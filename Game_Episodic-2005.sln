@@ -1,0 +1,25 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client (Episodic)", "game\client\client_episodic-2005.vcproj", "{306BEF7B-8A1F-F569-3761-3E05CFD6D683}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server (Episodic)", "game\server\server_episodic-2005.vcproj", "{31C796EE-3EE9-54FC-9EF2-AC09ED9C18F5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{306BEF7B-8A1F-F569-3761-3E05CFD6D683}.Debug|Win32.ActiveCfg = Debug|Win32
+		{306BEF7B-8A1F-F569-3761-3E05CFD6D683}.Debug|Win32.Build.0 = Debug|Win32
+		{306BEF7B-8A1F-F569-3761-3E05CFD6D683}.Release|Win32.ActiveCfg = Release|Win32
+		{306BEF7B-8A1F-F569-3761-3E05CFD6D683}.Release|Win32.Build.0 = Release|Win32
+		{31C796EE-3EE9-54FC-9EF2-AC09ED9C18F5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{31C796EE-3EE9-54FC-9EF2-AC09ED9C18F5}.Debug|Win32.Build.0 = Debug|Win32
+		{31C796EE-3EE9-54FC-9EF2-AC09ED9C18F5}.Release|Win32.ActiveCfg = Release|Win32
+		{31C796EE-3EE9-54FC-9EF2-AC09ED9C18F5}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

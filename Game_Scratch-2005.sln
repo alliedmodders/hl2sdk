@@ -1,0 +1,25 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client (SDK)", "game\client\client_scratch-2005.vcproj", "{09603CC0-928D-4939-83E5-C255291B9466}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server (SDK)", "game\server\server_scratch-2005.vcproj", "{E8C0FE86-D8E1-4B44-8F76-F2A9A21E9C4F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{09603CC0-928D-4939-83E5-C255291B9466}.Debug|Win32.ActiveCfg = Debug|Win32
+		{09603CC0-928D-4939-83E5-C255291B9466}.Debug|Win32.Build.0 = Debug|Win32
+		{09603CC0-928D-4939-83E5-C255291B9466}.Release|Win32.ActiveCfg = Release|Win32
+		{09603CC0-928D-4939-83E5-C255291B9466}.Release|Win32.Build.0 = Release|Win32
+		{E8C0FE86-D8E1-4B44-8F76-F2A9A21E9C4F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E8C0FE86-D8E1-4B44-8F76-F2A9A21E9C4F}.Debug|Win32.Build.0 = Debug|Win32
+		{E8C0FE86-D8E1-4B44-8F76-F2A9A21E9C4F}.Release|Win32.ActiveCfg = Release|Win32
+		{E8C0FE86-D8E1-4B44-8F76-F2A9A21E9C4F}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
