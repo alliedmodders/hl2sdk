@@ -297,7 +297,7 @@ void netadr_t::SetFromSocket( int hSocket )
 
 	struct sockaddr address;
 	int namelen = sizeof(address);
-	if ( getsockname( hSocket, (struct sockaddr *)&address, (int *)&namelen) == 0 )
+	if ( getsockname( hSocket, (struct sockaddr *)&address, (socklen_t *)&namelen) == 0 )
 	{
 		SetFromSockadr( &address );
 	}

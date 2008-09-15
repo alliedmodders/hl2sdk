@@ -65,7 +65,7 @@ CBaseEntity *CAI_PoliceGoal::GetTarget( void )
 
 		if ( pTarget == NULL )
 		{
-			DevMsg( "Unable to find ai_goal_police target: %s\n", m_iszTarget );
+			DevMsg( "Unable to find ai_goal_police target: %s\n", STRING(m_iszTarget) );
 			return NULL;
 		}
 

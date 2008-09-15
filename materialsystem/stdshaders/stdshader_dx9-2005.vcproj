@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="stdshader_dx9"
 	ProjectGUID="{B29963C3-6E41-4C6F-98B7-EC89B0A8085F}"
+	RootNamespace="stdshader_dx9"
 	>
 	<Platforms>
 		<Platform
@@ -28,9 +29,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="Publishing to target directory (..\..\game\hl2\bin\)..."
-				CommandLine="if exist &quot;..\..\game\hl2\bin\game_shader_dx9.dll&quot; attrib -r &quot;..\..\game\hl2\bin\game_shader_dx9.dll&quot;&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; &quot;..\..\game\hl2\bin\game_shader_dx9.dll&quot;&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;game_shader_dx9.map copy &quot;$(TargetDir)&quot;game_shader_dx9.map &quot;..\..\game\hl2\bin\game_shader_dx9.map&quot;&#x0D;&#x0A;"
-				Outputs="&quot;..\..\game\hl2\bin\game_shader_dx9.dll&quot;"
+				Description="Publishing to target directory (bin\)..."
+				CommandLine="if exist &quot;bin\game_shader_dx9.dll&quot; attrib -r &quot;bin\game_shader_dx9.dll&quot;&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; &quot;bin\game_shader_dx9.dll&quot;&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;game_shader_dx9.map copy &quot;$(TargetDir)&quot;game_shader_dx9.map &quot;bin\game_shader_dx9.map&quot;&#x0D;&#x0A;"
+				Outputs="&quot;bin\game_shader_dx9.dll&quot;"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -84,7 +85,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\common\,..\..\lib\public\"
-				IgnoreDefaultLibraryNames="LIBCMT"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				ImportLibrary="Debug_dx9/game_shader_dx9.lib"
@@ -130,9 +131,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="Publishing to target directory (..\..\game\hl2\bin\)..."
-				CommandLine="if exist &quot;..\..\game\hl2\bin\game_shader_dx9.dll&quot; attrib -r &quot;..\..\game\hl2\bin\game_shader_dx9.dll&quot;&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; &quot;..\..\game\hl2\bin\game_shader_dx9.dll&quot;&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;game_shader_dx9.map copy &quot;$(TargetDir)&quot;game_shader_dx9.map &quot;..\..\game\hl2\bin\game_shader_dx9.map&quot;&#x0D;&#x0A;"
-				Outputs="&quot;..\..\game\hl2\bin\game_shader_dx9.dll&quot;"
+				Description="Publishing to target directory (bin\)..."
+				CommandLine="if exist &quot;bin\game_shader_dx9.dll&quot; attrib -r &quot;bin\game_shader_dx9.dll&quot;&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; &quot;bin\game_shader_dx9.dll&quot;&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;game_shader_dx9.map copy &quot;$(TargetDir)&quot;game_shader_dx9.map &quot;bin\game_shader_dx9.map&quot;&#x0D;&#x0A;"
+				Outputs="&quot;bin\game_shader_dx9.dll&quot;"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -190,6 +191,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\common\,..\..\lib\public\"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LICMTD"
 				ProgramDatabaseFile=".\Release_dx9/stdshader_dx9.pdb"
 				SubSystem="2"
 				ImportLibrary=".\Release_dx9/game_shader_dx9.lib"

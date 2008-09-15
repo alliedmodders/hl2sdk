@@ -22,12 +22,12 @@
 // email:          mete@swissquake.ch
 // web:            http://www.swissquake.ch/chumbalum-soft/
 //
-#include "ViewerSettings.h"
-#include "studiomodel.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "windows.h"
+#include <windows.h>
+#include "ViewerSettings.h"
+#include "studiomodel.h"
 
 
 ViewerSettings g_viewerSettings;

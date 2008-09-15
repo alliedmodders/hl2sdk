@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="vtf2tga"
 	ProjectGUID="{2A1F656C-053C-46A4-AE33-304C1D865E0C}"
+	RootNamespace="vtf2tga"
 	>
 	<Platforms>
 		<Platform
@@ -28,8 +29,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\$(TargetName).exe;..\..\..\game\bin\$(TargetName).pdb"
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\$(TargetName).exe;..\..\..\bin\$(TargetName).pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -82,7 +83,7 @@
 				OutputFile=".\Release/vtf2tga.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="libc,libcmtd.lib"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Release/vtf2tga.pdb"
 				GenerateMapFile="true"
@@ -130,8 +131,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\$(TargetName).exe;..\..\..\game\bin\$(TargetName).pdb"
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\$(TargetName).exe;..\..\..\bin\$(TargetName).pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -180,7 +181,7 @@
 				OutputFile=".\Debug/vtf2tga.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="libc,libcmt.lib"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/vtf2tga.pdb"
 				SubSystem="1"
@@ -304,11 +305,6 @@
 				RelativePath="..\..\public\vtf\vtf.h"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-			>
 		</Filter>
 		<Filter
 			Name="Link Libraries"

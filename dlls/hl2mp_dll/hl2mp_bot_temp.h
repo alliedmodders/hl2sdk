@@ -16,4 +16,3 @@ CBasePlayer *BotPutInServer( bool bFrozen, int iTeam );
 
 
 #endif // BOT_BASE_H
-

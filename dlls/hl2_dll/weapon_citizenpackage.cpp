@@ -72,3 +72,4 @@ acttable_t	CWeaponCitizenSuitcase::m_acttable[] =
 	{ ACT_WALK,						ACT_WALK_SUITCASE,					false },
 };
 IMPLEMENT_ACTTABLE(CWeaponCitizenSuitcase);
+

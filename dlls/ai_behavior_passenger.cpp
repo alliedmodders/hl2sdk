@@ -51,10 +51,10 @@ END_DATADESC();
 //-----------------------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------------------
-CAI_PassengerBehavior::CAI_PassengerBehavior( void ) : 
-m_bEnabled( false ), 
-m_hVehicle( NULL ), 
+CAI_PassengerBehavior::CAI_PassengerBehavior( void ) :  
 m_PassengerState( PASSENGER_STATE_OUTSIDE ), 
+m_hVehicle( NULL ), 
+m_bEnabled( false ),
 m_PassengerIntent( PASSENGER_INTENT_NONE ),
 m_nTransitionSequence( -1 )
 {

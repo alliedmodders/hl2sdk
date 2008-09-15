@@ -957,7 +957,7 @@ void CNPC_CombineGunship::ManageWarningBeam( void )
 					g_pEffects->EnergySplash( tr2.endpos + vDir * 8, tr2.plane.normal, true );
 				}
 
-				g_pEffects->Sparks( tr2.endpos, 3.0f - (m_flGroundAttackTime-gpGlobals->curtime), 3.5f - (m_flGroundAttackTime-gpGlobals->curtime), &tr2.plane.normal );
+				g_pEffects->Sparks( tr2.endpos, static_cast<int>(3.0f - (m_flGroundAttackTime-gpGlobals->curtime)), static_cast<int>(3.5f - (m_flGroundAttackTime-gpGlobals->curtime)), &tr2.plane.normal );
 
 			}
 		}
@@ -1958,7 +1958,7 @@ void CNPC_CombineGunship::BeginDestruct( void )
 		return;
 	}
 
-	m_hRagdoll->SetName( AllocPooledString( UTIL_VarArgs("%s_ragdoll", GetEntityName()) ) );
+	m_hRagdoll->SetName( AllocPooledString( UTIL_VarArgs("%s_ragdoll", STRING(GetEntityName())) ) );
 
 	// Tell the smoke trail to follow the ragdoll
 	CreateSmokeTrail();
@@ -2899,16 +2899,16 @@ int	CNPC_CombineGunship::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 		int iHealthIncrements = sk_gunship_health_increments.GetInt();
 		if ( g_pGameRules->IsSkillLevel( SKILL_EASY ) )
 		{
-			iHealthIncrements = ceil( iHealthIncrements * 0.5 );
+			iHealthIncrements = static_cast<int>(ceil( iHealthIncrements * 0.5 ));
 		}
 		else if ( g_pGameRules->IsSkillLevel( SKILL_HARD ) )
 		{
-			iHealthIncrements = floor( iHealthIncrements * 1.5 );
+			iHealthIncrements = static_cast<int>(floor( iHealthIncrements * 1.5 ));
 		}
 		info.SetDamage( ( GetMaxHealth() / (float)iHealthIncrements ) + 1 );
 		
 		// Find out which "stage" we're at in our health
-		int healthIncrement = iHealthIncrements - ( GetHealth() / (float)(( GetMaxHealth() / (float)iHealthIncrements )) );
+		int healthIncrement = iHealthIncrements - ( GetHealth() / ( GetMaxHealth() / iHealthIncrements ) );
 		switch ( healthIncrement )
 		{
 		case 1:

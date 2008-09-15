@@ -336,8 +336,6 @@ void CAI_BasePhysicsFlyingBot::TranslateNavGoal( CBaseEntity *pTarget, Vector &c
 //-----------------------------------------------------------------------------
 IMotionEvent::simresult_e CAI_BasePhysicsFlyingBot::Simulate( IPhysicsMotionController *pController, IPhysicsObject *pObject, float deltaTime, Vector &linear, AngularImpulse &angular )
 {
-	static int count;
-
 	IPhysicsObject *pPhysicsObject = VPhysicsGetObject();
 	// Assert( pPhysicsObject );
 	if (!pPhysicsObject) 

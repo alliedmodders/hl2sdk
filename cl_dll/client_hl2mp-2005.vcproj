@@ -203,7 +203,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib\public"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)/client.pdb"
 				GenerateMapFile="true"
@@ -664,86 +664,6 @@
 			<File
 				RelativePath="cdll_util.cpp"
 				>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreoactor.cpp"
-				>
-				<FileConfiguration
-					Name="Debug HL2MP|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release HL2MP|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreochannel.cpp"
-				>
-				<FileConfiguration
-					Name="Debug HL2MP|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release HL2MP|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreoevent.cpp"
-				>
-				<FileConfiguration
-					Name="Debug HL2MP|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release HL2MP|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreoscene.cpp"
-				>
-				<FileConfiguration
-					Name="Debug HL2MP|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release HL2MP|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="cl_mat_stub.cpp"
@@ -2836,20 +2756,6 @@
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_ar2.h"
 						>
-						<FileConfiguration
-							Name="Debug HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_crossbow.cpp"
@@ -2870,20 +2776,6 @@
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase.h"
 						>
-						<FileConfiguration
-							Name="Debug HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase_machinegun.cpp"
@@ -2892,20 +2784,6 @@
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase_machinegun.h"
 						>
-						<FileConfiguration
-							Name="Debug HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasebasebludgeon.cpp"
@@ -2914,20 +2792,6 @@
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasebasebludgeon.h"
 						>
-						<FileConfiguration
-							Name="Debug HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.cpp"
@@ -2936,20 +2800,6 @@
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.h"
 						>
-						<FileConfiguration
-							Name="Debug HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_physcannon.cpp"
@@ -2958,20 +2808,6 @@
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_physcannon.h"
 						>
-						<FileConfiguration
-							Name="Debug HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_pistol.cpp"
@@ -2984,40 +2820,10 @@
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_rpg.h"
 						>
-						<FileConfiguration
-							Name="Debug HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_shotgun.cpp"
 						>
-						<FileConfiguration
-							Name="Debug HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_slam.cpp"
@@ -3026,20 +2832,6 @@
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_slam.h"
 						>
-						<FileConfiguration
-							Name="Debug HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_smg1.cpp"
@@ -3056,22 +2848,6 @@
 					<File
 						RelativePath=".\hl2mp\ui\backgroundpanel.cpp"
 						>
-						<FileConfiguration
-							Name="Debug HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\hl2mp\ui\backgroundpanel.h"
@@ -3112,22 +2888,6 @@
 					<File
 						RelativePath=".\hl2mp\hud_deathnotice.cpp"
 						>
-						<FileConfiguration
-							Name="Debug HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"
-							/>
-						</FileConfiguration>
 					</File>
 				</Filter>
 			</Filter>
@@ -3965,11 +3725,11 @@
 				>
 			</File>
 			<File
-				RelativePath="iinput.h"
+				RelativePath="..\public\vgui\IInput.h"
 				>
 			</File>
 			<File
-				RelativePath="..\public\vgui\IInput.h"
+				RelativePath="iinput.h"
 				>
 			</File>
 			<File
@@ -4293,11 +4053,11 @@
 				>
 			</File>
 			<File
-				RelativePath="menu.h"
+				RelativePath="..\public\vgui_controls\Menu.h"
 				>
 			</File>
 			<File
-				RelativePath="..\public\vgui_controls\Menu.h"
+				RelativePath="menu.h"
 				>
 			</File>
 			<File
@@ -5033,70 +4793,42 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\lib\public\bitmap.lib"
+		<Filter
+			Name="Link Libraries"
 			>
-		</File>
-		<File
-			RelativePath="..\lib\public\mathlib.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier0.lib"
-			>
-			<FileConfiguration
-				Name="Debug HL2MP|Win32"
+			<File
+				RelativePath="..\lib\public\bitmap.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release HL2MP|Win32"
+			</File>
+			<File
+				RelativePath="..\lib\public\choreoobjects.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier1.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier2.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\vgui_controls.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\vstdlib.lib"
-			>
-			<FileConfiguration
-				Name="Debug HL2MP|Win32"
+			</File>
+			<File
+				RelativePath="..\lib\public\mathlib.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release HL2MP|Win32"
+			</File>
+			<File
+				RelativePath="..\lib\public\tier0.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-		</File>
+			</File>
+			<File
+				RelativePath="..\lib\public\tier1.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\public\tier2.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\public\vgui_controls.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\public\vstdlib.lib"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

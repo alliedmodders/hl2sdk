@@ -185,7 +185,7 @@ void CPropThumper::Thump ( void )
 	}
 
 	EmitSound( "coast.thumper_dust" );
-	CSoundEnt::InsertSound ( SOUND_THUMPER, GetAbsOrigin(), THUMPER_RADIUS * m_flPlaybackRate, THUMPER_SOUND_DURATION, this );
+	CSoundEnt::InsertSound ( SOUND_THUMPER, GetAbsOrigin(), static_cast<int>(THUMPER_RADIUS * m_flPlaybackRate), THUMPER_SOUND_DURATION, this );
 
 	if ( m_flPlaybackRate < 0.7f )
 		 return;

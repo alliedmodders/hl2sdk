@@ -1117,7 +1117,7 @@ static NavErrorType CheckNavFile( const char *bspFilename )
 	// read file version number
 	unsigned int version;
 	result = filesystem->Read( &version, sizeof(unsigned int), file );
-	if (!result || version > NavCurrentVersion || version < 4)
+	if (!result || version > static_cast<unsigned int>(NavCurrentVersion) || version < 4)
 	{
 		filesystem->Close( file );
 		return NAV_BAD_FILE_VERSION;
@@ -1165,6 +1165,8 @@ void CommandNavCheckFileConsistency( void )
 			break;
 		case NAV_OK:
 			Msg( "The nav file for %s is up-to-date\n", bspFilename );
+			break;
+		default:
 			break;
 		}
 
@@ -1218,7 +1220,7 @@ NavErrorType CNavMesh::Load( void )
 	// read file version number
 	unsigned int version;
 	result = filesystem->Read( &version, sizeof(unsigned int), file );
-	if (!result || version > NavCurrentVersion)
+	if (!result || version > static_cast<unsigned int>(NavCurrentVersion))
 	{
 		Msg( "Unknown navigation file version.\n" );
 		filesystem->Close( file );

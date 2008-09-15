@@ -1606,7 +1606,7 @@ void CBaseCombatWeapon::WeaponSound( WeaponSound_t sound_type, float soundtime /
 #if !defined( CLIENT_DLL )
 			if( sound_type == EMPTY )
 			{
-				CSoundEnt::InsertSound( SOUND_COMBAT, GetOwner()->GetAbsOrigin(), SOUNDENT_VOLUME_EMPTY, 0.2, GetOwner() );
+				CSoundEnt::InsertSound( SOUND_COMBAT, GetOwner()->GetAbsOrigin(), static_cast<int>(SOUNDENT_VOLUME_EMPTY), 0.2, GetOwner() );
 			}
 #endif
 		}

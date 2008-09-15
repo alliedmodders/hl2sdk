@@ -498,7 +498,7 @@ void CNPC_Antlion::MeleeAttack( float distance, float damage, QAngle &viewPunch,
 		return;
 	}
 
-	CBaseEntity *pHurt = CheckTraceHullAttack( distance, -Vector(16,16,32), Vector(16,16,32), damage, DMG_SLASH, 5.0f );
+	CBaseEntity *pHurt = CheckTraceHullAttack( distance, -Vector(16,16,32), Vector(16,16,32), static_cast<int>(damage), DMG_SLASH, 5.0f );
 
 	if ( pHurt )
 	{
@@ -1949,7 +1949,7 @@ void CNPC_Antlion::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDi
 		if ( newInfo.GetDamageType() & (DMG_CRUSH|DMG_PHYSGUN) )
 		{
 			PainSound( newInfo );
-			ApplyAbsVelocityImpulse( ( vecShoveDir * random->RandomInt( 500.0f, 1000.0f ) ) + Vector(0,0,64.0f) );
+			ApplyAbsVelocityImpulse( ( vecShoveDir * random->RandomFloat( 500.0f, 1000.0f ) ) + Vector(0,0,64.0f) );
 			SetGroundEntity( NULL );
 		}
 
@@ -1974,7 +1974,7 @@ void CNPC_Antlion::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDi
 					SetCondition( COND_ANTLION_FLIPPED );
 				}
 
-				ApplyAbsVelocityImpulse( ( vecShoveDir * random->RandomInt( 500.0f, 1000.0f ) ) + Vector(0,0,64.0f) );
+				ApplyAbsVelocityImpulse( ( vecShoveDir * random->RandomFloat( 500.0f, 1000.0f ) ) + Vector(0,0,64.0f) );
 				SetGroundEntity( NULL );
 			}
 			else
@@ -1987,7 +1987,7 @@ void CNPC_Antlion::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDi
 					SetCondition( COND_ANTLION_FLIPPED );
 
 					//Get tossed!
-					ApplyAbsVelocityImpulse( ( vecShoveDir * random->RandomInt( 500.0f, 1000.0f ) ) + Vector(0,0,64.0f) );
+					ApplyAbsVelocityImpulse( ( vecShoveDir * random->RandomFloat( 500.0f, 1000.0f ) ) + Vector(0,0,64.0f) );
 					SetGroundEntity( NULL );
 				}
 			}

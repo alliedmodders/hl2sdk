@@ -146,9 +146,9 @@ void CPathKeyFrame::CalculateFrameDuration( void )
 			float x = 0;
 			for ( int i = 0; i < 3; i++ )
 			{
-				if ( abs(ang[i]) > x )
+				if ( abs(static_cast<int>(ang[i])) > x )
 				{
-					x = abs(ang[i]);
+					x = abs(static_cast<int>(ang[i]));
 				}
 			}
 

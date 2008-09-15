@@ -968,7 +968,7 @@ void CTestEffect::Think( void )
 		for (i = 0; i < m_iBeam; i++)
 		{
 			t = (gpGlobals->curtime - m_flBeamTime[i]) / ( 3 + m_flStartTime - m_flBeamTime[i]);
-			m_pBeam[i]->SetBrightness( 255 * t );
+			m_pBeam[i]->SetBrightness( static_cast<int>(255 * t) );
 			// m_pBeam[i]->SetScrollRate( 20 * t );
 		}
 		SetNextThink( gpGlobals->curtime + 0.1f );
@@ -1149,11 +1149,11 @@ void CBlood::InputEmitBlood( inputdata_t &inputdata )
 {
 	if ( HasSpawnFlags( SF_BLOOD_STREAM ) )
 	{
-		UTIL_BloodStream( BloodPosition(inputdata.pActivator), Direction(), Color(), BloodAmount() );
+		UTIL_BloodStream( BloodPosition(inputdata.pActivator), Direction(), Color(), static_cast<int>(BloodAmount()) );
 	}
 	else
 	{
-		UTIL_BloodDrips( BloodPosition(inputdata.pActivator), Direction(), Color(), BloodAmount() );
+		UTIL_BloodDrips( BloodPosition(inputdata.pActivator), Direction(), Color(), static_cast<int>(BloodAmount()) );
 	}
 
 	if ( HasSpawnFlags( SF_BLOOD_DECAL ) )
@@ -1190,7 +1190,7 @@ void CBlood::InputEmitBlood( inputdata_t &inputdata )
 			nFlags |= FX_BLOODSPRAY_GORE;
 		}
 
-		UTIL_BloodSpray(GetAbsOrigin(), Direction(), Color(), BloodAmount(), nFlags);
+		UTIL_BloodSpray(GetAbsOrigin(), Direction(), Color(), static_cast<int>(BloodAmount()), nFlags);
 	}
 }
 
@@ -1591,7 +1591,7 @@ void CEnvWind::Spawn( void )
 	SetSolid( SOLID_NONE );
 	AddEffects( EF_NODRAW );
 
-	m_EnvWindShared.Init( entindex(), 0, gpGlobals->frametime, GetLocalAngles().y, 0 );
+	m_EnvWindShared.Init( entindex(), 0, gpGlobals->frametime, static_cast<int>(GetLocalAngles().y), 0 );
 
 	SetThink( &CEnvWind::WindThink );
 	SetNextThink( gpGlobals->curtime );

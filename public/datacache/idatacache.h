@@ -347,6 +347,8 @@ public:
 		case DC_REMOVED:
 			Assert ( 0 );
 			return false;
+		default:
+			break;
 		}
 		return false;
 	}

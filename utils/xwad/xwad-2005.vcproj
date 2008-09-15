@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="xwad"
 	ProjectGUID="{B850012C-98A2-42F7-B023-9F65C448D938}"
+	RootNamespace="xwad"
 	>
 	<Platforms>
 		<Platform
@@ -28,8 +29,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\xwad.exe;..\..\..\game\bin\xwad.pdb"
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\xwad.exe;..\..\..\bin\xwad.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -73,6 +74,7 @@
 				OutputFile=".\Debug/xwad.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/xwad.pdb"
 				SubSystem="1"
@@ -118,8 +120,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\xwad.exe;..\..\..\game\bin\xwad.pdb"
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\xwad.exe;..\..\..\bin\xwad.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -164,6 +166,7 @@
 				OutputFile=".\Release/xwad.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				ProgramDatabaseFile=".\Release/xwad.pdb"
 				SubSystem="1"
 				TargetMachine="1"
@@ -202,15 +205,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="goldsrc_bspfile.h"
-				>
-			</File>
-			<File
 				RelativePath="goldsrc_standin.cpp"
-				>
-			</File>
-			<File
-				RelativePath="goldsrc_standin.h"
 				>
 			</File>
 			<File
@@ -218,15 +213,7 @@
 				>
 			</File>
 			<File
-				RelativePath="lbmlib.h"
-				>
-			</File>
-			<File
 				RelativePath="wadlib.cpp"
-				>
-			</File>
-			<File
-				RelativePath="wadlib.h"
 				>
 			</File>
 			<File
@@ -238,11 +225,22 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-			>
+			<File
+				RelativePath="goldsrc_bspfile.h"
+				>
+			</File>
+			<File
+				RelativePath="goldsrc_standin.h"
+				>
+			</File>
+			<File
+				RelativePath="lbmlib.h"
+				>
+			</File>
+			<File
+				RelativePath="wadlib.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

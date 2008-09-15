@@ -578,8 +578,8 @@ void CPhysicsPushedEntities::StoreMovedEntities( physicspushlist_t &list )
 	list.localOrigin = m_rootPusherStartLocalOrigin;
 	list.localAngles = m_rootPusherStartLocalAngles;
 	list.pushedCount = CountMovedEntities();
-	Assert(list.pushedCount < ARRAYSIZE(list.pushedEnts));
-	if ( list.pushedCount > ARRAYSIZE(list.pushedEnts) )
+	Assert(static_cast<size_t>(list.pushedCount) < ARRAYSIZE(list.pushedEnts));
+	if ( list.pushedCount > static_cast<int>(ARRAYSIZE(list.pushedEnts)) )
 	{
 		list.pushedCount = ARRAYSIZE(list.pushedEnts);
 	}
@@ -1474,7 +1474,7 @@ void CBaseEntity::PerformPush( float movetime )
 		m_pBlocker = pBlocker;
 		if (m_pBlocker.ToInt() != hPrevBlocker)
 		{
-			if (hPrevBlocker != INVALID_EHANDLE_INDEX)
+			if (hPrevBlocker != static_cast<int>(INVALID_EHANDLE_INDEX))
 			{
 				EndBlocked();
 			}

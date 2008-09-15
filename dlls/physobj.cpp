@@ -1243,7 +1243,7 @@ void CPhysConvert::InputConvertTarget( inputdata_t &inputdata )
 	while ( (pEntity = gEntList.FindEntityByName( pEntity, m_target, NULL, inputdata.pActivator, inputdata.pCaller )) != NULL )
 	{
 		entlist[count++] = pEntity;
-		if ( count >= ARRAYSIZE(entlist) )
+		if ( count >= static_cast<int>(ARRAYSIZE(entlist)) )
 			break;
 	}
 

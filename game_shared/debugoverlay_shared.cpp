@@ -335,7 +335,7 @@ void NDebugOverlay::DrawTickMarkedLine(const Vector &startPos, const Vector &end
 	
 	Vector	lineDir		= (endPos - startPos);
 	float	lineDist	= VectorNormalize( lineDir );
-	int		numTicks	= lineDist/tickDist;
+	int	numTicks		= static_cast<int>(lineDist / tickDist);
 	Vector	vBodyDir;
 	
 #if defined( CLIENT_DLL )

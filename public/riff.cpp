@@ -6,8 +6,10 @@
 //
 //=============================================================================//
 // Avoid these warnings:
+#ifdef _MSC_VER
 #pragma warning(disable : 4512) // warning C4512: 'InFileRIFF' : assignment operator could not be generated
 #pragma warning(disable : 4514) // warning C4514: 'RIFFName' : unreferenced inline function has been removed
+#endif
 
 #include "riff.h"
 #include <stdio.h>

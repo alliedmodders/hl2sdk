@@ -36,12 +36,12 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="copy to ..\..\..\bin\motionmapper.exe"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
 "
-				Outputs="..\..\..\game\bin\motionmapper.exe;..\..\..\game\bin\motionmapper.pdb"/>
+				Outputs="..\..\..\bin\motionmapper.exe;..\..\..\bin\motionmapper.pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib"
@@ -106,12 +106,12 @@ copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="copy to ..\..\..\bin\motionmapper.exe"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
 "
-				Outputs="..\..\..\game\bin\motionmapper.exe;..\..\..\game\bin\motionmapper.pdb"/>
+				Outputs="..\..\..\bin\motionmapper.exe;..\..\..\bin\motionmapper.pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib"

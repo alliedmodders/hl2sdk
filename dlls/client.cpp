@@ -830,7 +830,7 @@ void CC_Player_TestDispatchEffect( void )
 		AngleVectors( vecAngles, &data.m_vNormal );
 	}
 	data.m_nEntIndex = pPlayer->entindex();
-	data.m_fFlags = flags;
+	data.m_fFlags = static_cast<int>(flags);
 	data.m_flMagnitude = magnitude;
 	data.m_flScale = scale;
 	DispatchEffect( (char *)engine->Cmd_Argv(1), data );
@@ -1148,6 +1148,7 @@ void CC_HurtMe_f(void)
 
 static ConCommand hurtme("hurtme", CC_HurtMe_f, "Hurts the player.\n\tArguments: <health to lose>", FCVAR_CHEAT);
 
+#ifdef _DEBUG
 static bool IsInGroundList( CBaseEntity *ent, CBaseEntity *ground )
 {
 	if ( !ground || !ent )
@@ -1169,6 +1170,7 @@ static bool IsInGroundList( CBaseEntity *ent, CBaseEntity *ground )
 	return false;
 
 }
+#endif
 
 static int DescribeGroundList( CBaseEntity *ent )
 {

@@ -4233,7 +4233,7 @@ void RealignBones( )
 	}
 
 	// force bones with IK rules to realign themselves
-	for (int i = 0; i < g_numikchains; i++)
+	for (i = 0; i < g_numikchains; i++)
 	{
 		k = g_ikchain[i].link[0].bone;
 		if (childbone[k] == -1 || childbone[k] == g_ikchain[i].link[1].bone)

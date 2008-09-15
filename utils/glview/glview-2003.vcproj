@@ -37,21 +37,21 @@
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="Copy to ..\..\..\game\bin"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
+				Description="Copy to ..\..\..\bin"
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
 
 "
-				Outputs="..\..\..\game\bin\glview.exe;..\..\..\game\bin\glview.pdb"/>
+				Outputs="..\..\..\bin\glview.exe;..\..\..\bin\glview.pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="glu32.lib opengl32.lib glaux.lib odbc32.lib odbccp32.lib winmm.lib"
 				OutputFile=".\Debug/glview.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/glview.pdb"
 				SubSystem="2"
@@ -116,21 +116,21 @@ copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="Copy to ..\..\..\game\bin"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
+				Description="Copy to ..\..\..\bin"
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
 
 "
-				Outputs="..\..\..\game\bin\glview.exe;..\..\..\game\bin\glview.pdb"/>
+				Outputs="..\..\..\bin\glview.exe;..\..\..\bin\glview.pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="glu32.lib opengl32.lib glaux.lib odbc32.lib odbccp32.lib winmm.lib"
 				OutputFile=".\Release/glview.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames="libcmtd.lib"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Release/glview.pdb"
 				GenerateMapFile="TRUE"
@@ -222,22 +222,22 @@ copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
 		<Filter
 			Name="Link Libraries"
 			Filter="">
+			<File
+				RelativePath="..\..\lib-vc7\public\mathlib.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\tier0.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\tier1.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\tier2.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\vstdlib.lib">
+			</File>
 		</Filter>
-		<File
-			RelativePath="..\..\lib-vc7\public\mathlib.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier0.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier1.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier2.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\vstdlib.lib">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

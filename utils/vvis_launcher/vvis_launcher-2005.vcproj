@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="vvis_launcher"
 	ProjectGUID="{4C0B9915-E8FF-4089-8927-FC934BFC1E4A}"
+	RootNamespace="vvis_launcher"
 	>
 	<Platforms>
 		<Platform
@@ -28,8 +29,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\$(TargetName).exe"
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\bin&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\$(TargetName).exe"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -77,6 +78,7 @@
 				OutputFile="Debug/vvis.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/vvis.pdb"
 				SubSystem="1"
@@ -122,8 +124,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\$(TargetName).exe"
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\bin&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\$(TargetName).exe"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -175,7 +177,7 @@
 				OutputFile="Release/vvis.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				ProgramDatabaseFile=".\Release/vvis.pdb"
 				SubSystem="1"
 				TargetMachine="1"
@@ -252,62 +254,57 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			Name="Link Libraries"
 			>
+			<File
+				RelativePath="..\..\lib\public\tier0.lib"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\tier1.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\vstdlib.lib"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+			</File>
 		</Filter>
-		<File
-			RelativePath="ReadMe.txt"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier0.lib"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier1.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\vstdlib.lib"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -8,7 +8,7 @@
 #include <assert.h>
 
 #include "studio.h"
-#include "UtlRBTree.h"
+#include "utlrbtree.h"
 
 extern studiohdr_t *FindOrLoadGroupFile( char const *modelname );
 

@@ -955,7 +955,7 @@ void CBounceBomb::ExplodeThink()
 
 	CBaseEntity *pThrower = HasPhysicsAttacker( 0.5 );
 
-	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), (pThrower) ? pThrower : this, BOUNCEBOMB_EXPLODE_DAMAGE, BOUNCEBOMB_EXPLODE_RADIUS, true );
+	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), (pThrower) ? pThrower : this, static_cast<int>(BOUNCEBOMB_EXPLODE_DAMAGE), static_cast<int>(BOUNCEBOMB_EXPLODE_RADIUS), true );
 	UTIL_Remove( this );
 }
 
@@ -1098,7 +1098,7 @@ void CBounceBomb::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t re
 
 			// Try to scatter NPCs without panicking them. Make a move away sound up around their 
 			// ear level.
-			CSoundEnt::InsertSound( SOUND_MOVE_AWAY, GetAbsOrigin() + Vector( 0, 0, 60), 32.0f, 0.2f );
+			CSoundEnt::InsertSound( SOUND_MOVE_AWAY, GetAbsOrigin() + Vector( 0, 0, 60), 32, 0.2f );
 			return;
 		}
 		else

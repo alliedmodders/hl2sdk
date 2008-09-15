@@ -361,3 +361,4 @@ void CBaseHL2MPBludgeonWeapon::Swing( int bIsSecondary )
 	m_flNextPrimaryAttack = gpGlobals->curtime + GetFireRate();
 	m_flNextSecondaryAttack = gpGlobals->curtime + SequenceDuration();
 }
+

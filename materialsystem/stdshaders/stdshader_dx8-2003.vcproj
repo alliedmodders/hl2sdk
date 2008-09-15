@@ -42,12 +42,12 @@
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="Publishing to target directory (..\..\game\hl2\bin\)..."
-				CommandLine="if exist &quot;..\..\game\hl2\bin\game_shader_dx8.dll&quot; attrib -r &quot;..\..\game\hl2\bin\game_shader_dx8.dll&quot;
-copy &quot;$(TargetPath)&quot; &quot;..\..\game\hl2\bin\game_shader_dx8.dll&quot;
-if exist &quot;$(TargetDir)&quot;game_shader_dx8.map copy &quot;$(TargetDir)&quot;game_shader_dx8.map &quot;..\..\game\hl2\bin\game_shader_dx8.map&quot;
+				Description="Publishing to target directory (bin\)..."
+				CommandLine="if exist &quot;bin\game_shader_dx8.dll&quot; attrib -r &quot;bin\game_shader_dx8.dll&quot;
+copy &quot;$(TargetPath)&quot; &quot;bin\game_shader_dx8.dll&quot;
+if exist &quot;$(TargetDir)&quot;game_shader_dx8.map copy &quot;$(TargetDir)&quot;game_shader_dx8.map &quot;bin\game_shader_dx8.map&quot;
 "
-				Outputs="&quot;..\..\game\hl2\bin\game_shader_dx8.dll&quot;"/>
+				Outputs="&quot;bin\game_shader_dx8.dll&quot;"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="version.lib winmm.lib"
@@ -55,7 +55,7 @@ if exist &quot;$(TargetDir)&quot;game_shader_dx8.map copy &quot;$(TargetDir)&quo
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib-vc7\common\,..\..\lib-vc7\public\"
-				IgnoreDefaultLibraryNames="LIBCMT"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug_dx8/stdshader_dx8.pdb"
 				SubSystem="2"
@@ -124,20 +124,21 @@ if exist &quot;$(TargetDir)&quot;game_shader_dx8.map copy &quot;$(TargetDir)&quo
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="Publishing to target directory (..\..\game\hl2\bin\)..."
-				CommandLine="if exist &quot;..\..\game\hl2\bin\game_shader_dx8.dll&quot; attrib -r &quot;..\..\game\hl2\bin\game_shader_dx8.dll&quot;
-copy &quot;$(TargetPath)&quot; &quot;..\..\game\hl2\bin\game_shader_dx8.dll&quot;
-if exist &quot;$(TargetDir)&quot;game_shader_dx8.map copy &quot;$(TargetDir)&quot;game_shader_dx8.map &quot;..\..\game\hl2\bin\game_shader_dx8.map&quot;
+				Description="Publishing to target directory (bin\)..."
+				CommandLine="if exist &quot;bin\game_shader_dx8.dll&quot; attrib -r &quot;bin\game_shader_dx8.dll&quot;
+copy &quot;$(TargetPath)&quot; &quot;bin\game_shader_dx8.dll&quot;
+if exist &quot;$(TargetDir)&quot;game_shader_dx8.map copy &quot;$(TargetDir)&quot;game_shader_dx8.map &quot;bin\game_shader_dx8.map&quot;
 "
-				Outputs="&quot;..\..\game\hl2\bin\game_shader_dx8.dll&quot;"/>
+				Outputs="&quot;bin\game_shader_dx8.dll&quot;"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/IGNORE:4089"
 				AdditionalDependencies="version.lib winmm.lib"
 				OutputFile=".\Release_dx8/game_shader_dx8.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib-vc7\common\,..\..\lib-vc7\public\"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				ProgramDatabaseFile=".\Release_dx8/stdshader_dx8.pdb"
 				SubSystem="2"
 				ImportLibrary=".\Release_dx8/stdshader_dx8.lib"

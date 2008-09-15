@@ -8,14 +8,14 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include	"NPCEvent.h"
-#include	"basehlcombatweapon_shared.h"
-#include	"basecombatcharacter.h"
-#include	"AI_BaseNPC.h"
-#include	"player.h"
-#include	"gamerules.h"		// For g_pGameRules
-#include	"in_buttons.h"
-#include	"soundent.h"
+#include "npcevent.h"
+#include "basehlcombatweapon_shared.h"
+#include "basecombatcharacter.h"
+#include "ai_basenpc.h"
+#include "player.h"
+#include "gamerules.h"		// For g_pGameRules
+#include "in_buttons.h"
+#include "soundent.h"
 #include "vstdlib/random.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -420,7 +420,7 @@ void CWeaponShotgun::PrimaryAttack( void )
 	
 	pPlayer->ViewPunch( QAngle( random->RandomFloat( -2, -1 ), random->RandomFloat( -2, 2 ), 0 ) );
 
-	CSoundEnt::InsertSound( SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_SHOTGUN, 0.2, GetOwner() );
+	CSoundEnt::InsertSound( SOUND_COMBAT, GetAbsOrigin(), static_cast<int>(SOUNDENT_VOLUME_SHOTGUN), 0.2, GetOwner() );
 
 	if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
 	{
@@ -474,7 +474,7 @@ void CWeaponShotgun::SecondaryAttack( void )
 
 	pPlayer->SetMuzzleFlashTime( gpGlobals->curtime + 1.0 );
 
-	CSoundEnt::InsertSound( SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_SHOTGUN, 0.2 );
+	CSoundEnt::InsertSound( SOUND_COMBAT, GetAbsOrigin(), static_cast<int>(SOUNDENT_VOLUME_SHOTGUN), 0.2 );
 
 	if (!m_iClip1 && pPlayer->GetAmmoCount(m_iPrimaryAmmoType) <= 0)
 	{

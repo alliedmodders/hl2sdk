@@ -894,13 +894,13 @@ public:
 
 	void StopSound( int entindex, const char *soundname )
 	{
-		int soundindex = soundemitterbase->GetSoundIndex( soundname );
+		short soundindex = soundemitterbase->GetSoundIndex( soundname );
 		if ( soundindex == -1 )
 		{
 			return;
 		}
 
-		StopSoundByHandle( entindex, soundname, (HSOUNDSCRIPTHANDLE &)soundindex );
+		StopSoundByHandle( entindex, soundname, soundindex);
 	}
 
 

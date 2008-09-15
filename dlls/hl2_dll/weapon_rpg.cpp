@@ -18,8 +18,8 @@
 #include "in_buttons.h"
 #include "weapon_rpg.h"
 #include "shake.h"
-#include "AI_BaseNPC.h"
-#include "AI_Squad.h"
+#include "ai_basenpc.h"
+#include "ai_squad.h"
 #include "te_effect_dispatch.h"
 #include "triggers.h"
 #include "smoke_trail.h"
@@ -85,7 +85,7 @@ public:
 
 // a list of laser dots to search quickly
 CEntityClassList<CLaserDot> g_LaserDotList;
-CLaserDot *CEntityClassList<CLaserDot>::m_pClassList = NULL;
+template<> CLaserDot *CEntityClassList<CLaserDot>::m_pClassList = NULL;
 CLaserDot *GetLaserDotList()
 {
 	return g_LaserDotList.m_pClassList;
@@ -335,7 +335,7 @@ void CMissile::ShotDown( void )
 void CMissile::DoExplosion( void )
 {
 	// Explode
-	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), GetOwnerEntity(), GetDamage(), CMissile::EXPLOSION_RADIUS, 
+	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), GetOwnerEntity(), static_cast<int>(GetDamage()), CMissile::EXPLOSION_RADIUS, 
 		SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE, 0.0f, this);
 }
 
@@ -819,7 +819,7 @@ CBaseEntity *CInfoAPCMissileHint::FindAimTarget( CBaseEntity *pMissile, const ch
 // a list of missiles to search quickly
 //-----------------------------------------------------------------------------
 CEntityClassList<CAPCMissile> g_APCMissileList;
-CAPCMissile *CEntityClassList<CAPCMissile>::m_pClassList = NULL;
+template <> CAPCMissile *CEntityClassList<CAPCMissile>::m_pClassList = NULL;
 CAPCMissile *GetAPCMissileList()
 {
 	return g_APCMissileList.m_pClassList;
@@ -1083,9 +1083,9 @@ void CAPCMissile::DoExplosion( void )
 	else
 	{
 #ifdef HL2_EPISODIC
-		ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), this, APC_MISSILE_DAMAGE, 100, true, 20000 );
+		ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), this, static_cast<int>(APC_MISSILE_DAMAGE), 100, true, 20000 );
 #else
-		ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), GetOwnerEntity(), APC_MISSILE_DAMAGE, 100, true, 20000 );
+		ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), GetOwnerEntity(), static_cast<int>(APC_MISSILE_DAMAGE), 100, true, 20000 );
 #endif
 	}
 }
@@ -1177,7 +1177,7 @@ void CAPCMissile::ComputeActualDotPosition( CLaserDot *pLaserDot, Vector *pActua
 		m_hSpecificTarget = CInfoAPCMissileHint::FindAimTarget( this, STRING( m_strHint ), vecOrigin, vecVelocity );
 	}
 
-	CBaseEntity *pLaserTarget = m_hSpecificTarget ? m_hSpecificTarget : pLaserDot->GetTargetEntity();
+	CBaseEntity *pLaserTarget = m_hSpecificTarget ? m_hSpecificTarget.Get() : pLaserDot->GetTargetEntity();
 	if ( !pLaserTarget )
 	{
 		BaseClass::ComputeActualDotPosition( pLaserDot, pActualDotPosition, pHomingSpeed );

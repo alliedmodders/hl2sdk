@@ -14,12 +14,12 @@ VCPM_OBJ_DIR=$(BUILD_OBJ_DIR)/vcpm
 TIER1_OBJ_DIR=$(BUILD_OBJ_DIR)/vcpm/public
 
 #we use custome CFLAGS because the base ones interfere with XERCES
-CFLAGS= -w -fpermissive -D_LINUX -DNDEBUG -D_alloca=alloca -D_snprintf=snprintf -D_vsnprintf=vsnprintf $(ARCH_CFLAGS)
+CFLAGS=-D_LINUX -DNDEBUG -D_alloca=alloca -D_snprintf=snprintf -D_vsnprintf=vsnprintf -Wall -Wno-non-virtual-dtor -Wno-invalid-offsetof -Werror $(ARCH_CFLAGS)
 #DEBUG = -g -ggdb
 #CFLAGS+= $(DEBUG)
 
 INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -I$(XERCES_INC_DIR) -I$(UTIL_COMMON_SRC_DIR) -I$(TIER1_PUBLIC_SRC_DIR)
-LDFLAGS_VC=-lm -ldl -L$(XERCES_LIB_DIR) -lxerces-c $(GAME_DIR)/bin/tier0_i486.so $(GAME_DIR)/bin/vstdlib_i486.so
+LDFLAGS_VC=-lm -ldl -L$(XERCES_LIB_DIR) -lxerces-c tier1_i486.a $(GAME_DIR)/bin/tier0_i486.so $(GAME_DIR)/bin/vstdlib_i486.so
 
 DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -DARCH=$(ARCH) -o $@ -c $<
 
@@ -30,30 +30,17 @@ VCPM_OBJS = \
 	$(VCPM_OBJ_DIR)/vprojtomake.o \
 	$(VCPM_OBJ_DIR)/vcprojconvert.o \
 
-TIER1_OBJS = \
-	$(TIER1_OBJ_DIR)/characterset.o \
-	$(TIER1_OBJ_DIR)/interface.o \
-	$(TIER1_OBJ_DIR)/generichash.o \
-	$(TIER1_OBJ_DIR)/KeyValues.o \
-	$(TIER1_OBJ_DIR)/stringpool.o \
-	$(TIER1_OBJ_DIR)/utlbuffer.o \
-	$(TIER1_OBJ_DIR)/utlsymbol.o \
-
 all: dirs vcpm
 
 dirs:
-	-mkdir $(BUILD_OBJ_DIR)
-	-mkdir $(VCPM_OBJ_DIR)
-	-mkdir $(TIER1_OBJ_DIR)
+	-mkdir -p $(BUILD_OBJ_DIR)
+	-mkdir -p $(VCPM_OBJ_DIR)
 
-vcpm: $(VCPM_OBJS) $(TIER1_OBJS)
-	$(CLINK) $(DEBUG) -o $(BUILD_DIR)/$@ $(VCPM_OBJS) $(TIER1_OBJS) $(CPP_LIB) $(LDFLAGS_VC)
+vcpm: $(VCPM_OBJS)
+	$(CLINK) $(DEBUG) -o $(BUILD_DIR)/$@ $(VCPM_OBJS) $(CPP_LIB) $(LDFLAGS_VC)
 
 $(VCPM_OBJ_DIR)/%.o: $(VCPM_SRC_DIR)/%.cpp
 	$(DO_CC)
-
-$(TIER1_OBJ_DIR)/%.o: $(TIER1_SRC_DIR)/%.cpp
-	$(DO_CC) -Dstricmp=strcasecmp -Dstrcmpi=strcasecmp
 
 clean:
 	-rm -rf $(VCPM_OBJ_DIR)

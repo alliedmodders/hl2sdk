@@ -44,16 +44,16 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying to bin"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.dll
+copy &quot;$(TargetPath)&quot; ..\..\..\bin
 
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
-copy &quot;$(TargetDir)$(TargetName).pdb&quot; ..\..\..\game\bin
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
+copy &quot;$(TargetDir)$(TargetName).pdb&quot; ..\..\..\bin
 
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.map attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.map
-if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\game\bin\&quot;$(TargetName)&quot;.map
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.map attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.map
+if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\bin\&quot;$(TargetName)&quot;.map
 "
-				Outputs="..\..\..\game\bin\$(TargetName).dll;..\..\..\game\bin\$(TargetName).pdb"/>
+				Outputs="..\..\..\bin\$(TargetName).dll;..\..\..\bin\$(TargetName).pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib"
@@ -61,7 +61,7 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\public,..\..\lib\common"
-				IgnoreDefaultLibraryNames="libcmt"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/vvis.pdb"
 				ImportLibrary=".\Debug/vvis.lib"
@@ -127,16 +127,16 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.dll
+copy &quot;$(TargetPath)&quot; ..\..\..\bin
 
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
-copy &quot;$(TargetDir)$(TargetName).pdb&quot; ..\..\..\game\bin
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
+copy &quot;$(TargetDir)$(TargetName).pdb&quot; ..\..\..\bin
 
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.map attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.map
-if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\game\bin\&quot;$(TargetName)&quot;.map
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.map attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.map
+if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\bin\&quot;$(TargetName)&quot;.map
 "
-				Outputs="..\..\..\game\bin\$(TargetName).dll;..\..\..\game\bin\$(TargetName).pdb"/>
+				Outputs="..\..\..\bin\$(TargetName).dll;..\..\..\bin\$(TargetName).pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib"
@@ -144,7 +144,7 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\public,..\..\lib\common"
-				IgnoreDefaultLibraryNames="libcmtd.lib"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Release/vvis.pdb"
 				GenerateMapFile="TRUE"
@@ -360,71 +360,25 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
-		</Filter>
-		<Filter
 			Name="Link Libraries"
 			Filter="">
 			<File
-				RelativePath="..\..\lib\public\mathlib.lib">
+				RelativePath="..\..\lib-vc7\public\mathlib.lib">
 			</File>
 			<File
-				RelativePath="..\..\lib\public\tier0.lib">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						Description=""
-						CommandLine=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						Description=""
-						CommandLine=""/>
-				</FileConfiguration>
+				RelativePath="..\..\lib-vc7\public\tier0.lib">
 			</File>
 			<File
-				RelativePath="..\..\lib\public\tier1.lib">
+				RelativePath="..\..\lib-vc7\public\tier1.lib">
 			</File>
 			<File
-				RelativePath="..\..\lib\public\tier2.lib">
+				RelativePath="..\..\lib-vc7\public\tier2.lib">
 			</File>
 			<File
-				RelativePath="..\..\lib\public\vmpi.lib">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						Description=""
-						CommandLine=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						Description=""
-						CommandLine=""/>
-				</FileConfiguration>
+				RelativePath="..\..\lib-vc7\public\vmpi.lib">
 			</File>
 			<File
-				RelativePath="..\..\lib\public\vstdlib.lib">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						Description=""
-						CommandLine=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						Description=""
-						CommandLine=""/>
-				</FileConfiguration>
+				RelativePath="..\..\lib-vc7\public\vstdlib.lib">
 			</File>
 		</Filter>
 	</Files>

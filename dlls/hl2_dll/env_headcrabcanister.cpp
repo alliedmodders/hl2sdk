@@ -381,7 +381,7 @@ CSkyCamera *CEnvHeadcrabCanister::PlaceCanisterInWorld()
 		CBaseEntity *pLaunchPos = gEntList.FindEntityByName( NULL, m_iszLaunchPositionName );
 		if ( !pLaunchPos )
 		{
-			Warning("%s (%s) could not find an entity matching LaunchPositionName of '%s'\n", GetEntityName(), GetDebugName(), STRING(m_iszLaunchPositionName) );
+			Warning("%s (%s) could not find an entity matching LaunchPositionName of '%s'\n", STRING(GetEntityName()), GetDebugName(), STRING(m_iszLaunchPositionName) );
 			SUB_Remove();
 		}
 		else
@@ -937,7 +937,7 @@ void CEnvHeadcrabCanister::Detonate( )
 	if ( !HasSpawnFlags( SF_NO_IMPACT_EFFECTS ) )
 	{
 		// Normal explosion
-		ExplosionCreate( m_vecImpactPosition, GetAbsAngles(), this, 50.0f, 500.0f, 
+		ExplosionCreate( m_vecImpactPosition, GetAbsAngles(), this, 50, 500, 
 			SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODAMAGE | SF_ENVEXPLOSION_NOSOUND, 1300.0f );
 			
 		// Dust explosion

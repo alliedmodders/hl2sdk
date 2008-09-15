@@ -971,7 +971,7 @@ int CBaseHeadcrab::CalcDamageInfo( CTakeDamageInfo *pInfo )
 {
 	pInfo->Set( this, this, sk_headcrab_melee_dmg.GetFloat(), DMG_SLASH );
 	CalculateMeleeDamageForce( pInfo, GetAbsVelocity(), GetAbsOrigin() );
-	return pInfo->GetDamage();
+	return static_cast<int>(pInfo->GetDamage());
 }
 
 //-----------------------------------------------------------------------------
@@ -1842,7 +1842,7 @@ int CBaseHeadcrab::SelectSchedule( void )
 			return SCHED_HEADCRAB_UNHIDE;
 		}
 
-		return m_bBurrowed ? SCHED_HEADCRAB_BURROW_WAIT : SCHED_IDLE_STAND;
+		return m_bBurrowed ? static_cast<int>(SCHED_HEADCRAB_BURROW_WAIT) : static_cast<int>(SCHED_IDLE_STAND);
 	}
 
 	if ( GetSpawnFlags() & SF_HEADCRAB_START_HANGING && IsHangingFromCeiling() == false )
@@ -1916,6 +1916,9 @@ int CBaseHeadcrab::SelectSchedule( void )
 			}
 			break;
 		}
+
+		default:
+			break;
 	}
 
 	if ( HasCondition( COND_FLOATING_OFF_GROUND ) )

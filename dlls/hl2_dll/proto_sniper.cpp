@@ -641,7 +641,7 @@ void CProtoSniper::LaserOn( const Vector &vecTarget, const Vector &vecDeviance )
 	m_pBeam->SetScrollRate( 0 );
 	m_pBeam->SetFadeLength( 0 );
 	m_pBeam->SetHaloTexture( sHaloSprite );
-	m_pBeam->SetHaloScale( 4.0f );
+	m_pBeam->SetHaloScale( 4 );
 
 	m_vecPaintStart = vecInitialAim;
 
@@ -1100,7 +1100,7 @@ int CProtoSniper::IRelationPriority( CBaseEntity *pTarget )
 		if ( flDistance <= SNIPER_PROTECTION_MINDIST )
  		{
  			float flBonus = (1.0 - (flDistance / SNIPER_PROTECTION_MINDIST)) * SNIPER_PROTECTION_PRIORITYCAP;
-			priority += flBonus;
+			priority += static_cast<int>(flBonus);
 
 			if ( m_debugOverlays & OVERLAY_NPC_SELECTED_BIT )
 			{

@@ -274,8 +274,8 @@ void CEntityFlame::FlameThink( void )
 		{
 			const float ENTITYFLAME_MOVE_AWAY_DIST = 24.0f;
 			// Make a sound near my origin, and up a little higher (in case I'm on the ground, so NPC's still hear it)
-			CSoundEnt::InsertSound( SOUND_MOVE_AWAY, GetAbsOrigin(), ENTITYFLAME_MOVE_AWAY_DIST, 0.1f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
-			CSoundEnt::InsertSound( SOUND_MOVE_AWAY, GetAbsOrigin() + Vector( 0, 0, 48.0f ), ENTITYFLAME_MOVE_AWAY_DIST, 0.1f, this, SOUNDENT_CHANNEL_REPEATING );
+			CSoundEnt::InsertSound( SOUND_MOVE_AWAY, GetAbsOrigin(), static_cast<int>(ENTITYFLAME_MOVE_AWAY_DIST), 0.1f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
+			CSoundEnt::InsertSound( SOUND_MOVE_AWAY, GetAbsOrigin() + Vector( 0, 0, 48.0f ), static_cast<int>(ENTITYFLAME_MOVE_AWAY_DIST), 0.1f, this, SOUNDENT_CHANNEL_REPEATING );
 		}
 	}
 	else

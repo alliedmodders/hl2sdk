@@ -175,7 +175,7 @@ void CTerrainMorph::MorphThink( void )
 			//Msg( "Strength: %f - Radius: %f\n", params.m_flStrength, params.m_flRadius );
 
 			TerrainMod_Add( type, params );
-			m_iIterations += params.m_flStrength;
+			m_iIterations += static_cast<int>(params.m_flStrength);
 		}
 #if 0
 		NDebugOverlay::Line( m_Params.m_vecLocation, m_Params.m_vecLocation + Vector( 200, 200, 0 ), 0,255,0, true, 3 );

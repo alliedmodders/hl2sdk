@@ -30,7 +30,7 @@
 				PreprocessorDefinitions="NDEBUG;BOTS;SDK_DLL;USES_SAVERESTORE;GAME_DLL;sprintf=use_Q_snprintf_instead_of_sprintf;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
 				StringPooling="TRUE"
 				ExceptionHandling="FALSE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="TRUE"
 				ForceConformanceInForLoopScope="TRUE"
@@ -64,7 +64,7 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\lib-vc7\public"
-				IgnoreDefaultLibraryNames="LIBCMT,LIBCMTD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/server.pdb"
 				GenerateMapFile="TRUE"
@@ -115,9 +115,9 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				Optimization="0"
 				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories="../Public/tier1;../game_shared/sdk;./;../Public;../game_shared;../utils/common;../dlls;../dlls/sdk"
-				PreprocessorDefinitions="_DEBUG;fopen=dont_use_fopen;BOTS;SDK_DLL;USES_SAVERESTORE;GAME_DLL;sprintf=use_Q_snprintf_instead_of_sprintf;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
+				PreprocessorDefinitions="_DEBUG;BOTS;SDK_DLL;USES_SAVERESTORE;GAME_DLL;sprintf=use_Q_snprintf_instead_of_sprintf;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
 				ExceptionHandling="FALSE"
-				RuntimeLibrary="5"
+				RuntimeLibrary="1"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="3"
@@ -147,7 +147,7 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\lib-vc7\public"
-				IgnoreDefaultLibraryNames="LIBCMT,LIBCMTD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/server.pdb"
 				SubSystem="2"
@@ -2694,16 +2694,6 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\sdk_basegrenade_projectile.h">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\sdk\sdk_bot_temp.cpp">
@@ -2728,16 +2718,6 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\sdk_fx_shared.h">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="sdk\sdk_gameinterface.cpp">
@@ -2750,16 +2730,6 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\sdk_gamerules.h">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\sdk\sdk_logicalentity.cpp">
@@ -2772,16 +2742,6 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath="sdk\sdk_player.h">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\sdk_player_shared.cpp">
@@ -2791,48 +2751,18 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\sdk_playeranimstate.h">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="sdk\sdk_playermove.cpp">
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\sdk_shareddefs.h">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="sdk\sdk_team.cpp">
 				</File>
 				<File
 					RelativePath="sdk\sdk_team.h">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\sdk_usermessages.cpp">
@@ -2845,60 +2775,18 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\sdk_weapon_parse.h">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\sdk\te_firebullets.cpp">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\sdk\te_firebullets.h">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\weapon_basesdkgrenade.cpp">
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\weapon_basesdkgrenade.h">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\weapon_grenade.cpp">
@@ -2911,31 +2799,9 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\weapon_sdkbase.h">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCustomBuildTool"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\weapon_shotgun.cpp">
-					<FileConfiguration
-						Name="Release SDK|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
 				</File>
 			</Filter>
 			<Filter
@@ -3583,24 +3449,28 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 				RelativePath="..\public\zip_uncompressed.h">
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\lib-vc7\public\choreoobjects.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\mathlib.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\tier0.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\tier1.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\vgui_controls.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\vstdlib.lib">
-		</File>
+		<Filter
+			Name="Link Libraries"
+			Filter="">
+			<File
+				RelativePath="..\lib-vc7\public\choreoobjects.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\mathlib.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\tier0.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\tier1.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\vgui_controls.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\vstdlib.lib">
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

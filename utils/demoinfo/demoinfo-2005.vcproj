@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="demoinfo"
 	ProjectGUID="{4FE3FDCA-9571-44B3-A521-C81448434490}"
+	RootNamespace="demoinfo"
 	>
 	<Platforms>
 		<Platform
@@ -28,8 +29,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\demoinfo.exe;..\..\..\game\bin\demoinfo.pdb"
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\demoinfo.exe;..\..\..\bin\demoinfo.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -78,7 +79,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\public"
-				IgnoreDefaultLibraryNames="LIBCMT"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				ProgramDatabaseFile=".\Release/demoinfo.pdb"
 				SubSystem="1"
 				TargetMachine="1"
@@ -123,8 +124,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\demoinfo.exe;..\..\..\game\bin\demoinfo.pdb"
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\demoinfo.exe;..\..\..\bin\demoinfo.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -173,7 +174,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\public"
-				IgnoreDefaultLibraryNames="LIBCMT"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/demoinfo.pdb"
 				GenerateMapFile="true"
@@ -670,58 +671,57 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			Name="Link Libraries"
 			>
+			<File
+				RelativePath="..\..\lib\public\tier0.lib"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="if exist  ..\..\..\bin\demoinfo.exe attrib -r ..\..\..\bin\demoinfo.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\bin\demoinfo.exe&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="if exist  ..\..\..\bin\demoinfo.exe attrib -r ..\..\..\bin\demoinfo.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\bin\demoinfo.exe&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\tier1.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\tier2.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\vstdlib.lib"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="if exist  ..\..\..\bin\demoinfo.exe attrib -r ..\..\..\bin\demoinfo.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\bin\demoinfo.exe&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="if exist  ..\..\..\bin\demoinfo.exe attrib -r ..\..\..\bin\demoinfo.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\bin\demoinfo.exe&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+			</File>
 		</Filter>
-		<File
-			RelativePath="..\..\lib\public\tier0.lib"
-			>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="if exist  ..\..\..\game\bin\demoinfo.exe attrib -r ..\..\..\game\bin\demoinfo.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\demoinfo.exe&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="if exist  ..\..\..\game\bin\demoinfo.exe attrib -r ..\..\..\game\bin\demoinfo.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\demoinfo.exe&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier1.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier2.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\vstdlib.lib"
-			>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="if exist  ..\..\..\game\bin\demoinfo.exe attrib -r ..\..\..\game\bin\demoinfo.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\demoinfo.exe&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="if exist  ..\..\..\game\bin\demoinfo.exe attrib -r ..\..\..\game\bin\demoinfo.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\demoinfo.exe&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

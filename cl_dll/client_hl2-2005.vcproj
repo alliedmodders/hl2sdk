@@ -92,7 +92,7 @@
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib\public"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)/client.pdb"
 				GenerateMapFile="true"
@@ -208,7 +208,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib\public"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)/client.pdb"
 				GenerateMapFile="true"
@@ -669,86 +669,6 @@
 			<File
 				RelativePath="cdll_util.cpp"
 				>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreoactor.cpp"
-				>
-				<FileConfiguration
-					Name="Debug HL2|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release HL2|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreochannel.cpp"
-				>
-				<FileConfiguration
-					Name="Debug HL2|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release HL2|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreoevent.cpp"
-				>
-				<FileConfiguration
-					Name="Debug HL2|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release HL2|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreoscene.cpp"
-				>
-				<FileConfiguration
-					Name="Debug HL2|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release HL2|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="cl_mat_stub.cpp"
@@ -4684,34 +4604,42 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\lib\public\bitmap.lib"
+		<Filter
+			Name="Link Libraries"
 			>
-		</File>
-		<File
-			RelativePath="..\lib\public\mathlib.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier0.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier1.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier2.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\vgui_controls.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\vstdlib.lib"
-			>
-		</File>
+			<File
+				RelativePath="..\lib\public\bitmap.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\public\choreoobjects.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\public\mathlib.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\public\tier0.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\public\tier1.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\public\tier2.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\public\vgui_controls.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\public\vstdlib.lib"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

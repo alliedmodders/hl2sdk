@@ -356,7 +356,7 @@ void CAmbientGeneric::ComputeMaxAudibleDistance( )
 //-----------------------------------------------------------------------------
 void CAmbientGeneric::InputPitch( inputdata_t &inputdata )
 {
-	m_dpv.pitch = clamp( inputdata.value.Float(), 0, 255 );
+	m_dpv.pitch = clamp( inputdata.value.Int(), 0, 255 );
 
 	SendSound( SND_CHANGE_PITCH );
 }
@@ -371,7 +371,7 @@ void CAmbientGeneric::InputVolume( inputdata_t &inputdata )
 	//
 	// Multiply the input value by ten since volumes are expected to be from 0 - 100.
 	//
-	m_dpv.vol = clamp( inputdata.value.Float(), 0, 10 ) * 10;
+	m_dpv.vol = static_cast<int>(clamp( inputdata.value.Float(), 0, 10 ) * 10);
 	m_dpv.volfrac = m_dpv.vol << 8;
 
 	SendSound( SND_CHANGE_VOL );
@@ -387,7 +387,7 @@ void CAmbientGeneric::InputFadeIn( inputdata_t &inputdata )
 	// cancel any fade out that might be happening
 	m_dpv.fadeout = 0;
 
-	m_dpv.fadein = inputdata.value.Float();
+	m_dpv.fadein = inputdata.value.Int();
 	if (m_dpv.fadein > 100) m_dpv.fadein = 100;
 	if (m_dpv.fadein < 0) m_dpv.fadein = 0;
 
@@ -407,7 +407,7 @@ void CAmbientGeneric::InputFadeOut( inputdata_t &inputdata )
 	// cancel any fade in that might be happening
 	m_dpv.fadein = 0;
 
-	m_dpv.fadeout = inputdata.value.Float();
+	m_dpv.fadeout = inputdata.value.Int();
 
 	if (m_dpv.fadeout > 100) m_dpv.fadeout = 100;
 	if (m_dpv.fadeout < 0) m_dpv.fadeout = 0;

@@ -443,7 +443,7 @@ void DrawAllDebugOverlays( void )
 
 			char tempstr[512];
 			Q_snprintf(tempstr, sizeof(tempstr),"%s: Mass: %.2f kg / %.2f lb (%s)", 
-				ent->GetModelName(), ent->VPhysicsGetObject()->GetMass(), 
+				STRING(ent->GetModelName()), ent->VPhysicsGetObject()->GetMass(), 
 				kg2lbs(ent->VPhysicsGetObject()->GetMass()), 
 				GetMassEquivalent(ent->VPhysicsGetObject()->GetMass()));
 			ent->EntityText(0, tempstr, 0);
@@ -522,7 +522,7 @@ bool CServerGameDLL::DLLInit(CreateInterfaceFn engineFactory,
 
 	g_pSharedChangeInfo = engine->GetSharedEdictChangeInfo();
 	
-	MathLib_Init( 2.2f, 2.2f, 0.0f, 2.0f );
+	MathLib_Init( 2.2f, 2.2f, 0.0f, 2 );
 
 	// save these in case other system inits need them
 	factorylist_t factories;
@@ -1396,14 +1396,13 @@ void CServerGameDLL::GetSaveCommentEx( char *text, int maxlength, float flMinute
 {
 	char comment[64];
 	const char	*pName;
-	int		i;
 
 	char const *mapname = STRING( gpGlobals->mapname );
 
 	pName = NULL;
 
 	// Try to find a matching title comment for this mapname
-	for ( i = 0; i < ARRAYSIZE(gTitleComments) && !pName; i++ )
+	for ( size_t i = 0; i < ARRAYSIZE(gTitleComments) && !pName; i++ )
 	{
 		if ( !Q_strnicmp( mapname, gTitleComments[i].pBSPName, strlen(gTitleComments[i].pBSPName) ) )
 		{
@@ -1438,9 +1437,9 @@ void CServerGameDLL::GetSaveCommentEx( char *text, int maxlength, float flMinute
 	}
 	else
 	{
-		int totalSeconds = gpGlobals->curtime + flSeconds;
-		int minutes = (int)( totalSeconds / 60.0f ) + flMinutes;
-		int seconds = (int)fmod( totalSeconds, 60.0f );
+		int totalSeconds = static_cast<int>(gpGlobals->curtime + flSeconds);
+		int minutes = static_cast<int>(( totalSeconds / 60.0f ) + flMinutes);
+		int seconds = static_cast<int>(fmod( totalSeconds, 60.0f ));
 
 		// Wow, this guy/gal must suck...!
 		if ( minutes >= 1000 )
@@ -1518,7 +1517,7 @@ void CServerGameDLL::LoadMessageOfTheDay()
 
 	int length = filesystem->Size( motdfile.GetString(), "GAME" );
 
-	if ( length <= 0 || length >= (sizeof(data)-1) )
+	if ( length <= 0 || length >= static_cast<int>((sizeof(data)-1)) )
 	{
 		DevMsg("Invalid file size for %s\n", motdfile.GetString() );
 		return;
@@ -1549,7 +1548,7 @@ void UpdateChapterRestrictions( const char *mapname )
 	// look at the chapter for this map
 	char chapterTitle[64];
 	chapterTitle[0] = 0;
-	for ( int i = 0; i < ARRAYSIZE(gTitleComments); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE(gTitleComments); i++ )
 	{
 		if ( !Q_strnicmp( mapname, gTitleComments[i].pBSPName, strlen(gTitleComments[i].pBSPName) ) )
 		{
@@ -1572,7 +1571,7 @@ void UpdateChapterRestrictions( const char *mapname )
 		return;
 
 	// make sure the specified chapter title is unlocked
-	strlwr( chapterTitle );
+	Q_strlower( chapterTitle );
 
 	const char *pGameDir = CommandLine()->ParmValue( "-game", "hl2" );
 
@@ -2151,7 +2150,7 @@ void CServerGameClients::ClientSetupVisibility( edict_t *pViewEntity, edict_t *p
 		portalNums[iOutPortal] = pCur->m_portalNumber;
 		isOpen[iOutPortal] = pCur->UpdateVisibility( org, fovDistanceAdjustFactor, bIsOpenOnClient );
 		++iOutPortal;
-		if ( iOutPortal >= ARRAYSIZE( portalNums ) )
+		if ( iOutPortal >= static_cast<int>(ARRAYSIZE( portalNums )) )
 		{
 			engine->SetAreaPortalStates( portalNums, isOpen, iOutPortal );
 			iOutPortal = 0;
@@ -2166,7 +2165,7 @@ void CServerGameClients::ClientSetupVisibility( edict_t *pViewEntity, edict_t *p
 		{
 			if ( pCur->m_portalNumber < 0 )
 				continue;
-			else if ( pCur->m_portalNumber >= sizeof( portalBits ) * 8 )
+			else if ( pCur->m_portalNumber >= static_cast<int>((sizeof( portalBits ) * 8)) )
 				Error( "ClientSetupVisibility: portal number (%d) too large", pCur->m_portalNumber );
 			else
 				portalBits[pCur->m_portalNumber >> 3] |= (1 << (pCur->m_portalNumber & 7));
@@ -2338,7 +2337,7 @@ void CServerGameClients::GetBugReportInfo( char *buf, int buflen )
 				ent->entindex(),
 				ent->GetClassname(),
 				STRING( ent->GetEntityName() ),
-				ent->GetModelName() );
+				STRING( ent->GetModelName() ) );
 		}
 
 		// get any sounds that were spoken by NPCs recently

@@ -547,8 +547,8 @@ void CBaseEntity::AddTimedOverlay( const char *msg, int endTime )
 	int len = strlen(msg);
 	pNewTO->msg = new char[len + 1];
 	Q_strncpy(pNewTO->msg,msg, len+1);
-	pNewTO->msgEndTime = gpGlobals->curtime + endTime;
-	pNewTO->msgStartTime = gpGlobals->curtime;
+	pNewTO->msgEndTime = static_cast<int>(gpGlobals->curtime + endTime);
+	pNewTO->msgStartTime = static_cast<int>(gpGlobals->curtime);
 	pNewTO->pNextTimedOverlay = m_pTimedOverlay;
 	m_pTimedOverlay = pNewTO;
 }
@@ -689,7 +689,7 @@ void CBaseEntity::DrawTimedOverlays(void)
 			// If messages aren't paused fade out
 			if (!CBaseEntity::Debug_IsPaused())
 			{
-				nAlpha = 255*((gpGlobals->curtime - pTO->msgStartTime)/(pTO->msgEndTime - pTO->msgStartTime));
+				nAlpha = static_cast<int>(255*((gpGlobals->curtime - pTO->msgStartTime)/(pTO->msgEndTime - pTO->msgStartTime)));
 			}
 			int r = 185;
 			int g = 145;
@@ -3300,7 +3300,7 @@ void CBaseEntity::DrawInputOverlay(const char *szInputName, CBaseEntity *pCaller
 	{
 		Q_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s) <-- (%s)\n", gpGlobals->curtime, szInputName, pCaller ? pCaller->GetDebugName() : NULL);
 	}
-	AddTimedOverlay(bigstring, 10.0);
+	AddTimedOverlay(bigstring, 10);
 
 	if ( Value.FieldType() == FIELD_INTEGER )
 	{
@@ -3331,7 +3331,7 @@ void CBaseEntity::DrawOutputOverlay(CEventAction *ev)
 	{
 		Q_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s) --> (%s)\n", gpGlobals->curtime,  STRING(ev->m_iTargetInput), STRING(ev->m_iTarget));
 	}
-	AddTimedOverlay(bigstring, 10.0);
+	AddTimedOverlay(bigstring, 10);
 
 	// Now print to the console
 	if ( ev->m_flDelay )
@@ -4545,7 +4545,7 @@ void CC_Find_Ent( void )
 		if ( bMatches )
 		{
  			iCount++;
-			Msg("   '%s' : '%s' (entindex %d) \n", ent->GetClassname(), ent->GetEntityName(), ent->entindex() );
+			Msg("   '%s' : '%s' (entindex %d) \n", ent->GetClassname(), STRING(ent->GetEntityName()), ent->entindex() );
 		}
 	}
 
@@ -4606,6 +4606,8 @@ void CC_Ent_Dump( void )
 									Q_snprintf( buf,sizeof(buf), "%s", STRING(var.Entity()->GetEntityName()) );
 								}
 							}
+							break;
+						default:
 							break;
 						}
 
@@ -6381,8 +6383,8 @@ void CBaseEntity::SUB_PerformFadeOut( void )
 		dt = 0.1f;
 	}
 	m_nRenderMode = kRenderTransTexture;
-	int speed = max(1,256*dt); // fade out over 1 second
-	SetRenderColorA( UTIL_Approach( 0, m_clrRender->a, speed ) );
+	int speed = static_cast<int>(max(1,256*dt)); // fade out over 1 second
+	SetRenderColorA( static_cast<byte>(UTIL_Approach( 0, m_clrRender->a, speed )) );
 }
 
 bool CBaseEntity::SUB_AllowedToFade( void )

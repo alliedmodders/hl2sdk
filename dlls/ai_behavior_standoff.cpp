@@ -1110,7 +1110,7 @@ void CAI_MappedActivityBehavior_Temporary::UpdateTranslateActivityMap()
 	
 	CBaseCombatWeapon *pWeapon = GetOuter()->GetActiveWeapon();
 	const char *pszWeaponClass = ( pWeapon ) ? pWeapon->GetClassname() : "";
-	for ( int i = 0; i < ARRAYSIZE(mappings); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE(mappings); i++ )
 	{
 		if ( !mappings[i].pszWeapon || stricmp( mappings[i].pszWeapon, pszWeaponClass ) == 0 )
 		{

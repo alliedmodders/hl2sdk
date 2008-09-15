@@ -95,3 +95,4 @@ private:
 };
 
 #endif //HL2MP_PLAYER_SHARED_h
+

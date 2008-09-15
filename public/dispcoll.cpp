@@ -5,8 +5,8 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include "BuildDisp.h"
-#include "DispColl.h"
+#include "builddisp.h"
+#include "dispcoll.h"
 #include "tier0/dbg.h"
 
 //=============================================================================
@@ -356,7 +356,7 @@ int CDispCollTree::GetNodeIndexFromComponents( int x, int y )
 		index |= ( x & 1 ) << shift;
 	}
 
-	for( shift = 1; y != 0; shift += 2, y >>= 1 )
+	for( int shift = 1; y != 0; shift += 2, y >>= 1 )
 	{
 		index |= ( y & 1 ) << shift;
 	}
@@ -1597,7 +1597,7 @@ bool CDispCollTree::SweptAABBTriTest( Vector &rayStart, Vector &rayEnd, Vector &
 		if( rayDir[dir] < 0.0f )
 		{
 			dist = rayStart[dir] - extents[dir];
-			for( int ptIndex = 0; ptIndex < 3; ptIndex )
+			for( int ptIndex = 0; ptIndex < 3; )
 			{
 				if( points[ptIndex][dir] > dist )
 				{
@@ -1609,7 +1609,7 @@ bool CDispCollTree::SweptAABBTriTest( Vector &rayStart, Vector &rayEnd, Vector &
 		else
 		{
 			dist = rayStart[dir] + extents[dir];
-			for( int ptIndex = 0; ptIndex < 3; ptIndex )
+			for( int ptIndex = 0; ptIndex < 3; )
 			{
 				if( pTri->m_Points[ptIndex][dir] < dist )
 				{

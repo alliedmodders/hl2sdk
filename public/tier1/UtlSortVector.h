@@ -94,13 +94,13 @@ private:
 //-----------------------------------------------------------------------------
 template <class T, class LessFunc> 
 CUtlSortVector<T, LessFunc>::CUtlSortVector( int nGrowSize, int initSize ) : 
-	m_pLessContext(NULL), CUtlVector<T>( nGrowSize, initSize ), m_bNeedsSort( false )
+	CUtlVector<T>( nGrowSize, initSize ), m_pLessContext(NULL), m_bNeedsSort( false )
 {
 }
 
 template <class T, class LessFunc> 
 CUtlSortVector<T, LessFunc>::CUtlSortVector( T* pMemory, int numElements ) :
-	m_pLessContext(NULL), CUtlVector<T>( pMemory, numElements ), m_bNeedsSort( false )
+	 CUtlVector<T>( pMemory, numElements ), m_pLessContext(NULL), m_bNeedsSort( false )
 {
 }
 
@@ -122,9 +122,9 @@ int CUtlSortVector<T, LessFunc>::Insert( const T& src )
 	AssertFatal( !m_bNeedsSort );
 
 	int pos = FindLessOrEqual( src ) + 1;
-	GrowVector();
-	ShiftElementsRight(pos);
-	CopyConstruct<T>( &Element(pos), src );
+	this->GrowVector();
+	this->ShiftElementsRight(pos);
+	CopyConstruct<T>( &this->Element(pos), src );
 	return pos;
 }
 
@@ -134,18 +134,18 @@ int CUtlSortVector<T, LessFunc>::InsertNoSort( const T& src )
 	m_bNeedsSort = true;
 	int lastElement = CUtlVector<T>::m_Size;
 	// Just stick the new element at the end of the vector, but don't do a sort
-	GrowVector();
-	ShiftElementsRight(lastElement);
-	CopyConstruct( &Element(lastElement), src );
+	this->GrowVector();
+	this->ShiftElementsRight(lastElement);
+	CopyConstruct( &this->Element(lastElement), src );
 	return lastElement;
 }
 
 template <class T, class LessFunc> 
 void CUtlSortVector<T, LessFunc>::Swap( int L, int R )
 {
-	T temp = Element( L );
-	Element( L ) = Element( R );
-	Element( R ) = temp;
+	T temp = this->Element( L );
+	this->Element( L ) = this->Element( R );
+	this->Element( R ) = temp;
 }
 
 template <class T, class LessFunc> 
@@ -165,13 +165,13 @@ int CUtlSortVector<T, LessFunc>::SplitList( LessFunc& less, int nLower, int nUpp
     int nLeft = nLower + 1;
     int nRight = nUpper;
 
-	const T& val = Element( nLower );
+	const T& val = this->Element( nLower );
 
 	while ( nLeft <= nRight )
     {
-        while ( nLeft <= nRight && !less.Less( val, Element( nLeft ), m_pLessContext ) )
+        while ( nLeft <= nRight && !less.Less( val, this->Element( nLeft ), m_pLessContext ) )
             ++nLeft;
-        while ( nLeft <= nRight && !less.Less( Element( nRight ), val, m_pLessContext ) )
+        while ( nLeft <= nRight && !less.Less( this->Element( nRight ), val, m_pLessContext ) )
             --nRight;
 
         if ( nLeft < nRight )
@@ -194,7 +194,7 @@ void CUtlSortVector<T, LessFunc>::RedoSort( bool bForceSort /*= false */ )
 
 	m_bNeedsSort = false;
 	LessFunc less;
-	QuickSort( less, 0, Count() - 1 );
+	QuickSort( less, 0, this->Count() - 1 );
 }
 
 //-----------------------------------------------------------------------------
@@ -207,15 +207,15 @@ int CUtlSortVector<T, LessFunc>::Find( const T& src ) const
 
 	LessFunc less;
 
-	int start = 0, end = Count() - 1;
+	int start = 0, end = this->Count() - 1;
 	while (start <= end)
 	{
 		int mid = (start + end) >> 1;
-		if ( less.Less( Element(mid), src, m_pLessContext ) )
+		if ( less.Less( this->Element(mid), src, m_pLessContext ) )
 		{
 			start = mid + 1;
 		}
-		else if ( less.Less( src, Element(mid), m_pLessContext ) )
+		else if ( less.Less( src, this->Element(mid), m_pLessContext ) )
 		{
 			end = mid - 1;
 		}
@@ -237,15 +237,15 @@ int CUtlSortVector<T, LessFunc>::FindLessOrEqual( const T& src ) const
 	AssertFatal( !m_bNeedsSort );
 
 	LessFunc less;
-	int start = 0, end = Count() - 1;
+	int start = 0, end = this->Count() - 1;
 	while (start <= end)
 	{
 		int mid = (start + end) >> 1;
-		if ( less.Less( Element(mid), src, m_pLessContext ) )
+		if ( less.Less( this->Element(mid), src, m_pLessContext ) )
 		{
 			start = mid + 1;
 		}
-		else if ( less.Less( src, Element(mid), m_pLessContext ) )
+		else if ( less.Less( src, this->Element(mid), m_pLessContext ) )
 		{
 			end = mid - 1;
 		}

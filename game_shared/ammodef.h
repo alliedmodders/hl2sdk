@@ -100,4 +100,4 @@ CAmmoDef* GetAmmoDef();
 
 
 #endif // AI_AMMODEF_H
- 
+

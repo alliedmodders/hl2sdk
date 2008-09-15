@@ -45,6 +45,7 @@ class IEntityFactory;
 
 #include "tier0/memdbgon.h"
 
+CBaseEntity *CreateEntityByName(const char *className, int iForceEdictIndex);
 
 // entity creation
 // creates an entity that has not been linked to a classname
@@ -64,7 +65,7 @@ T *_CreateEntityTemplate( T *newEnt, const char *className )
 template< class T >
 T *_CreateEntity( T *newClass, const char *className )
 {
-	T *newEnt = dynamic_cast<T*>( CreateEntityByName(className) );
+	T *newEnt = dynamic_cast<T*>( CreateEntityByName(className, -1) );
 	if ( !newEnt )
 	{
 		Warning( "classname %s used to create wrong class type\n" );

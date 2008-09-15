@@ -43,22 +43,22 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-copy &quot;$(TargetPath)&quot;  ..\..\..\game\bin
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+copy &quot;$(TargetPath)&quot;  ..\..\..\bin
 
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
-copy &quot;$(TargetDir)$(TargetName).pdb&quot; ..\..\..\game\bin
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
+copy &quot;$(TargetDir)$(TargetName).pdb&quot; ..\..\..\bin
 
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.map attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.map
-if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\game\bin\&quot;$(TargetName)&quot;.map
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.map attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.map
+if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\bin\&quot;$(TargetName)&quot;.map
 "
-				Outputs="..\..\..\game\bin\$(TargetName).exe;..\..\..\game\bin\$(TargetName).pdb"/>
+				Outputs="..\..\..\bin\$(TargetName).exe;..\..\..\bin\$(TargetName).pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib odbc32.lib odbccp32.lib winmm.lib"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames="libcd,libc,libcmt"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/vbsp.pdb"
 				SubSystem="1"
@@ -126,23 +126,23 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-copy &quot;$(TargetPath)&quot;  ..\..\..\game\bin
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+copy &quot;$(TargetPath)&quot;  ..\..\..\bin
 
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
-copy &quot;$(TargetDir)$(TargetName).pdb&quot; ..\..\..\game\bin
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
+copy &quot;$(TargetDir)$(TargetName).pdb&quot; ..\..\..\bin
 
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.map attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.map
-if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\game\bin\&quot;$(TargetName)&quot;.map
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.map attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.map
+if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\bin\&quot;$(TargetName)&quot;.map
 "
-				Outputs="..\..\..\game\bin\$(TargetName).exe;..\..\..\game\bin\$(TargetName).pdb"/>
+				Outputs="..\..\..\bin\$(TargetName).exe;..\..\..\bin\$(TargetName).pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib odbc32.lib odbccp32.lib winmm.lib"
 				OutputFile=".\Release/vbsp.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames="libc,libcd,libcmtd"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Release/vbsp.pdb"
 				GenerateMapFile="TRUE"
@@ -566,10 +566,6 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 			<File
 				RelativePath="..\..\Public\worldsize.h">
 			</File>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
 		</Filter>
 		<Filter
 			Name="Link Libraries"

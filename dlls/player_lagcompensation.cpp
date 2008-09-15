@@ -234,7 +234,7 @@ void CLagCompensationManager::FrameUpdatePostEntityThink()
 	VPROF_BUDGET( "FrameUpdatePostEntityThink", "CLagCompensationManager" );
 
 	// remove all records before that time:
-	int flDeadtime = gpGlobals->curtime - sv_maxunlag.GetFloat();
+	int flDeadtime = static_cast<int>(gpGlobals->curtime - sv_maxunlag.GetFloat());
 
 	// Iterate all active players
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )

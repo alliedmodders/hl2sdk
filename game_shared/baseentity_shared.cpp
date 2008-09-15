@@ -619,7 +619,7 @@ BASEPTR	CBaseEntity::ThinkSet( BASEPTR func, float thinkTime, const char *szCont
 {
 #if !defined( CLIENT_DLL )
 #ifdef _DEBUG
-	COMPILE_TIME_ASSERT( sizeof(func) == 4 );
+	COMPILE_TIME_ASSERT( sizeof(func) == MFP_SIZE );
 #endif
 #endif
 
@@ -1001,6 +1001,9 @@ void CBaseEntity::VPhysicsUpdate( IPhysicsObject *pPhysics )
 		VPhysicsUpdatePusher( pPhysics );
 #endif
 	break;
+
+	default:
+		break;
 	}
 }
 

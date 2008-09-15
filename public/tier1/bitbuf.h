@@ -584,7 +584,8 @@ inline float bf_read::ReadBitFloat()
 	if (bit != 0)
 		val |= ((int)m_pData[byte + 4]) << (32 - bit);
 	m_iCurBit += 32;
-	return *((float*)&val);
+	void *bits = &val;
+	return *reinterpret_cast<float *>(bits);
 }
 
 

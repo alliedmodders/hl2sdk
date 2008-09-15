@@ -1955,3 +1955,4 @@ AI_BEGIN_CUSTOM_NPC( npc_turret_floor, CNPC_FloorTurret )
 	DECLARE_INTERACTION( g_interactionTurretStillStanding );	
 
 AI_END_CUSTOM_NPC()
+

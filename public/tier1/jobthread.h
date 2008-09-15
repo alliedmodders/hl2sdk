@@ -196,9 +196,9 @@ abstract_class CAsyncJob : public CRefCounted1<IRefCounted, CRefCountServiceMT>
 public:
 	CAsyncJob( AsyncJobPriority_t priority = AJP_NORMAL )
 	  : m_status( ASYNC_STATUS_UNSERVICED ),
+		m_priority( priority ),
 		m_queueID( -1 ),
-		m_pFulfiller( NULL ),
-		m_priority( priority )
+		m_pFulfiller( NULL )
 	{
 	}
 

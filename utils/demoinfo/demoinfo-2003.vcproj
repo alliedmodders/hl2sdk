@@ -37,19 +37,19 @@
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
 "
-				Outputs="..\..\..\game\bin\demoinfo.exe;..\..\..\game\bin\demoinfo.pdb"/>
+				Outputs="..\..\..\bin\demoinfo.exe;..\..\..\bin\demoinfo.pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile=".\Release/demoinfo.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib-vc7\public"
-				IgnoreDefaultLibraryNames="LIBCMTD,LIBCMT"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				ProgramDatabaseFile=".\Release/demoinfo.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
@@ -105,12 +105,12 @@ copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
 "
-				Outputs="..\..\..\game\bin\demoinfo.exe;..\..\..\game\bin\demoinfo.pdb"/>
+				Outputs="..\..\..\bin\demoinfo.exe;..\..\..\bin\demoinfo.pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/FIXED:NO"
@@ -118,7 +118,7 @@ copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib-vc7\public"
-				IgnoreDefaultLibraryNames="LIBCMTD,LIBCMT"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/demoinfo.pdb"
 				GenerateMapFile="TRUE"
@@ -536,21 +536,21 @@ copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			Name="Link Libraries"
+			Filter="">
+			<File
+				RelativePath="..\..\lib-vc7\public\tier0.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\tier1.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\tier2.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\vstdlib.lib">
+			</File>
 		</Filter>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier0.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier1.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier2.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\vstdlib.lib">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

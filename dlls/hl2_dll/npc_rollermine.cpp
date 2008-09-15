@@ -753,6 +753,8 @@ NPC_STATE CNPC_RollerMine::SelectIdealState( void )
 				return NPC_STATE_ALERT;
 			}
 		}
+		default:
+			break;
 	}
 
 	return BaseClass::SelectIdealState();
@@ -840,12 +842,12 @@ void CNPC_RollerMine::RunAI()
 			if( m_bHackedByAlyx )
 			{
 				// Scare combine
-				CSoundEnt::InsertSound( (SOUND_DANGER | SOUND_CONTEXT_COMBINE_ONLY | SOUND_CONTEXT_REACT_TO_SOURCE | SOUND_CONTEXT_DANGER_APPROACH), WorldSpaceCenter() + Vector( 0, 0, 32 ) + vecVelocity * 0.5f, 120.0f, 0.2f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
+				CSoundEnt::InsertSound( (SOUND_DANGER | SOUND_CONTEXT_COMBINE_ONLY | SOUND_CONTEXT_REACT_TO_SOURCE | SOUND_CONTEXT_DANGER_APPROACH), WorldSpaceCenter() + Vector( 0, 0, 32 ) + vecVelocity * 0.5f, 120, 0.2f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
 			}
 			else
 			{
 				// Scare player allies
-				CSoundEnt::InsertSound( (SOUND_DANGER | SOUND_CONTEXT_EXCLUDE_COMBINE | SOUND_CONTEXT_REACT_TO_SOURCE | SOUND_CONTEXT_DANGER_APPROACH), WorldSpaceCenter() + Vector( 0, 0, 32 ) + vecVelocity * 0.5f, 120.0f, 0.2f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
+				CSoundEnt::InsertSound( (SOUND_DANGER | SOUND_CONTEXT_EXCLUDE_COMBINE | SOUND_CONTEXT_REACT_TO_SOURCE | SOUND_CONTEXT_DANGER_APPROACH), WorldSpaceCenter() + Vector( 0, 0, 32 ) + vecVelocity * 0.5f, 120, 0.2f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
 			}
 		}
 
@@ -2530,7 +2532,7 @@ void CNPC_RollerMine::Explode( void )
 	}
 	else
 	{
-		ExplosionCreate( WorldSpaceCenter(), GetLocalAngles(), this, expDamage, 128, true );
+		ExplosionCreate( WorldSpaceCenter(), GetLocalAngles(), this, static_cast<int>(expDamage), 128, true );
 	}
 
 	CTakeDamageInfo	info( this, this, 1, DMG_GENERIC );
@@ -2636,6 +2638,9 @@ void CNPC_RollerMine::UpdateRollingSound()
 
 	case ROLL_SOUND_OFF:
 		// no sound
+		break;
+
+	default:
 		break;
 	}
 

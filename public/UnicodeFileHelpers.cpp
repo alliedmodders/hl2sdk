@@ -5,8 +5,8 @@
 //=============================================================================//
 
 #include <stdlib.h>
-#include <ctype.h>
-#include "UtlBuffer.h"
+#include <wctype.h>
+#include "utlbuffer.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

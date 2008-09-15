@@ -361,6 +361,8 @@ bool CBaseFlex::ClearSceneEvent( CSceneEventInfo *info, bool fastKill, bool canc
 			}
 		}
 		return true;
+	default:
+		break;
 	}
 	return false;
 }
@@ -642,7 +644,7 @@ bool CBaseFlex::HandleStartGestureSceneEvent( CSceneEventInfo *info, CChoreoScen
 	if ( looping )
 	{
 		DevMsg( 1, "vcd error, gesture %s of model %s is marked as STUDIO_LOOPING!\n", 
-			event->GetParameters(), GetModelName() );
+			event->GetParameters(), STRING(GetModelName()) );
 	}
 
 	SetLayerLooping( info->m_iLayer, false ); // force to not loop
@@ -731,6 +733,9 @@ bool CBaseFlex::StartSceneEvent( CSceneEventInfo *info, CChoreoScene *scene, CCh
 	
 	case CChoreoEvent::EXPRESSION: // These are handled client-side
 		return true;
+
+	default:
+		break;
 	}
 
 	return false;

@@ -1,0 +1,66 @@
+#
+# Tier1 Static Library Makefile
+#
+
+TIER1_SRC_DIR=$(SOURCE_DIR)/tier1
+COMMON_SRC_DIR=$(SOURCE_DIR)/common
+PUBLIC_SRC_DIR=$(SOURCE_DIR)/public
+TIER1_PUBLIC_SRC_DIR=$(SOURCE_DIR)/public/tier1
+
+TIER1_OBJ_DIR=$(BUILD_OBJ_DIR)/tier1_$(ARCH)
+
+# Extension of linux static library
+override SHLIBEXT=a
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+#DEBUG = -g -ggdb
+#CFLAGS+= $(DEBUG)
+
+INCLUDEDIRS=-I$(COMMON_SRC_DIR) -I$(PUBLIC_SRC_DIR) -I$(TIER1_PUBLIC_SRC_DIR) -D_LIB -DTIER1_STATIC_LIB
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) $(CFLAGS) -DARCH=$(ARCH) -o $@ -c $<
+
+#####################################################################
+
+TIER1_OBJS= \
+	$(TIER1_OBJ_DIR)/bitbuf.o \
+	$(TIER1_OBJ_DIR)/byteswap.o \
+	$(TIER1_OBJ_DIR)/characterset.o \
+	$(TIER1_OBJ_DIR)/checksum_crc.o \
+	$(TIER1_OBJ_DIR)/checksum_md5.o \
+	$(TIER1_OBJ_DIR)/convar.o \
+	$(TIER1_OBJ_DIR)/datamanager.o \
+	$(TIER1_OBJ_DIR)/diff.o \
+	$(TIER1_OBJ_DIR)/generichash.o \
+	$(TIER1_OBJ_DIR)/interface.o \
+	$(TIER1_OBJ_DIR)/jobthread.o \
+	$(TIER1_OBJ_DIR)/KeyValues.o \
+	$(TIER1_OBJ_DIR)/mempool.o \
+	$(TIER1_OBJ_DIR)/memstack.o \
+	$(TIER1_OBJ_DIR)/NetAdr.o \
+	$(TIER1_OBJ_DIR)/processor_detect.o \
+	$(TIER1_OBJ_DIR)/rangecheckedvar.o \
+	$(TIER1_OBJ_DIR)/stringpool.o \
+	$(TIER1_OBJ_DIR)/strtools.o \
+	$(TIER1_OBJ_DIR)/tier1.o \
+	$(TIER1_OBJ_DIR)/tokenreader.o \
+	$(TIER1_OBJ_DIR)/utlbuffer.o \
+	$(TIER1_OBJ_DIR)/utlstring.o \
+	$(TIER1_OBJ_DIR)/utlsymbol.o \
+	$(TIER1_OBJ_DIR)/xboxstubs.o \
+
+all: dirs tier1_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir -p $(BUILD_OBJ_DIR)
+	-mkdir -p $(TIER1_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+tier1_$(ARCH).$(SHLIBEXT): $(TIER1_OBJS)
+	$(AR) $(BUILD_DIR)/$@ $(TIER1_OBJS)
+
+$(TIER1_OBJ_DIR)/%.o: $(TIER1_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(TIER1_OBJ_DIR)

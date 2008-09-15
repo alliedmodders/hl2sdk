@@ -52,7 +52,7 @@ public:
 
 	CDataObjectAccessSystem()
 	{
-		COMPILE_TIME_ASSERT( NUM_DATAOBJECT_TYPES <= MAX_ACCESSORS );
+		COMPILE_TIME_ASSERT( static_cast<int>(NUM_DATAOBJECT_TYPES) <= static_cast<int>(MAX_ACCESSORS) );
 
 		Q_memset( m_Accessors, 0, sizeof( m_Accessors ) );
 	}

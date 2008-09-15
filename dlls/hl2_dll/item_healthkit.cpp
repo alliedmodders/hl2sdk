@@ -243,7 +243,7 @@ void CWallHealth::Spawn(void)
 
 	SetModel( STRING( GetModelName() ) );
 
-	m_iJuice = sk_healthcharger.GetFloat();
+	m_iJuice = sk_healthcharger.GetInt();
 
 	m_nState = 0;	
 	
@@ -388,7 +388,7 @@ void CWallHealth::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE u
 void CWallHealth::Recharge(void)
 {
 	EmitSound( "WallHealth.Recharge" );
-	m_iJuice = sk_healthcharger.GetFloat();
+	m_iJuice = sk_healthcharger.GetInt();
 	m_nState = 0;			
 	SetThink( NULL );
 }
@@ -405,7 +405,7 @@ void CWallHealth::Off(void)
 
 	m_iOn = 0;
 
-	if ((!m_iJuice) &&  ( ( m_iReactivate = g_pGameRules->FlHealthChargerRechargeTime() ) > 0) )
+	if ((!m_iJuice) &&  ( ( m_iReactivate = static_cast<int>(g_pGameRules->FlHealthChargerRechargeTime()) ) > 0) )
 	{
 		SetNextThink( gpGlobals->curtime + m_iReactivate );
 		SetThink(&CWallHealth::Recharge);
@@ -520,7 +520,7 @@ void CNewWallHealth::Spawn(void)
 
 	ResetSequence( LookupSequence( "idle" ) );
 
-	m_iJuice = sk_healthcharger.GetFloat();
+	m_iJuice = sk_healthcharger.GetInt();
 
 	m_nState = 0;	
 	
@@ -700,7 +700,7 @@ void CNewWallHealth::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYP
 void CNewWallHealth::Recharge(void)
 {
 	EmitSound( "WallHealth.Recharge" );
-	m_flJuice = m_iJuice = sk_healthcharger.GetFloat();
+	m_flJuice = m_iJuice = sk_healthcharger.GetInt();
 	m_nState = 0;
 
 	ResetSequence( LookupSequence( "idle" ) );
@@ -733,7 +733,7 @@ void CNewWallHealth::Off(void)
 	{
 		if ((!m_iJuice) && g_pGameRules->FlHealthChargerRechargeTime() > 0 )
 		{
-			m_iReactivate = g_pGameRules->FlHealthChargerRechargeTime();
+			m_iReactivate = static_cast<int>(g_pGameRules->FlHealthChargerRechargeTime());
 			SetNextThink( gpGlobals->curtime + m_iReactivate );
 			SetThink(&CNewWallHealth::Recharge);
 		}

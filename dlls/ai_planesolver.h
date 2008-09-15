@@ -137,8 +137,8 @@ private:
 		CircleObstacles_t( const Vector &center, float radius, CBaseEntity *pEntity, AI_MoveSuggType_t type )
 		 :	center(center), 
 			radius(radius), 
-			hEntity(pEntity),
-			type(type)
+			type(type),
+			hEntity(pEntity)
 		{
 		}
 		

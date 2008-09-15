@@ -27,7 +27,7 @@ class CBaseSpriteProjectile : public CSprite
 public:
 	void Touch( CBaseEntity *pOther );
 
-	void CBaseSpriteProjectile::Spawn(	char *pszModel,
+	void Spawn(	char *pszModel,
 									const Vector &vecOrigin,
 									const Vector &vecVelocity,
 									edict_t *pOwner,

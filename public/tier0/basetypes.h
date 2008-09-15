@@ -135,7 +135,8 @@ inline unsigned long const& FloatBits( vec_t const& f )
 
 inline vec_t BitsToFloat( unsigned long i )
 {
-	return *reinterpret_cast<vec_t*>(&i);
+	void *bits = &i;
+	return *reinterpret_cast<vec_t *>(bits);
 }
 
 inline bool IsFinite( vec_t f )

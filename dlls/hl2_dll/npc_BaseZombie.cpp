@@ -890,6 +890,9 @@ int CNPC_BaseZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 		case RELEASE_SCHEDULED:
 			SetCondition( COND_ZOMBIE_RELEASECRAB );
 			break;
+
+		default:
+			break;
 		}
 
 		if( ShouldBecomeTorso( info, flDamageThreshold ) )
@@ -945,7 +948,7 @@ void CNPC_BaseZombie::MakeAISpookySound( float volume, float duration )
 {
 	if ( HL2GameRules()->IsAlyxInDarknessMode() )
 	{
-		CSoundEnt::InsertSound( SOUND_COMBAT, EyePosition(), volume, duration, this, SOUNDENT_CHANNEL_SPOOKY_NOISE );
+		CSoundEnt::InsertSound( SOUND_COMBAT, EyePosition(), static_cast<int>(volume), duration, this, SOUNDENT_CHANNEL_SPOOKY_NOISE );
 	}
 }
 
@@ -1010,7 +1013,7 @@ void CNPC_BaseZombie::MoanSound( envelopePoint_t *pEnvelope, int iEnvelopeSize )
 
 	float duration = ENVELOPE_CONTROLLER.SoundPlayEnvelope( m_pMoanSound, SOUNDCTRL_CHANGE_VOLUME, pEnvelope, iEnvelopeSize );
 
-	float flPitch = random->RandomInt( m_flMoanPitch + zombie_changemin.GetInt(), m_flMoanPitch + zombie_changemax.GetInt() );
+	float flPitch = random->RandomFloat( m_flMoanPitch + zombie_changemin.GetFloat(), m_flMoanPitch + zombie_changemax.GetFloat() );
 	ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, flPitch, 0.3 );
 
 	m_flNextMoanSound = gpGlobals->curtime + duration + 9999;
@@ -1221,7 +1224,7 @@ void CNPC_BaseZombie::Ignite( float flFlameLifetime, bool bNPCOnly, float flSize
 #endif // HL2_EPISODIC
 
 	// Set the zombie up to burn to death in about ten seconds.
-	SetHealth( min( m_iHealth, FLAME_DIRECT_DAMAGE_PER_SEC * (ZOMBIE_BURN_TIME + random->RandomFloat( -ZOMBIE_BURN_TIME_NOISE, ZOMBIE_BURN_TIME_NOISE)) ) );
+	SetHealth( static_cast<int>(min( m_iHealth, FLAME_DIRECT_DAMAGE_PER_SEC * (ZOMBIE_BURN_TIME + random->RandomFloat( -ZOMBIE_BURN_TIME_NOISE, ZOMBIE_BURN_TIME_NOISE))) ) );
 
 	// FIXME: use overlays when they come online
 	//AddOverlay( ACT_ZOM_WALK_ON_FIRE, false );
@@ -1537,7 +1540,7 @@ void CNPC_BaseZombie::HandleAnimEvent( animevent_t *pEvent )
 		right = right * 100;
 		forward = forward * 200;
 
-		ClawAttack( GetClawAttackRange(), sk_zombie_dmg_one_slash.GetFloat(), QAngle( -15, -20, -10 ), right + forward, ZOMBIE_BLOOD_RIGHT_HAND );
+		ClawAttack( GetClawAttackRange(), sk_zombie_dmg_one_slash.GetInt(), QAngle( -15, -20, -10 ), right + forward, ZOMBIE_BLOOD_RIGHT_HAND );
 		return;
 	}
 
@@ -1549,7 +1552,7 @@ void CNPC_BaseZombie::HandleAnimEvent( animevent_t *pEvent )
 		right = right * -100;
 		forward = forward * 200;
 
-		ClawAttack( GetClawAttackRange(), sk_zombie_dmg_one_slash.GetFloat(), QAngle( -15, 20, -10 ), right + forward, ZOMBIE_BLOOD_LEFT_HAND );
+		ClawAttack( GetClawAttackRange(), sk_zombie_dmg_one_slash.GetInt(), QAngle( -15, 20, -10 ), right + forward, ZOMBIE_BLOOD_LEFT_HAND );
 		return;
 	}
 
@@ -1559,7 +1562,7 @@ void CNPC_BaseZombie::HandleAnimEvent( animevent_t *pEvent )
 		QAngle qaPunch( 45, random->RandomInt(-5,5), random->RandomInt(-5,5) );
 		AngleVectors( GetLocalAngles(), &forward );
 		forward = forward * 200;
-		ClawAttack( GetClawAttackRange(), sk_zombie_dmg_one_slash.GetFloat(), qaPunch, forward, ZOMBIE_BLOOD_BOTH_HANDS );
+		ClawAttack( GetClawAttackRange(), sk_zombie_dmg_one_slash.GetInt(), qaPunch, forward, ZOMBIE_BLOOD_BOTH_HANDS );
 		return;
 	}
 
@@ -1860,12 +1863,14 @@ int CNPC_BaseZombie::SelectSchedule ( void )
 
 #ifdef DEBUG_ZOMBIES
 			DevMsg("Wandering\n");
-#endif+
+#endif
 
 			// Just lost track of our enemy. 
 			// Wander around a bit so we don't look like a dingus.
 			return SCHED_ZOMBIE_WANDER_MEDIUM;
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -2567,6 +2572,9 @@ Activity CNPC_BaseZombie::NPC_TranslateActivity( Activity baseAct )
 				// I'm on fire. Put ME out.
 				return ( Activity )ACT_IDLE_ON_FIRE;
 			}
+
+			default:
+				break;
 		}
 	}
 

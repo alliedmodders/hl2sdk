@@ -208,7 +208,7 @@ class CWeaponLOSFilter : public CTraceFilterSkipTwoEntities
 {
 	DECLARE_CLASS( CWeaponLOSFilter, CTraceFilterSkipTwoEntities );
 public:
-	CWeaponLOSFilter::CWeaponLOSFilter( IHandleEntity *pHandleEntity, IHandleEntity *pHandleEntity2, int collisionGroup ) :
+	CWeaponLOSFilter( IHandleEntity *pHandleEntity, IHandleEntity *pHandleEntity2, int collisionGroup ) :
 		CTraceFilterSkipTwoEntities( pHandleEntity, pHandleEntity2, collisionGroup )
 	{
 	}

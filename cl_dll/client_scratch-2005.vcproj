@@ -89,7 +89,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib\public"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)/client.pdb"
 				GenerateMapFile="true"
@@ -205,7 +205,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib\public"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)/client.pdb"
 				GenerateMapFile="true"
@@ -662,86 +662,6 @@
 			<File
 				RelativePath="cdll_util.cpp"
 				>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreoactor.cpp"
-				>
-				<FileConfiguration
-					Name="Debug SDK|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release SDK|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreochannel.cpp"
-				>
-				<FileConfiguration
-					Name="Debug SDK|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release SDK|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreoevent.cpp"
-				>
-				<FileConfiguration
-					Name="Debug SDK|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release SDK|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreoscene.cpp"
-				>
-				<FileConfiguration
-					Name="Debug SDK|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release SDK|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="cl_mat_stub.cpp"
@@ -2502,7 +2422,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"
+							ObjectFile="$(IntDir)/"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -2510,7 +2430,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"
+							ObjectFile="$(IntDir)/"
 						/>
 					</FileConfiguration>
 				</File>
@@ -4827,88 +4747,96 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\lib\public\bitmap.lib"
+		<Filter
+			Name="Link Libraries"
 			>
-		</File>
-		<File
-			RelativePath="..\lib\public\mathlib.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier0.lib"
-			>
-			<FileConfiguration
-				Name="Debug SDK|Win32"
+			<File
+				RelativePath="..\lib\public\bitmap.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release SDK|Win32"
+			</File>
+			<File
+				RelativePath="..\lib\public\choreoobjects.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier1.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier2.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\vgui_controls.lib"
-			>
-			<FileConfiguration
-				Name="Debug SDK|Win32"
+			</File>
+			<File
+				RelativePath="..\lib\public\mathlib.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release SDK|Win32"
+			</File>
+			<File
+				RelativePath="..\lib\public\tier0.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\lib\public\vstdlib.lib"
-			>
-			<FileConfiguration
-				Name="Debug SDK|Win32"
+				<FileConfiguration
+					Name="Debug SDK|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release SDK|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\lib\public\tier1.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release SDK|Win32"
+			</File>
+			<File
+				RelativePath="..\lib\public\tier2.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-		</File>
+			</File>
+			<File
+				RelativePath="..\lib\public\vgui_controls.lib"
+				>
+				<FileConfiguration
+					Name="Debug SDK|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release SDK|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\lib\public\vstdlib.lib"
+				>
+				<FileConfiguration
+					Name="Debug SDK|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release SDK|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

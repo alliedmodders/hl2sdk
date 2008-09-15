@@ -6,7 +6,7 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#ifndef _XBOX
+#if !defined _XBOX && defined _MSC_VER
 #pragma warning (disable:4514)
 #endif
 
@@ -300,7 +300,8 @@ FileNameHandle_t CUtlFilenameSymbolTable::FindOrAddFileName( char const *pFileNa
 	handle.path = g_CountedStringPool.ReferenceStringHandle(basepath);
 	handle.file = g_CountedStringPool.ReferenceStringHandle(filename );
 
-	return *( FileNameHandle_t * )( &handle );
+	void *h = &handle;
+	return *reinterpret_cast<FileNameHandle_t *>(h);
 }
 
 FileNameHandle_t CUtlFilenameSymbolTable::FindFileName( char const *pFileName )
@@ -329,10 +330,11 @@ FileNameHandle_t CUtlFilenameSymbolTable::FindFileName( char const *pFileName )
 	handle.path = g_CountedStringPool.FindStringHandle(basepath);
 	handle.file = g_CountedStringPool.FindStringHandle(filename);
 
-	if( handle.path == NULL || handle.file == NULL )
+	if( handle.path == 0 || handle.file == 0 )
 		return NULL;
 
-	return *( FileNameHandle_t * )( &handle );
+	void *h = &handle;
+	return *reinterpret_cast<FileNameHandle_t *>(h);
 }
 
 //-----------------------------------------------------------------------------

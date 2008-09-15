@@ -500,6 +500,9 @@ int CFastZombie::SelectSchedule ( void )
 			return SCHED_ZOMBIE_WANDER_MEDIUM;
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	return BaseClass::SelectSchedule();
@@ -553,7 +556,7 @@ void CFastZombie::PrescheduleThink( void )
 			int iPitch;
 
 			m_flDistFactor = min( 1.0, 1 - flDistNoBBox / FASTZOMBIE_EXCITE_DIST ); 
-			iPitch = FASTZOMBIE_MIN_PITCH + ( ( FASTZOMBIE_MAX_PITCH - FASTZOMBIE_MIN_PITCH ) * m_flDistFactor); 
+			iPitch = static_cast<int>(FASTZOMBIE_MIN_PITCH + ( ( FASTZOMBIE_MAX_PITCH - FASTZOMBIE_MIN_PITCH ) * m_flDistFactor)); 
 			ENVELOPE_CONTROLLER.SoundChangePitch( m_pMoanSound, iPitch, FASTZOMBIE_SOUND_UPDATE_FREQ );
 		}
 

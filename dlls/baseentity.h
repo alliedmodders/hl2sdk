@@ -1007,21 +1007,21 @@ public:
 
 	ENTITYFUNCPTR TouchSet( ENTITYFUNCPTR func, char *name ) 
 	{ 
-		COMPILE_TIME_ASSERT( sizeof(func) == 4 );
+		COMPILE_TIME_ASSERT( sizeof(func) == MFP_SIZE );
 		m_pfnTouch = func; 
 		FunctionCheck( (void *)*((int *)((char *)this + ( offsetof(CBaseEntity,m_pfnTouch)))), name ); 
 		return func;
 	}
 	USEPTR	UseSet( USEPTR func, char *name ) 
 	{ 
-		COMPILE_TIME_ASSERT( sizeof(func) == 4 );
+		COMPILE_TIME_ASSERT( sizeof(func) == MFP_SIZE );
 		m_pfnUse = func; 
 		FunctionCheck( (void *)*((int *)((char *)this + ( offsetof(CBaseEntity,m_pfnUse)))), name ); 
 		return func;
 	}
 	ENTITYFUNCPTR	BlockedSet( ENTITYFUNCPTR func, char *name ) 
 	{ 
-		COMPILE_TIME_ASSERT( sizeof(func) == 4 );
+		COMPILE_TIME_ASSERT( sizeof(func) == MFP_SIZE );
 		m_pfnBlocked = func; 
 		FunctionCheck( (void *)*((int *)((char *)this + ( offsetof(CBaseEntity,m_pfnBlocked)))), name ); 
 		return func;
@@ -1789,7 +1789,7 @@ inline void CBaseEntity::SetName( string_t newName )
 
 inline bool CBaseEntity::NameMatches( const char *pszNameOrWildcard )
 {
-	if ( IDENT_STRINGS(m_iName, pszNameOrWildcard) )
+	if ( IDENT_STRINGS(m_iName, MAKE_STRING(pszNameOrWildcard)) )
 		return true;
 	return NameMatchesComplex( pszNameOrWildcard );
 }
@@ -1803,7 +1803,7 @@ inline bool CBaseEntity::NameMatches( string_t nameStr )
 
 inline bool CBaseEntity::ClassMatches( const char *pszClassOrWildcard )
 {
-	if ( IDENT_STRINGS(m_iClassname, pszClassOrWildcard ) )
+	if ( IDENT_STRINGS(m_iClassname, MAKE_STRING(pszClassOrWildcard) ) )
 		return true;
 	return ClassMatchesComplex( pszClassOrWildcard );
 }

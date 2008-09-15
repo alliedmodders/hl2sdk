@@ -43,16 +43,16 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.dll
+copy &quot;$(TargetPath)&quot; ..\..\..\bin
 
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
-copy &quot;$(TargetDir)$(TargetName).pdb&quot; ..\..\..\game\bin
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
+copy &quot;$(TargetDir)$(TargetName).pdb&quot; ..\..\..\bin
 
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.map attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.map
-if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\game\bin\&quot;$(TargetName)&quot;.map
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.map attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.map
+if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\bin\&quot;$(TargetName)&quot;.map
 "
-				Outputs="..\..\..\game\bin\$(TargetName).dll;..\..\..\game\bin\$(TargetName).pdb"/>
+				Outputs="..\..\..\bin\$(TargetName).dll;..\..\..\bin\$(TargetName).pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib"
@@ -60,7 +60,7 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib-vc7\common,..\..\lib-vc7\public"
-				IgnoreDefaultLibraryNames="libc.lib,libcd.lib,libcmt.lib"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\vrad___Win32_Debug/vrad.pdb"
 				ImportLibrary=".\vrad___Win32_Debug/vrad.lib"
@@ -128,16 +128,16 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.dll
+copy &quot;$(TargetPath)&quot; ..\..\..\bin
 
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb
-copy &quot;$(TargetDir)$(TargetName).pdb&quot; ..\..\..\game\bin
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb
+copy &quot;$(TargetDir)$(TargetName).pdb&quot; ..\..\..\bin
 
-if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.map attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.map
-if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\game\bin\&quot;$(TargetName)&quot;.map
+if exist ..\..\..\bin\&quot;$(TargetName)&quot;.map attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.map
+if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\bin\&quot;$(TargetName)&quot;.map
 "
-				Outputs="..\..\..\game\bin\$(TargetName).dll;..\..\..\game\bin\$(TargetName).pdb"/>
+				Outputs="..\..\..\bin\$(TargetName).dll;..\..\..\bin\$(TargetName).pdb"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib"
@@ -145,7 +145,7 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib-vc7\common,..\..\lib-vc7\public"
-				IgnoreDefaultLibraryNames="libc.lib,libcmtd.lib"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\vrad___Win32_Release/vrad.pdb"
 				GenerateMapFile="TRUE"
@@ -720,10 +720,6 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 					RelativePath="..\..\Public\worldsize.h">
 				</File>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
 		</Filter>
 		<Filter
 			Name="Link Libraries"

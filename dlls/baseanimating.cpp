@@ -500,12 +500,12 @@ void CBaseAnimating::SetLightingOriginRelative( string_t strLightingOriginRelati
 		{
 			if( !pLightingOrigin )
 			{
-				DevWarning( "%s: Cannot find Lighting Origin named: %s\n", GetEntityName(), strLightingOriginRelative );
+				DevWarning( "%s: Cannot find Lighting Origin named: %s\n", STRING(GetEntityName()), STRING(strLightingOriginRelative) );
 			}
 			else
 			{
 				DevWarning( "%s: Specified entity '%s' must be a info_lighting_relative!\n", 
-					pLightingOrigin->GetClassname(), pLightingOrigin->GetEntityName() );
+					pLightingOrigin->GetClassname(), STRING(pLightingOrigin->GetEntityName()) );
 			}
 			return;
 		}

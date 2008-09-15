@@ -44,7 +44,8 @@ static inline __m128 MMReplicate(float f)
 /// replicate a single 32 bit integer value to all 4 components of an m128
 static inline __m128 MMReplicateI(int i)
 {
-	__m128 value=_mm_set_ss(*((float *)&i));;
+	void *t = &i;
+	__m128 value = _mm_set_ss(*reinterpret_cast<float *>(t));
 	return _mm_shuffle_ps(value,value,0);
 }
 
@@ -289,7 +290,6 @@ public:
 	/// from VectorNormalizeFast.
 	inline void VectorNormalize(void)
 	{
-		static __m128 FourHalves={0.5,0.5,0.5,0.5};
 		static __m128 FourThrees={3.,3.,3.,3.};
 		__m128 mag_sq=(*this)*(*this);						// length^2
 		__m128 guess=_mm_rsqrt_ps(mag_sq);
@@ -346,7 +346,8 @@ inline bool IsAllZeros(__m128 var)
 #elif _LINUX
 	int32 myints[4] __attribute__ ((aligned (16)));
 #endif
-	_mm_store_ps((float *) myints,var);
+	void *ints = &myints;
+	_mm_store_ps(static_cast<float *>(ints),var);
 	return (myints[0]|myints[1]|myints[2]|myints[3])==0;
 }
 
@@ -360,7 +361,8 @@ inline __m128 fabs(__m128 x)
 	static int32 clear_signmask[4]  __attribute__ ((aligned (16)))=
 		{0x7fffffff,0x7fffffff,0x7fffffff,0x7fffffff};
 #endif
-	return _mm_and_ps(x,_mm_load_ps((float *) clear_signmask));
+	void *mask = &clear_signmask;
+	return _mm_and_ps(x,_mm_load_ps(static_cast<float *>(mask)));
 }
 
 /// negate all four components of an sse packed single
@@ -373,7 +375,8 @@ inline __m128 fnegate(__m128 x)
 	static int32 signmask[4]  __attribute__ ((aligned (16)))=
 		{0x80000000,0x80000000,0x80000000,0x80000000};
 #endif
-	return _mm_xor_ps(x,_mm_load_ps((float *) signmask));
+	void *mask = &signmask;
+	return _mm_xor_ps(x,_mm_load_ps(static_cast<float *>(mask)));
 }
 
 __m128 PowSSE_FixedPoint_Exponent(__m128 x, int exponent);

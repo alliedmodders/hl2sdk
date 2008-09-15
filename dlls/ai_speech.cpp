@@ -213,8 +213,8 @@ CAI_Expresser::CAI_Expresser( CAI_BaseNPC *pOuter )
  :	CAI_Component( pOuter ),
 	m_pSink( NULL ),
 	m_flStopTalkTime( 0 ),
-	m_flBlockedTalkTime( 0 ),
 	m_flStopTalkTimeWithoutDelay( 0 ),
+	m_flBlockedTalkTime( 0 ),
 	m_voicePitch( 100 )
 {
 #ifdef DEBUG
@@ -828,7 +828,7 @@ void CAI_ExpresserHost_DoModifyOrAppendCriteria( CAI_BaseNPC *pSpeaker, AI_Crite
 	}
 
 	static const char *pStateNames[] = { "None", "Idle", "Alert", "Combat", "Scripted", "PlayDead", "Dead" };
-	if ( (int)pSpeaker->m_NPCState < ARRAYSIZE(pStateNames) )
+	if ( (int)pSpeaker->m_NPCState < static_cast<int>(ARRAYSIZE(pStateNames)) )
 	{
 		set.AppendCriteria( "npcstate", UTIL_VarArgs( "[NPCState::%s]", pStateNames[pSpeaker->m_NPCState] ) );
 	}

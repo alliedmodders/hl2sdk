@@ -1634,20 +1634,20 @@ void CAntlionTemplateMaker::DrawDebugGeometryOverlays( void )
 
 	if ( m_debugOverlays & OVERLAY_TEXT_BIT )
 	{
-		float r, g, b;
+		int r, g, b;
 
 		// Color by active state
 		if ( m_bDisabled )
 		{
-			r = 255.0f;
-			g = 0.0f;
-			b = 0.0f;
+			r = 255;
+			g = 0;
+			b = 0;
 		}
 		else
 		{
-			r = 0.0f;
-			g = 255.0f;
-			b = 0.0f;
+			r = 0;
+			g = 255;
+			b = 0;
 		}
 
 		// Draw ourself

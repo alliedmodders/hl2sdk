@@ -12,7 +12,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-#ifdef _LINUX
+#if defined _LINUX && !defined __stdcall
 #define __stdcall
 #endif
 

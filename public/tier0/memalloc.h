@@ -299,7 +299,7 @@ struct MemAllocFileLine_t
 #define MEM_ALLOC_CREDIT_CLASS()
 #define MEM_ALLOC_CLASSNAME(type) NULL
 
-#endif !STEAM && NO_MALLOC_OVERRIDE
+#endif /* !STEAM && NO_MALLOC_OVERRIDE */
 
 //-----------------------------------------------------------------------------
 

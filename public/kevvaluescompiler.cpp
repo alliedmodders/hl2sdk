@@ -4,7 +4,7 @@
 //
 //=============================================================================
 #include "keyvaluescompiler.h"
-#include "FileSystem.h"
+#include "filesystem.h"
 #include "tier1/KeyValues.h"
 
 extern IFileSystem *g_pFullFileSystem;
@@ -312,7 +312,7 @@ bool CCompiledKeyValuesReader::CreateInPlaceFromData( KeyValues& head, const Fil
 			int idx = helper.Find( search );
 			if ( idx == helper.InvalidIndex() )
 			{
-				return NULL;
+				return false;
 			}
 
 			KeyValues *parent = helper[ idx ].kv;

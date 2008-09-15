@@ -188,7 +188,4 @@ public:
 	virtual KeyValues *UnserializeKeyValue( bf_read *msg ) = 0; // create new KeyValues, must be deleted
 };
 
-
-
-
 #endif // IGAMEEVENTS_H

@@ -138,6 +138,8 @@ void CAI_MoveAndShootOverlay::UpdateMoveShootActivity( bool bMoveAimAtEnemy )
 		case ACT_RUN:
 			newActivity = ACT_RUN_AIM;
 			break;
+		default:
+			break;
 		}
 	}
 	else
@@ -149,6 +151,8 @@ void CAI_MoveAndShootOverlay::UpdateMoveShootActivity( bool bMoveAimAtEnemy )
 			break;
 		case ACT_RUN_AIM:
 			newActivity = ACT_RUN;
+			break;
+		default:
 			break;
 		}
 	}

@@ -109,7 +109,9 @@ void CPredictableId::ResetInstanceCounters( void )
 //-----------------------------------------------------------------------------
 bool CPredictableId::IsActive( void ) const
 {
-	if ( *(const int *)&m_PredictableID == 0 )
+	const void *predict = &m_PredictableID;
+
+	if (*reinterpret_cast<const int *>(predict) == 0)
 		return false;
 
 	return true;
@@ -267,7 +269,8 @@ bool CPredictableId::GetAcknowledged( void ) const
 //-----------------------------------------------------------------------------
 int CPredictableId::GetRaw( void ) const
 {
-	return *(int *)&m_PredictableID;
+	const void *predict = &m_PredictableID;
+	return *reinterpret_cast<const int *>(predict);
 }
 
 //-----------------------------------------------------------------------------
@@ -276,7 +279,8 @@ int CPredictableId::GetRaw( void ) const
 //-----------------------------------------------------------------------------
 void CPredictableId::SetRaw( int raw )
 {
-	*(int *)&m_PredictableID = raw;
+	void *predict = &m_PredictableID;
+	*reinterpret_cast<int *>(predict) = raw;
 }
 
 //-----------------------------------------------------------------------------

@@ -325,8 +325,8 @@ inline CBitStringT<BASE_OPS>::CBitStringT(int numBits)
 template <class BASE_OPS>
 inline bool CBitStringT<BASE_OPS>::GetBit( int bitNum ) const
 {
-	Assert( bitNum >= 0 && bitNum < Size() );
-	const int *pInt = GetInts() + BitString_Int( bitNum );
+	Assert( bitNum >= 0 && bitNum < this->Size() );
+	const int *pInt = this->GetInts() + BitString_Int( bitNum );
 	return ( ( *pInt & BitString_Bit( bitNum ) ) != 0 );
 }
 
@@ -335,8 +335,8 @@ inline bool CBitStringT<BASE_OPS>::GetBit( int bitNum ) const
 template <class BASE_OPS>
 inline void CBitStringT<BASE_OPS>::SetBit( int bitNum )			
 {
-	Assert( bitNum >= 0 && bitNum < Size() );
-	int *pInt = GetInts() + BitString_Int( bitNum );
+	Assert( bitNum >= 0 && bitNum < this->Size() );
+	int *pInt = this->GetInts() + BitString_Int( bitNum );
 	*pInt |= BitString_Bit( bitNum );
 }
 
@@ -345,8 +345,8 @@ inline void CBitStringT<BASE_OPS>::SetBit( int bitNum )
 template <class BASE_OPS>
 inline void CBitStringT<BASE_OPS>::ClearBit(int bitNum)		
 {
-	Assert( bitNum >= 0 && bitNum < Size() );
-	int *pInt = GetInts() + BitString_Int( bitNum );
+	Assert( bitNum >= 0 && bitNum < this->Size() );
+	int *pInt = this->GetInts() + BitString_Int( bitNum );
 	*pInt &= ~BitString_Bit( bitNum );
 }
 
@@ -362,10 +362,10 @@ inline void CBitStringT<BASE_OPS>::And(const CBitStringT &addStr, CBitStringT *o
 	ValidateOperand( *out );
 	
 	int *	   pDest		= out->GetInts();
-	const int *pOperand1	= GetInts();
+	const int *pOperand1	= this->GetInts();
 	const int *pOperand2	= addStr.GetInts();
 
-	for (int i = GetNumInts() - 1; i >= 0 ; --i) 
+	for (int i = this->GetNumInts() - 1; i >= 0 ; --i) 
 	{
 		pDest[i] = pOperand1[i] & pOperand2[i];
 	}
@@ -383,10 +383,10 @@ inline void CBitStringT<BASE_OPS>::Or(const CBitStringT &orStr, CBitStringT *out
 	ValidateOperand( *out );
 
 	int *	   pDest		= out->GetInts();
-	const int *pOperand1	= GetInts();
+	const int *pOperand1	= this->GetInts();
 	const int *pOperand2	= orStr.GetInts();
 
-	for (int i = GetNumInts() - 1; i >= 0; --i) 
+	for (int i = this->GetNumInts() - 1; i >= 0; --i) 
 	{
 		pDest[i] = pOperand1[i] | pOperand2[i];
 	}
@@ -401,10 +401,10 @@ template <class BASE_OPS>
 inline void CBitStringT<BASE_OPS>::Xor(const CBitStringT &xorStr, CBitStringT *out) const
 {
 	int *	   pDest		= out->GetInts();
-	const int *pOperand1	= GetInts();
+	const int *pOperand1	= this->GetInts();
 	const int *pOperand2	= xorStr.GetInts();
 
-	for (int i = GetNumInts() - 1; i >= 0; --i) 
+	for (int i = this->GetNumInts() - 1; i >= 0; --i) 
 	{
 		pDest[i] = pOperand1[i] ^ pOperand2[i];
 	}
@@ -421,9 +421,9 @@ inline void CBitStringT<BASE_OPS>::Not(CBitStringT *out) const
 	ValidateOperand( *out );
 
 	int *	   pDest	= out->GetInts();
-	const int *pOperand	= GetInts();
+	const int *pOperand	= this->GetInts();
 
-	for (int i = GetNumInts() - 1; i >= 0; --i) 
+	for (int i = this->GetNumInts() - 1; i >= 0; --i) 
 	{
 		pDest[i] = ~(pOperand[i]);
 	}
@@ -440,7 +440,7 @@ inline void CBitStringT<BASE_OPS>::Copy(CBitStringT *out) const
 	ValidateOperand( *out );
 	Assert( out != this );
 	
-	memcpy( out->GetInts(), GetInts(), GetNumInts() * sizeof( int ) );
+	memcpy( out->GetInts(), this->GetInts(), this->GetNumInts() * sizeof( int ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -454,11 +454,11 @@ inline bool CBitStringT<BASE_OPS>::IsAllClear(void) const
 	// Number of available bits may be more than the number
 	// actually used, so make sure to mask out unused bits
 	// before testing for zero
-	(const_cast<CBitStringT *>(this))->GetInts()[GetNumInts()-1] &= ~CBitStringT<BASE_OPS>::GetEndMask(); // external semantics of const retained
+	(const_cast<CBitStringT *>(this))->GetInts()[this->GetNumInts()-1] &= ~CBitStringT<BASE_OPS>::GetEndMask(); // external semantics of const retained
 
-	for (int i = GetNumInts() - 1; i >= 0; --i) 
+	for (int i = this->GetNumInts() - 1; i >= 0; --i) 
 	{
-		if ( GetInts()[i] !=0 ) 
+		if ( this->GetInts()[i] !=0 ) 
 		{
 			return false;
 		}
@@ -477,11 +477,11 @@ inline bool CBitStringT<BASE_OPS>::IsAllSet(void) const
 	// Number of available bits may be more than the number
 	// actually used, so make sure to mask out unused bits
 	// before testing for set bits
-	(const_cast<CBitStringT *>(this))->GetInts()[GetNumInts()-1] |= CBitStringT<BASE_OPS>::GetEndMask();  // external semantics of const retained
+	(const_cast<CBitStringT *>(this))->GetInts()[this->GetNumInts()-1] |= CBitStringT<BASE_OPS>::GetEndMask();  // external semantics of const retained
 
-	for (int i = GetNumInts() - 1; i >= 0; --i) 
+	for (int i = this->GetNumInts() - 1; i >= 0; --i) 
 	{
-		if ( GetInts()[i] != ~0 ) 
+		if ( this->GetInts()[i] != ~0 ) 
 		{
 			return false;
 		}
@@ -497,8 +497,8 @@ inline bool CBitStringT<BASE_OPS>::IsAllSet(void) const
 template <class BASE_OPS>
 inline void CBitStringT<BASE_OPS>::SetAllBits(void)		
 {
-	if ( GetInts() )
-		memset( GetInts(), 0xff, GetNumInts() * sizeof(int) );
+	if ( this->GetInts() )
+		memset( this->GetInts(), 0xff, this->GetNumInts() * sizeof(int) );
 }
 
 //-----------------------------------------------------------------------------
@@ -509,8 +509,8 @@ inline void CBitStringT<BASE_OPS>::SetAllBits(void)
 template <class BASE_OPS>
 inline void CBitStringT<BASE_OPS>::ClearAllBits(void)		
 {
-	if ( GetInts() )
-		memset( GetInts(), 0, GetNumInts() * sizeof(int) );
+	if ( this->GetInts() )
+		memset( this->GetInts(), 0, this->GetNumInts() * sizeof(int) );
 }
 
 //-----------------------------------------------------------------------------
@@ -518,8 +518,8 @@ inline void CBitStringT<BASE_OPS>::ClearAllBits(void)
 template <class BASE_OPS>
 inline void CBitStringT<BASE_OPS>::DebugPrintBits(void) const
 {
-	(const_cast<CBitStringT *>(this))->GetInts()[GetNumInts()-1] &= ~CBitStringT<BASE_OPS>::GetEndMask(); // external semantics of const retained
-	DebugPrintBitStringBits( GetInts(), GetNumInts() );
+	(const_cast<CBitStringT *>(this))->GetInts()[this->GetNumInts()-1] &= ~CBitStringT<BASE_OPS>::GetEndMask(); // external semantics of const retained
+	DebugPrintBitStringBits( this->GetInts(), this->GetNumInts() );
 }
 
 //-----------------------------------------------------------------------------
@@ -527,8 +527,8 @@ inline void CBitStringT<BASE_OPS>::DebugPrintBits(void) const
 template <class BASE_OPS>
 inline void CBitStringT<BASE_OPS>::SaveBitString(CUtlBuffer& buf) const
 {
-	(const_cast<CBitStringT *>(this))->GetInts()[GetNumInts()-1] &= ~CBitStringT<BASE_OPS>::GetEndMask(); // external semantics of const retained
-	::SaveBitString( GetInts(), GetNumInts(), buf );
+	(const_cast<CBitStringT *>(this))->GetInts()[this->GetNumInts()-1] &= ~CBitStringT<BASE_OPS>::GetEndMask(); // external semantics of const retained
+	::SaveBitString( this->GetInts(), this->GetNumInts(), buf );
 }
 
 //-----------------------------------------------------------------------------
@@ -536,8 +536,8 @@ inline void CBitStringT<BASE_OPS>::SaveBitString(CUtlBuffer& buf) const
 template <class BASE_OPS>
 inline void CBitStringT<BASE_OPS>::LoadBitString(CUtlBuffer& buf) 
 {
-	(const_cast<CBitStringT *>(this))->GetInts()[GetNumInts()-1] &= ~CBitStringT<BASE_OPS>::GetEndMask(); 
-	::LoadBitString( GetInts(), GetNumInts(), buf );
+	(const_cast<CBitStringT *>(this))->GetInts()[this->GetNumInts()-1] &= ~CBitStringT<BASE_OPS>::GetEndMask(); 
+	::LoadBitString( this->GetInts(), this->GetNumInts(), buf );
 }
 
 //-----------------------------------------------------------------------------

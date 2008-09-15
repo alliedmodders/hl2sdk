@@ -366,7 +366,8 @@ void RecvProxy_Int32ToInt8( const CRecvProxyData *pData, void *pStruct, void *pO
 
 void RecvProxy_Int32ToInt16( const CRecvProxyData *pData, void *pStruct, void *pOut )
 {
-	*((unsigned short*)pOut) = *((unsigned short*)&pData->m_Value.m_Int);
+	const void *addr = &pData->m_Value.m_Int;
+	*((unsigned short*)pOut) = *((unsigned short*)addr);
 }
 
 void RecvProxy_Int32ToInt32( const CRecvProxyData *pData, void *pStruct, void *pOut )

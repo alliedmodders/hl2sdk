@@ -110,14 +110,20 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tier1", "tier1\tier1-2003.v
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "phonemeextractor", "utils\phonemeextractor\phonemeextractor-2003.vcproj", "{8A35F55B-B5C2-47A0-8C4A-5857A8E20385}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "choreoobjects", "choreoobjects\choreoobjects-2003.vcproj", "{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hlmv", "utils\hlmv\hlmv-2003.vcproj", "{F3704DBF-8055-413C-B027-399E5DBCA4DD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720} = {E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}
 		{E1DA9FB8-FB4C-4B14-91A6-98BCED6B9720} = {E1DA9FB8-FB4C-4B14-91A6-98BCED6B9720}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hlmv", "utils\hlmv\hlmv-2003.vcproj", "{F3704DBF-8055-413C-B027-399E5DBCA4DD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "phonemeextractor", "utils\phonemeextractor\phonemeextractor-2003.vcproj", "{8A35F55B-B5C2-47A0-8C4A-5857A8E20385}"
 	ProjectSection(ProjectDependencies) = postProject
+		{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720} = {E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}
+		{E1DA9FB8-FB4C-4B14-91A6-98BCED6B9720} = {E1DA9FB8-FB4C-4B14-91A6-98BCED6B9720}
 	EndProjectSection
 EndProject
 Global
@@ -212,14 +218,18 @@ Global
 		{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}.Debug.Build.0 = Debug|Win32
 		{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}.Release.ActiveCfg = Release|Win32
 		{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}.Release.Build.0 = Release|Win32
-		{8A35F55B-B5C2-47A0-8C4A-5857A8E20385}.Debug.ActiveCfg = Debug|Win32
-		{8A35F55B-B5C2-47A0-8C4A-5857A8E20385}.Debug.Build.0 = Debug|Win32
-		{8A35F55B-B5C2-47A0-8C4A-5857A8E20385}.Release.ActiveCfg = Release|Win32
-		{8A35F55B-B5C2-47A0-8C4A-5857A8E20385}.Release.Build.0 = Release|Win32
+		{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}.Debug.ActiveCfg = Debug|Win32
+		{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}.Debug.Build.0 = Debug|Win32
+		{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}.Release.ActiveCfg = Release|Win32
+		{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}.Release.Build.0 = Release|Win32
 		{F3704DBF-8055-413C-B027-399E5DBCA4DD}.Debug.ActiveCfg = Debug|Win32
 		{F3704DBF-8055-413C-B027-399E5DBCA4DD}.Debug.Build.0 = Debug|Win32
 		{F3704DBF-8055-413C-B027-399E5DBCA4DD}.Release.ActiveCfg = Release|Win32
 		{F3704DBF-8055-413C-B027-399E5DBCA4DD}.Release.Build.0 = Release|Win32
+		{8A35F55B-B5C2-47A0-8C4A-5857A8E20385}.Debug.ActiveCfg = Debug|Win32
+		{8A35F55B-B5C2-47A0-8C4A-5857A8E20385}.Debug.Build.0 = Debug|Win32
+		{8A35F55B-B5C2-47A0-8C4A-5857A8E20385}.Release.ActiveCfg = Release|Win32
+		{8A35F55B-B5C2-47A0-8C4A-5857A8E20385}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

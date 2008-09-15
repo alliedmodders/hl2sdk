@@ -125,7 +125,7 @@ const char *MapEntity_ParseToken( const char *data, char *newToken )
 
 		for ( const char *c = s_BraceChars; *c; c++ )
 		{
-			s_BraceCharacters[*c] = true;
+			s_BraceCharacters[static_cast<size_t>(*c)] = true;
 		}
 	}
 		

@@ -1429,7 +1429,7 @@ void CNPC_AttackHelicopter::InputSetHealthFraction( inputdata_t &inputdata )
 	// Sets the health fraction, no damage effects
 	if ( inputdata.value.Float() > 0 )
 	{
-		SetHealth( GetMaxHealth() * inputdata.value.Float() * 0.01f );
+		SetHealth( static_cast<int>(GetMaxHealth() * inputdata.value.Float() * 0.01f) );
 	}
 }
 
@@ -2131,7 +2131,7 @@ bool CNPC_AttackHelicopter::DoGunCharging( )
 	case SHOOT_MODE_DEFAULT:
 		{
 			int nBurstCount = sk_helicopter_burstcount.GetInt();
-			m_nRemainingBursts = random->RandomInt( nBurstCount, 2.0 * nBurstCount );
+			m_nRemainingBursts = random->RandomInt( nBurstCount, 2 * nBurstCount );
 			m_flIdleTimeDelay = 0.1f * ( m_nRemainingBursts - nBurstCount );
 		}
 		break;
@@ -3262,7 +3262,7 @@ int CNPC_AttackHelicopter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 		{
 			if ( nPrevHealth != GetMaxHealth() )
 			{
-				DropCorpse( info.GetDamage() );
+				DropCorpse( static_cast<int>(info.GetDamage()) );
 			}
 		}
 
@@ -4703,8 +4703,8 @@ int CGrenadeHelicopter::OnTakeDamage( const CTakeDamageInfo &info )
 //------------------------------------------------------------------------------
 void CGrenadeHelicopter::DoExplosion( const Vector &vecOrigin, const Vector &vecVelocity )
 {
-	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), this, sk_helicopter_grenadedamage.GetFloat(), 
-		sk_helicopter_grenaderadius.GetFloat(), (SF_ENVEXPLOSION_NOSPARKS|SF_ENVEXPLOSION_NODLIGHTS|SF_ENVEXPLOSION_NODECAL|SF_ENVEXPLOSION_NOFIREBALL|SF_ENVEXPLOSION_NOPARTICLES), 
+	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), this, sk_helicopter_grenadedamage.GetInt(), 
+		sk_helicopter_grenaderadius.GetInt(), (SF_ENVEXPLOSION_NOSPARKS|SF_ENVEXPLOSION_NODLIGHTS|SF_ENVEXPLOSION_NODECAL|SF_ENVEXPLOSION_NOFIREBALL|SF_ENVEXPLOSION_NOPARTICLES), 
 		sk_helicopter_grenadeforce.GetFloat() );
 
 	if ( GetShakeAmplitude() )

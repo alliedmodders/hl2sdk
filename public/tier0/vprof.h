@@ -263,8 +263,6 @@ private:
 	int			m_iCurL2CacheMiss;
 	int			m_iTotalL2CacheMiss;
 #endif
-
-	int			m_nRecursions;
 	
 	unsigned	m_nCurFrameCalls;
 	CCycleCount	m_CurFrameTime;
@@ -277,6 +275,8 @@ private:
 
 	CCycleCount	m_PeakTime;
 
+	int m_nRecursions;
+
 	CVProfNode *m_pParent;
 	CVProfNode *m_pChild;
 	CVProfNode *m_pSibling;
@@ -285,6 +285,7 @@ private:
 	
 	int m_iClientData;
 	int m_iUniqueNodeID;
+
 	
 #if !defined(_WIN32) || defined(_XBOX)
 	void *operator new( size_t );

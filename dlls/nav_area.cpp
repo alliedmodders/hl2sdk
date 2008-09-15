@@ -877,6 +877,8 @@ void CNavArea::FinishSplitEdit( CNavArea *newArea, NavDirType ignoreEdge )
 			corner[0] = NORTH_WEST;
 			corner[1] = SOUTH_WEST;
 			break;
+		default:
+			break;
 		}
 
 		while ( !newArea->IsOverlapping( *newArea->m_node[ corner[0] ]->GetPosition(), GenerationStepSize/2 ) )
@@ -2221,6 +2223,8 @@ void CNavArea::DrawConnectedAreas( void ) const
 						from = hookPos + Vector( size, 0.0f, 0.0f );
 						to = hookPos + Vector( -size, 0.0f, 0.0f );
 						break;
+					default:
+						break;
 				}
 
 				from.z = GetZ( from );
@@ -2503,6 +2507,8 @@ static Vector FindPositionInArea( CNavArea *area, NavCornerType corner )
 	case SOUTH_EAST:
 		multX = -1;
 		multY = -1;
+		break;
+	default:
 		break;
 	}
 
@@ -3027,6 +3033,8 @@ void CNavArea::RaiseCorner( NavCornerType corner, int amount, bool raiseAdjacent
 	case SOUTH_EAST:
 		m_extent.hi.z += amount;
 		break;
+	default:
+		break;
 	}
 
 	// Recompute the center
@@ -3083,7 +3091,7 @@ void CNavArea::RaiseCorner( NavCornerType corner, int amount, bool raiseAdjacent
 					if ( areaPos.DistTo( cornerPos ) < tolerance )
 					{
 						float heightDiff = (cornerPos.z + amount ) - areaPos.z;
-						area->RaiseCorner( NavCornerType(i), heightDiff, false );
+						area->RaiseCorner( NavCornerType(i), static_cast<int>(heightDiff), false );
 					}
 				}
 			}
@@ -3200,25 +3208,25 @@ void CNavArea::PlaceOnGround( NavCornerType corner, float inset )
 	if ( corner == NORTH_WEST || corner == NUM_CORNERS )
 	{
 		float newZ = FindGroundZ( nw, ne, sw );
-		RaiseCorner( NORTH_WEST, newZ - nw.z );
+		RaiseCorner( NORTH_WEST, static_cast<int>(newZ - nw.z) );
 	}
 
 	if ( corner == NORTH_EAST || corner == NUM_CORNERS )
 	{
 		float newZ = FindGroundZ( ne, nw, se );
-		RaiseCorner( NORTH_EAST, newZ - ne.z );
+		RaiseCorner( NORTH_EAST, static_cast<int>(newZ - ne.z) );
 	}
 
 	if ( corner == SOUTH_WEST || corner == NUM_CORNERS )
 	{
 		float newZ = FindGroundZ( sw, nw, se );
-		RaiseCorner( SOUTH_WEST, newZ - sw.z );
+		RaiseCorner( SOUTH_WEST, static_cast<int>(newZ - sw.z) );
 	}
 
 	if ( corner == SOUTH_EAST || corner == NUM_CORNERS )
 	{
 		float newZ = FindGroundZ( se, ne, sw );
-		RaiseCorner( SOUTH_EAST, newZ - se.z );
+		RaiseCorner( SOUTH_EAST, static_cast<int>(newZ - se.z) );
 	}
 }
 
@@ -3351,7 +3359,7 @@ public:
 
 
 //-----------------------------------------------------------------------------------------------------
-static int GetPushawayEntsInVolume( const Vector& origin, const Vector& mins, const Vector& maxs, CBaseEntity **ents, int nMaxEnts, int PartitionMask, CNavBlockerEnumerator *enumerator )
+/*static int GetPushawayEntsInVolume( const Vector& origin, const Vector& mins, const Vector& maxs, CBaseEntity **ents, int nMaxEnts, int PartitionMask, CNavBlockerEnumerator *enumerator )
 {
 	Ray_t ray;
 	ray.Init( origin, origin, mins, maxs );
@@ -3371,7 +3379,7 @@ static int GetPushawayEntsInVolume( const Vector& origin, const Vector& mins, co
 		delete physPropEnum;
 
 	return numHit;
-}
+}*/
 
 
 //--------------------------------------------------------------------------------------------------------------

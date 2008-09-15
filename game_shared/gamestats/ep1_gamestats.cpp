@@ -5,7 +5,7 @@
 //=============================================================================
 
 #include "gamestats/ep1_gamestats.h"
-#include "tier1/UtlBuffer.h"
+#include "tier1/utlbuffer.h"
 
 static int g_nParseVersion = -1;
 

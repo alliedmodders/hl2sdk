@@ -390,7 +390,7 @@ void CHLTVDirector::StartBestPlayerCameraShot()
 		{
 			shot->SetInt("target1", iBestCamera );
 			shot->SetInt("target2", iBestTarget );
-			shot->SetInt("distance", 112.0f );
+			shot->SetInt("distance", 112 );
 			shot->SetInt("phi", 20 );
 
 			// view over shoulder, randomly left or right
@@ -431,11 +431,11 @@ void CHLTVDirector::StartFixedCameraShot(int iCamera, int iTarget)
 
 	if ( shot )
 	{
-		shot->SetInt("posx", vCamPos.x );
-		shot->SetInt("posy", vCamPos.y );
-		shot->SetInt("posz", vCamPos.z );
-		shot->SetInt("theta", aViewAngle.x );
-		shot->SetInt("phi", aViewAngle.y );
+		shot->SetInt("posx", static_cast<int>(vCamPos.x) );
+		shot->SetInt("posy", static_cast<int>(vCamPos.y) );
+		shot->SetInt("posz", static_cast<int>(vCamPos.z) );
+		shot->SetInt("theta", static_cast<int>(aViewAngle.x) );
+		shot->SetInt("phi", static_cast<int>(aViewAngle.y) );
 		shot->SetInt("target", iTarget );
 		shot->SetFloat("fov", RandomFloat(50,110) );
 	

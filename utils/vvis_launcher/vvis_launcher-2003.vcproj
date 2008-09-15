@@ -41,15 +41,16 @@
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\bin
 "
-				Outputs="..\..\..\game\bin\$(TargetName).exe"/>
+				Outputs="..\..\..\bin\$(TargetName).exe"/>
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="Debug/vvis.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/vvis.pdb"
 				SubSystem="1"
@@ -114,16 +115,16 @@ if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe
-if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe
+if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\bin
 "
-				Outputs="..\..\..\game\bin\$(TargetName).exe"/>
+				Outputs="..\..\..\bin\$(TargetName).exe"/>
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="Release/vvis.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames="LIBCMTD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				ProgramDatabaseFile=".\Release/vvis.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
@@ -204,21 +205,18 @@ if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			Name="Link Libraries"
+			Filter="">
+			<File
+				RelativePath="..\..\lib-vc7\public\tier0.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\tier1.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\vstdlib.lib">
+			</File>
 		</Filter>
-		<File
-			RelativePath="ReadMe.txt">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier0.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier1.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\vstdlib.lib">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

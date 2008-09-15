@@ -158,6 +158,8 @@ bool CNPC_Alyx::FValidateHintType( CAI_Hint *pHint )
 	case HINT_WORLD_VISUALLY_INTERESTING_STEALTH:
 		return true;
 		break;
+	default:
+		break;
 	}
 
 	return BaseClass::FValidateHintType( pHint );
@@ -485,7 +487,7 @@ void CNPC_Alyx::ReadinessLevelChanged( int iPriorLevel )
 			{ AIRL_STIMULATED, AIRL_RELAXED, ACT_IDLE, ACT_READINESS_STIMULATED_TO_RELAXED, }
 		};
 
-		for ( int i = 0; i < ARRAYSIZE( readinessTransitions ); i++ )
+		for ( int i = 0; i < static_cast<int>(ARRAYSIZE( readinessTransitions )); i++ )
 		{
 			if ( GetIdealActivity() != readinessTransitions[i].requiredActivity )
 				continue;
@@ -1677,6 +1679,9 @@ void CNPC_Alyx::BuildScheduleTestBits()
 		case NPC_STATE_IDLE:
 			SetCustomInterruptCondition( COND_ALYX_HAS_INTERACT_TARGET );
 			SetCustomInterruptCondition( COND_ALYX_CAN_INTERACT_WITH_TARGET );
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -3175,6 +3180,9 @@ bool CNPC_Alyx::IsCrouchedActivity( Activity activity )
 	case ACT_RANGE_AIM_PISTOL_LOW:
 	case ACT_RANGE_AIM_AR2_LOW:
 		return true;
+
+	default:
+		break;
 	}
 	return false;
 }

@@ -40,10 +40,10 @@
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="attrib -r ..\..\..\game\bin\serverplugin_empty.dll
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\serverplugin_empty.dll
+				CommandLine="attrib -r ..\..\..\bin\serverplugin_empty.dll
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\serverplugin_empty.dll
 "
-				Outputs="..\..\..\game\bin\serverplugin_empty.dll"/>
+				Outputs="..\..\..\bin\serverplugin_empty.dll"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib"
@@ -51,7 +51,7 @@ copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\serverplugin_empty.dll
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\lib-vc7\public,..\lib-vc7\common"
-				IgnoreDefaultLibraryNames="LIBC,libcmt"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/serverplugin_empty.pdb"
 				GenerateMapFile="TRUE"
@@ -122,10 +122,10 @@ copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\serverplugin_empty.dll
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="attrib -r ..\..\..\game\bin\serverplugin_empty.dll
-copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\serverplugin_empty.dll
+				CommandLine="attrib -r ..\..\..\bin\serverplugin_empty.dll
+copy &quot;$(TargetPath)&quot; ..\..\..\bin\serverplugin_empty.dll
 "
-				Outputs="..\..\..\game\bin\serverplugin_empty.dll"/>
+				Outputs="..\..\..\bin\serverplugin_empty.dll"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib"
@@ -133,7 +133,7 @@ copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\serverplugin_empty.dll
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\lib-vc7\public,..\lib-vc7\common"
-				IgnoreDefaultLibraryNames="libcmtd.lib"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Release/serverplugin_empty.pdb"
 				GenerateMapFile="TRUE"

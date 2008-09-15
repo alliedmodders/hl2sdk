@@ -169,12 +169,12 @@ void CMakefileCreator::OutputIncludes( CVCProjConvert::CConfiguration & config, 
 	FileWrite( f, "INCLUDES=" );
 	for ( int i = 0; i < config.GetNumIncludes(); i++ )
 	{
-		FileWrite( f, "-I%s ", config.GetInclude(i) );
+		FileWrite( f, " -I%s", config.GetInclude(i) );
 	}
 
 	for ( int i = 0; i < config.GetNumDefines(); i++ )
 	{
-		FileWrite( f, "-D%s ", config.GetDefine(i) );
+		FileWrite( f, " -D%s", config.GetDefine(i) );
 	}
 	FileWrite( f, "\n\n" );
 }

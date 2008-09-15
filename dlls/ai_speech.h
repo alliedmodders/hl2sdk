@@ -260,15 +260,15 @@ public:
 	virtual void	PostSpeakDispatchResponse( AIConcept_t concept, AI_Response *response ) { return; }
 	float 			GetResponseDuration( AI_Response *response );
 
-	float GetTimeSpeechComplete() const 	{ return GetExpresser()->GetTimeSpeechComplete(); }
+	float GetTimeSpeechComplete() const 	{ return this->GetExpresser()->GetTimeSpeechComplete(); }
 
-	bool IsSpeaking()				{ return GetExpresser()->IsSpeaking(); }
-	bool CanSpeak()					{ return GetExpresser()->CanSpeak(); }
-	bool CanSpeakAfterMyself()		{ return GetExpresser()->CanSpeakAfterMyself(); }
+	bool IsSpeaking()				{ return this->GetExpresser()->IsSpeaking(); }
+	bool CanSpeak()					{ return this->GetExpresser()->CanSpeak(); }
+	bool CanSpeakAfterMyself()		{ return this->GetExpresser()->CanSpeakAfterMyself(); }
 
-	void SetSpokeConcept( AIConcept_t concept, AI_Response *response, bool bCallback = true ) 		{ GetExpresser()->SetSpokeConcept( concept, response, bCallback ); }
-	float GetTimeSpokeConcept( AIConcept_t concept )												{ return GetExpresser()->GetTimeSpokeConcept( concept ); }
-	bool SpokeConcept( AIConcept_t concept )														{ return GetExpresser()->SpokeConcept( concept ); }
+	void SetSpokeConcept( AIConcept_t concept, AI_Response *response, bool bCallback = true ) 		{ this->GetExpresser()->SetSpokeConcept( concept, response, bCallback ); }
+	float GetTimeSpokeConcept( AIConcept_t concept )												{ return this->GetExpresser()->GetTimeSpokeConcept( concept ); }
+	bool SpokeConcept( AIConcept_t concept )														{ return this->GetExpresser()->SpokeConcept( concept ); }
 
 protected:
 	virtual bool 	Speak( AIConcept_t concept, const char *modifiers = NULL, char *pszOutResponseChosen = NULL, size_t bufsize = 0 );
@@ -285,7 +285,7 @@ protected:
 template <class BASE_NPC>
 inline void CAI_ExpresserHost<BASE_NPC>::NoteSpeaking( float duration, float delay )
 { 
-	GetExpresser()->NoteSpeaking( duration, delay ); 
+	this->GetExpresser()->NoteSpeaking( duration, delay ); 
 }
 
 //-----------------------------------------------------------------------------
@@ -293,8 +293,8 @@ inline void CAI_ExpresserHost<BASE_NPC>::NoteSpeaking( float duration, float del
 template <class BASE_NPC>
 inline bool CAI_ExpresserHost<BASE_NPC>::Speak( AIConcept_t concept, const char *modifiers /*= NULL*/, char *pszOutResponseChosen /*=NULL*/, size_t bufsize /* = 0 */ ) 
 {
-	AssertOnce( GetExpresser()->GetOuter() == this );
-	return GetExpresser()->Speak( concept, modifiers, pszOutResponseChosen, bufsize ); 
+	AssertOnce( this->GetExpresser()->GetOuter() == this );
+	return this->GetExpresser()->Speak( concept, modifiers, pszOutResponseChosen, bufsize ); 
 }
 
 //-----------------------------------------------------------------------------
@@ -302,7 +302,7 @@ inline bool CAI_ExpresserHost<BASE_NPC>::Speak( AIConcept_t concept, const char 
 template <class BASE_NPC>
 inline int CAI_ExpresserHost<BASE_NPC>::PlaySentence( const char *pszSentence, float delay, float volume, soundlevel_t soundlevel, CBaseEntity *pListener )
 {
-	return GetExpresser()->SpeakRawSentence( pszSentence, delay, volume, soundlevel, pListener );
+	return this->GetExpresser()->SpeakRawSentence( pszSentence, delay, volume, soundlevel, pListener );
 }
 
 //-----------------------------------------------------------------------------
@@ -332,7 +332,7 @@ inline IResponseSystem *CAI_ExpresserHost<BASE_NPC>::GetResponseSystem()
 template <class BASE_NPC>
 inline AI_Response *CAI_ExpresserHost<BASE_NPC>::SpeakFindResponse( AIConcept_t concept, const char *modifiers /*= NULL*/ )
 {
-	return GetExpresser()->SpeakFindResponse( concept, modifiers );
+	return this->GetExpresser()->SpeakFindResponse( concept, modifiers );
 }
 
 //-----------------------------------------------------------------------------
@@ -340,7 +340,7 @@ inline AI_Response *CAI_ExpresserHost<BASE_NPC>::SpeakFindResponse( AIConcept_t 
 template <class BASE_NPC>
 inline bool CAI_ExpresserHost<BASE_NPC>::SpeakDispatchResponse( AIConcept_t concept, AI_Response *response )
 {
-	if ( GetExpresser()->SpeakDispatchResponse( concept, response ) )
+	if ( this->GetExpresser()->SpeakDispatchResponse( concept, response ) )
 	{
 		PostSpeakDispatchResponse( concept, response );
 		return true;
@@ -354,7 +354,7 @@ inline bool CAI_ExpresserHost<BASE_NPC>::SpeakDispatchResponse( AIConcept_t conc
 template <class BASE_NPC>
 inline float CAI_ExpresserHost<BASE_NPC>::GetResponseDuration( AI_Response *response )
 {
-	return GetExpresser()->GetResponseDuration( response );
+	return this->GetExpresser()->GetResponseDuration( response );
 }
 
 //-----------------------------------------------------------------------------

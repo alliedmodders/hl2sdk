@@ -185,7 +185,7 @@ struct AI_NavGoal_t
 				  CBaseEntity *	pTarget   = AIN_DEF_TARGET);
 				  
 	//----------------------------------
-	
+
 	// What type of goal is this
 	GoalType_t 		type;
 
@@ -195,10 +195,6 @@ struct AI_NavGoal_t
 
 	// The activity to use, or none if a previosly set activity should be used
 	Activity		activity;
-	
-	// The predicted activity used after arrival
-	Activity		arrivalActivity;
-	int				arrivalSequence;
 
 	// The tolerance of success, or none if a previosly set tolerance should be used
 	float			tolerance;
@@ -209,9 +205,13 @@ struct AI_NavGoal_t
 
 	// Optional flags specifying
 	unsigned		flags;
-
+	
 	// The target of the navigation, primarily used to ignore the entity in hull and line traces
 	CBaseEntity *	pTarget;
+	
+	// The predicted activity used after arrival
+	Activity		arrivalActivity;
+	int				arrivalSequence;
 };
 
 //-------------------------------------

@@ -26,7 +26,7 @@
 				AdditionalIncludeDirectories=".\hl2mp\UI,.\hl2mp,..\game_shared\hl2mp,.\hl2_hud,.\hl2_hud\elements,../game_shared/hl2,.,.\..\Public,.\..\Public\tier1,.\..\vgui2\include,.\..\vgui2\controls,../game_shared,.\game_controls"
 				PreprocessorDefinitions="HL2_EPISODIC;HL2MP;HL2_CLIENT_DLL;_DEBUG;fopen=dont_use_fopen;NO_STRING_T;CLIENT_DLL;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
 				ExceptionHandling="FALSE"
-				RuntimeLibrary="5"
+				RuntimeLibrary="1"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="3"
@@ -55,7 +55,7 @@ copy &quot;$(TargetDir)&quot;client.dll &quot;..\..\game\hl2mp\bin&quot;
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\lib-vc7\public"
-				IgnoreDefaultLibraryNames="LIBCMTD,LIBC,LIBCMT"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/client.pdb"
 				GenerateMapFile="TRUE"
@@ -114,7 +114,7 @@ copy &quot;$(TargetDir)&quot;client.dll &quot;..\..\game\hl2mp\bin&quot;
 				PreprocessorDefinitions="HL2_EPISODIC;HL2MP;HL2_CLIENT_DLL;NDEBUG;NO_STRING_T;CLIENT_DLL;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
 				StringPooling="TRUE"
 				ExceptionHandling="FALSE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="TRUE"
 				ForceConformanceInForLoopScope="TRUE"
@@ -147,7 +147,7 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\lib-vc7\public"
-				IgnoreDefaultLibraryNames="libcd.lib,LIBCD,LIBCMT,libcmtd"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/client.pdb"
 				GenerateMapFile="TRUE"
@@ -506,66 +506,6 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 			</File>
 			<File
 				RelativePath="cdll_util.cpp">
-			</File>
-			<File
-				RelativePath="..\game_shared\choreoactor.cpp">
-				<FileConfiguration
-					Name="Debug HL2MP|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release HL2MP|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreochannel.cpp">
-				<FileConfiguration
-					Name="Debug HL2MP|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release HL2MP|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreoevent.cpp">
-				<FileConfiguration
-					Name="Debug HL2MP|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release HL2MP|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\game_shared\choreoscene.cpp">
-				<FileConfiguration
-					Name="Debug HL2MP|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release HL2MP|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="cl_mat_stub.cpp">
@@ -2144,16 +2084,6 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_ar2.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_crossbow.cpp">
@@ -2169,80 +2099,30 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase_machinegun.cpp">
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbase_machinegun.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasebasebludgeon.cpp">
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasebasebludgeon.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.cpp">
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_physcannon.cpp">
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_physcannon.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_pistol.cpp">
@@ -2252,47 +2132,15 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_rpg.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_shotgun.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_slam.cpp">
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_slam.h">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCustomBuildTool"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\game_shared\hl2mp\weapon_smg1.cpp">
@@ -2306,18 +2154,6 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					Filter="">
 					<File
 						RelativePath=".\hl2mp\ui\backgroundpanel.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\hl2mp\ui\backgroundpanel.h">
@@ -2348,18 +2184,6 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 					</File>
 					<File
 						RelativePath=".\hl2mp\hud_deathnotice.cpp">
-						<FileConfiguration
-							Name="Debug HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release HL2MP|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
 					</File>
 				</Filter>
 			</Filter>
@@ -2990,10 +2814,10 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				RelativePath="..\public\vgui\IImage.h">
 			</File>
 			<File
-				RelativePath="iinput.h">
+				RelativePath="..\public\vgui\IInput.h">
 			</File>
 			<File
-				RelativePath="..\public\vgui\IInput.h">
+				RelativePath="iinput.h">
 			</File>
 			<File
 				RelativePath="..\public\vgui\IInputInternal.h">
@@ -3236,10 +3060,10 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				RelativePath="..\public\tier1\mempool.h">
 			</File>
 			<File
-				RelativePath="menu.h">
+				RelativePath="..\public\vgui_controls\Menu.h">
 			</File>
 			<File
-				RelativePath="..\public\vgui_controls\Menu.h">
+				RelativePath="menu.h">
 			</File>
 			<File
 				RelativePath="..\public\vgui_controls\MenuItem.h">
@@ -3793,27 +3617,34 @@ if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\lib-vc7\public\bitmap.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\mathlib.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\tier0.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\tier1.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\tier2.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\vgui_controls.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\vstdlib.lib">
-		</File>
+		<Filter
+			Name="Link Libraries"
+			Filter="">
+			<File
+				RelativePath="..\lib-vc7\public\bitmap.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\choreoobjects.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\mathlib.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\tier0.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\tier1.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\tier2.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\vgui_controls.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\vstdlib.lib">
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

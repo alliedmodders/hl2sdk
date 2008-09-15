@@ -1223,6 +1223,9 @@ int CNPC_Crow::SelectSchedule( void )
 
 			// TODO: need idle flying behaviors!
 		}
+		
+		default:
+			break;
 	}
 
 	return BaseClass::SelectSchedule();

@@ -190,14 +190,14 @@ template <class T = int>
 class CThreadLocalInt : public CThreadLocal<T>
 {
 public:
-	operator const T() const { return Get(); }
+	operator const T() const { return this->Get(); }
 	int	operator=( T i ) { Set( i ); return i; }
 
-	T operator++()					{ T i = Get(); Set( ++i ); return i; }
-	T operator++(int)				{ T i = Get(); Set( i + 1 ); return i; }
+	T operator++()					{ T i = this->Get(); Set( ++i ); return i; }
+	T operator++(int)				{ T i = this->Get(); Set( i + 1 ); return i; }
 
-	T operator--()					{ T i = Get(); Set( --i ); return i; }
-	T operator--(int)				{ T i = Get(); Set( i - 1 ); return i; }
+	T operator--()					{ T i = this->Get(); Set( --i ); return i; }
+	T operator--(int)				{ T i = this->Get(); Set( i - 1 ); return i; }
 };
 
 //---------------------------------------------------------
@@ -430,7 +430,8 @@ public:
 private:
 	bool TryLock( const uint32 threadId ) volatile
 	{
-		if ( threadId != m_ownerID && ThreadInterlockedCompareExchange( (volatile long *)&m_ownerID, (long)threadId, 0 ) != 0 )
+		volatile void *owner = &m_ownerID;
+		if ( threadId != m_ownerID && ThreadInterlockedCompareExchange( reinterpret_cast<volatile long *>(owner), (long)threadId, 0 ) != 0 )
 			return false;
 
 		m_depth++;

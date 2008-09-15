@@ -629,29 +629,22 @@ bool CAI_BaseActor::CheckSceneEventCompletion( CSceneEventInfo *info, float curr
 	Assert( info->m_pScene );
 	Assert( info->m_pEvent );
 
-	switch ( event->GetType() )
+	if (event->GetType() == CChoreoEvent::GENERIC)
 	{
-	case CChoreoEvent::GENERIC:
+		if (info->m_nType == SCENE_AI_HOLSTER || info->m_nType == SCENE_AI_UNHOLSTER)
 		{
-			switch( info->m_nType)
+			if (info->m_iLayer == -1)
 			{
-			case SCENE_AI_HOLSTER:
-			case SCENE_AI_UNHOLSTER:
-				{
-					if (info->m_iLayer == -1)
-					{
-						return true;
-					}
-					float preload = event->GetEndTime() - currenttime;
-					if (preload < 0)
-					{
-						return true;
-					}
-					float t = (1.0 - GetLayerCycle( info->m_iLayer )) * SequenceDuration( GetLayerSequence( info->m_iLayer ) );
-
-					return (t <= preload);
-				}
+				return true;
 			}
+			float preload = event->GetEndTime() - currenttime;
+			if (preload < 0)
+			{
+				return true;
+			}
+			float t = (1.0 - GetLayerCycle( info->m_iLayer )) * SequenceDuration( GetLayerSequence( info->m_iLayer ) );
+
+			return (t <= preload);
 		}
 	}
 
@@ -1664,6 +1657,8 @@ void CAI_BaseActor::PlayExpressionForState( NPC_STATE state )
 		{
 			SetExpression( STRING(m_iszDeathExpression) );
 		}
+		break;
+	default:
 		break;
 	}
 }

@@ -542,12 +542,12 @@ void CWateryDeathLeech::LeechThink( void )
 			dt = 0.1f;
 		}
 		m_nRenderMode = kRenderTransTexture;
-		int speed = max(1,256*dt); // fade out over 1 second
+		int speed = static_cast<int>(max(1,256*dt)); // fade out over 1 second
 
 		if ( m_iFadeState == -1 )
-			 SetRenderColorA( UTIL_Approach( 0, m_clrRender->a, speed ) );
+			 SetRenderColorA( static_cast<int>(UTIL_Approach( 0, m_clrRender->a, speed )) );
 		else
-			 SetRenderColorA( UTIL_Approach( 255, m_clrRender->a, speed ) );
+			 SetRenderColorA( static_cast<int>(UTIL_Approach( 255, m_clrRender->a, speed )) );
 
 		if ( m_clrRender->a == 0 )
 		{

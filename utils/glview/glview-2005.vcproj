@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="glview"
 	ProjectGUID="{BD1604CA-F401-4C4B-821C-251F5AE157FE}"
+	RootNamespace="glview"
 	>
 	<Platforms>
 		<Platform
@@ -27,9 +28,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="Copy to ..\..\..\game\bin"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\glview.exe;..\..\..\game\bin\glview.pdb"
+				Description="Copy to ..\..\..\bin"
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\glview.exe;..\..\..\bin\glview.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -79,7 +80,7 @@
 				OutputFile=".\Debug/glview.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/glview.pdb"
 				SubSystem="2"
@@ -124,9 +125,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="Copy to ..\..\..\game\bin"
-				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\glview.exe;..\..\..\game\bin\glview.pdb"
+				Description="Copy to ..\..\..\bin"
+				CommandLine="if exist ..\..\..\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\glview.exe;..\..\..\bin\glview.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -180,7 +181,7 @@
 				OutputFile=".\Release/glview.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="libcmtd.lib"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Release/glview.pdb"
 				GenerateMapFile="true"

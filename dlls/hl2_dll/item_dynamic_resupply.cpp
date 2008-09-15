@@ -218,12 +218,12 @@ void CItem_DynamicResupply::Precache( void )
 {
 	// Precache all the items potentially spawned
 	int i;
-	for ( i = 0; i < NUM_HEALTH_ITEMS; i++ )
+	for ( i = 0; i < static_cast<int>(NUM_HEALTH_ITEMS); i++ )
 	{
 		UTIL_PrecacheOther( g_DynamicResupplyHealthItems[i].sEntityName );
 	}
 
-	for ( i = 0; i < NUM_AMMO_ITEMS; i++ )
+	for ( i = 0; i < static_cast<int>(NUM_AMMO_ITEMS); i++ )
 	{
 		UTIL_PrecacheOther( g_DynamicResupplyAmmoItems[i].sEntityName );
 	}
@@ -293,7 +293,7 @@ void CItem_DynamicResupply::SpawnFullItem( CItem_DynamicResupply *pMaster, CBase
 	float flRatio[NUM_AMMO_ITEMS];
 	int i;
 	float flTotalProb = 0.0f;
-	for ( i = 0; i < NUM_AMMO_ITEMS; ++i )
+	for ( i = 0; i < static_cast<int>(NUM_AMMO_ITEMS); ++i )
 	{
 		int iAmmoType = GetAmmoDef()->Index( g_DynamicResupplyAmmoItems[i].sAmmoDef );
 		bool bCanSpawn = pPlayer->Weapon_GetWpnForAmmo( iAmmoType ) != NULL;
@@ -329,7 +329,7 @@ void CItem_DynamicResupply::SpawnFullItem( CItem_DynamicResupply *pMaster, CBase
 	}
 	
 	float flChoice = random->RandomFloat( 0.0f, flTotalProb ); 
-	for ( i = 0; i < NUM_AMMO_ITEMS; ++i )
+	for ( i = 0; i < static_cast<int>(NUM_AMMO_ITEMS); ++i )
 	{
 		if ( flChoice <= flRatio[i] )
 		{
@@ -399,7 +399,7 @@ void CItem_DynamicResupply::FindPotentialItems( int nCount, DynamicResupplyItems
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::ComputeHealthRatios( CItem_DynamicResupply* pMaster, CBasePlayer *pPlayer, int iDebug, SpawnInfo_t *pSpawnInfo )
 {
-	for ( int i = 0; i < NUM_HEALTH_ITEMS; i++ )
+	for ( int i = 0; i < static_cast<int>(NUM_HEALTH_ITEMS); i++ )
 	{
 		// Figure out the current level of this resupply type
 		float flMax;
@@ -435,7 +435,7 @@ void CItem_DynamicResupply::ComputeHealthRatios( CItem_DynamicResupply* pMaster,
 	if ( iDebug )
 	{
 		Msg("Calculating desired health ratios & deltas:\n");
-		for ( int i = 0; i < NUM_HEALTH_ITEMS; i++ )
+		for ( int i = 0; i < static_cast<int>(NUM_HEALTH_ITEMS); i++ )
 		{
 			Msg("   %s Desired Ratio: %.2f, Current Ratio: %.2f = Delta of %.2f\n", 
 				g_DynamicResupplyHealthItems[i].sEntityName, pSpawnInfo[i].m_flDesiredRatio, pSpawnInfo[i].m_flCurrentRatio, pSpawnInfo[i].m_flDelta );
@@ -449,7 +449,7 @@ void CItem_DynamicResupply::ComputeHealthRatios( CItem_DynamicResupply* pMaster,
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::ComputeAmmoRatios( CItem_DynamicResupply* pMaster, CBasePlayer *pPlayer, int iDebug, SpawnInfo_t *pSpawnInfo )
 {
-	for ( int i = 0; i < NUM_AMMO_ITEMS; i++ )
+	for ( int i = 0; i < static_cast<int>(NUM_AMMO_ITEMS); i++ )
 	{
 		// Get the ammodef's
 		int iAmmoType = GetAmmoDef()->Index( g_DynamicResupplyAmmoItems[i].sAmmoDef );
@@ -477,7 +477,7 @@ void CItem_DynamicResupply::ComputeAmmoRatios( CItem_DynamicResupply* pMaster, C
 	if ( iDebug )
 	{
 		Msg("Calculating desired ammo ratios & deltas:\n");
-		for ( int i = 0; i < NUM_AMMO_ITEMS; i++ )
+		for ( int i = 0; i < static_cast<int>(NUM_AMMO_ITEMS); i++ )
 		{
 			Msg("   %s Desired Ratio: %.2f, Current Ratio: %.2f = Delta of %.2f\n", 
 				g_DynamicResupplyAmmoItems[i].sEntityName, pSpawnInfo[i].m_flDesiredRatio, pSpawnInfo[i].m_flCurrentRatio, pSpawnInfo[i].m_flDelta );

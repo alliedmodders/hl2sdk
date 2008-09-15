@@ -276,14 +276,14 @@ inline I  CUtlLinkedList<T,I>::Next( I i ) const
 template <class T, class I>
 inline bool CUtlLinkedList<T,I>::IsValidIndex( I i ) const  
 { 
-	return (i < m_TotalElements) && (i >= 0) &&
+	return (i < m_TotalElements) && (i > 0) &&
 		((m_Memory[i].m_Previous != i) || (m_Memory[i].m_Next == i));
 }
 
 template <class T, class I>
 inline bool CUtlLinkedList<T,I>::IsInList( I i ) const
 {
-	return (i < m_TotalElements) && (i >= 0) && (Previous(i) != i);
+	return (i < m_TotalElements) && (i > 0) && (Previous(i) != i);
 }
 
 //-----------------------------------------------------------------------------

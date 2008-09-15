@@ -50,8 +50,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../game_shared/hl2,./,../Public,../Public/tier1,../game_shared,../utils/common,../dlls,../../dlls,../dlls/hl2_dll,./episodic"
-				PreprocessorDefinitions="HL2_EPISODIC;HL2_DLL;USES_SAVERESTORE;_DEBUG;fopen=dont_use_fopen;GAME_DLL;sprintf=use_Q_snprintf_instead_of_sprintf;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
+				AdditionalIncludeDirectories="../game_shared/hl2,./,../Public,../Public/tier1,../game_shared,../utils/common,../dlls,../../dlls,../dlls/hl2_dll,../dlls/episodic"
+				PreprocessorDefinitions="HL2_EPISODIC;HL2_DLL;USES_SAVERESTORE;_DEBUG;GAME_DLL;sprintf=use_Q_snprintf_instead_of_sprintf;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
 				ExceptionHandling="0"
 				RuntimeLibrary="1"
 				ForceConformanceInForLoopScope="true"
@@ -88,7 +88,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib\public"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)/server.pdb"
 				SubSystem="2"
@@ -160,7 +160,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../game_shared/hl2,./,../Public,../Public/tier1,../game_shared,../utils/common,../dlls,../../dlls,../dlls/hl2_dll,./episodic"
+				AdditionalIncludeDirectories="../game_shared/hl2,./,../Public,../Public/tier1,../game_shared,../utils/common,../dlls,../../dlls,../dlls/hl2_dll,../dlls/episodic"
 				PreprocessorDefinitions="HL2_EPISODIC;HL2_DLL;USES_SAVERESTORE;NDEBUG;GAME_DLL;sprintf=use_Q_snprintf_instead_of_sprintf;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
 				StringPooling="true"
 				ExceptionHandling="0"
@@ -201,7 +201,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib\public"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)/server.pdb"
 				GenerateMapFile="true"
@@ -4235,22 +4235,6 @@
 				<File
 					RelativePath=".\hl2_dll\vehicle_jeep.cpp"
 					>
-					<FileConfiguration
-						Name="Debug HL2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release HL2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="hl2_dll\vehicle_prisoner_pod.cpp"
@@ -5456,66 +5440,70 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\lib\public\choreoobjects.lib"
+		<Filter
+			Name="Link Libraries"
 			>
-		</File>
-		<File
-			RelativePath="..\lib\public\mathlib.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier0.lib"
-			>
-			<FileConfiguration
-				Name="Debug HL2|Win32"
+			<File
+				RelativePath="..\lib\public\choreoobjects.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=" "
-					CommandLine="&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release HL2|Win32"
+			</File>
+			<File
+				RelativePath="..\lib\public\mathlib.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=" "
-					CommandLine="&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier1.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\vgui_controls.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\vstdlib.lib"
-			>
-			<FileConfiguration
-				Name="Debug HL2|Win32"
+			</File>
+			<File
+				RelativePath="..\lib\public\tier0.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=" "
-					CommandLine="&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release HL2|Win32"
+				<FileConfiguration
+					Name="Debug HL2|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=" "
+						CommandLine="&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release HL2|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=" "
+						CommandLine="&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\lib\public\tier1.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=" "
-					CommandLine="&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-		</File>
+			</File>
+			<File
+				RelativePath="..\lib\public\vgui_controls.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\public\vstdlib.lib"
+				>
+				<FileConfiguration
+					Name="Debug HL2|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=" "
+						CommandLine="&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release HL2|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=" "
+						CommandLine="&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

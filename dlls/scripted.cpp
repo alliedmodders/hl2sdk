@@ -745,7 +745,7 @@ void CAI_ScriptedSequence::ScriptThink( void )
 	else if (FindEntity())
 	{
 		StartScript( );
-		DevMsg( 2,  "scripted_sequence \"%s\" using NPC \"%s\"(%s)\n", GetDebugName(), STRING( m_iszEntity ), GetTarget()->GetEntityName() );
+		DevMsg( 2,  "scripted_sequence \"%s\" using NPC \"%s\"(%s)\n", GetDebugName(), STRING( m_iszEntity ), STRING(GetTarget()->GetEntityName()) );
 	}
 	else
 	{
@@ -1616,7 +1616,7 @@ void CAI_ScriptedSchedule::ScriptThink( void )
 		pTarget = FindScriptEntity( (m_spawnflags & SF_SCRIPT_SEARCH_CYCLICALLY) != 0 );
 		if ( pTarget )
 		{
-			DevMsg( 2,  "scripted_schedule \"%s\" using NPC \"%s\"(%s)\n", GetDebugName(), STRING( m_iszEntity ), pTarget->GetEntityName() );
+			DevMsg( 2,  "scripted_schedule \"%s\" using NPC \"%s\"(%s)\n", GetDebugName(), STRING( m_iszEntity ), STRING(pTarget->GetEntityName()) );
 			StartSchedule( pTarget );
 			success = true;
 		}
@@ -1626,7 +1626,7 @@ void CAI_ScriptedSchedule::ScriptThink( void )
 		m_hLastFoundEntity = NULL;
 		while ( ( pTarget = FindScriptEntity( true ) ) != NULL )
 		{
-			DevMsg( 2,  "scripted_schedule \"%s\" using NPC \"%s\"(%s)\n", GetDebugName(), pTarget->GetEntityName(), STRING( m_iszEntity ) );
+			DevMsg( 2,  "scripted_schedule \"%s\" using NPC \"%s\"(%s)\n", GetDebugName(), STRING(pTarget->GetEntityName()), STRING( m_iszEntity ) );
 			StartSchedule( pTarget );
 			success = true;
 		}
@@ -1714,7 +1714,7 @@ void CAI_ScriptedSchedule::StartSchedule( CAI_BaseNPC *pTarget )
 	
 	pTarget->ForceDecisionThink();
 
-	Assert( m_nForceState >= 0 && m_nForceState < ARRAYSIZE(forcedStatesMap) );
+	Assert( m_nForceState >= 0 && m_nForceState < static_cast<int>(ARRAYSIZE(forcedStatesMap)) );
 	
 	NPC_STATE forcedState = forcedStatesMap[m_nForceState];
 
@@ -1790,6 +1790,8 @@ void CAI_ScriptedSchedule::StartSchedule( CAI_BaseNPC *pTarget )
 			bDidSetSchedule = true;
 			break;
 		}
+		default:
+			break;
 	}
 
 	if ( bDidSetSchedule )

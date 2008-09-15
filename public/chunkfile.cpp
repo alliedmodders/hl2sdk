@@ -33,15 +33,20 @@
 //=============================================================================//
 
 #include <fcntl.h>
+#include <errno.h>
+#ifdef _LINUX
+#include <sys/io.h>
+#else
 #include <io.h>
+#endif
 #include <math.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "ChunkFile.h"
-#include "Vector.h"
-#include "Vector4D.h"
+#include "chunkfile.h"
+#include "vector.h"
+#include "vector4d.h"
 #include "vstdlib/strtools.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -51,8 +56,9 @@
 // Fixes an infinite loop that occurs when loading certain VMFs. The bug
 // occurs with Worldcraft built with DevStudio SP4.
 //
+#ifdef _MSC_VER
 #pragma optimize("g", off)
-
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor.
@@ -534,6 +540,9 @@ ChunkFileResult_t CChunkFile::ReadNext(char *szName, char *szValue, int nValueSi
 						// String too long or unterminated string.
 						return ChunkFile_StringTooLong;
 					}
+
+					default:
+						break;
 				}
 			}
 
@@ -557,6 +566,9 @@ ChunkFileResult_t CChunkFile::ReadNext(char *szName, char *szValue, int nValueSi
 			{
 				return ChunkFile_StringTooLong;
 			}
+
+			default:
+				break;
 		}
 	}
 

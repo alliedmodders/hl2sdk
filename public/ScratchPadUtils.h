@@ -64,6 +64,7 @@ private:
 	class CLineInfo
 	{
 	public:
+		CLineInfo() : m_flLastTime(0.0f), m_flLastValue(0.0f) { };
 		bool m_bFirst;
 		float m_flLastTime;
 		float m_flLastValue;

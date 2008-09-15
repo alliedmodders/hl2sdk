@@ -61,4 +61,3 @@ struct XShaderHeader_t
 #pragma pack()
 
 #endif // SHADER_VCS_VERSION_H
-	

@@ -8,10 +8,13 @@
 // vice.cpp : Defines the entry point for the console application.
 //
 
+#undef GetCurrentDirectory
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include "windows.h"
 #include "vstdlib/strtools.h"
 #include <sys/stat.h>
 #include "conio.h"
@@ -21,15 +24,12 @@
 #include "tier0/dbg.h"
 #include "cmdlib.h"
 #include "vstdlib/icommandline.h"
-#include "windows.h"
 
 #include <IceKey.h	>
 #include <filesystem_tools.h>
 
 #define FF_TRYAGAIN 1
 #define FF_DONTPROCESS 2
-
-#undef GetCurrentDirectory
 
 static bool g_NoPause = false;
 static bool g_Quiet = false;

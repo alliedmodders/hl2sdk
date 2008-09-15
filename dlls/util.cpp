@@ -687,10 +687,10 @@ void UTIL_GetPlayerConnectionInfo( int playerIndex, int& ping, int &packetloss )
 		// Source pings by half a tick to match the old GoldSrc pings.
 		latency -= TICKS_TO_TIME( 0.5f );
 
-		ping = latency * 1000.0f; // as msecs
+		ping = static_cast<int>(latency * 1000.0f); // as msecs
 		ping = clamp( ping, 5, 1000 ); // set bounds, dont show pings under 5 msecs
 		
-		packetloss = 100.0f * nci->GetAvgLoss( FLOW_INCOMING ); // loss in percentage
+		packetloss = static_cast<int>(100.0f * nci->GetAvgLoss( FLOW_INCOMING )); // loss in percentage
 		packetloss = clamp( packetloss, 0, 100 );
 	}
 	else
@@ -704,7 +704,7 @@ static unsigned short FixedUnsigned16( float value, float scale )
 {
 	int output;
 
-	output = value * scale;
+	output = static_cast<int>(value * scale);
 	if ( output < 0 )
 		output = 0;
 	if ( output > 0xFFFF )
@@ -2151,7 +2151,7 @@ void UTIL_SetClientVisibilityPVS( edict_t *pClient, const unsigned char *pvs, in
 {
 	if ( pClient == UTIL_GetCurrentCheckClient() )
 	{
-		Assert( pvssize <= sizeof(g_CheckClient.m_checkVisibilityPVS) );
+		Assert( pvssize <= static_cast<int>(sizeof(g_CheckClient.m_checkVisibilityPVS)) );
 
 		g_CheckClient.m_bClientPVSIsExpanded = false;
 
@@ -2289,7 +2289,6 @@ CBaseEntity *UTIL_EntitiesInPVS( CBaseEntity *pPVSEntity, CBaseEntity *pStarting
 	Vector			org;
 	static byte		pvs[ MAX_MAP_CLUSTERS/8 ];
 	static Vector	lastOrg( 0, 0, 0 );
-	static int		lastCluster = -1;
 
 	if ( !pPVSEntity )
 		return NULL;

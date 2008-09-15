@@ -10,9 +10,9 @@
 #pragma once
 #endif
 
-#include "tier1/UtlBuffer.h"
-#include "tier1/UtlSymbol.h"
-#include "tier1/UtlDict.h"
+#include "tier1/utlbuffer.h"
+#include "tier1/utlsymbol.h"
+#include "tier1/utldict.h"
 
 class KeyValues;
 
@@ -120,7 +120,7 @@ public:
 
 	bool ReadStringTable( int numStrings, CUtlBuffer& buf );
 	
-	inline int CRunTimeKeyValuesStringTable::Count() const
+	inline int Count() const
 	{
 		return m_Strings.Count();
 	}

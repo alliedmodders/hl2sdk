@@ -1,0 +1,45 @@
+#
+# Choreoobjects Static Library Makefile
+#
+
+CHOREOOBJECTS_SRC_DIR=$(SOURCE_DIR)/choreoobjects
+GAMESHARED_SRC_DIR=$(SOURCE_DIR)/game_shared
+PUBLIC_SRC_DIR=$(SOURCE_DIR)/public
+TIER1_PUBLIC_SRC_DIR=$(SOURCE_DIR)/public/tier1
+
+CHOREOOBJECTS_OBJ_DIR=$(BUILD_OBJ_DIR)/choreoobjects_$(ARCH)
+
+# Extension of linux static library
+override SHLIBEXT=a
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+#DEBUG = -g -ggdb
+#CFLAGS+= $(DEBUG)
+
+INCLUDEDIRS=-I$(GAMESHARED_SRC_DIR) -I$(PUBLIC_SRC_DIR) -I$(TIER1_PUBLIC_SRC_DIR) -D_LIB -DCHOREOOBJECTS_STATIC_LIB
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) $(CFLAGS) -DARCH=$(ARCH) -o $@ -c $<
+
+#####################################################################
+
+CHOREOOBJECTS_OBJS= \
+	$(CHOREOOBJECTS_OBJ_DIR)/choreoactor.o \
+	$(CHOREOOBJECTS_OBJ_DIR)/choreochannel.o \
+	$(CHOREOOBJECTS_OBJ_DIR)/choreoevent.o \
+	$(CHOREOOBJECTS_OBJ_DIR)/choreoscene.o \
+
+all: dirs choreoobjects_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir -p $(BUILD_OBJ_DIR)
+	-mkdir -p $(CHOREOOBJECTS_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+choreoobjects_$(ARCH).$(SHLIBEXT): $(CHOREOOBJECTS_OBJS)
+	$(AR) $(BUILD_DIR)/$@ $(CHOREOOBJECTS_OBJS)
+
+$(CHOREOOBJECTS_OBJ_DIR)/%.o: $(CHOREOOBJECTS_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(CHOREOOBJECTS_OBJ_DIR)

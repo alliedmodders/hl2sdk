@@ -2702,7 +2702,7 @@ bool CNPC_PlayerCompanion::OverrideMove( float flInterval )
 			}
 		}
 
-		for ( int i = 0; i < ARRAYSIZE(classNames); i++ )
+		for ( int i = 0; i < static_cast<int>(ARRAYSIZE(classNames)); i++ )
 		{
 			if ( classNames[i] != NULL_STRING )
 			{

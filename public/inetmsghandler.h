@@ -164,5 +164,4 @@ public:
 	virtual bool ProcessConnectionlessPacket( netpacket_t *packet ) = 0;	// process a connectionless packet
 };
 
-
 #endif // INETMSGHANDLER_H

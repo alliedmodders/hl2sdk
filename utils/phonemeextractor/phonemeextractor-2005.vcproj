@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="phonemeextractor"
 	ProjectGUID="{8A35F55B-B5C2-47A0-8C4A-5857A8E20385}"
+	RootNamespace="phonemeextractor"
 	>
 	<Platforms>
 		<Platform
@@ -50,7 +51,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../common,../hlfaceposer,../../public,../../public/tier1,../sapi51/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;PHONEMEEXTRACTOR_EXPORTS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;PHONEMEEXTRACTOR_EXPORTS;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
@@ -80,7 +81,7 @@
 				OutputFile=".\Debug/phonemeextractor.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="LIBC;LIBCD;LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/phonemeextractor.pdb"
 				ImportLibrary=".\Debug/phonemeextractor.lib"
@@ -149,7 +150,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="../common,../hlfaceposer,../../public,../../public/tier1,../sapi51/include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;PHONEMEEXTRACTOR_EXPORTS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;PHONEMEEXTRACTOR_EXPORTS;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -180,7 +181,7 @@
 				OutputFile=".\Release/phonemeextractor.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="libcd.lib;libc.lib;libcmtd.lib"
+				IgnoreDefaultLibraryNames="LIBC;LIBCD;LIBCMTD"
 				ProgramDatabaseFile=".\Release/phonemeextractor.pdb"
 				ImportLibrary=".\Release/phonemeextractor.lib"
 				TargetMachine="1"
@@ -219,27 +220,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\Public\amd3dx.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Public\tier0\basetypes.h"
-				>
-			</File>
-			<File
 				RelativePath="..\common\cmdlib.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\common\cmdlib.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Public\commonmacros.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\public\tier0\dbg.h"
 				>
 			</File>
 			<File
@@ -247,19 +228,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\public\tier0\fasttimer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Public\FileSystem.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\public\filesystem_helpers.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\public\filesystem_helpers.h"
 				>
 			</File>
 			<File
@@ -271,27 +240,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\filesystem_tools.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\public\appframework\IAppSystem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Public\MATHLIB.H"
-				>
-			</File>
-			<File
 				RelativePath="..\..\public\tier0\memoverride.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\phonemeconverter.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\phonemeconverter.h"
 				>
 			</File>
 			<File
@@ -315,6 +268,121 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\public\sentence.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Link Libraries"
+			>
+			<File
+				RelativePath="..\..\lib\public\mathlib.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\sapi51\lib\i386\sapi.lib"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release IMS|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="if exist ..\..\..\game\bin\phonemeextractors\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\phonemeextractors\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\phonemeextractors&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\game\bin\phonemeextractors\&quot;$(TargetName)&quot;.map&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug IMS|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="if exist ..\..\..\game\bin\phonemeextractors\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\phonemeextractors\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\phonemeextractors&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\game\bin\phonemeextractors\&quot;$(TargetName)&quot;.map&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\tier0.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\tier1.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\vstdlib.lib"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;fi;fd"
+			>
+			<File
+				RelativePath="..\..\Public\amd3dx.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Public\tier0\basetypes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\cmdlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Public\commonmacros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\public\tier0\dbg.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\public\tier0\fasttimer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Public\FileSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\public\filesystem_helpers.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\filesystem_tools.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\public\appframework\IAppSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Public\MATHLIB.H"
+				>
+			</File>
+			<File
+				RelativePath=".\phonemeconverter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\public\phonemeextractor\phonemeextractor.h"
 				>
 			</File>
@@ -332,10 +400,6 @@
 			</File>
 			<File
 				RelativePath="..\sapi51\Include\sapiddk.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\public\sentence.cpp"
 				>
 			</File>
 			<File
@@ -395,70 +459,6 @@
 				>
 			</File>
 		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl"
-			>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-			>
-		</Filter>
-		<File
-			RelativePath="..\..\lib\public\mathlib.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\sapi51\lib\i386\sapi.lib"
-			>
-			<FileConfiguration
-				Name="Release IMS|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="if exist ..\..\..\game\bin\phonemeextractors\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\phonemeextractors\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\phonemeextractors&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\game\bin\phonemeextractors\&quot;$(TargetName)&quot;.map&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug IMS|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					CommandLine="if exist ..\..\..\game\bin\phonemeextractors\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\phonemeextractors\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\phonemeextractors&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map ..\..\..\game\bin\phonemeextractors\&quot;$(TargetName)&quot;.map&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier0.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier1.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\vstdlib.lib"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

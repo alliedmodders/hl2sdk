@@ -79,7 +79,7 @@ DataTableProp PropInt(
 	)
 {
 #if !defined (CLIENT_DLL)
-	return SendPropInt( pVarName, offset, sizeofVar, nBits, flags, rightShift );
+	return SendPropInt( pVarName, offset, sizeofVar, nBits, flags, (SendVarProxyFn)rightShift );
 #else
 	return RecvPropInt( pVarName, offset, sizeofVar, flags );
 #endif

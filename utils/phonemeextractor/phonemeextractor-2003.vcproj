@@ -50,7 +50,7 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 				OutputFile=".\Debug/phonemeextractor.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="LIBC;LIBCD;LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/phonemeextractor.pdb"
 				ImportLibrary=".\Debug/phonemeextractor.lib"
@@ -119,11 +119,12 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 				Outputs="..\..\..\game\bin\phonemeextractors\$(TargetName).dll"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/IGNORE:4089"
 				AdditionalDependencies="odbc32.lib odbccp32.lib "
 				OutputFile=".\Release/phonemeextractor.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames="libcd.lib;libc.lib;libcmtd.lib"
+				IgnoreDefaultLibraryNames="LIBC;LIBCD;LIBCMTD"
 				ProgramDatabaseFile=".\Release/phonemeextractor.pdb"
 				ImportLibrary=".\Release/phonemeextractor.lib"
 				TargetMachine="1"/>
@@ -285,42 +286,38 @@ if exist &quot;$(TargetDir)&quot;&quot;$(TargetName)&quot;.map copy &quot;$(Targ
 			</File>
 		</Filter>
 		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl">
+			Name="Link Libraries"
+			Filter="">
+			<File
+				RelativePath="..\..\lib-vc7\public\mathlib.lib">
+			</File>
+			<File
+				RelativePath="..\sapi51\lib\i386\sapi.lib">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\tier0.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\tier1.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\vstdlib.lib">
+			</File>
 		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
-		</Filter>
-		<File
-			RelativePath="..\..\lib-vc7\public\mathlib.lib">
-		</File>
-		<File
-			RelativePath="..\sapi51\lib\i386\sapi.lib">
-			<FileConfiguration
-				Name="Debug|Win32">
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32">
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier0.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier1.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\vstdlib.lib">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

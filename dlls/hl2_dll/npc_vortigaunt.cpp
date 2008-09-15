@@ -830,7 +830,7 @@ CBaseEntity*	CNPC_Vortigaunt::Kick( void )
 //------------------------------------------------------------------------------
 void CNPC_Vortigaunt::Claw( int iAttachment)
 {
-	CBaseEntity *pHurt = CheckTraceHullAttack( 40, Vector(-10,-10,-10), Vector(10,10,10),sk_vortigaunt_dmg_claw.GetFloat(), DMG_SLASH );
+	CBaseEntity *pHurt = CheckTraceHullAttack( 40, Vector(-10,-10,-10), Vector(10,10,10),sk_vortigaunt_dmg_claw.GetInt(), DMG_SLASH );
 	if ( pHurt )
 	{
 		pHurt->ViewPunch( QAngle(5,0,-18) );
@@ -1743,6 +1743,9 @@ int CNPC_Vortigaunt::SelectSchedule( void )
 			Speak( VORT_KILL );
 		}
 
+		break;
+
+	default:
 		break;
 	}
 	

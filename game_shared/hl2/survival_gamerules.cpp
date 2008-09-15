@@ -206,7 +206,7 @@ void CHalfLife2Survival::ParseSurvivalSettings( KeyValues *pSubKey )
 		}
 		else if ( !stricmp( pTestKey->GetName(), "spawnhealth" ) )
 		{
-			m_SurvivalSettings.m_iSpawnHealth = pTestKey->GetInt( NULL, 100 );
+			m_SurvivalSettings.m_iSpawnHealth = pTestKey->GetInt( 0, 100 );
 		}
 		else if ( !stricmp( pTestKey->GetName(), "allowedpickups" ) )
 		{
@@ -240,7 +240,7 @@ void CHalfLife2Survival::ParseSurvivalAmmo( KeyValues *pSubKey )
 void CHalfLife2Survival::ReadSurvivalScriptFile( void )
 {
 	char szFullName[512];
-	Q_snprintf( szFullName, sizeof( szFullName ), "maps/%s_survival.txt", gpGlobals->mapname );
+	Q_snprintf( szFullName, sizeof( szFullName ), "maps/%s_survival.txt", STRING(gpGlobals->mapname) );
 
 	KeyValues *pkvFile = new KeyValues( "Survival" );
 	if ( pkvFile->LoadFromFile( filesystem, szFullName, "MOD" ) )

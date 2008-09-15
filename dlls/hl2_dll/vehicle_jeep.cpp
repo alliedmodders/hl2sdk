@@ -1387,8 +1387,8 @@ void CPropJeep::CreateDangerSounds( void )
 		const float radius = speed * 0.4;
 		// 0.3 seconds ahead of the jeep
 		vecSpot = vecStart + vecDir * (speed * 0.3f);
-		CSoundEnt::InsertSound( SOUND_DANGER, vecSpot, radius, soundDuration, this, 0 );
-		CSoundEnt::InsertSound( SOUND_PHYSICS_DANGER, vecSpot, radius, soundDuration, this, 1 );
+		CSoundEnt::InsertSound( SOUND_DANGER, vecSpot, static_cast<int>(radius), soundDuration, this, 0 );
+		CSoundEnt::InsertSound( SOUND_PHYSICS_DANGER, vecSpot, static_cast<int>(radius), soundDuration, this, 1 );
 		//NDebugOverlay::Box(vecSpot, Vector(-radius,-radius,-radius),Vector(radius,radius,radius), 255, 0, 255, 0, soundDuration);
 
 #if 0

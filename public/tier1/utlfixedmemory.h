@@ -19,14 +19,15 @@
 
 #include "tier0/dbg.h"
 #include <string.h>
-#include <new.h>
+#include <new>
 #include "tier0/platform.h"
 
 #include "tier0/memdbgon.h"
 
+#ifdef _MSC_VER
 #pragma warning (disable:4100)
 #pragma warning (disable:4514)
-
+#endif
 
 //-----------------------------------------------------------------------------
 // The CUtlFixedMemory class:
@@ -92,9 +93,9 @@ private:
 
 private:
 	BlockHeader_t *m_pMemory;
+	T *m_pFirstFree;
 	int m_nAllocationCount;
 	int m_nGrowSize;
-	T *m_pFirstFree;
 };
 
 

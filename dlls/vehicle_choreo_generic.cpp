@@ -58,10 +58,10 @@ extern ConVar g_debug_vehicledriver;
 
 class CPropVehicleChoreoGeneric;
 
-static const char *pChoreoGenericFollowerBoneNames[] =
+/*static const char *pChoreoGenericFollowerBoneNames[] =
 {
 	"base",
-};
+};*/
 
 
 //-----------------------------------------------------------------------------
@@ -914,5 +914,4 @@ void CVehicleChoreoViewParser::SetDefaults( void *pData )
 	pView->flYawMax = CHOREO_VEHICLE_VIEW_YAW_MAX;
 	pView->flPitchMin = CHOREO_VEHICLE_VIEW_PITCH_MIN;
 	pView->flPitchMax = CHOREO_VEHICLE_VIEW_PITCH_MAX;
-
 }

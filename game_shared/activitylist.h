@@ -19,7 +19,7 @@ class CActivityRemap
 {
 public:
 
-	CActivityRemap()
+	CActivityRemap() : mappedActivity(ACT_IDLE)
 	{
 		pExtraBlock = NULL;
 	}

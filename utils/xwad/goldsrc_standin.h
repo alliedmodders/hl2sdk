@@ -10,6 +10,14 @@
 #pragma once
 #endif
 
+#if defined _MSC_VER && _MSC_VER >= 1400
+	#ifndef _CRT_SECURE_NO_WARNINGS
+		#define _CRT_SECURE_NO_WARNINGS
+	#endif
+
+	#pragma warning(disable : 4996)	// functions declared deprecated
+#endif
+
 
 typedef float vec_t;
 typedef float vec3_t[3];

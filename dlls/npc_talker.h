@@ -15,7 +15,7 @@
 #include <time.h>
 #endif
 
-#ifndef _XBOX
+#if !defined _XBOX && defined _MSC_VER
 #pragma warning(push)
 #include <set>
 #pragma warning(pop)

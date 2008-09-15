@@ -9,9 +9,10 @@
 
 #include "tier0/memdbgon.h"
 
+#ifdef _DEBUG
 static CUtlDict<int,int> *g_STDict = 0;
 static CUtlDict<int,int> *g_RTDict = 0;
-
+#endif
 
 char* AllocateStringHelper2( const char *pFormat, va_list marker )
 {

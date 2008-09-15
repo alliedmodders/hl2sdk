@@ -9,7 +9,14 @@
 #include "tier0/basetypes.h"
 #include "tier0/platform.h"
 #include "generichash.h"
+
+#if defined _WIN32 && !defined __CTYPE_H_
 #include <ctype.h>
+#endif
+
+#ifdef _LINUX
+#include <ctype.h>
+#endif
 
 //-----------------------------------------------------------------------------
 //

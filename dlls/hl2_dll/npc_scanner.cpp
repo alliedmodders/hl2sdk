@@ -1168,7 +1168,7 @@ void CNPC_CScanner::AttackDivebombCollide(float flInterval)
 			if (vBounceVel.z < 0)
 			{
 				float floorZ = GetFloorZ(GetAbsOrigin());
-				if (abs(GetAbsOrigin().z - floorZ) < 36)
+				if (abs(static_cast<int>(GetAbsOrigin().z - floorZ)) < 36)
 				{
 					vBounceVel.z = 0;
 				}
@@ -1359,7 +1359,7 @@ void CNPC_CScanner::PlayFlySound(void)
 
 	float	speed	 = GetCurrentVelocity().Length();
 	float	flVolume = 0.25f + (0.75f*(speed/GetMaxSpeed()));
-	int		iPitch	 = min( 255, 80 + (20*(speed/GetMaxSpeed())) );
+	int		iPitch	 = static_cast<int>(min( 255, 80 + (20*(speed/GetMaxSpeed())) ));
 
 	//Update our pitch and volume based on our speed
 	controller.SoundChangePitch( m_pEngineSound, iPitch, 0.1f );
@@ -2761,12 +2761,12 @@ void CNPC_CScanner::SpotlightUpdate(void)
 	}
 	else if (m_flSpotlightCurLength > m_flSpotlightMaxLength)		
 	{
-		m_hSpotlightTarget->SetRenderColorA( (1-((m_flSpotlightCurLength-m_flSpotlightMaxLength)/m_flSpotlightMaxLength)) );
+		m_hSpotlightTarget->SetRenderColorA( static_cast<int>((1-((m_flSpotlightCurLength-m_flSpotlightMaxLength)/m_flSpotlightMaxLength))) );
 		m_hSpotlight->SetFadeLength(m_flSpotlightMaxLength);
 	}
 	else
 	{
-		m_hSpotlightTarget->SetRenderColorA( 1.0 );
+		m_hSpotlightTarget->SetRenderColorA( 1 );
 		m_hSpotlight->SetFadeLength(m_flSpotlightCurLength);
 	}
 
@@ -2920,7 +2920,7 @@ void CNPC_CScanner::BlindFlashTarget( CBaseEntity *pTarget )
 
 		if ( tr.startsolid == false && tr.fraction == 1.0)
 		{
-			color32 white = { 255, 255, 255, SCANNER_FLASH_MAX_VALUE * dotPr };
+			color32 white = { 255, 255, 255, static_cast<byte>(SCANNER_FLASH_MAX_VALUE * dotPr) };
 			UTIL_ScreenFade( pTarget, white, 3.0, 0.5, FFADE_IN );
 		}
 	}
@@ -3890,6 +3890,9 @@ float CNPC_CScanner::GetGoalDistance( void )
 
 	case SCANNER_FLY_FOLLOW:
 		return ( SCANNER_FOLLOW_DIST );
+		break;
+
+	default:
 		break;
 	}
 

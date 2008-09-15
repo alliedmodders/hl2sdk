@@ -505,7 +505,7 @@ void CSpectatorGUI::Update()
 		
 		wchar_t playerText[ 80 ], playerName[ 64 ], health[ 10 ];
 		wcscpy( playerText, L"Unable to find #Spec_PlayerItem*" );
-		memset( playerName, 0x0, sizeof( playerName ) * sizeof( wchar_t ) );
+		memset( playerName, 0x0, sizeof( playerName ) );
 
 		localize()->ConvertANSIToUnicode( UTIL_SafeName(gr->GetPlayerName( playernum )), playerName, sizeof( playerName ) );
 		int iHealth = gr->GetHealth( playernum );

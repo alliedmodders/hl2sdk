@@ -61,6 +61,7 @@ END_DATADESC()
 //-----------------------------------------------------------------------------
 // List of maps in HL2 that we must apply our skybox fog fixup hack to
 //-----------------------------------------------------------------------------
+#ifdef HL2_DLL
 static const char *s_pBogusFogMaps[] =
 {
 	"d1_canals_01",
@@ -84,6 +85,7 @@ static const char *s_pBogusFogMaps[] =
 	"d3_citadel_01",
 	NULL
 };
+#endif
 
 //-----------------------------------------------------------------------------
 // Constructor, destructor

@@ -765,7 +765,7 @@ int CNPCSimpleTalker::PlayScriptedSentence( const char *pszSentence, float delay
 	m_useTime = gpGlobals->curtime + delay;
 
 	// Stop all idle speech until after the sentence has completed
-	DeferAllIdleSpeech( delay + random->RandomInt( 3.0f, 5.0f ) );
+	DeferAllIdleSpeech( delay + random->RandomFloat( 3.0f, 5.0f ) );
 
 	return sentenceIndex;
 }
@@ -1126,7 +1126,7 @@ bool CNPCSimpleTalker::ShouldSpeakRandom( int iChance, float flModifier )
 		if ( !flModifier )
 			return false;
 
-		iChance = floor( (float)iChance / flModifier );
+		iChance = static_cast<int>(floor( (float)iChance / flModifier ));
 	}
 
 	return (random->RandomInt(0,iChance) == 0);

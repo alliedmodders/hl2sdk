@@ -297,7 +297,7 @@ void MdlExceptionFilter( unsigned long code )
 	};
 
 	int nErrors = sizeof( errors ) / sizeof( errors[0] );
-	int i = 0;
+	int i;
 	for ( i=0; i < nErrors; i++ )
 	{
 		if ( errors[i].code == code )

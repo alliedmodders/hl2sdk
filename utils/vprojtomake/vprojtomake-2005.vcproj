@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="vprojtomake"
 	ProjectGUID="{EA55446E-BC04-491C-A9F0-605DFCBB213A}"
+	RootNamespace="vprojtomake"
 	>
 	<Platforms>
 		<Platform
@@ -28,8 +29,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist  ..\..\..\game\bin\vcpm.exe attrib -r ..\..\..\game\bin\vcpm.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\vcpm.exe&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\vcpm.exe"
+				CommandLine="if exist  ..\..\..\bin\vcpm.exe attrib -r ..\..\..\bin\vcpm.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\bin\vcpm.exe&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\vcpm.exe"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -125,8 +126,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist  ..\..\..\game\bin\vcpm.exe attrib -r ..\..\..\game\bin\vcpm.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\vcpm.exe&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\vcpm.exe"
+				CommandLine="if exist  ..\..\..\bin\vcpm.exe attrib -r ..\..\..\bin\vcpm.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\bin\vcpm.exe&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\vcpm.exe"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -179,7 +180,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\public"
-				IgnoreDefaultLibraryNames="LIBCMT"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/vprojtomake.pdb"
 				GenerateMapFile="true"
@@ -464,6 +465,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\public\appframework\IAppSystem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\public\tier1\KeyValues.h"
 				>
 			</File>
@@ -513,66 +518,61 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			Name="Link Libraries"
 			>
+			<File
+				RelativePath="..\..\lib\public\tier0.lib"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\tier1.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\tier2.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\vstdlib.lib"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+			</File>
 		</Filter>
-		<File
-			RelativePath="..\..\public\appframework\IAppSystem.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier0.lib"
-			>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier1.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier2.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\vstdlib.lib"
-			>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="hlmv"
 	ProjectGUID="{F3704DBF-8055-413C-B027-399E5DBCA4DD}"
+	RootNamespace="hlmv"
 	>
 	<Platforms>
 		<Platform
@@ -54,7 +55,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\mxtk\include,..\common,..\..\public,..\..\public\tier1,..\..\common"
-				PreprocessorDefinitions="WIN32;_WINDOWS;PROTECTED_THINGS_DISABLE;NDEBUG;_WIN32"
+				PreprocessorDefinitions="WIN32;_WINDOWS;PROTECTED_THINGS_DISABLE;NDEBUG;_WIN32;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -162,7 +163,7 @@
 				AdditionalOptions="/I /mxtk/include&quot; &quot;"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\mxtk\include,..\common,..\..\public,..\..\public\tier1,..\..\common"
-				PreprocessorDefinitions="VECTOR;WIN32;_WINDOWS;PROTECTED_THINGS_DISABLE;_DEBUG;_WIN32"
+				PreprocessorDefinitions="VECTOR;WIN32;_WINDOWS;PROTECTED_THINGS_DISABLE;_DEBUG;_WIN32;_CRT_SECURE_NO_DEPRECATE"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"

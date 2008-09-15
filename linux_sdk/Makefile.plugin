@@ -17,9 +17,9 @@ CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
 #DEBUG = -g -ggdb
 #CFLAGS+= $(DEBUG)
 
-INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -I$(TIER1_PUBLIC_SRC_DIR)  -Dstrcmpi=strcasecmp -D_alloca=alloca
+INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -I$(TIER1_PUBLIC_SRC_DIR) -Dstrcmpi=strcasecmp -D_alloca=alloca
 
-DO_CC=$(CPLUS) $(INCLUDEDIRS) -w $(CFLAGS) -DARCH=$(ARCH) -o $@ -c $<
+DO_CC=$(CPLUS) $(INCLUDEDIRS) $(CFLAGS) -DARCH=$(ARCH) -o $@ -c $<
 
 #####################################################################
 
@@ -29,15 +29,15 @@ PLUGIN_OBJS = \
         $(PLUGIN_OBJ_DIR)/serverplugin_bot.o \
 
 TIER0_OBJS = \
-	$(TIER0_OBJ_DIR)/memoverride-vc7.o \
+	$(TIER0_OBJ_DIR)/memoverride.o \
 
 all: dirs serverplugin_empty_$(ARCH).$(SHLIBEXT)
 
 dirs:
-	-mkdir $(BUILD_OBJ_DIR)
-	-mkdir $(PLUGIN_OBJ_DIR)
-	-mkdir $(PUBLIC_OBJ_DIR)
-	-mkdir $(TIER0_OBJ_DIR)
+	-mkdir -p $(BUILD_OBJ_DIR)
+	-mkdir -p $(PLUGIN_OBJ_DIR)
+	-mkdir -p $(PUBLIC_OBJ_DIR)
+	-mkdir -p $(TIER0_OBJ_DIR)
 	$(CHECK_DSP) $(SOURCE_DSP)
 
 serverplugin_empty_$(ARCH).$(SHLIBEXT): $(PLUGIN_OBJS) $(TIER0_OBJS)
@@ -51,4 +51,4 @@ $(TIER0_OBJ_DIR)/%.o: $(TIER0_PUBLIC_SRC_DIR)/%.cpp
 
 clean:
 	-rm -rf $(PLUGIN_OBJ_DIR)
-	-rm -f plugin_$(ARCH).$(SHLIBEXT)
+	-rm -f serverplugin_empty_$(ARCH).$(SHLIBEXT)

@@ -95,7 +95,9 @@ const char *g_ppszRandomCombineModels[] =
 
 #define HL2MPPLAYER_PHYSDAMAGE_SCALE 4.0f
 
+#ifdef _MSC_VER
 #pragma warning( disable : 4355 )
+#endif
 
 CHL2MP_Player::CHL2MP_Player() : m_PlayerAnimState( this )
 {
@@ -1541,7 +1543,7 @@ CHL2MPPlayerStateInfo *CHL2MP_Player::State_LookupInfo( HL2MPPlayerState state )
 		{ STATE_OBSERVER_MODE,	"STATE_OBSERVER_MODE",	&CHL2MP_Player::State_Enter_OBSERVER_MODE,	NULL, &CHL2MP_Player::State_PreThink_OBSERVER_MODE }
 	};
 
-	for ( int i=0; i < ARRAYSIZE( playerStateInfos ); i++ )
+	for ( size_t i=0; i < ARRAYSIZE( playerStateInfos ); i++ )
 	{
 		if ( playerStateInfos[i].m_iPlayerState == state )
 			return &playerStateInfos[i];

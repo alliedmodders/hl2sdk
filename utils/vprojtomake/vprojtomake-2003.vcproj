@@ -41,10 +41,10 @@
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist  ..\..\..\game\bin\vcpm.exe attrib -r ..\..\..\game\bin\vcpm.exe
-if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\vcpm.exe
+				CommandLine="if exist  ..\..\..\bin\vcpm.exe attrib -r ..\..\..\bin\vcpm.exe
+if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\bin\vcpm.exe
 "
-				Outputs="..\..\..\game\bin\vcpm.exe"/>
+				Outputs="..\..\..\bin\vcpm.exe"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib comsupp.lib msxml2.lib"
@@ -52,7 +52,7 @@ if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib-vc7\public"
-				IgnoreDefaultLibraryNames="LIBCMT,LIBCMTD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				ProgramDatabaseFile=".\Release/vprojtomake.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
@@ -110,10 +110,10 @@ if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist  ..\..\..\game\bin\vcpm.exe attrib -r ..\..\..\game\bin\vcpm.exe
-if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\vcpm.exe
+				CommandLine="if exist  ..\..\..\bin\vcpm.exe attrib -r ..\..\..\bin\vcpm.exe
+if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\bin\vcpm.exe
 "
-				Outputs="..\..\..\game\bin\vcpm.exe"/>
+				Outputs="..\..\..\bin\vcpm.exe"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/FIXED:NO"
@@ -122,7 +122,7 @@ if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib-vc7\public"
-				IgnoreDefaultLibraryNames="LIBCMT,LIBCMTD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/vprojtomake.pdb"
 				GenerateMapFile="TRUE"
@@ -363,6 +363,9 @@ if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\
 				RelativePath="..\..\Public\FileSystem.h">
 			</File>
 			<File
+				RelativePath="..\..\public\appframework\IAppSystem.h">
+			</File>
+			<File
 				RelativePath="..\..\public\tier1\KeyValues.h">
 			</File>
 			<File
@@ -400,24 +403,21 @@ if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			Name="Link Libraries"
+			Filter="">
+			<File
+				RelativePath="..\..\lib-vc7\public\tier0.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\tier1.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\tier2.lib">
+			</File>
+			<File
+				RelativePath="..\..\lib-vc7\public\vstdlib.lib">
+			</File>
 		</Filter>
-		<File
-			RelativePath="..\..\public\appframework\IAppSystem.h">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier0.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier1.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\tier2.lib">
-		</File>
-		<File
-			RelativePath="..\..\lib-vc7\public\vstdlib.lib">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

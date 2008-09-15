@@ -506,7 +506,7 @@ void  CUtlFixedLinkedList<T>::RemoveAll()
 	// This doesn't actually deallocate the memory... purge does that
 	m_Memory.RemoveAll();
 	m_TotalElements = 0;
-	m_FirstFree = NULL;
+	m_FirstFree = 0;
 	
 	// Clear everything else out
 	m_Head = InvalidIndex(); 

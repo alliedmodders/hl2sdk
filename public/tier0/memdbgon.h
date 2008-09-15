@@ -11,7 +11,7 @@
 // to include this potentially multiple times (since we can deactivate debugging
 // by including memdbgoff.h)
 
-#if !defined(STEAM) && !defined(NO_MALLOC_OVERRIDE)
+#if !defined(STEAM) && !defined(NO_MALLOC_OVERRIDE) && defined(_WIN32)
 
 // SPECIAL NOTE #2: This must be the final include in a .cpp or .h file!!!
 
@@ -172,7 +172,7 @@ inline char *MemAlloc_StrDup(const char *pString)
 	if (!pString)
 		return NULL;
 
-	int len = strlen(pString) + 1;
+	size_t len = strlen(pString) + 1;
 	if ((pMemory = (char *)g_pMemAlloc->Alloc(len)) != NULL)
 	{
 		return strcpy( pMemory, pString );
@@ -188,7 +188,7 @@ inline wchar_t *MemAlloc_WcStrDup(const wchar_t *pString)
 	if (!pString)
 		return NULL;
 
-	int len = (wcslen(pString) + 1);
+	size_t len = (wcslen(pString) + 1);
 	if ((pMemory = (wchar_t *)g_pMemAlloc->Alloc(len * sizeof(wchar_t))) != NULL)
 	{
 		return wcscpy( pMemory, pString );

@@ -2813,7 +2813,7 @@ void CreateStuckTable( void )
 			}
 		}
 	}
-	Assert( idx < sizeof(rgv3tStuckTable)/sizeof(rgv3tStuckTable[0]));
+	Assert( idx < static_cast<int>(sizeof(rgv3tStuckTable)/sizeof(rgv3tStuckTable[0])));
 }
 #else
 extern void CreateStuckTable( void );
@@ -4202,7 +4202,9 @@ void CGameMovement::FullTossMove( void )
 // Purpose: 
 //-----------------------------------------------------------------------------
 
+#ifdef _MSC_VER
 #pragma warning (disable : 4701)
+#endif
 
 void CGameMovement::IsometricMove( void )
 {
@@ -4235,4 +4237,6 @@ void CGameMovement::IsometricMove( void )
 	mv->m_vecVelocity.Init();
 }
 
+#ifdef _MSC_VER
 #pragma warning (default : 4701)
+#endif

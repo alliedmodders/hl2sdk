@@ -84,7 +84,7 @@ void CAlyxEmpEffect::SetTargetEntity( const char *szEntityName )
 		if ( pTargetEnt == NULL )
 		{
 			Assert(0);
-			DevMsg( "Unable to find env_alyxemp (%s) target %s!\n", GetEntityName(), szEntityName );
+			DevMsg( "Unable to find env_alyxemp (%s) target %s!\n", STRING(GetEntityName()), szEntityName );
 		}
 	}
 

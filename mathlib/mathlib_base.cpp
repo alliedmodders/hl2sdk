@@ -21,8 +21,10 @@
 #include "tier0/vprof.h"
 //#define _VPROF_MATHLIB
 
+#ifdef _MSC_VER
 #pragma warning(disable:4244)   // "conversion from 'const int' to 'float', possible loss of data"
 #pragma warning(disable:4730)	// "mixing _m64 and floating point expressions may result in incorrect code"
+#endif
 
 #include "mathlib.h"
 #include "amd3dx.h"
@@ -289,7 +291,9 @@ void FASTCALL _3DNow_VectorNormalizeFast (Vector& vec)
 }
 
 // JAY: This complains with the latest processor pack
+#ifdef _MSC_VER
 #pragma warning(disable: 4730)
+#endif
 
 float _3DNow_InvRSquared(const float* v)
 {
@@ -470,7 +474,9 @@ float FASTCALL _SSE_VectorNormalize (Vector& vec)
 #endif
 
 	float *v = &vec[0];
+#ifdef _WIN32
 	float *r = &result[0];
+#endif
 
 	float	radius = 0.f;
 	// Blah, get rid of these comparisons ... in reality, if you have all 3 as zero, it shouldn't 
@@ -588,7 +594,7 @@ float _SSE_InvRSquared(const float* v)
                         "rcpss           %%xmm1, %%xmm0 \n\t"
 			"movss           %%xmm0, %0 \n\t" 
                         : "=m" (inv_r2)
-                        : "m" (*v), "0" (inv_r2)
+                        : "m" (*v), "m" (inv_r2)
  		);
 
 #else
@@ -1447,11 +1453,13 @@ void VectorRotateSSE( const float *in1, const matrix3x4_t& in2, float *out1 )
 void TransformAndRotate( const Vector &srcPos, const Vector &srcNorm, 
 							const matrix3x4_t& mat, Vector &pos, Vector &norm )
 {
+#ifdef _WIN32
 	const float *pMat = &mat[0][0];
-	const float *pPos = &srcPos.x;
 	const float *pNormal = &srcNorm.x;
-	float *pPosOut = &pos.x;
 	float *pNormalOut = &norm.x;
+#endif
+	const float *pPos = &srcPos.x;
+	float *pPosOut = &pos.x;
 
 //	Vector pt, nt;
 //	pt[0] = DotProduct(vert.m_vecPosition.Base(), mat[0]) + mat[0][3];
@@ -3010,7 +3018,7 @@ void BuildGammaTable( float gamma, float texGamma, float brightness, int overbri
 
 	for (i=0 ; i<256 ; i++)
 	{
-		inf = 255 * pow ( i/255.f, g1 ); 
+		inf = static_cast<int>(255 * pow ( i/255.f, g1 )); 
 		if (inf < 0)
 			inf = 0;
 		if (inf > 255)
@@ -3035,7 +3043,7 @@ void BuildGammaTable( float gamma, float texGamma, float brightness, int overbri
 			f = 0.125 + ((f - g3) / (1.0 - g3)) * 0.875;
 
 		// convert linear space to desired gamma space
-		inf = 255 * pow ( f, g ); 
+		inf = static_cast<int>(255 * pow ( f, g )); 
 
 		if (inf < 0)
 			inf = 0;
@@ -3069,7 +3077,7 @@ void BuildGammaTable( float gamma, float texGamma, float brightness, int overbri
 	for (i=0 ; i<1024 ; i++)
 	{
 		// convert from linear space (0..1) to nonlinear texture space (0..255)
-		lineartotexture[i] =  pow( i / 1023.0, 1.0 / texGamma ) * 255;
+		lineartotexture[i] =  static_cast<int>(pow( i / 1023.0, 1.0 / texGamma ) * 255);
 	}
 
 	BuildExponentTable();
@@ -3186,7 +3194,7 @@ int LinearToTexture( float f )
 {
 	Assert( s_bMathlibInitialized );
 	int i;
-	i = f * 1023;	// assume 0..1 range
+	i = static_cast<int>(f * 1023);	// assume 0..1 range
 	if (i < 0)
 		i = 0;
 	if (i > 1023)
@@ -3201,7 +3209,7 @@ int LinearToScreenGamma( float f )
 {
 	Assert( s_bMathlibInitialized );
 	int i;
-	i = f * 1023;	// assume 0..1 range
+	i = static_cast<int>(f * 1023);	// assume 0..1 range
 	if (i < 0)
 		i = 0;
 	if (i > 1023)
@@ -4303,7 +4311,9 @@ void Hermite_SplineBasis( float t, float basis[4] )
 //-----------------------------------------------------------------------------
 
 // BUG: the VectorSubtract()'s calls go away if the global optimizer is enabled
+#ifdef _MSC_VER
 #pragma optimize( "g", off )
+#endif
 
 void Hermite_Spline( const Vector &p0, const Vector &p1, const Vector &p2, float t, Vector& output )
 {
@@ -4313,7 +4323,9 @@ void Hermite_Spline( const Vector &p0, const Vector &p1, const Vector &p2, float
 	Hermite_Spline( p1, p2, e10, e21, t, output );
 }
 
+#ifdef _MSC_VER
 #pragma optimize( "", on )
+#endif
 
 float Hermite_Spline( float p0, float p1, float p2,	float t )
 {
@@ -5060,7 +5072,9 @@ bool CalcLineToLineIntersectionSegment(
    return true;
 }
 
+#ifdef _MSC_VER
 #pragma optimize( "", off )
+#endif
 
 // stuff from windows.h
 #ifndef _XBOX
@@ -5071,8 +5085,9 @@ typedef unsigned int DWORD;
 #define EXCEPTION_EXECUTE_HANDLER       1
 #endif
 
-
+#ifdef _MSC_VER
 #pragma optimize( "", on )
+#endif
 
 static bool s_b3DNowEnabled = false;
 static bool s_bMMXEnabled = false;

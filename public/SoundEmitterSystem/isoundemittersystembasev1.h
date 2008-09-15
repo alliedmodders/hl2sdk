@@ -84,7 +84,7 @@ struct CSoundParametersInternal
 	// CSoundParametersInternal( const CSoundParametersInternal& src );
 
 	bool CompareInterval( const interval_t& i1, const interval_t& i2 ) const;
-	bool CSoundParametersInternal::operator == ( const CSoundParametersInternal& other ) const;
+	bool operator == ( const CSoundParametersInternal& other ) const;
 
 	const char *VolumeToString( void );
 	const char *ChannelToString( void );

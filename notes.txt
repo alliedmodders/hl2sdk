@@ -1,0 +1,18 @@
+*********
+* About *
+*********
+This version of the Source/Half-Life 2 SDK attempts to provide support for GCC 4.x and remove as many
+warnings as possible when compiling under Windows or Linux. In addition, the -fpermissive option has
+been removed from the Linux makefiles and -Wall has been added.
+
+*********
+* Notes *
+*********
+1. The file "Makefile.mod" located in the linux_sdk directory has been renamed to "Makefile.game" in
+   order to avoid potential conflicts with the Modula-2 compiler. GNU Make may issue an error about the
+   file with its original name and try to execute m2c (the Modula-2 compiler program).
+
+2. Makefiles for choreoobjects_i486.a, mathlib_i486.a, and tier1_i486.a have been added in the linux_sdk
+   directory to ease compiling of these static libraries on Linux if it ever becomes necessary.
+   
+3. The SDK does not currently compile with GCC 4.2. This will be addressed in the future.

@@ -37,16 +37,18 @@ inline T MemAlign( T val, unsigned alignment )
 //-----------------------------------------------------------------------------
 
 CMemoryStack::CMemoryStack()
- : 	m_pBase( NULL ),
-	m_pNextAlloc( NULL ),
-	m_pAllocLimit( NULL ),
+ :	m_pNextAlloc( NULL ),
 	m_pCommitLimit( NULL ),
+	m_pAllocLimit( NULL ),
+	m_pBase( NULL ),
+	m_maxSize( 0 ),
+#if defined (_LINUX)
+	m_alignment( 16 )
+#elif defined(_WIN32)
 	m_alignment( 16 ),
-#if defined(_WIN32)
  	m_commitSize( 0 ),
-	m_minCommit( 0 ),
+	m_minCommit( 0 )
 #endif
- 	m_maxSize( 0 )
 {
 }
 	

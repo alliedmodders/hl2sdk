@@ -256,7 +256,7 @@ inline void CCycleCount::Init()
 inline void CCycleCount::Init( float initTimeMsec )
 {
 	if ( g_ClockSpeedMillisecondsMultiplier > 0 )
-		m_Int64 = initTimeMsec / g_ClockSpeedMillisecondsMultiplier;
+		m_Int64 = static_cast<int64>(initTimeMsec / g_ClockSpeedMillisecondsMultiplier);
 	else
 		m_Int64 = 0;
 }
@@ -268,7 +268,7 @@ inline void CCycleCount::Init( int64 cycles )
 
 inline void CCycleCount::Sample()
 {
-	unsigned long* pSample = (unsigned long *)&m_Int64;
+	void* pSample = &m_Int64;
 #ifdef _WIN32
 	__asm
 	{

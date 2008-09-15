@@ -38,6 +38,7 @@ void LightDesc_t::ComputeLightAtPoints( const FourVectors &pos, const FourVector
 										FourVectors &color, bool DoHalfLambert ) const
 {
 	FourVectors delta;
+	
 	Assert((m_Type==MATERIAL_LIGHT_POINT) || (m_Type==MATERIAL_LIGHT_SPOT) || (m_Type==MATERIAL_LIGHT_DIRECTIONAL));
 	switch (m_Type)
 	{
@@ -50,6 +51,12 @@ void LightDesc_t::ComputeLightAtPoints( const FourVectors &pos, const FourVector
 		case MATERIAL_LIGHT_DIRECTIONAL:
 			delta.DuplicateVector(m_Direction);
 			delta*=-1.0;
+			break;
+			
+		default:
+			delta.x = Four_Zeros;
+			delta.y = Four_Zeros;
+			delta.z = Four_Zeros;
 			break;
 	}
 
@@ -122,6 +129,9 @@ void LightDesc_t::ComputeLightAtPoints( const FourVectors &pos, const FourVector
 		break;
 			
 		case MATERIAL_LIGHT_DIRECTIONAL:
+			break;
+			
+		default:
 			break;
 
 	}

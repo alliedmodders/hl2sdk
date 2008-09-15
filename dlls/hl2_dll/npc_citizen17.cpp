@@ -116,23 +116,23 @@ struct citizen_expression_list_t
 // Scared
 citizen_expression_list_t ScaredExpressions[STATES_WITH_EXPRESSIONS] =
 {
-	{ "scenes/Expressions/citizen_scared_idle_01.vcd" },
-	{ "scenes/Expressions/citizen_scared_alert_01.vcd" },
-	{ "scenes/Expressions/citizen_scared_combat_01.vcd" },
+	{{ "scenes/Expressions/citizen_scared_idle_01.vcd" }},
+	{{ "scenes/Expressions/citizen_scared_alert_01.vcd" }},
+	{{ "scenes/Expressions/citizen_scared_combat_01.vcd" }},
 };
 // Normal
 citizen_expression_list_t NormalExpressions[STATES_WITH_EXPRESSIONS] =
 {
-	{ "scenes/Expressions/citizen_normal_idle_01.vcd" },
-	{ "scenes/Expressions/citizen_normal_alert_01.vcd" },
-	{ "scenes/Expressions/citizen_normal_combat_01.vcd" },
+	{{ "scenes/Expressions/citizen_normal_idle_01.vcd" }},
+	{{ "scenes/Expressions/citizen_normal_alert_01.vcd" }},
+	{{ "scenes/Expressions/citizen_normal_combat_01.vcd" }},
 };
 // Angry
 citizen_expression_list_t AngryExpressions[STATES_WITH_EXPRESSIONS] =
 {
-	{ "scenes/Expressions/citizen_angry_idle_01.vcd" },
-	{ "scenes/Expressions/citizen_angry_alert_01.vcd" },
-	{ "scenes/Expressions/citizen_angry_combat_01.vcd" },
+	{{ "scenes/Expressions/citizen_angry_idle_01.vcd" }},
+	{{ "scenes/Expressions/citizen_angry_alert_01.vcd" }},
+	{{ "scenes/Expressions/citizen_angry_combat_01.vcd" }},
 };
 
 //-----------------------------------------------------------------------------
@@ -374,15 +374,15 @@ void CNPC_Citizen::Precache()
 
 	for ( int i = 0; i < STATES_WITH_EXPRESSIONS; i++ )
 	{
-		for ( int j = 0; j < ARRAYSIZE(ScaredExpressions[i].szExpressions); j++ )
+		for ( int j = 0; j < static_cast<int>(ARRAYSIZE(ScaredExpressions[i].szExpressions)); j++ )
 		{
 			PrecacheInstancedScene( ScaredExpressions[i].szExpressions[j] );
 		}
-		for ( int j = 0; j < ARRAYSIZE(NormalExpressions[i].szExpressions); j++ )
+		for ( int j = 0; j < static_cast<int>(ARRAYSIZE(NormalExpressions[i].szExpressions)); j++ )
 		{
 			PrecacheInstancedScene( NormalExpressions[i].szExpressions[j] );
 		}
-		for ( int j = 0; j < ARRAYSIZE(AngryExpressions[i].szExpressions); j++ )
+		for ( int j = 0; j < static_cast<int>(ARRAYSIZE(AngryExpressions[i].szExpressions)); j++ )
 		{
 			PrecacheInstancedScene( AngryExpressions[i].szExpressions[j] );
 		}
@@ -579,7 +579,7 @@ void CNPC_Citizen::SelectModel()
 		Q_strncpy(szMapName, STRING(gpGlobals->mapname), sizeof(szMapName) );
 		Q_strlower(szMapName);
 
-		for ( int i = 0; i < ARRAYSIZE(CitizenTypeMappings); i++ )
+		for ( int i = 0; i < static_cast<int>(ARRAYSIZE(CitizenTypeMappings)); i++ )
 		{
 			if ( Q_stristr( szMapName, CitizenTypeMappings[i].pszMapTag ) )
 			{
@@ -613,7 +613,7 @@ void CNPC_Citizen::SelectModel()
 			for ( i = 0; i < g_AI_Manager.NumAIs(); i++ )
 			{
 				CNPC_Citizen *pCitizen = dynamic_cast<CNPC_Citizen *>(g_AI_Manager.AccessAIs()[i]);
-				if ( pCitizen && pCitizen != this && pCitizen->m_iHead >= 0 && pCitizen->m_iHead < ARRAYSIZE(g_ppszRandomHeads) )
+				if ( pCitizen && pCitizen != this && pCitizen->m_iHead >= 0 && pCitizen->m_iHead < static_cast<int>(ARRAYSIZE(g_ppszRandomHeads)) )
 				{
 					headCounts[pCitizen->m_iHead]++;
 				}
@@ -622,7 +622,7 @@ void CNPC_Citizen::SelectModel()
 			// Find all candidates
 			CUtlVectorFixed<HeadCandidate_t, ARRAYSIZE(g_ppszRandomHeads)> candidates;
 
-			for ( i = 0; i < ARRAYSIZE(g_ppszRandomHeads); i++ )
+			for ( i = 0; i < static_cast<int>(ARRAYSIZE(g_ppszRandomHeads)); i++ )
 			{
 				if ( !gender || g_ppszRandomHeads[i][0] == gender )
 				{
@@ -666,7 +666,7 @@ void CNPC_Citizen::SelectModel()
 			pszModelName++;
 			if ( m_iHead == -1 )
 			{
-				for ( int i = 0; i < ARRAYSIZE(g_ppszRandomHeads); i++ )
+				for ( int i = 0; i < static_cast<int>(ARRAYSIZE(g_ppszRandomHeads)); i++ )
 				{
 					if ( Q_stricmp( g_ppszRandomHeads[i], pszModelName ) == 0 )
 					{
@@ -991,8 +991,8 @@ void CNPC_Citizen::PrescheduleThink()
 		float b = bMin + ( bMax - bMin ) * fade;
 
 		// THIS IS A PLACEHOLDER UNTIL WE HAVE A REAL DESIGN & ART -- DO NOT REMOVE
-		NDebugOverlay::Line( Vector( mins.x, GetAbsOrigin().y, GetAbsOrigin().z+1 ), Vector( maxs.x, GetAbsOrigin().y, GetAbsOrigin().z+1 ), r, g, b, false, .11 );
-		NDebugOverlay::Line( Vector( GetAbsOrigin().x, mins.y, GetAbsOrigin().z+1 ), Vector( GetAbsOrigin().x, maxs.y, GetAbsOrigin().z+1 ), r, g, b, false, .11 );
+		NDebugOverlay::Line( Vector( mins.x, GetAbsOrigin().y, GetAbsOrigin().z+1 ), Vector( maxs.x, GetAbsOrigin().y, GetAbsOrigin().z+1 ), static_cast<int>(r), static_cast<int>(g), static_cast<int>(b), false, .11 );
+		NDebugOverlay::Line( Vector( GetAbsOrigin().x, mins.y, GetAbsOrigin().z+1 ), Vector( GetAbsOrigin().x, maxs.y, GetAbsOrigin().z+1 ), static_cast<int>(r), static_cast<int>(g), static_cast<int>(b), false, .11 );
 	}
 	if( GetEnemy() && g_ai_citizen_show_enemy.GetBool() )
 	{
@@ -1708,7 +1708,7 @@ void CNPC_Citizen::HandleAnimEvent( animevent_t *pEvent )
 			// If I have a name, make my weapon match it with "_weapon" appended
 			if ( GetEntityName() != NULL_STRING )
 			{
-				pWeapon->SetName( AllocPooledString(UTIL_VarArgs("%s_weapon", GetEntityName())) );
+				pWeapon->SetName( AllocPooledString(UTIL_VarArgs("%s_weapon", STRING(GetEntityName()))) );
 			}
 			Weapon_Equip( pWeapon );
 		}
@@ -1943,7 +1943,7 @@ Vector CNPC_Citizen::GetActualShootPosition( const Vector &shootOrigin )
 				128,
 				-128
 			};
-			for ( int i = 0; i < ARRAYSIZE(flShotOffsets); i++ )
+			for ( int i = 0; i < static_cast<int>(ARRAYSIZE(flShotOffsets)); i++ )
 			{
 				Vector vecTest = vecTarget + (vecRight * flShotOffsets[i]);
 				// Add some random height to it
@@ -3044,7 +3044,7 @@ int __cdecl SquadSortFunc( const SquadMemberInfo_t *pLeft, const SquadMemberInfo
 		return 1;
 	}
 
-	return ( pLeft->distSq - pRight->distSq );
+	return static_cast<int>(pLeft->distSq - pRight->distSq);
 }
 
 CAI_BaseNPC *CNPC_Citizen::GetSquadCommandRepresentative()
@@ -3281,9 +3281,9 @@ bool CNPC_Citizen::ShouldHealTarget( CBaseEntity *pTarget, bool bActiveUse )
 					int requiredHealth;
 
 					if ( bTargetIsPlayer )
-						requiredHealth = pTarget->GetMaxHealth() - sk_citizen_heal_player.GetFloat();
+						requiredHealth = pTarget->GetMaxHealth() - sk_citizen_heal_player.GetInt();
 					else
-						requiredHealth = pTarget->GetMaxHealth() * sk_citizen_heal_player_min_pct.GetFloat();
+						requiredHealth = pTarget->GetMaxHealth() * sk_citizen_heal_player_min_pct.GetInt();
 
 					if ( ( pTarget->m_iHealth <= requiredHealth ) && IRelationType( pTarget ) == D_LI )
 						return true;

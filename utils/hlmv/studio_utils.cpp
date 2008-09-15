@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
+#include "mx/mx.h"
 #include "StudioModel.h"
 #include "vphysics/constraints.h"
 #include "physmesh.h"
@@ -21,7 +22,6 @@
 #include "ViewerSettings.h"
 #include "bone_setup.h"
 #include "UtlMemory.h"
-#include "mx/mx.h"
 #include "filesystem.h"
 #include "IStudioRender.h"
 #include "materialsystem/IMaterialSystemHardwareConfig.h"

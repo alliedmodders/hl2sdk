@@ -146,7 +146,7 @@ public:
 	void Clear()
 	{
 		m_simThinkList.Purge();
-		for ( int i = 0; i < ARRAYSIZE(m_entinfoIndex); i++ )
+		for ( size_t i = 0; i < ARRAYSIZE(m_entinfoIndex); i++ )
 		{
 			m_entinfoIndex[i] = 0xFFFF;
 		}

@@ -1132,7 +1132,7 @@ void CAI_BaseNPC::StartTask( const Task_t *pTask )
 		{
 			if (!GetHintNode())
 			{
-				SetHintNode( CAI_HintManager::FindHint( this, HINT_NONE, pTask->flTaskData, 2000 ) );
+				SetHintNode( CAI_HintManager::FindHint( this, HINT_NONE, static_cast<int>(pTask->flTaskData), 2000 ) );
 			}
 			if (GetHintNode())
 			{
@@ -1330,7 +1330,7 @@ void CAI_BaseNPC::StartTask( const Task_t *pTask )
 		break;
 
 	case TASK_SET_SCHEDULE:
-		if ( !SetSchedule( pTask->flTaskData ) )
+		if ( !SetSchedule( static_cast<int>(pTask->flTaskData) ) )
 			TaskFail(FAIL_SCHEDULE_NOT_FOUND);
 		break;
 
@@ -2537,7 +2537,7 @@ void CAI_BaseNPC::StartTask( const Task_t *pTask )
 		}
 	case TASK_SPEAK_SENTENCE:
 		{
-			SpeakSentence(pTask->flTaskData);	
+			SpeakSentence(static_cast<int>(pTask->flTaskData));	
 			TaskComplete();
 			break;
 		}
@@ -2842,7 +2842,7 @@ void CAI_BaseNPC::StartTask( const Task_t *pTask )
 			{
 				int iMinDist, iMaxDist, iParameter;
 
-				iParameter = pTask->flTaskData;
+				iParameter = static_cast<int>(pTask->flTaskData);
 
 				iMinDist = iParameter / 10000;
 				iMaxDist = iParameter - (iMinDist * 10000);

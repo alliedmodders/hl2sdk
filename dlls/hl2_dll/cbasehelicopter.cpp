@@ -674,7 +674,7 @@ void CBaseHelicopter::UpdateEnemy()
 	// be sure and change my prevseen/lastseen timers.
 	if( m_lifeState == LIFE_ALIVE )
 	{
-		GetSenses()->Look( EnemySearchDistance() );
+		GetSenses()->Look( static_cast<int>(EnemySearchDistance()) );
 
 		GetEnemies()->RefreshMemories();
 		ChooseEnemy();
@@ -834,7 +834,7 @@ void CBaseHelicopter::UpdatePlayerDopplerShift( )
 			float velReceiver = DotProduct( pPlayer->GetAbsVelocity(), dir );
 			float velTransmitter = -DotProduct( GetAbsVelocity(), dir );
 			// speed of sound == 13049in/s
-			int iPitch = 100 * ((1 - velReceiver / 13049) / (1 + velTransmitter / 13049));
+			int iPitch = static_cast<int>(100 * ((1 - velReceiver / 13049) / (1 + velTransmitter / 13049)));
 #else
 			// This is a bogus doppler shift, but I like it better
 			float relV = DotProduct( GetAbsVelocity() - pPlayer->GetAbsVelocity(), dir );

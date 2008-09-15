@@ -48,7 +48,7 @@ public:
 
 	void InputStartFogTransition(inputdata_t &data);
 
-	int CFogController::DrawDebugTextOverlays(void);
+	int DrawDebugTextOverlays(void);
 
 	void SetLerpValues( void );
 	void Spawn( void );

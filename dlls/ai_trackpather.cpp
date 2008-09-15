@@ -817,7 +817,7 @@ CPathTrack *CAI_TrackPather::FindClosestPointOnPath( CPathTrack *pPath,
 			// No alt paths allowed in leading mode.
 			if ( pTravPath->m_paltpath )
 			{
-				Warning( "%s: Alternative paths in path_track not allowed when using the leading behavior!\n", GetEntityName() );
+				Warning( "%s: Alternative paths in path_track not allowed when using the leading behavior!\n", STRING(GetEntityName()) );
 			}
 
 			// Need line segments
@@ -1595,7 +1595,7 @@ void CAI_TrackPather::SetTrack( CBaseEntity *pGoalEnt )
 	CPathTrack *pTrack = dynamic_cast<CPathTrack *>(pGoalEnt);
 	if ( !pTrack )
 	{
-		DevWarning( "%s: Specified entity '%s' must be a path_track!\n", pGoalEnt->GetClassname(), pGoalEnt->GetEntityName() );
+		DevWarning( "%s: Specified entity '%s' must be a path_track!\n", pGoalEnt->GetClassname(), STRING(pGoalEnt->GetEntityName()) );
 		return;
 	}
 

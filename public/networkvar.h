@@ -19,8 +19,9 @@
 #endif
 
 
+#ifdef _MSC_VER
 #pragma warning( disable : 4284 ) // warning C4284: return type for 'CNetworkVarT<int>::operator ->' is 'int *' (ie; not a UDT or reference to a UDT.  Will produce errors if applied using infix notation)
-
+#endif
 
 #define MyOffsetOf( type, var ) ( (int)&((type*)0)->var )
 
@@ -352,7 +353,7 @@ protected:
 	{
 		if ( out != in )
 		{
-			NetworkStateChanged();
+			this->NetworkStateChanged();
 			out = in;
 		}
 	}
@@ -436,7 +437,7 @@ private:
 	{
 		if ( out != in ) 
 		{
-			NetworkStateChanged();
+			this->NetworkStateChanged();
 			out = in;
 		}
 	}
@@ -523,7 +524,7 @@ private:
 	{
 		if ( out != in ) 
 		{
-			NetworkStateChanged();
+			this->NetworkStateChanged();
 			out = in;
 		}
 	}
@@ -561,7 +562,7 @@ private:
 		{
 			if ( CNetworkHandleBase<Type,Changer>::m_Value != val )
 			{
-				NetworkStateChanged();
+				this->NetworkStateChanged();
 				CNetworkHandleBase<Type,Changer>::m_Value = val;
 			}
 			return val;

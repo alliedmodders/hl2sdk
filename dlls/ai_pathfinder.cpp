@@ -1241,7 +1241,7 @@ AI_Waypoint_t *CAI_Pathfinder::BuildRadialRoute( const Vector &vStartPos, const 
 		vNextPos.y	+= flRadius * sin( flCurAngle );
 
 		// Build a route from the last position to the current one
-		pNextRoute = BuildLocalRoute( vLastPos, vNextPos, NULL, NULL, NO_NODE, fRouteBits, goalTolerance);
+		pNextRoute = BuildLocalRoute( vLastPos, vNextPos, NULL, 0, NO_NODE, fRouteBits, goalTolerance);
 		
 		// If we can't find a route, we failed
 		if ( pNextRoute == NULL )
@@ -1270,7 +1270,7 @@ AI_Waypoint_t *CAI_Pathfinder::BuildRadialRoute( const Vector &vStartPos, const 
 	}
 
 	// Append a path to the final position
-	pLastRoute = BuildLocalRoute( vLastPos, vGoalPos, NULL, NULL, NO_NODE, bAirRoute ? bits_BUILD_FLY : bits_BUILD_GROUND, goalTolerance );	
+	pLastRoute = BuildLocalRoute( vLastPos, vGoalPos, NULL, 0, NO_NODE, bAirRoute ? bits_BUILD_FLY : bits_BUILD_GROUND, goalTolerance );	
 	if ( pLastRoute == NULL )
 		return NULL;
 
@@ -1811,9 +1811,9 @@ void CAI_Pathfinder::CTriDebugOverlay::FadeTriOverlayLines(void)
 	{
 		for (int i=0;i<NUM_NPC_DEBUG_OVERLAYS;i++)
 		{
-			m_debugTriOverlayLine[i]->r *= 0.5;
-			m_debugTriOverlayLine[i]->g *= 0.5;				
-			m_debugTriOverlayLine[i]->b *= 0.5;				
+			m_debugTriOverlayLine[i]->r = static_cast<int>(m_debugTriOverlayLine[i]->r * 0.5);
+			m_debugTriOverlayLine[i]->g = static_cast<int>(m_debugTriOverlayLine[i]->g * 0.5);				
+			m_debugTriOverlayLine[i]->b = static_cast<int>(m_debugTriOverlayLine[i]->b * 0.5);				
 		}
 	}
 }

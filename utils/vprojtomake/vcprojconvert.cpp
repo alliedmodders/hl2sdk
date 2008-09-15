@@ -163,17 +163,17 @@ bool CVCProjConvert::LoadProject( const char *project )
             char* message = XMLString::transcode(toCatch.getMessage());
             Error( "Exception message is: %s\n", message );    
             XMLString::release(&message);
-            return;
+            return false;
         }
         catch (const DOMException& toCatch) {
             char* message = XMLString::transcode(toCatch.msg);
             Error( "Exception message is: %s\n", message );    
             XMLString::release(&message);
-            return;
+            return false;
         }
         catch (...) {
             Error( "Unexpected Exception \n" );
-            return;
+            return false;
         }
 	
 	DOMDocument *pXMLDoc = parser->getDocument();
@@ -263,7 +263,7 @@ CUtlSymbol CVCProjConvert::GetXMLAttribValue( IXMLDOMElement *p, const char *att
 	CUtlSymbol name( static_cast<char *>( _bstr_t( vtValue.bstrVal ) ) );
 	::SysFreeString(vtValue.bstrVal);
 #elif _LINUX
-	const XMLCh *xAttrib = XMLString::transcode( attribName );
+	XMLCh *xAttrib = XMLString::transcode( attribName );
 	const XMLCh *value = p->getAttribute( xAttrib );
 	if ( value == NULL )
 	{
@@ -346,7 +346,7 @@ bool CVCProjConvert::ExtractProjectName( IXMLDOMDocument *pDoc )
 			DOMNode *node = nodes->item(0);
 			if ( node )
 			{
-				m_Name = GetXMLAttribValue( node, "Name" );
+				m_Name = GetXMLAttribValue( static_cast<DOMElement *>(node), "Name" );
 			}
 		}
 	}
@@ -401,13 +401,13 @@ bool CVCProjConvert::ExtractConfigurations( IXMLDOMDocument *pDoc )
 			DOMNode *node = nodes->item(i);
 			if (node)
 			{
-				CUtlSymbol configName = GetXMLAttribValue( node, "Name" );
+				CUtlSymbol configName = GetXMLAttribValue( static_cast<DOMElement *>(node), "Name" );
 				if ( configName.IsValid() )
 				{
 					int newIndex = m_Configurations.AddToTail();
 					CConfiguration & config = m_Configurations[newIndex];
 					config.SetName( configName );
-					ExtractIncludes( node, config );
+					ExtractIncludes( static_cast<DOMElement *>(node), config );
 				}
 			}
 		}
@@ -501,10 +501,10 @@ bool CVCProjConvert::ExtractIncludes( IXMLDOMElement *pDoc, CConfiguration & con
 			DOMNode *node = nodes->item(i);
 			if (node)
 			{
-				CUtlSymbol toolName = GetXMLAttribValue( node, "Name" );
+				CUtlSymbol toolName = GetXMLAttribValue( static_cast<DOMElement *>(node), "Name" );
 				if ( toolName == "VCCLCompilerTool" )
 				{
-					CUtlSymbol defines = GetXMLAttribValue( node, "PreprocessorDefinitions" );
+					CUtlSymbol defines = GetXMLAttribValue( static_cast<DOMElement *>(node), "PreprocessorDefinitions" );
 					char *str = (char *)_alloca( Q_strlen( defines.String() + 1 ));
 					Assert( str );
 					Q_strcpy( str, defines.String() );
@@ -529,7 +529,7 @@ bool CVCProjConvert::ExtractIncludes( IXMLDOMElement *pDoc, CConfiguration & con
 						config.AddDefine( curpos );
 					}
 
-					CUtlSymbol includes = GetXMLAttribValue( node, "AdditionalIncludeDirectories" );
+					CUtlSymbol includes = GetXMLAttribValue( static_cast<DOMElement *>(node), "AdditionalIncludeDirectories" );
 					char *str2 = (char *)_alloca( Q_strlen( includes.String() + 1 ));
 					Assert( str2 );
 					Q_strcpy( str2, includes.String() );
@@ -614,8 +614,8 @@ bool CVCProjConvert::IterateFileConfigurations( IXMLDOMElement *pFile, CUtlSymbo
 			DOMNode *node = nodes->item(i);
 			if (node)
 			{
-				CUtlSymbol configName = GetXMLAttribValue( node, "Name");
-				CUtlSymbol excluded = GetXMLAttribValue( node ,"ExcludedFromBuild");
+				CUtlSymbol configName = GetXMLAttribValue( static_cast<DOMElement *>(node), "Name");
+				CUtlSymbol excluded = GetXMLAttribValue( static_cast<DOMElement *>(node) ,"ExcludedFromBuild");
 				if ( configName.IsValid() && excluded.IsValid() )
 				{
 					int index = FindConfiguration( configName );
@@ -683,7 +683,7 @@ bool CVCProjConvert::ExtractFiles( IXMLDOMDocument *pDoc  )
 			DOMNode *node = nodes->item(i);
 			if (node)
 			{
-				CUtlSymbol fileName = GetXMLAttribValue(node,"RelativePath");
+				CUtlSymbol fileName = GetXMLAttribValue(static_cast<DOMElement *>(node),"RelativePath");
 				if ( fileName.IsValid() )
 				{
 					char fixedFileName[ MAX_PATH ];
@@ -702,7 +702,7 @@ bool CVCProjConvert::ExtractFiles( IXMLDOMDocument *pDoc  )
 						CConfiguration & config = m_Configurations[i];
 						config.InsertFile( fileEntry );
 					}
-					IterateFileConfigurations( node, fixedFileName ); // now remove the excluded ones
+					IterateFileConfigurations( static_cast<DOMElement *>(node), fixedFileName ); // now remove the excluded ones
 				}
 			}
 		}//for

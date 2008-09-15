@@ -13,6 +13,8 @@
 #include "vector.h"
 #include "vector2d.h"
 #include "tier0/dbg.h"
+
+#undef MINMAX_H
 #include "minmax.h"
 
 #ifdef _WIN32
@@ -504,7 +506,7 @@ inline float RemapValClamped( float val, float A, float B, float C, float D)
 template <class T>
 FORCEINLINE_MATH T Lerp( float flPercent, T const &A, T const &B )
 {
-	return A + (B - A) * flPercent;
+	return static_cast<T>(A + (B - A) * flPercent);
 }
 
 // 5-argument floating point linear interpolation.
@@ -1071,11 +1073,12 @@ inline unsigned long RoundFloatToUnsignedLong(float f)
 // Fast, accurate ftol:
 inline int Float2Int( float a )
 {
-   int CtrlwdHolder;
-   int CtrlwdSetter;
    int RetVal;
 
 #ifdef _WIN32
+   int CtrlwdHolder;
+   int CtrlwdSetter;
+
    __asm 
    {
       fld    a					// push 'a' onto the FP stack
@@ -1098,11 +1101,12 @@ inline int Float2Int( float a )
 // Over 15x faster than: (int)floor(value)
 inline int Floor2Int( float a )
 {
-   int CtrlwdHolder;
-   int CtrlwdSetter;
    int RetVal;
 
 #ifdef _WIN32
+   int CtrlwdHolder;
+   int CtrlwdSetter;
+
    __asm 
    {
       fld    a					// push 'a' onto the FP stack
@@ -1146,11 +1150,12 @@ inline float ClampToMsec( float in )
 // Over 15x faster than: (int)ceil(value)
 inline int Ceil2Int( float a )
 {
-   int CtrlwdHolder;
-   int CtrlwdSetter;
    int RetVal;
 
 #ifdef _WIN32
+   int CtrlwdHolder;
+   int CtrlwdSetter;
+
    __asm 
    {
       fld    a					// push 'a' onto the FP stack

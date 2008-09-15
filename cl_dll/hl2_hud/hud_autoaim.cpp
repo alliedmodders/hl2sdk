@@ -199,7 +199,7 @@ void CHUDAutoAim::OnThink()
 						QAngle targetangles;
 						QAngle delta;
 
-						float dist = (pLocalPlayer->m_HL2Local.m_vecAutoAimPoint - pLocalPlayer->GetAbsOrigin()).Length();
+//						float dist = (pLocalPlayer->m_HL2Local.m_vecAutoAimPoint - pLocalPlayer->GetAbsOrigin()).Length();
 
 						engine->GetViewAngles( viewangles );
 

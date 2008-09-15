@@ -1,0 +1,45 @@
+#
+# Mathlin Static Library Makefile
+#
+
+MATHLIB_SRC_DIR=$(SOURCE_DIR)/mathlib
+PUBLIC_SRC_DIR=$(SOURCE_DIR)/public
+MATHLIB_PUBLIC_SRC_DIR=$(SOURCE_DIR)/public/mathlib
+
+MATHLIB_OBJ_DIR=$(BUILD_OBJ_DIR)/mathlib_$(ARCH)
+
+# Extension of linux static library
+override SHLIBEXT=a
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS)
+#DEBUG = -g -ggdb
+#CFLAGS+= $(DEBUG)
+
+INCLUDEDIRS=-I$(PUBLIC_SRC_DIR) -I$(MATHLIB_PUBLIC_SRC_DIR) -D_LIB
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) $(CFLAGS) -DARCH=$(ARCH) -o $@ -c $<
+
+#####################################################################
+
+MATHLIB_OBJS= \
+	$(MATHLIB_OBJ_DIR)/halton.o \
+	$(MATHLIB_OBJ_DIR)/lightdesc.o \
+	$(MATHLIB_OBJ_DIR)/mathlib_base.o \
+	$(MATHLIB_OBJ_DIR)/powsse.o \
+	$(MATHLIB_OBJ_DIR)/sseconst.o \
+
+all: dirs mathlib_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir -p $(BUILD_OBJ_DIR)
+	-mkdir -p $(MATHLIB_OBJ_DIR)
+	$(CHECK_DSP) $(SOURCE_DSP)
+
+mathlib_$(ARCH).$(SHLIBEXT): $(MATHLIB_OBJS)
+	$(AR) $(BUILD_DIR)/$@ $(MATHLIB_OBJS)
+
+$(MATHLIB_OBJ_DIR)/%.o: $(MATHLIB_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(MATHLIB_OBJ_DIR)

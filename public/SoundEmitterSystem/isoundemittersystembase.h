@@ -106,8 +106,8 @@ struct sound_interval_t
 	T range;
 
 	interval_t &ToInterval( interval_t &dest ) const	{ dest.start = start; dest.range = range; return dest; }
-	void FromInterval( const interval_t &from )			{ start = from.start; range = from.range; }
-	float Random() const								{ interval_t temp = { start, range }; return RandomInterval( temp ); }
+	void FromInterval( const interval_t &from )			{ start = static_cast<T>(from.start); range = static_cast<T>(from.range); }
+	float Random() const								{ interval_t temp = { start, range }; return this->RandomInterval( temp ); }
 };
 
 
@@ -125,7 +125,7 @@ struct CSoundParametersInternal
 
 	void CopyFrom( const CSoundParametersInternal& src );
 
-	bool CSoundParametersInternal::operator == ( const CSoundParametersInternal& other ) const;
+	bool operator == ( const CSoundParametersInternal& other ) const;
 
 	const char *VolumeToString( void ) const;
 	const char *ChannelToString( void ) const;
@@ -148,9 +148,9 @@ struct CSoundParametersInternal
 	bool		ShouldPreload() const						{ return m_bShouldPreload; }
 
 	void		SetChannel( int newChannel )				{ channel = newChannel; }
-	void		SetVolume( float start, float range = 0.0 )	{ volume.start = start; volume.range = range; }
-	void		SetPitch( float start, float range = 0.0 )	{ pitch.start = start; pitch.range = range; }
-	void		SetSoundLevel( float start, float range = 0.0 )	{ soundlevel.start = start; soundlevel.range = range; }
+	void		SetVolume( float start, float range = 0.0 )	{ volume.start = static_cast<uint8>(start); volume.range = static_cast<uint8>(range); }
+	void		SetPitch( float start, float range = 0.0 )	{ pitch.start = static_cast<uint8>(start); pitch.range = static_cast<uint8>(range); }
+	void		SetSoundLevel( float start, float range = 0.0 )	{ soundlevel.start = static_cast<int>(start); soundlevel.range = static_cast<int>(range); }
 	void		SetDelayMsec( int delay )					{ delay_msec = delay; }
 	void		SetShouldPreload( bool bShouldPreload )		{ m_bShouldPreload = bShouldPreload;	}
 	void		SetOnlyPlayToOwner( bool b )				{ play_to_owner_only = b; }

@@ -31,7 +31,7 @@ protected:
 	CImpl				*m_pImpl;
 
 	netadr_t			m_cserIP;
-	unsigned int		m_Socket;
+	int				m_Socket;
 
 
 };

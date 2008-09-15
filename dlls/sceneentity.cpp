@@ -136,7 +136,7 @@ private:
 		CRestoreSceneSound()
 		{
 			actor = NULL;
-			soundname[ 0 ] = NULL;
+			soundname[ 0 ] = 0;
 			soundlevel = SNDLVL_NORM;
 			time_in_past = 0.0f;
 		}
@@ -3143,9 +3143,9 @@ CChoreoScene *CSceneEntity::BlockingLoadScene( const char *filename )
 	Q_FixSlashes( loadfile );
 
 	// Load the file
-	char *buffer = NULL;
+	void *buffer = NULL;
 	
-	int filesize = filesystem->ReadFileEx( loadfile, ( IsXbox() ) ? "XGAME" : "GAME", (void **)&buffer, true );
+	int filesize = filesystem->ReadFileEx( loadfile, ( IsXbox() ) ? "XGAME" : "GAME", &buffer, true );
 
 	if ( filesize <= 0 )
 	{
@@ -3153,10 +3153,10 @@ CChoreoScene *CSceneEntity::BlockingLoadScene( const char *filename )
 		return NULL;
 	}
 
-	g_TokenProcessor.SetBuffer( buffer );
+	g_TokenProcessor.SetBuffer( reinterpret_cast<char *>(buffer) );
 	CChoreoScene *scene = ChoreoLoadScene( loadfile, NULL, &g_TokenProcessor, LocalScene_Printf );
 
-	delete[] buffer;
+	delete[] reinterpret_cast<char *>(buffer);
 
 	return scene;
 }
@@ -4242,7 +4242,7 @@ bool CopySceneFileIntoMemory( char const *filename, void **buffer )
 //-----------------------------------------------------------------------------
 void FreeSceneFileMemory( void *buffer )
 {
-	delete[] buffer;
+	delete[] reinterpret_cast<byte *>(buffer);
 }
 
 CON_COMMAND( scene_mem, "Spew memory usage for .vcds in the instanced scene resource manager." )
@@ -4645,7 +4645,7 @@ void CSceneManager::PauseActorsScenes( CBaseFlex *pActor, bool bInstancedOnly  )
 
 		if ( pScene->InvolvesActor( pActor ) && pScene->IsPlayingBack() )
 		{
-			LocalScene_Printf( "Pausing actor %s scripted scene: %s\n", pActor->GetDebugName(), pScene->m_iszSceneFile );
+			LocalScene_Printf( "Pausing actor %s scripted scene: %s\n", pActor->GetDebugName(), STRING(pScene->m_iszSceneFile) );
 
 			variant_t emptyVariant;
 			pScene->AcceptInput( "Pause", pScene, pScene, emptyVariant, 0 );
@@ -4702,7 +4702,7 @@ void CSceneManager::ResumeActorsScenes( CBaseFlex *pActor, bool bInstancedOnly  
 
 		if ( pScene->InvolvesActor( pActor ) && pScene->IsPlayingBack() )
 		{
-			LocalScene_Printf( "Resuming actor %s scripted scene: %s\n", pActor->GetDebugName(), pScene->m_iszSceneFile );
+			LocalScene_Printf( "Resuming actor %s scripted scene: %s\n", pActor->GetDebugName(), STRING(pScene->m_iszSceneFile) );
 
 			variant_t emptyVariant;
 			pScene->AcceptInput( "Resume", pScene, pScene, emptyVariant, 0 );

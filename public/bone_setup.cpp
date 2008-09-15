@@ -4211,9 +4211,9 @@ float Studio_GetPoseParameter( const CStudioHdr *pStudioHdr, int iParameter, flo
 	return ctlValue * (PoseParam.end - PoseParam.start) + PoseParam.start;
 }
 
-
+#ifdef _MSC_VER
 #pragma warning (disable : 4701)
-
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -4306,8 +4306,9 @@ static int ClipRayToHitbox( const Ray_t &ray, mstudiobbox_t *pbox, matrix3x4_t& 
 	return hitside;
 }
 
+#ifdef _MSC_VER
 #pragma warning (default : 4701)
-
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -4496,7 +4497,7 @@ int Studio_MaxFrame( const CStudioHdr *pStudioHdr, int iSequence, const float po
 	
 
 	// FIXME: why does the weights sometimes not exactly add it 1.0 and this sometimes rounds down?
-	return (maxFrame + 0.01);
+	return static_cast<int>(maxFrame + 0.01);
 }
 
 

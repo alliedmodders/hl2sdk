@@ -253,7 +253,7 @@ void Bot_UpdateDirection( CSDKBot *pBot )
 	float angledelta = 15.0;
 	QAngle angle;
 
-	int maxtries = (int)360.0/angledelta;
+	int maxtries = static_cast<int>(360.0 / angledelta);
 
 	if ( pBot->m_bLastTurnToRight )
 	{

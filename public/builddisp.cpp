@@ -62,7 +62,269 @@ bool CalcBarycentricCooefs( Vector const &v0, Vector const &v1, Vector const &v2
 
 // For some reason, the global optimizer screws up the recursion here.  disable the global optimizations to fix this.
 // IN VC++ 6.0
+#ifdef _MSC_VER
 #pragma optimize( "g", off )
+#endif
+
+//
+// Node Functions (friend functions)
+//
+
+//-----------------------------------------------------------------------------
+// should make this more programatic and extensible!
+//-----------------------------------------------------------------------------
+int GetNodeLevel( int index )
+{
+    // root
+    if( index == 0 )
+        return 1;
+
+    // [1...4]
+    if( index < 5 )
+        return 2;
+
+    // [5....20]
+    if( index < 21 )
+        return 3;
+
+    // [21....84]
+    if( index < 85 )
+        return 4;
+
+    // error!!!
+    return -1;
+}
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+int GetNodeCount( int power )
+{
+    return ( ( 1 << ( power << 1 ) ) / 3 );
+}
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+int GetNodeParent( int index )
+{
+	// ( index - 1 ) / 4
+	return ( ( index - 1 ) >> 2 );
+}
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+int GetNodeChild( int power, int index, int direction )
+{
+    // ( index * 4 ) + direction
+    return ( ( index << 2 ) + ( direction - 3 ) );
+}
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+int GetNodeMinNodeAtLevel( int level )
+{
+    switch( level )
+    {
+    case 1: return 0;
+    case 2: return 1;
+    case 3: return 5;
+    case 4: return 21;
+    default: return -99999;
+    }
+}
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+void GetComponentsFromNodeIndex( int index, int *x, int *y )
+{
+	*x = 0;
+	*y = 0;
+
+	for( int shift = 0; index != 0; shift++ )
+	{
+		*x |= ( index & 1 ) << shift;
+		index >>= 1;
+
+		*y |= ( index & 1 ) << shift;
+		index >>= 1;
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+int GetNodeIndexFromComponents( int x, int y )
+{
+	int index = 0;
+
+	// Interleave bits from the x and y values to create the index:
+	
+	int shift;
+	for( shift = 0; x != 0; shift += 2, x >>= 1 )
+	{
+		index |= ( x & 1 ) << shift;
+	}
+
+	for( shift = 1; y != 0; shift += 2, y >>= 1 )
+	{
+		index |= ( y & 1 ) << shift;
+	}
+
+	return index;
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: This function calculates the neighbor node index given the base
+//          node and direction of the neighbor node in the tree.
+//   Input: power - the size in one dimension of the displacement map (2^power + 1 )
+//          index - the "base" node index
+//          direction - the direction of the neighbor { W = 1, N = 2, E = 3, S = 4 }
+//  Output: returns the index of the neighbor node
+//-----------------------------------------------------------------------------
+int GetNodeNeighborNode( int power, int index, int direction, int level )
+{
+    // adjust the index to range [0...?]
+	int minNodeIndex = GetNodeMinNodeAtLevel( level );
+
+    // get node extent (uniform: height = width)
+    int nodeExtent = ( 1 << ( level - 1 ) );
+
+	//
+	// get node's component positions in quad-tree
+	//
+	int posX, posY;
+	GetComponentsFromNodeIndex( ( index - minNodeIndex ), &posX, &posY );
+
+	//
+	// find the neighbor in the "direction"
+	//
+    switch( direction )
+    {
+    case CCoreDispInfo::WEST:
+        {
+            if( ( posX - 1 ) < 0 )
+            {
+                return -( CCoreDispInfo::WEST + 1 );
+            }
+            else
+            {
+                return ( GetNodeIndexFromComponents( ( posX - 1 ), posY ) + minNodeIndex );
+            }
+        }
+    case CCoreDispInfo::NORTH:
+        {
+            if( ( posY + 1 ) == nodeExtent )
+            {
+                return -( CCoreDispInfo::NORTH + 1 );
+            }
+            else
+            {
+                return ( GetNodeIndexFromComponents( posX, ( posY + 1 ) ) + minNodeIndex );
+            }
+        }
+    case CCoreDispInfo::EAST:
+        {
+            if( ( posX + 1 ) == nodeExtent )
+            {
+                return -( CCoreDispInfo::EAST + 1 );
+            }
+            else
+            {
+                return ( GetNodeIndexFromComponents( ( posX + 1 ), posY ) + minNodeIndex );
+            }
+        }
+    case CCoreDispInfo::SOUTH: 
+        {
+            if( ( posY - 1 ) < 0 )
+            {
+                return -( CCoreDispInfo::SOUTH + 1 );
+            }
+            else
+            {
+                return ( GetNodeIndexFromComponents( posX, ( posY - 1 ) ) + minNodeIndex );
+            }
+        }
+    default:
+        {
+            return -99999;
+        }
+    }
+}
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+int GetNodeNeighborNodeFromNeighborSurf( int power, int index, int direction, int level, int neighborOrient )
+{
+    // adjust the index to range [0...?]
+	int minNodeIndex = GetNodeMinNodeAtLevel( level );
+
+    // get node extent (uniform: height = width)
+    int nodeExtent = ( 1 << ( level - 1 ) );
+
+	//
+	// get node's component positions in quad-tree
+	//
+	int posX, posY;
+	GetComponentsFromNodeIndex( ( index - minNodeIndex ), &posX, &posY );
+
+    switch( direction )
+    {
+    case CCoreDispInfo::WEST:
+        {
+            switch( neighborOrient )
+            {
+            case CCoreDispInfo::WEST: return -( ( GetNodeIndexFromComponents( posX, ( ( nodeExtent - 1 ) - posY ) ) ) + minNodeIndex );
+            case CCoreDispInfo::NORTH: return -( ( GetNodeIndexFromComponents( ( nodeExtent - 1 ) - posY, ( nodeExtent - 1 ) ) ) + minNodeIndex );
+            case CCoreDispInfo::EAST: return -( ( GetNodeIndexFromComponents( ( nodeExtent - 1 ), posY ) ) + minNodeIndex );
+            case CCoreDispInfo::SOUTH: return -( ( GetNodeIndexFromComponents( posY, posX ) ) + minNodeIndex );
+            default: return -99999;
+            }
+        }
+    case CCoreDispInfo::NORTH:
+        {
+            switch( neighborOrient )
+            {
+            case CCoreDispInfo::WEST: return -( ( GetNodeIndexFromComponents( ( ( nodeExtent - 1 ) - posY ), ( ( nodeExtent - 1 ) - posX ) ) ) + minNodeIndex );
+            case CCoreDispInfo::NORTH: return -( ( GetNodeIndexFromComponents( ( ( nodeExtent - 1 ) - posX ), posY ) ) + minNodeIndex );
+            case CCoreDispInfo::EAST: return -( ( GetNodeIndexFromComponents( posY, posX ) ) + minNodeIndex );
+            case CCoreDispInfo::SOUTH: return -( ( GetNodeIndexFromComponents( posX, ( ( nodeExtent - 1 ) - posY ) ) ) + minNodeIndex );
+            default: return -99999;
+            }
+        }
+    case CCoreDispInfo::EAST:
+        {
+            switch( neighborOrient )
+            {
+            case CCoreDispInfo::WEST: return -( ( GetNodeIndexFromComponents( ( ( nodeExtent - 1 ) - posX ), posY ) ) + minNodeIndex );
+            case CCoreDispInfo::NORTH: return -( ( GetNodeIndexFromComponents( posY, posX ) ) + minNodeIndex );
+            case CCoreDispInfo::EAST: return -( ( GetNodeIndexFromComponents( posX, ( ( nodeExtent - 1 ) - posY ) ) ) + minNodeIndex );
+            case CCoreDispInfo::SOUTH: return -( ( GetNodeIndexFromComponents( ( ( nodeExtent - 1 ) - posY ), ( ( nodeExtent - 1 ) - posX ) ) ) + minNodeIndex );
+            default: return -99999;
+            }
+        }
+    case CCoreDispInfo::SOUTH:
+        {
+            switch( neighborOrient )
+            {
+            case CCoreDispInfo::WEST: return -( ( GetNodeIndexFromComponents( posY, posX ) ) + minNodeIndex );
+            case CCoreDispInfo::NORTH: return -( ( GetNodeIndexFromComponents( posX, ( nodeExtent - 1 ) ) ) + minNodeIndex );
+            case CCoreDispInfo::EAST: return -( ( GetNodeIndexFromComponents( ( nodeExtent - 1 ), ( ( nodeExtent - 1 ) - posX ) ) ) + minNodeIndex );
+            case CCoreDispInfo::SOUTH: return -( ( GetNodeIndexFromComponents( ( ( nodeExtent - 1 ) - posX ), posY ) ) + minNodeIndex );
+            default: return -99999;
+            }
+        }
+    default:
+        {
+            return -99999;
+        }
+    }
+}
+
 
 CCoreDispSurface::CCoreDispSurface()
 {
@@ -1837,269 +2099,10 @@ bool CCoreDispInfo::CreateWithoutLOD( void )
 }
 
 
-//
-// Node Functions (friend functions)
-//
-
-//-----------------------------------------------------------------------------
-// should make this more programatic and extensible!
-//-----------------------------------------------------------------------------
-int GetNodeLevel( int index )
-{
-    // root
-    if( index == 0 )
-        return 1;
-
-    // [1...4]
-    if( index < 5 )
-        return 2;
-
-    // [5....20]
-    if( index < 21 )
-        return 3;
-
-    // [21....84]
-    if( index < 85 )
-        return 4;
-
-    // error!!!
-    return -1;
-}
-
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-int GetNodeCount( int power )
-{
-    return ( ( 1 << ( power << 1 ) ) / 3 );
-}
-
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-int GetNodeParent( int index )
-{
-	// ( index - 1 ) / 4
-	return ( ( index - 1 ) >> 2 );
-}
-
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-int GetNodeChild( int power, int index, int direction )
-{
-    // ( index * 4 ) + direction
-    return ( ( index << 2 ) + ( direction - 3 ) );
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: This function calculates the neighbor node index given the base
-//          node and direction of the neighbor node in the tree.
-//   Input: power - the size in one dimension of the displacement map (2^power + 1 )
-//          index - the "base" node index
-//          direction - the direction of the neighbor { W = 1, N = 2, E = 3, S = 4 }
-//  Output: returns the index of the neighbor node
-//-----------------------------------------------------------------------------
-int GetNodeNeighborNode( int power, int index, int direction, int level )
-{
-    // adjust the index to range [0...?]
-	int minNodeIndex = GetNodeMinNodeAtLevel( level );
-
-    // get node extent (uniform: height = width)
-    int nodeExtent = ( 1 << ( level - 1 ) );
-
-	//
-	// get node's component positions in quad-tree
-	//
-	int posX, posY;
-	GetComponentsFromNodeIndex( ( index - minNodeIndex ), &posX, &posY );
-
-	//
-	// find the neighbor in the "direction"
-	//
-    switch( direction )
-    {
-    case CCoreDispInfo::WEST:
-        {
-            if( ( posX - 1 ) < 0 )
-            {
-                return -( CCoreDispInfo::WEST + 1 );
-            }
-            else
-            {
-                return ( GetNodeIndexFromComponents( ( posX - 1 ), posY ) + minNodeIndex );
-            }
-        }
-    case CCoreDispInfo::NORTH:
-        {
-            if( ( posY + 1 ) == nodeExtent )
-            {
-                return -( CCoreDispInfo::NORTH + 1 );
-            }
-            else
-            {
-                return ( GetNodeIndexFromComponents( posX, ( posY + 1 ) ) + minNodeIndex );
-            }
-        }
-    case CCoreDispInfo::EAST:
-        {
-            if( ( posX + 1 ) == nodeExtent )
-            {
-                return -( CCoreDispInfo::EAST + 1 );
-            }
-            else
-            {
-                return ( GetNodeIndexFromComponents( ( posX + 1 ), posY ) + minNodeIndex );
-            }
-        }
-    case CCoreDispInfo::SOUTH: 
-        {
-            if( ( posY - 1 ) < 0 )
-            {
-                return -( CCoreDispInfo::SOUTH + 1 );
-            }
-            else
-            {
-                return ( GetNodeIndexFromComponents( posX, ( posY - 1 ) ) + minNodeIndex );
-            }
-        }
-    default:
-        {
-            return -99999;
-        }
-    }
-}
-
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-int GetNodeNeighborNodeFromNeighborSurf( int power, int index, int direction, int level, int neighborOrient )
-{
-    // adjust the index to range [0...?]
-	int minNodeIndex = GetNodeMinNodeAtLevel( level );
-
-    // get node extent (uniform: height = width)
-    int nodeExtent = ( 1 << ( level - 1 ) );
-
-	//
-	// get node's component positions in quad-tree
-	//
-	int posX, posY;
-	GetComponentsFromNodeIndex( ( index - minNodeIndex ), &posX, &posY );
-
-    switch( direction )
-    {
-    case CCoreDispInfo::WEST:
-        {
-            switch( neighborOrient )
-            {
-            case CCoreDispInfo::WEST: return -( ( GetNodeIndexFromComponents( posX, ( ( nodeExtent - 1 ) - posY ) ) ) + minNodeIndex );
-            case CCoreDispInfo::NORTH: return -( ( GetNodeIndexFromComponents( ( nodeExtent - 1 ) - posY, ( nodeExtent - 1 ) ) ) + minNodeIndex );
-            case CCoreDispInfo::EAST: return -( ( GetNodeIndexFromComponents( ( nodeExtent - 1 ), posY ) ) + minNodeIndex );
-            case CCoreDispInfo::SOUTH: return -( ( GetNodeIndexFromComponents( posY, posX ) ) + minNodeIndex );
-            default: return -99999;
-            }
-        }
-    case CCoreDispInfo::NORTH:
-        {
-            switch( neighborOrient )
-            {
-            case CCoreDispInfo::WEST: return -( ( GetNodeIndexFromComponents( ( ( nodeExtent - 1 ) - posY ), ( ( nodeExtent - 1 ) - posX ) ) ) + minNodeIndex );
-            case CCoreDispInfo::NORTH: return -( ( GetNodeIndexFromComponents( ( ( nodeExtent - 1 ) - posX ), posY ) ) + minNodeIndex );
-            case CCoreDispInfo::EAST: return -( ( GetNodeIndexFromComponents( posY, posX ) ) + minNodeIndex );
-            case CCoreDispInfo::SOUTH: return -( ( GetNodeIndexFromComponents( posX, ( ( nodeExtent - 1 ) - posY ) ) ) + minNodeIndex );
-            default: return -99999;
-            }
-        }
-    case CCoreDispInfo::EAST:
-        {
-            switch( neighborOrient )
-            {
-            case CCoreDispInfo::WEST: return -( ( GetNodeIndexFromComponents( ( ( nodeExtent - 1 ) - posX ), posY ) ) + minNodeIndex );
-            case CCoreDispInfo::NORTH: return -( ( GetNodeIndexFromComponents( posY, posX ) ) + minNodeIndex );
-            case CCoreDispInfo::EAST: return -( ( GetNodeIndexFromComponents( posX, ( ( nodeExtent - 1 ) - posY ) ) ) + minNodeIndex );
-            case CCoreDispInfo::SOUTH: return -( ( GetNodeIndexFromComponents( ( ( nodeExtent - 1 ) - posY ), ( ( nodeExtent - 1 ) - posX ) ) ) + minNodeIndex );
-            default: return -99999;
-            }
-        }
-    case CCoreDispInfo::SOUTH:
-        {
-            switch( neighborOrient )
-            {
-            case CCoreDispInfo::WEST: return -( ( GetNodeIndexFromComponents( posY, posX ) ) + minNodeIndex );
-            case CCoreDispInfo::NORTH: return -( ( GetNodeIndexFromComponents( posX, ( nodeExtent - 1 ) ) ) + minNodeIndex );
-            case CCoreDispInfo::EAST: return -( ( GetNodeIndexFromComponents( ( nodeExtent - 1 ), ( ( nodeExtent - 1 ) - posX ) ) ) + minNodeIndex );
-            case CCoreDispInfo::SOUTH: return -( ( GetNodeIndexFromComponents( ( ( nodeExtent - 1 ) - posX ), posY ) ) + minNodeIndex );
-            default: return -99999;
-            }
-        }
-    default:
-        {
-            return -99999;
-        }
-    }
-}
-
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-int GetNodeMinNodeAtLevel( int level )
-{
-    switch( level )
-    {
-    case 1: return 0;
-    case 2: return 1;
-    case 3: return 5;
-    case 4: return 21;
-    default: return -99999;
-    }
-}
-
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-void GetComponentsFromNodeIndex( int index, int *x, int *y )
-{
-	*x = 0;
-	*y = 0;
-
-	for( int shift = 0; index != 0; shift++ )
-	{
-		*x |= ( index & 1 ) << shift;
-		index >>= 1;
-
-		*y |= ( index & 1 ) << shift;
-		index >>= 1;
-	}
-}
-
-
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-int GetNodeIndexFromComponents( int x, int y )
-{
-	int index = 0;
-
-	// Interleave bits from the x and y values to create the index:
-	
-	int shift;
-	for( shift = 0; x != 0; shift += 2, x >>= 1 )
-	{
-		index |= ( x & 1 ) << shift;
-	}
-
-	for( shift = 1; y != 0; shift += 2, y >>= 1 )
-	{
-		index |= ( y & 1 ) << shift;
-	}
-
-	return index;
-}
-
-
 // Turn the optimizer back on
+#ifdef _MSC_VER
 #pragma optimize( "", on )
+#endif
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

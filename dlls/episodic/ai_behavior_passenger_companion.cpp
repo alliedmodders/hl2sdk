@@ -64,9 +64,9 @@ BEGIN_SIMPLE_DATADESC( FailPosition_t )
 END_DATADESC();
 
 CAI_PassengerBehaviorCompanion::CAI_PassengerBehaviorCompanion( void ) : 
-m_flUnseenDuration( 0.0f ),
 m_flNextOverturnWarning( 0.0f ),
 m_flOverturnedDuration( 0.0f ), 
+m_flUnseenDuration( 0.0f ),
 m_nExitAttempts( 0 )
 {
 	memset( &m_vehicleState, 0, sizeof( m_vehicleState ) );

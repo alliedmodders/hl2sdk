@@ -59,7 +59,7 @@ void CRopeAnchor::Spawn()
 		flDist = fabs( GetOwnerEntity()->GetAbsOrigin().z - GetAbsOrigin().z );
 	}
 
-	m_hRope = CRopeKeyframe::CreateWithSecondPointDetached( this, -1, flDist, RAPPEL_ROPE_WIDTH, "cable/cable.vmt", 5, true );
+	m_hRope = CRopeKeyframe::CreateWithSecondPointDetached( this, -1, static_cast<int>(flDist), RAPPEL_ROPE_WIDTH, "cable/cable.vmt", 5, true );
 
 	ASSERT( m_hRope != NULL );
 

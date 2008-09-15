@@ -343,11 +343,21 @@ public:
 	// Returns true if the engine is an internal build. i.e. is using the internal bugreporter.
 	virtual bool		IsInternalBuild( void ) = 0;
 
-	virtual IChangeInfoAccessor *GetChangeAccessor( const edict_t *pEdict ) = 0;	
+	virtual IChangeInfoAccessor *GetChangeAccessor( const edict_t *pEdict ) = 0;
+	
+	// Call this to find out the value of a cvar on the client.
+	//
+	// It is an asynchronous query, and it will call IServerGameDLL::OnQueryCvarValueFinished when 
+	// the value comes in from the client.
+	//
+	// Store the return value if you want to match this specific query to the OnQueryCvarValueFinished call.
+	// Returns InvalidQueryCvarCookie if the entity is invalid.
+	virtual QueryCvarCookie_t StartQueryCvarValue( edict_t *pPlayerEntity, const char *pName ) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
-#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
+#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_5	"ServerGameDLL005"
+#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL006"
 
 //-----------------------------------------------------------------------------
 // Purpose: These are the interfaces that the game .dll exposes to the engine
@@ -437,6 +447,15 @@ public:
 #ifdef _XBOX
 	virtual void			GetTitleName( const char *pMapName, char* pTitleBuff, int titleBuffSize ) = 0;
 #endif
+
+	// * This function is new with version 6 of the interface.
+	//
+	// This is called when a query from IVEngineServer::StartQueryCvarValue is finished.
+	// iCookie is the value returned by IVEngineServer::StartQueryCvarValue.
+	// Added with version 2 of the interface.
+	virtual void OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue )
+	{
+	}
 };
 
 //-----------------------------------------------------------------------------

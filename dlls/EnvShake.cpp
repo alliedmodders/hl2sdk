@@ -245,6 +245,8 @@ void CEnvShake::ApplyShake( ShakeCommand_t command )
 		case SHAKE_FREQUENCY:
 			m_pShakeController->WakeObjects();
 			break;
+		default:
+			break;
 		}
 	}
 }

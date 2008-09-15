@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="serverplugin_empty"
 	ProjectGUID="{B6572CBE-7C7F-4FFF-94DE-AFBBBAB11C64}"
+	RootNamespace="serverplugin_empty"
 	>
 	<Platforms>
 		<Platform
@@ -28,8 +29,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="attrib -r ..\..\..\game\bin\serverplugin_empty.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\serverplugin_empty.dll&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\serverplugin_empty.dll"
+				CommandLine="attrib -r ..\..\..\bin\serverplugin_empty.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\serverplugin_empty.dll&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\serverplugin_empty.dll"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -82,7 +83,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib\public,..\lib\common"
-				IgnoreDefaultLibraryNames="LIBC,libcmt"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/serverplugin_empty.pdb"
 				GenerateMapFile="true"
@@ -131,8 +132,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="attrib -r ..\..\..\game\bin\serverplugin_empty.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\serverplugin_empty.dll&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\serverplugin_empty.dll"
+				CommandLine="attrib -r ..\..\..\bin\serverplugin_empty.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\bin\serverplugin_empty.dll&#x0D;&#x0A;"
+				Outputs="..\..\..\bin\serverplugin_empty.dll"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -189,7 +190,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib\public,..\lib\common"
-				IgnoreDefaultLibraryNames="libcmtd.lib"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Release/serverplugin_empty.pdb"
 				GenerateMapFile="true"

@@ -18,7 +18,8 @@
 void SendProxy_Color32ToInt( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID )
 {
 	color32 *pIn = (color32*)pData;
-	*((unsigned int*)&pOut->m_Int) = ((unsigned int)pIn->r << 24) | ((unsigned int)pIn->g << 16) | ((unsigned int)pIn->b << 8) | ((unsigned int)pIn->a);
+	void *out = &pOut->m_Int;
+	*reinterpret_cast<unsigned int *>(out) = ((unsigned int)pIn->r << 24) | ((unsigned int)pIn->g << 16) | ((unsigned int)pIn->b << 8) | ((unsigned int)pIn->a);
 }
 
 void SendProxy_EHandleToInt( const SendProp *pProp, const void *pStruct, const void *pVarData, DVariant *pOut, int iElement, int objectID)
@@ -106,7 +107,7 @@ REGISTER_SEND_PROXY_NON_MODIFIED_POINTER( SendProxy_OnlyToTeam );
 #define TIME_BITS 24
 
 // This table encodes edict data.
-static void SendProxy_Time( const SendProp *pProp, const void *pStruct, const void *pVarData, DVariant *pOut, int iElement, int objectID )
+/*static void SendProxy_Time( const SendProp *pProp, const void *pStruct, const void *pVarData, DVariant *pOut, int iElement, int objectID )
 {
 	float clock_base = floor( gpGlobals->curtime );
 	float t = *( float * )pVarData;
@@ -118,7 +119,7 @@ static void SendProxy_Time( const SendProp *pProp, const void *pStruct, const vo
 	addt = clamp( addt, -maxoffset, maxoffset );
 
 	pOut->m_Int = addt;
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Purpose: 

@@ -77,7 +77,7 @@ void WriteUsercmd( bf_write *buf, CUserCmd *to, CUserCmd *from )
 	if ( to->forwardmove != from->forwardmove )
 	{
 		buf->WriteOneBit( 1 );
-		buf->WriteSBitLong( to->forwardmove, 16 );
+		buf->WriteSBitLong( static_cast<int>(to->forwardmove), 16 );
 	}
 	else
 	{
@@ -87,7 +87,7 @@ void WriteUsercmd( bf_write *buf, CUserCmd *to, CUserCmd *from )
 	if ( to->sidemove != from->sidemove )
 	{
 		buf->WriteOneBit( 1 );
-		buf->WriteSBitLong( to->sidemove, 16 );
+		buf->WriteSBitLong( static_cast<int>(to->sidemove), 16 );
 	}
 	else
 	{
@@ -97,7 +97,7 @@ void WriteUsercmd( bf_write *buf, CUserCmd *to, CUserCmd *from )
 	if ( to->upmove != from->upmove )
 	{
 		buf->WriteOneBit( 1 );
-		buf->WriteSBitLong( to->upmove, 16 );
+		buf->WriteSBitLong( static_cast<int>(to->upmove), 16 );
 	}
 	else
 	{

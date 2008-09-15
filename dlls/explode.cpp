@@ -293,7 +293,7 @@ void CEnvExplosion::InputExplode( inputdata_t &inputdata )
 	}
 
 	//Get the damage override if specified
-	int	iRadius = ( m_iRadiusOverride > 0 ) ? m_iRadiusOverride : ( m_iMagnitude * 2.5f );
+	int	iRadius = ( m_iRadiusOverride > 0 ) ? m_iRadiusOverride : ( static_cast<int>(m_iMagnitude * 2.5f) );
 
 	CPASFilter filter( vecExplodeOrigin );
 	te->Explosion( filter, 0.0,

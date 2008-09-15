@@ -747,7 +747,7 @@ void CSentence::CacheSaveToBuffer( CUtlBuffer& buf )
 		Assert( sample );
 
 		buf.PutFloat( sample->time );
-		short scaledValue = clamp( (short)( sample->value * 32767 ), 0, 32767 );
+		short scaledValue = static_cast<short>(clamp( sample->value * 32767, 0, 32767 ));
 
 		buf.PutShort( scaledValue );
 	}

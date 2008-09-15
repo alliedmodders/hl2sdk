@@ -851,7 +851,7 @@ void CBasePlayer::DamageEffect(float flDamage, int fDamageType)
 		UTIL_ScreenFade( this, blue, 0.2, 0.4, FFADE_MODULATE );
 
 		// Very small screen shake
-		ViewPunch(QAngle(random->RandomInt(-0.1,0.1), random->RandomInt(-0.1,0.1), random->RandomInt(-0.1,0.1)));
+		ViewPunch(QAngle(random->RandomFloat(-0.1,0.1), random->RandomFloat(-0.1,0.1), random->RandomFloat(-0.1,0.1)));
 
 		// Burn sound 
 		EmitSound( "Player.PlasmaDamage" );
@@ -984,7 +984,7 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	}
 
 	// keep track of amount of damage last sustained
-	m_lastDamageAmount = info.GetDamage();
+	m_lastDamageAmount = static_cast<int>(info.GetDamage());
 
 	// Armor. 
 	if (m_ArmorValue && !(info.GetDamageType() & (DMG_FALL | DMG_DROWN | DMG_POISON | DMG_RADIATION)) )// armor doesn't protect against fall or drown damage!
@@ -1132,7 +1132,7 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		{
 			if (bitsDamage & DMG_POISON)
 			{
-				m_nPoisonDmg += info.GetDamage();
+				m_nPoisonDmg += static_cast<int>(info.GetDamage());
 				m_tbdPrev = gpGlobals->curtime;
 				m_rgbTimeBasedDamage[itbd_PoisonRecover] = 0;
 			}
@@ -1272,7 +1272,7 @@ void CBasePlayer::PackDeadPlayerItems( void )
 	int iPW = 0;// index into packweapons array
 	int iPA = 0;// index into packammo array
 
-	memset(rgpPackWeapons, NULL, sizeof(rgpPackWeapons) );
+	memset(rgpPackWeapons, 0, sizeof(rgpPackWeapons) );
 	memset(iPackAmmo, -1, sizeof(iPackAmmo) );
 
 	// get the game rules 
@@ -1459,7 +1459,6 @@ void CBasePlayer::Event_Killed( const CTakeDamageInfo &info )
 	CSound *pSound;
 
 	g_pGameRules->PlayerKilled( this, info );
-
 
 	RumbleEffect( RUMBLE_STOP_ALL, 0, RUMBLE_FLAGS_NONE );
 
@@ -3311,7 +3310,7 @@ void CBasePlayer::HandleFuncTrain(void)
 
 	if (vel)
 	{
-		m_iTrain = TrainSpeed(pTrain->m_flSpeed, ((CFuncTrackTrain*)pTrain)->GetMaxSpeed());
+		m_iTrain = TrainSpeed(static_cast<int>(pTrain->m_flSpeed), static_cast<int>(((CFuncTrackTrain*)pTrain)->GetMaxSpeed()));
 		m_iTrain |= TRAIN_ACTIVE|TRAIN_NEW;
 	}
 }
@@ -3482,13 +3481,11 @@ void CBasePlayer::CheckTimeBasedDamage()
 	int i;
 	byte bDuration = 0;
 
-	static float gtbdPrev = 0.0;
-
 	if (!(m_bitsDamageType & DMG_TIMEBASED))
 		return;
 
 	// only check for time based damage approx. every 2 seconds
-	if (abs(gpGlobals->curtime - m_tbdPrev) < 2.0)
+	if (abs(static_cast<int>(gpGlobals->curtime - m_tbdPrev) < 2.0))
 		return;
 	
 	m_tbdPrev = gpGlobals->curtime;
@@ -3876,7 +3873,7 @@ void CBasePlayer::UpdatePlayerSound ( void )
 	// now figure out how loud the player's movement is.
 	if ( GetFlags() & FL_ONGROUND )
 	{	
-		iBodyVolume = GetAbsVelocity().Length(); 
+		iBodyVolume = static_cast<int>(GetAbsVelocity().Length()); 
 
 		// clamp the noise that can be made by the body, in case a push trigger,
 		// weapon recoil, or anything shoves the player abnormally fast. 
@@ -3912,7 +3909,7 @@ void CBasePlayer::UpdatePlayerSound ( void )
 	}
 	else if ( iVolume > m_iTargetVolume )
 	{
-		iVolume -= 250 * gpGlobals->frametime;
+		iVolume -= static_cast<int>(250 * gpGlobals->frametime);
 
 		if ( iVolume < m_iTargetVolume )
 		{

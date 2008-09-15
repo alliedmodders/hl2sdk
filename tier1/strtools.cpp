@@ -183,7 +183,7 @@ char *_V_strstr(const char* file, int line,  const char *s1, const char *search 
 	AssertValidStringPtr( s1 );
 	AssertValidStringPtr( search );
 
-	// Casting the args to (char*) in order to get the overload of strstr() that returns a (char*) instead of (const char *). This is a changed brought about by VS2005. 
+	// Casting the args to (char*) in order to get the overload of strstr() that returns a (char*) instead of (const char *). This is a change brought about by VS2005. 
 	return strstr( (char*)s1, (char*)search );
 }
 
@@ -829,52 +829,52 @@ char *V_pretifynum( int64 value )
 	}
 
 	// Render quadrillions
-	if ( value >= 1000000000000 )
+	if ( value >= 1000000000000LL )
 	{
 		char *pchRender = out + V_strlen( out );
-		V_snprintf( pchRender, 32, "%d,", value / 1000000000000 );
+		V_snprintf( pchRender, 32, "%d,", value / 1000000000000LL );
 	}
 
 	// Render trillions
-	if ( value >= 1000000000000 )
+	if ( value >= 1000000000000LL )
 	{
 		char *pchRender = out + V_strlen( out );
-		V_snprintf( pchRender, 32, "%d,", value / 1000000000000 );
+		V_snprintf( pchRender, 32, "%d,", value / 1000000000000LL );
 	}
 
 	// Render billions
-	if ( value >= 1000000000 )
+	if ( value >= 1000000000LL )
 	{
 		char *pchRender = out + V_strlen( out );
-		V_snprintf( pchRender, 32, "%d,", value / 1000000000 );
+		V_snprintf( pchRender, 32, "%d,", value / 1000000000LL );
 	}
 
 	// Render millions
-	if ( value >= 1000000 )
+	if ( value >= 1000000LL )
 	{
 		char *pchRender = out + V_strlen( out );
 		if ( value >= 1000000000 )
-			V_snprintf( pchRender, 32, "%03d,", ( value / 1000000 ) % 1000 );
+			V_snprintf( pchRender, 32, "%03d,", ( value / 1000000LL ) % 1000LL );
 		else
-			V_snprintf( pchRender, 32, "%d,", ( value / 1000000 ) % 1000 );
+			V_snprintf( pchRender, 32, "%d,", ( value / 1000000LL ) % 1000LL );
 	}
 
 	// Render thousands
-	if ( value >= 1000 )
+	if ( value >= 1000LL )
 	{
 		char *pchRender = out + V_strlen( out );
 		if ( value >= 1000000 )
-			V_snprintf( pchRender, 32, "%03d,", ( value / 1000 ) % 1000 );
+			V_snprintf( pchRender, 32, "%03d,", ( value / 1000LL ) % 1000LL );
 		else
-			V_snprintf( pchRender, 32, "%d,", ( value / 1000 ) % 1000 );
+			V_snprintf( pchRender, 32, "%d,", ( value / 1000LL ) % 1000LL );
 	}
 
 	// Render units
 	char *pchRender = out + V_strlen( out );
-	if ( value > 1000 )
-		V_snprintf( pchRender, 32, "%03d", value % 1000 );
+	if ( value > 1000LL )
+		V_snprintf( pchRender, 32, "%03d", value % 1000LL );
 	else
-		V_snprintf( pchRender, 32, "%d", value % 1000 );
+		V_snprintf( pchRender, 32, "%d", value % 1000LL );
 
 	return out;
 }
@@ -1338,7 +1338,7 @@ bool V_ExtractFilePath (const char *path, char *dest, int destSize )
 //-----------------------------------------------------------------------------
 void V_ExtractFileExtension( const char *path, char *dest, int destSize )
 {
-	*dest = NULL;
+	*dest = '\0';
 	const char * extension = V_GetFileExtension( path );
 	if ( NULL != extension )
 		V_strncpy( dest, extension, destSize );

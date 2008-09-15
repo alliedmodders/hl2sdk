@@ -218,6 +218,8 @@ void CItem::OnEntityEvent( EntityEvent_t event, void *pEventData )
 			SetNextThink( gpGlobals->curtime + 0.1f );
 		}
 		break;
+	default:
+		break;
 	}
 }
 

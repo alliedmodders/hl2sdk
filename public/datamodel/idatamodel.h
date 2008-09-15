@@ -237,8 +237,8 @@ abstract_class IUndoElement
 {
 protected:
 	explicit IUndoElement( char const *desc ) :
-		m_pDesc( desc ),
-		m_bEndOfStream( false )
+		m_bEndOfStream( false ),
+		m_pDesc( desc )
 	{
 	}
 public:

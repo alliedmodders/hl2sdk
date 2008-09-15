@@ -11,7 +11,7 @@
 #endif
 
 class CUtlBuffer;
-#include "tier1/UtlDict.h"
+#include "tier1/utldict.h"
 
 #define GAMESTATS_FILE_VERSION_OLD		001
 #define GAMESTATS_FILE_VERSION_OLD2		002
@@ -61,9 +61,9 @@ public:
 	GameStats_t() :
 	  m_nVersion( GAMESTATS_FILE_VERSION ),
 	  m_nSecondsToCompleteGame( 0 ),
-  		m_nHL2ChaptureUnlocked( 0 ),
 		m_bSteam( true ),
 		m_bCyberCafe( false ),
+  		m_nHL2ChaptureUnlocked( 0 ),
 		m_nDXLevel( 0 )
 	{
 		m_szUserID[ 0 ] = 0;

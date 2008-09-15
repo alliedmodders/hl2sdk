@@ -22,7 +22,11 @@
 
 // need this for _alloca
 #include <malloc.h>
+#ifdef _MSC_VER
 #include <new.h>
+#elif defined __GNUC__
+#include <new>
+#endif
 
 // need this for memset
 #include <string.h>
@@ -343,13 +347,13 @@ typedef void * HINSTANCE;
 #define NO_DEFAULT default: UNREACHABLE();
 
 #ifdef _WIN32
-// Alloca defined for this platform
-#define  stackalloc( _size ) _alloca( _size )
-#define  stackfree( _p )   0
+	// Alloca defined for this platform
+	#define  stackalloc( _size ) _alloca( _size )
+	#define  stackfree( _p )
 #elif _LINUX
-// Alloca defined for this platform
-#define  stackalloc( _size ) alloca( _size )
-#define  stackfree( _p )   0
+	// Alloca defined for this platform
+	#define  stackalloc( _size ) alloca( _size )
+	#define  stackfree( _p )
 #endif
 
 #ifdef _WIN32
@@ -384,7 +388,7 @@ typedef void * HINSTANCE;
 #endif
 
 // When we port to 64 bit, we'll have to resolve the int, ptr vs size_t 32/64 bit problems...
-#if !defined( _WIN64 )
+#if !defined( _WIN64 ) && defined _MSC_VER
 #pragma warning( disable : 4267 )	// conversion from 'size_t' to 'int', possible loss of data
 #pragma warning( disable : 4311 )	// pointer truncation from 'char *' to 'int'
 #pragma warning( disable : 4312 )	// conversion from 'unsigned int' to 'memhandle_t' of greater size
@@ -528,11 +532,11 @@ inline float DWordSwapAsm<float>( float f )
 // The typically used methods. 
 //-------------------------------------
 
-#if defined(__i386__) || defined(_XBOX)
+#if (defined(__i386__) || defined(_XBOX)) && !defined LITTLE_ENDIAN
 #define LITTLE_ENDIAN 1
 #endif
 
-#ifdef _SGI_SOURCE
+#if defined _SGI_SOURCE && !defined BIG_ENDIAN
 #define	BIG_ENDIAN 1
 #endif
 

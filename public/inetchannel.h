@@ -73,5 +73,4 @@ public:
 	virtual void	SetMaxBufferSize(bool bReliable, int nBytes) = 0;
 };
 
-
 #endif // INETCHANNEL_H

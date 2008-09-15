@@ -13,7 +13,7 @@
 #endif
 
 #include <stdio.h>
-#include "TokenReader.h"
+#include "tokenreader.h"
 
 
 #define MAX_INDENT_DEPTH		80

@@ -506,7 +506,7 @@ static void ReportPenetration( CBaseEntity *pEntity, float duration )
 			pEntity->m_debugOverlays |= OVERLAY_ABSBOX_BIT;
 		}
 
-		pEntity->AddTimedOverlay( UTIL_VarArgs("VPhysics Penetration Error (%s)!", pEntity->GetDebugName()), duration );
+		pEntity->AddTimedOverlay( UTIL_VarArgs("VPhysics Penetration Error (%s)!", pEntity->GetDebugName()), static_cast<int>(duration) );
 	}
 }
 
@@ -1461,7 +1461,7 @@ friction_t *CCollisionEvent::FindFriction( CBaseEntity *pObject )
 {
 	friction_t *pFree = NULL;
 
-	for ( int i = 0; i < ARRAYSIZE(m_current); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE(m_current); i++ )
 	{
 		if ( !m_current[i].pObject && !pFree )
 			pFree = &m_current[i];
@@ -1541,7 +1541,7 @@ float CCollisionEvent::DeltaTimeSinceLastFluid( CBaseEntity *pEntity )
 
 void CCollisionEvent::UpdateFrictionSounds( void )
 {
-	for ( int i = 0; i < ARRAYSIZE(m_current); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE(m_current); i++ )
 	{
 		if ( m_current[i].patch )
 		{
@@ -1875,7 +1875,7 @@ int CCollisionEvent::AddDamageInflictor( IPhysicsObject *pInflictorPhysics, floa
 
 void CCollisionEvent::LevelShutdown( void )
 {
-	for ( int i = 0; i < ARRAYSIZE(m_current); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE(m_current); i++ )
 	{
 		if ( m_current[i].patch )
 		{

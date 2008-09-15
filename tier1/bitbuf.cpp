@@ -330,7 +330,7 @@ void bf_write::WriteBitCoord (const float f)
 	VPROF( "bf_write::WriteBitCoord" );
 #endif
 	int		signbit = (f <= -COORD_RESOLUTION);
-	int		intval = (int)abs(f);
+	int		intval = abs(static_cast<int>(f));
 	int		fractval = abs((int)(f*COORD_DENOMINATOR)) & (COORD_DENOMINATOR-1);
 
 
@@ -366,7 +366,8 @@ void bf_write::WriteBitFloat(float val)
 	Assert(sizeof(long) == sizeof(float));
 	Assert(sizeof(float) == 4);
 
-	intVal = *((long*)&val);
+	void *v = &val;
+	intVal = *reinterpret_cast<long *>(v);
 	WriteUBitLong( intVal, 32 );
 }
 

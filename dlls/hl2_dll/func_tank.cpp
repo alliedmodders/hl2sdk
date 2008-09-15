@@ -824,7 +824,7 @@ void CFuncTank::Spawn( void )
 
 	m_sightOrigin = WorldBarrelPosition(); // Point at the end of the barrel
 
-	if ( m_spread > MAX_FIRING_SPREADS )
+	if ( m_spread > static_cast<int>(MAX_FIRING_SPREADS) )
 	{
 		m_spread = 0;
 	}
@@ -1143,7 +1143,7 @@ void CFuncTank::ControllerPostFrame( void )
 	AngleVectors( GetAbsAngles(), &forward );
 	m_fireLast = gpGlobals->curtime - (1/m_fireRate) - 0.01;  // to make sure the gun doesn't fire too many bullets
 	
-	int bulletCount = (gpGlobals->curtime - m_fireLast) * m_fireRate;
+	int bulletCount = static_cast<int>((gpGlobals->curtime - m_fireLast) * m_fireRate);
 	
 	if( HasSpawnFlags( SF_TANK_AIM_ASSISTANCE ) )
 	{
@@ -1417,7 +1417,7 @@ float CFuncTank::GetRandomFireTime( void )
 //-----------------------------------------------------------------------------
 int CFuncTank::GetRandomBurst( void )
 {
-	return random->RandomInt( m_fireRate-2, m_fireRate+2 );
+	return random->RandomInt( static_cast<int>(m_fireRate-2), static_cast<int>(m_fireRate+2) );
 }
 
 //-----------------------------------------------------------------------------
@@ -2110,7 +2110,7 @@ void CFuncTank::FiringSequence( const Vector &barrelEnd, const Vector &forward, 
 {
 	if ( m_fireLast != 0 )
 	{
-		int bulletCount = (gpGlobals->curtime - m_fireLast) * m_fireRate;
+		int bulletCount = static_cast<int>((gpGlobals->curtime - m_fireLast) * m_fireRate);
 		
 		if ( bulletCount > 0 )
 		{
@@ -2227,7 +2227,7 @@ void CFuncTank::Fire( int bulletCount, const Vector &barrelEnd, const Vector &fo
 #ifdef _XBOX
 		UTIL_PlayerByIndex(1)->RumbleEffect( RUMBLE_AR2, 0, RUMBLE_FLAG_RESTART | RUMBLE_FLAG_RANDOM_AMPLITUDE );
 #else	
-		CSoundEnt::InsertSound( SOUND_MOVE_AWAY, barrelEnd + forward * 32.0f, 32.0f, 0.2f, pAttacker, SOUNDENT_CHANNEL_WEAPON );
+		CSoundEnt::InsertSound( SOUND_MOVE_AWAY, barrelEnd + forward * 32.0f, 32, 0.2f, pAttacker, SOUNDENT_CHANNEL_WEAPON );
 #endif
 	}
 
@@ -3517,7 +3517,7 @@ void CMortarShell::FlyThink()
 	if ( gpGlobals->curtime > m_flNPCWarnTime )
 	{
 		// Warn the AI. Make this radius a little larger than the explosion will be, and make the sound last a little longer.
-		CSoundEnt::InsertSound ( SOUND_DANGER | SOUND_CONTEXT_MORTAR, GetAbsOrigin(), MORTAR_BLAST_RADIUS * 1.25, (m_flImpactTime - m_flNPCWarnTime) + 0.15 );
+		CSoundEnt::InsertSound ( SOUND_DANGER | SOUND_CONTEXT_MORTAR, GetAbsOrigin(), static_cast<int>(MORTAR_BLAST_RADIUS * 1.25), (m_flImpactTime - m_flNPCWarnTime) + 0.15 );
 		m_flNPCWarnTime = FLT_MAX;
 	}
 
@@ -3531,11 +3531,11 @@ void CMortarShell::FlyThink()
 
 	// Beam updates START
 
-	m_pBeamEffect[0]->SetBrightness( 255 * curve1 );
+	m_pBeamEffect[0]->SetBrightness( static_cast<int>(255 * curve1) );
 	m_pBeamEffect[0]->SetWidth( 64.0f * curve1 );
 	m_pBeamEffect[0]->SetEndWidth( 64.0f * curve1 );
 
-	m_pBeamEffect[1]->SetBrightness( 255 * curve1 );
+	m_pBeamEffect[1]->SetBrightness( static_cast<int>(255 * curve1) );
 	m_pBeamEffect[1]->SetWidth( 8.0f * curve1 );
 	m_pBeamEffect[1]->SetEndWidth( 8.0f * curve1 );
 
@@ -3543,14 +3543,14 @@ void CMortarShell::FlyThink()
 
 	if ( m_pBeamEffect[2] )
 	{
-		m_pBeamEffect[2]->SetBrightness( 255 * curve2 );
+		m_pBeamEffect[2]->SetBrightness( static_cast<int>(255 * curve2) );
 		m_pBeamEffect[2]->SetWidth( 32.0f * curve2 );
 		m_pBeamEffect[2]->SetEndWidth( 32.0f * curve2 );
 	}
 
 	if ( m_pBeamEffect[3] )
 	{
-		m_pBeamEffect[3]->SetBrightness( 255 * curve2 );
+		m_pBeamEffect[3]->SetBrightness( static_cast<int>(255 * curve2) );
 		m_pBeamEffect[3]->SetWidth( 8.0f * curve2 );
 		m_pBeamEffect[3]->SetEndWidth( 8.0f * curve2 );
 	}
@@ -3687,11 +3687,11 @@ void CMortarShell::FadeThink( void )
 
 	// Beam updates START
 
-	m_pBeamEffect[0]->SetBrightness( 255 * curve1 );
+	m_pBeamEffect[0]->SetBrightness( static_cast<int>(255 * curve1) );
 	m_pBeamEffect[0]->SetWidth( 64.0f * curve1 );
 	m_pBeamEffect[0]->SetEndWidth( 64.0f * curve1 );
 
-	m_pBeamEffect[1]->SetBrightness( 255 * curve1 );
+	m_pBeamEffect[1]->SetBrightness( static_cast<int>(255 * curve1) );
 	m_pBeamEffect[1]->SetWidth( 8.0f * curve1 );
 	m_pBeamEffect[1]->SetEndWidth( 8.0f * curve1 );
 
@@ -3699,14 +3699,14 @@ void CMortarShell::FadeThink( void )
 
 	if ( m_pBeamEffect[2] )
 	{
-		m_pBeamEffect[2]->SetBrightness( 255 * curve2 );
+		m_pBeamEffect[2]->SetBrightness( static_cast<int>(255 * curve2) );
 		m_pBeamEffect[2]->SetWidth( 32.0f * curve2 );
 		m_pBeamEffect[2]->SetEndWidth( 32.0f * curve2 );
 	}
 
 	if ( m_pBeamEffect[3] )
 	{
-		m_pBeamEffect[3]->SetBrightness( 255 * curve2 );
+		m_pBeamEffect[3]->SetBrightness( static_cast<int>(255 * curve2) );
 		m_pBeamEffect[3]->SetWidth( 8.0f * curve2 );
 		m_pBeamEffect[3]->SetEndWidth( 8.0f * curve2 );
 	}

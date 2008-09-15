@@ -1522,7 +1522,6 @@ void CChangeLevel::WarnAboutActiveLead( void )
 void CChangeLevel::ChangeLevelNow( CBaseEntity *pActivator )
 {
 	CBaseEntity	*pLandmark;
-	levellist_t	levels[16];
 
 	Assert(!FStrEq(m_szMapName, ""));
 
@@ -3616,7 +3615,7 @@ END_DATADESC()
 void CTriggerWind::Spawn( void )
 {
 	m_bSwitch = true;
-	m_nDirBase = GetLocalAngles().y;
+	m_nDirBase = static_cast<int>(GetLocalAngles().y);
 
 	BaseClass::Spawn();
 
@@ -3739,7 +3738,7 @@ void CTriggerWind::WindThink( void )
 
 		// Set new target direction and speed
 		m_nSpeedTarget = m_nSpeedBase + random->RandomInt( -m_nSpeedNoise, m_nSpeedNoise );
-		m_nDirTarget = UTIL_AngleMod( m_nDirBase + random->RandomInt(-m_nDirNoise, m_nDirNoise) );
+		m_nDirTarget = static_cast<int>(UTIL_AngleMod( m_nDirBase + random->RandomInt(-m_nDirNoise, m_nDirNoise) ));
 	}
 	else
 	{
@@ -3747,14 +3746,14 @@ void CTriggerWind::WindThink( void )
 		// either ramp up, or sleep till change
 		if (abs(m_nSpeedTarget - m_nSpeedCurrent) > MAX_WIND_CHANGE)
 		{
-			m_nSpeedCurrent += (m_nSpeedTarget > m_nSpeedCurrent) ? MAX_WIND_CHANGE : -MAX_WIND_CHANGE;
+			m_nSpeedCurrent += (m_nSpeedTarget > m_nSpeedCurrent) ? static_cast<int>(MAX_WIND_CHANGE) : static_cast<int>(-MAX_WIND_CHANGE);
 			bDone = false;
 		}
 
 		if (abs(m_nDirTarget - m_nDirCurrent) > MAX_WIND_CHANGE)
 		{
 
-			m_nDirCurrent = UTIL_ApproachAngle( m_nDirTarget, m_nDirCurrent, MAX_WIND_CHANGE );
+			m_nDirCurrent = static_cast<int>(UTIL_ApproachAngle( m_nDirTarget, m_nDirCurrent, MAX_WIND_CHANGE ));
 			bDone = false;
 		}
 		

@@ -694,15 +694,15 @@ public:
 	}
 	inline void SetDeltaFixed( const Vector vInput )
 	{
-		delta[0] = vInput.x * g_VertAnimFixedPointScaleInv;
-		delta[1] = vInput.y * g_VertAnimFixedPointScaleInv;
-		delta[2] = vInput.z * g_VertAnimFixedPointScaleInv;
+		delta[0] = static_cast<short>(vInput.x * g_VertAnimFixedPointScaleInv);
+		delta[1] = static_cast<short>(vInput.y * g_VertAnimFixedPointScaleInv);
+		delta[2] = static_cast<short>(vInput.z * g_VertAnimFixedPointScaleInv);
 	}
 	inline void SetNDeltaFixed( const Vector vInputNormal )
 	{
-		ndelta[0] = vInputNormal.x * g_VertAnimFixedPointScaleInv;
-		ndelta[1] = vInputNormal.y * g_VertAnimFixedPointScaleInv;
-		ndelta[2] = vInputNormal.z * g_VertAnimFixedPointScaleInv;
+		ndelta[0] = static_cast<short>(vInputNormal.x * g_VertAnimFixedPointScaleInv);
+		ndelta[1] = static_cast<short>(vInputNormal.y * g_VertAnimFixedPointScaleInv);
+		ndelta[2] = static_cast<short>(vInputNormal.z * g_VertAnimFixedPointScaleInv);
 	}
 
 	// Ick...can also force fp16 data into this structure for writing to file in legacy format...

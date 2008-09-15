@@ -102,7 +102,7 @@ template<class T> T LowLevelByteSwap( T input )
 {
 	T output = input;	// To solve the "output may not have been initialized" warning.
 
-	for( int i = 0; i < sizeof(T); i++ )
+	for( unsigned int i = 0; i < sizeof(T); i++ )
 	{
 		((unsigned char* )&output)[i] = ((unsigned char*)&input)[sizeof(T)-(i+1)]; 
 	}

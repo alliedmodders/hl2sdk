@@ -63,7 +63,7 @@ public:
 		if ( !BaseClass::Connect( factory ) )
 			return false;
 
-		if ( IsPrimaryAppSystem() )
+		if ( this->IsPrimaryAppSystem() )
 		{
 			ConnectTier1Libraries( &factory, 1 );
 			if ( ConVarFlag && !g_pCVar )
@@ -77,7 +77,7 @@ public:
 
 	virtual void Disconnect() 
 	{
-		if ( IsPrimaryAppSystem() )
+		if ( this->IsPrimaryAppSystem() )
 		{
 			DisconnectTier1Libraries();
 		}
@@ -90,7 +90,7 @@ public:
 		if ( nRetVal != INIT_OK )
 			return nRetVal;
 
-		if ( g_pCVar && ConVarFlag && IsPrimaryAppSystem() )
+		if ( g_pCVar && ConVarFlag && this->IsPrimaryAppSystem() )
 		{
 			ConCommandBaseMgr::OneTimeInit( this );
 		}
@@ -99,7 +99,7 @@ public:
 
 	virtual void Shutdown()
 	{
-		if ( g_pCVar && ConVarFlag && IsPrimaryAppSystem() )
+		if ( g_pCVar && ConVarFlag && this->IsPrimaryAppSystem() )
 		{
 			g_pCVar->UnlinkVariables( ConVarFlag );
 		}

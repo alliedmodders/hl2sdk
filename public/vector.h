@@ -54,7 +54,7 @@
 #ifdef VECTOR_PARANOIA
 #define CHECK_VALID( _v)	Assert( (_v).IsValid() )
 #else
-#define CHECK_VALID( _v)	0
+#define CHECK_VALID( _v)
 #endif
 
 #ifdef __cplusplus
@@ -231,8 +231,8 @@ public:
 	// Initialization
 	void Init(short ix = 0, short iy = 0, short iz = 0, short iw = 0 );
 
-	__m64 &AsM64() { return *(__m64*)&x; }
-	const __m64 &AsM64() const { return *(const __m64*)&x; } 
+	__m64 &AsM64() { void *addr = &x; return *reinterpret_cast<__m64 *>(addr); }
+	const __m64 &AsM64() const { const void *addr = &x; return *reinterpret_cast<const __m64 *>(addr); } 
 
 	// Setter
 	void Set( const ShortVector& vOther );
@@ -405,12 +405,9 @@ Vector RandomVector( vec_t minVal, vec_t maxVal );
 //-----------------------------------------------------------------------------
 inline Vector::Vector(void)									
 { 
-#ifdef _DEBUG
-#ifdef VECTOR_PARANOIA
 	// Initialize to NAN to catch errors
 	x = y = z = VEC_T_NAN;
-#endif
-#endif
+
 }
 
 inline Vector::Vector(vec_t X, vec_t Y, vec_t Z)						
@@ -724,10 +721,10 @@ FORCEINLINE_VECTOR  ShortVector& ShortVector::operator-=(const ShortVector& v)
 
 FORCEINLINE_VECTOR  ShortVector& ShortVector::operator*=(float fl)	
 {
-	x *= fl;
-	y *= fl;
-	z *= fl;
-	w *= fl;
+	x *= static_cast<short>(fl);
+	y *= static_cast<short>(fl);
+	z *= static_cast<short>(fl);
+	w *= static_cast<short>(fl);
 	return *this;
 }
 
@@ -744,10 +741,10 @@ FORCEINLINE_VECTOR  ShortVector& ShortVector::operator/=(float fl)
 {
 	Assert( fl != 0.0f );
 	float oofl = 1.0f / fl;
-	x *= oofl;
-	y *= oofl;
-	z *= oofl;
-	w *= oofl;
+	x *= static_cast<short>(oofl);
+	y *= static_cast<short>(oofl);
+	z *= static_cast<short>(oofl);
+	w *= static_cast<short>(oofl);
 	return *this;
 }
 
@@ -764,10 +761,10 @@ FORCEINLINE_VECTOR  ShortVector& ShortVector::operator/=(const ShortVector& v)
 FORCEINLINE_VECTOR void ShortVectorMultiply( const ShortVector& src, float fl, ShortVector& res )
 {
 	Assert( IsFinite(fl) );
-	res.x = src.x * fl;
-	res.y = src.y * fl;
-	res.z = src.z * fl;
-	res.w = src.w * fl;
+	res.x = src.x * static_cast<short>(fl);
+	res.y = src.y * static_cast<short>(fl);
+	res.z = src.z * static_cast<short>(fl);
+	res.w = src.w * static_cast<short>(fl);
 }
 
 FORCEINLINE_VECTOR ShortVector ShortVector::operator*(float fl) const

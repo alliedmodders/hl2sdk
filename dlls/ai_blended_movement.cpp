@@ -961,7 +961,7 @@ int CAI_BlendedMotor::BuildInsertNode( int i, float flTime )
 
 	Assert( flTime > 0.0 );
 
-	for (i; i < m_scriptTurn.Count() - 1; i++)
+	for (; i < m_scriptTurn.Count() - 1; i++)
 	{
 		if (m_scriptTurn[i].flTime < flTime)
 		{
@@ -1203,12 +1203,8 @@ void CAI_BlendedMotor::BuildVelocityScript( const AILocalMoveGoal_t &move )
 					script.flMaxVelocity = 0;
 				}
 				break;
-			/*
-			case NAV_FLY:
-				// FIXME: can there be a NAV_GROUND -> NAV_FLY transition?
-				script.flMaxVelocity = 0;
+			default:
 				break;
-			*/
 			}
 		}
 		else

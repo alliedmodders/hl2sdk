@@ -301,7 +301,7 @@ bool CSDKPlayerAnimState::IsOuterGrenadePrimed()
 	}
 	else
 	{
-		return NULL;
+		return false;
 	}
 }
 

@@ -22,10 +22,10 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				OptimizeForProcessor="2"
-				AdditionalIncludeDirectories="../game_shared/hl2,./,../Public,../Public/tier1,../game_shared,../utils/common,../dlls,../../dlls,../dlls/hl2_dll,./episodic"
-				PreprocessorDefinitions="HL2_EPISODIC;HL2_DLL;USES_SAVERESTORE;_DEBUG;fopen=dont_use_fopen;GAME_DLL;sprintf=use_Q_snprintf_instead_of_sprintf;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
+				AdditionalIncludeDirectories="../game_shared/hl2,./,../Public,../Public/tier1,../game_shared,../utils/common,../dlls,../../dlls,../dlls/hl2_dll,../dlls/episodic"
+				PreprocessorDefinitions="HL2_EPISODIC;HL2_DLL;USES_SAVERESTORE;_DEBUG;GAME_DLL;sprintf=use_Q_snprintf_instead_of_sprintf;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
 				ExceptionHandling="FALSE"
-				RuntimeLibrary="5"
+				RuntimeLibrary="1"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="3"
@@ -54,7 +54,7 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\lib-vc7\public"
-				IgnoreDefaultLibraryNames="LIBCMT,LIBCMTD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/server.pdb"
 				SubSystem="2"
@@ -107,11 +107,11 @@ if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.
 				EnableIntrinsicFunctions="TRUE"
 				FavorSizeOrSpeed="1"
 				OptimizeForProcessor="3"
-				AdditionalIncludeDirectories="../game_shared/hl2,./,../Public,../Public/tier1,../game_shared,../utils/common,../dlls,../../dlls,../dlls/hl2_dll,./episodic"
+				AdditionalIncludeDirectories="../game_shared/hl2,./,../Public,../Public/tier1,../game_shared,../utils/common,../dlls,../../dlls,../dlls/hl2_dll,../dlls/episodic"
 				PreprocessorDefinitions="HL2_EPISODIC;HL2_DLL;USES_SAVERESTORE;NDEBUG;GAME_DLL;sprintf=use_Q_snprintf_instead_of_sprintf;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
 				StringPooling="TRUE"
 				ExceptionHandling="FALSE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="TRUE"
 				ForceConformanceInForLoopScope="TRUE"
@@ -145,7 +145,7 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\lib-vc7\public"
-				IgnoreDefaultLibraryNames="LIBCMT,LIBCMTD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/server.pdb"
 				GenerateMapFile="TRUE"
@@ -3185,18 +3185,6 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				</File>
 				<File
 					RelativePath=".\hl2_dll\vehicle_jeep.cpp">
-					<FileConfiguration
-						Name="Debug HL2|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release HL2|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="hl2_dll\vehicle_prisoner_pod.cpp">
@@ -4110,24 +4098,28 @@ if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\lib-vc7\public\choreoobjects.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\mathlib.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\tier0.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\tier1.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\vgui_controls.lib">
-		</File>
-		<File
-			RelativePath="..\lib-vc7\public\vstdlib.lib">
-		</File>
+		<Filter
+			Name="Link Libraries"
+			Filter="">
+			<File
+				RelativePath="..\lib-vc7\public\choreoobjects.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\mathlib.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\tier0.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\tier1.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\vgui_controls.lib">
+			</File>
+			<File
+				RelativePath="..\lib-vc7\public\vstdlib.lib">
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

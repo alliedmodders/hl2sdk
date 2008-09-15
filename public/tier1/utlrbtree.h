@@ -10,6 +10,8 @@
 #define UTLRBTREE_H
 
 #include "tier1/utlmemory.h"
+#undef MINMAX_H
+#include "minmax.h"
 
 //-----------------------------------------------------------------------------
 // Tool to generate a default compare function for any type that implements
@@ -42,7 +44,7 @@ void SetDefLessFunc( RBTREE_T &RBTree )
 {
 #ifdef _WIN32
 	RBTree.SetLessFunc( DefLessFunc( RBTREE_T::KeyType_t ) );
-#elif _LINUX
+#elif defined _LINUX
 	RBTree.SetLessFunc( DefLessFunc( typename RBTREE_T::KeyType_t ) );
 #endif
 }
@@ -250,22 +252,23 @@ protected:
 
 template <class T, class I, typename L>
 inline CUtlRBTree<T, I, L>::CUtlRBTree( int growSize, int initSize, const LessFunc_t &lessfunc ) : 
-m_Elements( growSize, initSize ), 
 m_LessFunc( lessfunc ),
+m_Elements( growSize, initSize ), 
 m_Root( InvalidIndex() ), 
-m_NumElements( 0 ), m_TotalElements( 0 ),  
-m_FirstFree( InvalidIndex() )
+m_NumElements( 0 ),
+m_FirstFree( InvalidIndex() ),
+m_TotalElements( 0 )
 {
 	ResetDbgInfo();
 }
 
 template <class T, class I, typename L>
 inline CUtlRBTree<T, I, L>::CUtlRBTree( const LessFunc_t &lessfunc ) : 
-m_Elements( 0, 0 ), 
 m_LessFunc( lessfunc ),
-m_Root( InvalidIndex() ), 
-m_NumElements( 0 ), m_TotalElements( 0 ),  
-m_FirstFree( InvalidIndex() )
+m_Elements( 0, 0 ), 
+m_Root( InvalidIndex() ),
+m_FirstFree( InvalidIndex() ),
+m_NumElements( 0 ), m_TotalElements( 0 )
 {
 	ResetDbgInfo();
 }
@@ -1189,6 +1192,7 @@ int CUtlRBTree<T, I, L>::Depth( I node ) const
 
 	int depthright = Depth( RightChild(node) );
 	int depthleft = Depth( LeftChild(node) );
+
 	return max(depthright, depthleft) + 1;
 }
 

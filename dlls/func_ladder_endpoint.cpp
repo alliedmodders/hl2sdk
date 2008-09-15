@@ -44,7 +44,7 @@ bool CFuncLadderEndPoint::Validate()
 	CFuncLadderEndPoint *other = dynamic_cast< CFuncLadderEndPoint * >( GetNextTarget() );
 	if ( !other )
 	{
-		DevMsg( 1, "func_ladderendpoint(%s) without matching target\n", GetEntityName() );
+		DevMsg( 1, "func_ladderendpoint(%s) without matching target\n", STRING(GetEntityName()) );
 		return false;
 	}
 

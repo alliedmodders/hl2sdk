@@ -94,7 +94,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib\public"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMTD"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)/server.pdb"
 				GenerateMapFile="true"
@@ -166,7 +166,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../Public/tier1;../game_shared/sdk;./;../Public;../game_shared;../utils/common;../dlls;../dlls/sdk"
-				PreprocessorDefinitions="_DEBUG;fopen=dont_use_fopen;BOTS;SDK_DLL;USES_SAVERESTORE;GAME_DLL;sprintf=use_Q_snprintf_instead_of_sprintf;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
+				PreprocessorDefinitions="_DEBUG;BOTS;SDK_DLL;USES_SAVERESTORE;GAME_DLL;sprintf=use_Q_snprintf_instead_of_sprintf;_WINDOWS;VECTOR;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;_WIN32;PROTECTED_THINGS_ENABLE"
 				ExceptionHandling="0"
 				RuntimeLibrary="1"
 				ForceConformanceInForLoopScope="true"
@@ -204,7 +204,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib\public"
-				IgnoreDefaultLibraryNames="LIBC,LIBCD"
+				IgnoreDefaultLibraryNames="LIBC,LIBCD,LIBCMT"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(IntDir)/server.pdb"
 				SubSystem="2"
@@ -3573,20 +3573,6 @@
 				<File
 					RelativePath="..\game_shared\sdk\sdk_basegrenade_projectile.h"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\sdk\sdk_bot_temp.cpp"
@@ -3619,20 +3605,6 @@
 				<File
 					RelativePath="..\game_shared\sdk\sdk_fx_shared.h"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="sdk\sdk_gameinterface.cpp"
@@ -3649,20 +3621,6 @@
 				<File
 					RelativePath="..\game_shared\sdk\sdk_gamerules.h"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\sdk\sdk_logicalentity.cpp"
@@ -3679,20 +3637,6 @@
 				<File
 					RelativePath="sdk\sdk_player.h"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\sdk_player_shared.cpp"
@@ -3705,20 +3649,6 @@
 				<File
 					RelativePath="..\game_shared\sdk\sdk_playeranimstate.h"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="sdk\sdk_playermove.cpp"
@@ -3727,20 +3657,6 @@
 				<File
 					RelativePath="..\game_shared\sdk\sdk_shareddefs.h"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="sdk\sdk_team.cpp"
@@ -3749,20 +3665,6 @@
 				<File
 					RelativePath="sdk\sdk_team.h"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\sdk_usermessages.cpp"
@@ -3779,58 +3681,14 @@
 				<File
 					RelativePath="..\game_shared\sdk\sdk_weapon_parse.h"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\sdk\te_firebullets.cpp"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\sdk\te_firebullets.h"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\weapon_basesdkgrenade.cpp"
@@ -3839,20 +3697,6 @@
 				<File
 					RelativePath="..\game_shared\sdk\weapon_basesdkgrenade.h"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\weapon_grenade.cpp"
@@ -3869,40 +3713,10 @@
 				<File
 					RelativePath="..\game_shared\sdk\weapon_sdkbase.h"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\game_shared\sdk\weapon_shotgun.cpp"
 					>
-					<FileConfiguration
-						Name="Release SDK|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug SDK|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"
-						/>
-					</FileConfiguration>
 				</File>
 			</Filter>
 			<Filter
@@ -4763,66 +4577,70 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\lib\public\choreoobjects.lib"
+		<Filter
+			Name="Link Libraries"
 			>
-		</File>
-		<File
-			RelativePath="..\lib\public\mathlib.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier0.lib"
-			>
-			<FileConfiguration
-				Name="Release SDK|Win32"
+			<File
+				RelativePath="..\lib\public\choreoobjects.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=" "
-					CommandLine="&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug SDK|Win32"
+			</File>
+			<File
+				RelativePath="..\lib\public\mathlib.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=" "
-					CommandLine="&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\lib\public\tier1.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\vgui_controls.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\lib\public\vstdlib.lib"
-			>
-			<FileConfiguration
-				Name="Release SDK|Win32"
+			</File>
+			<File
+				RelativePath="..\lib\public\tier0.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=" "
-					CommandLine="&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug SDK|Win32"
+				<FileConfiguration
+					Name="Release SDK|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=" "
+						CommandLine="&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug SDK|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=" "
+						CommandLine="&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\lib\public\tier1.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=" "
-					CommandLine="&#x0D;&#x0A;"
-				/>
-			</FileConfiguration>
-		</File>
+			</File>
+			<File
+				RelativePath="..\lib\public\vgui_controls.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\lib\public\vstdlib.lib"
+				>
+				<FileConfiguration
+					Name="Release SDK|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=" "
+						CommandLine="&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug SDK|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=" "
+						CommandLine="&#x0D;&#x0A;"
+					/>
+				</FileConfiguration>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

@@ -154,3 +154,4 @@ inline bool CAI_MoveProbe::TestGroundMove( const Vector &vecActualStart, const V
 }
 
 #endif // AI_MOVEPROBE_H
+

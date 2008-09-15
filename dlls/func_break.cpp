@@ -55,11 +55,11 @@ extern Vector		g_vecAttackDir;
 		"item_rpg_round",			// 12
 		"unused (item_smg1_grenade) 13",// 13
 		"item_box_sniper_rounds",	// 14
-		"unused (???) 15",			// 15
+		"unused (?) 15",			// 15
 		"weapon_stunstick",			// 16
 		"unused (weapon_ar1) 17",	// 17
 		"weapon_ar2",				// 18
-		"unused (???) 19",				// 19
+		"unused (?) 19",				// 19
 		"weapon_rpg",				// 20
 		"weapon_smg1",				// 21
 		"unused (weapon_smg2) 22",	// 22
@@ -209,13 +209,13 @@ bool CBreakable::KeyValue( const char *szKeyName, const char *szValue )
 	else if (FStrEq(szKeyName, "spawnobject") )
 	{
 		int object = atoi( szValue );
-		if ( object > 0 && object < ARRAYSIZE(pSpawnObjects) )
+		if ( object > 0 && object < static_cast<int>(ARRAYSIZE(pSpawnObjects)) )
 			m_iszSpawnObject = MAKE_STRING( pSpawnObjects[object] );
 	}
 	else if (FStrEq(szKeyName, "propdata") )
 	{
 		int pdata = atoi( szValue );
-		if ( pdata > 0 && pdata < ARRAYSIZE(pFGDPropData) )
+		if ( pdata > 0 && pdata < static_cast<int>(ARRAYSIZE(pFGDPropData)) )
 		{
 			m_iszPropData = MAKE_STRING( pFGDPropData[pdata] );
 		}
@@ -452,7 +452,7 @@ void CBreakable::Precache( void )
 	else
 	{
 		// Actually, precache all possible objects...
-		for ( int i = 0; i < ARRAYSIZE(pSpawnObjects) ; ++i )
+		for ( size_t i = 0; i < ARRAYSIZE(pSpawnObjects) ; ++i )
 		{
 			if ( !pSpawnObjects[ i ] )
 				continue;
@@ -716,7 +716,10 @@ void CBreakable::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir,
 			
 			case matUnbreakableGlass:
 				g_pEffects->Ricochet( ptr->endpos, (vecDir*-1.0f) );
-			break;
+				break;
+
+			default:
+				break;
 		}
 	}
 
@@ -978,7 +981,7 @@ void CBreakable::Die( void )
 	CCollisionProperty *pCollisionProp = CollisionProp();
 
 	Vector vSize = pCollisionProp->OBBSize();
-	int iCount = ( vSize[0] * vSize[1] + vSize[1] * vSize[2] + vSize[2] * vSize[0] ) / ( 3 * 12 * 12 );
+	int iCount = static_cast<int>(( vSize[0] * vSize[1] + vSize[1] * vSize[2] + vSize[2] * vSize[0] ) / ( 3 * 12 * 12 ));
 
 	if ( iCount > func_break_max_pieces.GetInt() )
 	{
@@ -1034,7 +1037,7 @@ void CBreakable::Die( void )
 
 	if ( Explodable() )
 	{
-		ExplosionCreate( vecSpot, pCollisionProp->GetCollisionAngles(), this, GetExplosiveDamage(), GetExplosiveRadius(), true );
+		ExplosionCreate( vecSpot, pCollisionProp->GetCollisionAngles(), this, static_cast<int>(GetExplosiveDamage()), static_cast<int>(GetExplosiveRadius()), true );
 	}
 }
 

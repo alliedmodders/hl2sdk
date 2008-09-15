@@ -187,7 +187,7 @@ CHL2MPRules::CHL2MPRules()
 {
 #ifndef CLIENT_DLL
 	// Create the team managers
-	for ( int i = 0; i < ARRAYSIZE( sTeamNames ); i++ )
+	for ( int i = 0; i < static_cast<int>(ARRAYSIZE( sTeamNames )); i++ )
 	{
 		CTeam *pTeam = static_cast<CTeam*>(CreateEntityByName( "team_manager" ));
 		pTeam->Init( sTeamNames[i], i );

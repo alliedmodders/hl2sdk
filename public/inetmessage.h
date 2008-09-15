@@ -43,6 +43,4 @@ public:
 	virtual const char		*ToString( void ) const = 0; // returns a human readable string about message content
 };
 
-
 #endif
-
