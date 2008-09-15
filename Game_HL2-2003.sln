@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client", "cl_dll\client_hl2-2003.vcproj", "{E44D6502-2BB4-47F8-85CF-ACDD4FC18329}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "server", "dlls\server_hl2-2003.vcproj", "{1AA0213B-2B68-40CD-90F8-CFDFD37C1550}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug HL2 = Debug HL2
+		Release HL2 = Release HL2
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{E44D6502-2BB4-47F8-85CF-ACDD4FC18329}.Debug HL2.ActiveCfg = Debug HL2|Win32
+		{E44D6502-2BB4-47F8-85CF-ACDD4FC18329}.Debug HL2.Build.0 = Debug HL2|Win32
+		{E44D6502-2BB4-47F8-85CF-ACDD4FC18329}.Release HL2.ActiveCfg = Release HL2|Win32
+		{E44D6502-2BB4-47F8-85CF-ACDD4FC18329}.Release HL2.Build.0 = Release HL2|Win32
+		{1AA0213B-2B68-40CD-90F8-CFDFD37C1550}.Debug HL2.ActiveCfg = Debug HL2|Win32
+		{1AA0213B-2B68-40CD-90F8-CFDFD37C1550}.Debug HL2.Build.0 = Debug HL2|Win32
+		{1AA0213B-2B68-40CD-90F8-CFDFD37C1550}.Release HL2.ActiveCfg = Release HL2|Win32
+		{1AA0213B-2B68-40CD-90F8-CFDFD37C1550}.Release HL2.Build.0 = Release HL2|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

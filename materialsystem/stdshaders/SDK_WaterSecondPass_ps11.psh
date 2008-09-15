@@ -1,0 +1,15 @@
+ps.1.1
+
+; t0: 
+;		texture: dudv map
+;		texcoords: dudvmap texcoords
+; t1:
+;		texture: refraction render target
+;		texcoords: 
+
+tex t0					; sample dudv map, alpha channel contains fog, red contains tint
+texbem t1, t0			; dudv
+
+dp3 r0, t0, c1			; Apply monochrome refracttint
+mul r1, t1, r0
+lrp r0, t0.a, c0, r1	; c0 contains the fog color

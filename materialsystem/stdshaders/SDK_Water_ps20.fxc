@@ -1,0 +1,154 @@
+// STATIC: "MULTITEXTURE" "0..1"
+// STATIC: "REFLECT" "0..1"
+// STATIC: "REFRACT" "0..1"
+// STATIC: "ABOVEWATER" "0..1"
+// STATIC: "HDRTYPE"					"0..2"
+
+// DYNAMIC: "HDRENABLED"				"0..1"
+// DYNAMIC: "FOGTYPE"					"0..2"
+
+#include "common_ps_fxc.h"
+
+sampler RefractSampler	: register( s0 );
+
+sampler ReflectSampler	: register( s2 );
+
+sampler NormalSampler	: register( s4 );
+
+sampler NormalizeSampler : register( s5 );
+
+const HALF4 vRefractTint : register( c1 );
+const HALF4 vReflectTint : register( c4 );
+const float4  g_ReflectRefractScale : register( c5 ); // xy - reflect scale, zw - refract scale
+
+const HALF4 g_FogColor : register( c6 );
+
+const HALF4 g_FogParams : register( c7 );
+#define g_FogStart g_FogParams.x
+#define g_FogEndMinusStart g_FogParams.y
+#define g_Reflect_OverBright g_FogParams.z
+
+static const bool g_bReflect = REFLECT ? true : false;
+static const bool g_bRefract = REFRACT ? true : false;
+
+
+struct PS_INPUT
+{
+	float2 vBumpTexCoord			: TEXCOORD0;
+	half3 vTangentEyeVect			: TEXCOORD1;
+	float4 vReflectXY_vRefractYX	: TEXCOORD2;
+	float  W						: TEXCOORD3;
+	float4 vProjPos					: TEXCOORD4;
+	float screenCoord				: TEXCOORD5;
+#if MULTITEXTURE
+	float4 vExtraBumpTexCoord        : TEXCOORD6;
+#endif
+	float4 fogFactorW				: COLOR1;
+};
+
+HDR_PS_OUTPUT main( PS_INPUT i ) : COLOR
+{
+	// Load normal and expand range
+	HALF4 vNormalSample = tex2D( NormalSampler, i.vBumpTexCoord.xy );
+
+#if MULTITEXTURE
+	HALF4 vNormalSample1 = tex2D( NormalSampler, i.vExtraBumpTexCoord.xy );
+	HALF4 vNormalSample2 = tex2D( NormalSampler, i.vExtraBumpTexCoord.zw );
+	vNormalSample=0.33*(vNormalSample+vNormalSample1+vNormalSample2);
+#endif
+
+	HALF3 vNormal = vNormalSample * 2.0 - 1.0;
+
+	// Perform division by W only once
+	float ooW = 1.0f / i.W;
+
+	float2 unwarpedRefractTexCoord = i.vReflectXY_vRefractYX.wz * ooW;
+
+	float fogDepthValue = tex2D( RefractSampler, unwarpedRefractTexCoord ).a;
+
+	float4 reflectRefractScale = g_ReflectRefractScale;
+	reflectRefractScale *= fogDepthValue;
+
+	// Compute coordinates for sampling Reflection
+	float2 vReflectTexCoord;
+	float2 vRefractTexCoord;
+
+	// vectorize the dependent UV calculations (reflect = .xy, refract = .wz)
+#ifdef NV3X
+	float4 vDependentTexCoords = vNormal.xyxy * vNormalSample.a * reflectRefractScale;
+#else
+	float4 vN;
+	vN.xy = vNormal.xy;
+	vN.w = vNormal.x;
+	vN.z = vNormal.y;
+	float4 vDependentTexCoords = vN * vNormalSample.a * reflectRefractScale;
+#endif
+
+	vDependentTexCoords += ( i.vReflectXY_vRefractYX * ooW );
+	vReflectTexCoord = vDependentTexCoords.xy;
+	vRefractTexCoord = vDependentTexCoords.wz;
+
+	// Sample reflection and refraction
+	HALF4 vReflectColor = tex2D( ReflectSampler, vReflectTexCoord );
+	HALF4 vRefractColor = tex2D( RefractSampler, vRefractTexCoord );
+	vReflectColor*=g_Reflect_OverBright;
+	vReflectColor *= vReflectTint;
+	vRefractColor *= vRefractTint;
+	
+#if HDRTYPE==0 && MULTITEXTURE==0
+	// this check is not HDR/multitexture dependent, but I didn't want to potentially mess with the
+	// performance of non-hdr water at this stage. removing the use of the normalizing cube map
+	// fixes the vertical bands in the water.
+	HALF3 vEyeVect;
+	vEyeVect = NormalizeWithCubemap( NormalizeSampler, i.vTangentEyeVect );
+#else
+	half3 vEyeVect;
+	vEyeVect = normalize(i.vTangentEyeVect);
+#endif
+
+	// Fresnel term
+	HALF fNdotV = saturate( dot( vEyeVect, vNormal ) );
+	HALF fFresnel = pow( 1.0 - fNdotV, 5 );
+
+	// fFresnel == 1.0f means full reflection
+
+	fFresnel *= saturate( ( fogDepthValue - 0.05f ) * 20.0f );
+
+	float4 fogColor;
+#if HDRTYPE == 0 || HDRENABLED == 0
+	fogColor = g_FogColor;
+#else
+	fogColor = GammaToLinear( g_FogColor );
+#	if HDRTYPE == HDR_TYPE_INTEGER
+	fogColor *= cLinearLightScale.x;
+#	endif
+#endif	
+
+	// blend between refraction and fog color.
+#if ABOVEWATER
+	vRefractColor = lerp( vRefractColor, fogColor, saturate( fogDepthValue - 0.05f ) );
+#else
+	float fogFactor = saturate( ( i.vProjPos.z - g_FogStart ) / g_FogEndMinusStart );
+	vRefractColor = lerp( vRefractColor, fogColor, fogFactor );
+#endif
+
+	float4 result;
+	if( g_bReflect && g_bRefract )
+	{
+		result = lerp( vRefractColor, vReflectColor, fFresnel );
+	}
+	else if( g_bReflect )
+	{
+		result = vReflectColor;
+	}
+	else if( g_bRefract )
+	{
+		result = vRefractColor;
+	}
+	else
+	{
+		result = float4( 0.0f, 0.0f, 0.0f, 0.0f );
+	}
+	return LinearColorToHDROutput_NoScale( float4( result.xyz, 1.0f ), i.fogFactorW.w );
+}
+

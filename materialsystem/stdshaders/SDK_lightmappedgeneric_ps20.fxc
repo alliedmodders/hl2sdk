@@ -1,0 +1,385 @@
+// STATIC: "MASKEDBLENDING"              "0..1"
+// STATIC: "BASETEXTURE2"			"0..1"
+// STATIC: "DETAILTEXTURE"			"0..1"
+// STATIC: "BUMPMAP"				"0..1"
+// STATIC: "BUMPMAP2"				"0..1"
+// STATIC: "CUBEMAP"				"0..1"
+// STATIC: "ENVMAPMASK"			"0..1"
+// STATIC: "BASEALPHAENVMAPMASK"	"0..1"
+// STATIC: "SELFILLUM"				"0..1"
+// STATIC: "NORMALMAPALPHAENVMAPMASK" "0..1"
+// STATIC: "DIFFUSEBUMPMAP"		"0..1"
+// STATIC: "BASETEXTURENOENVMAP"	"0..1"
+// STATIC: "BASETEXTURE2NOENVMAP"	"0..1"
+// STATIC: "WARPLIGHTING"            "0..1"
+// STATIC: "FANCY_BLENDING"          "0..1"
+
+
+// DYNAMIC: "FASTPATHENVMAPTINT" "0..1"
+// DYNAMIC: "FASTPATHENVMAPCONTRAST" "0..1"
+// DYNAMIC: "FASTPATH" "0..1"
+// DYNAMIC: "WRITEWATERFOGTODESTALPHA" "0..1"
+// DYNAMIC: "FOGTYPE"					"0..2"
+// DYNAMIC: "LIGHTING_PREVIEW"          "0..2"
+
+#define NORMALIZE_WITHOUT_CUBEMAP (WARPLIGHTING)
+
+//  SKIP: $BUMPMAP2 && $WARPLIGHTING
+//  SKIP: $WARPLIGHTING && $DETAILTEXTURE
+//	SKIP: $ENVMAPMASK && $BUMPMAP
+//	SKIP: $NORMALMAPALPHAENVMAPMASK && $BASEALPHAENVMAPMASK
+//	SKIP: $NORMALMAPALPHAENVMAPMASK && $ENVMAPMASK
+//	SKIP: $BASEALPHAENVMAPMASK && $ENVMAPMASK
+//	SKIP: $BASEALPHAENVMAPMASK && $SELFILLUM
+//  SKIP: !$FASTPATH && $FASTPATHENVMAPCONTRAST
+//  SKIP: !$FASTPATH && $FASTPATHENVMAPTINT
+//  SKIP: !$BUMPMAP && $DIFFUSEBUMPMAP
+//	SKIP: !$BUMPMAP && $BUMPMAP2
+//	SKIP: $ENVMAPMASK && $BUMPMAP2
+//	SKIP: $BASETEXTURENOENVMAP && ( !$BASETEXTURE2 || !$CUBEMAP )
+//	SKIP: $BASETEXTURE2NOENVMAP && ( !$BASETEXTURE2 || !$CUBEMAP )
+//	SKIP: $BASEALPHAENVMAPMASK && $BUMPMAP
+//  SKIP: $FANCY_BLENDING && $DETAILTEXTURE
+//  NOSKIP: $FANCY_BLENDING && (! $FASTPATH)
+
+
+// debug crap:
+// NOSKIP: $DETAILTEXTURE
+// NOSKIP: $CUBEMAP
+// NOSKIP: $ENVMAPMASK
+// NOSKIP: $BASEALPHAENVMAPMASK
+// NOSKIP: $SELFILLUM
+
+#include "common_ps_fxc.h"
+
+#if FASTPATH == 1
+
+#	if FASTPATHENVMAPTINT == 0
+static const HALF4 g_EnvmapTint = { 1.0f, 1.0f, 1.0f, 1.0f };
+#	else
+const HALF4 g_EnvmapTint : register( c0 );
+#	endif
+
+#	if FASTPATHENVMAPCONTRAST == 0
+static const HALF3 g_EnvmapContrast = { 0.0f, 0.0f, 0.0f };
+#	else
+static const HALF3 g_EnvmapContrast = { 1.0f, 1.0f, 1.0f };
+#	endif
+static const HALF3 g_EnvmapSaturation = { 1.0f, 1.0f, 1.0f };
+static const HALF g_FresnelReflection = 1.0f;
+static const HALF g_OneMinusFresnelReflection = 0.0f;
+static const HALF4 g_SelfIllumTint = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+#else
+
+const HALF4 g_EnvmapTint					: register( c0 );
+const HALF3 g_EnvmapContrast				: register( c2 );
+const HALF3 g_EnvmapSaturation				: register( c3 );
+const HALF4 g_FresnelReflectionReg			: register( c4 );
+#define g_FresnelReflection g_FresnelReflectionReg.a
+#define g_OneMinusFresnelReflection g_FresnelReflectionReg.b
+const HALF4 g_SelfIllumTint					: register( c7 );
+
+#endif
+
+const HALF3 g_EyePos							: register( c10 );
+const HALF4 g_FogParams							: register( c11 );
+
+#define g_FogEndOverRange g_FogParams.x
+#define g_WaterZ g_FogParams.y
+#define g_FogOORange g_FogParams.w
+
+const HALF4 g_WaterFogColor						: register( c14 );
+
+sampler BaseTextureSampler	: register( s0 );
+sampler LightmapSampler		: register( s1 );
+sampler EnvmapSampler		: register( s2 );
+#if FANCY_BLENDING
+sampler BlendModulationSampler : register( s3 );
+#endif
+
+#if DETAILTEXTURE
+sampler DetailSampler		: register( s3 );
+#endif
+
+sampler BumpmapSampler		: register( s4 );
+#if BUMPMAP2 == 1
+sampler BumpmapSampler2		: register( s5 );
+#else
+sampler EnvmapMaskSampler	: register( s5 );
+#endif
+#if NORMALIZE_WITHOUT_CUBEMAP == 0
+sampler NormalizeSampler	: register( s6 );
+#endif
+#if WARPLIGHTING
+sampler WarpLightingSampler	: register( s6 );
+#endif
+sampler BaseTextureSampler2	: register( s7 );
+
+
+
+struct PS_INPUT
+{
+	HALF2 baseTexCoord	: TEXCOORD0;
+	// detail textures and bumpmaps are mutually exclusive so that we have enough texcoords.
+	HALF4 detailOrBumpAndEnvmapMaskTexCoord	: TEXCOORD1;
+// CENTROID: TEXCOORD2
+	HALF4 lightmapTexCoord1And2	: TEXCOORD2;
+// CENTROID: TEXCOORD3
+	HALF4 lightmapTexCoord3		: TEXCOORD3;
+	HALF4 worldPos_projPosZ				: TEXCOORD4;
+	HALF3x3 tangentSpaceTranspose : TEXCOORD5;	// and 6 and 7
+	HALF4 vertexColor				: COLOR;
+	float4 vertexBlendX_fogFactorW	: COLOR1;
+};
+
+
+
+#if LIGHTING_PREVIEW
+#	if LIGHTING_PREVIEW == 2
+struct LPREVIEW_PS_OUT
+{
+	float4 color : COLOR0;
+	float4 normal : COLOR1;
+	float4 position : COLOR2;
+	float4 flags : COLOR3;
+};
+LPREVIEW_PS_OUT main( PS_INPUT i ) : COLOR
+#	else
+HALF4 main( PS_INPUT i ) : COLOR
+#	endif
+#else
+HDR_PS_OUTPUT main( PS_INPUT i ) : COLOR
+#endif
+{
+	bool bBaseTexture2 = BASETEXTURE2 ? true : false;
+	bool bDetailTexture = DETAILTEXTURE ? true : false;
+	bool bBumpmap = BUMPMAP ? true : false;
+	bool bBumpmap2 = BUMPMAP2 ? true : false;
+	bool bDiffuseBumpmap = DIFFUSEBUMPMAP ? true : false;
+	bool bCubemap = CUBEMAP ? true : false;
+	bool bEnvmapMask = ENVMAPMASK ? true : false;
+	bool bBaseAlphaEnvmapMask = BASEALPHAENVMAPMASK ? true : false;
+	bool bSelfIllum = SELFILLUM ? true : false;
+	bool bNormalMapAlphaEnvmapMask = NORMALMAPALPHAENVMAPMASK ? true : false;
+	bool bBaseTextureNoEnvmap = BASETEXTURENOENVMAP ? true : false;
+	bool bBaseTexture2NoEnvmap = BASETEXTURE2NOENVMAP ? true : false;
+
+	HALF3 lightmapColor1 = HALF3( 1.0f, 1.0f, 1.0f );
+	HALF3 lightmapColor2 = HALF3( 1.0f, 1.0f, 1.0f );
+	HALF3 lightmapColor3 = HALF3( 1.0f, 1.0f, 1.0f );
+#if LIGHTING_PREVIEW == 0
+	if( bBumpmap && bDiffuseBumpmap )
+	{
+		HALF2 bumpCoord1;
+		HALF2 bumpCoord2;
+		HALF2 bumpCoord3;
+		ComputeBumpedLightmapCoordinates( i.lightmapTexCoord1And2, i.lightmapTexCoord3.xy,
+			bumpCoord1, bumpCoord2, bumpCoord3 );
+		
+		HALF4 lightmapSample1 = tex2D( LightmapSampler, bumpCoord1 );
+		lightmapColor1 = lightmapSample1.rgb;
+		lightmapColor2 = tex2D( LightmapSampler, bumpCoord2 );
+		lightmapColor3 = tex2D( LightmapSampler, bumpCoord3 );
+	}
+	else
+	{
+		HALF2 bumpCoord1 = ComputeLightmapCoordinates( i.lightmapTexCoord1And2, i.lightmapTexCoord3.xy );
+		HALF4 lightmapSample1 = tex2D( LightmapSampler, bumpCoord1 );
+		lightmapColor1 = lightmapSample1.rgb;
+	}
+#endif
+
+#if DETAILTEXTURE == 1
+	HALF2 detailTexCoord = i.detailOrBumpAndEnvmapMaskTexCoord.xy;
+	HALF2 bumpmapTexCoord = i.baseTexCoord.xy;
+#else
+	HALF2 detailTexCoord = 0.0f;
+	HALF2 bumpmapTexCoord = i.detailOrBumpAndEnvmapMaskTexCoord.xy;
+#endif
+	HALF2 envmapMaskTexCoord = i.detailOrBumpAndEnvmapMaskTexCoord.wz;
+
+	HALF4 detailColor = HALF4( 1.0f, 1.0f, 1.0f, 1.0f );
+#if DETAILTEXTURE
+	detailColor = 2.0f * tex2D( DetailSampler, detailTexCoord );
+#endif
+
+	HALF4 baseColor = HALF4( 1.0f, 1.0f, 1.0f, 1.0f );
+	baseColor = tex2D( BaseTextureSampler, i.baseTexCoord.xy );
+#if LIGHTING_PREVIEW == 2
+	baseColor.xyz=GammaToLinear(baseColor.xyz);
+#endif
+
+	float blendedAlpha = baseColor.a;
+
+	if( bBaseTexture2 )
+	{
+		HALF4 baseColor2 = tex2D( BaseTextureSampler2, i.baseTexCoord.xy );
+#if MASKEDBLENDING
+		float blendfactor=0.5;
+#else
+		float blendfactor=i.vertexBlendX_fogFactorW.r;
+#endif
+
+#if (SELFILLUM == 0) && (NORMALMAPALPHAENVMAPMASK==0) && (FOGTYPE != 2) && (FANCY_BLENDING)
+		float4 modt=tex2D(BlendModulationSampler,i.lightmapTexCoord3.zw);
+#if MASKEDBLENDING
+		float minb=modt.g-modt.r;
+		float maxb=modt.g+modt.r;
+#else
+		float minb=max(0,modt.g-modt.r);
+		float maxb=min(1,modt.g+modt.r);
+#endif
+		blendfactor=smoothstep(minb,maxb,blendfactor);
+#endif
+		baseColor.rgb = lerp( baseColor, baseColor2.rgb, blendfactor );
+		blendedAlpha = lerp( baseColor.a, baseColor2.a, blendfactor );
+	}
+
+	HALF3 specularFactor = 1.0f;
+	
+	HALF3 normal = HALF3( 0.0f, 0.0f, 1.0f );
+	if( bBumpmap )
+	{
+		HALF4 normalTexel;
+		normalTexel = tex2D( BumpmapSampler, bumpmapTexCoord.xy );
+		if( bBaseTextureNoEnvmap )
+		{
+			normalTexel.a = 0.0f;
+		}
+#if BUMPMAP2 == 1
+		{
+			HALF4 normalTexel2 = tex2D( BumpmapSampler2, bumpmapTexCoord.xy );
+			if( bBaseTexture2NoEnvmap )
+			{
+				normalTexel2.a = 0.0f;
+			}
+			normalTexel = lerp( normalTexel, normalTexel2, i.vertexBlendX_fogFactorW.r );
+		}
+#endif
+		if( bNormalMapAlphaEnvmapMask )
+		{
+			specularFactor *= normalTexel.a;
+		}
+		normal = 2.0 * normalTexel - 1.0;
+	}
+	
+#if BUMPMAP2 == 0
+	if( bEnvmapMask )
+	{
+		specularFactor *= tex2D( EnvmapMaskSampler, envmapMaskTexCoord ).xyz;	
+	}
+#endif
+		
+	if( bBaseAlphaEnvmapMask )
+	{
+		specularFactor *= 1.0 - blendedAlpha; // Reversing alpha blows!
+	}
+	
+	HALF3 albedo = HALF3( 1.0f, 1.0f, 1.0f );
+	HALF alpha = 1.0f;
+	albedo *= baseColor;
+	if( !bBaseAlphaEnvmapMask && !bSelfIllum )
+	{
+		alpha *= baseColor.a;
+	}
+
+	if( bDetailTexture )
+	{
+		albedo *= detailColor;
+	}
+
+	// The vertex color contains the modulation color + vertex color combined
+	albedo *= i.vertexColor;
+	alpha *= i.vertexColor.a; // not sure about this one
+
+	HALF3 diffuseLighting;
+	if( bBumpmap && bDiffuseBumpmap )
+	{
+		float3 dp;
+		dp.x = saturate( dot( normal, bumpBasis[0] ) );
+		dp.y = saturate( dot( normal, bumpBasis[1] ) );
+		dp.z = saturate( dot( normal, bumpBasis[2] ) );
+		dp *= dp;
+		
+		diffuseLighting = dp.x * lightmapColor1 +
+						  dp.y * lightmapColor2 +
+						  dp.z * lightmapColor3;
+		float sum = dot( dp, float3( 1.0f, 1.0f, 1.0f ) );
+		diffuseLighting *= LIGHT_MAP_SCALE / sum;
+	}
+	else
+	{
+		diffuseLighting = lightmapColor1 * LIGHT_MAP_SCALE;
+	}
+
+#if WARPLIGHTING
+	float len=0.5*length(diffuseLighting);
+	diffuseLighting *= 2.0*tex2D(WarpLightingSampler,float2(len,0));
+#endif
+	HALF3 diffuseComponent = albedo * diffuseLighting;
+
+	if( bSelfIllum )
+	{
+		HALF3 selfIllumComponent = g_SelfIllumTint * albedo;
+		diffuseComponent = lerp( diffuseComponent, selfIllumComponent, baseColor.a );
+	}
+
+	HALF3 specularLighting = HALF3( 0.0f, 0.0f, 0.0f );
+	if( bCubemap )
+	{
+		float3 worldVertToEyeVector = g_EyePos - i.worldPos_projPosZ.xyz;
+		float3 worldSpaceNormal = mul( normal, i.tangentSpaceTranspose );
+		float3 reflectVect = CalcReflectionVectorUnnormalized( worldSpaceNormal, worldVertToEyeVector );
+
+		// Calc Fresnel factor
+#if NORMALIZE_WITHOUT_CUBEMAP
+		half3 eyeVect = normalize(worldVertToEyeVector);
+#else
+		HALF3 eyeVect = NormalizeWithCubemap( NormalizeSampler, worldVertToEyeVector );
+#endif
+		HALF fresnel = 1.0 - dot( worldSpaceNormal, eyeVect );
+		fresnel = pow( fresnel, 5.0 );
+		fresnel = fresnel * g_OneMinusFresnelReflection + g_FresnelReflection;
+		
+		specularLighting = ENV_MAP_SCALE * texCUBE( EnvmapSampler, reflectVect );
+		specularLighting *= specularFactor;
+								   
+#if FANCY_BLENDING == 0
+		specularLighting *= g_EnvmapTint;
+		HALF3 specularLightingSquared = specularLighting * specularLighting;
+		specularLighting = lerp( specularLighting, specularLightingSquared, g_EnvmapContrast );
+		HALF3 greyScale = dot( specularLighting, HALF3( 0.299f, 0.587f, 0.114f ) );
+		specularLighting = lerp( greyScale, specularLighting, g_EnvmapSaturation );
+#endif
+		specularLighting *= fresnel;
+	}
+			  
+	HALF3 result = diffuseComponent + specularLighting;
+
+#if FOGTYPE == 2
+	float fogFactor = CalcWaterFogAlpha( g_WaterZ, g_EyePos.z, i.worldPos_projPosZ.z, i.worldPos_projPosZ.w, g_FogOORange );
+	result = lerp( result, g_WaterFogColor.xyz, fogFactor );
+#	if WRITEWATERFOGTODESTALPHA
+	alpha = fogFactor;
+#	endif
+#endif
+	
+#if LIGHTING_PREVIEW
+	float3 worldSpaceNormal = mul( normal, i.tangentSpaceTranspose );
+# if LIGHTING_PREVIEW == 1
+	float dotprod=0.7+0.25*dot(worldSpaceNormal,normalize(float3(1,2,-.5)));
+	return HALF4( dotprod*albedo.xyz, alpha );
+# else
+	LPREVIEW_PS_OUT ret;
+	ret.color=float4( albedo.xyz,alpha);
+	ret.normal=float4( worldSpaceNormal,alpha);
+	ret.position=float4(i.worldPos_projPosZ.xyz,alpha);
+	ret.flags=float4(1,1,1,alpha);
+	return ret;
+# endif
+#else
+	return LinearColorToHDROutput( float4( result.xyz, alpha ), i.vertexBlendX_fogFactorW.w );
+#endif
+}
+

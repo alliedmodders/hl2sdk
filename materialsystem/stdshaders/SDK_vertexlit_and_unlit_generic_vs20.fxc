@@ -1,0 +1,161 @@
+//  STATIC: "VERTEXCOLOR"			"0..1"
+//	STATIC: "CUBEMAP"				"0..1"
+//  STATIC: "HALFLAMBERT"			"0..1"
+//  STATIC: "FLASHLIGHT"			"0..1"
+//	DYNAMIC: "LIGHT_COMBO"			"0..21"
+//	DYNAMIC: "DOWATERFOG"			"0..1"
+//	DYNAMIC: "NUM_BONES"			"0..3"
+//  DYNAMIC: "LIGHTING_PREVIEW"		"0..1"
+
+#include "common_vs_fxc.h"
+
+ 
+#ifdef USE_CONDITIONALS
+const bool g_bZeroBones : register( b0 );
+const bool g_bOneBone   : register( b1 );
+const bool g_bTwoBones  : register( b2 );
+#else
+static const int g_NumBones			= NUM_BONES;
+#endif
+
+static const int  g_LightCombo		= LIGHT_COMBO;
+static const int  g_FogType			= DOWATERFOG;
+static const bool g_bVertexColor	= VERTEXCOLOR ? true : false;
+static const bool g_bCubemap		= CUBEMAP ? true : false;
+static const bool g_bFlashlight		= FLASHLIGHT ? true : false;
+static const bool g_bHalfLambert	= HALFLAMBERT ? true : false;
+
+static const int g_StaticLightType	= g_StaticLightTypeArray[g_LightCombo];
+static const int g_AmbientLightType = g_AmbientLightTypeArray[g_LightCombo];
+static const int g_LocalLightType0	= g_LocalLightType0Array[g_LightCombo];
+static const int g_LocalLightType1	= g_LocalLightType1Array[g_LightCombo];
+
+const float4 cBaseTexCoordTransform[2]			:  register( SHADER_SPECIFIC_CONST_0 );
+const float4 cDetailTexCoordTransform[2]		:  register( SHADER_SPECIFIC_CONST_2 );
+// FIXME: don't need none of this!
+const float4 cEnvmapMaskTexCoordTransform[2]	:  register( SHADER_SPECIFIC_CONST_4 );
+
+struct VS_INPUT
+{
+	// This is all of the stuff that we ever use.
+	float4 vPos				: POSITION;
+	float4 vBoneWeights		: BLENDWEIGHT;
+	float4 vBoneIndices		: BLENDINDICES;
+	float3 vNormal			: NORMAL;
+	float4 vColor			: COLOR0;
+	float3 vSpecular		: COLOR1;
+	// make these float2's and stick the [n n 0 1] in the dot math.
+	float4 vTexCoord0		: TEXCOORD0;
+	float4 vTexCoord1		: TEXCOORD1;
+	float4 vTexCoord2		: TEXCOORD2;
+	float4 vTexCoord3		: TEXCOORD3;
+
+	// Position and normal/tangent deltas
+	float3 vPosFlex			: POSITION1;
+	float3 vNormalFlex		: NORMAL1;
+};
+
+struct VS_OUTPUT
+{
+    float4 projPos					: POSITION;			// Projection-space position	
+	float  fog						: FOG;
+
+	HALF2 baseTexCoord				: TEXCOORD0;		// Base texture coordinate
+	HALF2 detailTexCoord			: TEXCOORD1;		// Detail texture coordinate
+	float4 color					: TEXCOORD2;		// Vertex color (from lighting or unlit)
+
+#if CUBEMAP
+	float3 worldVertToEyeVector		: TEXCOORD3;		// Necessary for cubemaps
+#endif
+#if CUBEMAP || FLASHLIGHT || LIGHTING_PREVIEW
+	float3 worldSpaceNormal			: TEXCOORD4;		// Necessary for cubemaps and flashlight
+#endif
+
+	float4 worldPos_projPosZ		: TEXCOORD7;		// Necessary for water fog dest alpha
+	float4 fogFactorW				: COLOR1;
+};
+
+
+VS_OUTPUT main( const VS_INPUT v )
+{
+	VS_OUTPUT o = ( VS_OUTPUT )0;
+
+	float4 vPosition = v.vPos;
+	float3 vNormal   = v.vNormal;
+
+	// Flexes coming in from a separate stream (contribution masked by cFlexScale.x)
+	vPosition.xyz += v.vPosFlex    * cFlexScale.x;
+	vNormal       += v.vNormalFlex * cFlexScale.x;
+
+	// Perform skinning
+	float3 worldNormal, worldPos;
+	SkinPositionAndNormal( 
+		g_NumBones, 
+		vPosition, vNormal,
+		v.vBoneWeights, v.vBoneIndices,
+		worldPos, worldNormal );
+
+	if ( !g_bVertexColor )
+	{
+		worldNormal = normalize( worldNormal );
+	}
+
+#if CUBEMAP || FLASHLIGHT || LIGHTING_PREVIEW
+	o.worldSpaceNormal = worldNormal;
+#endif
+
+	// Transform into projection space
+	float4 projPos = mul( float4( worldPos, 1 ), cViewProj );
+	o.projPos = projPos;
+	o.fogFactorW.w = o.fog = CalcFog( worldPos, projPos, g_FogType );
+
+	// Needed for water fog alpha; 
+	// FIXME: we shouldn't have to compute this all thie time.
+	o.worldPos_projPosZ = float4( worldPos.xyz, projPos.z );
+
+	// Needed for cubemaps 
+#if CUBEMAP
+	o.worldVertToEyeVector.xyz = VSHADER_VECT_SCALE * (cEyePos - worldPos);
+#endif
+
+	if( g_bFlashlight )
+	{
+		o.color = float4( 0.0f, 0.0f, 0.0f, 0.0f );
+	}
+	else
+	{
+		if ( g_bVertexColor )
+		{
+			// Assume that this is unlitgeneric if you are using vertex color.
+			o.color.rgb = GammaToLinear( v.vColor.rgb );
+			o.color.a = v.vColor.a;
+		}
+		else
+		{
+			// Compute vertex lighting
+			o.color.xyz = DoLighting( worldPos, worldNormal, v.vSpecular,
+				g_StaticLightType, g_AmbientLightType, g_LocalLightType0, g_LocalLightType1, 1.0f, g_bHalfLambert );
+		}
+	}
+
+	// Base texture coordinates
+	o.baseTexCoord.x = dot( v.vTexCoord0, cBaseTexCoordTransform[0] );
+	o.baseTexCoord.y = dot( v.vTexCoord0, cBaseTexCoordTransform[1] );
+
+	// Detail texture coordinates
+	// FIXME: This shouldn't have to be computed all the time.
+	o.detailTexCoord.x = dot( v.vTexCoord0, cDetailTexCoordTransform[0] );
+	o.detailTexCoord.y = dot( v.vTexCoord0, cDetailTexCoordTransform[1] );
+#if LIGHTING_PREVIEW
+	float dot=0.5+0.5*worldNormal*float3(0.7071,0.7071,0);
+	o.color.xyz=float3(dot,dot,dot);
+#endif
+
+
+//	o.color.xyz = vNormal * 0.5f + 0.5f;
+
+
+	return o;
+}
+
+

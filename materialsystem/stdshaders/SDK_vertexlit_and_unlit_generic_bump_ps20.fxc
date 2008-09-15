@@ -1,0 +1,195 @@
+// STATIC: "BASETEXTURE"				"0..1"
+// STATIC: "CUBEMAP"					"0..1"
+// STATIC: "DIFFUSELIGHTING"			"0..1"
+// STATIC: "SELFILLUM"					"0..1"
+// STATIC: "NORMALMAPALPHAENVMAPMASK"	"0..1"
+// STATIC: "HALFLAMBERT"				"0..1"
+// STATIC: "FLASHLIGHT"					"0..1"
+
+// DYNAMIC: "LIGHT_COMBO"				"0..21"
+// DYNAMIC: "WRITEWATERFOGTODESTALPHA"  "0..1"
+// DYNAMIC: "FOGTYPE"					"0..2"
+// DYNAMIC: "FLASHLIGHTDEPTH"			"0..0"
+
+// This is because we don't support static lighting and bumpmapping
+// SKIP: ( $LIGHT_COMBO == 1 || $LIGHT_COMBO > 11 )
+// We don't use light combos when doing the flashlight, so force it to zero when using the flashlight.
+// SKIP	 ( $FLASHLIGHT != 0 ) && ( $LIGHT_COMBO != 0 )
+// We skip this because this combo blows ps_2_0 program length.
+// SKIP: $CUBEMAP && $SELFILLUM && $WRITEWATERFOGTODESTALPHA
+
+#include "common_vertexlitgeneric_dx9.h"
+
+const HALF4 g_EnvmapTint			: register( c0 );
+const HALF4 g_DiffuseModulation		: register( c1 );
+#if !FLASHLIGHT
+		const HALF3 g_EnvmapContrast		: register( c2 );
+		const HALF3 g_EnvmapSaturation		: register( c3 );
+#endif
+const HALF4 g_SelfIllumTint			: register( c4 );
+
+const float3 cAmbientCube[6]		: register( c5 );
+
+// 3 register each - 6 register total
+PixelShaderLightInfo cLightInfo[2]	: register( c13 );  // through c18
+
+const HALF4 g_WaterFogColor			: register( c19 );
+const HALF3 g_EyePos				: register( c20 );
+const HALF4 g_FogParams				: register( c21 );
+#define g_WaterZ g_FogParams.y
+#define g_FogOORange g_FogParams.w
+
+const float4 g_FlashlightAttenuationFactors	    : register( c22 );
+const HALF3 g_FlashlightPos						: register( c23 );
+const float4x4 g_FlashlightWorldToTexture		: register( c24 ); // through c27
+
+static const int g_LightCombo		= LIGHT_COMBO;
+
+static const int g_StaticLightType = g_StaticLightTypeArray[g_LightCombo];
+static const int g_AmbientLightType = g_AmbientLightTypeArray[g_LightCombo];
+static const int g_LocalLightType0 = g_LocalLightType0Array[g_LightCombo];
+static const int g_LocalLightType1 = g_LocalLightType1Array[g_LightCombo];
+
+sampler BaseTextureSampler	   : register( s0 );
+sampler EnvmapSampler		   : register( s1 );
+sampler BumpmapSampler		   : register( s3 );
+sampler EnvmapMaskSampler	   : register( s4 );
+sampler NormalizeSampler	   : register( s5 );
+sampler FlashlightSampler	   : register( s7 );
+
+struct PS_INPUT
+{
+	HALF4 baseTexCoord2_tangentSpaceVertToEyeVectorXY					: TEXCOORD0;
+
+	// bump mapping and a separate envmap mask texture are mutually exclusive.
+	float3 color2						: TEXCOORD1;
+	float3 color1						: TEXCOORD2;
+	float4 worldVertToEyeVectorXYZ_tangentSpaceVertToEyeVectorZ	: TEXCOORD3;
+	float3x3 tangentSpaceTranspose		: TEXCOORD4;
+
+	float4 worldPos_projPosZ			: TEXCOORD7;
+	
+	float4 fogFactorW					: COLOR1;
+};
+
+HDR_PS_OUTPUT main( PS_INPUT i ) : COLOR
+{
+	bool bBaseTexture = BASETEXTURE ? true : false;
+	bool bCubemap = CUBEMAP ? true : false;
+	bool bDiffuseLighting = DIFFUSELIGHTING ? true : false;
+	bool bSelfIllum = SELFILLUM ? true : false;
+	bool bNormalMapAlphaEnvmapMask = NORMALMAPALPHAENVMAPMASK ? true : false;
+	bool bHalfLambert = HALFLAMBERT ? true : false;
+	bool bFlashlight = (FLASHLIGHT!=0) ? true : false;
+
+	HALF4 baseColor = HALF4( 1.0f, 1.0f, 1.0f, 1.0f );
+	if( bBaseTexture )
+	{
+		baseColor = tex2D( BaseTextureSampler, i.baseTexCoord2_tangentSpaceVertToEyeVectorXY.xy );
+	}
+
+	HALF3 specularFactor = 1.0f;
+	HALF4 normalTexel = tex2D( BumpmapSampler, i.baseTexCoord2_tangentSpaceVertToEyeVectorXY.xy );
+	HALF3 tangentSpaceNormal = 2.0f * normalTexel - 1.0f;
+
+	if( bNormalMapAlphaEnvmapMask )
+	{
+		specularFactor = normalTexel.a;
+	}
+
+	HALF3 diffuseLighting = HALF3( 1.0f, 1.0f, 1.0f );
+	if( bDiffuseLighting )
+	{
+		float3 worldSpaceNormal = mul( i.tangentSpaceTranspose, tangentSpaceNormal );
+		worldSpaceNormal = NormalizeWithCubemap( NormalizeSampler, worldSpaceNormal );
+		float3 staticLightingColor = float3( 0.0f, 0.0f, 0.0f );
+		diffuseLighting = PixelShaderDoLighting( i.worldPos_projPosZ.xyz, worldSpaceNormal,
+			   staticLightingColor, g_StaticLightType,
+			   g_AmbientLightType, g_LocalLightType0,
+			   g_LocalLightType1, 1.0f, i.color1,
+			   i.color2, cAmbientCube, NormalizeSampler, cLightInfo, bHalfLambert );
+	}
+
+	HALF3 albedo = HALF3( 1.0f, 1.0f, 1.0f );
+	HALF alpha = 1.0f;
+	if( bBaseTexture )
+	{
+		albedo *= baseColor;
+		if ( !bSelfIllum )
+		{
+			alpha *= baseColor.a;
+		}
+	}
+
+	// If we only have specularity, assume that we want a black diffuse component, and
+	// get alpha from the envmapmask
+	if( !bBaseTexture && bCubemap )
+	{
+		diffuseLighting = HALF3( 0.0f, 0.0f, 0.0f );
+		if( bNormalMapAlphaEnvmapMask )
+		{
+			alpha *= specularFactor;
+		}
+	}
+	
+#if FLASHLIGHT
+	if( bFlashlight )
+	{
+		bool bDoShadow = (FLASHLIGHTDEPTH==1)?1:0;
+
+		float3 worldSpaceNormal = mul( i.tangentSpaceTranspose, tangentSpaceNormal );
+		diffuseLighting = DoFlashlight( g_FlashlightPos, i.worldPos_projPosZ.xyz, worldSpaceNormal, 
+			g_FlashlightWorldToTexture, g_FlashlightAttenuationFactors.xyz, g_FlashlightAttenuationFactors.w,
+			FlashlightSampler, EnvmapMaskSampler, bDoShadow );
+	}
+#endif
+	
+	// FIXME: This could be done per vertex!
+	diffuseLighting *= g_DiffuseModulation.rgb;
+	alpha *= g_DiffuseModulation.a;
+	
+	HALF3 diffuseComponent = albedo * diffuseLighting;
+	if( bSelfIllum )
+	{
+		HALF3 selfIllumComponent = g_SelfIllumTint * albedo;
+		diffuseComponent = lerp( diffuseComponent, selfIllumComponent, baseColor.a );
+	}
+
+	HALF3 specularLighting = HALF3( 0.0f, 0.0f, 0.0f );
+#if !FLASHLIGHT
+	if( bCubemap )
+	{
+		// If we've *only* specified a cubemap, blow off the diffuse component
+		if ( !bBaseTexture && !bDiffuseLighting && !bSelfIllum && !bFlashlight )
+		{
+			diffuseComponent = HALF3( 0.0f, 0.0f, 0.0f );
+		}
+
+		HALF3 worldSpaceNormal = mul( i.tangentSpaceTranspose, tangentSpaceNormal );
+
+		HALF3 reflectVect = CalcReflectionVectorUnnormalized( worldSpaceNormal, i.worldVertToEyeVectorXYZ_tangentSpaceVertToEyeVectorZ.xyz );
+
+		specularLighting = ENV_MAP_SCALE * texCUBE( EnvmapSampler, reflectVect );
+		specularLighting *= specularFactor;
+		specularLighting *= g_EnvmapTint;
+		HALF3 specularLightingSquared = specularLighting * specularLighting;
+		specularLighting = lerp( specularLighting, specularLightingSquared, g_EnvmapContrast );
+		HALF3 greyScale = dot( specularLighting, HALF3( 0.299f, 0.587f, 0.114f ) );
+		specularLighting = lerp( greyScale, specularLighting, g_EnvmapSaturation );
+	}
+#endif
+
+	HALF3 result = diffuseComponent + specularLighting;
+
+#if FOGTYPE == 2
+	float fogFactor = CalcWaterFogAlpha( g_WaterZ, g_EyePos.z, i.worldPos_projPosZ.z, i.worldPos_projPosZ.w, g_FogOORange );
+	result = lerp( result, g_WaterFogColor.xyz, fogFactor );
+#	if WRITEWATERFOGTODESTALPHA
+	alpha = fogFactor;
+#	endif
+#endif
+
+	//FIXME: need to take dowaterfog into consideration
+	return LinearColorToHDROutput( float4( result, alpha ), i.fogFactorW.w );
+}
+

@@ -1,0 +1,148 @@
+// STATIC: "BASETEXTURE"				"0..1"
+// STATIC: "BUMPTEXTURE"				"0..1"
+// STATIC: "DIFFUSELIGHTING"			"0..1"
+// STATIC: "SELFILLUM"					"0..1"
+// STATIC: "HALFLAMBERT"				"0..1"
+// STATIC: "FLASHLIGHT"					"0..1"
+
+// DYNAMIC: "LIGHT_COMBO"				"0..21"
+// DYNAMIC: "WRITEWATERFOGTODESTALPHA"  "0..1"
+// DYNAMIC: "FOGTYPE"					"0..2"
+// DYNAMIC: "FLASHLIGHTDEPTH"			"0..0"
+
+// This is because we don't support static lighting and bumpmapping
+// SKIP: ( $LIGHT_COMBO == 1 || $LIGHT_COMBO > 11 )
+// We don't use light combos when doing the flashlight, so force it to zero when using the flashlight.
+// SKIP	 ( $FLASHLIGHT != 0 ) && ( $LIGHT_COMBO != 0 )
+
+#include "shader_constant_register_map.h"
+
+const float4 g_SelfIllumTint					: register( PSREG_SELFILLUMTINT );
+const float4 g_FlashlightColor					: register( PSREG_FLASHLIGHT_COLOR );
+#if !FLASHLIGHT
+		const float3 g_EnvmapContrast			: register( PSREG_ENVMAP_CONTRAST );
+		const float3 g_EnvmapSaturation			: register( PSREG_ENVMAP_SATURATION );
+#endif
+const float3 cAmbientCube[6]					: register( PSREG_AMBIENT_CUBE );
+const float4 g_WaterFogColor					: register( PSREG_WATER_FOG_COLOR );
+const float3 g_EyePos							: register( PSREG_EYEPOS_SPEC_EXPONENT );
+const float4 g_FogParams						: register( PSREG_FOG_PARAMS );
+const float4 g_FlashlightAttenuationFactors	    : register( PSREG_FLASHLIGHT_ATTENUATION );
+const float3 g_FlashlightPos					: register( PSREG_FLASHLIGHT_POSITION );
+const float4x4 g_FlashlightWorldToTexture		: register( PSREG_FLASHLIGHT_TO_WORLD_TEXTURE );
+PixelShaderLightInfo cLightInfo[2]				: register( PSREG_LIGHT_INFO_ARRAY );			// 3 registers each - 6 registers total
+
+#define g_WaterZ		g_FogParams.y
+#define g_FogOORange	g_FogParams.w
+
+static const int g_LightCombo		= LIGHT_COMBO;
+
+static const int g_StaticLightType	= g_StaticLightTypeArray[g_LightCombo];
+static const int g_AmbientLightType	= g_AmbientLightTypeArray[g_LightCombo];
+static const int g_LocalLightType0	= g_LocalLightType0Array[g_LightCombo];
+static const int g_LocalLightType1	= g_LocalLightType1Array[g_LightCombo];
+
+sampler BaseTextureSampler		: register( s0 );	// Base map, selfillum in alpha
+sampler EnvmapSampler			: register( s1 );
+sampler LightWarpSampler		: register( s2 );	// Lighting warp sampler (1D texture for diffuse lighting modification)
+sampler NormalMapSampler		: register( s3 );	// Normal map, specular mask in alpha
+sampler EnvmapMaskSampler		: register( s4 );	// Flashlight shadow depth map sampler
+sampler NormalizeSampler		: register( s5 );
+sampler FlashlightSampler		: register( s6 );	// Flashlight cookie
+
+struct PS_INPUT
+{
+	float2 baseTexCoord										: TEXCOORD0;
+
+	// Bump mapping and a separate envmap mask texture are mutually exclusive
+	float4 color2_wrinkleWeight									: TEXCOORD1;
+	float3 color1												: TEXCOORD2;
+	float4 worldVertToEyeVectorXYZ_tangentSpaceVertToEyeVectorZ	: TEXCOORD3;
+	float3x3 tangentSpaceTranspose								: TEXCOORD4;
+	//	     second row											: TEXCOORD5;
+	//	     third row											: TEXCOORD6;
+	float4 worldPos_projPosZ									: TEXCOORD7;
+};
+
+HDR_PS_OUTPUT main( PS_INPUT i ) : COLOR
+{
+	bool bBaseTexture = BASETEXTURE ? true : false;
+	bool bBumpTexture = BUMPTEXTURE ? true : false;
+	bool bDiffuseLighting = DIFFUSELIGHTING ? true : false;
+	bool bHalfLambert = HALFLAMBERT ? true : false;
+	bool bFlashlight = (FLASHLIGHT!=0) ? true : false;
+	bool bSelfIllum = SELFILLUM ? true : false;
+
+	float4 baseColor = float4( 1.0f, 1.0f, 1.0f, 1.0f );
+	if( bBaseTexture )
+	{
+		baseColor		   = tex2D( BaseTextureSampler, i.baseTexCoord );
+//		float4 wrinkleColor = tex2D( WrinkleSampler,	i.baseTexCoord );
+//		float4 stretchColor = tex2D( StretchSampler,	i.baseTexCoord );
+
+		// JasonM TODO: incorporate stretchColor and negative wrinkle weight values
+//		baseColor = lerp( baseColor, wrinkleColor, i.color2_wrinkleWeight.w );
+	}
+
+	float3 worldSpaceNormal, tangentSpaceNormal = float3(0, 0, 1);
+	if( bBumpTexture )
+	{
+		float4 normalTexel = tex2D( NormalMapSampler, i.baseTexCoord );
+		tangentSpaceNormal = 2.0f * normalTexel.xyz - 1.0f;
+	}
+
+	// We need a normal if we're doing any lighting
+	if ( bDiffuseLighting )
+	{
+		worldSpaceNormal = normalize( mul( i.tangentSpaceTranspose, tangentSpaceNormal ) );
+	}
+
+	float3 diffuseLighting = float3( 1.0f, 1.0f, 1.0f );
+	if( bDiffuseLighting )
+	{
+		float3 staticLightingColor = float3( 0.0f, 0.0f, 0.0f );
+		diffuseLighting = PixelShaderDoLighting(i.worldPos_projPosZ.xyz, worldSpaceNormal,
+												staticLightingColor, g_StaticLightType,
+												g_AmbientLightType, g_LocalLightType0,
+												g_LocalLightType1, 1.0f, i.color1,
+												i.color2_wrinkleWeight.xyz, cAmbientCube,
+												NormalizeSampler, cLightInfo, bHalfLambert );
+	}
+
+	float3 albedo = float3( 1.0f, 1.0f, 1.0f );
+	float alpha = 1.0f;
+	if( bBaseTexture )
+	{
+		albedo *= baseColor.xyz;
+	}
+
+#if FLASHLIGHT
+	if( bFlashlight )
+	{
+		bool bDoShadow = (FLASHLIGHTDEPTH==1)?1:0;
+		worldSpaceNormal = mul( i.tangentSpaceTranspose, tangentSpaceNormal );
+		diffuseLighting = DoFlashlight( g_FlashlightPos, i.worldPos_projPosZ.xyz, worldSpaceNormal, 
+			g_FlashlightWorldToTexture, g_FlashlightAttenuationFactors.xyz, g_FlashlightAttenuationFactors.w,
+			FlashlightSampler, EnvmapMaskSampler, bDoShadow );
+	}
+#endif
+
+	float3 diffuseComponent = albedo * diffuseLighting;
+	if( bSelfIllum )
+	{
+		diffuseComponent = lerp( diffuseComponent, g_SelfIllumTint * albedo, baseColor.a );
+	}
+
+	float3 result = diffuseComponent;
+
+#if FOGTYPE == 2
+	float fogFactor = CalcWaterFogAlpha( g_WaterZ, g_EyePos.z, i.worldPos_projPosZ.z, i.worldPos_projPosZ.w, g_FogOORange );
+	result = lerp( result, g_WaterFogColor.xyz, fogFactor );
+#	if WRITEWATERFOGTODESTALPHA
+	alpha = fogFactor;
+#	endif
+#endif
+
+	//FIXME: need to take dowaterfog into consideration
+	return LinearColorToHDROutput( float4( result, alpha ), 1.0f ); // <-- this last parameter does nothing in LinearColorToHDROutput()
+}

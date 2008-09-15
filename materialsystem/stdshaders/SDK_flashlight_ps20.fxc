@@ -1,0 +1,105 @@
+//====== Copyright © 1996-2004, Valve Corporation, All rights reserved. =======
+//
+// Purpose: 
+//
+//=============================================================================
+
+// STATIC: "NORMALMAP"				"0..1"
+// STATIC: "NORMALMAP2"				"0..1"
+// STATIC: "WORLDVERTEXTRANSITION"	"0..1"
+// STATIC: "HDRTYPE"				"0..2"
+
+// DYNAMIC: "HDRENABLED"			"0..1"
+// DYNAMIC: "FOGTYPE"				"0..2"
+// DYNAMIC: "FLASHLIGHTDEPTH"		"0..0"
+
+// SKIP: !$WORLDVERTEXTRANSITION && $NORMALMAP2
+// SKIP: !$NORMALMAP && $NORMALMAP2
+
+#include "common_ps_fxc.h"
+
+sampler SpotSampler					: register( s0 );
+sampler BaseTextureSampler			: register( s1 );
+sampler NormalizingCubemapSampler	: register( s2 );
+// use a normalizing cube map here if we aren't normal mapping
+#if NORMALMAP
+sampler NormalMapSampler			: register( s3 );
+#else
+sampler NormalizingCubemapSampler2	: register( s3 );
+#endif
+#ifdef WORLDVERTEXTRANSITION
+sampler BaseTexture2Sampler			: register( s4 );
+sampler NormalMap2Sampler			: register( s6 );
+#endif
+
+sampler FlashlightDepthSampler		: register( s7 );
+
+static const HALF g_OverbrightFactor = 2.0f;
+
+struct PS_INPUT
+{
+	float4 spotTexCoord				: TEXCOORD0;
+	float2 baseTexCoord				: TEXCOORD1;
+#if NORMALMAP
+	float3 tangentPosToLightVector	: TEXCOORD2;
+	float2 normalMapTexCoord		: TEXCOORD3;
+#else
+	float3 worldPosToLightVector	: TEXCOORD2;
+	float3 normal					: TEXCOORD3;
+#endif
+#if WORLDVERTEXTRANSITION
+	float2 baseTexCoord2			: TEXCOORD4;
+	float2 lightmapTexCoord			: TEXCOORD5;
+#endif
+	float4 vertAtten				: COLOR0;
+	float4 fogFactorW				: COLOR1;
+};
+
+HDR_PS_OUTPUT main( PS_INPUT i ) : COLOR
+{
+	bool bDoShadow = (FLASHLIGHTDEPTH==1)?1:0;
+
+#if WORLDVERTEXTRANSITION
+	float lerpAlpha = 1-i.vertAtten.a;
+#endif
+
+#if NORMALMAP
+	float3 normal = tex2D( NormalMapSampler, i.normalMapTexCoord ) * 2.0f - 1.0f;
+#	if NORMALMAP2
+	float3 normal2 = tex2D( NormalMap2Sampler, i.normalMapTexCoord ) * 2.0f - 1.0f;
+	normal = lerp( normal2, normal, lerpAlpha );
+#	endif
+#else 
+	float3 normal = texCUBE( NormalizingCubemapSampler2, i.normal ) * 2.0f - 1.0f;
+#endif
+	float3 spotColor = tex2D( SpotSampler, i.spotTexCoord.xyz / i.spotTexCoord.w ) * cFlashlightColor;
+    if( i.spotTexCoord.w < 0.0f )
+		spotColor = float3(0,0,0);
+
+	if( bDoShadow )
+		spotColor *= DoShadow( FlashlightDepthSampler, i.spotTexCoord );
+
+	float4 baseSample = tex2D( BaseTextureSampler, i.baseTexCoord );
+	float3 baseColor = baseSample.xyz;
+
+#if WORLDVERTEXTRANSITION
+	float3 baseColor2 = tex2D( BaseTexture2Sampler, i.baseTexCoord2 ).xyz;
+	baseColor = lerp( baseColor2, baseColor, lerpAlpha );
+#endif
+
+#if NORMALMAP
+	// flashlightfixme: wrap this!
+	float3 tangentPosToLightVector = texCUBE( NormalizingCubemapSampler, i.tangentPosToLightVector ) * 2.0f - 1.0f;
+	float nDotL = dot( tangentPosToLightVector, normal );
+#else
+	float3 worldPosToLightVector = texCUBE( NormalizingCubemapSampler, i.worldPosToLightVector ) * 2.0f - 1.0f;
+	float nDotL = dot( worldPosToLightVector, normal );
+#endif
+	float3 outcolor;
+	outcolor = spotColor * baseColor * nDotL * g_OverbrightFactor;
+
+	// NOTE!!  This has to be last to avoid loss of range.
+	outcolor *= i.vertAtten;	
+
+	return LinearColorToHDROutput( float4( outcolor, baseSample.a ), i.fogFactorW.w );
+}

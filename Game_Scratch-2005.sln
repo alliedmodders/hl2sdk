@@ -1,0 +1,25 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client_sdk", "cl_dll\client_scratch-2005.vcproj", "{E44D6502-2BB4-47F8-85CF-ACDD4FC18329}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "server_sdk", "dlls\server_scratch-2005.vcproj", "{1AA0213B-2B68-40CD-90F8-CFDFD37C1550}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug SDK|Win32 = Debug SDK|Win32
+		Release SDK|Win32 = Release SDK|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E44D6502-2BB4-47F8-85CF-ACDD4FC18329}.Debug SDK|Win32.ActiveCfg = Debug SDK|Win32
+		{E44D6502-2BB4-47F8-85CF-ACDD4FC18329}.Debug SDK|Win32.Build.0 = Debug SDK|Win32
+		{E44D6502-2BB4-47F8-85CF-ACDD4FC18329}.Release SDK|Win32.ActiveCfg = Release SDK|Win32
+		{E44D6502-2BB4-47F8-85CF-ACDD4FC18329}.Release SDK|Win32.Build.0 = Release SDK|Win32
+		{1AA0213B-2B68-40CD-90F8-CFDFD37C1550}.Debug SDK|Win32.ActiveCfg = Debug SDK|Win32
+		{1AA0213B-2B68-40CD-90F8-CFDFD37C1550}.Debug SDK|Win32.Build.0 = Debug SDK|Win32
+		{1AA0213B-2B68-40CD-90F8-CFDFD37C1550}.Release SDK|Win32.ActiveCfg = Release SDK|Win32
+		{1AA0213B-2B68-40CD-90F8-CFDFD37C1550}.Release SDK|Win32.Build.0 = Release SDK|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

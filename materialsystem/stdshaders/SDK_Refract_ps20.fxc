@@ -1,0 +1,152 @@
+//====== Copyright © 1996-2005, Valve Corporation, All rights reserved. =======
+//
+// Purpose: 
+//
+//=============================================================================
+
+// STATIC: "BLUR"					"0..1"
+// STATIC: "FADEOUTONSILHOUETTE"	"0..1"
+// STATIC: "CUBEMAP"				"0..1"
+// STATIC: "REFRACTTINTTEXTURE"		"0..1"
+// STATIC: "MASKED" "0..1"
+
+// DYNAMIC: "FOGTYPE"				"0..2"
+
+// SKIP: $MASKED && $BLUR
+
+#include "common_ps_fxc.h"
+
+sampler RefractSampler	: register( s2 );
+sampler NormalSampler	: register( s3 );
+#if CUBEMAP
+sampler EnvmapSampler			: register( s4 );
+#endif
+#if REFRACTTINTTEXTURE
+sampler RefractTintSampler		: register( s5 );
+#endif
+
+const HALF3 g_EnvmapTint			: register( c0 );
+const HALF3 g_RefractTint : register( c1 );
+const HALF3 g_EnvmapContrast		: register( c2 );
+const HALF3 g_EnvmapSaturation		: register( c3 );
+const HALF2  g_RefractScale : register( c5 );
+
+static const int g_BlurCount = BLUR;
+static const float g_BlurFraction = 1.0f / 512.0f;
+static const float g_HalfBlurFraction = 0.5 * g_BlurFraction;
+static const float4 g_BlurFractionVec = float4( g_BlurFraction, g_HalfBlurFraction, 
+                                               -g_BlurFraction,-g_HalfBlurFraction );
+
+struct PS_INPUT
+{
+	float2 vBumpTexCoord			: TEXCOORD0; // dudvMapAndNormalMapTexCoord
+	HALF3 vWorldVertToEyeVector	: TEXCOORD1;
+	HALF3x3 tangentSpaceTranspose	: TEXCOORD2;
+	float3 vRefractXYW				: TEXCOORD5; 
+	float3 projNormal							: TEXCOORD6;
+    float4 vProjPos					: TEXCOORD7;	
+};
+
+HALF4 main( PS_INPUT i ) : COLOR
+{
+	HALF3 result;
+	
+#if FADEOUTONSILHOUETTE
+	HALF blend = -i.projNormal.z;
+	blend = blend * blend * blend;
+#else
+	HALF blend = 1.0f;
+#endif
+	
+	// Load normal and expand range
+	HALF4 vNormalSample = tex2D( NormalSampler, i.vBumpTexCoord );
+	HALF3 tangentSpaceNormal = vNormalSample * 2.0 - 1.0;
+
+#if REFRACTTINTTEXTURE
+	HALF3 refractTintColor = 2.0 * g_RefractTint * tex2D( RefractTintSampler, i.vBumpTexCoord );
+#else
+	HALF3 refractTintColor = g_RefractTint;
+#endif
+
+	// Perform division by W only once
+	float ooW = 1.0f / i.vRefractXYW.z;
+	
+	// Compute coordinates for sampling refraction
+	float2 vRefractTexCoordNoWarp = i.vRefractXYW.xy * ooW;
+	float2 vRefractTexCoord = tangentSpaceNormal.xy;
+	HALF scale = vNormalSample.a * g_RefractScale;
+	vRefractTexCoord *= scale;
+	vRefractTexCoord += vRefractTexCoordNoWarp;
+
+#if (BLUR==1)  // use polyphase magic to convert 9 lookups into 4
+
+	//  basic principle behind this transformation:
+	//  [ A  B  C ]
+	//  [ D  E  F ]
+	//  [ G  H  I ]
+	//  use bilinear filtering hardware to weight upper 2x2 samples evenly (0.25* [A + B + D + E]).
+	//  scale the upper 2x2 by 4/9 (total area of kernel occupied)
+	//  use bilinear filtering hardware to weight right 1x2 samples evenly (0.5*[C + F])
+	//  scale right 1x2 by 2/9
+	//  use bilinear filtering hardware to weight lower 2x1 samples evenly (0.5*[G + H])
+	//  scale bottom 2x1 by 2/9
+	//  fetch last sample (I) and scale by 1/9.
+	
+	float2 upper_2x2_loc = vRefractTexCoord.xy - float2(g_HalfBlurFraction, g_HalfBlurFraction);
+	float2 right_1x2_loc = vRefractTexCoord.xy + float2(g_BlurFraction, -g_HalfBlurFraction);
+	float2 lower_2x1_loc = vRefractTexCoord.xy + float2(-g_HalfBlurFraction, g_BlurFraction);
+	float2 singleton_loc = vRefractTexCoord.xy + float2(g_BlurFraction, g_BlurFraction);
+	result  = tex2D(RefractSampler, upper_2x2_loc) * 0.4444444;
+	result += tex2D(RefractSampler, right_1x2_loc) * 0.2222222;
+	result += tex2D(RefractSampler, lower_2x1_loc) * 0.2222222;
+	result += tex2D(RefractSampler, singleton_loc) * 0.1111111;
+	
+	HALF3 unblurredColor = tex2D(RefractSampler, vRefractTexCoordNoWarp.xy);
+	result = lerp(unblurredColor, result * refractTintColor, blend);
+
+#elif (BLUR>0)  // iteratively step through render target
+	int x, y;
+
+	result = float3( 0.0f, 0.0f, 0.0f );
+	for( x = -g_BlurCount; x <= g_BlurCount; x++ )
+	{
+		for( y = -g_BlurCount; y <= g_BlurCount; y++ )
+		{
+			result += tex2D( RefractSampler, vRefractTexCoord.xy + float2( g_BlurFraction * x, g_BlurFraction * y ) );
+		}
+	}
+	int width = g_BlurCount * 2 + 1;
+	result *= 1.0f / ( width * width );
+
+	// result is the blurred one now. . .now lerp.
+	float3 unblurredColor = tex2D( RefractSampler, vRefractTexCoordNoWarp.xy );
+	result = lerp( unblurredColor, result * refractTintColor, blend );
+#else
+#	if MASKED
+	return tex2D( RefractSampler, vRefractTexCoord.xy );
+#	else
+	float3 colorWarp = tex2D( RefractSampler, vRefractTexCoord.xy );
+	float3 colorNoWarp = tex2D( RefractSampler, vRefractTexCoordNoWarp.xy );
+	colorWarp *= refractTintColor;
+	result = lerp( colorNoWarp, colorWarp, blend );
+#	endif
+#endif
+	
+#if CUBEMAP
+	HALF specularFactor = vNormalSample.a;
+
+	HALF3 worldSpaceNormal = mul( i.tangentSpaceTranspose, tangentSpaceNormal );
+
+	HALF3 reflectVect = CalcReflectionVectorUnnormalized( worldSpaceNormal, i.vWorldVertToEyeVector );
+	HALF3 specularLighting = texCUBE( EnvmapSampler, reflectVect );
+	specularLighting *= specularFactor;
+	specularLighting *= g_EnvmapTint;
+	HALF3 specularLightingSquared = specularLighting * specularLighting;
+	specularLighting = lerp( specularLighting, specularLightingSquared, g_EnvmapContrast );
+	HALF3 greyScale = dot( specularLighting, HALF3( 0.299f, 0.587f, 0.114f ) );
+	specularLighting = lerp( greyScale, specularLighting, g_EnvmapSaturation );
+	result += specularLighting;
+#endif
+	
+	return HALF4( result, vNormalSample.a );
+}
