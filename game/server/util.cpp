@@ -719,10 +719,10 @@ void UTIL_GetPlayerConnectionInfo( int playerIndex, int& ping, int &packetloss )
 		// Source pings by half a tick to match the old GoldSrc pings.
 		latency -= TICKS_TO_TIME( 0.5f );
 
-		ping = latency * 1000.0f; // as msecs
+		ping = (int)(latency * 1000.0f); // as msecs
 		ping = clamp( ping, 5, 1000 ); // set bounds, dont show pings under 5 msecs
 		
-		packetloss = 100.0f * nci->GetAvgLoss( FLOW_INCOMING ); // loss in percentage
+		packetloss = (int)(100.0f * nci->GetAvgLoss( FLOW_INCOMING )); // loss in percentage
 		packetloss = clamp( packetloss, 0, 100 );
 	}
 	else
@@ -736,7 +736,7 @@ static unsigned short FixedUnsigned16( float value, float scale )
 {
 	int output;
 
-	output = value * scale;
+	output = (int)(value * scale);
 	if ( output < 0 )
 		output = 0;
 	if ( output > 0xFFFF )
@@ -1326,7 +1326,7 @@ void UTIL_SnapDirectionToAxis( Vector &direction, float epsilon )
 	}
 }
 
-char *UTIL_VarArgs( char *format, ... )
+char *UTIL_VarArgs( const char *format, ... )
 {
 	va_list		argptr;
 	static char		string[1024];
@@ -1387,7 +1387,7 @@ Vector UTIL_RandomBloodVector( void )
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void UTIL_ImpactTrace( trace_t *pTrace, int iDamageType, char *pCustomImpactName )
+void UTIL_ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName )
 {
 	CBaseEntity *pEntity = pTrace->m_pEnt;
 
@@ -1766,7 +1766,7 @@ void UTIL_PrecacheOther( const char *szClassname, const char *modelName )
 // UTIL_LogPrintf - Prints a logged message to console.
 // Preceded by LOG: ( timestamp ) < message >
 //=========================================================
-void UTIL_LogPrintf( char *fmt, ... )
+void UTIL_LogPrintf( const char *fmt, ... )
 {
 	va_list		argptr;
 	char		tempString[1024];
@@ -2189,7 +2189,7 @@ void UTIL_SetClientVisibilityPVS( edict_t *pClient, const unsigned char *pvs, in
 {
 	if ( pClient == UTIL_GetCurrentCheckClient() )
 	{
-		Assert( pvssize <= sizeof(g_CheckClient.m_checkVisibilityPVS) );
+		Assert( pvssize <= (int)sizeof(g_CheckClient.m_checkVisibilityPVS) );
 
 		g_CheckClient.m_bClientPVSIsExpanded = false;
 
@@ -2327,7 +2327,6 @@ CBaseEntity *UTIL_EntitiesInPVS( CBaseEntity *pPVSEntity, CBaseEntity *pStarting
 	Vector			org;
 	static byte		pvs[ MAX_MAP_CLUSTERS/8 ];
 	static Vector	lastOrg( 0, 0, 0 );
-	static int		lastCluster = -1;
 
 	if ( !pPVSEntity )
 		return NULL;

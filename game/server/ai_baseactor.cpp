@@ -675,6 +675,8 @@ bool CAI_BaseActor::CheckSceneEventCompletion( CSceneEventInfo *info, float curr
 				}
 			}
 		}
+		default:
+			break;
 	}
 
 	return BaseClass::CheckSceneEventCompletion( info, currenttime, scene, event );
@@ -1783,6 +1785,8 @@ void CAI_BaseActor::PlayExpressionForState( NPC_STATE state )
 		{
 			SetExpression( STRING(m_iszDeathExpression) );
 		}
+		break;
+	default:
 		break;
 	}
 }

@@ -31,16 +31,19 @@ MEMALLOC_DEFINE_EXTERNAL_TRACKING(CMemoryStack);
 //-----------------------------------------------------------------------------
 
 CMemoryStack::CMemoryStack()
- : 	m_pBase( NULL ),
-	m_pNextAlloc( NULL ),
-	m_pAllocLimit( NULL ),
+ :	m_pNextAlloc( NULL ),
 	m_pCommitLimit( NULL ),
+	m_pAllocLimit( NULL ),
+	m_pBase( NULL ),
+	m_maxSize( 0 ),
+#if defined (_LINUX)
+	m_alignment( 16 )
+#elif defined(_WIN32)
 	m_alignment( 16 ),
-#if defined(_WIN32)
  	m_commitSize( 0 ),
-	m_minCommit( 0 ),
+	m_minCommit( 0 )
 #endif
- 	m_maxSize( 0 )
+
 {
 }
 	
@@ -114,7 +117,7 @@ bool CMemoryStack::Init( unsigned maxSize, unsigned commitSize, unsigned initial
 	}
 
 #else
-	m_pBase = MemAlloc_AllocAligned( m_maxSize, alignment ? alignment : 1 );
+	m_pBase = (byte *)MemAlloc_AllocAligned( m_maxSize, alignment ? alignment : 1 );
 	m_pNextAlloc = m_pBase;
 	m_pCommitLimit = m_pBase + m_maxSize;
 #endif

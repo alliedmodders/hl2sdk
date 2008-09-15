@@ -1249,7 +1249,7 @@ void CBasePlayer::PlayerUse ( void )
 				if ( pTrain && !(m_nButtons & IN_JUMP) && (GetFlags() & FL_ONGROUND) && (pTrain->ObjectCaps() & FCAP_DIRECTIONAL_USE) && pTrain->OnControls(this) )
 				{
 					m_afPhysicsFlags |= PFLAG_DIROVERRIDE;
-					m_iTrain = TrainSpeed(pTrain->m_flSpeed, ((CFuncTrackTrain*)pTrain)->GetMaxSpeed());
+					m_iTrain = TrainSpeed((int)pTrain->m_flSpeed, (int)((CFuncTrackTrain*)pTrain)->GetMaxSpeed());
 					m_iTrain |= TRAIN_NEW;
 					EmitSound( "Player.UseTrain" );
 					return;
@@ -1398,7 +1398,7 @@ void CBasePlayer::SmoothViewOnStairs( Vector& eyeOrigin )
 	}
 }
 
-static bool IsWaterContents( int contents )
+/*static bool IsWaterContents( int contents )
 {
 	if ( contents & MASK_WATER )
 		return true;
@@ -1407,7 +1407,7 @@ static bool IsWaterContents( int contents )
 //		return true;
 
 	return false;
-}
+}*/
 
 void CBasePlayer::ResetObserverMode()
 {

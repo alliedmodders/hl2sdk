@@ -118,7 +118,7 @@ void CSatchelCharge::CreateEffects( void )
 //-----------------------------------------------------------------------------
 void CSatchelCharge::InputExplode( inputdata_t &inputdata )
 {
-	ExplosionCreate( GetAbsOrigin() + Vector( 0, 0, 16 ), GetAbsAngles(), GetThrower(), GetDamage(), 200, 
+	ExplosionCreate( GetAbsOrigin() + Vector( 0, 0, 16 ), GetAbsAngles(), GetThrower(), (int)GetDamage(), 200, 
 		SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE, 0.0f, this);
 
 	UTIL_Remove( this );

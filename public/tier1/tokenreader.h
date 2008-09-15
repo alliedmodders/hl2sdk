@@ -66,6 +66,7 @@ public:
 
 	inline int GetErrorCount(void);
 
+#ifndef _LINUX
 	inline TokenReader(TokenReader const &)
 	{
 		// prevent vc7 warning. compiler can't generate a copy constructor since descended from
@@ -78,6 +79,7 @@ public:
 		// std::ifstream
 		assert(0);
 	}
+#endif
 private:
 
 	trtoken_t GetString(char *pszStore, int nSize);

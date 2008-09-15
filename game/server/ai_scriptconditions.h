@@ -104,9 +104,9 @@ public:
 		m_flPlayerTargetFOV( 0 ),
 		m_fPlayerTargetLOS( TRS_NONE ),
 		m_fPlayerBlockingActor( TRS_NONE ),
+		m_fActorInPVS( TRS_NONE ),
 		m_flMinTimeout( 0 ),
 		m_flMaxTimeout( 0 ),
-		m_fActorInPVS( TRS_NONE ),
 		m_fActorInVehicle( TRS_NONE ),
 		m_fPlayerInVehicle( TRS_NONE )
 	{

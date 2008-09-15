@@ -447,8 +447,8 @@ void CPhysicsPushedEntities::StoreMovedEntities( physicspushlist_t &list )
 	list.localOrigin = m_rootPusherStartLocalOrigin;
 	list.localAngles = m_rootPusherStartLocalAngles;
 	list.pushedCount = CountMovedEntities();
-	Assert(list.pushedCount < ARRAYSIZE(list.pushedEnts));
-	if ( list.pushedCount > ARRAYSIZE(list.pushedEnts) )
+	Assert(list.pushedCount < (int)ARRAYSIZE(list.pushedEnts));
+	if ( list.pushedCount > (int)ARRAYSIZE(list.pushedEnts) )
 	{
 		list.pushedCount = ARRAYSIZE(list.pushedEnts);
 	}
@@ -573,7 +573,7 @@ private:
 			if ( m_collisionGroups[i] == collisionGroup )
 				return;
 		}
-		if ( m_collisionGroupCount < ARRAYSIZE(m_collisionGroups) )
+		if ( m_collisionGroupCount < (int)ARRAYSIZE(m_collisionGroups) )
 		{
 			m_collisionGroups[m_collisionGroupCount] = collisionGroup;
 			m_collisionGroupCount++;
@@ -1377,7 +1377,7 @@ void CBaseEntity::PerformPush( float movetime )
 		m_pBlocker = pBlocker;
 		if (m_pBlocker.ToInt() != hPrevBlocker)
 		{
-			if (hPrevBlocker != INVALID_EHANDLE_INDEX)
+			if (hPrevBlocker != (int)INVALID_EHANDLE_INDEX)
 			{
 				EndBlocked();
 			}

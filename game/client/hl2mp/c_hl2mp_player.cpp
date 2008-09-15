@@ -798,7 +798,7 @@ void C_HL2MPRagdoll::Interp_Copy( C_BaseAnimatingOverlay *pSourceEntity )
 	}
 }
 
-void C_HL2MPRagdoll::ImpactTrace( trace_t *pTrace, int iDamageType, char *pCustomImpactName )
+void C_HL2MPRagdoll::ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName )
 {
 	IPhysicsObject *pPhysicsObject = VPhysicsGetObject();
 

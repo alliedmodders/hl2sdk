@@ -263,7 +263,7 @@ void CBaseProp::Activate( void )
 	// Make sure mapmakers haven't used the wrong prop type.
 	if ( m_takedamage == DAMAGE_NO && m_iHealth != 0 )
 	{
-		Warning("%s has a health specified in model '%s'. Use prop_physics or prop_dynamic instead.\n", GetClassname(), GetModelName() );
+		Warning("%s has a health specified in model '%s'. Use prop_physics or prop_dynamic instead.\n", GetClassname(), STRING(GetModelName()) );
 	}
 }
 
@@ -368,7 +368,7 @@ void CBaseProp::DrawDebugGeometryOverlays( void )
 			// Remap health to green brightness
 			float flG = RemapVal( m_iHealth, 0, 100, 64, 255 );
 			flG = clamp( flG, 0, 255 );
-			NDebugOverlay::EntityBounds(this, 0, flG, 0, 0, 0 );
+			NDebugOverlay::EntityBounds(this, 0, (int)flG, 0, 0, 0 );
 		}
 	}
 }
@@ -446,7 +446,7 @@ void CBreakableProp::Ignite( float flFlameLifetime, bool bNPCOnly, float flSize,
 	}
 
 	// Frighten AIs, just in case this is an exploding thing.
-	CSoundEnt::InsertSound( SOUND_DANGER, GetAbsOrigin(), 128.0f, 1.0f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
+	CSoundEnt::InsertSound( SOUND_DANGER, GetAbsOrigin(), 128, 1.0f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
 }
 
 //-----------------------------------------------------------------------------
@@ -1515,7 +1515,7 @@ void CBreakableProp::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Rea
 
 	SetPhysicsAttacker( pPhysGunUser, gpGlobals->curtime );
 
-	if( Reason == PUNTED_BY_CANNON )
+	if( Reason == static_cast<PhysGunDrop_t>(PUNTED_BY_CANNON) )
 	{
 		PlayPuntSound(); 
 	}
@@ -1691,14 +1691,14 @@ void CBreakableProp::Break( CBaseEntity *pBreaker, const CTakeDamageInfo &info )
 	{
 		if( HasInteraction( PROPINTER_PHYSGUN_BREAK_EXPLODE ) )
 		{
-			ExplosionCreate( WorldSpaceCenter(), angles, pAttacker, m_explodeDamage, m_explodeRadius, 
+			ExplosionCreate( WorldSpaceCenter(), angles, pAttacker, (int)m_explodeDamage, (int)m_explodeRadius, 
 				SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE | SF_ENVEXPLOSION_SURFACEONLY | SF_ENVEXPLOSION_NOSOUND,
 				0.0f, this );
 			EmitSound("PropaneTank.Burst");
 		}
 		else
 		{
-			ExplosionCreate( WorldSpaceCenter(), angles, pAttacker, m_explodeDamage, m_explodeRadius, 
+			ExplosionCreate( WorldSpaceCenter(), angles, pAttacker, (int)m_explodeDamage, (int)m_explodeRadius, 
 				SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE | SF_ENVEXPLOSION_SURFACEONLY,
 				0.0f, this );
 		}
@@ -1761,7 +1761,7 @@ void CBreakableProp::Break( CBaseEntity *pBreaker, const CTakeDamageInfo &info )
 	{
 		if ( bExploded == false )
 		{
-			ExplosionCreate( origin, angles, pAttacker, 1, m_explodeRadius, 
+			ExplosionCreate( origin, angles, pAttacker, 1, (int)m_explodeRadius, 
 				SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE, 0.0f, this );			
 		}
 
@@ -5222,7 +5222,7 @@ void CPropDoorRotating::BeginOpening(CBaseEntity *pOpenAwayFrom)
 	// Make respectful entities move away from our path
 	if( !HasSpawnFlags(SF_DOOR_SILENT_TO_NPCS) )
 	{
-		CSoundEnt::InsertSound( SOUND_MOVE_AWAY, volumeCenter, volumeRadius, 0.5f, pOpenAwayFrom );
+		CSoundEnt::InsertSound( SOUND_MOVE_AWAY, volumeCenter, (int)volumeRadius, 0.5f, pOpenAwayFrom );
 	}
 
 	// Do final setup
@@ -5487,7 +5487,7 @@ class CPhysicsPropMultiplayer : public CPhysicsProp, public IMultiplayerPhysics
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 
-	CPhysicsPropMultiplayer::CPhysicsPropMultiplayer()
+	CPhysicsPropMultiplayer()
 	{
 		m_iPhysicsMode = PHYSICS_MULTIPLAYER_AUTODETECT;
 		m_usingCustomCollisionBounds = false;

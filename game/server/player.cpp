@@ -944,7 +944,7 @@ void CBasePlayer::DamageEffect(float flDamage, int fDamageType)
 		UTIL_ScreenFade( this, blue, 0.2, 0.4, FFADE_MODULATE );
 
 		// Very small screen shake
-		ViewPunch(QAngle(random->RandomInt(-0.1,0.1), random->RandomInt(-0.1,0.1), random->RandomInt(-0.1,0.1)));
+		ViewPunch(QAngle(random->RandomFloat(-0.1f,0.1f), random->RandomFloat(-0.1f,0.1f), random->RandomFloat(-0.1f,0.1f)));
 
 		// Burn sound 
 		EmitSound( "Player.PlasmaDamage" );
@@ -1102,7 +1102,7 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 	}
 
 	// keep track of amount of damage last sustained
-	m_lastDamageAmount = info.GetDamage();
+	m_lastDamageAmount = (int)info.GetDamage();
 
 	// Armor. 
 	if (m_ArmorValue && !(info.GetDamageType() & (DMG_FALL | DMG_DROWN | DMG_POISON | DMG_RADIATION)) )// armor doesn't protect against fall or drown damage!
@@ -1252,7 +1252,7 @@ int CBasePlayer::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		{
 			if (bitsDamage & DMG_POISON)
 			{
-				m_nPoisonDmg += info.GetDamage();
+				m_nPoisonDmg += (int)info.GetDamage();
 				m_tbdPrev = gpGlobals->curtime;
 				m_rgbTimeBasedDamage[itbd_PoisonRecover] = 0;
 			}
@@ -1402,7 +1402,7 @@ void CBasePlayer::PackDeadPlayerItems( void )
 	int iPW = 0;// index into packweapons array
 	int iPA = 0;// index into packammo array
 
-	memset(rgpPackWeapons, NULL, sizeof(rgpPackWeapons) );
+	memset(rgpPackWeapons, 0, sizeof(rgpPackWeapons) );
 	memset(iPackAmmo, -1, sizeof(iPackAmmo) );
 
 	// get the game rules 
@@ -3636,7 +3636,7 @@ void CBasePlayer::HandleFuncTrain(void)
 
 	if (vel)
 	{
-		m_iTrain = TrainSpeed(pTrain->m_flSpeed, ((CFuncTrackTrain*)pTrain)->GetMaxSpeed());
+		m_iTrain = TrainSpeed((int)pTrain->m_flSpeed, (int)((CFuncTrackTrain*)pTrain)->GetMaxSpeed());
 		m_iTrain |= TRAIN_ACTIVE|TRAIN_NEW;
 	}
 }
@@ -3812,14 +3812,12 @@ void CBasePlayer::CheckTimeBasedDamage()
 	int i;
 	byte bDuration = 0;
 
-	static float gtbdPrev = 0.0;
-
 	// If we don't have any time based damage return.
 	if ( !g_pGameRules->Damage_IsTimeBased( m_bitsDamageType ) )
 		return;
 
 	// only check for time based damage approx. every 2 seconds
-	if ( abs( gpGlobals->curtime - m_tbdPrev ) < 2.0 )
+	if ( fabs( gpGlobals->curtime - m_tbdPrev ) < 2.0f )
 		return;
 	
 	m_tbdPrev = gpGlobals->curtime;
@@ -4094,7 +4092,7 @@ void CBasePlayer::CheckSuitUpdate()
 // seconds, then we won't repeat playback of this word or sentence
 // for at least that number of seconds.
 
-void CBasePlayer::SetSuitUpdate(char *name, int fgroup, int iNoRepeatTime)
+void CBasePlayer::SetSuitUpdate(const char *name, int fgroup, int iNoRepeatTime)
 {
 	int i;
 	int isentence;
@@ -4214,7 +4212,7 @@ void CBasePlayer::UpdatePlayerSound ( void )
 	// now figure out how loud the player's movement is.
 	if ( GetFlags() & FL_ONGROUND )
 	{	
-		iBodyVolume = GetAbsVelocity().Length(); 
+		iBodyVolume = (int)GetAbsVelocity().Length(); 
 
 		// clamp the noise that can be made by the body, in case a push trigger,
 		// weapon recoil, or anything shoves the player abnormally fast. 
@@ -4250,7 +4248,7 @@ void CBasePlayer::UpdatePlayerSound ( void )
 	}
 	else if ( iVolume > m_iTargetVolume )
 	{
-		iVolume -= 250 * gpGlobals->frametime;
+		iVolume = static_cast<int>(iVolume - 250 * gpGlobals->frametime);
 
 		if ( iVolume < m_iTargetVolume )
 		{
@@ -7669,9 +7667,9 @@ void SendProxy_CropFlagsToPlayerFlagBitsLength( const SendProp *pProp, const voi
 		
 // If HL2_DLL is defined, then baseflex.cpp already sends these.
 #ifndef HL2_DLL
-		SendPropFloat		( SENDINFO_VECTORELEM(m_vecViewOffset, 0), 8, SPROP_ROUNDDOWN, -32.0, 32.0f),
-		SendPropFloat		( SENDINFO_VECTORELEM(m_vecViewOffset, 1), 8, SPROP_ROUNDDOWN, -32.0, 32.0f),
-		SendPropFloat		( SENDINFO_VECTORELEM(m_vecViewOffset, 2), 10, SPROP_CHANGES_OFTEN,	0.0f, 128.0f),
+		SendPropFloat		( SENDINFO_VECTORELEM2(m_vecViewOffset, 0, x), 8, SPROP_ROUNDDOWN, -32.0, 32.0f),
+		SendPropFloat		( SENDINFO_VECTORELEM2(m_vecViewOffset, 1, y), 8, SPROP_ROUNDDOWN, -32.0, 32.0f),
+		SendPropFloat		( SENDINFO_VECTORELEM2(m_vecViewOffset, 2, z), 10, SPROP_CHANGES_OFTEN,	0.0f, 128.0f),
 #endif
 
 		SendPropFloat		( SENDINFO(m_flFriction),		8,	SPROP_ROUNDDOWN,	0.0f,	4.0f),
@@ -7686,9 +7684,9 @@ void SendProxy_CropFlagsToPlayerFlagBitsLength( const SendProp *pProp, const voi
 		SendPropEHandle		( SENDINFO( m_hLastWeapon ) ),
 		SendPropEHandle		( SENDINFO( m_hGroundEntity ), SPROP_CHANGES_OFTEN ),
 
-		SendPropFloat		( SENDINFO_VECTORELEM(m_vecVelocity, 0), 32, SPROP_NOSCALE|SPROP_CHANGES_OFTEN ),
-		SendPropFloat		( SENDINFO_VECTORELEM(m_vecVelocity, 1), 32, SPROP_NOSCALE|SPROP_CHANGES_OFTEN ),
-		SendPropFloat		( SENDINFO_VECTORELEM(m_vecVelocity, 2), 32, SPROP_NOSCALE|SPROP_CHANGES_OFTEN ),
+		SendPropFloat		( SENDINFO_VECTORELEM2(m_vecVelocity, 0, x), 32, SPROP_NOSCALE|SPROP_CHANGES_OFTEN ),
+		SendPropFloat		( SENDINFO_VECTORELEM2(m_vecVelocity, 1, y), 32, SPROP_NOSCALE|SPROP_CHANGES_OFTEN ),
+		SendPropFloat		( SENDINFO_VECTORELEM2(m_vecVelocity, 2, z), 32, SPROP_NOSCALE|SPROP_CHANGES_OFTEN ),
 
 #if PREDICTION_ERROR_CHECK_LEVEL > 1 
 		SendPropVector		( SENDINFO( m_vecBaseVelocity ), -1, SPROP_COORD ),
@@ -8140,7 +8138,7 @@ int CBasePlayer::GetFOV( void )
 	}
 	else
 	{
-		fFOV = SimpleSplineRemapValClamped( deltaTime, 0.0f, 1.0f, m_iFOVStart, fFOV );
+		fFOV = (int)SimpleSplineRemapValClamped( deltaTime, 0.0f, 1.0f, m_iFOVStart, fFOV );
 	}
 
 	return fFOV;

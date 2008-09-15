@@ -6,7 +6,9 @@
 // $NoKeywords: $
 //=============================================================================//
 
+#ifdef _MSC_VER
 #pragma warning (disable:4514)
+#endif
 
 #include "utlsymbol.h"
 #include "KeyValues.h"
@@ -344,7 +346,7 @@ FileNameHandle_t CUtlFilenameSymbolTable::FindFileName( const char *pFileName )
 	handle.file = m_StringPool.FindStringHandle(filename);
 	m_lock.UnlockRead();
 
-	if ( handle.path == NULL || handle.file == NULL )
+	if ( handle.path == 0 || handle.file == 0 )
 		return NULL;
 
 	return *( FileNameHandle_t * )( &handle );

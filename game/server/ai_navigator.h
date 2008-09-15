@@ -663,12 +663,12 @@ inline AI_NavGoal_t::AI_NavGoal_t( GoalType_t   type,
 	dest(AIN_NO_DEST),
 	destNode(AIN_NO_NODE),
 	activity(activity),
+	arrivalActivity( AIN_DEF_ACTIVITY ),
+	arrivalSequence( ACT_INVALID ),
 	tolerance(tolerance),
 	maxInitialSimplificationDist(-1),
 	flags(flags),
-	pTarget(pTarget),
-	arrivalActivity( AIN_DEF_ACTIVITY ),
-	arrivalSequence( ACT_INVALID )
+	pTarget(pTarget)
 {
 }
 
@@ -681,12 +681,12 @@ inline AI_NavGoal_t::AI_NavGoal_t( const Vector &dest,
 	dest(dest),
 	destNode(AIN_NO_NODE),
 	activity(activity),
+	arrivalActivity( AIN_DEF_ACTIVITY ),
+	arrivalSequence( ACT_INVALID ),
 	tolerance(tolerance),
 	maxInitialSimplificationDist(-1),
 	flags(flags),
-	pTarget(pTarget),
-	arrivalActivity( AIN_DEF_ACTIVITY ),
-	arrivalSequence( ACT_INVALID )
+	pTarget(pTarget)
 {
 }
 
@@ -700,12 +700,12 @@ inline AI_NavGoal_t::AI_NavGoal_t( GoalType_t 	type,
 	dest(dest),
 	destNode(AIN_NO_NODE),
 	activity(activity),
+	arrivalActivity( AIN_DEF_ACTIVITY ),
+	arrivalSequence( ACT_INVALID ),
 	tolerance(tolerance),
 	maxInitialSimplificationDist(-1),
 	flags(flags),
-	pTarget(pTarget),
-	arrivalActivity( AIN_DEF_ACTIVITY ),
-	arrivalSequence( ACT_INVALID )
+	pTarget(pTarget)
 {
 }
 
@@ -718,12 +718,12 @@ inline AI_NavGoal_t::AI_NavGoal_t( AI_PathNode_t destNode,
 	dest(AIN_NO_DEST),
 	destNode(destNode),
 	activity(activity),
+	arrivalActivity( AIN_DEF_ACTIVITY ),
+	arrivalSequence( ACT_INVALID ),
 	tolerance(tolerance),
 	maxInitialSimplificationDist(-1),
 	flags(flags),
-	pTarget(pTarget),
-	arrivalActivity( AIN_DEF_ACTIVITY ),
-	arrivalSequence( ACT_INVALID )
+	pTarget(pTarget)
 {
 }
 
@@ -737,12 +737,12 @@ inline AI_NavGoal_t::AI_NavGoal_t( GoalType_t	 type,
 	dest(AIN_NO_DEST),
 	destNode(destNode),
 	activity(activity),
+	arrivalActivity( AIN_DEF_ACTIVITY ),
+	arrivalSequence( ACT_INVALID ),
 	tolerance(tolerance),
 	maxInitialSimplificationDist(-1),
 	flags(flags),
-	pTarget(pTarget),
-	arrivalActivity( AIN_DEF_ACTIVITY ),
-	arrivalSequence( ACT_INVALID )
+	pTarget(pTarget)
 {
 }
 

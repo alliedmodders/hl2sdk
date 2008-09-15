@@ -168,7 +168,7 @@ void CDecal::StaticDecal( void )
 			if ( pEntity->IsEffectActive( EF_NODRAW ) )
 				return false;
 
-			for ( int i = 0; i < ARRAYSIZE(ppszIgnoredClasses); i++ )
+			for ( size_t i = 0; i < ARRAYSIZE(ppszIgnoredClasses); i++ )
 			{
 				if ( pEntity->ClassMatches( ppszIgnoredClasses[i] ) )
 					return false;
@@ -188,7 +188,7 @@ void CDecal::StaticDecal( void )
 
 	bool canDraw = true;
 
-	entityIndex = (short)trace.m_pEnt ? trace.m_pEnt->entindex() : 0;
+	entityIndex = trace.m_pEnt ? trace.m_pEnt->entindex() : 0;
 	if ( entityIndex )
 	{
 		CBaseEntity *ent = trace.m_pEnt;
@@ -567,7 +567,7 @@ static const char *g_DefaultLightstyles[] =
 
 const char *GetDefaultLightstyleString( int styleIndex )
 {
-	if ( styleIndex < ARRAYSIZE(g_DefaultLightstyles) )
+	if ( styleIndex < (int)ARRAYSIZE(g_DefaultLightstyles) )
 	{
 		return g_DefaultLightstyles[styleIndex];
 	}
@@ -651,7 +651,7 @@ void CWorld::Precache( void )
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
 //
-	for ( int i = 0; i < ARRAYSIZE(g_DefaultLightstyles); i++ )
+	for ( int i = 0; i < (int)ARRAYSIZE(g_DefaultLightstyles); i++ )
 	{
 		engine->LightStyle( i, GetDefaultLightstyleString(i) );
 	}

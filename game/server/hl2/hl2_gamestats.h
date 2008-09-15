@@ -10,7 +10,7 @@
 #pragma once
 #endif
 
-#include "gamestats.h"
+#include "GameStats.h"
 
 class CHL2GameStats : public CBaseGameStats
 {

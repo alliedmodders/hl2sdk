@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="demoinfo"
 	ProjectGUID="{4FE3FDCA-9571-44B3-A521-C81448434490}"
+	RootNamespace="demoinfo"
 	>
 	<Platforms>
 		<Platform
@@ -74,7 +75,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile=".\Release/demoinfo.exe"
+				OutputFile="$(OutDir)/demoinfo.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\public"
@@ -169,7 +170,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/FIXED:NO"
-				OutputFile=".\Debug/demoinfo.exe"
+				OutputFile="$(OutDir)/demoinfo.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\public"
@@ -216,33 +217,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\tier1\characterset.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\common\cmdlib.cpp"
 				>
 				<FileConfiguration
@@ -268,10 +242,6 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\common\cmdlib.h"
-				>
 			</File>
 			<File
 				RelativePath="demoinfo.cpp"
@@ -382,115 +352,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\tier1\interface.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\tier1\KeyValues.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="tooldemofile.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\tier1\utlbuffer.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\tier1\utlsymbol.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -523,6 +385,10 @@
 			>
 			<File
 				RelativePath="..\..\Public\tier0\basetypes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\common\cmdlib.h"
 				>
 			</File>
 			<File
@@ -615,8 +481,8 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="DemoSmootherSampleSourceFiles"
-			Filter="*.h;*.cpp"
+			Name="Demo Smoother Sample"
+			Filter="h;cpp"
 			>
 			<File
 				RelativePath="demosmoothersamplesource.cpp"
@@ -671,26 +537,26 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			Name="Link Libraries"
+			Filter="lib"
 			>
+			<File
+				RelativePath="..\..\lib\public\tier0.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\tier1.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\tier2.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\vstdlib.lib"
+				>
+			</File>
 		</Filter>
-		<File
-			RelativePath="..\..\lib\public\tier0.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier1.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier2.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\vstdlib.lib"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

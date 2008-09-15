@@ -779,7 +779,7 @@ static void ReportPenetration( CBaseEntity *pEntity, float duration )
 			pEntity->m_debugOverlays |= OVERLAY_ABSBOX_BIT;
 		}
 
-		pEntity->AddTimedOverlay( UTIL_VarArgs("VPhysics Penetration Error (%s)!", pEntity->GetDebugName()), duration );
+		pEntity->AddTimedOverlay( UTIL_VarArgs("VPhysics Penetration Error (%s)!", pEntity->GetDebugName()), (int)duration );
 	}
 }
 
@@ -1317,7 +1317,7 @@ CON_COMMAND_F(surfaceprop, "Reports the surface properties at the cursor", FCVAR
 		
 		// Calculate distance to surface that was hit
 		Vector vecVelocity = tr.startpos - tr.endpos;
-		int length = vecVelocity.Length();
+		int length = (int)vecVelocity.Length();
 
 		Msg("Hit surface \"%s\" (entity %s, model \"%s\" %s), texture \"%s\"\n", physprops->GetPropName( tr.surface.surfaceProps ), tr.m_pEnt->GetClassname(), pModelName, modelStuff.Access(), tr.surface.name);
 		Msg("Distance to surface: %d\n", length );
@@ -1950,7 +1950,7 @@ friction_t *CCollisionEvent::FindFriction( CBaseEntity *pObject )
 {
 	friction_t *pFree = NULL;
 
-	for ( int i = 0; i < ARRAYSIZE(m_current); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE(m_current); i++ )
 	{
 		if ( !m_current[i].pObject && !pFree )
 			pFree = &m_current[i];
@@ -2061,7 +2061,7 @@ float CCollisionEvent::DeltaTimeSinceLastFluid( CBaseEntity *pEntity )
 
 void CCollisionEvent::UpdateFrictionSounds( void )
 {
-	for ( int i = 0; i < ARRAYSIZE(m_current); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE(m_current); i++ )
 	{
 		if ( m_current[i].patch )
 		{
@@ -2393,7 +2393,7 @@ int CCollisionEvent::AddDamageInflictor( IPhysicsObject *pInflictorPhysics, floa
 
 void CCollisionEvent::LevelShutdown( void )
 {
-	for ( int i = 0; i < ARRAYSIZE(m_current); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE(m_current); i++ )
 	{
 		if ( m_current[i].patch )
 		{

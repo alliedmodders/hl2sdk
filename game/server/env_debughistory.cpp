@@ -134,7 +134,7 @@ void CDebugHistory::DumpDebugHistory( int iCategory )
 
 	// Find the start of the oldest whole debug line.
 	const char *pszLine = m_DebugLineEnd[iCategory] + 1;
-	if ( (pszLine - m_DebugLines[iCategory]) >= sizeof(m_DebugLines[iCategory]) )
+	if ( (size_t)(pszLine - m_DebugLines[iCategory]) >= sizeof(m_DebugLines[iCategory]) )
 	{
 		pszLine = m_DebugLines[iCategory];
 	}
@@ -147,7 +147,7 @@ void CDebugHistory::DumpDebugHistory( int iCategory )
 		pszLine++;
 
 		// Have we looped?
-		if ( (pszLine - m_DebugLines[iCategory]) >= sizeof(m_DebugLines[iCategory]) )
+		if ( (size_t)(pszLine - m_DebugLines[iCategory]) >= sizeof(m_DebugLines[iCategory]) )
 		{
 			pszLine = m_DebugLines[iCategory];
 		}
@@ -187,7 +187,7 @@ void CDebugHistory::DumpDebugHistory( int iCategory )
 		pszLine++;
 
 		// Have we looped?
-		if ( (pszLine - m_DebugLines[iCategory]) >= sizeof(m_DebugLines[iCategory]) )
+		if ( (size_t)(pszLine - m_DebugLines[iCategory]) >= sizeof(m_DebugLines[iCategory]) )
 		{
 			pszLine = m_DebugLines[iCategory];
 		}

@@ -27,6 +27,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\vbsp.exe;..\..\..\game\bin\vbsp.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -128,7 +130,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -147,6 +148,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\vbsp.exe;..\..\..\game\bin\vbsp.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -250,7 +253,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -261,6 +263,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath=".\brushbsp.cpp"
@@ -341,22 +344,6 @@
 			<File
 				RelativePath="..\..\public\tier0\memoverride.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\common\mstristrip.cpp"
@@ -489,6 +476,7 @@
 		</Filter>
 		<Filter
 			Name="Link Libraries"
+			Filter="lib"
 			>
 			<File
 				RelativePath="..\..\lib\public\bitmap.lib"
@@ -521,6 +509,7 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath=".\csg.h"
@@ -657,6 +646,7 @@
 		</Filter>
 		<Filter
 			Name="Public Headers"
+			Filter="h"
 			>
 			<File
 				RelativePath="..\..\public\mathlib\amd3dx.h"

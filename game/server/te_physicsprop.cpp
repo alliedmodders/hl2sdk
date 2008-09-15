@@ -104,9 +104,9 @@ void CTEPhysicsProp::Test( const Vector& current_origin, const QAngle& current_a
 
 IMPLEMENT_SERVERCLASS_ST(CTEPhysicsProp, DT_TEPhysicsProp)
 	SendPropVector( SENDINFO(m_vecOrigin), -1, SPROP_COORD),
-	SendPropAngle( SENDINFO_VECTORELEM(m_angRotation, 0), 13 ),
-	SendPropAngle( SENDINFO_VECTORELEM(m_angRotation, 1), 13 ),
-	SendPropAngle( SENDINFO_VECTORELEM(m_angRotation, 2), 13 ),
+	SendPropAngle( SENDINFO_VECTORELEM2(m_angRotation, 0, x), 13 ),
+	SendPropAngle( SENDINFO_VECTORELEM2(m_angRotation, 1, y), 13 ),
+	SendPropAngle( SENDINFO_VECTORELEM2(m_angRotation, 2, z), 13 ),
 	SendPropVector( SENDINFO(m_vecVelocity), -1, SPROP_COORD),
 	SendPropModelIndex( SENDINFO(m_nModelIndex) ),
 	SendPropInt( SENDINFO(m_nSkin), ANIMATION_SKIN_BITS),

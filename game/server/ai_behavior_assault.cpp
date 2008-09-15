@@ -350,7 +350,7 @@ void CAI_AssaultBehavior::ClearAssaultPoint( void )
 		}
 		else
 		{
-			DevMsg("**ERROR: Can't find next assault point: %s\n", m_hAssaultPoint->m_NextAssaultPointName );
+			DevMsg("**ERROR: Can't find next assault point: %s\n", STRING(m_hAssaultPoint->m_NextAssaultPointName) );
 
 			// Bomb out of assault behavior.
 			m_AssaultCue = CUE_NO_ASSAULT;
@@ -1111,6 +1111,9 @@ bool CAI_AssaultBehavior::PollAssaultCue( void )
 	case CUE_COMMANDER:
 		// Player told me to go, so go!
 		return m_ReceivedAssaultCue == CUE_COMMANDER;
+		break;
+
+	default:
 		break;
 	}
 

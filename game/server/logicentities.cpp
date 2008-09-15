@@ -804,10 +804,10 @@ void CMathColorBlend::InputValue( inputdata_t &inputdata )
 		// Remap the input value to the desired output color and update the output.
 		//
 		color32 Color;
-		Color.r = m_OutColor1.r + (((flClampValue - m_flInMin) * (m_OutColor2.r - m_OutColor1.r)) / (m_flInMax - m_flInMin));
-		Color.g = m_OutColor1.g + (((flClampValue - m_flInMin) * (m_OutColor2.g - m_OutColor1.g)) / (m_flInMax - m_flInMin));
-		Color.b = m_OutColor1.b + (((flClampValue - m_flInMin) * (m_OutColor2.b - m_OutColor1.b)) / (m_flInMax - m_flInMin));
-		Color.a = m_OutColor1.a + (((flClampValue - m_flInMin) * (m_OutColor2.a - m_OutColor1.a)) / (m_flInMax - m_flInMin));
+		Color.r = (byte)(m_OutColor1.r + (((flClampValue - m_flInMin) * (m_OutColor2.r - m_OutColor1.r)) / (m_flInMax - m_flInMin)));
+		Color.g = (byte)(m_OutColor1.g + (((flClampValue - m_flInMin) * (m_OutColor2.g - m_OutColor1.g)) / (m_flInMax - m_flInMin)));
+		Color.b = (byte)(m_OutColor1.b + (((flClampValue - m_flInMin) * (m_OutColor2.b - m_OutColor1.b)) / (m_flInMax - m_flInMin)));
+		Color.a = (byte)(m_OutColor1.a + (((flClampValue - m_flInMin) * (m_OutColor2.a - m_OutColor1.a)) / (m_flInMax - m_flInMin)));
 
 		m_OutValue.Set(Color, inputdata.pActivator, this);
 	}
@@ -2737,7 +2737,7 @@ int CLogicBranchList::DrawDebugTextOverlays( void )
 			CLogicBranch *pBranch = (CLogicBranch *)m_LogicBranchList.Element( i ).Get();
 			if ( pBranch )
 			{
-				Q_snprintf( tempstr, sizeof(tempstr), "Branch (%s): %s", pBranch->GetEntityName(), (pBranch->GetLogicBranchState()) ? "TRUE" : "FALSE" );
+				Q_snprintf( tempstr, sizeof(tempstr), "Branch (%s): %s", STRING(pBranch->GetEntityName()), (pBranch->GetLogicBranchState()) ? "TRUE" : "FALSE" );
 				EntityText( text_offset, tempstr, 0 );
 				text_offset++;
 			}

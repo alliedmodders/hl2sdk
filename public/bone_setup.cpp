@@ -790,7 +790,7 @@ static void CalcZeroframeData( const CStudioHdr *pStudioHdr, const studiohdr_t *
 	else
 	{
 		float s1;
-		int index = fFrame / animdesc.zeroframespan;
+		int index = (int)(fFrame / animdesc.zeroframespan);
 		if (index >= animdesc.zeroframecount - 1)
 		{
 			index = animdesc.zeroframecount - 2;
@@ -3892,13 +3892,30 @@ void CIKContext::AutoIKRelease( void )
 			{
 				ikcontextikrule_t ikrule;
 
+				ikrule.index = -1;
 				ikrule.chain = pTarget->chain;
 				ikrule.bone = 0;
 				ikrule.type = IK_RELEASE;
 				ikrule.slot = i;
+				ikrule.height = 0.0f;
+				ikrule.radius = 0.0f;
+				ikrule.floor = 0.0f;
+				ikrule.pos = Vector(0.0f, 0.0f, 0.0f);
+				ikrule.q = Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
+				ikrule.start = 0.0f;
+				ikrule.peak = 0.0f;
+				ikrule.tail = 0.0f;
+				ikrule.end = 0.0f;
+				ikrule.top = 0.0f;
+				ikrule.drop = 0.0f;
+				ikrule.commit = 0.0f;
+				ikrule.release = 0.0f;
 				ikrule.flWeight = SimpleSpline( pTarget->error.ramp );
 				ikrule.flRuleWeight = 1.0;
 				ikrule.latched = dt < 0.25 ? 0.0 : ikrule.flWeight;
+				ikrule.szLabel = NULL;
+				ikrule.kneeDir = Vector(0.0f, 0.0f, 0.0f);
+				ikrule.kneePos = Vector(0.0f, 0.0f, 0.0f);
 
 				// don't bother with AutoIKRelease if the bone isn't going to be calculated
 				// this code is crashing for some unknown reason.
@@ -5017,9 +5034,9 @@ float Studio_GetPoseParameter( const CStudioHdr *pStudioHdr, int iParameter, flo
 	return ctlValue * (PoseParam.end - PoseParam.start) + PoseParam.start;
 }
 
-
+#ifdef _MSC_VER
 #pragma warning (disable : 4701)
-
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -5112,8 +5129,9 @@ static int ClipRayToHitbox( const Ray_t &ray, mstudiobbox_t *pbox, matrix3x4_t& 
 	return hitside;
 }
 
+#ifdef _MSC_VER
 #pragma warning (default : 4701)
-
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -5312,7 +5330,7 @@ int Studio_MaxFrame( const CStudioHdr *pStudioHdr, int iSequence, const float po
 	
 
 	// FIXME: why does the weights sometimes not exactly add it 1.0 and this sometimes rounds down?
-	return (maxFrame + 0.01);
+	return static_cast<int>(maxFrame + 0.01);
 }
 
 

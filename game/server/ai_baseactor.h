@@ -81,11 +81,11 @@ public:
 		m_flBlinktime( 0 ),
 		m_hLookTarget( NULL ),
 		m_iszExpressionScene( NULL_STRING ),
+		m_iszExpressionOverride( NULL_STRING ),
 		m_iszIdleExpression( NULL_STRING ),
 		m_iszAlertExpression( NULL_STRING ),
 		m_iszCombatExpression( NULL_STRING ),
-		m_iszDeathExpression( NULL_STRING ),
-		m_iszExpressionOverride( NULL_STRING )
+		m_iszDeathExpression( NULL_STRING )
 	{
 		memset( m_flextarget, 0, 64 * sizeof( m_flextarget[0] ) );
 	}

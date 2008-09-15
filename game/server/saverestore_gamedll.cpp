@@ -188,9 +188,9 @@ bool ExtractKeyvalue( void *pObject, typedescription_t *pFields, int iNumFields,
 			case FIELD_POSITION_VECTOR:
 			case FIELD_VECTOR:
 				Q_snprintf( szValue, iMaxLen, "%f %f %f", 
-					(float *)((char *)pObject + fieldOffset)[0],
-					(float *)((char *)pObject + fieldOffset)[1],
-					(float *)((char *)pObject + fieldOffset)[2] );
+					((float *)((char *)pObject + fieldOffset))[0],
+					((float *)((char *)pObject + fieldOffset))[1],
+					((float *)((char *)pObject + fieldOffset))[2] );
 				return true;
 
 			case FIELD_VMATRIX:
@@ -204,10 +204,10 @@ bool ExtractKeyvalue( void *pObject, typedescription_t *pFields, int iNumFields,
 
 			case FIELD_COLOR32:
 				Q_snprintf( szValue, iMaxLen, "%d %d %d %d", 
-					(int *)((char *)pObject + fieldOffset)[0],
-					(int *)((char *)pObject + fieldOffset)[1],
-					(int *)((char *)pObject + fieldOffset)[2],
-					(int *)((char *)pObject + fieldOffset)[3] );
+					((int *)((char *)pObject + fieldOffset))[0],
+					((int *)((char *)pObject + fieldOffset))[1],
+					((int *)((char *)pObject + fieldOffset))[2],
+					((int *)((char *)pObject + fieldOffset))[3] );
 				return true;
 
 			case FIELD_CUSTOM:

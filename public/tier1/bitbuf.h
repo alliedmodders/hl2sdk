@@ -1042,7 +1042,7 @@ public:
 
 	void StartReading( const void *pData, int nBytes, int iStartBit = 0, int nBits = -1 );
 
-	FORCEINLINE int CBitRead::GetNumBitsRead( void ) const;
+	FORCEINLINE int GetNumBitsRead( void ) const;
 
 	FORCEINLINE void GrabNextDWord( bool bOverFlowImmediately = false );
 	FORCEINLINE void FetchNext( void );

@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="Server (SDK)"
 	ProjectGUID="{E8C0FE86-D8E1-4B44-8F76-F2A9A21E9C4F}"
+	RootNamespace="Server (SDK)"
 	>
 	<Platforms>
 		<Platform
@@ -28,8 +29,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying to destination folder"
-				CommandLine="if exist &quot;..\..\game\hl2\bin\server.dll&quot; attrib -r &quot;..\..\game\hl2\bin\server.dll&quot;&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.dll &quot;..\..\game\hl2\bin\server.dll&quot;&#x0D;&#x0A;"
-				Outputs="..\..\game\hl2\bin\server.dll"
+				CommandLine="if exist ..\..\..\game\sdk\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\sdk\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\sdk\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;if exist ..\..\..\game\sdk\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\sdk\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\sdk\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\sdk\bin\server.dll;..\..\..\game\sdk\bin\server.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -85,7 +86,7 @@
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies=" winmm.lib"
 				ShowProgress="0"
-				OutputFile="$(OutDir)/Server.dll"
+				OutputFile="$(OutDir)/server.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\common;..\..\lib\public"
@@ -146,8 +147,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying to destination folder"
-				CommandLine="if exist &quot;..\..\game\hl2\bin\server.dll&quot; attrib -r &quot;..\..\game\hl2\bin\server.dll&quot;&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.dll &quot;..\..\game\hl2\bin\server.dll&quot;&#x0D;&#x0A;if exist ..\..\game\hl2\bin\server.pdb attrib -r &quot;..\..\game\hl2\bin\server.pdb&quot;&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.pdb &quot;..\..\game\hl2\bin&quot;&#x0D;&#x0A;"
-				Outputs="..\..\game\hl2\bin\server.dll;..\..\game\hl2\bin\server.pdb"
+				CommandLine="if exist ..\..\..\game\sdk\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\sdk\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\sdk\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;if exist ..\..\..\game\sdk\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\sdk\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\sdk\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\sdk\bin\server.dll;..\..\..\game\sdk\bin\server.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -205,7 +206,7 @@
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies=" winmm.lib"
 				ShowProgress="0"
-				OutputFile="$(OutDir)/Server.dll"
+				OutputFile="$(OutDir)/server.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\common;..\..\lib\public"
@@ -259,6 +260,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath="..\shared\achievement_saverestore.cpp"
@@ -3647,6 +3649,7 @@
 		</Filter>
 		<Filter
 			Name="Link Libraries"
+			Filter="lib"
 			>
 			<File
 				RelativePath="..\..\lib\public\choreoobjects.lib"
@@ -3691,6 +3694,7 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath="..\..\public\mathlib\amd3dx.h"
@@ -4531,6 +4535,7 @@
 		</Filter>
 		<Filter
 			Name="Tools Framework"
+			Filter="h;cpp"
 			>
 			<File
 				RelativePath=".\entity_tools_server.cpp"

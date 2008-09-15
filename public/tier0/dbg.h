@@ -478,11 +478,22 @@ public:
 // Macro to assist in asserting constant invariants during compilation
 
 #ifdef _DEBUG
-#define COMPILE_TIME_ASSERT( pred )	switch(0){case 0:case pred:;}
-#define ASSERT_INVARIANT( pred )	static void UNIQUE_ID() { COMPILE_TIME_ASSERT( pred ) }
+	#define COMPILE_TIME_ASSERT( pred )	switch(0){case 0:case pred:;}
+	#ifdef _MSC_VER
+		#define ASSERT_INVARIANT( pred )	static void UNIQUE_ID() { COMPILE_TIME_ASSERT( pred ) }
+	#elif defined __GNUC__
+		#define ASSERT_INVARIANT( pred )	__attribute__((unused)) static void UNIQUE_ID() { COMPILE_TIME_ASSERT( pred ) }
+	#endif
 #else
-#define COMPILE_TIME_ASSERT( pred )
-#define ASSERT_INVARIANT( pred )
+	#define COMPILE_TIME_ASSERT( pred )
+	#define ASSERT_INVARIANT( pred )
+#endif
+
+// Member function pointer size
+#ifdef _MSC_VER
+	#define MFP_SIZE 4
+#elif __GNUC__
+	#define MFP_SIZE 8
 #endif
 
 #ifdef _DEBUG

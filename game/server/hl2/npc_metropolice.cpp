@@ -995,6 +995,9 @@ void CNPC_MetroPolice::AnnounceEnemyType( CBaseEntity *pEnemy )
 		case CLASS_BARNACLE:
 			pSentenceName = "METROPOLICE_MONST_PARASITES";
 			break;
+
+		default:
+			break;
 		}
 
 		m_Sentences.Speak( pSentenceName, SENTENCE_PRIORITY_HIGH );
@@ -1049,6 +1052,9 @@ void CNPC_MetroPolice::AnnounceEnemyKill( CBaseEntity *pEnemy )
 	case CLASS_HEADCRAB:
 	case CLASS_BARNACLE:
 		pSentenceName = "METROPOLICE_KILL_PARASITES";
+		break;
+
+	default:
 		break;
 	}
 
@@ -1210,8 +1216,8 @@ void CNPC_MetroPolice::OnUpdateShotRegulator( )
 				
 				float factor = (dist - MIN_PISTOL_MODIFY_DIST) / (MAX_PISTOL_MODIFY_DIST - MIN_PISTOL_MODIFY_DIST);
 				
-				int		nMinBurst			= MIN_MIN_PISTOL_BURST + ( MAX_MIN_PISTOL_BURST - MIN_MIN_PISTOL_BURST ) * (1.0 - factor);
-				int		nMaxBurst			= MIN_MAX_PISTOL_BURST + ( MAX_MAX_PISTOL_BURST - MIN_MAX_PISTOL_BURST ) * (1.0 - factor);
+				int nMinBurst = (int)(MIN_MIN_PISTOL_BURST + ( MAX_MIN_PISTOL_BURST - MIN_MIN_PISTOL_BURST ) * (1.0 - factor));
+				int nMaxBurst = (int)(MIN_MAX_PISTOL_BURST + ( MAX_MAX_PISTOL_BURST - MIN_MAX_PISTOL_BURST ) * (1.0 - factor));
 				float	flMinRestInterval	= MIN_MIN_PISTOL_REST_INTERVAL + ( MAX_MIN_PISTOL_REST_INTERVAL - MIN_MIN_PISTOL_REST_INTERVAL ) * factor;
 				float	flMaxRestInterval	= MIN_MAX_PISTOL_REST_INTERVAL + ( MAX_MAX_PISTOL_REST_INTERVAL - MIN_MAX_PISTOL_REST_INTERVAL ) * factor;
 				
@@ -1675,7 +1681,7 @@ float CNPC_MetroPolice::AimBurstAtReactionTime( float flReactionTime, float flDi
 #define AIM_AT_SHOT_SPEED_COUNT 6
 #define AIM_AT_SHOT_DIST_COUNT 6
 
-static int s_pShotCountFraction[AIM_AT_TIME_DIST_COUNT][AIM_AT_TIME_SPEED_COUNT] =
+static float s_pShotCountFraction[AIM_AT_TIME_DIST_COUNT][AIM_AT_TIME_SPEED_COUNT] =
 {
 	{  3.0f, 3.0f,  2.5f,  1.5f,  1.0f, 0.0f },
 	{  3.0f, 3.0f,  2.5f,  1.25f, 0.5f, 0.0f },
@@ -1706,7 +1712,7 @@ int CNPC_MetroPolice::AimBurstAtSetupHitCount( float flDistToTarget, float flCur
 			flShotFactor += s_pShotCountFraction[nv][nu+1] * fu * (1.0f - fv);
 			flShotFactor += s_pShotCountFraction[nv+1][nu+1] * fu * fv;
 
-			int nExtraShots = nHitCount * flShotFactor;
+			int nExtraShots = (int)(nHitCount * flShotFactor);
 			m_nMaxBurstHits += random->RandomInt( nExtraShots, nExtraShots + 1 );
 			return nExtraShots;
 		}
@@ -4181,6 +4187,9 @@ int CNPC_MetroPolice::SelectSchedule( void )
 					return nResult;
 			}
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -4367,7 +4376,7 @@ void CNPC_MetroPolice::StartTask( const Task_t *pTask )
 	{
 	case TASK_METROPOLICE_WAIT_FOR_SENTENCE:
 		{
-			if ( FOkToMakeSound( pTask->flTaskData ) )
+			if ( FOkToMakeSound( (int)pTask->flTaskData ) )
 			{
 				TaskComplete();
 			}
@@ -4441,7 +4450,7 @@ void CNPC_MetroPolice::StartTask( const Task_t *pTask )
 			info.SetAttacker( this );
 			info.SetInflictor( this );
 			info.SetDamage( m_iHealth );
-			info.SetDamageType( pTask->flTaskData );
+			info.SetDamageType( (int)pTask->flTaskData );
 			info.SetDamageForce( Vector( 0.1, 0.1, 0.1 ) );
 
 			TakeDamage( info );
@@ -4678,7 +4687,7 @@ void CNPC_MetroPolice::RunTask( const Task_t *pTask )
 
 	case TASK_METROPOLICE_WAIT_FOR_SENTENCE:
 		{
-			if ( FOkToMakeSound( pTask->flTaskData ) )
+			if ( FOkToMakeSound( (int)pTask->flTaskData ) )
 			{
 				TaskComplete();
 			}
@@ -4865,7 +4874,7 @@ int CNPC_MetroPolice::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 	{
 		// Keep track of recent damage by my attacker. If it seems like we're
 		// being killed, consider running off and hiding.
-		m_nRecentDamage += info.GetDamage();
+		m_nRecentDamage = (int)(m_nRecentDamage + info.GetDamage());
 		m_flRecentDamageTime = gpGlobals->curtime;
 	}
 

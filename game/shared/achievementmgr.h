@@ -55,7 +55,7 @@ public:
 	void PrintAchievementStatus();
 	float GetLastClassChangeTime() { return m_flLastClassChangeTime; }
 	float GetTeamplayStartTime() { return m_flTeamplayStartTime; }
-	int	  GetMiniroundsCompleted() { return m_iMiniroundsCompleted; }
+	int	  GetMiniroundsCompleted() { return (int)m_iMiniroundsCompleted; }
 	const char *GetMapName() { return m_szMap; }
 	void OnAchievementEvent( int iAchievementID );
 	void SetDirty( bool bDirty ) { m_bDirty = bDirty; }

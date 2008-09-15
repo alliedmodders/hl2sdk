@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="Vvis_dll"
 	ProjectGUID="{CB353257-04B0-4EC8-9E47-F2F17B2675C9}"
+	RootNamespace="Vvis_dll"
 	>
 	<Platforms>
 		<Platform
@@ -27,6 +28,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\vvis_dll.dll;..\..\..\game\bin\vvis_dll.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -123,7 +126,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -142,6 +144,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\vvis_dll.dll;..\..\..\game\bin\vvis_dll.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -242,7 +246,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -253,6 +256,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath="..\common\bsplib.cpp"
@@ -319,10 +323,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\common\tools_minidump.h"
-				>
-			</File>
-			<File
 				RelativePath="..\common\vmpi_tools_shared.cpp"
 				>
 			</File>
@@ -341,6 +341,7 @@
 		</Filter>
 		<Filter
 			Name="Link Libraries"
+			Filter="lib"
 			>
 			<File
 				RelativePath="..\..\lib\public\mathlib.lib"
@@ -369,6 +370,7 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath="..\..\public\mathlib\amd3dx.h"

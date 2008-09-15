@@ -257,7 +257,7 @@ float CEnvWindShared::WindThink( float flTime )
 			m_flAveWindSpeed = m_Stream.RandomInt( m_iMinGust, m_iMaxGust );
 
 			// change wind direction, maybe a lot
-			m_iWindDir = anglemod( m_iWindDir + m_Stream.RandomInt(-m_iGustDirChange, m_iGustDirChange) );
+			m_iWindDir = (int)anglemod( m_iWindDir + m_Stream.RandomInt(-m_iGustDirChange, m_iGustDirChange) );
 
 			// set up to stop the gust in a short while
 			m_bGusting = true;

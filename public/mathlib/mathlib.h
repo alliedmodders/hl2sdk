@@ -281,10 +281,10 @@ FORCEINLINE void VectorMAInline( const Vector& start, float scale, const Vector&
 	dest.z=start.z+direction.z*scale;
 }
 
-FORCEINLINE void VectorMA( const Vector& start, float scale, const Vector& direction, Vector& dest )
-{
-	VectorMAInline(start, scale, direction, dest);
-}
+//FORCEINLINE void VectorMA( const Vector& start, float scale, const Vector& direction, Vector& dest )
+//{
+//	VectorMAInline(start, scale, direction, dest);
+//}
 
 FORCEINLINE void VectorMA( const float * start, float scale, const float *direction, float *dest )
 {
@@ -525,7 +525,7 @@ inline float RemapValClamped( float val, float A, float B, float C, float D)
 template <class T>
 FORCEINLINE T Lerp( float flPercent, T const &A, T const &B )
 {
-	return A + (B - A) * flPercent;
+	return (T)(A + (B - A) * flPercent);
 }
 
 FORCEINLINE float Sqr( float f )

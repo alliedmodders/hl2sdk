@@ -137,7 +137,7 @@ bool CEmptyServerPlugin::Load(	CreateInterfaceFn interfaceFactory, CreateInterfa
 		gpGlobals = playerinfomanager->GetGlobalVars();
 	}
 
-	MathLib_Init( 2.2f, 2.2f, 0.0f, 2.0f );
+	MathLib_Init( 2.2f, 2.2f, 0.0f, 2 );
 	ConVar_Register( 0 );
 	return true;
 }

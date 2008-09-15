@@ -8,6 +8,7 @@
 #include "particles_simple.h"
 #include "baseparticleentity.h"
 #include "iefx.h"
+#include "fx.h"
 #include "decals.h"
 #include "beamdraw.h"
 #include "hud.h"

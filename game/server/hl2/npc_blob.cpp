@@ -717,7 +717,7 @@ void CNPC_Blob::DoBlobBatchedAI( int iStart, int iEnd )
 	float flMySine;
 	float flAmplitude = npc_blob_sin_amplitude.GetFloat();
 	float flMyAmplitude;
-	Vector vecRight;
+	Vector vecRight = Vector(0.0f, 0.0f, 0.0f);
 	Vector vecForward;
 
 	// Local fields for attract/repel

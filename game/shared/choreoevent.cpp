@@ -3978,7 +3978,7 @@ bool CChoreoEvent::ComputeCombinedBaseFileName( char *dest, int destlen, bool cr
 		}
 	}
 
-	int len = Q_strlen( pvcd );
+	size_t len = Q_strlen( pvcd );
 
 	if ( len > 0 && ( len + 1 ) < ( sizeof( vcdpath ) - 1 ) )
 	{
@@ -4148,7 +4148,7 @@ void CChoreoEvent::SaveToBuffer( CUtlBuffer& buf, CChoreoScene *pScene, IChoreoS
 		buf.PutShort( pStringPool->FindOrAddString( rt->GetName() ) );
 
 		Assert( rt->GetPercentage() >= 0.0f && rt->GetPercentage() <= 1.0f );
-		unsigned char p = rt->GetPercentage() * 255.0f;
+		unsigned char p = static_cast<unsigned char>(rt->GetPercentage() * 255.0f);
 		buf.PutUnsignedChar( p );
 	}
 
@@ -4164,7 +4164,7 @@ void CChoreoEvent::SaveToBuffer( CUtlBuffer& buf, CChoreoScene *pScene, IChoreoS
 
 		// save as u0.8
 		Assert( tt->GetPercentage() >= 0.0f && tt->GetPercentage() <= 1.0f );
-		unsigned char p = tt->GetPercentage() * 255.0f;
+		unsigned char p = static_cast<unsigned char>(tt->GetPercentage() * 255.0f);
 		buf.PutUnsignedChar( p );
 
 		// Don't save locked state, it's only used by the editor tt->GetLocked()
@@ -4185,7 +4185,7 @@ void CChoreoEvent::SaveToBuffer( CUtlBuffer& buf, CChoreoScene *pScene, IChoreoS
 
 			// save as u4.12
 			Assert( abstag->GetPercentage() >= 0.0f && abstag->GetPercentage() <= 15.0f );
-			unsigned short p = abstag->GetPercentage() * 4096.0f;
+			unsigned short p = static_cast<unsigned short>(abstag->GetPercentage() * 4096.0f);
 			buf.PutUnsignedShort( p );
 		}
 	}
@@ -4371,7 +4371,7 @@ void CCurveData::SaveToBuffer( CUtlBuffer& buf, IChoreoStringPool *pStringPool )
 		buf.PutFloat( sample->time );
 
 		Assert( sample->value >= 0.0f && sample->value <= 1.0f );
-		unsigned char v = sample->value * 255.0f;
+		unsigned char v = static_cast<unsigned char>(sample->value * 255.0f);
 		buf.PutUnsignedChar( v );
 	}	
 }
@@ -4421,7 +4421,7 @@ void CChoreoEvent::SaveFlexAnimationsToBuffer( CUtlBuffer& buf, IChoreoStringPoo
 			buf.PutFloat( s->time );
 
 			Assert( s->value >= 0.0f && s->value <= 1.0f );
-			unsigned char v = s->value * 255.0f;
+			unsigned char v = static_cast<unsigned char>(s->value * 255.0f);
 			buf.PutUnsignedChar( v );
 
 			buf.PutUnsignedShort( s->GetCurveType() );
@@ -4443,7 +4443,7 @@ void CChoreoEvent::SaveFlexAnimationsToBuffer( CUtlBuffer& buf, IChoreoStringPoo
 				buf.PutFloat( s->time );
 
 				Assert( s->value >= 0.0f && s->value <= 1.0f );
-				unsigned char v = s->value * 255.0f;
+				unsigned char v = static_cast<unsigned char>(s->value * 255.0f);
 				buf.PutUnsignedChar( v );
 
 				buf.PutUnsignedShort( s->GetCurveType() );

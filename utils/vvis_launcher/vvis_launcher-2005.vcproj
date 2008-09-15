@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="Vvis_launcher"
 	ProjectGUID="{4C0B9915-E8FF-4089-8927-FC934BFC1E4A}"
+	RootNamespace="Vvis_launcher"
 	>
 	<Platforms>
 		<Platform
@@ -27,6 +28,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\vvis.exe;..\..\..\game\bin\vvis.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -128,7 +131,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -147,6 +149,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\vvis.exe;..\..\..\game\bin\vvis.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -250,7 +254,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -261,6 +264,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath="..\..\public\tier0\memoverride.cpp"
@@ -309,6 +313,7 @@
 		</Filter>
 		<Filter
 			Name="Link Libraries"
+			Filter="h"
 			>
 			<File
 				RelativePath="..\..\lib\public\tier0.lib"
@@ -325,6 +330,7 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath="..\..\public\tier1\interface.h"
@@ -335,10 +341,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\ReadMe.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

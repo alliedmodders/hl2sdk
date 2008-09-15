@@ -105,6 +105,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vprojtomake", "utils\vprojt
 		{E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720} = {E1DA8DB8-FB4C-4B14-91A6-98BCED6B9720}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "choreoobjects", "choreoobjects\choreoobjects-2005.vcproj", "{E60CA0E5-422B-450A-B185-53DDB734FF6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -195,6 +197,10 @@ Global
 		{EA55446E-BC04-491C-A9F0-605DFCBB213A}.Debug|Win32.Build.0 = Debug|Win32
 		{EA55446E-BC04-491C-A9F0-605DFCBB213A}.Release|Win32.ActiveCfg = Release|Win32
 		{EA55446E-BC04-491C-A9F0-605DFCBB213A}.Release|Win32.Build.0 = Release|Win32
+		{E60CA0E5-422B-450A-B185-53DDB734FF6B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E60CA0E5-422B-450A-B185-53DDB734FF6B}.Debug|Win32.Build.0 = Debug|Win32
+		{E60CA0E5-422B-450A-B185-53DDB734FF6B}.Release|Win32.ActiveCfg = Release|Win32
+		{E60CA0E5-422B-450A-B185-53DDB734FF6B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

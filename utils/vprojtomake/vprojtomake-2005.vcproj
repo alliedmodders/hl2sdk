@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="vprojtomake"
 	ProjectGUID="{EA55446E-BC04-491C-A9F0-605DFCBB213A}"
+	RootNamespace="vprojtomake"
 	>
 	<Platforms>
 		<Platform
@@ -28,8 +29,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist  ..\..\..\game\bin\vcpm.exe attrib -r ..\..\..\game\bin\vcpm.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\vcpm.exe&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\vcpm.exe"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\vcpm.exe;..\..\..\game\bin\vcpm.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -39,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/vprojtomake.tlb"
+				TypeLibraryName=".\Release/vcpm.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -53,7 +54,7 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="stdafx.h"
-				PrecompiledHeaderFile=".\Release/vprojtomake.pch"
+				PrecompiledHeaderFile=".\Release/vcpm.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -75,12 +76,12 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib comsupp.lib msxml2.lib comsuppw.lib"
-				OutputFile=".\Release/vcpm.exe"
+				OutputFile="$(OutDir)/vcpm.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\public"
 				IgnoreDefaultLibraryNames="LIBCMTD"
-				ProgramDatabaseFile=".\Release/vprojtomake.pdb"
+				ProgramDatabaseFile=".\Release/vcpm.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -124,8 +125,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="if exist  ..\..\..\game\bin\vcpm.exe attrib -r ..\..\..\game\bin\vcpm.exe&#x0D;&#x0A;if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\vcpm.exe&#x0D;&#x0A;"
-				Outputs="..\..\..\game\bin\vcpm.exe"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\vcpm.exe;..\..\..\game\bin\vcpm.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -135,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/vprojtomake.tlb"
+				TypeLibraryName=".\Debug/vcpm.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -147,7 +148,7 @@
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="stdafx.h"
-				PrecompiledHeaderFile=".\Debug/vprojtomake.pch"
+				PrecompiledHeaderFile=".\Debug/vcpm.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -173,15 +174,15 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/FIXED:NO"
 				AdditionalDependencies="odbc32.lib odbccp32.lib msxml2.lib comsuppw.lib comsupp.lib"
-				OutputFile=".\Debug/vprojtomake.exe"
+				OutputFile="$(OutDir)/vcpm.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\public"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/vprojtomake.pdb"
+				ProgramDatabaseFile=".\Debug/vcpm.pdb"
 				GenerateMapFile="true"
-				MapFileName=".\Debug/vprojtomake.map"
+				MapFileName=".\Debug/vcpm.map"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -219,62 +220,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\tier1\interface.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						UsePrecompiledHeader="0"
-						BrowseInformation="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\tier1\KeyValues.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						UsePrecompiledHeader="0"
-						BrowseInformation="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="makefilecreator.cpp"
 				>
 				<FileConfiguration
@@ -303,62 +248,6 @@
 			</File>
 			<File
 				RelativePath="StdAfx.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						UsePrecompiledHeader="0"
-						BrowseInformation="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\tier1\utlbuffer.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						UsePrecompiledHeader="0"
-						BrowseInformation="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\tier1\utlsymbol.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -510,44 +399,45 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\..\public\appframework\IAppSystem.h"
+		<Filter
+			Name="Link Libraries"
+			Filter="lib"
 			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier0.lib"
-			>
-			<FileConfiguration
-				Name="Release|Win32"
+			<File
+				RelativePath="..\..\lib\public\tier0.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug|Win32"
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description=""
+						CommandLine=""
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\tier1.lib"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description=""
-					CommandLine=""
-				/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier1.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\tier2.lib"
-			>
-		</File>
-		<File
-			RelativePath="..\..\lib\public\vstdlib.lib"
-			>
-		</File>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\tier2.lib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lib\public\vstdlib.lib"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

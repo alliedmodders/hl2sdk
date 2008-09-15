@@ -31,7 +31,7 @@ class Vector;
 enum VertexFormatFlags_t
 {
 	// Indicates an uninitialized VertexFormat_t value
-	VERTEX_FORMAT_INVALID = 0xFFFFFFFFFFFFFFFFL,
+	VERTEX_FORMAT_INVALID = 0xFFFFFFFFFFFFFFFFLL,
 
 	VERTEX_POSITION	= 0x0001,
 	VERTEX_NORMAL	= 0x0002,

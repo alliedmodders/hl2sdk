@@ -80,13 +80,13 @@ BEGIN_SIMPLE_DATADESC( FailPosition_t )
 END_DATADESC();
 
 CAI_PassengerBehaviorCompanion::CAI_PassengerBehaviorCompanion( void ) : 
-m_flUnseenDuration( 0.0f ),
+m_flNextJostleTime( 0.0f ),
 m_flNextOverturnWarning( 0.0f ),
-m_flOverturnedDuration( 0.0f ), 
+m_flOverturnedDuration( 0.0f ),
+m_flUnseenDuration( 0.0f ),
 m_nExitAttempts( 0 ),
-m_flNextEnterAttempt( 0.0f ),
 m_flLastLateralLean( 0.0f ),
-m_flNextJostleTime( 0.0f )
+m_flNextEnterAttempt( 0.0f )
 {
 	memset( &m_vehicleState, 0, sizeof( m_vehicleState ) );
 	m_VehicleMonitor.ClearMark();
@@ -818,8 +818,8 @@ bool CAI_PassengerBehaviorCompanion::CanEnterVehicleImmediately( int *pResultSeq
 	float	flSeatDistSqr;
 	int		nNearestSequence = -1;
 	int		nSequence;
-	Vector	vecNearestPos;
-	QAngle	vecNearestAngles;
+	Vector	vecNearestPos(0.0f, 0.0f, 0.0f);
+	QAngle	vecNearestAngles(0.0f, 0.0f, 0.0f);
 
 	// Test each animation (sorted by priority) for the best match
 	for ( int i = 0; i < pEntryAnims->Count(); i++ )

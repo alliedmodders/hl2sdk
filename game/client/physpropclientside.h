@@ -32,7 +32,7 @@ public:
 	virtual CollideType_t	GetCollideType( void ) { return ENTITY_SHOULD_RESPOND; }
 	virtual void			StartTouch( C_BaseEntity *pOther );
 	virtual	void			HitSurface( C_BaseEntity *pOther );
-	virtual	void			ImpactTrace( trace_t *pTrace, int iDamageType, char *pCustomImpactName );
+	virtual	void			ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName );
 	virtual	bool			IsClientCreated( void ) const { return true; }
 	virtual int				GetMultiplayerPhysicsMode() { return m_iPhysicsMode; }
 	virtual float			GetMass();

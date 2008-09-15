@@ -6,9 +6,6 @@
 
 #undef PROTECTED_THINGS_ENABLE
 #undef PROTECT_FILEIO_FUNCTIONS
-#ifndef _LINUX
-#undef fopen
-#endif
 
 #if defined( _WIN32 ) && !defined( _X360 )
 #include <windows.h>

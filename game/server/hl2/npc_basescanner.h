@@ -100,7 +100,7 @@ public:
 	void			DeathSound( const CTakeDamageInfo &info );
 	void			AlertSound( void );
 	void			PainSound( const CTakeDamageInfo &info );
-	virtual char	*GetScannerSoundPrefix( void ) { return ""; }
+	virtual const char	*GetScannerSoundPrefix( void ) { return ""; }
 	void			ScannerEmitSound( const char *pszSoundName );
 
 	int				MeleeAttack1Conditions ( float flDot, float flDist );
@@ -124,7 +124,7 @@ public:
 	void			InputSetDistanceOverride( inputdata_t &inputdata );
 
 protected:
-	virtual char		*GetEngineSound( void ) { return NULL; }
+	virtual const char	*GetEngineSound( void ) { return NULL; }
 	void				PlayFlySound(void);
 
 	void				SetBanking( float flInterval );

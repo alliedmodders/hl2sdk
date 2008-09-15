@@ -19,7 +19,7 @@
 #include "ndebugoverlay.h"
 #include "physics_saverestore.h"
 #include "player_pickup.h"
-#include "soundemittersystem/isoundemittersystembase.h"
+#include "SoundEmitterSystem/isoundemittersystembase.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -726,8 +726,9 @@ void CWeaponGravityGun::EffectUpdate( void )
 
 	// Add the incremental player yaw to the target transform
 	matrix3x4_t curMatrix, incMatrix, nextMatrix;
+	QAngle ang(0.0f, pOwner->EyeAngles().y - m_lastYaw, 0.0f);
 	AngleMatrix( m_gravCallback.m_targetRotation, curMatrix );
-	AngleMatrix( QAngle(0,pOwner->EyeAngles().y - m_lastYaw,0), incMatrix );
+	AngleMatrix( ang, incMatrix );
 	ConcatTransforms( incMatrix, curMatrix, nextMatrix );
 	MatrixAngles( nextMatrix, m_gravCallback.m_targetRotation );
 	m_lastYaw = pOwner->EyeAngles().y;

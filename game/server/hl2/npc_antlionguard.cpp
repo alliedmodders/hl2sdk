@@ -31,7 +31,7 @@
 #include "prop_combine_ball.h"
 #include "eventqueue.h"
 #include "te_effect_dispatch.h"
-#include "sprite.h"
+#include "Sprite.h"
 #include "particle_parse.h"
 #include "particle_system.h"
 
@@ -2245,8 +2245,8 @@ int CNPC_AntlionGuard::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 			const float flNumDamagePhases =	5.0f;
 
 			float flDenom = ( (float) GetMaxHealth() / flNumDamagePhases );
-			int nPreDamagePhase = ceil( (float) nPreHealth / flDenom );
-			int nPostDamagePhase = ceil( (float) GetHealth() / flDenom );
+			int nPreDamagePhase = (int)ceil(nPreHealth / flDenom);
+			int nPostDamagePhase = (int)ceil(GetHealth() / flDenom);
 			if ( nPreDamagePhase != nPostDamagePhase )
 			{
 				bTakeHeavyDamage = true;
@@ -3151,7 +3151,7 @@ void CNPC_AntlionGuard::SummonAntlions( void )
 
 	// Only spawn up to our max count
 	int iSpawnPoint = 0;
-	for ( int i = 0; (m_iNumLiveAntlions < ANTLIONGUARD_SUMMON_COUNT) && (iSpawnPoint < ARRAYSIZE(sAntlionSpawnPositions)); i++ )
+	for ( int i = 0; (m_iNumLiveAntlions < ANTLIONGUARD_SUMMON_COUNT) && (iSpawnPoint < (int)ARRAYSIZE(sAntlionSpawnPositions)); i++ )
 	{
 		// Determine spawn position for the antlion
 		Vector vecSpawn = GetAbsOrigin() + ( sAntlionSpawnPositions[iSpawnPoint].flForward * vecForward ) + ( sAntlionSpawnPositions[iSpawnPoint].flRight * vecRight );

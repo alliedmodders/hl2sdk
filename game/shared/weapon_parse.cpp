@@ -77,7 +77,7 @@ static CUtlDict< FileWeaponInfo_t*, unsigned short > m_WeaponInfoDatabase;
 
 #ifdef _DEBUG
 // used to track whether or not two weapons have been mistakenly assigned the wrong slot
-bool g_bUsedWeaponSlots[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS] = { 0 };
+bool g_bUsedWeaponSlots[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS] = { {false} };
 
 #endif
 
@@ -121,7 +121,7 @@ static FileWeaponInfo_t gNullWeaponInfo;
 //-----------------------------------------------------------------------------
 FileWeaponInfo_t *GetFileWeaponInfoFromHandle( WEAPON_FILE_INFO_HANDLE handle )
 {
-	if ( handle < 0 || handle >= m_WeaponInfoDatabase.Count() )
+	if ( handle >= m_WeaponInfoDatabase.Count() )
 	{
 		return &gNullWeaponInfo;
 	}
@@ -382,7 +382,7 @@ void FileWeaponInfo_t::Parse( KeyValues *pKeyValuesData, const char *szWeaponNam
 	// Weapon scripts should use the flag names.
 	iFlags = pKeyValuesData->GetInt( "item_flags", ITEM_FLAG_LIMITINWORLD );
 
-	for ( int i=0; i < ARRAYSIZE( g_ItemFlags ); i++ )
+	for ( size_t i=0; i < ARRAYSIZE( g_ItemFlags ); i++ )
 	{
 		int iVal = pKeyValuesData->GetInt( g_ItemFlags[i].m_pFlagName, -1 );
 		if ( iVal == 0 )

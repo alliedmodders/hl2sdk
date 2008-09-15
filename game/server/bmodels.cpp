@@ -804,7 +804,7 @@ void CFuncRotating::RampPitchVol( void )
 
 	float fpitch = FANPITCHMIN + (FANPITCHMAX - FANPITCHMIN) * fpct;	
 	
-	int pitch = clamp(fpitch, 0, 255);
+	int pitch = (int)clamp(fpitch, 0, 255);
 	if (pitch == PITCH_NORM)
 	{
 		pitch = PITCH_NORM - 1;

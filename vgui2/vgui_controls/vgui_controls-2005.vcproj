@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="vgui_controls"
 	ProjectGUID="{BF3EDBF5-ED65-4567-B348-504C1310A1BB}"
+	RootNamespace="vgui_controls"
 	>
 	<Platforms>
 		<Platform
@@ -207,6 +208,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath=".\AnalogBar.cpp"
@@ -511,6 +513,7 @@
 		</Filter>
 		<Filter
 			Name="Public Header Files"
+			Filter="h"
 			>
 			<File
 				RelativePath="..\..\public\vgui_controls\AnimatingImagePanel.h"

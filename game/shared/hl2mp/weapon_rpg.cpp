@@ -45,7 +45,7 @@
 const char *g_pLaserDotThink = "LaserThinkContext";
 
 static ConVar sk_apc_missile_damage("sk_apc_missile_damage", "15");
-#define APC_MISSILE_DAMAGE	sk_apc_missile_damage.GetFloat()
+#define APC_MISSILE_DAMAGE	sk_apc_missile_damage.GetInt()
 
 #endif
 
@@ -360,7 +360,7 @@ void CMissile::ShotDown( void )
 void CMissile::DoExplosion( void )
 {
 	// Explode
-	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), GetOwnerEntity(), GetDamage(), GetDamage() * 2, 
+	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), GetOwnerEntity(), (int)GetDamage(), (int)(GetDamage() * 2), 
 		SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE, 0.0f, this);
 }
 

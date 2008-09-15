@@ -888,9 +888,9 @@ END_DATADESC()
 // Purpose :
 //------------------------------------------------------------------------------
 CNPC_AttackHelicopter::CNPC_AttackHelicopter() : 
-	m_bNonCombat( false ),
 	m_flGracePeriod( 2.0f ),
-	m_bBombsExplodeOnContact( false )
+	m_bBombsExplodeOnContact( false ),
+	m_bNonCombat( false )
 {
 	m_flMaxSpeed = 0;
 }
@@ -1603,7 +1603,7 @@ void CNPC_AttackHelicopter::InputSetHealthFraction( inputdata_t &inputdata )
 	// Sets the health fraction, no damage effects
 	if ( inputdata.value.Float() > 0 )
 	{
-		SetHealth( GetMaxHealth() * inputdata.value.Float() * 0.01f );
+		SetHealth( (int)(GetMaxHealth() * inputdata.value.Float() * 0.01f) );
 	}
 }
 
@@ -2357,7 +2357,7 @@ bool CNPC_AttackHelicopter::DoGunCharging( )
 	case SHOOT_MODE_FAST:
 		{
 			int nBurstCount = sk_helicopter_burstcount.GetInt();
-			m_nRemainingBursts = random->RandomInt( nBurstCount, 2.0 * nBurstCount );
+			m_nRemainingBursts = random->RandomInt( nBurstCount, 2 * nBurstCount );
 			m_flIdleTimeDelay = 0.1f * ( m_nRemainingBursts - nBurstCount );
 		}
 		break;
@@ -2469,7 +2469,7 @@ void CNPC_AttackHelicopter::ShootAtFacingDirection( const Vector &vBasePos, cons
 #ifdef HL2_EPISODIC 
 	if( GetEnemy() != NULL )
 	{
-		CSoundEnt::InsertSound( SOUND_DANGER, GetEnemy()->WorldSpaceCenter(), 180.0f, 0.5f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
+		CSoundEnt::InsertSound( SOUND_DANGER, GetEnemy()->WorldSpaceCenter(), 180, 0.5f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
 	}
 #endif//HL2_EPISODIC
 
@@ -3449,7 +3449,7 @@ void CNPC_AttackHelicopter::DropCorpse( int nDamage )
 
 	// Clamp damage to prevent ridiculous ragdoll velocity
 	if( nDamage > 250.0f )
-		nDamage = 250.0f;
+		nDamage = 250;
 
 	m_flLastCorpseFall = gpGlobals->curtime + 3.0;
 
@@ -3596,7 +3596,7 @@ int CNPC_AttackHelicopter::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 		{
 			if ( nPrevHealth != GetMaxHealth() )
 			{
-				DropCorpse( info.GetDamage() );
+				DropCorpse( (int)info.GetDamage() );
 			}
 		}
 
@@ -4992,7 +4992,7 @@ void CGrenadeHelicopter::Spawn( void )
 
 	if ( HasSpawnFlags( SF_HELICOPTER_GRENADE_DUD ) )
 	{
-		m_nSkin = SKIN_DUD;
+		m_nSkin = (int)SKIN_DUD;
 	}
 
 	if ( !HasSpawnFlags( SF_GRENADE_HELICOPTER_MEGABOMB ) )
@@ -5091,7 +5091,7 @@ void CGrenadeHelicopter::InputExplodeIn( inputdata_t &inputdata )
 	{
 		// We are a dud no more!
 		RemoveSpawnFlags( SF_HELICOPTER_GRENADE_DUD );
-		m_nSkin = SKIN_REGULAR;
+		m_nSkin = (int)SKIN_REGULAR;
 	}
 
 	m_bActivated = false;
@@ -5204,19 +5204,19 @@ void CGrenadeHelicopter::WarningBlinkerThink()
 		if( m_bBlinkerAtTop )
 		{
 			//m_hWarningSprite->SetParentAttachment( "SetParentAttachment", "bottom", false );
-			m_nSkin = SKIN_REGULAR;
+			m_nSkin = (int)SKIN_REGULAR;
 			m_bBlinkerAtTop = false;
 		}
 		else
 		{
 			//m_hWarningSprite->SetParentAttachment( "SetParentAttachment", "top", false );
-			m_nSkin = SKIN_DUD;
+			m_nSkin = (int)SKIN_DUD;
 			m_bBlinkerAtTop = true;
 		}
 	}
 
 	// Frighten people
-	CSoundEnt::InsertSound ( SOUND_DANGER, WorldSpaceCenter(), g_helicopter_bomb_danger_radius.GetFloat(), 0.2f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
+	CSoundEnt::InsertSound ( SOUND_DANGER, WorldSpaceCenter(), g_helicopter_bomb_danger_radius.GetInt(), 0.2f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
 
 #ifdef HL2_EPISODIC
 	if( gpGlobals->curtime >= m_flBlinkFastTime )
@@ -5364,8 +5364,8 @@ int CGrenadeHelicopter::OnTakeDamage( const CTakeDamageInfo &info )
 //------------------------------------------------------------------------------
 void CGrenadeHelicopter::DoExplosion( const Vector &vecOrigin, const Vector &vecVelocity )
 {
-	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), GetOwnerEntity() ? GetOwnerEntity() : this, sk_helicopter_grenadedamage.GetFloat(), 
-		sk_helicopter_grenaderadius.GetFloat(), (SF_ENVEXPLOSION_NOSPARKS|SF_ENVEXPLOSION_NODLIGHTS|SF_ENVEXPLOSION_NODECAL|SF_ENVEXPLOSION_NOFIREBALL|SF_ENVEXPLOSION_NOPARTICLES), 
+	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), GetOwnerEntity() ? GetOwnerEntity() : this, sk_helicopter_grenadedamage.GetInt(), 
+		sk_helicopter_grenaderadius.GetInt(), (SF_ENVEXPLOSION_NOSPARKS|SF_ENVEXPLOSION_NODLIGHTS|SF_ENVEXPLOSION_NODECAL|SF_ENVEXPLOSION_NOFIREBALL|SF_ENVEXPLOSION_NOPARTICLES), 
 		sk_helicopter_grenadeforce.GetFloat(), this );
 
 	if ( GetShakeAmplitude() )
@@ -5520,7 +5520,7 @@ void CGrenadeHelicopter::OnPhysGunPickup(CBasePlayer *pPhysGunUser, PhysGunPicku
 			SetContextThink( &CGrenadeHelicopter::WarningBlinkerThink, gpGlobals->curtime + GetBombLifetime() - 2.0f, s_pWarningBlinkerContext );
 
 #ifdef HL2_EPISODIC
-			m_nSkin = SKIN_REGULAR;
+			m_nSkin = (int)SKIN_REGULAR;
 			m_flBlinkFastTime = gpGlobals->curtime + GetBombLifetime() - 1.0f;
 #endif//HL2_EPISODIC
 			

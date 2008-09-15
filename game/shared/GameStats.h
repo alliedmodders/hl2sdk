@@ -94,9 +94,9 @@ struct BasicGameStats_t
 public:
 	BasicGameStats_t() :
 		  m_nSecondsToCompleteGame( 0 ),
-		  m_nHL2ChaptureUnlocked( 0 ),
 		  m_bSteam( true ),
 		  m_bCyberCafe( false ),
+		  m_nHL2ChaptureUnlocked( 0 ),
 		  m_nDXLevel( 0 )
 	  {
 	  }

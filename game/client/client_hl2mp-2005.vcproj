@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="Client (HL2MP)"
 	ProjectGUID="{5FE91DC8-B6DF-4061-984E-36FD36623E72}"
+	RootNamespace="Client (HL2MP)"
 	>
 	<Platforms>
 		<Platform
@@ -28,8 +29,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying to destination folder"
-				CommandLine="if exist &quot;..\..\game\hl2\bin\client.dll&quot; attrib -r &quot;..\..\game\hl2\bin\client.dll&quot;&#x0D;&#x0A;copy &quot;$(TargetDir)&quot;client.dll &quot;..\..\game\hl2\bin&quot;&#x0D;&#x0A;"
-				Outputs="..\..\game\hl2\bin\client.dll"
+				CommandLine="if exist ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;if exist ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\hl2mp\bin\client.dll;..\..\..\game\hl2mp\bin\client.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -87,7 +88,7 @@
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="winmm.lib"
 				ShowProgress="0"
-				OutputFile="$(OutDir)/Client.dll"
+				OutputFile="$(OutDir)/client.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\common;..\..\lib\public"
@@ -148,8 +149,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying to destination folder"
-				CommandLine="if exist &quot;..\..\game\hl2\bin\client.dll&quot; attrib -r &quot;..\..\game\hl2\bin\client.dll&quot;&#x0D;&#x0A;copy &quot;$(TargetDir)&quot;client.dll &quot;..\..\game\hl2\bin&quot;&#x0D;&#x0A;if exist &quot;..\..\game\hl2\bin\client.pdb&quot; attrib -r &quot;..\..\game\hl2\bin\client.pdb&quot;&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;client.pdb copy &quot;$(TargetDir)&quot;client.pdb &quot;..\..\game\hl2\bin\client.pdb&quot;&#x0D;&#x0A;"
-				Outputs="..\..\game\hl2\bin\client.dll&quot;;&quot;..\..\game\hl2\bin\client.pdb"
+				CommandLine="if exist ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;if exist ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\hl2mp\bin\client.dll;..\..\..\game\hl2mp\bin\client.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -209,7 +210,7 @@
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="winmm.lib"
 				ShowProgress="0"
-				OutputFile="$(OutDir)/Client.dll"
+				OutputFile="$(OutDir)/client.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\common;..\..\lib\public"
@@ -263,6 +264,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath=".\achievement_notification_panel.cpp"
@@ -1865,6 +1867,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\teamplay_round_timer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\teamplayroundbased_gamerules.cpp"
 				>
 			</File>
@@ -2923,6 +2929,7 @@
 		</Filter>
 		<Filter
 			Name="Link Libraries"
+			Filter="lib"
 			>
 			<File
 				RelativePath="..\..\lib\public\bitmap.lib"
@@ -2987,6 +2994,7 @@
 		</Filter>
 		<Filter
 			Name="MP3"
+			Filter="h;cpp"
 			>
 			<File
 				RelativePath=".\mp3player.cpp"
@@ -2999,6 +3007,7 @@
 		</Filter>
 		<Filter
 			Name="Tool Framework"
+			Filter="h;cpp"
 			>
 			<File
 				RelativePath="..\..\public\tools\bonelist.cpp"
@@ -3023,6 +3032,7 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath=".\animationlayer.h"
@@ -3803,6 +3813,7 @@
 		</Filter>
 		<Filter
 			Name="Public Header Files"
+			Filter="h"
 			>
 			<File
 				RelativePath="..\..\public\mathlib\amd3dx.h"
@@ -4703,6 +4714,7 @@
 		</Filter>
 		<Filter
 			Name="Game Shared Header Files"
+			Filter="h"
 			>
 			<File
 				RelativePath="..\shared\activitylist.h"
@@ -5171,6 +5183,7 @@
 		</Filter>
 		<Filter
 			Name="game_controls Header Files"
+			Filter="h"
 			>
 			<File
 				RelativePath=".\game_controls\baseviewport.h"

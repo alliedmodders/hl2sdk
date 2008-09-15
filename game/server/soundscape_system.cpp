@@ -116,7 +116,7 @@ void CSoundscapeSystem::PrintDebugInfo()
 		CEnvSoundscape *currentSoundscape = m_soundscapeEntities[entityIndex];
 		Msg("- %d: %s x:%.4f y:%.4f z:%.4f\n", 
 			entityIndex, 
-			currentSoundscape->GetSoundscapeName(), 
+			STRING(currentSoundscape->GetSoundscapeName()), 
 			currentSoundscape->GetAbsOrigin().x,
 			currentSoundscape->GetAbsOrigin().y,
 			currentSoundscape->GetAbsOrigin().z

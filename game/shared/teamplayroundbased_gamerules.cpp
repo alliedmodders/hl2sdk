@@ -716,7 +716,7 @@ void CTeamplayRoundBasedRules::CheckWaitingForPlayers( void )
 			if ( m_hWaitingForPlayersTimer )
 			{
 				variant_t sVariant;
-				sVariant.SetInt( m_flWaitingForPlayersTimeEnds - gpGlobals->curtime );
+				sVariant.SetInt( (int)(m_flWaitingForPlayersTimeEnds - gpGlobals->curtime) );
 				m_hWaitingForPlayersTimer->AcceptInput( "SetTime", NULL, NULL, sVariant, 0 );
 			}
 		}
@@ -777,7 +777,7 @@ void CTeamplayRoundBasedRules::CheckWaitingForPlayers( void )
 				m_hWaitingForPlayersTimer = (CTeamRoundTimer*)CBaseEntity::Create( "team_round_timer", vec3_origin, vec3_angle );
 				m_hWaitingForPlayersTimer->SetName( MAKE_STRING("zz_teamplay_waiting_timer") );
 				m_hWaitingForPlayersTimer->KeyValue( "show_in_hud", "1" );
-				sVariant.SetInt( m_flWaitingForPlayersTimeEnds - gpGlobals->curtime );
+				sVariant.SetInt( (int)(m_flWaitingForPlayersTimeEnds - gpGlobals->curtime) );
 				m_hWaitingForPlayersTimer->AcceptInput( "SetTime", NULL, NULL, sVariant, 0 );
 				m_hWaitingForPlayersTimer->AcceptInput( "Resume", NULL, NULL, sVariant, 0 );
 				m_hWaitingForPlayersTimer->AcceptInput( "Enable", NULL, NULL, sVariant, 0 );
@@ -1118,7 +1118,7 @@ CGameRulesRoundStateInfo* CTeamplayRoundBasedRules::State_LookupInfo( gamerules_
 		{ GR_STATE_GAME_OVER,	"GR_STATE_GAME_OVER",	NULL, NULL, NULL },
 	};
 
-	for ( int i=0; i < ARRAYSIZE( playerStateInfos ); i++ )
+	for ( size_t i=0; i < ARRAYSIZE( playerStateInfos ); i++ )
 	{
 		if ( playerStateInfos[i].m_iRoundState == state )
 			return &playerStateInfos[i];
@@ -1779,7 +1779,6 @@ void CTeamplayRoundBasedRules::RestartTournament( void )
 }
 
 #endif
-
 
 //-----------------------------------------------------------------------------
 // Purpose: 

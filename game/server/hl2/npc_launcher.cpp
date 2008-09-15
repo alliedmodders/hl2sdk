@@ -376,7 +376,7 @@ void CNPC_Launcher::LauncherThink( void )
 		// Otherwise look for enemy to fire at
 		else
 		{
-			GetSenses()->Look(m_flMaxAttackDist);
+			GetSenses()->Look((int)m_flMaxAttackDist);
 			CBaseEntity* pBestEnemy = BestEnemy();
 
 			if (pBestEnemy)

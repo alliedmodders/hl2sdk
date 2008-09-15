@@ -97,7 +97,7 @@ void CWeapon_SLAM::Precache( void )
 //------------------------------------------------------------------------------
 void CWeapon_SLAM::SetPickupTouch( void )
 {
-	SetTouch(SlamTouch);
+	SetTouch(&CWeapon_SLAM::SlamTouch);
 }
 
 //-----------------------------------------------------------------------------
@@ -934,7 +934,7 @@ bool CWeapon_SLAM::Deploy( void )
 	m_bDetonatorArmed = AnyUndetonatedCharges();
 
 
-	SetThink( SLAMThink );
+	SetThink( &CWeapon_SLAM::SLAMThink );
 	SetNextThink( gpGlobals->curtime + 0.1f );
 
 	SetModel( GetViewModel() );

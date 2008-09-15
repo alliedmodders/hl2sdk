@@ -6,8 +6,9 @@
 
 #include "mathlib/IceKey.H"
 
+#ifdef _MSC_VER
 #pragma warning(disable: 4244)
-
+#endif
 
 	/* Structure of a single round subkey */
 class IceSubkey {

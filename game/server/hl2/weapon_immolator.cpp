@@ -104,7 +104,7 @@ void CWeaponImmolator::StartImmolating()
 	// determine whether the immolator is operating or not.
 	m_flBurnRadius = 0.1;
 	m_flTimeLastUpdatedRadius = gpGlobals->curtime;
-	SetThink( UpdateThink );
+	SetThink( &CWeaponImmolator::UpdateThink );
 	SetNextThink( gpGlobals->curtime );
 
 	CSoundEnt::InsertSound( SOUND_DANGER, m_vecImmolatorTarget, 256, 5.0, GetOwner() );
@@ -251,13 +251,13 @@ void CWeaponImmolator::Update()
 	UTIL_TraceLine( vecSrc, vecSrc + vecAiming * MAX_TRACE_LENGTH, MASK_SHOT, pOwner, COLLISION_GROUP_NONE, &tr );
 
 	int brightness;
-	brightness = 255 * (m_flBurnRadius/MAX_BURN_RADIUS);
+	brightness = (int)(255 * (m_flBurnRadius / MAX_BURN_RADIUS));
 	UTIL_Beam(  vecSrc,
 				tr.endpos,
 				m_beamIndex,
 				0,		//halo index
 				0,		//frame start
-				2.0f,	//framerate
+				2,	//framerate
 				0.1f,	//life
 				20,		// width
 				1,		// endwidth
@@ -294,11 +294,11 @@ void CWeaponImmolator::Update()
 						m_beamIndex,
 						0,		//halo index
 						0,		//frame start
-						2.0f,	//framerate
+						2,	//framerate
 						0.15f,	//life
 						20,		// width
-						1.75,	// endwidth
-						0.75,	// fadelength,
+						1,	// endwidth
+						0,	// fadelength,
 						15,		// noise
 
 						0,		// red
@@ -348,7 +348,7 @@ void CWeaponImmolator::ImmolationDamage( const CTakeDamageInfo &info, const Vect
 	Vector vecSrc = vecSrcIn;
 
 	// iterate on all entities in the vicinity.
-	for ( CEntitySphereQuery sphere( vecSrc, flRadius ); pEntity = sphere.GetCurrentEntity(); sphere.NextEntity() )
+	for ( CEntitySphereQuery sphere( vecSrc, flRadius ); (pEntity = sphere.GetCurrentEntity()) != NULL; sphere.NextEntity() )
 	{
 		CBaseCombatCharacter *pBCC;
 

@@ -516,7 +516,7 @@ void studiohdr_t::SetAttachmentBone( int iAttachment, int iBone )
 // Purpose:
 //-----------------------------------------------------------------------------
 
-char *studiohdr_t::pszNodeName( int iNode ) const
+const char *studiohdr_t::pszNodeName( int iNode ) const
 {
 	if (numincludemodels == 0)
 	{
@@ -799,7 +799,9 @@ const virtualmodel_t * CStudioHdr::ResetVModel( const virtualmodel_t *pVModel ) 
 	if (pVModel != NULL)
 	{
 		m_pVModel = (virtualmodel_t *)pVModel;
+	#if defined(_WIN32) && !defined(THREAD_PROFILER)
 		Assert( !pVModel->m_Lock.GetOwnerId() );
+	#endif
 		m_pStudioHdrCache.SetCount( m_pVModel->m_group.Count() );
 
 		int i;
@@ -847,7 +849,9 @@ const studiohdr_t *CStudioHdr::GroupStudioHdr( int i ) const
 
 	if (pStudioHdr == NULL)
 	{
+	#if defined(_WIN32) && !defined(THREAD_PROFILER)
 		Assert( !m_pVModel->m_Lock.GetOwnerId() );
+	#endif
 		virtualgroup_t *pGroup = &m_pVModel->m_group[ i ];
 		pStudioHdr = pGroup->GetStudioHdr();
 		m_pStudioHdrCache[ i ] = pStudioHdr;
@@ -1149,7 +1153,7 @@ void CStudioHdr::SetAttachmentBone( int iAttachment, int iBone )
 // Purpose:
 //-----------------------------------------------------------------------------
 
-char *CStudioHdr::pszNodeName( int iNode ) const
+const char *CStudioHdr::pszNodeName( int iNode ) const
 {
 	if (m_pVModel == NULL)
 	{

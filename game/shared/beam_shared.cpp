@@ -838,19 +838,19 @@ void CBeam::InputWidth( inputdata_t &inputdata )
 
 void CBeam::InputColorRedValue( inputdata_t &inputdata )
 {
-	int nNewColor = clamp( inputdata.value.Float(), 0, 255 );
+	int nNewColor = clamp( inputdata.value.Int(), 0, 255 );
 	SetColor( nNewColor, m_clrRender->g, m_clrRender->b );
 }
 
 void CBeam::InputColorGreenValue( inputdata_t &inputdata )
 {
-	int nNewColor = clamp( inputdata.value.Float(), 0, 255 );
+	int nNewColor = clamp( inputdata.value.Int(), 0, 255 );
 	SetColor( m_clrRender->r, nNewColor, m_clrRender->b );
 }
 
 void CBeam::InputColorBlueValue( inputdata_t &inputdata )
 {
-	int nNewColor = clamp( inputdata.value.Float(), 0, 255 );
+	int nNewColor = clamp( inputdata.value.Int(), 0, 255 );
 	SetColor( m_clrRender->r, m_clrRender->g, nNewColor );
 }
 

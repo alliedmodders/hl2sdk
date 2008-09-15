@@ -27,7 +27,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/memdbgon.h>
 
-static char * s_LastFileLoadingFrom = "unknown"; // just needed for error messages
+static const char * s_LastFileLoadingFrom = "unknown"; // just needed for error messages
 
 #define KEYVALUES_TOKEN_SIZE	1024
 static char s_pTokenBuf[KEYVALUES_TOKEN_SIZE];
@@ -369,7 +369,9 @@ int KeyValues::GetNameSymbol() const
 //-----------------------------------------------------------------------------
 // Purpose: Read a single token from buffer (0 terminated)
 //-----------------------------------------------------------------------------
+#ifdef _MSC_VER
 #pragma warning (disable:4706)
+#endif
 const char *KeyValues::ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasConditional )
 {
 	wasQuoted = false;
@@ -416,7 +418,7 @@ const char *KeyValues::ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasCon
 	bool bReportedError = false;
 	bool bConditionalStart = false;
 	int nCount = 0;
-	while ( c = (const char*)buf.PeekGet( sizeof(char), 0 ) )
+	while ( (c = (const char*)buf.PeekGet( sizeof(char), 0 )) )
 	{
 		// end of file
 		if ( *c == 0 )
@@ -453,8 +455,9 @@ const char *KeyValues::ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasCon
 	s_pTokenBuf[ nCount ] = 0;
 	return s_pTokenBuf;
 }
+#ifdef _MSC_VER
 #pragma warning (default:4706)
-
+#endif
 	
 
 //-----------------------------------------------------------------------------
@@ -472,7 +475,9 @@ void KeyValues::UsesEscapeSequences(bool state)
 bool KeyValues::LoadFromFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID )
 {
 	Assert(filesystem);
+#ifndef _LINUX
 	Assert( IsX360() || ( IsPC() && _heapchk() == _HEAPOK ) );
+#endif
 
 	FileHandle_t f = filesystem->Open(resourceName, "rb", pathID);
 	if ( !f )
@@ -1166,8 +1171,8 @@ const char *KeyValues::GetString( const char *keyName, const char *defaultValue 
 
 const wchar_t *KeyValues::GetWString( const char *keyName, const wchar_t *defaultValue)
 {
-	KeyValues *dat = FindKey( keyName, false );
 #ifdef _WIN32
+	KeyValues *dat = FindKey( keyName, false );
 	if ( dat )
 	{
 		wchar_t wbuf[64];
@@ -1235,7 +1240,7 @@ Color KeyValues::GetColor( const char *keyName )
 		}
 		else if ( dat->m_iDataType == TYPE_FLOAT )
 		{
-			color[0] = dat->m_flValue;
+			color[0] = (unsigned char)dat->m_flValue;
 		}
 		else if ( dat->m_iDataType == TYPE_INT )
 		{

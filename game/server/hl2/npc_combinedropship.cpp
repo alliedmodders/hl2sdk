@@ -663,7 +663,7 @@ int CCombineDropshipContainer::OnTakeDamage( const CTakeDamageInfo &info )
 
 		if ( ShouldTriggerDamageEffect( nPrevHealth, MAX_EXPLOSIONS ) )
 		{
-			ExplosionCreate( dmgInfo.GetDamagePosition(), vec3_angle, this, 1000, 500.0f, 
+			ExplosionCreate( dmgInfo.GetDamagePosition(), vec3_angle, this, 1000, 500, 
 			SF_ENVEXPLOSION_NODAMAGE | SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE, 0 );
 			UTIL_ScreenShake( dmgInfo.GetDamagePosition(), 25.0, 150.0, 1.0, 750.0f, SHAKE_START );
 
@@ -681,7 +681,7 @@ int CCombineDropshipContainer::OnTakeDamage( const CTakeDamageInfo &info )
 void CCombineDropshipContainer::AddSmokeTrail( const Vector &vecPos )
 {
 	// Start this trail out with a bang!
-	ExplosionCreate( vecPos, vec3_angle, this, 1000, 500.0f, SF_ENVEXPLOSION_NODAMAGE | 
+	ExplosionCreate( vecPos, vec3_angle, this, 1000, 500, SF_ENVEXPLOSION_NODAMAGE | 
 		SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE, 0 );
 	UTIL_ScreenShake( vecPos, 25.0, 150.0, 1.0, 750.0f, SHAKE_START );
 
@@ -2326,6 +2326,9 @@ void CNPC_CombineDropship::PrescheduleThink( void )
 			DoRotorWash();
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	if ( !(CAI_BaseNPC::m_nDebugBits & bits_debugDisableAI) )
@@ -2395,7 +2398,7 @@ void CNPC_CombineDropship::SpawnTroop( void )
 	QAngle vecDeployEndAngles;
 	m_hContainer->GetAttachment( m_iAttachmentTroopDeploy, vecDeployEndPoint, vecDeployEndAngles );
 	vecDeployEndPoint = GetDropoffFinishPosition( vecDeployEndPoint, NULL, vecNPCMins, vecNPCMaxs );
-	CSoundEnt::InsertSound( SOUND_DANGER, vecDeployEndPoint, 120.0f, 2.0f, this );
+	CSoundEnt::InsertSound( SOUND_DANGER, vecDeployEndPoint, 120, 2.0f, this );
 
 	// Make sure there are no NPCs on the spot
 	trace_t tr;
@@ -2919,7 +2922,7 @@ bool CNPC_CombineDropship::FireCannonRound( void )
 //------------------------------------------------------------------------------
 void CNPC_CombineDropship::DoImpactEffect( trace_t &tr, int nDamageType )
 {
-	CSoundEnt::InsertSound( SOUND_DANGER | SOUND_CONTEXT_REACT_TO_SOURCE, tr.endpos, 120.0f, 0.3f, this );
+	CSoundEnt::InsertSound( SOUND_DANGER | SOUND_CONTEXT_REACT_TO_SOURCE, tr.endpos, 120, 0.3f, this );
 
 	BaseClass::DoImpactEffect( tr, nDamageType );
 }

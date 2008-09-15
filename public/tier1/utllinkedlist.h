@@ -186,22 +186,22 @@ public:
 
 	bool IsValidIndex( int i ) const
 	{
-		if ( !Memory().IsIdxValid( i ) )
+		if ( !this->Memory().IsIdxValid( i ) )
 			return false;
 
 #ifdef _DEBUG // it's safe to skip this here, since the only way to get indices after m_LastAlloc is to use MaxElementIndex
-		if ( Memory().IsIdxAfter( i, this->m_LastAlloc ) )
+		if ( this->Memory().IsIdxAfter( i, this->m_LastAlloc ) )
 		{
 			Assert( 0 );
 			return false; // don't read values that have been allocated, but not constructed
 		}
 #endif
 
-		return ( Memory()[ i ].m_Previous != i ) || ( Memory()[ i ].m_Next == i );
+		return ( this->Memory()[ i ].m_Previous != i ) || ( this->Memory()[ i ].m_Next == i );
 	}
 
 private:
-	int	MaxElementIndex() const { Assert( 0 ); return InvalidIndex(); } // fixedmemory containers don't support iteration from 0..maxelements-1
+	int	MaxElementIndex() const { Assert( 0 ); return this->InvalidIndex(); } // fixedmemory containers don't support iteration from 0..maxelements-1
 	void ResetDbgInfo() {}
 };
 

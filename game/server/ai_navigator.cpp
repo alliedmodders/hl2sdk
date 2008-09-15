@@ -1221,7 +1221,6 @@ float CAI_Navigator::GetPathTimeToGoal()
 
 AI_PathNode_t CAI_Navigator::GetNearestNode()
 {
-	COMPILE_TIME_ASSERT( (int)AIN_NO_NODE == NO_NODE );
 	return (AI_PathNode_t)( GetPathfinder()->NearestNodeToNPC() );
 }
 
@@ -2325,6 +2324,9 @@ bool CAI_Navigator::PreMove()
 				GetMotor()->MoveJumpStop();
 				break;
 			}
+
+			default:
+				break;
 		}
 
 		SetNavType( NAV_GROUND );
@@ -2529,6 +2531,8 @@ bool CAI_Navigator::Move( float flInterval )
 						case NAV_GROUND:
 						case NAV_FLY:
 							OnMoveBlocked( &moveResult );
+							break;
+						default:
 							break;
 						}
 						break;
@@ -3819,6 +3823,9 @@ bool CAI_Navigator::DoFindPath( void )
 			}
 		}
 		break;
+	
+	default:
+		break;
 	}
 
 	return returnCode;
@@ -4131,18 +4138,18 @@ void CAI_Navigator::DrawDebugRouteOverlay(void)
 	if (waypoint)
 	{
 		Vector RGB = GetRouteColor(waypoint->NavType(), waypoint->Flags());
-		NDebugOverlay::Line(GetLocalOrigin(), waypoint->GetPos(), RGB[0],RGB[1],RGB[2], true,0);
+		NDebugOverlay::Line(GetLocalOrigin(), waypoint->GetPos(), (int)RGB[0], (int)RGB[1], (int)RGB[2], true,0);
 	}
 
 	while (waypoint) 
 	{
 		Vector RGB = GetWaypointColor(waypoint->NavType());
-		NDebugOverlay::Box(waypoint->GetPos(), Vector(-3,-3,-3),Vector(3,3,3), RGB[0],RGB[1],RGB[2], true,0);
+		NDebugOverlay::Box(waypoint->GetPos(), Vector(-3,-3,-3), Vector(3,3,3), (int)RGB[0], (int)RGB[1], (int)RGB[2], true, 0);
 
 		if (waypoint->GetNext()) 
 		{
 			Vector RGB = GetRouteColor(waypoint->GetNext()->NavType(), waypoint->GetNext()->Flags());
-			NDebugOverlay::Line(waypoint->GetPos(), waypoint->GetNext()->GetPos(),RGB[0],RGB[1],RGB[2], true,0);
+			NDebugOverlay::Line(waypoint->GetPos(), waypoint->GetNext()->GetPos(), (int)RGB[0], (int)RGB[1], (int)RGB[2], true, 0);
 		}
 		waypoint = waypoint->GetNext();
 	}

@@ -31,6 +31,7 @@ struct JeepWaterData_t
 //-----------------------------------------------------------------------------
 class CPropJeep : public CPropVehicleDriveable
 {
+protected:
 	DECLARE_CLASS( CPropJeep, CPropVehicleDriveable );
 
 public:

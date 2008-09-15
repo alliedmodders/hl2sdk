@@ -106,21 +106,29 @@ ALIGN128 float	power2_n[256] = 			// 2**(index - 128) / 255
 // You can use this to double check the exponent table and assert that 
 // the precomputation is correct.
 #ifdef DBGFLAG_ASSERT
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning( disable : 4189 ) // disable unused local variable warning
+#endif
+#ifdef __GNUC__
+__attribute__((unused)) static void CheckExponentTable()
+#else
 static void CheckExponentTable()
+#endif
 {
 	for( int i = 0; i < 256; i++ )
 	{
 		float testAgainst = pow( 2.0f, i - 128 ) / 255.0f;
 		float diff = testAgainst - power2_n[i] ;
 		float relativeDiff = diff / testAgainst;
-		Assert( testAgainst == 0 ? 
-				power2_n[i] < 1.16E-041 :
-				power2_n[i] == testAgainst );
+		Assert( sizeof(relativeDiff) > 0 && testAgainst == 0 ? 
+								power2_n[i] < 1.16E-041 :
+								power2_n[i] == testAgainst );
 	}
 }
+#ifdef _MSC_VER
 #pragma warning(pop)
+#endif
 #endif
 
 void BuildGammaTable( float gamma, float texGamma, float brightness, int overbright )
@@ -154,7 +162,7 @@ void BuildGammaTable( float gamma, float texGamma, float brightness, int overbri
 
 	for (i=0 ; i<256 ; i++)
 	{
-		inf = 255 * pow ( i/255.f, g1 ); 
+		inf = static_cast<int>(255 * pow ( i/255.f, g1 )); 
 		if (inf < 0)
 			inf = 0;
 		if (inf > 255)
@@ -179,7 +187,7 @@ void BuildGammaTable( float gamma, float texGamma, float brightness, int overbri
 			f = 0.125 + ((f - g3) / (1.0 - g3)) * 0.875;
 
 		// convert linear space to desired gamma space
-		inf = 255 * pow ( f, g ); 
+		inf = static_cast<int>(255 * pow ( f, g )); 
 
 		if (inf < 0)
 			inf = 0;
@@ -213,7 +221,7 @@ void BuildGammaTable( float gamma, float texGamma, float brightness, int overbri
 	for (i=0 ; i<1024 ; i++)
 	{
 		// convert from linear space (0..1) to nonlinear texture space (0..255)
-		lineartotexture[i] =  pow( i / 1023.0, 1.0 / texGamma ) * 255;
+		lineartotexture[i] = static_cast<int>(pow( i / 1023.0, 1.0 / texGamma ) * 255);
 	}
 
 #if 0
@@ -423,7 +431,7 @@ int LinearToTexture( float f )
 {
 	Assert( s_bMathlibInitialized );
 	int i;
-	i = f * 1023;	// assume 0..1 range
+	i = static_cast<int>(f * 1023);	// assume 0..1 range
 	if (i < 0)
 		i = 0;
 	if (i > 1023)
@@ -438,7 +446,7 @@ int LinearToScreenGamma( float f )
 {
 	Assert( s_bMathlibInitialized );
 	int i;
-	i = f * 1023;	// assume 0..1 range
+	i = static_cast<int>(f * 1023);	// assume 0..1 range
 	if (i < 0)
 		i = 0;
 	if (i > 1023)
@@ -617,9 +625,9 @@ void VectorToColorRGBExp32( const Vector& vin, ColorRGBExp32 &c )
 	// This awful construction is necessary to prevent VC2005 from using the 
 	// fldcw/fnstcw control words around every float-to-unsigned-char operation.
 	{
-		int red = (vin.x * scalar);
-		int green = (vin.y * scalar);
-		int blue = (vin.z * scalar);
+		int red = static_cast<int>(vin.x * scalar);
+		int green = static_cast<int>(vin.y * scalar);
+		int blue = static_cast<int>(vin.z * scalar);
 
 		c.r = red;
 		c.g = green;

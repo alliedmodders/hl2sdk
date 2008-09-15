@@ -489,7 +489,7 @@ void DrawAllDebugOverlays( void )
 
 			char tempstr[512];
 			Q_snprintf(tempstr, sizeof(tempstr),"%s: Mass: %.2f kg / %.2f lb (%s)", 
-				ent->GetModelName(), ent->VPhysicsGetObject()->GetMass(), 
+				STRING(ent->GetModelName()), ent->VPhysicsGetObject()->GetMass(), 
 				kg2lbs(ent->VPhysicsGetObject()->GetMass()), 
 				GetMassEquivalent(ent->VPhysicsGetObject()->GetMass()));
 			ent->EntityText(0, tempstr, 0);
@@ -579,7 +579,7 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 
 	g_pSharedChangeInfo = engine->GetSharedEdictChangeInfo();
 	
-	MathLib_Init( 2.2f, 2.2f, 0.0f, 2.0f );
+	MathLib_Init( 2.2f, 2.2f, 0.0f, 2 );
 
 	// save these in case other system inits need them
 	factorylist_t factories;
@@ -1378,8 +1378,8 @@ void CServerGameDLL::PreSave( CSaveRestoreData *s )
 // This little hack lets me marry BSP names to messages in titles.txt
 typedef struct
 {
-	char *pBSPName;
-	char *pTitleName;
+	const char *pBSPName;
+	const char *pTitleName;
 } TITLECOMMENT;
 
 // this list gets searched for the first partial match, so some are out of order
@@ -1539,7 +1539,7 @@ void CServerGameDLL::GetSaveComment( char *text, int maxlength, float flMinutes,
 {
 	char comment[64];
 	const char	*pName;
-	int		i;
+	size_t	i;
 
 	char const *mapname = STRING( gpGlobals->mapname );
 
@@ -1551,7 +1551,7 @@ void CServerGameDLL::GetSaveComment( char *text, int maxlength, float flMinutes,
 		if ( !Q_strnicmp( mapname, gTitleComments[i].pBSPName, strlen(gTitleComments[i].pBSPName) ) )
 		{
 			// found one
-			int j;
+			size_t j;
 
 			// Got a message, post-process it to be save name friendly
 			Q_strncpy( comment, gTitleComments[i].pTitleName, sizeof( comment ) );
@@ -1581,8 +1581,8 @@ void CServerGameDLL::GetSaveComment( char *text, int maxlength, float flMinutes,
 	}
 	else
 	{
-		int minutes = flMinutes;
-		int seconds = flSeconds;
+		int minutes = (int)flMinutes;
+		int seconds = (int)flSeconds;
 
 		// Wow, this guy/gal must suck...!
 		if ( minutes >= 1000 )
@@ -1700,7 +1700,7 @@ void CServerGameDLL::LoadMessageOfTheDay()
 
 	int length = filesystem->Size( motdfile.GetString(), "GAME" );
 
-	if ( length <= 0 || length >= (sizeof(data)-1) )
+	if ( length <= 0 || length >= (int)(sizeof(data)-1) )
 	{
 		DevMsg("Invalid file size for %s\n", motdfile.GetString() );
 		return;
@@ -1731,13 +1731,13 @@ void UpdateChapterRestrictions( const char *mapname )
 	// look at the chapter for this map
 	char chapterTitle[64];
 	chapterTitle[0] = 0;
-	for ( int i = 0; i < ARRAYSIZE(gTitleComments); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE(gTitleComments); i++ )
 	{
 		if ( !Q_strnicmp( mapname, gTitleComments[i].pBSPName, strlen(gTitleComments[i].pBSPName) ) )
 		{
 			// found
 			Q_strncpy( chapterTitle, gTitleComments[i].pTitleName, sizeof( chapterTitle ) );
-			int j = 0;
+			size_t j = 0;
 			while ( j < 64 && chapterTitle[j] )
 			{
 				if ( chapterTitle[j] == '\n' || chapterTitle[j] == '\r' )
@@ -1754,7 +1754,7 @@ void UpdateChapterRestrictions( const char *mapname )
 		return;
 
 	// make sure the specified chapter title is unlocked
-	strlwr( chapterTitle );
+	Q_strlower( chapterTitle );
 	
 	// Get our active mod directory name
 	char modDir[MAX_PATH];
@@ -2577,7 +2577,7 @@ void CServerGameClients::ClientSetupVisibility( edict_t *pViewEntity, edict_t *p
 #endif
 
 		++iOutPortal;
-		if ( iOutPortal >= ARRAYSIZE( portalNums ) )
+		if ( iOutPortal >= (int)ARRAYSIZE( portalNums ) )
 		{
 			engine->SetAreaPortalStates( portalNums, isOpen, iOutPortal );
 			iOutPortal = 0;
@@ -2592,7 +2592,7 @@ void CServerGameClients::ClientSetupVisibility( edict_t *pViewEntity, edict_t *p
 		{
 			if ( pCur->m_portalNumber < 0 )
 				continue;
-			else if ( pCur->m_portalNumber >= sizeof( portalBits ) * 8 )
+			else if ( pCur->m_portalNumber >= (int)sizeof( portalBits ) * 8 )
 				Error( "ClientSetupVisibility: portal number (%d) too large", pCur->m_portalNumber );
 			else
 				portalBits[pCur->m_portalNumber >> 3] |= (1 << (pCur->m_portalNumber & 7));
@@ -2775,7 +2775,7 @@ void CServerGameClients::GetBugReportInfo( char *buf, int buflen )
 				ent->entindex(),
 				ent->GetClassname(),
 				STRING( ent->GetEntityName() ),
-				ent->GetModelName() );
+				STRING(ent->GetModelName()) );
 		}
 
 		// get any sounds that were spoken by NPCs recently

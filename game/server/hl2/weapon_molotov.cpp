@@ -8,11 +8,11 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include	"NPCEvent.h"
+#include	"npcevent.h"
 #include	"basehlcombatweapon.h"
 #include	"basecombatcharacter.h"
-#include	"AI_BaseNPC.h"
-#include	"AI_Memory.h"
+#include	"ai_basenpc.h"
+#include	"ai_memory.h"
 #include	"player.h"
 #include	"gamerules.h"		// For g_pGameRules
 #include	"weapon_molotov.h"
@@ -76,7 +76,7 @@ void CWeaponMolotov::Spawn( void )
 //------------------------------------------------------------------------------
 void CWeaponMolotov::SetPickupTouch( void )
 {
-	SetTouch(MolotovTouch);
+	SetTouch(&CWeaponMolotov::MolotovTouch);
 }
 
 //-----------------------------------------------------------------------------

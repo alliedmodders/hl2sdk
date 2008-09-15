@@ -85,7 +85,7 @@ void CEnvMicrophone::Spawn(void)
 		{ SF_MICROPHONE_SOUND_EXPLOSION,		SOUND_CONTEXT_EXPLOSION },
 	};
 
-	for (int i = 0; i < sizeof(nFlags) / sizeof(nFlags[0]); i++)
+	for (size_t i = 0; i < sizeof(nFlags) / sizeof(nFlags[0]); i++)
 	{
 		if (m_spawnflags & nFlags[i][0])
 		{

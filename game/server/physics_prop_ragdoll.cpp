@@ -367,7 +367,7 @@ void CRagdollProp::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t r
 		}
 		else
 		{
-			CRagdollBoogie::Create( this, 150, gpGlobals->curtime, 2.0f, 0.0f );
+			CRagdollBoogie::Create( this, 150, gpGlobals->curtime, 2.0f, 0 );
 		}
 	}
 

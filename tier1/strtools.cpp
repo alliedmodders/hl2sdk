@@ -885,17 +885,17 @@ char *V_pretifynum( int64 value )
 	}
 
 	// Render quadrillions
-	if ( value >= 1000000000000 )
+	if ( value >= 1000000000000LL )
 	{
 		char *pchRender = out + V_strlen( out );
-		V_snprintf( pchRender, 32, "%d,", value / 1000000000000 );
+		V_snprintf( pchRender, 32, "%d,", value / 1000000000000LL );
 	}
 
 	// Render trillions
-	if ( value >= 1000000000000 )
+	if ( value >= 1000000000000LL )
 	{
 		char *pchRender = out + V_strlen( out );
-		V_snprintf( pchRender, 32, "%d,", value / 1000000000000 );
+		V_snprintf( pchRender, 32, "%d,", value / 1000000000000LL );
 	}
 
 	// Render billions
@@ -1413,7 +1413,7 @@ bool V_ExtractFilePath (const char *path, char *dest, int destSize )
 //-----------------------------------------------------------------------------
 void V_ExtractFileExtension( const char *path, char *dest, int destSize )
 {
-	*dest = NULL;
+	*dest = '\0';
 	const char * extension = V_GetFileExtension( path );
 	if ( NULL != extension )
 		V_strncpy( dest, extension, destSize );

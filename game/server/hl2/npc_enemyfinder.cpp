@@ -560,7 +560,7 @@ void CNPC_EnemyFinderCombineCannon::Spawn()
 		}
 		else
 		{
-			DevMsg( this, "Enemyfinder %s can't snap to %s because it doesn't exist\n", GetDebugName(), m_iszSnapToEnt );
+			DevMsg( this, "Enemyfinder %s can't snap to %s because it doesn't exist\n", GetDebugName(), STRING(m_iszSnapToEnt) );
 		}
 	}
 }

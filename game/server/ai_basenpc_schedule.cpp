@@ -1254,7 +1254,7 @@ void CAI_BaseNPC::StartTask( const Task_t *pTask )
 		{
 			if (!GetHintNode())
 			{
-				SetHintNode( CAI_HintManager::FindHint( this, HINT_NONE, pTask->flTaskData, 2000 ) );
+				SetHintNode( CAI_HintManager::FindHint( this, HINT_NONE, (int)pTask->flTaskData, 2000 ) );
 			}
 			if (GetHintNode())
 			{
@@ -1452,7 +1452,7 @@ void CAI_BaseNPC::StartTask( const Task_t *pTask )
 		break;
 
 	case TASK_SET_SCHEDULE:
-		if ( !SetSchedule( pTask->flTaskData ) )
+		if ( !SetSchedule( (int)pTask->flTaskData ) )
 			TaskFail(FAIL_SCHEDULE_NOT_FOUND);
 		break;
 
@@ -2713,7 +2713,7 @@ void CAI_BaseNPC::StartTask( const Task_t *pTask )
 		}
 	case TASK_SPEAK_SENTENCE:
 		{
-			SpeakSentence(pTask->flTaskData);	
+			SpeakSentence((int)pTask->flTaskData);	
 			TaskComplete();
 			break;
 		}
@@ -3045,7 +3045,7 @@ void CAI_BaseNPC::StartTask( const Task_t *pTask )
 			{
 				int iMinDist, iMaxDist, iParameter;
 
-				iParameter = pTask->flTaskData;
+				iParameter = (int)pTask->flTaskData;
 
 				iMinDist = iParameter / 10000;
 				iMaxDist = iParameter - (iMinDist * 10000);
@@ -3584,6 +3584,7 @@ void CAI_BaseNPC::RunTask( const Task_t *pTask )
 					{
 					case ACT_WALK_AIM:	curActivity = ACT_WALK;	break;
 					case ACT_RUN_AIM:	curActivity = ACT_RUN;	break;
+					default:	break;
 					}
 
 					if ( curActivity != followActivity )

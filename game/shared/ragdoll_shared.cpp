@@ -609,7 +609,7 @@ void RagdollSolveSeparation( ragdoll_t &ragdoll, CBaseEntity *pEntity )
 {
 	byte needsFix[256];
 	int fixCount = 0;
-	Assert(ragdoll.listCount<=ARRAYSIZE(needsFix));
+	Assert(ragdoll.listCount <= (int)ARRAYSIZE(needsFix));
 	for ( int i = 0; i < ragdoll.listCount; i++ )
 	{
 		needsFix[i] = 0;

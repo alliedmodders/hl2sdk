@@ -41,8 +41,7 @@ CAI_SensedObjectsManager g_AI_SensedObjectsManager;
 
 //-----------------------------------------------------------------------------
 
-#pragma pack(push)
-#pragma pack(1)
+#pragma pack(push, 1)
 
 struct AISightIterVal_t
 {
@@ -254,7 +253,7 @@ CBaseEntity *CAI_Senses::GetFirstSeenEntity( AISightIter_t *pIter, seentype_t iS
 	pIterVal->SeenArray = (char)iSeenType;
 	int iFirstArray = ( iSeenType == SEEN_ALL ) ? 0 : iSeenType;
 
-	for ( int i = iFirstArray; i < ARRAYSIZE( m_SeenArrays ); i++ )
+	for ( int i = iFirstArray; i < (int)ARRAYSIZE( m_SeenArrays ); i++ )
 	{
 		if ( m_SeenArrays[i]->Count() != 0 )
 		{
@@ -276,7 +275,7 @@ CBaseEntity *CAI_Senses::GetNextSeenEntity( AISightIter_t *pIter ) const
 	{
 		AISightIterVal_t *pIterVal = (AISightIterVal_t *)pIter;
 		
-		for ( int i = pIterVal->array;  i < ARRAYSIZE( m_SeenArrays ); i++ )
+		for ( int i = pIterVal->array;  i < (int)ARRAYSIZE( m_SeenArrays ); i++ )
 		{
 			for ( int j = pIterVal->iNext; j < m_SeenArrays[i]->Count(); j++ )
 			{
@@ -654,7 +653,7 @@ void CAI_Senses::PerformSensing( void )
 	//  Look	
 	// -----------------
 	if( !HasSensingFlags(SENSING_FLAGS_DONT_LOOK) )
-		Look( m_LookDist );
+		Look( static_cast<int>(m_LookDist) );
 	
 	// ------------------
 	//  Listen

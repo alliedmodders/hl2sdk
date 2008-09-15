@@ -191,7 +191,7 @@ public:
 };
 
 #define DECLARE_ACHIEVEMENT_( className, achievementID, achievementName, gameDirFilter, iPointValue, bHidden ) \
-static CBaseAchievement *Create_##className##( void )					\
+static CBaseAchievement *Create_##className( void )					\
 {																		\
 	CBaseAchievement *pAchievement = new className( );					\
 	pAchievement->SetAchievementID( achievementID );					\
@@ -201,19 +201,19 @@ static CBaseAchievement *Create_##className##( void )					\
 	if ( gameDirFilter ) pAchievement->SetGameDirFilter( gameDirFilter ); \
 	return pAchievement;												\
 };																		\
-static CBaseAchievementHelper g_##className##_Helper( Create_##className## );
+static CBaseAchievementHelper g_##className##_Helper( Create_##className );
 
 #define DECLARE_ACHIEVEMENT( className, achievementID, achievementName, iPointValue ) \
-	DECLARE_ACHIEVEMENT_( className, achievementID, achievementName, NULL, iPointValue, false )
+	DECLARE_ACHIEVEMENT_( className, achievementID, achievementName, false, iPointValue, false )
 
 #define DECLARE_MAP_EVENT_ACHIEVEMENT_( achievementID, achievementName, gameDirFilter, iPointValue, bHidden ) \
 class CAchievement##achievementID : public CMapAchievement {};		\
 DECLARE_ACHIEVEMENT_( CAchievement##achievementID, achievementID, achievementName, gameDirFilter, iPointValue, bHidden )	\
 
 #define DECLARE_MAP_EVENT_ACHIEVEMENT( achievementID, achievementName, iPointValue )	\
-	DECLARE_MAP_EVENT_ACHIEVEMENT_( achievementID, achievementName, NULL, iPointValue, false )
+	DECLARE_MAP_EVENT_ACHIEVEMENT_( achievementID, achievementName, false, iPointValue, false )
 
 #define DECLARE_MAP_EVENT_ACHIEVEMENT_HIDDEN( achievementID, achievementName, iPointValue )	\
-	DECLARE_MAP_EVENT_ACHIEVEMENT_( achievementID, achievementName, NULL, iPointValue, true )
+	DECLARE_MAP_EVENT_ACHIEVEMENT_( achievementID, achievementName, false, iPointValue, true )
 
 #endif // BASEACHIEVEMENT_H

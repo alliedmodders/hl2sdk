@@ -639,7 +639,7 @@ void CBaseEntity::DecalTrace( trace_t *pTrace, char const *decalName )
 //-----------------------------------------------------------------------------
 // Purpose: Base handling for impacts against entities
 //-----------------------------------------------------------------------------
-void CBaseEntity::ImpactTrace( trace_t *pTrace, int iDamageType, char *pCustomImpactName )
+void CBaseEntity::ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName )
 {
 	VPROF( "CBaseEntity::ImpactTrace" );
 	Assert( pTrace->m_pEnt );
@@ -731,7 +731,7 @@ BASEPTR	CBaseEntity::ThinkSet( BASEPTR func, float thinkTime, const char *szCont
 {
 #if !defined( CLIENT_DLL )
 #ifdef _DEBUG
-	COMPILE_TIME_ASSERT( sizeof(func) == 4 );
+	COMPILE_TIME_ASSERT( sizeof(func) == MFP_SIZE );
 #endif
 #endif
 
@@ -1138,6 +1138,9 @@ void CBaseEntity::VPhysicsUpdate( IPhysicsObject *pPhysics )
 		VPhysicsUpdatePusher( pPhysics );
 #endif
 	break;
+
+	default:
+		break;
 	}
 }
 

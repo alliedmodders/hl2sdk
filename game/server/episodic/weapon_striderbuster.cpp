@@ -14,7 +14,7 @@
 #include "model_types.h"
 #include "ai_utils.h"
 #include "particle_system.h"
-#include "sprite.h"
+#include "Sprite.h"
 #include "citadel_effects_shared.h"
 #include "soundent.h"
 #include "SpriteTrail.h"
@@ -24,7 +24,7 @@
 #include "npc_hunter.h"
 #include "particle_parse.h"
 #include "gameweaponmanager.h"
-#include "gamestats.h"
+#include "GameStats.h"
 
 extern ConVar hunter_hate_held_striderbusters;
 extern ConVar hunter_hate_thrown_striderbusters;
@@ -192,10 +192,10 @@ BEGIN_DATADESC( CWeaponStriderBuster )
 END_DATADESC()
 
 CWeaponStriderBuster::CWeaponStriderBuster( void ) : 
-	m_pConstraint( NULL ),
 	m_flCollisionSpeedSqr( -1.0f ),
-	m_hConstrainedEntity( NULL ),
-	m_nAttachedBoneFollowerIndex( -1 )
+	m_nAttachedBoneFollowerIndex( -1 ),
+	m_pConstraint( NULL ),
+	m_hConstrainedEntity( NULL )
 {
 }
 
@@ -260,7 +260,7 @@ void CWeaponStriderBuster::Spawn( void )
 		m_hParticleEffect->SetParent( this );
 	}
 
-	SetHealth( striderbuster_health.GetFloat() );
+	SetHealth( striderbuster_health.GetInt() );
 	
 	SetNextThink(gpGlobals->curtime + 0.01f);
 }
@@ -946,7 +946,7 @@ void CWeaponStriderBuster::BusterFlyThink()
 		float magradiusSq = Square( magradius );	
 		float nearestDistSq = magradiusSq + 1;
 		int bestFit = -1;
-		Vector toTarget; // will be garbage unless something good is found
+		Vector toTarget(0.0f, 0.0f, 0.0f); // will be garbage unless something good is found
 		CNPC_Strider *pBestStrider  = NULL;
 
 		for ( int ii = 0 ; ii < count ; ++ii )

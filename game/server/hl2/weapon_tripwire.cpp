@@ -86,7 +86,7 @@ void CWeapon_Tripwire::Precache( void )
 //------------------------------------------------------------------------------
 void CWeapon_Tripwire::SetPickupTouch( void )
 {
-	SetTouch(TripwireTouch);
+	SetTouch(&CWeapon_Tripwire::TripwireTouch);
 }
 
 //-----------------------------------------------------------------------------

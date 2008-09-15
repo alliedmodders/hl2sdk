@@ -29,7 +29,9 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#ifdef _MSC_VER
 #pragma warning( disable : 4127 )
+#endif
 
 // Let scene linger for 1/4 second so blends can finish
 #define SCENE_LINGER_TIME 0.25f

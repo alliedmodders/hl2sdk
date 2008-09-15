@@ -8,9 +8,9 @@
 
 #include "cbase.h"
 #include "basehlcombatweapon.h"
-#include "NPCevent.h"
+#include "npcevent.h"
 #include "basecombatcharacter.h"
-#include "AI_BaseNPC.h"
+#include "ai_basenpc.h"
 #include "player.h"
 #include "entitylist.h"
 #include "ndebugoverlay.h"
@@ -70,8 +70,8 @@ void CPortableThumper::Spawn( void )
 	SetSolid( SOLID_BBOX );
 	UTIL_SetSize( this, vecBBMin, vecBBMax );
 
-	SetThink( ThumpThink );
-	SetUse( ThumperUse );
+	SetThink( &CPortableThumper::ThumpThink );
+	SetUse( &CPortableThumper::ThumperUse );
 	SetNextThink( gpGlobals->curtime + thumpFrequency.GetFloat() );
 }
 

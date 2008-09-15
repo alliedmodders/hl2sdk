@@ -1222,6 +1222,7 @@ void variant_t::SetOther( void *data )
 
 	case FIELD_EHANDLE:		*((EHANDLE *)data) = eVal;			break;
 	case FIELD_CLASSPTR:	*((CBaseEntity **)data) = eVal;		break;
+	default:	break;
 	}
 }
 
@@ -1274,8 +1275,14 @@ bool variant_t::Convert( fieldtype_t newType )
 					SetBool( iVal != 0 );
 					return true;
 				}
+
+				default:
+					break;
 			}
 			break;
+
+			default:
+				break;
 		}
 
 		case FIELD_FLOAT:
@@ -1293,6 +1300,9 @@ bool variant_t::Convert( fieldtype_t newType )
 					SetBool( flVal != 0 );
 					return true;
 				}
+
+				default:
+					break;
 			}
 			break;
 		}
@@ -1380,6 +1390,9 @@ bool variant_t::Convert( fieldtype_t newType )
 					SetEntity( ent );
 					return true;
 				}
+
+				default:
+					break;
 			}
 		
 			break;
@@ -1399,6 +1412,9 @@ bool variant_t::Convert( fieldtype_t newType )
 					}
 					return true;
 				}
+
+				default:
+					break;
 			}
 			break;
 		}
@@ -1479,6 +1495,9 @@ const char *variant_t::ToString( void ) const
 			Q_strncpy( szBuf, pszName, 512 );
 			return (szBuf);
 		}
+
+	default:
+		break;
 	}
 
 	return("No conversion to string");

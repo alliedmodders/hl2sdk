@@ -122,8 +122,8 @@ public:
 		TE_ConcussiveExplosion( filter, 0.0,
 			&GetAbsOrigin(),//position
 			1.0f,	//scale
-			256*magnitude,	//radius
-			175*magnitude,	//magnitude
+			(int)(256*magnitude),	//radius
+			(int)(175*magnitude),	//magnitude
 			&vecForward );	//normal
 		
 		int	colorRamp = random->RandomInt( 128, 255 );

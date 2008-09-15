@@ -671,7 +671,7 @@ bool CSave::ShouldSaveField( const void *pData, typedescription_t *pField )
 			int *pEHandle = (int *)pData;
 			for ( int i = 0; i < pField->fieldSize; ++i, ++pEHandle )
 			{
-				if ( (*pEHandle) != 0xFFFFFFFF )
+				if ( (*pEHandle) != (int)0xFFFFFFFF )
 					return true;
 			}
 		}
@@ -2831,7 +2831,7 @@ CBaseEntity *CEntitySaveRestoreBlockHandler::FindGlobalEntity( string_t classnam
 	{
 		if ( !FClassnameIs( pReturn, STRING(classname) ) )
 		{
-			Warning( "Global entity found %s, wrong class %s [expects class %s]\n", STRING(globalname), STRING(pReturn->m_iClassname), classname );
+			Warning( "Global entity found %s, wrong class %s [expects class %s]\n", STRING(globalname), STRING(pReturn->m_iClassname), STRING(classname) );
 			pReturn = NULL;
 		}
 	}

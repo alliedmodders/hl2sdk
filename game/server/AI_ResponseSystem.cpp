@@ -1185,7 +1185,7 @@ float CResponseSystem::ScoreCriteriaAgainstRuleCriteria( const AI_CriteriaSet& s
 		if ( verbose )
 		{
 			DevMsg( "matched, weight %4.2f (s %4.2f x c %4.2f)",
-				score, w, c->weight );
+				score, w, c->weight.GetFloat() );
 		}
 	}
 	else
@@ -1574,7 +1574,7 @@ void CResponseSystem::DescribeResponseGroup( ResponseGroup *group, int selected,
 			i == selected ? "-> " : "   ",
 			AI_Response::DescribeResponse( r->GetType() ),
 			r->value,
-			r->weight );
+			r->weight.GetFloat() );
 	}
 }
 

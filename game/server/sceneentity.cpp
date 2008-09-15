@@ -146,7 +146,7 @@ private:
 		CRestoreSceneSound()
 		{
 			actor = NULL;
-			soundname[ 0 ] = NULL;
+			soundname[0] = '\0';
 			soundlevel = SNDLVL_NORM;
 			time_in_past = 0.0f;
 		}
@@ -221,7 +221,7 @@ bool CopySceneFileIntoMemory( char const *pFilename, void **pBuffer, int *pSize 
 //-----------------------------------------------------------------------------
 void FreeSceneFileMemory( void *buffer )
 {
-	delete[] buffer;
+	delete[] reinterpret_cast<byte *>(buffer);
 }
 
 //-----------------------------------------------------------------------------
@@ -1756,9 +1756,9 @@ void CSceneEntity::DispatchStartSpeak( CChoreoScene *scene, CBaseFlex *actor, CC
 			if ( m_fPitch != 1.0f )
 			{
 				if ( es.m_nPitch )
-					es.m_nPitch = static_cast<float>( es.m_nPitch ) * m_fPitch;
+					es.m_nPitch = static_cast<int>(es.m_nPitch * m_fPitch);
 				else
-					es.m_nPitch = 100.0f * m_fPitch;
+					es.m_nPitch = static_cast<int>(100.0f * m_fPitch);
 
 				es.m_nFlags |= SND_CHANGE_PITCH;
 			}
@@ -2735,7 +2735,7 @@ void CSceneEntity::PitchShiftPlayback( float fPitch )
 			CPASAttenuationFilter filter( pTestActor );
 			EmitSound_t params;
 			params.m_pSoundName = szBuff;
-			params.m_nPitch = 100.0f * fPitch;
+			params.m_nPitch = static_cast<int>(100.0f * fPitch);
 			params.m_nFlags = SND_CHANGE_PITCH;
 			pTestActor->EmitSound( filter, pTestActor->entindex(), params );
 		}
@@ -5014,7 +5014,7 @@ void CSceneManager::PauseActorsScenes( CBaseFlex *pActor, bool bInstancedOnly  )
 
 		if ( pScene->InvolvesActor( pActor ) && pScene->IsPlayingBack() )
 		{
-			LocalScene_Printf( "Pausing actor %s scripted scene: %s\n", pActor->GetDebugName(), pScene->m_iszSceneFile );
+			LocalScene_Printf( "Pausing actor %s scripted scene: %s\n", pActor->GetDebugName(), STRING(pScene->m_iszSceneFile) );
 
 			variant_t emptyVariant;
 			pScene->AcceptInput( "Pause", pScene, pScene, emptyVariant, 0 );
@@ -5071,7 +5071,7 @@ void CSceneManager::ResumeActorsScenes( CBaseFlex *pActor, bool bInstancedOnly  
 
 		if ( pScene->InvolvesActor( pActor ) && pScene->IsPlayingBack() )
 		{
-			LocalScene_Printf( "Resuming actor %s scripted scene: %s\n", pActor->GetDebugName(), pScene->m_iszSceneFile );
+			LocalScene_Printf( "Resuming actor %s scripted scene: %s\n", pActor->GetDebugName(), STRING(pScene->m_iszSceneFile) );
 
 			variant_t emptyVariant;
 			pScene->AcceptInput( "Resume", pScene, pScene, emptyVariant, 0 );

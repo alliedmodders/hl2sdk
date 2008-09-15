@@ -152,23 +152,23 @@ LINK_ENTITY_TO_CLASS( npc_turret_floor, CNPC_FloorTurret );
 // Constructor
 //-----------------------------------------------------------------------------
 CNPC_FloorTurret::CNPC_FloorTurret( void ) : 
-	m_bActive( false ),
-	m_hEyeGlow( NULL ),
-	m_hLaser( NULL ),
 	m_iAmmoType( -1 ),
 	m_bAutoStart( false ),
+	m_bActive( false ),
+	m_bBlinkState( false ),
+	m_bEnabled( false ),
+	m_bSelfDestructing( false ),
+	m_flShotTime( 0.0f ),
+	m_flLastSight( 0.0f ),
+	m_flThrashTime( 0.0f ),
 	m_flPingTime( 0.0f ),
 	m_flNextActivateSoundTime( 0.0f ),
 	m_bCarriedByPlayer( false ),
 	m_bUseCarryAngles( false ),
 	m_flPlayerDropTime( 0.0f ),
-	m_flShotTime( 0.0f ),
-	m_flLastSight( 0.0f ),
-	m_bBlinkState( false ),
-	m_flThrashTime( 0.0f ),
-	m_pMotionController( NULL ),
-	m_bEnabled( false ),
-	m_bSelfDestructing( false )
+	m_hEyeGlow( NULL ),
+	m_hLaser( NULL ),
+	m_pMotionController( NULL )
 {
 	m_vecGoalAngles.Init();
 
@@ -2097,7 +2097,7 @@ void CNPC_FloorTurret::SelfDestructThink( void )
 		CPASAttenuationFilter filter( this, "NPC_FloorTurret.AlarmPing" );
 		EmitSound_t params;
 		params.m_pSoundName = "NPC_FloorTurret.AlarmPing";
-		params.m_nPitch = floor( flBeepPitch );
+		params.m_nPitch = (int)floor( flBeepPitch );
 		params.m_nFlags = SND_CHANGE_PITCH;
 		EmitSound( filter, entindex(), params );
 		

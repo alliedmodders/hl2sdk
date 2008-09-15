@@ -15,8 +15,7 @@
 #define	GRENADEBRICKBAT_H
 
 #include "basegrenade_shared.h"
-
-enum BrickbatAmmo_t;
+#include "weapon_brickbat.h"
 
 class CGrenade_Brickbat : public CBaseGrenade
 {

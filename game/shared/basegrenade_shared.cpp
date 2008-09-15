@@ -337,7 +337,7 @@ void CBaseGrenade::DangerSoundThink( void )
 	}
 
 #if !defined( CLIENT_DLL )
-	CSoundEnt::InsertSound ( SOUND_DANGER, GetAbsOrigin() + GetAbsVelocity() * 0.5, GetAbsVelocity().Length( ), 0.2, this );
+	CSoundEnt::InsertSound ( SOUND_DANGER, GetAbsOrigin() + GetAbsVelocity() * 0.5, (int)GetAbsVelocity().Length( ), 0.2, this );
 #endif
 
 	SetNextThink( gpGlobals->curtime + 0.2 );
@@ -394,7 +394,7 @@ void CBaseGrenade::BounceTouch( CBaseEntity *pOther )
 		
 		// register a radius louder than the explosion, so we make sure everyone gets out of the way
 #if !defined( CLIENT_DLL )
-		CSoundEnt::InsertSound ( SOUND_DANGER, GetAbsOrigin(), m_flDamage / 0.4, 0.3, this );
+		CSoundEnt::InsertSound ( SOUND_DANGER, GetAbsOrigin(), (int)(m_flDamage / 0.4), 0.3, this );
 #endif
 		m_bHasWarnedAI = true;
 	}

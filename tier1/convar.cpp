@@ -153,7 +153,7 @@ CVarDLLIdentifier_t ConCommandBase::GetDLLIdentifier() const
 //-----------------------------------------------------------------------------
 void ConCommandBase::Create( const char *pName, const char *pHelpString /*= 0*/, int flags /*= 0*/ )
 {
-	static char *empty_string = "";
+	static const char *empty_string = "";
 
 	m_bRegistered = false;
 
@@ -592,7 +592,7 @@ void ConCommand::Dispatch( const CCommand &command )
 	}
 
 	// Command without callback!!!
-	AssertMsg( 0, ( "Encountered ConCommand '%s' without a callback!\n", GetName() ) );
+	AssertMsg( 0, ( "Encountered ConCommand without a callback!\n" ) );
 }
 
 
@@ -907,7 +907,7 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 	const char *pHelpString /*= NULL*/, bool bMin /*= false*/, float fMin /*= 0.0*/,
 	bool bMax /*= false*/, float fMax /*= false*/, FnChangeCallback_t callback /*= NULL*/ )
 {
-	static char *empty_string = "";
+	static const char *empty_string = "";
 
 	m_pParent = this;
 

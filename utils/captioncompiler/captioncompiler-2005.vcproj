@@ -3,6 +3,8 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Captioncompiler"
+	ProjectGUID="{12299E22-0529-4EB5-9DD8-9035333FA866}"
+	RootNamespace="Captioncompiler"
 	>
 	<Platforms>
 		<Platform
@@ -258,42 +260,16 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath=".\captioncompiler.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\common\compiledcaptionswap.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\common\filesystem_tools.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\public\tier0\memoverride.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
 		</Filter>
 		<Filter
 			Name="Link Libraries"
+			Filter="lib"
 			>
 			<File
 				RelativePath="..\..\lib\public\appframework.lib"
@@ -325,27 +301,17 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Resources"
-			>
-			<File
-				RelativePath=".\captioncompiler.vpc"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath=".\cbase.h"
 				>
 			</File>
-			<File
-				RelativePath="..\common\filesystem_tools.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Shared Code"
+			Filter="h;cpp"
 			>
 			<File
 				RelativePath="..\common\cmdlib.cpp"
@@ -353,6 +319,10 @@
 			</File>
 			<File
 				RelativePath="..\common\cmdlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\compiledcaptionswap.cpp"
 				>
 			</File>
 			<File
@@ -372,7 +342,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\common\filesystem_tools.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\common\filesystem_tools.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\public\mathlib\mathlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\public\tier0\memoverride.cpp"
 				>
 			</File>
 			<File
@@ -401,4 +383,6 @@
 			</File>
 		</Filter>
 	</Files>
+	<Globals>
+	</Globals>
 </VisualStudioProject>

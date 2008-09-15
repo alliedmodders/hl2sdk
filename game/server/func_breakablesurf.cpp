@@ -367,8 +367,8 @@ void CBreakableSurface::TraceAttack( const CTakeDamageInfo &info, const Vector &
 		// Figure out which panel has taken the damage and break it
 		float flWidth,flHeight;
 		PanePos(ptr->endpos,&flWidth,&flHeight);
-		int nWidth  = flWidth;
-		int nHeight = flHeight;
+		int nWidth  = (int)flWidth;
+		int nHeight = (int)flHeight;
 		
 		if ( ShatterPane(nWidth, nHeight,vecDir*500,ptr->endpos) )
 		{
@@ -438,8 +438,8 @@ void CBreakableSurface::TraceAttack( const CTakeDamageInfo &info, const Vector &
 			{
 				PanePos(ptr->endpos,&flWidth,&flHeight);
 			}
-			int nWidth  = flWidth;
-			int nHeight = flHeight;
+			int nWidth  = (int)flWidth;
+			int nHeight = (int)flHeight;
 
 			// Blow out a roughly circular patch of tile with some randomness
 			for (int width =nWidth-4;width<nWidth+4;width++)

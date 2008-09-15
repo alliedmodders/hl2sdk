@@ -813,7 +813,7 @@ public:
 
 	virtual char const *			DamageDecal( int bitsDamageType, int gameMaterial );
 	virtual void					DecalTrace( trace_t *pTrace, char const *decalName );
-	virtual void					ImpactTrace( trace_t *pTrace, int iDamageType, char *pCustomImpactName );
+	virtual void					ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName );
 
 	virtual bool					ShouldPredict( void ) { return false; };
 	// interface function pointers
@@ -1122,7 +1122,7 @@ public:
 #ifdef _DEBUG
 	void FunctionCheck( void *pFunction, const char *name );
 
-	ENTITYFUNCPTR TouchSet( ENTITYFUNCPTR func, char *name ) 
+	ENTITYFUNCPTR TouchSet( ENTITYFUNCPTR func, const char *name ) 
 	{ 
 		//COMPILE_TIME_ASSERT( sizeof(func) == 4 );
 		m_pfnTouch = func; 

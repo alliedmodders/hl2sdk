@@ -105,7 +105,7 @@ public:
 	virtual bool			IsOk( FileHandle_t file )															{ return m_pFileSystemPassThru->IsOk( file ); }
 	virtual bool			EndOfFile( FileHandle_t file )														{ return m_pFileSystemPassThru->EndOfFile( file ); }
 	virtual char			*ReadLine( char *pOutput, int maxChars, FileHandle_t file )							{ return m_pFileSystemPassThru->ReadLine( pOutput, maxChars, file ); }
-	virtual int				FPrintf( FileHandle_t file, char *pFormat, ... ) 
+	virtual int				FPrintf( FileHandle_t file, const char *pFormat, ... ) 
 	{ 
 		char str[8192];
 		va_list marker;

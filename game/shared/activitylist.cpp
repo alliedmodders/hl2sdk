@@ -1914,6 +1914,7 @@ void UTIL_LoadActivityRemapFile( const char *filename, const char *section, CUtl
 				KeyValues *pRemapKey = pTestKey->GetFirstSubKey();
 
 				CActivityRemap actMap;
+				actMap.mappedActivity = ACT_IDLE;
 				actMap.activity = ActBase;
 
 				while ( pRemapKey )

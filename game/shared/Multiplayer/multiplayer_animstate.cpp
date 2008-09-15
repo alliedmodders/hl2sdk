@@ -860,6 +860,7 @@ Activity CMultiPlayerAnimState::TranslateActivity( Activity actDesired )
 		case ACT_MP_ATTACK_STAND_SECONDARYFIRE: { actDesired = ACT_MP_ATTACK_SWIM_SECONDARYFIRE; break; }
 		case ACT_MP_ATTACK_STAND_GRENADE: { actDesired = ACT_MP_ATTACK_SWIM_GRENADE; break; }
 		case ACT_MP_RELOAD_STAND: { actDesired = ACT_MP_RELOAD_SWIM; break; }
+		default: break;
 		}
 	}
 

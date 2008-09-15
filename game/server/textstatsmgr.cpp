@@ -58,7 +58,7 @@ char *CTextStatsMgr::GetStatsFilename( void )
 	return m_szStatFilename;
 }
 
-void CTextStatsMgr::SetStatsFilename( char *sFilename )
+void CTextStatsMgr::SetStatsFilename( const char *sFilename )
 {
 	Assert( sFilename && sFilename[0] );
 

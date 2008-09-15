@@ -931,7 +931,7 @@ public:
 	Activity			GetIdealActivity( void ) { return m_IdealActivity; }
 	void				SetIdealActivity( Activity NewActivity );
 	void				ResetIdealActivity( Activity newIdealActivity );
-	void				SetSequenceByName( char *szSequence );
+	void				SetSequenceByName( const char *szSequence );
 	void				SetSequenceById( int iSequence );
 	Activity			GetScriptCustomMoveActivity( void );
 	int					GetScriptCustomMoveSequence( void );
@@ -1748,7 +1748,7 @@ public:
 	virtual float		GetHitgroupDamageMultiplier( int iHitGroup, const CTakeDamageInfo &info );
 	void				TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr );
 	void				DecalTrace( trace_t *pTrace, char const *decalName );
-	void				ImpactTrace( trace_t *pTrace, int iDamageType, char *pCustomImpactName );
+	void				ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName );
 	virtual	bool		PlayerInSpread( const Vector &sourcePos, const Vector &targetPos, float flSpread, float maxDistOffCenter, bool ignoreHatedPlayers = true );
 	CBaseEntity *		PlayerInRange( const Vector &vecLocation, float flDist );
 	bool				PointInSpread( CBaseCombatCharacter *pCheckEntity, const Vector &sourcePos, const Vector &targetPos, const Vector &testPoint, float flSpread, float maxDistOffCenter );
@@ -1805,7 +1805,7 @@ public:
 
 	virtual void	PickupWeapon( CBaseCombatWeapon *pWeapon );
 	virtual void	PickupItem( CBaseEntity *pItem ) { };
-	CBaseEntity*	DropItem( char *pszItemName, Vector vecPos, QAngle vecAng );// drop an item.
+	CBaseEntity*	DropItem( const char *pszItemName, Vector vecPos, QAngle vecAng );// drop an item.
 
 
 	//---------------------------------
@@ -2338,11 +2338,11 @@ typedef CHandle<CAI_BaseNPC> AIHANDLE;
 
 #define DEFINE_SCHEDULE( id, text ) \
 	scheduleIds.PushBack( #id, id ); \
-	char * g_psz##id = \
-		"\n	Schedule" \
-		"\n		" #id \
-		text \
-		"\n"; \
+	const char * g_psz##id = \
+			"\n	Schedule" \
+			"\n		" #id \
+			text \
+			"\n"; \
 	schedulesToLoad.AddToTail( (char *)g_psz##id );
 	
 //-----------------

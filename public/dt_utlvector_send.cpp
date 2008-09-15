@@ -11,7 +11,7 @@
 #include "tier0/memdbgon.h"
 
 
-extern char *s_ElementNames[MAX_ARRAY_ELEMENTS];
+extern const char *s_ElementNames[MAX_ARRAY_ELEMENTS];
 
 // This gets associated with SendProps inside a utlvector and stores extra data needed to make it work.
 class CSendPropExtra_UtlVector
@@ -124,7 +124,7 @@ void* SendProxy_LengthTable( const SendProp *pProp, const void *pStructBase, con
 // Note: you have to be DILIGENT about calling NetworkStateChanged whenever an element in your CUtlVector changes
 // since CUtlVector doesn't do this automatically.
 SendProp SendPropUtlVector(
-	char *pVarName,		// Use SENDINFO_UTLVECTOR to generate these 4.
+	const char *pVarName,		// Use SENDINFO_UTLVECTOR to generate these 4.
 	int offset,			// Used to generate pData in the function specified in varProxy.
 	int sizeofVar,		// The size of each element in the utlvector.
 	EnsureCapacityFn ensureFn,	// This is the value returned for elements out of the array's current range.

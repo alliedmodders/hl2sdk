@@ -13,10 +13,10 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "NPCEvent.h"
+#include "npcevent.h"
 #include "basehlcombatweapon.h"
 #include "basecombatcharacter.h"
-#include "AI_BaseNPC.h"
+#include "ai_basenpc.h"
 #include "player.h"
 #include "gamerules.h"				// For g_pGameRules
 #include "in_buttons.h"
@@ -364,7 +364,7 @@ void CWeaponSniperRifle::Zoom( void )
 		return;
 	}
 
-	if (m_nZoomLevel >= sizeof(g_nZoomFOV) / sizeof(g_nZoomFOV[0]))
+	if (m_nZoomLevel >= (int)(sizeof(g_nZoomFOV) / sizeof(g_nZoomFOV[0])))
 	{
 		if ( pPlayer->SetFOV( this, 0 ) )
 		{

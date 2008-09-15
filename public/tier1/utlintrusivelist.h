@@ -455,7 +455,8 @@ namespace IntrusiveList
 	// null, or if n is the first node. not fast.
 	template<class T> static inline T * PrevNode(T *head, T *node)
 	{
-		for(T *i=head;i;i=i->m_pNext)
+		T *i;
+		for(i=head;i;i=i->m_pNext)
 		{
 			if (i->m_pNext == node)
 				break;
@@ -511,7 +512,8 @@ namespace IntrusiveList
 		}
 		else
 		{
-			for(T *t=head;t->m_pNext;t=t->m_pNext)                        // find the node we should be before
+			T *t;
+			for(t=head;t->m_pNext;t=t->m_pNext)                        // find the node we should be before
 				if (stricmp(t->m_pNext->m_Name,node->m_Name)>=0)
 					break;
 			node->m_pNext=t->m_pNext;

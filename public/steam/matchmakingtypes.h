@@ -150,7 +150,7 @@ inline const char *servernetadr_t::ToString( uint32 unIP, uint16 usPort ) const
 	static char s[4][64];
 	static int nBuf = 0;
 	unsigned char *ipByte = (unsigned char *)&unIP;
-	_snprintf (s[nBuf], sizeof( s[nBuf] ), "%u.%u.%u.%u:%i", (int)(ipByte[3]), (int)(ipByte[2]), (int)(ipByte[1]), (int)(ipByte[0]), usPort );
+	Q_snprintf (s[nBuf], sizeof( s[nBuf] ), "%u.%u.%u.%u:%i", (int)(ipByte[3]), (int)(ipByte[2]), (int)(ipByte[1]), (int)(ipByte[0]), usPort );
 	const char *pchRet = s[nBuf];
 	++nBuf;
 	nBuf %= ( (sizeof(s)/sizeof(s[0])) );

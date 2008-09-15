@@ -145,7 +145,7 @@ void CGrenadeHomer::SetSpin(float flSpinMagnitude, float flSpinSpeed)
 {
 	m_flSpinMagnitude	= flSpinMagnitude;
 	m_flSpinSpeed		= flSpinSpeed;
-	m_flSpinOffset		= random->RandomInt(-m_flSpinSpeed,m_flSpinSpeed);
+	m_flSpinOffset		= random->RandomInt((int)-m_flSpinSpeed, (int)m_flSpinSpeed);
 }
 
 //------------------------------------------------------------------------------

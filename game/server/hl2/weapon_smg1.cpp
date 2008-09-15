@@ -6,17 +6,17 @@
 
 #include "cbase.h"
 #include "basehlcombatweapon.h"
-#include "NPCevent.h"
+#include "npcevent.h"
 #include "basecombatcharacter.h"
-#include "AI_BaseNPC.h"
+#include "ai_basenpc.h"
 #include "player.h"
 #include "game.h"
 #include "in_buttons.h"
 #include "grenade_ar2.h"
-#include "AI_Memory.h"
+#include "ai_memory.h"
 #include "soundent.h"
 #include "rumble_shared.h"
-#include "gamestats.h"
+#include "GameStats.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

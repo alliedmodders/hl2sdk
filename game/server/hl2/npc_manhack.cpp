@@ -1590,7 +1590,7 @@ void CNPC_Manhack::Bump( CBaseEntity *pHitEntity, float flInterval, trace_t &tr 
 		if (moveVec.z < 0)
 		{
 			float floorZ = GetFloorZ(GetAbsOrigin());
-			if (abs(GetAbsOrigin().z - floorZ) < 36)
+			if (fabs(GetAbsOrigin().z - floorZ) < 36.0f)
 			{
 				moveVec.z = 0;
 			}
@@ -1812,11 +1812,11 @@ void CNPC_Manhack::PlayFlySound(void)
 			float flDistFactor;
 
 			flDistFactor = min( 1.0, 1 - flEnemyDist / MANHACK_PITCH_DIST1 ); 
-			iPitch1 = MANHACK_MIN_PITCH1 + ( ( MANHACK_MAX_PITCH1 - MANHACK_MIN_PITCH1 ) * flDistFactor); 
+			iPitch1 = (int)(MANHACK_MIN_PITCH1 + ( ( MANHACK_MAX_PITCH1 - MANHACK_MIN_PITCH1 ) * flDistFactor)); 
 
 			// NOTE: MANHACK_PITCH_DIST2 must be < MANHACK_PITCH_DIST1
 			flDistFactor = min( 1.0, 1 - flEnemyDist / MANHACK_PITCH_DIST2 ); 
-			iPitch2 = MANHACK_MIN_PITCH2 + ( ( MANHACK_MAX_PITCH2 - MANHACK_MIN_PITCH2 ) * flDistFactor); 
+			iPitch2 = (int)(MANHACK_MIN_PITCH2 + ( ( MANHACK_MAX_PITCH2 - MANHACK_MIN_PITCH2 ) * flDistFactor)); 
 
 			m_nEnginePitch1 = iPitch1;
 			m_flEnginePitch1Time = gpGlobals->curtime + 0.1f;

@@ -1072,7 +1072,7 @@ int CPhysExplosion::DrawDebugTextOverlays( void )
 		text_offset++;
 
 		// print target entity
-		Q_snprintf(tempstr,sizeof(tempstr),"    limit to: %s", m_targetEntityName);
+		Q_snprintf(tempstr,sizeof(tempstr),"    limit to: %s", STRING(m_targetEntityName));
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 	}
@@ -1392,7 +1392,7 @@ void CPhysConvert::InputConvertTarget( inputdata_t &inputdata )
 	while ( (pEntity = gEntList.FindEntityByName( pEntity, m_target, NULL, inputdata.pActivator, inputdata.pCaller )) != NULL )
 	{
 		entlist[count++] = pEntity;
-		if ( count >= ARRAYSIZE(entlist) )
+		if ( count >= (int)ARRAYSIZE(entlist) )
 			break;
 	}
 

@@ -50,7 +50,7 @@ void CEnvSoundscapeProxy::Activate()
 	{
 		// Copy the relevant parameters from our main soundscape.
 		m_soundscapeIndex = m_hProxySoundscape->m_soundscapeIndex;
-		for ( int i=0; i < ARRAYSIZE( m_positionNames ); i++ )
+		for ( size_t i=0; i < ARRAYSIZE( m_positionNames ); i++ )
 			m_positionNames[i] = m_hProxySoundscape->m_positionNames[i];
 	}
 	else
@@ -223,7 +223,7 @@ void CEnvSoundscape::WriteAudioParamsTo( audioparams_t &audio )
 	audio.ent.Set( this );
 	audio.soundscapeIndex = m_soundscapeIndex;
 	audio.localBits = 0;
-	for ( int i = 0; i < ARRAYSIZE(m_positionNames); i++ )
+	for ( int i = 0; i < (int)ARRAYSIZE(m_positionNames); i++ )
 	{
 		if ( m_positionNames[i] != NULL_STRING )
 		{

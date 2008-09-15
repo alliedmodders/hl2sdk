@@ -532,7 +532,7 @@ public:
 	virtual CBaseEntity		*GetHeldObject( void );
 
 	void					CheckSuitUpdate();
-	void					SetSuitUpdate(char *name, int fgroup, int iNoRepeat);
+	void					SetSuitUpdate(const char *name, int fgroup, int iNoRepeat);
 	virtual void			UpdateGeigerCounter( void );
 	void					CheckTimeBasedDamage( void );
 

@@ -305,8 +305,8 @@ bool HateThisStriderBuster( CBaseEntity *pTarget )
 //-----------------------------------------------------------------------------
 static const char *s_szHunterFlechetteBubbles = "HunterFlechetteBubbles";
 static const char *s_szHunterFlechetteSeekThink = "HunterFlechetteSeekThink";
-static const char *s_szHunterFlechetteDangerSoundThink = "HunterFlechetteDangerSoundThink";
-static const char *s_szHunterFlechetteSpriteTrail = "sprites/bluelaser1.vmt";
+//static const char *s_szHunterFlechetteDangerSoundThink = "HunterFlechetteDangerSoundThink";
+//static const char *s_szHunterFlechetteSpriteTrail = "sprites/bluelaser1.vmt";
 static int s_nHunterFlechetteImpact = -2;
 static int s_nFlechetteFuseAttach = -1;
 
@@ -427,9 +427,10 @@ void CC_Hunter_Shoot_Flechette( const CCommand& args )
 		DispatchSpawn( entity );
 
 		// Shoot the flechette.		
-		Vector forward;
+		Vector forward, velocity;
 		pPlayer->EyeVectors( &forward );
-		entity->Shoot( forward * 2000.0f, false );
+		velocity = forward * 2000.0f;
+		entity->Shoot( velocity, false );
 	}
 
 	CBaseEntity::SetAllowPrecache( allowPrecache );
@@ -872,7 +873,7 @@ void CHunterFlechette::DangerSoundThink()
 {
 	EmitSound( "NPC_Hunter.FlechettePreExplode" );
 
-	CSoundEnt::InsertSound( SOUND_DANGER|SOUND_CONTEXT_EXCLUDE_COMBINE, GetAbsOrigin(), 150.0f, 0.5, this );
+	CSoundEnt::InsertSound( SOUND_DANGER|SOUND_CONTEXT_EXCLUDE_COMBINE, GetAbsOrigin(), 150, 0.5, this );
 	SetThink( &CHunterFlechette::ExplodeThink );
 	SetNextThink( gpGlobals->curtime + HUNTER_FLECHETTE_WARN_TIME );
 }
@@ -1022,8 +1023,6 @@ inline void HunterTraceHull_SkipPhysics( const Vector &vecAbsStart, const Vector
 //-----------------------------------------------------------------------------
 class CAI_HunterEscortBehavior : public CAI_FollowBehavior
 {
-	typedef CAI_FollowBehavior BaseClass;
-
 	DECLARE_CLASS( CAI_HunterEscortBehavior, CAI_FollowBehavior );
 	
 public:
@@ -3123,6 +3122,9 @@ int CNPC_Hunter::SelectSchedule()
 			{
 				return SelectCombatSchedule();
 			}
+
+			default:
+				break;
 		}
 	}
 		
@@ -4295,25 +4297,29 @@ void CNPC_Hunter::HandleAnimEvent( animevent_t *pEvent )
 		
 	if ( pEvent->event == AE_HUNTER_MELEE_ATTACK_LEFT )
 	{
-		Vector right, forward;
+		QAngle viewPunch(25.0f, 30.0f, -20.0f);
+		Vector right, forward, velocityPunch;
 		AngleVectors( GetLocalAngles(), &forward, &right, NULL );
 
 		right = right * -100;
 		forward = forward * 600;
+		velocityPunch = right + forward;
 
-		MeleeAttack( HUNTER_MELEE_REACH, sk_hunter_dmg_one_slash.GetFloat(), QAngle( 25, 30, -20 ), right + forward, HUNTER_BLOOD_LEFT_FOOT );
+		MeleeAttack( HUNTER_MELEE_REACH, sk_hunter_dmg_one_slash.GetInt(), viewPunch, velocityPunch, HUNTER_BLOOD_LEFT_FOOT );
 		return;
 	}
 
 	if ( pEvent->event == AE_HUNTER_MELEE_ATTACK_RIGHT )
 	{
-		Vector right, forward;
+		QAngle viewPunch(25.0f, -30.0f, 20.0f);
+		Vector right, forward, velocityPunch;
 		AngleVectors( GetLocalAngles(), &forward, &right, NULL );
 
 		right = right * 100;
 		forward = forward * 600;
+		velocityPunch = right + forward;
 
-		MeleeAttack( HUNTER_MELEE_REACH, sk_hunter_dmg_one_slash.GetFloat(), QAngle( 25, -30, 20 ), right + forward, HUNTER_BLOOD_LEFT_FOOT );
+		MeleeAttack( HUNTER_MELEE_REACH, sk_hunter_dmg_one_slash.GetInt(), viewPunch, velocityPunch, HUNTER_BLOOD_LEFT_FOOT );
 		return;
 	}
 
@@ -4700,7 +4706,7 @@ int CNPC_Hunter::IRelationPriority( CBaseEntity *pTarget )
 	if ( IsStriderBuster( pTarget ) )
 	{
 		// If we're here, we already know that we hate striderbusters.
-		return 1000.0f;
+		return 1000;
 	}
 
 	return BaseClass::IRelationPriority( pTarget );
@@ -6265,7 +6271,7 @@ bool CNPC_Hunter::ShootFlechette( CBaseEntity *pTargetEntity, bool bSingleShot )
 	{
 		// Make this person afraid and react to ME, not to the flechettes. 
 		// Otherwise they could be scared into running towards the hunter.
-		CSoundEnt::InsertSound( SOUND_DANGER|SOUND_CONTEXT_REACT_TO_SOURCE|SOUND_CONTEXT_EXCLUDE_COMBINE, pTargetEntity->EyePosition(), 180.0f, 2.0f, this );
+		CSoundEnt::InsertSound( SOUND_DANGER|SOUND_CONTEXT_REACT_TO_SOURCE|SOUND_CONTEXT_EXCLUDE_COMBINE, pTargetEntity->EyePosition(), 180, 2.0f, this );
 	}
 
 	return bClamped;
@@ -6471,7 +6477,7 @@ const char *CNPC_Hunter::SelectRandomExpressionForState( NPC_STATE state )
 	if ( !hunter_random_expressions.GetBool() )
 		return NULL;
 
-	char *szExpressions[4] =
+	const char *szExpressions[4] =
 	{
 		"scenes/npc/hunter/hunter_scan.vcd",
 		"scenes/npc/hunter/hunter_eyeclose.vcd",

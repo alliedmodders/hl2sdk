@@ -48,7 +48,7 @@ CVoiceGameMgr g_VoiceGameMgr;
 // ------------------------------------------------------------------------ //
 
 // Find a player with a case-insensitive name search.
-static CBasePlayer* FindPlayerByName(const char *pTestName)
+/*static CBasePlayer* FindPlayerByName(const char *pTestName)
 {
 	for(int i=1; i <= gpGlobals->maxClients; i++)
 	{
@@ -68,7 +68,7 @@ static CBasePlayer* FindPlayerByName(const char *pTestName)
 	}
 
 	return NULL;
-}
+}*/
 
 static void VoiceServerDebug( const char *pFmt, ... )
 {
@@ -163,7 +163,7 @@ bool CVoiceGameMgr::ClientCommand( CBasePlayer *pPlayer, const CCommand &args )
 		for(int i=1; i < args.ArgC(); i++)
 		{
 			unsigned long mask = 0;
-			sscanf( args[i], "%x", &mask);
+			sscanf( args[i], "%p", (void**)&mask);
 
 			if( i <= VOICE_MAX_PLAYERS_DW )
 			{
@@ -193,7 +193,6 @@ bool CVoiceGameMgr::ClientCommand( CBasePlayer *pPlayer, const CCommand &args )
 		return false;
 	}
 }
-
 
 void CVoiceGameMgr::UpdateMasks()
 {

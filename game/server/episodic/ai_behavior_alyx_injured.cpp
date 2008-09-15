@@ -90,7 +90,7 @@ void CAI_BehaviorAlyxInjured::PopulateActivityMap( void )
 	m_ActivityMap.RemoveAll();
 
 	// Add all translations
-	for ( int i = 0; i < ARRAYSIZE( map ); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE( map ); i++ )
 	{
 		Assert( m_ActivityMap.Find( map[i].activity ) == m_ActivityMap.InvalidIndex() );
 		m_ActivityMap.Insert( map[i].activity, map[i].translation );

@@ -62,9 +62,9 @@ IMPLEMENT_SERVERCLASS_ST(CBaseFlex, DT_BaseFlex)
 	SendPropInt		(SENDINFO(m_blinktoggle), 1, SPROP_UNSIGNED ),
 	SendPropVector	(SENDINFO(m_viewtarget), -1, SPROP_COORD),
 #ifdef HL2_DLL
-	SendPropFloat	( SENDINFO_VECTORELEM(m_vecViewOffset, 0), 0, SPROP_NOSCALE ),
-	SendPropFloat	( SENDINFO_VECTORELEM(m_vecViewOffset, 1), 0, SPROP_NOSCALE ),
-	SendPropFloat	( SENDINFO_VECTORELEM(m_vecViewOffset, 2), 0, SPROP_NOSCALE ),
+	SendPropFloat	( SENDINFO_VECTORELEM2(m_vecViewOffset, 0, x), 0, SPROP_NOSCALE ),
+	SendPropFloat	( SENDINFO_VECTORELEM2(m_vecViewOffset, 1, y), 0, SPROP_NOSCALE ),
+	SendPropFloat	( SENDINFO_VECTORELEM2(m_vecViewOffset, 2, z), 0, SPROP_NOSCALE ),
 
 	SendPropVector	( SENDINFO(m_vecLean), -1, SPROP_COORD ),
 	SendPropVector	( SENDINFO(m_vecShift), -1, SPROP_COORD ),
@@ -383,6 +383,8 @@ bool CBaseFlex::ClearSceneEvent( CSceneEventInfo *info, bool fastKill, bool canc
 			}
 		}
 		return true;
+	default:
+		break;
 	}
 	return false;
 }
@@ -669,7 +671,7 @@ bool CBaseFlex::HandleStartGestureSceneEvent( CSceneEventInfo *info, CChoreoScen
 	if ( looping )
 	{
 		DevMsg( 1, "vcd error, gesture %s of model %s is marked as STUDIO_LOOPING!\n", 
-			event->GetParameters(), GetModelName() );
+			event->GetParameters(), STRING(GetModelName()) );
 	}
 
 	SetLayerLooping( info->m_iLayer, false ); // force to not loop
@@ -765,6 +767,9 @@ bool CBaseFlex::StartSceneEvent( CSceneEventInfo *info, CChoreoScene *scene, CCh
 	
 	case CChoreoEvent::EXPRESSION: // These are handled client-side
 		return true;
+
+	default:
+		break;
 	}
 
 	return false;

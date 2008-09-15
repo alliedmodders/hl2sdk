@@ -207,7 +207,6 @@ float FASTCALL _SSE_VectorNormalize (Vector& vec)
 #endif
 
 	float *v = &vec[0];
-	float *r = &result[0];
 
 	float	radius = 0.f;
 	// Blah, get rid of these comparisons ... in reality, if you have all 3 as zero, it shouldn't 
@@ -215,6 +214,7 @@ float FASTCALL _SSE_VectorNormalize (Vector& vec)
 	if ( v[0] || v[1] || v[2] )
 	{
 #ifdef _WIN32
+	float *r = &result[0];
 	_asm
 		{
 			mov			eax, v
@@ -325,7 +325,7 @@ float _SSE_InvRSquared(const float* v)
         "rcpss           %%xmm1, %%xmm0 \n\t"
 		"movss           %%xmm0, %0 \n\t" 
         : "=m" (inv_r2)
-        : "m" (*v), "0" (inv_r2)
+        : "m" (*v), "m" (inv_r2)
  		);
 #else
 	#error "Not Implemented"
@@ -422,7 +422,7 @@ void _SSE_SinCos(float x, float* s, float* c)
 		movss	[edx], xmm4
 	}
 #elif _LINUX
-	#warning "_SSE_sincos NOT implemented!"
+//	#warning "_SSE_sincos NOT implemented!"
 #else
 	#error "Not Implemented"
 #endif
@@ -480,7 +480,7 @@ float _SSE_cos( float x )
 
 	}
 #elif _LINUX
-	#warning "_SSE_cos NOT implemented!"
+//	#warning "_SSE_cos NOT implemented!"
 #else
 	#error "Not Implemented"
 #endif
@@ -570,7 +570,7 @@ void _SSE2_SinCos(float x, float* s, float* c)  // any x
 		movss	[edx], xmm6
 	}
 #elif _LINUX
-	#warning "_SSE2_SinCos NOT implemented!"
+//	#warning "_SSE2_SinCos NOT implemented!"
 #else
 	#error "Not Implemented"
 #endif
@@ -625,7 +625,7 @@ float _SSE2_cos(float x)
 		movss   x,    xmm0
 	}
 #elif _LINUX
-	#warning "_SSE2_cos NOT implemented!"
+//	#warning "_SSE2_cos NOT implemented!"
 #else
 	#error "Not Implemented"
 #endif
@@ -682,7 +682,7 @@ void VectorTransformSSE(const float *in1, const matrix3x4_t& in2, float *out1)
 		movss [edx+8], xmm0;
 	}
 #elif _LINUX
-	#warning "VectorTransformSSE C implementation only"
+//	#warning "VectorTransformSSE C implementation only"
 		out1[0] = DotProduct(in1, in2[0]) + in2[0][3];
 		out1[1] = DotProduct(in1, in2[1]) + in2[1][3];
 		out1[2] = DotProduct(in1, in2[2]) + in2[2][3];
@@ -736,7 +736,7 @@ void VectorRotateSSE( const float *in1, const matrix3x4_t& in2, float *out1 )
 		movss [edx+8], xmm0;
 	}
 #elif _LINUX
-	#warning "VectorRotateSSE C implementation only"
+//	#warning "VectorRotateSSE C implementation only"
 		out1[0] = DotProduct( in1, in2[0] );
 		out1[1] = DotProduct( in1, in2[1] );
 		out1[2] = DotProduct( in1, in2[2] );

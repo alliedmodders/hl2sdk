@@ -174,6 +174,7 @@ inline NavDirType OppositeDirection( NavDirType dir )
 		case SOUTH: return NORTH;
 		case EAST:	return WEST;
 		case WEST:	return EAST;
+		default: break;
 	}
 
 	return NORTH;
@@ -188,6 +189,7 @@ inline NavDirType DirectionLeft( NavDirType dir )
 		case SOUTH: return EAST;
 		case EAST:	return NORTH;
 		case WEST:	return SOUTH;
+		default: break;
 	}
 
 	return NORTH;
@@ -202,6 +204,7 @@ inline NavDirType DirectionRight( NavDirType dir )
 		case SOUTH: return WEST;
 		case EAST:	return SOUTH;
 		case WEST:	return NORTH;
+		default: break;
 	}
 
 	return NORTH;
@@ -216,6 +219,7 @@ inline void AddDirectionVector( Vector *v, NavDirType dir, float amount )
 		case SOUTH: v->y += amount; return;
 		case EAST:  v->x += amount; return;
 		case WEST:  v->x -= amount; return;
+		default: break;
 	}
 }
 
@@ -228,6 +232,7 @@ inline float DirectionToAngle( NavDirType dir )
 		case SOUTH:	return 90.0f;
 		case EAST:	return 0.0f;
 		case WEST:	return 180.0f;
+		default: break;
 	}
 
 	return 0.0f;
@@ -263,6 +268,7 @@ inline void DirectionToVector2D( NavDirType dir, Vector2D *v )
 		case SOUTH: v->x =  0.0f; v->y =  1.0f; break;
 		case EAST:  v->x =  1.0f; v->y =  0.0f; break;
 		case WEST:  v->x = -1.0f; v->y =  0.0f; break;
+		default: break;
 	}
 }
 
@@ -276,6 +282,7 @@ inline void CornerToVector2D( NavCornerType dir, Vector2D *v )
 		case NORTH_EAST: v->x =  1.0f; v->y = -1.0f; break;
 		case SOUTH_EAST: v->x =  1.0f; v->y =  1.0f; break;
 		case SOUTH_WEST: v->x = -1.0f; v->y =  1.0f; break;
+		default: break;
 	}
 
 	v->NormalizeInPlace();

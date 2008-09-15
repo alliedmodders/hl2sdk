@@ -9,7 +9,6 @@
 #include "ammodef.h"
 #include "gamerules.h"
 #include "grenade_brickbat.h"
-#include "weapon_brickbat.h"
 #include "soundent.h"
 #include "decals.h"
 #include "IEffects.h"
@@ -26,8 +25,8 @@ BEGIN_DATADESC( CGrenade_Brickbat )
 	DEFINE_FIELD( m_bBounceToFlat, FIELD_BOOLEAN ),
 
 	// Function Pointers
-	DEFINE_FUNCTION( BrickbatTouch ),
-	DEFINE_FUNCTION( BrickbatThink ),
+	DEFINE_ENTITYFUNC( BrickbatTouch ),
+	DEFINE_THINKFUNC( BrickbatThink ),
 
 END_DATADESC()
 
@@ -37,8 +36,8 @@ void CGrenade_Brickbat::Spawn( void )
 {
 	RemoveEffects( EF_NOINTERP );
 	SetCollisionGroup( COLLISION_GROUP_PROJECTILE );
-	SetTouch( BrickbatTouch );
-	SetThink( BrickbatThink );
+	SetTouch( &CGrenade_Brickbat::BrickbatTouch );
+	SetThink( &CGrenade_Brickbat::BrickbatThink );
 	SetNextThink( gpGlobals->curtime + 0.1f );
 
 	m_takedamage = DAMAGE_YES;

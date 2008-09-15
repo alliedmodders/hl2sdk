@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="QC_Eyes"
 	ProjectGUID="{D373436F-7DBF-468B-A3E4-601FB8556544}"
+	RootNamespace="QC_Eyes"
 	>
 	<Platforms>
 		<Platform
@@ -27,6 +28,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\QC_Eyes.exe;..\..\..\game\bin\QC_Eyes.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -128,7 +131,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -147,6 +149,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\QC_Eyes.exe;..\..\..\game\bin\QC_Eyes.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -250,7 +254,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -261,13 +264,10 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath=".\QC_Eyes.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\QC_Eyes.rc"
 				>
 			</File>
 			<File
@@ -297,6 +297,7 @@
 		</Filter>
 		<Filter
 			Name="Link Libraries"
+			Filter="lib"
 			>
 			<File
 				RelativePath="..\..\lib\public\tier0.lib"
@@ -313,6 +314,7 @@
 		</Filter>
 		<Filter
 			Name="Resources"
+			Filter="ico;cur;bmp;dlg;rc;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
 			<File
 				RelativePath=".\res\bitmap1.bmp"
@@ -367,12 +369,17 @@
 				>
 			</File>
 			<File
+				RelativePath=".\QC_Eyes.rc"
+				>
+			</File>
+			<File
 				RelativePath=".\res\QC_Eyes.rc2"
 				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath=".\QC_Eyes.h"

@@ -297,6 +297,9 @@ int CNPC_VehicleDriver::SelectSchedule( void )
 			return SCHED_VEHICLEDRIVER_COMBAT_WAIT;
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	return BaseClass::SelectSchedule();

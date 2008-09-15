@@ -52,16 +52,16 @@ class CVortigauntChargeToken;
 static const char *VORTIGAUNT_LEFT_CLAW = "leftclaw";
 static const char *VORTIGAUNT_RIGHT_CLAW = "rightclaw";
 
-static const char *VORT_CURE = "VORT_CURE";
+//static const char *VORT_CURE = "VORT_CURE";
 static const char *VORT_CURESTOP = "VORT_CURESTOP";
-static const char *VORT_CURE_INTERRUPT = "VORT_CURE_INTERRUPT";
+//static const char *VORT_CURE_INTERRUPT = "VORT_CURE_INTERRUPT";
 static const char *VORT_ATTACK = "VORT_ATTACK";
-static const char *VORT_MAD = "VORT_MAD";
-static const char *VORT_SHOT = "VORT_SHOT";
+//static const char *VORT_MAD = "VORT_MAD";
+//static const char *VORT_SHOT = "VORT_SHOT";
 static const char *VORT_PAIN = "VORT_PAIN";
 static const char *VORT_DIE = "VORT_DIE";
-static const char *VORT_KILL = "VORT_KILL";
-static const char *VORT_LINE_FIRE = "VORT_LINE_FIRE";
+//static const char *VORT_KILL = "VORT_KILL";
+//static const char *VORT_LINE_FIRE = "VORT_LINE_FIRE";
 static const char *VORT_POK = "VORT_POK";
 static const char *VORT_EXTRACT_START = "VORT_EXTRACT_START";
 static const char *VORT_EXTRACT_FINISH = "VORT_EXTRACT_FINISH";
@@ -219,11 +219,11 @@ static bool IsRoller( CBaseEntity *pRoller )
 // Purpose: 
 //-----------------------------------------------------------------------------
 CNPC_Vortigaunt::CNPC_Vortigaunt( void ) : 
-m_bPlayerRequestedHeal( false ),
 m_flNextHealTime( 3.0f ), // Let the player settle before we decide to do this
+m_bPlayerRequestedHeal( false ),
+m_eHealState( HEAL_STATE_NONE ),
 m_nNumTokensToSpawn( 0 ),
-m_flAimDelay( 0.0f ),
-m_eHealState( HEAL_STATE_NONE )
+m_flAimDelay( 0.0f )
 {
 }
 
@@ -336,7 +336,7 @@ void CNPC_Vortigaunt::StartTask( const Task_t *pTask )
 	{
 		// Start the layer up and give it a higher priority than normal
 		int nLayer = AddGesture( (Activity) ACT_VORTIGAUNT_HEAL );
-		SetLayerPriority( nLayer, 1.0f );
+		SetLayerPriority( nLayer, 1 );
 
 		m_eHealState = HEAL_STATE_WARMUP;
 		
@@ -349,7 +349,7 @@ void CNPC_Vortigaunt::StartTask( const Task_t *pTask )
 
 		// Figure out how many tokens to spawn
 		float flArmorDelta = (float) sk_vortigaunt_armor_charge.GetInt() - pPlayer->ArmorValue();
-		m_nNumTokensToSpawn = ceil( flArmorDelta / sk_vortigaunt_armor_charge_per_token.GetInt() );
+		m_nNumTokensToSpawn = (int)ceil( flArmorDelta / sk_vortigaunt_armor_charge_per_token.GetInt() );
 		
 		// If we're forced to recharge, then at least send one
 		if ( m_bForceArmorRecharge && m_nNumTokensToSpawn <= 0 )
@@ -1086,7 +1086,7 @@ void CNPC_Vortigaunt::Spawn( void )
 #endif // HL2_EPISODIC
 
 	// Allow multiple models (for slaves), but default to vortigaunt.mdl
-	char *szModel = (char *)STRING( GetModelName() );
+	const char *szModel = (char *)STRING( GetModelName() );
 	if (!szModel || !*szModel)
 	{
 		szModel = "models/vortigaunt.mdl";
@@ -1949,7 +1949,7 @@ void CNPC_Vortigaunt::StartHandGlow( int beamType, int nHand )
 	case VORTIGAUNT_BEAM_ZAP:
 		{
 			// Validate the hand's range
-			if ( nHand >= ARRAYSIZE( m_hHandEffect ) )
+			if ( nHand >= (int)ARRAYSIZE( m_hHandEffect ) )
 				return;
 
 			// Start up

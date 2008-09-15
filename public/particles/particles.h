@@ -861,8 +861,8 @@ private:
 	DMXELEMENT_UNPACK_FIELD( "Visibility Alpha Scale maximum","1", float, VisibilityInputs.m_flAlphaScaleMax )		\
 	DMXELEMENT_UNPACK_FIELD( "Visibility Radius Scale minimum","1", float, VisibilityInputs.m_flRadiusScaleMin )		\
 	DMXELEMENT_UNPACK_FIELD( "Visibility Radius Scale maximum","1", float, VisibilityInputs.m_flRadiusScaleMax )
-//	DMXELEMENT_UNPACK_FIELD( "Visibility Use Bounding Box for Proxy", "0", bool, VisibilityInputs.m_bUseBBox )		\
-//	DMXELEMENT_UNPACK_FIELD( "Visibility Bounding Box Scale", "1.0", float, VisibilityInputs.m_flBBoxScale )		\
+//	DMXELEMENT_UNPACK_FIELD( "Visibility Use Bounding Box for Proxy", "0", bool, VisibilityInputs.m_bUseBBox )
+//	DMXELEMENT_UNPACK_FIELD( "Visibility Bounding Box Scale", "1.0", float, VisibilityInputs.m_flBBoxScale )
 
 #define REGISTER_PARTICLE_OPERATOR( _type, _className )	\
 	g_pParticleSystemMgr->AddParticleOperator( _type, &s_##_className##Factory )
@@ -1070,6 +1070,7 @@ public:
 	void GetControlPointTransformAtCurrentTime( int nControlPoint, matrix3x4_t *pMat );
 	void GetControlPointTransformAtCurrentTime( int nControlPoint, VMatrix *pMat );
 	int GetControlPointParent( int nControlPoint ) const;
+
 
 	// Used to retrieve the position of a control point
 	// somewhere between m_fCurTime and m_fCurTime - m_fPreviousDT
@@ -1388,7 +1389,7 @@ public:
 	FORCEINLINE CM128AttributeWriteIterator( void )
 	{
 	}
-	FORCEINLINE void CM128AttributeWriteIterator::Init ( int nAttribute, CParticleCollection *pParticles )
+	FORCEINLINE void Init ( int nAttribute, CParticleCollection *pParticles )
 	{
 		m_pData = pParticles->GetM128AttributePtrForWrite( nAttribute, &m_nStride );
 	}

@@ -62,15 +62,15 @@ void CNPC_CombineS::Spawn( void )
 	if( IsElite() )
 	{
 		// Stronger, tougher.
-		SetHealth( sk_combine_guard_health.GetFloat() );
-		SetMaxHealth( sk_combine_guard_health.GetFloat() );
-		SetKickDamage( sk_combine_guard_kick.GetFloat() );
+		SetHealth( sk_combine_guard_health.GetInt() );
+		SetMaxHealth( sk_combine_guard_health.GetInt() );
+		SetKickDamage( sk_combine_guard_kick.GetInt() );
 	}
 	else
 	{
-		SetHealth( sk_combine_s_health.GetFloat() );
-		SetMaxHealth( sk_combine_s_health.GetFloat() );
-		SetKickDamage( sk_combine_s_kick.GetFloat() );
+		SetHealth( sk_combine_s_health.GetInt() );
+		SetMaxHealth( sk_combine_s_health.GetInt() );
+		SetKickDamage( sk_combine_s_kick.GetInt() );
 	}
 
 	CapabilitiesAdd( bits_CAP_ANIMATEDFACE );
@@ -390,7 +390,7 @@ bool CNPC_CombineS::IsHeavyDamage( const CTakeDamageInfo &info )
 	// Shotgun blasts where at least half the pellets hit me are heavy damage
 	if ( info.GetDamageType() & DMG_BUCKSHOT )
 	{
-		int iHalfMax = sk_plr_dmg_buckshot.GetFloat() * sk_plr_num_shotgun_pellets.GetInt() * 0.5;
+		int iHalfMax = (int)(sk_plr_dmg_buckshot.GetFloat() * sk_plr_num_shotgun_pellets.GetInt() * 0.5);
 		if ( info.GetDamage() >= iHalfMax )
 			return true;
 	}

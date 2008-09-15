@@ -333,7 +333,7 @@ void CAI_PolicingBehavior::StartTask( const Task_t *pTask )
 				}
 			}
 
-			if ( GetNavigator()->SetGoal( harassPos, pTask->flTaskData ) )
+			if ( GetNavigator()->SetGoal( harassPos, (int)pTask->flTaskData ) )
 			{
 				GetNavigator()->SetMovementActivity( (Activity) ACT_WALK_ANGRY );
 				GetNavigator()->SetArrivalDirection( m_hPoliceGoal->GetTarget() );
@@ -348,7 +348,7 @@ void CAI_PolicingBehavior::StartTask( const Task_t *pTask )
 	
 	case TASK_POLICE_GET_PATH_TO_POLICE_GOAL:
 		{
-			if ( GetNavigator()->SetGoal( m_hPoliceGoal->GetAbsOrigin(), pTask->flTaskData ) )
+			if ( GetNavigator()->SetGoal( m_hPoliceGoal->GetAbsOrigin(), (int)pTask->flTaskData ) )
 			{
 				GetNavigator()->SetArrivalDirection( m_hPoliceGoal->GetAbsAngles() );
 				TaskComplete();
@@ -368,7 +368,7 @@ void CAI_PolicingBehavior::StartTask( const Task_t *pTask )
 			m_flNextHarassTime = gpGlobals->curtime + random->RandomInt( 4, 6 );
 
 			// Scatter rubber-neckers
-			CSoundEnt::InsertSound( SOUND_MOVE_AWAY, GetAbsOrigin(), 256.0f, 2.0f, GetOuter() );
+			CSoundEnt::InsertSound( SOUND_MOVE_AWAY, GetAbsOrigin(), 256, 2.0f, GetOuter() );
 		}
 		TaskComplete();
 		break;

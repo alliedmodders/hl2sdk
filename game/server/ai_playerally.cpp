@@ -141,7 +141,7 @@ public:
 	CConceptInfoMap() :
 	  CUtlMap<AIConcept_t, ConceptInfo_t *>( CaselessStringLessThan )
 	  {
-		  for ( int i = 0; i < ARRAYSIZE(g_ConceptInfos); i++ )
+		  for ( size_t i = 0; i < ARRAYSIZE(g_ConceptInfos); i++ )
 		  {
 			  Insert( g_ConceptInfos[i].concept, &g_ConceptInfos[i] );
 		  }
@@ -165,7 +165,7 @@ CAI_AllySpeechManager::~CAI_AllySpeechManager()
 void CAI_AllySpeechManager::Spawn()
 {
 	Assert( g_ConceptInfoMap.Count() != 0 );
-	for ( int i = 0; i < ARRAYSIZE(g_ConceptInfos); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE(g_ConceptInfos); i++ )
 		m_ConceptTimers.Insert( AllocPooledString( g_ConceptInfos[i].concept ), CSimpleSimTimer() );
 }
 
@@ -1536,7 +1536,7 @@ bool CAI_PlayerAlly::ShouldSpeakRandom( AIConcept_t concept, int iChance )
 			if ( flModifier < 0.001 )
 				return false;
 				
-			iChance = floor( (float)iChance / flModifier );
+			iChance = (int)floor( iChance / flModifier );
 		}
 	}
 	

@@ -717,7 +717,7 @@ bool CFourWheelVehiclePhysics::Think()
 	m_nLastSpeed = m_nSpeed;
 	m_nSpeed = ( int )carSpeed;
 	m_nRPM = ( int )carState.engineRPM;
-	m_nHasBoost = vehicleData.engine.boostDelay;	// if we have any boost delay, vehicle has boost ability
+	m_nHasBoost = (int)vehicleData.engine.boostDelay;	// if we have any boost delay, vehicle has boost ability
 
 	m_pVehicle->Update( gpGlobals->frametime, m_controls);
 

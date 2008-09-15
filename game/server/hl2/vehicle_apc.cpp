@@ -291,7 +291,7 @@ Vector CPropAPC::BodyTarget( const Vector &posSrc, bool bNoisy )
 void CPropAPC::AddSmokeTrail( const Vector &vecPos )
 {
 	// Start this trail out with a bang!
-	ExplosionCreate( vecPos, vec3_angle, this, 1000, 500.0f, SF_ENVEXPLOSION_NODAMAGE | 
+	ExplosionCreate( vecPos, vec3_angle, this, 1000, 500, SF_ENVEXPLOSION_NODAMAGE | 
 		SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS | SF_ENVEXPLOSION_NOSMOKE | 
 		SF_ENVEXPLOSION_NOFIREBALLSMOKE, 0 );
 	UTIL_ScreenShake( vecPos, 25.0, 150.0, 1.0, 750.0f, SHAKE_START );
@@ -349,7 +349,7 @@ void CPropAPC::AddSmokeTrail( const Vector &vecPos )
 //------------------------------------------------------------------------------
 void CPropAPC::ExplodeAndThrowChunk( const Vector &vecExplosionPos )
 {
-	ExplosionCreate( vecExplosionPos, vec3_angle, this, 1000, 500.0f, 
+	ExplosionCreate( vecExplosionPos, vec3_angle, this, 1000, 500, 
 		SF_ENVEXPLOSION_NODAMAGE | SF_ENVEXPLOSION_NOSPARKS | SF_ENVEXPLOSION_NODLIGHTS	|
 		SF_ENVEXPLOSION_NOSMOKE  | SF_ENVEXPLOSION_NOFIREBALLSMOKE, 0 );
 	UTIL_ScreenShake( vecExplosionPos, 25.0, 150.0, 1.0, 750.0f, SHAKE_START );

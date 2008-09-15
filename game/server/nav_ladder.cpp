@@ -100,6 +100,8 @@ CNavArea ** CNavLadder::GetConnection( LadderConnectionType dir )
 		return &m_topBehindArea;
 	case LADDER_BOTTOM:
 		return &m_bottomArea;
+	default:
+		break;
 	}
 
 	return NULL;

@@ -187,12 +187,12 @@ inline long ThreadInterlockedExchangeAdd( long volatile *p, long value )						{ 
 inline long ThreadInterlockedCompareExchange( long volatile *p, long value, long comperand )	{ Assert( (size_t)p % 4 == 0 ); return _InterlockedCompareExchange( p, value, comperand ); }
 inline bool ThreadInterlockedAssignIf( long volatile *p, long value, long comperand )			{ Assert( (size_t)p % 4 == 0 ); return ( _InterlockedCompareExchange( p, value, comperand ) == comperand ); }
 #else
-TT_INTERFACE long ThreadInterlockedIncrement( long volatile * ) NOINLINE;
-TT_INTERFACE long ThreadInterlockedDecrement( long volatile * ) NOINLINE;
-TT_INTERFACE long ThreadInterlockedExchange( long volatile *, long value ) NOINLINE;
-TT_INTERFACE long ThreadInterlockedExchangeAdd( long volatile *, long value ) NOINLINE;
-TT_INTERFACE long ThreadInterlockedCompareExchange( long volatile *, long value, long comperand ) NOINLINE;
-TT_INTERFACE bool ThreadInterlockedAssignIf( long volatile *, long value, long comperand ) NOINLINE;
+TT_INTERFACE long ThreadInterlockedIncrement( long volatile * );
+TT_INTERFACE long ThreadInterlockedDecrement( long volatile * );
+TT_INTERFACE long ThreadInterlockedExchange( long volatile *, long value );
+TT_INTERFACE long ThreadInterlockedExchangeAdd( long volatile *, long value );
+TT_INTERFACE long ThreadInterlockedCompareExchange( long volatile *, long value, long comperand );
+TT_INTERFACE bool ThreadInterlockedAssignIf( long volatile *, long value, long comperand );
 #endif
 
 inline unsigned ThreadInterlockedExchangeSubtract( long volatile *p, long value )	{ return ThreadInterlockedExchangeAdd( (long volatile *)p, -value ); }
@@ -203,21 +203,21 @@ inline void *ThreadInterlockedExchangePointer( void * volatile *p, void *value )
 inline void *ThreadInterlockedCompareExchangePointer( void * volatile *p, void *value, void *comperand )	{ return (void *)_InterlockedCompareExchange( reinterpret_cast<long volatile *>(p), reinterpret_cast<long>(value), reinterpret_cast<long>(comperand) ); }
 inline bool ThreadInterlockedAssignPointerIf( void * volatile *p, void *value, void *comperand )			{ return ( _InterlockedCompareExchange( reinterpret_cast<long volatile *>(p), reinterpret_cast<long>(value), reinterpret_cast<long>(comperand) ) == reinterpret_cast<long>(comperand) ); }
 #else
-TT_INTERFACE void *ThreadInterlockedExchangePointer( void * volatile *, void *value ) NOINLINE;
-TT_INTERFACE void *ThreadInterlockedCompareExchangePointer( void * volatile *, void *value, void *comperand ) NOINLINE;
-TT_INTERFACE bool ThreadInterlockedAssignPointerIf( void * volatile *, void *value, void *comperand ) NOINLINE;
+TT_INTERFACE void *ThreadInterlockedExchangePointer( void * volatile *, void *value );
+TT_INTERFACE void *ThreadInterlockedCompareExchangePointer( void * volatile *, void *value, void *comperand );
+TT_INTERFACE bool ThreadInterlockedAssignPointerIf( void * volatile *, void *value, void *comperand );
 #endif
 
 inline void const *ThreadInterlockedExchangePointerToConst( void const * volatile *p, void const *value )							{ return ThreadInterlockedExchangePointer( const_cast < void * volatile * > ( p ), const_cast < void * > ( value ) );  }
 inline void const *ThreadInterlockedCompareExchangePointerToConst( void const * volatile *p, void const *value, void const *comperand )	{ return ThreadInterlockedCompareExchangePointer( const_cast < void * volatile * > ( p ), const_cast < void * > ( value ), const_cast < void * > ( comperand ) ); }
 inline bool ThreadInterlockedAssignPointerToConstIf( void const * volatile *p, void const *value, void const *comperand )			{ return ThreadInterlockedAssignPointerIf( const_cast < void * volatile * > ( p ), const_cast < void * > ( value ), const_cast < void * > ( comperand ) ); }
 
-TT_INTERFACE int64 ThreadInterlockedIncrement64( int64 volatile * ) NOINLINE;
-TT_INTERFACE int64 ThreadInterlockedDecrement64( int64 volatile * ) NOINLINE;
-TT_INTERFACE int64 ThreadInterlockedCompareExchange64( int64 volatile *, int64 value, int64 comperand ) NOINLINE;
-TT_INTERFACE int64 ThreadInterlockedExchange64( int64 volatile *, int64 value ) NOINLINE;
-TT_INTERFACE int64 ThreadInterlockedExchangeAdd64( int64 volatile *, int64 value ) NOINLINE;
-TT_INTERFACE bool ThreadInterlockedAssignIf64(volatile int64 *pDest, int64 value, int64 comperand ) NOINLINE;
+TT_INTERFACE int64 ThreadInterlockedIncrement64( int64 volatile * );
+TT_INTERFACE int64 ThreadInterlockedDecrement64( int64 volatile * );
+TT_INTERFACE int64 ThreadInterlockedCompareExchange64( int64 volatile *, int64 value, int64 comperand );
+TT_INTERFACE int64 ThreadInterlockedExchange64( int64 volatile *, int64 value );
+TT_INTERFACE int64 ThreadInterlockedExchangeAdd64( int64 volatile *, int64 value );
+TT_INTERFACE bool ThreadInterlockedAssignIf64(volatile int64 *pDest, int64 value, int64 comperand );
 
 inline unsigned ThreadInterlockedExchangeSubtract( unsigned volatile *p, unsigned value )	{ return ThreadInterlockedExchangeAdd( (long volatile *)p, value ); }
 inline unsigned ThreadInterlockedIncrement( unsigned volatile *p )	{ return ThreadInterlockedIncrement( (long volatile *)p ); }
@@ -307,14 +307,14 @@ template <class T = int>
 class CThreadLocalInt : public CThreadLocal<T>
 {
 public:
-	operator const T() const { return Get(); }
+	operator const T() const { return CThreadLocal<T>::Get(); }
 	int	operator=( T i ) { Set( i ); return i; }
 
-	T operator++()					{ T i = Get(); Set( ++i ); return i; }
-	T operator++(int)				{ T i = Get(); Set( i + 1 ); return i; }
+	T operator++()					{ T i = CThreadLocal<T>::Get(); Set( ++i ); return i; }
+	T operator++(int)				{ T i = CThreadLocal<T>::Get(); Set( i + 1 ); return i; }
 
-	T operator--()					{ T i = Get(); Set( --i ); return i; }
-	T operator--(int)				{ T i = Get(); Set( i - 1 ); return i; }
+	T operator--()					{ T i = CThreadLocal<T>::Get(); Set( --i ); return i; }
+	T operator--(int)				{ T i = CThreadLocal<T>::Get(); Set( i - 1 ); return i; }
 };
 
 //---------------------------------------------------------
@@ -979,9 +979,8 @@ private:
 //-----------------------------------------------------------------------------
 
 #define TFRWL_ALIGN ALIGN8
-
-TFRWL_ALIGN 
-class TT_CLASS CThreadSpinRWLock
+ 
+class TFRWL_ALIGN TT_CLASS CThreadSpinRWLock
 {
 public:
 	CThreadSpinRWLock()	{ COMPILE_TIME_ASSERT( sizeof( LockInfo_t ) == sizeof( int64 ) ); Assert( (int)this % 8 == 0 ); memset( this, 0, sizeof( *this ) ); }

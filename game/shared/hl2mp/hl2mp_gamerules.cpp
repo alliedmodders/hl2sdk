@@ -175,7 +175,7 @@ static const char *s_PreserveEnts[] =
 #endif
 
 // NOTE: the indices here must match TEAM_TERRORIST, TEAM_CT, TEAM_SPECTATOR, etc.
-char *sTeamNames[] =
+const char *sTeamNames[] =
 {
 	"Unassigned",
 	"Spectator",
@@ -187,7 +187,7 @@ CHL2MPRules::CHL2MPRules()
 {
 #ifndef CLIENT_DLL
 	// Create the team managers
-	for ( int i = 0; i < ARRAYSIZE( sTeamNames ); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE( sTeamNames ); i++ )
 	{
 		CTeam *pTeam = static_cast<CTeam*>(CreateEntityByName( "team_manager" ));
 		pTeam->Init( sTeamNames[i], i );

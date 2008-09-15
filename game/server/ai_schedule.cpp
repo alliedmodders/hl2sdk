@@ -239,7 +239,7 @@ bool CAI_SchedulesManager::LoadSchedulesFromBuffer( const char *prefix, char *pS
 		int	   taskNum = 0;
 
 		pfile = engine->ParseFile(pfile, token, sizeof( token ) );
-		while ((token[0]!=NULL) && (stricmp("Interrupts",token)))
+		while ((token[0] != '\0') && (stricmp("Interrupts", token)))
 		{
 			// Convert generic ID to sub-class specific enum
 			int taskID = CAI_BaseNPC::GetTaskID(token);
@@ -477,7 +477,7 @@ bool CAI_SchedulesManager::LoadSchedulesFromBuffer( const char *prefix, char *pS
 		// Now read in the interrupts
 		// ==========================
 		pfile = engine->ParseFile(pfile, token, sizeof( token ) );
-		while ((token[0]!=NULL) && (stricmp("Schedule",token)))
+		while ((token[0] != '\0') && (stricmp("Schedule", token)))
 		{
 			// Convert generic ID to sub-class specific enum
 			int condID = CAI_BaseNPC::GetConditionID(token);

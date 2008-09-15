@@ -70,7 +70,7 @@ void CNPC_Kleiner::HandleAnimEvent( animevent_t *pEvent )
 //-----------------------------------------------------------------------------
 int CNPC_Kleiner::GetSoundInterests ( void )
 {
-	return	NULL;
+	return	0;
 }
 
 //-----------------------------------------------------------------------------
@@ -79,7 +79,7 @@ int CNPC_Kleiner::GetSoundInterests ( void )
 void CNPC_Kleiner::Spawn()
 {
 	// Allow custom model usage (mostly for monitors)
-	char *szModel = (char *)STRING( GetModelName() );
+	const char *szModel = (char *)STRING( GetModelName() );
 	if (!szModel || !*szModel)
 	{
 		szModel = "models/kleiner.mdl";

@@ -16,8 +16,10 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#ifdef _MSC_VER
 #pragma warning(disable:4244)   // "conversion from 'const int' to 'float', possible loss of data"
 #pragma warning(disable:4730)	// "mixing _m64 and floating point expressions may result in incorrect code"
+#endif
 
 //-----------------------------------------------------------------------------
 // 3D Now Implementations of optimized routines:
@@ -138,7 +140,9 @@ void FASTCALL _3DNow_VectorNormalizeFast (Vector& vec)
 
 
 // JAY: This complains with the latest processor pack
+#ifdef _MSC_VER
 #pragma warning(disable: 4730)
+#endif
 
 float _3DNow_InvRSquared(const float* v)
 {

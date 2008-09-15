@@ -61,7 +61,7 @@ void CWeapon_Manhack::Spawn( )
 
 	FallInit();// get ready to fall down.
 
-	m_flBladeYaw = NULL;
+	m_flBladeYaw = 0.0f;
 	AddSolidFlags( FSOLID_NOT_SOLID );
 }
 

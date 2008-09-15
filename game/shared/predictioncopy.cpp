@@ -519,13 +519,13 @@ void CPredictionCopy::DescribeQuaternion( difftype_t dt, Quaternion* outValue, c
 		}
 
 		ReportFieldsDiffer( "quaternion[] differs (1st diff) (net %f %f %f %f - pred %f %f %f %f) delta(%f %f %f %f)\n", 
-			inValue[0], inValue[1], inValue[2], inValue[3],
-			outValue[0], outValue[1], outValue[2], outValue[3],
-			delta[0], delta[1], delta[2], delta[3] );
+			inValue->x, inValue->y, inValue->z, inValue->w,
+			outValue->x, outValue->y, outValue->z, outValue->w,
+			delta.x, delta.y, delta.z, delta.w );
 	}
 
 	DescribeFields( dt, "quaternion (%f %f %f %f)\n", 
-					outValue[0][0], outValue[0][1], outValue[0][2], outValue[3] );
+					outValue->x, outValue->y, outValue->z, outValue->w );
 }
 
 void CPredictionCopy::WatchQuaternion( difftype_t dt, Quaternion& outValue, const Quaternion &inValue )
@@ -1593,7 +1593,7 @@ void CPredictionDescribeData::DescribeQuaternion( const Quaternion *inValue, int
 
 void CPredictionDescribeData::DescribeEHandle( EHANDLE const *invalue, int count )
 {
-	Describe( "EHandle (%p)\n", invalue[ 0 ] );
+	Describe( "EHandle (%p)\n", invalue->Get() );
 }
 
 void CPredictionDescribeData::DescribeFields_R( int chain_count, datamap_t *pRootMap, typedescription_t *pFields, int fieldCount )

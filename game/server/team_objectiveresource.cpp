@@ -200,7 +200,7 @@ void CBaseTeamObjectiveResource::ResetControlPoints( void )
 
 		for ( int team = 0; team < MAX_CONTROL_POINT_TEAMS; team++ )
 		{
-			m_iNumTeamMembers.Set( TEAM_ARRAY( i, team ), 0.0f );
+			m_iNumTeamMembers.Set( TEAM_ARRAY( i, team ), 0 );
 		}
 	}
 

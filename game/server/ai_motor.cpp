@@ -34,14 +34,18 @@ void DebugNoteMovementFailure()
 }
 
 // a place to put breakpoints
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable:4189)
+#endif
 AIMoveResult_t DbgResult( AIMoveResult_t result )
 {
+#ifdef _MSC_VER
 	if ( result < AIMR_OK )
 	{
-		int breakHere = 1;
+		//int breakHere = 1;
 	}
+#endif
 
 	switch ( result )
 	{
@@ -747,10 +751,11 @@ void CAI_Motor::UpdateYaw( int yawSpeed )
 
 	GetOuter()->SetUpdatedYaw();
 
+	float yaw = static_cast<float>(yawSpeed);
 	float ideal, current, newYaw;
 	
-	if ( yawSpeed == -1 )
-		yawSpeed = GetYawSpeed();
+	if ( yaw == -1.0f )
+		yaw = GetYawSpeed();
 
 	// NOTE: GetIdealYaw() will never exactly be reached because UTIL_AngleMod
 	// also truncates the angle to 16 bits of resolution. So lets truncate it here.
@@ -760,7 +765,7 @@ void CAI_Motor::UpdateYaw( int yawSpeed )
 	// FIXME: this needs a proper interval
 	float dt = min( 0.2, gpGlobals->curtime - GetLastThink() );
 	
-	newYaw = AI_ClampYaw( (float)yawSpeed * 10.0, current, ideal, dt );
+	newYaw = AI_ClampYaw( yaw * 10.0f, current, ideal, dt );
 		
 	if (newYaw != current)
 	{
@@ -908,7 +913,7 @@ AIMoveResult_t CAI_Motor::MoveNormalExecute( const AILocalMoveGoal_t &move )
 		AIMR_BLOCKED_WORLD,                      // AIM_PARTIAL_HIT_WORLD
 		AIMR_BLOCKED_WORLD,                      // AIM_PARTIAL_HIT_TARGET
 	};
-	Assert( ARRAYSIZE( moveResults ) == AIM_NUM_RESULTS && fMotorResult >= 0 && fMotorResult <= ARRAYSIZE( moveResults ) );
+	Assert( (AIMotorMoveResult_t)ARRAYSIZE( moveResults ) == AIM_NUM_RESULTS && fMotorResult >= 0 && fMotorResult <= (AIMotorMoveResult_t)ARRAYSIZE( moveResults ) );
 	
 	AIMoveResult_t result = moveResults[fMotorResult];
 	

@@ -1008,7 +1008,7 @@ void CNPC_Combine::StartTask( const Task_t *pTask )
 			info.SetAttacker( this );
 			info.SetInflictor( this );
 			info.SetDamage( m_iHealth );
-			info.SetDamageType( pTask->flTaskData );
+			info.SetDamageType( (int)pTask->flTaskData );
 			info.SetDamageForce( Vector( 0.1, 0.1, 0.1 ) );
 
 			TakeDamage( info );
@@ -1336,6 +1336,9 @@ Activity CNPC_Combine::NPC_TranslateActivity( Activity eNewActivity )
 		case ACT_RUN:
 			eNewActivity = ACT_RUN_AIM;
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -1436,6 +1439,9 @@ void CNPC_Combine::AnnounceEnemyType( CBaseEntity *pEnemy )
 	case CLASS_BARNACLE:
 		pSentenceName = "COMBINE_MONST_PARASITES";
 		break;
+
+	default:
+		break;
 	}
 
 	m_Sentences.Speak( pSentenceName, SENTENCE_PRIORITY_HIGH );
@@ -1471,6 +1477,9 @@ void CNPC_Combine::AnnounceEnemyKill( CBaseEntity *pEnemy )
 
 	case CLASS_HEADCRAB:
 	case CLASS_BARNACLE:
+		break;
+
+	default:
 		break;
 	}
 
@@ -1868,6 +1877,9 @@ int CNPC_Combine::SelectSchedule( void )
 			if ( nSched != SCHED_NONE )
 				return nSched;
 		}
+		break;
+
+	default:
 		break;
 	}
 

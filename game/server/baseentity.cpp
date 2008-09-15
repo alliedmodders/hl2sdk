@@ -563,8 +563,8 @@ void CBaseEntity::AddTimedOverlay( const char *msg, int endTime )
 	int len = strlen(msg);
 	pNewTO->msg = new char[len + 1];
 	Q_strncpy(pNewTO->msg,msg, len+1);
-	pNewTO->msgEndTime = gpGlobals->curtime + endTime;
-	pNewTO->msgStartTime = gpGlobals->curtime;
+	pNewTO->msgEndTime = (int)gpGlobals->curtime + endTime;
+	pNewTO->msgStartTime = (int)gpGlobals->curtime;
 	pNewTO->pNextTimedOverlay = m_pTimedOverlay;
 	m_pTimedOverlay = pNewTO;
 }
@@ -705,7 +705,7 @@ void CBaseEntity::DrawTimedOverlays(void)
 			// If messages aren't paused fade out
 			if (!CBaseEntity::Debug_IsPaused())
 			{
-				nAlpha = 255*((gpGlobals->curtime - pTO->msgStartTime)/(pTO->msgEndTime - pTO->msgStartTime));
+				nAlpha = (int)(255*((gpGlobals->curtime - pTO->msgStartTime)/(pTO->msgEndTime - pTO->msgStartTime)));
 			}
 			int r = 185;
 			int g = 145;
@@ -864,7 +864,7 @@ int CBaseEntity::DrawDebugTextOverlays(void)
 
 		if( m_iGlobalname != NULL_STRING )
 		{
-			Q_snprintf( tempstr, sizeof(tempstr), "GLOBALNAME: %s", m_iGlobalname );
+			Q_snprintf( tempstr, sizeof(tempstr), "GLOBALNAME: %s", STRING(m_iGlobalname) );
 			EntityText(offset,tempstr, 0);
 			offset++;
 		}
@@ -3577,7 +3577,7 @@ void CBaseEntity::DrawInputOverlay(const char *szInputName, CBaseEntity *pCaller
 	{
 		Q_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s) <-- (%s)\n", gpGlobals->curtime, szInputName, pCaller ? pCaller->GetDebugName() : NULL);
 	}
-	AddTimedOverlay(bigstring, 10.0);
+	AddTimedOverlay(bigstring, 10);
 
 	if ( Value.FieldType() == FIELD_INTEGER )
 	{
@@ -3608,7 +3608,7 @@ void CBaseEntity::DrawOutputOverlay(CEventAction *ev)
 	{
 		Q_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s) --> (%s)\n", gpGlobals->curtime,  STRING(ev->m_iTargetInput), STRING(ev->m_iTarget));
 	}
-	AddTimedOverlay(bigstring, 10.0);
+	AddTimedOverlay(bigstring, 10);
 
 	// Now print to the console
 	if ( ev->m_flDelay )
@@ -4649,7 +4649,7 @@ void CBaseEntity::PrecacheModelComponents( int nModelIndex )
 							char token[256];
 							const char *pOptions = pEvent->pszOptions();
 							nexttoken( token, pOptions, ' ' );
-							if ( token ) 
+							if ( token[0] != '\0' ) 
 							{
 								PrecacheParticleSystem( token );
 							}
@@ -5105,6 +5105,8 @@ void CC_Ent_Dump( const CCommand& args )
 									Q_snprintf( buf,sizeof(buf), "%s", STRING(var.Entity()->GetEntityName()) );
 								}
 							}
+							break;
+						default:
 							break;
 						}
 
@@ -6924,8 +6926,8 @@ void CBaseEntity::SUB_PerformFadeOut( void )
 		dt = 0.1f;
 	}
 	m_nRenderMode = kRenderTransTexture;
-	int speed = max(1,256*dt); // fade out over 1 second
-	SetRenderColorA( UTIL_Approach( 0, m_clrRender->a, speed ) );
+	int speed = (int)max(1,256*dt); // fade out over 1 second
+	SetRenderColorA( (byte)UTIL_Approach( 0, m_clrRender->a, speed ) );
 }
 
 bool CBaseEntity::SUB_AllowedToFade( void )

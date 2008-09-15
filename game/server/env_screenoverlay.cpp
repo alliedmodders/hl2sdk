@@ -49,6 +49,7 @@ BEGIN_DATADESC( CEnvScreenOverlay )
 //	DEFINE_ARRAY( m_iszOverlayNames, FIELD_STRING, MAX_SCREEN_OVERLAYS ),
 //	DEFINE_ARRAY( m_flOverlayTimes, FIELD_FLOAT, MAX_SCREEN_OVERLAYS ),
 
+	/* This causes a cannot apply ‘offsetof’ when ‘operator[]’ is overloaded error in GCC 4.2
 	DEFINE_KEYFIELD( m_iszOverlayNames[0], FIELD_STRING, "OverlayName1" ),
 	DEFINE_KEYFIELD( m_iszOverlayNames[1], FIELD_STRING, "OverlayName2" ),
 	DEFINE_KEYFIELD( m_iszOverlayNames[2], FIELD_STRING, "OverlayName3" ),
@@ -69,6 +70,28 @@ BEGIN_DATADESC( CEnvScreenOverlay )
 	DEFINE_KEYFIELD( m_flOverlayTimes[7], FIELD_FLOAT, "OverlayTime8" ),
 	DEFINE_KEYFIELD( m_flOverlayTimes[8], FIELD_FLOAT, "OverlayTime9" ),
 	DEFINE_KEYFIELD( m_flOverlayTimes[9], FIELD_FLOAT, "OverlayTime10" ),
+	*/
+
+	DEFINE_KEYFIELD_NETARRAY( m_iszOverlayNames, 0, FIELD_STRING, "OverlayName1" ),
+	DEFINE_KEYFIELD_NETARRAY( m_iszOverlayNames, 1, FIELD_STRING, "OverlayName2" ),
+	DEFINE_KEYFIELD_NETARRAY( m_iszOverlayNames, 2, FIELD_STRING, "OverlayName3" ),
+	DEFINE_KEYFIELD_NETARRAY( m_iszOverlayNames, 3, FIELD_STRING, "OverlayName4" ),
+	DEFINE_KEYFIELD_NETARRAY( m_iszOverlayNames, 4, FIELD_STRING, "OverlayName5" ),
+	DEFINE_KEYFIELD_NETARRAY( m_iszOverlayNames, 5, FIELD_STRING, "OverlayName6" ),
+	DEFINE_KEYFIELD_NETARRAY( m_iszOverlayNames, 6, FIELD_STRING, "OverlayName7" ),
+	DEFINE_KEYFIELD_NETARRAY( m_iszOverlayNames, 7, FIELD_STRING, "OverlayName8" ),
+	DEFINE_KEYFIELD_NETARRAY( m_iszOverlayNames, 8, FIELD_STRING, "OverlayName9" ),
+	DEFINE_KEYFIELD_NETARRAY( m_iszOverlayNames, 9, FIELD_STRING, "OverlayName10" ),
+	DEFINE_KEYFIELD_NETARRAY( m_flOverlayTimes, 0, FIELD_FLOAT, "OverlayTime1" ),
+	DEFINE_KEYFIELD_NETARRAY( m_flOverlayTimes, 1, FIELD_FLOAT, "OverlayTime2" ),
+	DEFINE_KEYFIELD_NETARRAY( m_flOverlayTimes, 2, FIELD_FLOAT, "OverlayTime3" ),
+	DEFINE_KEYFIELD_NETARRAY( m_flOverlayTimes, 3, FIELD_FLOAT, "OverlayTime4" ),
+	DEFINE_KEYFIELD_NETARRAY( m_flOverlayTimes, 4, FIELD_FLOAT, "OverlayTime5" ),
+	DEFINE_KEYFIELD_NETARRAY( m_flOverlayTimes, 5, FIELD_FLOAT, "OverlayTime6" ),
+	DEFINE_KEYFIELD_NETARRAY( m_flOverlayTimes, 6, FIELD_FLOAT, "OverlayTime7" ),
+	DEFINE_KEYFIELD_NETARRAY( m_flOverlayTimes, 7, FIELD_FLOAT, "OverlayTime8" ),
+	DEFINE_KEYFIELD_NETARRAY( m_flOverlayTimes, 8, FIELD_FLOAT, "OverlayTime9" ),
+	DEFINE_KEYFIELD_NETARRAY( m_flOverlayTimes, 9, FIELD_FLOAT, "OverlayTime10" ),
 	
 	// Class CEnvScreenOverlay:
 	DEFINE_FIELD( m_iDesiredOverlay, FIELD_INTEGER ),

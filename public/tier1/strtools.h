@@ -16,6 +16,7 @@
 #elif _LINUX
 #include <ctype.h>
 #include <wchar.h>
+#include <math.h>
 #endif
 
 #include <string.h>
@@ -24,6 +25,30 @@
 template< class T, class I > class CUtlMemory;
 template< class T, class A > class CUtlVector;
 
+#ifdef _LINUX
+inline char *strupr( char *start )
+{
+      char *str = start;
+      while( str && *str )
+      {
+              *str = (char)toupper(*str);
+              str++;
+      }
+      return start;
+}
+
+inline char *strlwr( char *start )
+{
+      char *str = start;
+      while( str && *str )
+      {
+              *str = (char)tolower(*str);
+              str++;
+      }
+      return start;
+}
+
+#endif // _LINUX
 
 //-----------------------------------------------------------------------------
 // Portable versions of standard string functions
@@ -62,31 +87,6 @@ int		_V_wcslen	( const char* file, int line, const wchar_t *pwch );
 #define V_wcslen(pwch)					_V_wcslen	(__FILE__, __LINE__, (pwch))		
 
 #else
-
-#ifdef _LINUX
-inline char *strupr( char *start )
-{
-      char *str = start;
-      while( str && *str )
-      {
-              *str = (char)toupper(*str);
-              str++;
-      }
-      return start;
-}
-
-inline char *strlwr( char *start )
-{
-      char *str = start;
-      while( str && *str )
-      {
-              *str = (char)tolower(*str);
-              str++;
-      }
-      return start;
-}
-
-#endif // _LINUX
 
 inline void		V_memset (void *dest, int fill, int count)			{ memset( dest, fill, count ); }
 inline void		V_memcpy (void *dest, const void *src, int count)	{ memcpy( dest, src, count ); }

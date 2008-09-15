@@ -645,7 +645,7 @@ CBaseEntity *CAI_FuncTankBehavior::BestEnemy( void )
 		{
 			bBestSeen = ( pNPC->GetSenses()->DidSeeEntity( pEnemy ) || pNPC->FVisible( pEnemy ) ); // @TODO (toml 04-02-03): Need to optimize CanSeeEntity() so multiple calls in frame do not recalculate, rather cache
 			iBestPriority = pNPC->IRelationPriority( pEnemy );
-			iBestDistSq = (pEnemy->GetAbsOrigin() - GetAbsOrigin() ).LengthSqr();
+			iBestDistSq = (int)(pEnemy->GetAbsOrigin() - GetAbsOrigin()).LengthSqr();
 			pBestEnemy = pEnemy;
 			bBestUnreachable = bUnreachable;
 		}
@@ -656,7 +656,7 @@ CBaseEntity *CAI_FuncTankBehavior::BestEnemy( void )
 			// currently think is the best visible enemy. No need to do
 			// a distance check, just get mad at this one for now.
 			iBestPriority = pNPC->IRelationPriority ( pEnemy );
-			iBestDistSq = ( pEnemy->GetAbsOrigin() - GetAbsOrigin() ).LengthSqr();
+			iBestDistSq = (int)(pEnemy->GetAbsOrigin() - GetAbsOrigin()).LengthSqr();
 			pBestEnemy = pEnemy;
 			bBestUnreachable = bUnreachable;
 		}
@@ -665,7 +665,7 @@ CBaseEntity *CAI_FuncTankBehavior::BestEnemy( void )
 			// this entity is disliked just as much as the entity that
 			// we currently think is the best visible enemy, so we only
 			// get mad at it if it is closer.
-			iDistSq = ( pEnemy->GetAbsOrigin() - GetAbsOrigin() ).LengthSqr();
+			iDistSq = (int)(pEnemy->GetAbsOrigin() - GetAbsOrigin()).LengthSqr();
 
 			bool bCloser = ( iDistSq < iBestDistSq ) ;
 

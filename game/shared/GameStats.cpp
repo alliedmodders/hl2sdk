@@ -211,6 +211,12 @@ void UpdatePerfStats( void )
 
 CBaseGameStats_Driver::CBaseGameStats_Driver( void ) :
 	BaseClass( "CGameStats" ),
+	m_bBufferFull( false ),
+	m_nWriteIndex( 0 ),
+	m_flLastRealTime( -1 ),
+	m_flLastSampleTime( -1 ),
+	m_flTotalTimeInLevels( 0 ),
+	m_iNumLevels( 0 ),
 	m_iLoadedVersion( -1 ),
 	m_bEnabled( false ),
 	m_bShuttingDown( false ),
@@ -220,13 +226,7 @@ CBaseGameStats_Driver::CBaseGameStats_Driver( void ) :
 	m_bStationary( false ),
 	m_flLastMovementTime( 0.0f ),
 	m_bGamePaused( false ),
-	m_pGamestatsData( NULL ),
-	m_bBufferFull( false ),
-	m_nWriteIndex( 0 ),
-	m_flLastRealTime( -1 ),
-	m_flLastSampleTime( -1 ),
-	m_flTotalTimeInLevels( 0 ),
-	m_iNumLevels( 0 )
+	m_pGamestatsData( NULL )
 
 {
 	m_szLoadedUserID[0] = 0;;
@@ -457,7 +457,7 @@ void CBaseGameStats::Event_Credits()
 	{
 		if( gamestats->UserPlayedAllTheMaps() )
 		{
-			gamestats->m_BasicStats.m_nSecondsToCompleteGame = elapsed + gamestats->m_BasicStats.m_Summary.m_nSeconds;
+			gamestats->m_BasicStats.m_nSecondsToCompleteGame = (int)(elapsed + gamestats->m_BasicStats.m_Summary.m_nSeconds);
 			gamestats->SaveToFileNOW();
 		}
 	}
@@ -607,7 +607,7 @@ bool CBaseGameStats::UploadStatsFileNOW( void )
 		return false;
 	}
 
-	int curtime = Plat_FloatTime();
+	int curtime = (int)Plat_FloatTime();
 
 	CBGSDriver.m_tLastUpload = curtime;
 
@@ -697,7 +697,7 @@ bool CBaseGameStats::LoadFromFile( void )
 				int iCheckForStandardStatsInFile = *( int * )buf.PeekGet();
 				bool bValid = true;
 
-				if ( iCheckForStandardStatsInFile != GAMESTATS_STANDARD_NOT_SAVED )
+				if ( iCheckForStandardStatsInFile != (int)GAMESTATS_STANDARD_NOT_SAVED )
 				{
 					//the GAMESTATS_STANDARD_NOT_SAVED flag coincides with user completion time, rewind so the gamestats parser can grab it
 					bValid = gamestats->m_BasicStats.ParseFromBuffer( buf, version );

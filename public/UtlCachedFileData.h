@@ -61,13 +61,13 @@ public:
 		m_pszRepositoryFileName( repositoryFileName ),
 		m_nVersion( version ),
 		m_pfnMetaChecksum( checksumfunc ),
-		m_bDirty( false ),
-		m_bInitialized( false ),
 		m_uCurrentMetaChecksum( 0u ),
 		m_fileCheckType( fileCheckType ),
 		m_bNeverCheckDisk( nevercheckdisk ),
 		m_bReadOnly( readonly ),
-		m_bSaveManifest( savemanifest )
+		m_bSaveManifest( savemanifest ),
+		m_bDirty( false ),
+		m_bInitialized( false )
 	{
 		Assert( m_pszRepositoryFileName && m_pszRepositoryFileName[ 0 ] );
 	}

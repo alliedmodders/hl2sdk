@@ -530,7 +530,7 @@ void CBaseAnimating::SetLightingOriginRelative( string_t strLightingOriginRelati
 		{
 			if( !pLightingOrigin )
 			{
-				DevWarning( "%s: Cannot find Lighting Origin named: %s\n", GetEntityName().ToCStr(), strLightingOriginRelative );
+				DevWarning( "%s: Cannot find Lighting Origin named: %s\n", GetEntityName().ToCStr(), STRING(strLightingOriginRelative) );
 			}
 			else
 			{
@@ -2527,7 +2527,7 @@ void CBaseAnimating::LockStudioHdr()
 
 			if ( pStudioHdrContainer && pStudioHdrContainer->GetVirtualModel() )
 			{
-				MDLHandle_t hVirtualModel = (MDLHandle_t)pStudioHdrContainer->GetRenderHdr()->virtualModel;
+				MDLHandle_t hVirtualModel = (MDLHandle_t)reinterpret_cast<intptr_t>(pStudioHdrContainer->GetRenderHdr()->virtualModel);
 				mdlcache->LockStudioHdr( hVirtualModel );
 			}
 			m_pStudioHdr = pStudioHdrContainer; // must be last to ensure virtual model correctly set up
@@ -2545,7 +2545,7 @@ void CBaseAnimating::UnlockStudioHdr()
 			mdlcache->UnlockStudioHdr( modelinfo->GetCacheHandle( mdl ) );
 			if ( m_pStudioHdr->GetVirtualModel() )
 			{
-				MDLHandle_t hVirtualModel = (MDLHandle_t)m_pStudioHdr->GetRenderHdr()->virtualModel;
+				MDLHandle_t hVirtualModel = (MDLHandle_t)reinterpret_cast<intptr_t>(m_pStudioHdr->GetRenderHdr()->virtualModel);
 				mdlcache->UnlockStudioHdr( hVirtualModel );
 			}
 		}

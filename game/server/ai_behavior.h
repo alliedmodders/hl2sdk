@@ -15,10 +15,14 @@
 #include "networkvar.h"
 
 #ifdef DEBUG
+#ifdef _MSC_VER
 #pragma warning(push)
+#endif
 #include <typeinfo>
+#ifdef _MSC_VER
 #pragma warning(pop)
 #pragma warning(disable:4290)
+#endif
 #endif
 
 #if defined( _WIN32 )
@@ -274,28 +278,28 @@ public:
 	{
 		if ( condition >= ID_SPACE_OFFSET && condition < ID_SPACE_OFFSET + 10000 ) // it's local to us
 			condition = GetClassScheduleIdSpace()->ConditionLocalToGlobal( condition );
-		GetOuter()->SetCondition( condition );
+		CAI_ComponentWithOuter<NPC_CLASS, CAI_BehaviorBase>::GetOuter()->SetCondition( condition );
 	}
 
 	bool HasCondition( int condition )
 	{
 		if ( condition >= ID_SPACE_OFFSET && condition < ID_SPACE_OFFSET + 10000 ) // it's local to us
 			condition = GetClassScheduleIdSpace()->ConditionLocalToGlobal( condition );
-		return GetOuter()->HasCondition( condition );
+		return CAI_ComponentWithOuter<NPC_CLASS, CAI_BehaviorBase>::GetOuter()->HasCondition( condition );
 	}
 
 	bool HasInterruptCondition( int condition )
 	{
 		if ( condition >= ID_SPACE_OFFSET && condition < ID_SPACE_OFFSET + 10000 ) // it's local to us
 			condition = GetClassScheduleIdSpace()->ConditionLocalToGlobal( condition );
-		return GetOuter()->HasInterruptCondition( condition );
+		return CAI_ComponentWithOuter<NPC_CLASS, CAI_BehaviorBase>::GetOuter()->HasInterruptCondition( condition );
 	}
 
 	void ClearCondition( int condition )
 	{
 		if ( condition >= ID_SPACE_OFFSET && condition < ID_SPACE_OFFSET + 10000 ) // it's local to us
 			condition = GetClassScheduleIdSpace()->ConditionLocalToGlobal( condition );
-		GetOuter()->ClearCondition( condition );
+		CAI_ComponentWithOuter<NPC_CLASS, CAI_BehaviorBase>::GetOuter()->ClearCondition( condition );
 	}
 
 protected:
@@ -310,7 +314,7 @@ protected:
 	}
 	virtual CAI_ClassScheduleIdSpace *GetClassScheduleIdSpace()
 	{
-		return GetOuter()->GetClassScheduleIdSpace();
+		return CAI_ComponentWithOuter<NPC_CLASS, CAI_BehaviorBase>::GetOuter()->GetClassScheduleIdSpace();
 	}
 
 	static CAI_ClassScheduleIdSpace &AccessClassScheduleIdSpaceDirect()
@@ -1041,7 +1045,7 @@ inline void CAI_BehaviorHost<BASE_NPC>::ChangeBehaviorTo( CAI_BehaviorBase *pNew
 		if ( pOldBehavior )
 		{
 			pOldBehavior->EndScheduleSelection();
-			VacateStrategySlot();
+			this->VacateStrategySlot();
 		}
 
 		OnChangeRunningBehavior( pOldBehavior, pNewBehavior );

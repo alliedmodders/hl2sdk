@@ -10,7 +10,8 @@
 #include "iscenetokenprocessor.h"
 #include "scenefilecache/SceneImageFile.h"
 
-#include "lzma/lzma.h"
+//#include "lzma/lzma.h"
+extern unsigned char *LZMA_Compress(unsigned char *buffer, unsigned int bufsize, unsigned int *outsize, unsigned int unk = 18);
 
 #include "tier1/utlbuffer.h"
 #include "tier1/UtlStringMap.h"

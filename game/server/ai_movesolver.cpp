@@ -114,7 +114,7 @@ bool CAI_MoveSolver::Solve( const AI_MoveSuggestion_t *pSuggestions, int nSugges
 		AI_MoveSuggestion_t *pHighSuggestion;
 	};
 
-	Solution_t 	solutions[NUM_SOLUTIONS]	= { 0 };
+	Solution_t 	solutions[NUM_SOLUTIONS]	= { {0.0f, 0.0f, NULL} };
 
 	//---------------------------------
 
@@ -133,15 +133,15 @@ bool CAI_MoveSolver::Solve( const AI_MoveSuggestion_t *pSuggestions, int nSugges
 
 		// Convert arc values to solution indices relative to right post. Right is angle down, left is angle up.
 		float halfSpan	= current.arc.span * 0.5;
-		int   center 	= round( ( halfSpan * NUM_SOLUTIONS ) / 360 );
-		int   left		= ( current.arc.span * NUM_SOLUTIONS ) / 360;
+		int   center 	= (int)round( ( halfSpan * NUM_SOLUTIONS ) / 360 );
+		int   left		= (int)( (current.arc.span * NUM_SOLUTIONS) / 360 );
 
 		float angRight   = current.arc.center - halfSpan;
 
 		if (angRight < 0.0)
 			angRight += 360;
 
-		int base = ( angRight * NUM_SOLUTIONS ) / 360;
+		int base = (int)( (angRight * NUM_SOLUTIONS) / 360 );
 
 		// Sweep from left to right, summing the bias. For positive suggestions,
 		// the bias is further weighted to favor the center of the arc.

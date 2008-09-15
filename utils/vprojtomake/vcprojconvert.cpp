@@ -23,6 +23,11 @@
 #include <dirent.h> // scandir()
 #define _stat stat
 
+// The defines for this in the makefile interfere with the definitions 
+// from Xerces, so we undefine them here
+#undef stricmp
+#undef strnicmp
+
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
@@ -161,17 +166,17 @@ bool CVCProjConvert::LoadProject( const char *project )
             char* message = XMLString::transcode(toCatch.getMessage());
             Error( "Exception message is: %s\n", message );    
             XMLString::release(&message);
-            return;
+            return false;
         }
         catch (const DOMException& toCatch) {
             char* message = XMLString::transcode(toCatch.msg);
             Error( "Exception message is: %s\n", message );    
             XMLString::release(&message);
-            return;
+            return false;
         }
         catch (...) {
             Error( "Unexpected Exception \n" );
-            return;
+            return false;
         }
 	
 	DOMDocument *pXMLDoc = parser->getDocument();
@@ -261,7 +266,7 @@ CUtlSymbol CVCProjConvert::GetXMLAttribValue( IXMLDOMElement *p, const char *att
 	CUtlSymbol name( static_cast<char *>( _bstr_t( vtValue.bstrVal ) ) );
 	::SysFreeString(vtValue.bstrVal);
 #elif _LINUX
-	const XMLCh *xAttrib = XMLString::transcode( attribName );
+	XMLCh *xAttrib = XMLString::transcode( attribName );
 	const XMLCh *value = p->getAttribute( xAttrib );
 	if ( value == NULL )
 	{
@@ -341,7 +346,7 @@ bool CVCProjConvert::ExtractProjectName( IXMLDOMDocument *pDoc )
 		int len = nodes->getLength();
 		if ( len == 1 )
 		{
-			DOMNode *node = nodes->item(0);
+			DOMElement *node = static_cast<DOMElement *>(nodes->item(0));
 			if ( node )
 			{
 				m_Name = GetXMLAttribValue( node, "Name" );
@@ -396,7 +401,7 @@ bool CVCProjConvert::ExtractConfigurations( IXMLDOMDocument *pDoc )
 		int len = nodes->getLength();
 		for ( int i=0; i<len; i++ )
 		{
-			DOMNode *node = nodes->item(i);
+			DOMElement *node = static_cast<DOMElement *>(nodes->item(i));
 			if (node)
 			{
 				CUtlSymbol configName = GetXMLAttribValue( node, "Name" );
@@ -496,7 +501,7 @@ bool CVCProjConvert::ExtractIncludes( IXMLDOMElement *pDoc, CConfiguration & con
 		int len = nodes->getLength();
 		for ( int i=0; i<len; i++ )
 		{
-			DOMNode *node = nodes->item(i);
+			DOMElement *node = static_cast<DOMElement *>(nodes->item(i));
 			if (node)
 			{
 				CUtlSymbol toolName = GetXMLAttribValue( node, "Name" );
@@ -609,11 +614,11 @@ bool CVCProjConvert::IterateFileConfigurations( IXMLDOMElement *pFile, CUtlSymbo
 		int len = nodes->getLength();
 		for ( int i=0; i<len; i++ )
 		{
-			DOMNode *node = nodes->item(i);
+			DOMElement *node = static_cast<DOMElement *>(nodes->item(i));
 			if (node)
 			{
 				CUtlSymbol configName = GetXMLAttribValue( node, "Name");
-				CUtlSymbol excluded = GetXMLAttribValue( node ,"ExcludedFromBuild");
+				CUtlSymbol excluded = GetXMLAttribValue( node, "ExcludedFromBuild");
 				if ( configName.IsValid() && excluded.IsValid() )
 				{
 					int index = FindConfiguration( configName );
@@ -678,10 +683,10 @@ bool CVCProjConvert::ExtractFiles( IXMLDOMDocument *pDoc  )
 		int len = nodes->getLength();
 		for ( int i=0; i<len; i++ )
 		{
-			DOMNode *node = nodes->item(i);
+			DOMElement *node = static_cast<DOMElement *>(nodes->item(i));
 			if (node)
 			{
-				CUtlSymbol fileName = GetXMLAttribValue(node,"RelativePath");
+				CUtlSymbol fileName = GetXMLAttribValue(node, "RelativePath");
 				if ( fileName.IsValid() )
 				{
 					char fixedFileName[ MAX_PATH ];

@@ -733,7 +733,7 @@ void CPropAirboat::ExitVehicle( int nRole )
 	ep.m_pSoundName = "Airboat_engine_stop";
 	ep.m_flVolume = controller.SoundGetVolume( m_pEngineSound );
 	ep.m_SoundLevel = SNDLVL_NORM;
-	ep.m_nPitch = controller.SoundGetPitch( m_pEngineSound );
+	ep.m_nPitch = (int)controller.SoundGetPitch( m_pEngineSound );
 
 	EmitSound( filter, entindex(), ep );
 	m_VehiclePhysics.TurnOff();
@@ -931,7 +931,9 @@ void CPropAirboat::VPhysicsFriction( IPhysicsObject *pObject, float energy, int 
 //-----------------------------------------------------------------------------
 // This fixes an optimizer bug that was causing targetYaw and targetPitch to
 // always be reported as clamped, thus disabling the gun. Ack!
+#ifdef _MSC_VER
 #pragma optimize("", off)
+#endif
 void CPropAirboat::AimGunAt( const Vector &aimPos, float flInterval )
 {
 	matrix3x4_t gunMatrix;
@@ -981,8 +983,9 @@ void CPropAirboat::AimGunAt( const Vector &aimPos, float flInterval )
 	m_aimPitch = GetPoseParameter( AIRBOAT_GUN_PITCH );
 	m_aimYaw = GetPoseParameter( AIRBOAT_GUN_YAW );
 }
+#ifdef _MSC_VER
 #pragma optimize("", on)
-
+#endif
 
 //-----------------------------------------------------------------------------
 // Removes the ammo...
@@ -1860,8 +1863,8 @@ void CPropAirboat::CreateDangerSounds( void )
 
 		// 0.7 seconds ahead
 		vecSpot = vecStart + vecDir * (speed * 0.7f);
-		CSoundEnt::InsertSound( SOUND_DANGER, vecSpot, radius, soundDuration, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
-		CSoundEnt::InsertSound( SOUND_PHYSICS_DANGER, vecSpot, radius, soundDuration, this, SOUNDENT_CHANNEL_REPEATED_PHYSICS_DANGER );
+		CSoundEnt::InsertSound( SOUND_DANGER, vecSpot, (int)radius, soundDuration, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
+		CSoundEnt::InsertSound( SOUND_PHYSICS_DANGER, vecSpot, (int)radius, soundDuration, this, SOUNDENT_CHANNEL_REPEATED_PHYSICS_DANGER );
 		//NDebugOverlay::Box(vecSpot, Vector(-radius,-radius,-radius),Vector(radius,radius,radius), 255, 0, 255, 0, soundDuration);
 
 #if 0
@@ -2079,7 +2082,7 @@ float CPropAirboat::CalculatePhysicsStressDamage( vphysics_objectstress_t *pStre
 //-----------------------------------------------------------------------------
 void CPropAirboat::ApplyStressDamage( IPhysicsObject *pPhysics )
 {
-	vphysics_objectstress_t stressOut;
+	vphysics_objectstress_t stressOut = {0.0f, 0.0f, false, false};
 	float damage = CalculatePhysicsStressDamage( &stressOut, pPhysics );
 	if ( ( damage > 0 ) &&  ( m_hPlayer != NULL ) )
 	{

@@ -85,10 +85,10 @@ enum
 	SOUNDLIST_EMPTY = -1
 };
 
-#define SOUNDENT_VOLUME_MACHINEGUN	1500.0
-#define SOUNDENT_VOLUME_SHOTGUN		1500.0
-#define SOUNDENT_VOLUME_PISTOL		1500.0
-#define SOUNDENT_VOLUME_EMPTY		 500.0 // volume of the "CLICK" when you have no bullets
+#define SOUNDENT_VOLUME_MACHINEGUN	1500
+#define SOUNDENT_VOLUME_SHOTGUN		1500
+#define SOUNDENT_VOLUME_PISTOL		1500
+#define SOUNDENT_VOLUME_EMPTY		 500 // volume of the "CLICK" when you have no bullets
 
 enum
 {

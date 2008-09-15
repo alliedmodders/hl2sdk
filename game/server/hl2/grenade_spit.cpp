@@ -39,7 +39,7 @@ BEGIN_DATADESC( CGrenadeSpit )
 
 END_DATADESC()
 
-CGrenadeSpit::CGrenadeSpit( void ) : m_bPlaySound( true ), m_pHissSound( NULL )
+CGrenadeSpit::CGrenadeSpit( void ) : m_pHissSound( NULL ), m_bPlaySound( true )
 {
 }
 
@@ -178,7 +178,7 @@ void CGrenadeSpit::GrenadeSpitTouch( CBaseEntity *pOther )
 		pTraceEnt->TakeDamage( CTakeDamageInfo( this, GetThrower(), m_flDamage * poisonratio, DMG_POISON ) );
 	}
 
-	CSoundEnt::InsertSound( SOUND_DANGER, GetAbsOrigin(), m_DmgRadius * 2.0f, 0.5f, GetThrower() );
+	CSoundEnt::InsertSound( SOUND_DANGER, GetAbsOrigin(), (int)(m_DmgRadius * 2.0f), 0.5f, GetThrower() );
 
 	QAngle vecAngles;
 	VectorAngles( tracePlaneNormal, vecAngles );
@@ -249,7 +249,7 @@ void CGrenadeSpit::Think( void )
 		float velTransmitter = -DotProduct( GetAbsVelocity(), dir );
 		
 		// speed of sound == 13049in/s
-		int iPitch = 100 * ((1 - velReceiver / 13049) / (1 + velTransmitter / 13049));
+		int iPitch = (int)(100 * ((1 - velReceiver / 13049) / (1 + velTransmitter / 13049)));
 
 		// clamp pitch shifts
 		if ( iPitch > 250 )

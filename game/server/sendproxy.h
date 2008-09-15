@@ -20,31 +20,31 @@ void SendProxy_IntAddOne( const SendProp *pProp, const void *pStruct, const void
 void SendProxy_ShortAddOne( const SendProp *pProp, const void *pStruct, const void *pVarData, DVariant *pOut, int iElement, int objectID );
 
 SendProp SendPropBool(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar );
 
 SendProp SendPropEHandle(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int flags = 0,
 	int sizeofVar=SIZEOF_IGNORE,
 	SendVarProxyFn proxyFn=SendProxy_EHandleToInt );
 
 SendProp SendPropTime(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar=SIZEOF_IGNORE );
 
 #if !defined( NO_ENTITY_PREDICTION )
 SendProp SendPropPredictableId(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar=SIZEOF_IGNORE	);
 #endif
 
 SendProp SendPropIntWithMinusOneFlag(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int bits,
 	int sizeofVar=SIZEOF_IGNORE,
@@ -52,7 +52,7 @@ SendProp SendPropIntWithMinusOneFlag(
 
 
 // Send a string_t as a string property.
-SendProp SendPropStringT( char *pVarName, int offset, int sizeofVar );
+SendProp SendPropStringT( const char *pVarName, int offset, int sizeofVar );
 
 //-----------------------------------------------------------------------------
 // Purpose: Proxy that only sends data to team members

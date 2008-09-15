@@ -6,14 +6,14 @@
 
 #include "cbase.h"
 #include "ammodef.h"
-#include "AI_Hint.h"
-#include "AI_Navigator.h"
-#include "npc_Assassin.h"
+#include "ai_hint.h"
+#include "ai_navigator.h"
+#include "npc_assassin.h"
 #include "game.h"
-#include "NPCEvent.h"
+#include "npcevent.h"
 #include "engine/IEngineSound.h"
-#include "AI_Squad.h"
-#include "AI_SquadSlot.h"
+#include "ai_squad.h"
+#include "ai_squadslot.h"
 #include "ai_moveprobe.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -323,7 +323,7 @@ void CNPC_Assassin::FirePistol( int hand )
 
 	FireBullets( 1, muzzlePos, muzzleDir, VECTOR_CONE_5DEGREES, 1024, bulletType, 2 );
 
-	UTIL_MuzzleFlash( muzzlePos, muzzleAngle, 0.5f, 1 );
+	UTIL_MuzzleFlash( muzzlePos, muzzleAngle, (int)0.5f, 1 );
 
 	CPASAttenuationFilter filter( this );
 	EmitSound( filter, entindex(), "NPC_Assassin.ShootPistol" );
@@ -480,6 +480,9 @@ int CNPC_Assassin::SelectSchedule ( void )
 			// ALERT( at_console, "stand\n");
 			return SCHED_ASSASSIN_FIND_VANTAGE_POINT;
 		}
+		break;
+
+	default:
 		break;
 	}
 
@@ -708,7 +711,7 @@ void CNPC_Assassin::StartTask( const Task_t *pTask )
 	
 			hint.SetFlag( bits_HINT_NODE_NEAREST );
 
-			CAI_Hint *pHint = CAI_HintManager::FindHint( this, GetEnemy()->GetAbsOrigin(), &hint );
+			CAI_Hint *pHint = CAI_HintManager::FindHint( this, GetEnemy()->GetAbsOrigin(), hint );
 
 			if ( pHint == NULL )
 			{

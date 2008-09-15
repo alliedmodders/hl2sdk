@@ -53,14 +53,14 @@ void CRopeAnchor::Spawn()
 	BaseClass::Spawn();
 
 	// Decent enough default in case something happens to our owner!
-	float flDist = 384;
+	float flDist = 384.0f;
 
 	if( GetOwnerEntity() )
 	{
 		flDist = fabs( GetOwnerEntity()->GetAbsOrigin().z - GetAbsOrigin().z );
 	}
 
-	m_hRope = CRopeKeyframe::CreateWithSecondPointDetached( this, -1, flDist, RAPPEL_ROPE_WIDTH, "cable/cable.vmt", 5, true );
+	m_hRope = CRopeKeyframe::CreateWithSecondPointDetached( this, -1, (int)flDist, RAPPEL_ROPE_WIDTH, "cable/cable.vmt", 5, true );
 
 	ASSERT( m_hRope != NULL );
 
@@ -355,7 +355,7 @@ void CAI_RappelBehavior::BeginRappel()
 		Vector forward;
 		GetOuter()->GetVectors( &forward, NULL, NULL );
 
-		CSoundEnt::InsertSound( SOUND_DANGER, tr.m_pEnt->EarPosition() - forward * 12.0f, 32.0f, 0.2f, GetOuter() );
+		CSoundEnt::InsertSound( SOUND_DANGER, tr.m_pEnt->EarPosition() - forward * 12.0f, 32, 0.2f, GetOuter() );
 	}
 }
 

@@ -15,7 +15,7 @@
 #include "vphysics/friction.h"
 #include "vphysicsupdateai.h"
 #include "physics_npc_solver.h"
-#include "sprite.h"
+#include "Sprite.h"
 #include "weapon_striderbuster.h"
 #include "npc_strider.h"
 #include "vguiscreen.h"
@@ -1003,7 +1003,8 @@ void CPropJeepEpisodic::UpdateCargoEntry( void )
 
 	// Slerp our quaternions to find where we are this frame
 	Quaternion	qtTarget;
-	AngleQuaternion( pProp->PreferredCarryAngles() + QAngle( 0, 90, 0 ), qtTarget );	// FIXME: Find the real offset to make this sit properly
+	QAngle ang = pProp->PreferredCarryAngles() + QAngle(0.0f, 90.0f, 0.0f);
+	AngleQuaternion( ang, qtTarget );	// FIXME: Find the real offset to make this sit properly
 	Quaternion	qtCurrent;
 	AngleQuaternion( pProp->GetLocalAngles(), qtCurrent );
 
@@ -1039,11 +1040,11 @@ void CPropJeepEpisodic::CreateAvoidanceZone( void )
 	
 	Vector	vecPos;
 	CollisionProp()->NormalizedToWorldSpace( Vector( 0.5f, 0.33f, 0.25f ), &vecPos );
-	CSoundEnt::InsertSound( SOUND_MOVE_AWAY, vecPos, (flHullRadius*0.4f), VEHICLE_AVOID_BROADCAST_RATE, this );
+	CSoundEnt::InsertSound( SOUND_MOVE_AWAY, vecPos, (int)(flHullRadius*0.4f), VEHICLE_AVOID_BROADCAST_RATE, this );
 	// NDebugOverlay::Sphere( vecPos, vec3_angle, flHullRadius*0.4f, 255, 0, 0, 0, true, VEHICLE_AVOID_BROADCAST_RATE );
 
 	CollisionProp()->NormalizedToWorldSpace( Vector( 0.5f, 0.66f, 0.25f ), &vecPos );
-	CSoundEnt::InsertSound( SOUND_MOVE_AWAY, vecPos, (flHullRadius*0.4f), VEHICLE_AVOID_BROADCAST_RATE, this );
+	CSoundEnt::InsertSound( SOUND_MOVE_AWAY, vecPos, (int)(flHullRadius*0.4f), VEHICLE_AVOID_BROADCAST_RATE, this );
 	// NDebugOverlay::Sphere( vecPos, vec3_angle, flHullRadius*0.4f, 255, 0, 0, 0, true, VEHICLE_AVOID_BROADCAST_RATE );
 
 	// Don't broadcast again until these are done
@@ -1449,8 +1450,8 @@ void CPropJeepEpisodic::SpawnRadarPanel()
 
 	// If we're attached to an entity, spawn control panels on it instead of use
 	CBaseAnimating *pEntityToSpawnOn = this;
-	char *pOrgLL = "controlpanel0_ll";
-	char *pOrgUR = "controlpanel0_ur";
+	const char *pOrgLL = "controlpanel0_ll";
+	const char *pOrgUR = "controlpanel0_ur";
 
 	Assert( pEntityToSpawnOn );
 

@@ -1895,6 +1895,9 @@ bool CNavMesh::UpdateGeneration( float maxTime )
 
 			return false;
 		}
+
+		default:
+			break;
 	}
 
 	return false;
@@ -2073,16 +2076,16 @@ bool CNavMesh::SampleStep( void )
 				Vector pos = *m_currentNode->GetPosition();
 
 				// snap to grid
-				int cx = SnapToGrid( pos.x );
-				int cy = SnapToGrid( pos.y );
+				int cx = (int)SnapToGrid( pos.x );
+				int cy = (int)SnapToGrid( pos.y );
 
 				// attempt to move to adjacent node
 				switch( dir )
 				{
-					case NORTH:		cy -= GenerationStepSize; break;
-					case SOUTH:		cy += GenerationStepSize; break;
-					case EAST:		cx += GenerationStepSize; break;
-					case WEST:		cx -= GenerationStepSize; break;
+					case NORTH:		cy = (int)(cy - GenerationStepSize); break;
+					case SOUTH:		cy = (int)(cy + GenerationStepSize); break;
+					case EAST:		cx = (int)(cx + GenerationStepSize); break;
+					case WEST:		cx = (int)(cx - GenerationStepSize); break;
 				}
 
 				pos.x = cx;

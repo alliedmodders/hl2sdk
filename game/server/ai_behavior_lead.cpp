@@ -268,7 +268,7 @@ bool CAI_LeadBehavior::GetClosestPointOnRoute( const Vector &targetPos, Vector *
 	float		flNearestDist	= 999999999;
 	float		flPathDist, flPathDist2D;
 
-	Vector vecNearestPoint;
+	Vector vecNearestPoint = Vector(0.0f, 0.0f, 0.0f);
 	Vector vecPrevPos = GetOuter()->GetAbsOrigin();
 	for ( ; (waypoint != NULL) ; waypoint = waypoint->GetNext() )
 	{
@@ -934,6 +934,7 @@ void CAI_LeadBehavior::RunTask( const Task_t *pTask )
 						{
 						case ACT_WALK_AIM:	curActivity = ACT_WALK;	break;
 						case ACT_RUN_AIM:	curActivity = ACT_RUN;	break;
+						default:	break;
 						}
 						
 						if ( curActivity != followActivity )

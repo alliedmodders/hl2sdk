@@ -1522,8 +1522,6 @@ Killed
 */
 void CBaseCombatCharacter::Event_Killed( const CTakeDamageInfo &info )
 {
-	extern ConVar npc_vphysics;
-
 	// Advance life state to dying
 	m_lifeState = LIFE_DYING;
 
@@ -3076,7 +3074,7 @@ void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, float flRa
 		// be less than 128 units.
 		float soundRadius = max( 128.0f, flRadius * 1.5 );
 
-		CSoundEnt::InsertSound( SOUND_COMBAT | SOUND_CONTEXT_EXPLOSION, vecSrc, soundRadius, 0.25, info.GetInflictor() );
+		CSoundEnt::InsertSound( SOUND_COMBAT | SOUND_CONTEXT_EXPLOSION, vecSrc, (int)soundRadius, 0.25, info.GetInflictor() );
 	}
 }
 

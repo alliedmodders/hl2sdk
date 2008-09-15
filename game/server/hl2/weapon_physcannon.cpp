@@ -17,7 +17,7 @@
 #include "shake.h"
 #include "hl2_player.h"
 #include "beam_shared.h"
-#include "sprite.h"
+#include "Sprite.h"
 #include "util.h"
 #include "weapon_physcannon.h"
 #include "physics_saverestore.h"
@@ -39,7 +39,7 @@
 #include "model_types.h"
 #include "ai_interactions.h"
 #include "rumble_shared.h"
-#include "gamestats.h"
+#include "GameStats.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -329,7 +329,7 @@ static QAngle AlignAngles( const QAngle &angles, float cosineAlignAngle )
 }
 
 
-static void TraceCollideAgainstBBox( const CPhysCollide *pCollide, const Vector &start, const Vector &end, const QAngle &angles, const Vector &boxOrigin, const Vector &mins, const Vector &maxs, trace_t *ptr )
+/*static void TraceCollideAgainstBBox( const CPhysCollide *pCollide, const Vector &start, const Vector &end, const QAngle &angles, const Vector &boxOrigin, const Vector &mins, const Vector &maxs, trace_t *ptr )
 {
 	physcollision->TraceBox( boxOrigin, boxOrigin + (start-end), mins, maxs, pCollide, start, angles, ptr );
 
@@ -340,7 +340,7 @@ static void TraceCollideAgainstBBox( const CPhysCollide *pCollide, const Vector 
 		ptr->plane.dist = -ptr->plane.dist;
 		ptr->plane.normal *= -1;
 	}
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Purpose: Finds the nearest ragdoll sub-piece to a location and returns it
@@ -3352,7 +3352,7 @@ void CWeaponPhysCannon::LaunchObject( const Vector &vecDir, float flForce )
 		int		i;
 
 		UTIL_TraceLine( vecStart, vecStart + vecDir * flForce, MASK_SHOT, pObject, COLLISION_GROUP_NONE, &tr );
-		iLength = ( tr.startpos - tr.endpos ).Length();
+		iLength = (int)((tr.startpos - tr.endpos).Length());
 		vecSpot = vecStart + vecDir * PHYSCANNON_DANGER_SOUND_RADIUS;
 
 		for( i = PHYSCANNON_DANGER_SOUND_RADIUS ; i < iLength ; i += PHYSCANNON_DANGER_SOUND_RADIUS )
@@ -3832,7 +3832,7 @@ void CWeaponPhysCannon::DoEffectClosed( void )
 	// Turn off the center sprite
 	if ( m_hCenterSprite != NULL )
 	{
-		m_hCenterSprite->SetBrightness( 0.0, 0.1f );
+		m_hCenterSprite->SetBrightness( 0, 0.1f );
 		m_hCenterSprite->SetScale( 0.0f, 0.1f );
 		m_hCenterSprite->TurnOff();
 	}
@@ -3861,7 +3861,7 @@ void CWeaponPhysCannon::DoEffectClosed( void )
 		if ( m_hGlowSprites[i] != NULL )
 		{
 			m_hGlowSprites[i]->TurnOn();
-			m_hGlowSprites[i]->SetBrightness( 16.0f, 0.2f );
+			m_hGlowSprites[i]->SetBrightness( 16, 0.2f );
 			m_hGlowSprites[i]->SetScale( 0.3f * flScaleFactor, 0.2f );
 		}
 	}
@@ -3885,7 +3885,7 @@ void CWeaponPhysCannon::DoMegaEffectClosed( void )
 	// Turn off the center sprite
 	if ( m_hCenterSprite != NULL )
 	{
-		m_hCenterSprite->SetBrightness( 0.0, 0.1f );
+		m_hCenterSprite->SetBrightness( 0, 0.1f );
 		m_hCenterSprite->SetScale( 0.0f, 0.1f );
 		m_hCenterSprite->TurnOff();
 	}
@@ -3914,7 +3914,7 @@ void CWeaponPhysCannon::DoMegaEffectClosed( void )
 		if ( m_hGlowSprites[i] != NULL )
 		{
 			m_hGlowSprites[i]->TurnOn();
-			m_hGlowSprites[i]->SetBrightness( 16.0f, 0.2f );
+			m_hGlowSprites[i]->SetBrightness( 16, 0.2f );
 			m_hGlowSprites[i]->SetScale( 0.3f * flScaleFactor, 0.2f );
 		}
 	}
@@ -3967,7 +3967,7 @@ void CWeaponPhysCannon::DoEffectReady( )
 		if ( m_hGlowSprites[i] != NULL )
 		{
 			m_hGlowSprites[i]->TurnOn();
-			m_hGlowSprites[i]->SetBrightness( 32.0f, 0.2f );
+			m_hGlowSprites[i]->SetBrightness( 32, 0.2f );
 			m_hGlowSprites[i]->SetScale( 0.4f * flScaleFactor, 0.2f );
 		}
 	}
@@ -4021,7 +4021,7 @@ void CWeaponPhysCannon::DoEffectHolding( )
 		if ( m_hGlowSprites[i] != NULL )
 		{
 			m_hGlowSprites[i]->TurnOn();
-			m_hGlowSprites[i]->SetBrightness( 64.0f, 0.2f );
+			m_hGlowSprites[i]->SetBrightness( 64, 0.2f );
 			m_hGlowSprites[i]->SetScale( 0.5f * flScaleFactor, 0.2f );
 		}
 	}
@@ -4079,7 +4079,7 @@ void CWeaponPhysCannon::DoEffectLaunch( Vector *pos )
 	{
 		m_hBlastSprite->TurnOn();
 		m_hBlastSprite->SetScale( 2.0f, 0.1f );
-		m_hBlastSprite->SetBrightness( 0.0f, 0.1f );
+		m_hBlastSprite->SetBrightness( 0, 0.1f );
 	}
 }
 
@@ -4185,7 +4185,7 @@ void CWeaponPhysCannon::DoMegaEffectHolding( void )
 		if ( m_hGlowSprites[i] != NULL )
 		{
 			m_hGlowSprites[i]->TurnOn();
-			m_hGlowSprites[i]->SetBrightness( 32.0f, 0.2f );
+			m_hGlowSprites[i]->SetBrightness( 32, 0.2f );
 			m_hGlowSprites[i]->SetScale( 0.25f * flScaleFactor, 0.2f );
 		}
 	}
@@ -4233,7 +4233,7 @@ void CWeaponPhysCannon::DoMegaEffectReady( void )
 		if ( m_hGlowSprites[i] != NULL )
 		{
 			m_hGlowSprites[i]->TurnOn();
-			m_hGlowSprites[i]->SetBrightness( 24.0f, 0.2f );
+			m_hGlowSprites[i]->SetBrightness( 24, 0.2f );
 			m_hGlowSprites[i]->SetScale( 0.2f * flScaleFactor, 0.2f );
 		}
 	}

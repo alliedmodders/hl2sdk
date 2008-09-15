@@ -328,7 +328,7 @@ bool CTraceFilterNoNPCsOrPlayer::ShouldHitEntity( IHandleEntity *pHandleEntity, 
 	{
 		CBaseEntity *pEntity = EntityFromEntityHandle( pHandleEntity );
 		if ( !pEntity )
-			return NULL;
+			return false;
 #ifndef CLIENT_DLL
 		if ( pEntity->Classify() == CLASS_PLAYER_ALLY )
 			return false; // CS hostages are CLASS_PLAYER_ALLY but not IsNPC()
@@ -493,6 +493,7 @@ bool CTraceFilterChain::ShouldHitEntity( IHandleEntity *pHandleEntity, int conte
 
 	if ( m_pTraceFilter1 )
 		bResult1 = m_pTraceFilter1->ShouldHitEntity( pHandleEntity, contentsMask );
+
 
 	if ( m_pTraceFilter2 )
 		bResult2 = m_pTraceFilter2->ShouldHitEntity( pHandleEntity, contentsMask );
@@ -886,6 +887,7 @@ bool UTIL_IsSpaceEmpty( CBaseEntity *pMainEnt, const Vector &vMin, const Vector 
 	Vector vCenter = vMin + vHalfDims;
 
 	trace_t trace;
+
 	UTIL_TraceHull( vCenter, vCenter, -vHalfDims, vHalfDims, MASK_SOLID, pMainEnt, COLLISION_GROUP_NONE, &trace );
 
 	bool bClear = ( trace.fraction == 1 && trace.allsolid != 1 && (trace.startsolid != 1) );
@@ -1035,14 +1037,14 @@ unsigned short UTIL_GetAchievementEventMask( void )
 	return ( mapCRC & 0xFFFF );
 }
 
-char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename )
+const char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename )
 {
 	const char *pValue = pSub->GetString( pName, NULL );
 	if ( !pValue )
 	{
 		if ( pFilename )
 		{
-			DevWarning( "Can't get key value	'%s' from file '%s'.\n", pName, pFilename );
+			DevWarning( "Can't get key value '%s' from file '%s'.\n", pName, pFilename );
 		}
 		return "";
 	}

@@ -26,7 +26,7 @@ void SendProxy_UInt8ToInt32( const SendProp *pProp, const void *pStruct, const v
 void SendProxy_UInt16ToInt32( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID);
 void SendProxy_UInt32ToInt32( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID);
 
-char *s_ElementNames[MAX_ARRAY_ELEMENTS] =
+const char *s_ElementNames[MAX_ARRAY_ELEMENTS] =
 {
 	"000", "001", "002", "003", "004", "005", "006", "007", "008", "009", 
 	"010", "011", "012", "013", "014", "015", "016", "017", "018", "019",
@@ -303,7 +303,7 @@ float AssignRangeMultiplier( int nBits, double range )
 		// Squeeze it down smaller and smaller until it's going to produce an integer
 		// in the valid range when given the highest value.
 		float multipliers[] = { 0.9999, 0.99, 0.9, 0.8, 0.7 };
-		int i;
+		size_t i;
 		for ( i=0; i < ARRAYSIZE( multipliers ); i++ )
 		{
 			float fHighLowMul = (float)( iHighValue / range ) * multipliers[i];
@@ -331,7 +331,7 @@ float AssignRangeMultiplier( int nBits, double range )
 
 
 SendProp SendPropFloat(
-	char *pVarName,		
+	const char *pVarName,		
 	// Variable name.
 	int offset,			// Offset into container structure.
 	int sizeofVar,
@@ -382,7 +382,7 @@ SendProp SendPropFloat(
 }
 
 SendProp SendPropVector(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar,
 	int nBits,					// Number of bits to use when encoding.
@@ -419,7 +419,7 @@ SendProp SendPropVector(
 
 #if 0 // We can't ship this since it changes the size of DTVariant to be 20 bytes instead of 16 and that breaks MODs!!!
 SendProp SendPropQuaternion(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar,
 	int nBits,					// Number of bits to use when encoding.
@@ -456,7 +456,7 @@ SendProp SendPropQuaternion(
 #endif
 
 SendProp SendPropAngle(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar,
 	int nBits,
@@ -489,7 +489,7 @@ SendProp SendPropAngle(
 
 
 SendProp SendPropQAngles(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar,
 	int nBits,
@@ -522,7 +522,7 @@ SendProp SendPropQAngles(
 }
   
 SendProp SendPropInt(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar,
 	int nBits,
@@ -586,7 +586,7 @@ SendProp SendPropInt(
 }
 
 SendProp SendPropString(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int bufferLen,
 	int flags,
@@ -606,7 +606,7 @@ SendProp SendPropString(
 }
 
 SendProp SendPropArray3(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar,
 	int elements,
@@ -653,7 +653,7 @@ SendProp SendPropArray3(
 }
 
 SendProp SendPropDataTable(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	SendTable *pTable,
 	SendTableProxyFn varProxy
@@ -685,7 +685,7 @@ SendProp SendPropDataTable(
 SendProp InternalSendPropArray(
 	const int elementCount,
 	const int elementStride,
-	char *pName,
+	const char *pName,
 	ArrayLengthSendProxyFn arrayLengthFn
 	)
 {
@@ -705,8 +705,8 @@ SendProp InternalSendPropArray(
 
 
 SendProp SendPropExclude(
-	char *pDataTableName,	// Data table name (given to BEGIN_SEND_TABLE and BEGIN_RECV_TABLE).
-	char *pPropName		// Name of the property to exclude.
+	const char *pDataTableName,	// Data table name (given to BEGIN_SEND_TABLE and BEGIN_RECV_TABLE).
+	const char *pPropName		// Name of the property to exclude.
 	)
 {
 	SendProp ret;
@@ -772,7 +772,7 @@ SendTable::SendTable()
 }
 
 
-SendTable::SendTable(SendProp *pProps, int nProps, char *pNetTableName)
+SendTable::SendTable(SendProp *pProps, int nProps, const char *pNetTableName)
 {
 	Construct( pProps, nProps, pNetTableName );
 }
@@ -784,7 +784,7 @@ SendTable::~SendTable()
 }
 
 
-void SendTable::Construct( SendProp *pProps, int nProps, char *pNetTableName )
+void SendTable::Construct( SendProp *pProps, int nProps, const char *pNetTableName )
 {
 	m_pProps = pProps;
 	m_nProps = nProps;

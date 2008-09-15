@@ -149,7 +149,7 @@ void  C_NPC_Hydra::StandardBlendingRules( Vector pos[], Quaternion q[], float cu
 {
 	VPROF( "C_NPC_Hydra::StandardBlendingRules" );
 
-	studiohdr_t *hdr = GetModelPtr();
+	const studiohdr_t *hdr = GetModelPtr()->GetRenderHdr();
 	if ( !hdr )
 	{
 		return;
@@ -169,7 +169,7 @@ void  C_NPC_Hydra::StandardBlendingRules( Vector pos[], Quaternion q[], float cu
 		{
 			poseparam[i] = 0;
 		}
-		CalcPose( hdr, NULL, pos, q, 0.0f, 0.0f, poseparam, BONE_USED_BY_ANYTHING );
+		CalcPose( GetModelPtr(), NULL, pos, q, 0.0f, 0.0f, poseparam, BONE_USED_BY_ANYTHING );
 
 		// allocate arrays
 		if (m_boneLength)

@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="Vrad_dll"
 	ProjectGUID="{0DA02E11-F553-4DD1-83D1-F760F2D96862}"
+	RootNamespace="Vrad_dll"
 	>
 	<Platforms>
 		<Platform
@@ -27,6 +28,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\vrad_dll.dll;..\..\..\game\bin\vrad_dll.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -123,7 +126,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -142,6 +144,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\vrad_dll.dll;..\..\..\game\bin\vrad_dll.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -242,7 +246,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -253,6 +256,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath="..\..\public\bsptreedata.cpp"
@@ -301,22 +305,6 @@
 			<File
 				RelativePath="..\..\public\tier0\memoverride.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\common\mpi_stats.cpp"
@@ -437,10 +425,6 @@
 					RelativePath="..\common\tools_minidump.cpp"
 					>
 				</File>
-				<File
-					RelativePath="..\common\tools_minidump.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="Public Files"
@@ -465,6 +449,7 @@
 		</Filter>
 		<Filter
 			Name="Link Libraries"
+			Filter="lib"
 			>
 			<File
 				RelativePath="..\..\lib\public\bitmap.lib"
@@ -505,6 +490,7 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath=".\disp_vrad.h"

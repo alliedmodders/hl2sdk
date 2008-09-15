@@ -265,6 +265,8 @@ void CNPC_Hydra::Spawn()
 
 	// init bones
 	HydraBone bone;
+	bone.flActualLength = 0.0f;
+	bone.vecGoalPos = Vector(0.0f, 0.0f, 0.0f);
 	bone.vecPos = GetAbsOrigin( ) - m_vecOutward * HYDRA_INWARD_BIAS;
 	m_body.AddToTail( bone );
 	bone.vecPos = m_vecChain[1];
@@ -955,7 +957,7 @@ bool CNPC_Hydra::ContractBetweenStuckSegments( )
 			}
 		}
 	}
-	if (iShortest = -1)
+	if (iShortest == -1)
 		return false;
 
 	// FIXME: check for tunneling
@@ -1030,6 +1032,7 @@ bool CNPC_Hydra::AddNodeBefore( int iNode )
 
 	bone.vecPos = (m_body[iNode].vecPos + m_body[iNode-1].vecPos) * 0.5;
 	bone.vecDelta = (m_body[iNode].vecDelta + m_body[iNode-1].vecDelta) * 0.5;
+	bone.vecGoalPos = Vector(0.0f, 0.0f, 0.0f);
 
 	/*
 	// FIXME: can't do this, may be embedded in the world
@@ -1078,7 +1081,7 @@ bool CNPC_Hydra::GrowFromMostStretched( )
 	int iLongest = iNode;
 	float dist = m_idealSegmentLength * 0.5;
 
-	for (iNode; iNode < m_body.Count() - 1; iNode++)
+	for (; iNode < m_body.Count() - 1; iNode++)
 	{
 		if (m_body[iNode].flActualLength > dist)
 		{
@@ -1200,7 +1203,10 @@ int CNPC_Hydra::SelectSchedule ()
 			}
 			return SCHED_HYDRA_STAB;
 		}
-		break;	
+		break;
+
+	default:
+		break;
 	}
 
 	return BaseClass::SelectSchedule();
@@ -1700,7 +1706,7 @@ IPhysicsConstraint *CHydraImpale::CreateConstraint( CNPC_Hydra *pHydra, IPhysics
 		m_pConstraint->SetGameData( (void *)this );
 	}
 
-	SetThink( ImpaleThink );
+	SetThink( &CHydraImpale::ImpaleThink );
 	SetNextThink( gpGlobals->curtime );
 	return m_pConstraint;
 }

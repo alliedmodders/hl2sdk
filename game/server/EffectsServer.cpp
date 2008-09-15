@@ -124,7 +124,7 @@ void CEffectsServer::Smoke( const Vector &origin, int mModel, float flScale, flo
 	CPVSFilter filter( origin );
 	if ( !SuppressTE( filter ) )
 	{
-		te->Smoke( filter, 0.0, &origin, mModel, flScale * 0.1f, flFramerate );
+		te->Smoke( filter, 0.0, &origin, mModel, flScale * 0.1f, (int)flFramerate );
 	}
 }
 

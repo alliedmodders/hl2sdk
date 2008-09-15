@@ -14,7 +14,7 @@
 #include "items.h"
 #include "in_buttons.h"
 #include "soundent.h"
-#include "gamestats.h"
+#include "GameStats.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -98,7 +98,7 @@ CWeaponFrag::CWeaponFrag() :
 	CBaseHLCombatWeapon(),
 	m_bRedraw( false )
 {
-	NULL;
+
 }
 
 //-----------------------------------------------------------------------------

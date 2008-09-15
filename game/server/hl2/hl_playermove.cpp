@@ -13,7 +13,7 @@
 #include "iservervehicle.h"
 #include "hl2_player.h"
 #include "vehicle_base.h"
-#include "gamestats.h"
+#include "GameStats.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

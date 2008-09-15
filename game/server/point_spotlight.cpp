@@ -194,12 +194,12 @@ void CPointSpotlight::ComputeRenderInfo()
 	}
 	else if ( m_flSpotlightCurLength > m_flSpotlightMaxLength )		
 	{
-		m_hSpotlightTarget->SetRenderColorA( (1-((m_flSpotlightCurLength-m_flSpotlightMaxLength)/m_flSpotlightMaxLength)) );
+		m_hSpotlightTarget->SetRenderColorA( (byte)(1-((m_flSpotlightCurLength-m_flSpotlightMaxLength)/m_flSpotlightMaxLength)) );
 		m_hSpotlight->SetFadeLength( m_flSpotlightMaxLength );
 	}
 	else
 	{
-		m_hSpotlightTarget->SetRenderColorA( 1.0 );
+		m_hSpotlightTarget->SetRenderColorA( 1 );
 		m_hSpotlight->SetFadeLength( m_flSpotlightCurLength );
 	}
 

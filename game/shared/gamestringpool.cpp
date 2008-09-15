@@ -27,7 +27,7 @@ class CGameStringPool : public CStringPool,	public CBaseGameSystem
 	}
 
 public:
-	void CGameStringPool::Dump( void )
+	void Dump( void )
 	{
 		for ( int i = m_Strings.FirstInorder(); i != m_Strings.InvalidIndex(); i = m_Strings.NextInorder(i) )
 		{

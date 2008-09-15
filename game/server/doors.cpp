@@ -220,11 +220,11 @@ bool CBaseDoor::KeyValue( const char *szKeyName, const char *szValue )
 {
 	if (FStrEq(szKeyName, "locked_sentence"))
 	{
-		m_bLockedSentence = atof(szValue);
+		m_bLockedSentence = atoi(szValue);
 	}
 	else if (FStrEq(szKeyName, "unlocked_sentence"))
 	{
-		m_bUnlockedSentence = atof(szValue);
+		m_bUnlockedSentence = atoi(szValue);
 	}
 	else
 		return BaseClass::KeyValue( szKeyName, szValue );
@@ -483,6 +483,8 @@ void CBaseDoor::Activate( void )
 		break;
 	case TS_AT_BOTTOM:
 		UpdateAreaPortals( false );
+		break;
+	default:
 		break;
 	}
 

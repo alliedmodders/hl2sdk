@@ -45,6 +45,7 @@ class IEntityFactory;
 
 #include "tier0/memdbgon.h"
 
+CBaseEntity *CreateEntityByName(const char *className, int iForceEdictIndex);
 
 // entity creation
 // creates an entity that has not been linked to a classname
@@ -64,7 +65,7 @@ T *_CreateEntityTemplate( T *newEnt, const char *className )
 template< class T >
 T *_CreateEntity( T *newClass, const char *className )
 {
-	T *newEnt = dynamic_cast<T*>( CreateEntityByName(className) );
+	T *newEnt = dynamic_cast<T*>( CreateEntityByName(className, -1) );
 	if ( !newEnt )
 	{
 		Warning( "classname %s used to create wrong class type\n" );
@@ -338,7 +339,7 @@ bool		UTIL_IsMasterTriggered	(string_t sMaster, CBaseEntity *pActivator);
 void		UTIL_BloodStream( const Vector &origin, const Vector &direction, int color, int amount );
 void		UTIL_BloodSpray( const Vector &pos, const Vector &dir, int color, int amount, int flags );
 Vector		UTIL_RandomBloodVector( void );
-void		UTIL_ImpactTrace( trace_t *pTrace, int iDamageType, char *pCustomImpactName = NULL );
+void		UTIL_ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName = NULL );
 void		UTIL_PlayerDecalTrace( trace_t *pTrace, int playernum );
 void		UTIL_Smoke( const Vector &origin, const float scale, const float framerate );
 void		UTIL_AxisStringToPointDir( Vector &start, Vector &dir, const char *pString );
@@ -350,7 +351,7 @@ void		UTIL_Beam( Vector &Start, Vector &End, int nModelIndex, int nHaloIndex, un
 				float Life, unsigned char Width, unsigned char EndWidth, unsigned char FadeLength, unsigned char Noise, unsigned char Red, unsigned char Green,
 				unsigned char Blue, unsigned char Brightness, unsigned char Speed);
 
-char		*UTIL_VarArgs( char *format, ... );
+char		*UTIL_VarArgs( const char *format, ... );
 bool		UTIL_IsValidEntity( CBaseEntity *pEnt );
 bool		UTIL_TeamsMatch( const char *pTeamName1, const char *pTeamName2 );
 
@@ -460,7 +461,7 @@ void			UTIL_HudMessage( CBasePlayer *pToPlayer, const hudtextparms_t &textparms,
 void			UTIL_HudHintText( CBaseEntity *pEntity, const char *pMessage );
 
 // Writes message to console with timestamp and FragLog header.
-void			UTIL_LogPrintf( char *fmt, ... );
+void			UTIL_LogPrintf( const char *fmt, ... );
 
 // Sorta like FInViewCone, but for nonNPCs. 
 float UTIL_DotPoints ( const Vector &vecSrc, const Vector &vecCheck, const Vector &vecDir );

@@ -21,8 +21,8 @@ class CSoundPatch;
 #define BOUNCEBOMB_WARN_RADIUS		245.0	// Must be slightly less than physcannon!
 #define BOUNCEBOMB_DETONATE_RADIUS	100.0
 
-#define BOUNCEBOMB_EXPLODE_RADIUS	125.0
-#define BOUNCEBOMB_EXPLODE_DAMAGE	150.0
+#define BOUNCEBOMB_EXPLODE_RADIUS	125
+#define BOUNCEBOMB_EXPLODE_DAMAGE	150
 #include "player_pickup.h"
 
 class CBounceBomb : public CBaseAnimating, public CDefaultPlayerPickupVPhysics

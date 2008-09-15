@@ -88,7 +88,7 @@ END_DATADESC()
 
 void CPropThumper::Spawn( void )
 {
-	char *szModel = (char *)STRING( GetModelName() );
+	const char *szModel = (char *)STRING( GetModelName() );
 	if (!szModel || !*szModel)
 	{
 		szModel = THUMPER_MODEL_NAME;
@@ -210,7 +210,7 @@ void CPropThumper::Thump ( void )
 	}
 
 	EmitSound( "coast.thumper_dust" );
-	CSoundEnt::InsertSound ( SOUND_THUMPER, GetAbsOrigin(), THUMPER_RADIUS * m_flPlaybackRate, THUMPER_SOUND_DURATION, this );
+	CSoundEnt::InsertSound ( SOUND_THUMPER, GetAbsOrigin(), (int)(THUMPER_RADIUS * m_flPlaybackRate), THUMPER_SOUND_DURATION, this );
 
 	if ( thumper_show_radius.GetBool() )
 	{

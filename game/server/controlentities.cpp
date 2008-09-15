@@ -128,7 +128,7 @@ void CTargetChangeGravity::InputChangeGrav( inputdata_t &inputdata )
 
 	// Save the gravity to restore it in InputResetGrav
 	if ( m_iOldGrav )
-		m_iOldGrav = pl->GetGravity();
+		m_iOldGrav = (int)pl->GetGravity();
 
 	pl->SetGravity(m_iGravity);
 }

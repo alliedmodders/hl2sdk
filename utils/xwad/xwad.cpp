@@ -100,7 +100,7 @@ void PrintExitStuff()
 	if ( !g_bQuiet )
 	{
 		printf( "Press a key to quit.\n" );
-		getch();
+		_getch();
 	}
 }
 
@@ -509,7 +509,7 @@ void RunVTexOnFile( const char *pBaseDir, const char *pFilename )
 	// Set the vproject environment variable (vtex doesn't allow game yet).
 	char envStr[MAX_PATH];
 	_snprintf( envStr, sizeof( envStr ), "vproject=%s", pBaseDir );
-	putenv( envStr );
+	_putenv( envStr );
 
 	// Call vtex on this texture now.
 	char vtexCommand[1024];
@@ -607,7 +607,7 @@ void ProcessWadFile( const char *pWadFilename, const char *pBaseDir, const char 
 
 	for (int i = 0; i < numlumps; i++) 
 	{
-		if ( pOnlyTex && stricmp( pOnlyTex, lumpinfo[i].name ) != 0 )
+		if ( pOnlyTex && _stricmp( pOnlyTex, lumpinfo[i].name ) != 0 )
 			continue;
 
 		fseek( wadhandle, lumpinfo[i].filepos, SEEK_SET );
@@ -945,7 +945,7 @@ bool DragAndDropCheck(
 	// Get the first argument in upper case.
 	char arg1[512];
 	strncpy( arg1, pLastParam, sizeof( arg1 ) );
-	strupr( arg1 );
+	_strupr( arg1 );
 
 	// Only handle it if there's a full path (with a colon).
 	if ( !strchr( arg1, ':' ) )
@@ -1016,7 +1016,7 @@ int main (int argc, char **argv)
 	{
 		if ( (i+2) < argc )
 		{
-			if ( stricmp( argv[i], "-vmtparam" ) == 0 && g_NumVMTParams < MAX_VMT_PARAMS )
+			if ( _stricmp( argv[i], "-vmtparam" ) == 0 && g_NumVMTParams < MAX_VMT_PARAMS )
 			{
 				g_VMTParams[g_NumVMTParams].m_szParam = argv[i+1];
 				g_VMTParams[g_NumVMTParams].m_szValue = argv[i+2];
@@ -1036,62 +1036,62 @@ int main (int argc, char **argv)
 
 		if ( (i+1) < argc )
 		{
-			if ( stricmp( argv[i], "-basedir" ) == 0 )
+			if ( _stricmp( argv[i], "-basedir" ) == 0 )
 			{
 				pBaseDir = argv[i+1];
 				++i;
 			}
-			else if ( stricmp( argv[i], "-wadfile" ) == 0 )
+			else if ( _stricmp( argv[i], "-wadfile" ) == 0 )
 			{
 				pWadFilenames = argv[i+1];
 				++i;
 			}
-			else if ( stricmp( argv[i], "-bmpfile" ) == 0 )
+			else if ( _stricmp( argv[i], "-bmpfile" ) == 0 )
 			{
 				pBMPFilenames = argv[i+1];
 				++i;
 			}
-			else if ( stricmp( argv[i], "-sprfile" ) == 0 )
+			else if ( _stricmp( argv[i], "-sprfile" ) == 0 )
 			{
 				pSPRFilenames = argv[i+1];
 				++i;
 			}
-			else if ( stricmp( argv[i], "-OnlyTex" ) == 0 )
+			else if ( _stricmp( argv[i], "-OnlyTex" ) == 0 )
 			{
 				pOnlyTex = argv[i+1];
 				++i;
 			}
-			else if ( stricmp( argv[i], "-SubDir" ) == 0 )
+			else if ( _stricmp( argv[i], "-SubDir" ) == 0 )
 			{
 				pSubDir = argv[i+1];
 				++i;
 			}
-			else if ( stricmp( argv[i], "-shader" ) == 0 )
+			else if ( _stricmp( argv[i], "-shader" ) == 0 )
 			{
 				g_pShader = argv[i+1];
 				++i;
 			}
 		}
 		
-		if ( stricmp( argv[i], "-AutoDir" ) == 0 )
+		if ( _stricmp( argv[i], "-AutoDir" ) == 0 )
 		{
 			bAutoDir = true;
 		}
-		else if ( stricmp( argv[i], "-Transparent" ) == 0 )
+		else if ( _stricmp( argv[i], "-Transparent" ) == 0 )
 		{
 			g_bBMPAllowTranslucent = true;
 		}
-		else if ( stricmp( argv[i], "-Decal" ) == 0 )
+		else if ( _stricmp( argv[i], "-Decal" ) == 0 )
 		{	
 			g_bDecal = true;
 			if ( g_pShader == g_pDefaultShader )
 				g_pShader = "DecalModulate";
 		}
-		else if ( stricmp( argv[i], "-quiet" ) == 0 )
+		else if ( _stricmp( argv[i], "-quiet" ) == 0 )
 		{
 			g_bQuiet = true;
 		}
-		else if ( stricmp( argv[i], "-vtex" ) == 0 )
+		else if ( _stricmp( argv[i], "-vtex" ) == 0 )
 		{
 			bVTex = true;
 		}

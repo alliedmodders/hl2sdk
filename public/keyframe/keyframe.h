@@ -14,7 +14,7 @@ class IPositionInterpolator
 public:
 	virtual void		Release() = 0;
 
-	virtual void		GetDetails( char **outName, int *outMinKeyReq, int *outMaxKeyReq ) = 0;
+	virtual void		GetDetails( const char **outName, int *outMinKeyReq, int *outMaxKeyReq ) = 0;
 	virtual void		SetKeyPosition( int keyNum, Vector const &vPos ) = 0;
 	virtual void		InterpolatePosition( float time, Vector &vOut ) = 0;
 	
@@ -25,7 +25,7 @@ public:
 
 // Time modifiers.
 int Motion_GetNumberOfTimeModifiers( void );
-bool Motion_GetTimeModifierDetails( int timeInterpNum, char **outName );
+bool Motion_GetTimeModifierDetails( int timeInterpNum, const char **outName );
 bool Motion_CalculateModifiedTime( float time, int timeModifierFuncNum, float *outNewTime );
 
 // Position interpolators.
@@ -34,7 +34,7 @@ IPositionInterpolator* Motion_GetPositionInterpolator( int interpNum );
 
 // Rotation interpolators.
 int Motion_GetNumberOfRotationInterpolators( void );
-bool Motion_GetRotationInterpolatorDetails( int rotInterpNum, char **outName, int *outMinKeyReq, int *outMaxKeyReq );
+bool Motion_GetRotationInterpolatorDetails( int rotInterpNum, const char **outName, int *outMinKeyReq, int *outMaxKeyReq );
 bool Motion_InterpolateRotation( float time, int interpFuncNum, Quaternion &outQuatRotation );
 bool Motion_SetKeyAngles( int keyNum, Quaternion &quatAngles );
 

@@ -48,7 +48,7 @@ public:
 	void			Precache(void);
 	void			RunTask( const Task_t *pTask );
 	int				SelectSchedule(void);
-	virtual char	*GetScannerSoundPrefix( void );
+	virtual const char	*GetScannerSoundPrefix( void );
 	void			Spawn(void);
 	void			Activate();
 	void			StartTask( const Task_t *pTask );
@@ -73,7 +73,7 @@ public:
 
 	void			Event_Killed( const CTakeDamageInfo &info );
 
-	char			*GetEngineSound( void );
+	const char		*GetEngineSound( void );
 
 	virtual float	MinGroundDist(void);
 	virtual void	AdjustScannerVelocity( void );

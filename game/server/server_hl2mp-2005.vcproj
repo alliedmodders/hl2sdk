@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="Server (HL2MP)"
 	ProjectGUID="{4254C2D9-2C38-4911-BD4A-EB034CBD48D1}"
+	RootNamespace="Server (HL2MP)"
 	>
 	<Platforms>
 		<Platform
@@ -28,8 +29,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying to destination folder"
-				CommandLine="if exist &quot;..\..\game\hl2\bin\server.dll&quot; attrib -r &quot;..\..\game\hl2\bin\server.dll&quot;&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.dll &quot;..\..\game\hl2\bin\server.dll&quot;&#x0D;&#x0A;"
-				Outputs="..\..\game\hl2\bin\server.dll"
+				CommandLine="if exist ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;if exist ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\hl2mp\bin\server.dll;..\..\..\game\hl2mp\bin\server.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -43,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;.\;..\..\game\shared;..\..\utils\common;..\..\game\shared\hl2,.\hl2,.\hl2mp,..\..\game\shared\hl2mp"
+				AdditionalIncludeDirectories="..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;.\;..\..\game\shared;..\..\utils\common;..\..\game\shared\hl2;.\hl2;.\hl2mp;..\..\game\shared\hl2mp"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;GAME_DLL;VECTOR;PROTECTED_THINGS_ENABLE;sprintf=use_Q_snprintf_instead_of_sprintf;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;HL2MP;HL2_DLL;VERSION_SAFE_STEAM_API_INTERFACES"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -85,7 +86,7 @@
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies=" winmm.lib"
 				ShowProgress="0"
-				OutputFile="$(OutDir)/Server.dll"
+				OutputFile="$(OutDir)/server.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\common;..\..\lib\public"
@@ -146,8 +147,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Copying to destination folder"
-				CommandLine="if exist &quot;..\..\game\hl2\bin\server.dll&quot; attrib -r &quot;..\..\game\hl2\bin\server.dll&quot;&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;server.dll copy &quot;$(TargetDir)&quot;server.dll &quot;..\..\game\hl2\bin\server.dll&quot;&#x0D;&#x0A;if exist ..\..\game\hl2\bin\server.pdb attrib -r &quot;..\..\game\hl2\bin\server.pdb&quot;&#x0D;&#x0A;if exist &quot;$(TargetDir)&quot;server.pdb copy &quot;$(TargetDir)&quot;server.pdb &quot;..\..\game\hl2\bin&quot;&#x0D;&#x0A;"
-				Outputs="..\..\game\hl2\bin\server.dll;..\..\game\hl2\bin\server.pdb"
+				CommandLine="if exist ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;if exist ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\hl2mp\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\hl2mp\bin\server.dll;..\..\..\game\hl2mp\bin\server.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -164,7 +165,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;.\;..\..\game\shared;..\..\utils\common;..\..\game\shared\hl2,.\hl2,.\hl2mp,..\..\game\shared\hl2mp"
+				AdditionalIncludeDirectories="..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;.\;..\..\game\shared;..\..\utils\common;..\..\game\shared\hl2;.\hl2;.\hl2mp;..\..\game\shared\hl2mp"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;GAME_DLL;VECTOR;PROTECTED_THINGS_ENABLE;sprintf=use_Q_snprintf_instead_of_sprintf;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;HL2MP;HL2_DLL;VERSION_SAFE_STEAM_API_INTERFACES"
 				StringPooling="true"
 				ExceptionHandling="0"
@@ -205,7 +206,7 @@
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies=" winmm.lib"
 				ShowProgress="0"
-				OutputFile="$(OutDir)/Server.dll"
+				OutputFile="$(OutDir)/server.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib\common;..\..\lib\public"
@@ -259,6 +260,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath="..\shared\achievement_saverestore.cpp"
@@ -3033,6 +3035,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\team_control_point.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\team_control_point_master.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\team_control_point_round.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\team_objectiveresource.cpp"
 				>
 			</File>
@@ -3058,6 +3072,10 @@
 			</File>
 			<File
 				RelativePath="..\shared\teamplay_gamerules.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\teamplay_round_timer.cpp"
 				>
 			</File>
 			<File
@@ -3122,6 +3140,10 @@
 			</File>
 			<File
 				RelativePath=".\trains.h"
+				>
+			</File>
+			<File
+				RelativePath=".\trigger_area_capture.cpp"
 				>
 			</File>
 			<File
@@ -4391,6 +4413,7 @@
 		</Filter>
 		<Filter
 			Name="Link Libraries"
+			Filter="lib"
 			>
 			<File
 				RelativePath="..\..\lib\public\choreoobjects.lib"
@@ -4443,6 +4466,7 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath="..\..\public\mathlib\amd3dx.h"
@@ -5287,6 +5311,7 @@
 		</Filter>
 		<Filter
 			Name="Tools Framework"
+			Filter="h;cpp"
 			>
 			<File
 				RelativePath=".\entity_tools_server.cpp"

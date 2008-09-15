@@ -18,10 +18,12 @@
 // memdbgon must be the last include file in a .h file!!!
 #include "tier0/memdbgon.h"
 
-
 // This is a useful macro to iterate from head to tail in a linked list.
 #define FOR_EACH_LL( listName, iteratorName ) \
 	for( int iteratorName=listName.Head(); iteratorName != listName.InvalidIndex(); iteratorName = listName.Next( iteratorName ) )
+
+template <class T, class I>
+struct validindex_t;
 
 //-----------------------------------------------------------------------------
 // class CUtlMultiList:
@@ -33,6 +35,7 @@
 template <class T, class I> 
 class CUtlMultiList
 {
+	friend struct validindex_t<T, I>;
 public:
 	typedef I ListHandle_t;
 
@@ -171,7 +174,6 @@ protected:
 	// it's in release builds so this can be used in libraries correctly
 	ListElem_t  *m_pElements;
 };
-   
    
 //-----------------------------------------------------------------------------
 // constructor, destructor
@@ -318,21 +320,99 @@ inline I  CUtlMultiList<T,I>::Next( I i ) const
 	return InternalElement(i).m_Next; 
 }
 
+//-----------------------------------------------------------------------------
+// Workaround for doing partial specialization of function templates
+// This was done to "fix" the following warning:
+//	comparison is always true due to limited range of data type
+//-----------------------------------------------------------------------------
+template <class T, class I>
+struct validindex_t
+{
+	static inline bool IsValidIndex(const CUtlMultiList<T, I> *list, I i)
+	{
+		return (i < list->m_MaxElementIndex) && (i >= 0) &&
+			((list->m_Memory[i].m_Previous != i) || (list->m_Memory[i].m_Next == i));
+	}
+
+	static inline bool IsInList(const CUtlMultiList<T, I> *list, I i)
+	{
+		return (i < list->m_MaxElementIndex) && (i >= 0) && (list->Previous(i) != i);
+	}
+};
+
+template <class T>
+struct validindex_t<T, unsigned char>
+{
+	static inline bool IsValidIndex(const CUtlMultiList<T, unsigned char> *list, unsigned char i)
+	{
+		return (i < list->m_MaxElementIndex) && ((list->m_Memory[i].m_Previous != i) ||
+			(list->m_Memory[i].m_Next == i));
+	}
+
+	static inline bool IsInList(const CUtlMultiList<T, unsigned char> *list, unsigned char i)
+	{
+		return (i < list->m_MaxElementIndex) && (list->Previous(i) != i);
+	}
+};
+
+template <class T>
+struct validindex_t<T, unsigned short>
+{
+	static inline bool IsValidIndex(const CUtlMultiList<T, unsigned short> *list, unsigned short i)
+	{
+		return (i < list->m_MaxElementIndex) && ((list->m_Memory[i].m_Previous != i) ||
+			(list->m_Memory[i].m_Next == i));
+	}
+
+	static inline bool IsInList(const CUtlMultiList<T, unsigned short> *list, unsigned short i)
+	{
+		return (i < list->m_MaxElementIndex) && (list->Previous(i) != i);
+	}
+};
+
+template <class T>
+struct validindex_t<T, unsigned int>
+{
+	static inline bool IsValidIndex(const CUtlMultiList<T, unsigned int> *list, unsigned int i)
+	{
+		return (i < list->m_MaxElementIndex) && ((list->m_Memory[i].m_Previous != i) ||
+			(list->m_Memory[i].m_Next == i));
+	}
+
+	static inline bool IsInList(const CUtlMultiList<T, unsigned int> *list, unsigned int i)
+	{
+		return (i < list->m_MaxElementIndex) && (list->Previous(i) != i);
+	}
+};
+
+template <class T>
+struct validindex_t<T, unsigned long>
+{
+	static inline bool IsValidIndex(const CUtlMultiList<T, unsigned long> *list, unsigned long i)
+	{
+		return (i < list->m_MaxElementIndex) && ((list->m_Memory[i].m_Previous != i) ||
+			(list->m_Memory[i].m_Next == i));
+	}
+
+	static inline bool IsInList(const CUtlMultiList<T, unsigned long> *list, unsigned long i)
+	{
+		return (i < list->m_MaxElementIndex) && (list->Previous(i) != i);
+	}
+};
 
 //-----------------------------------------------------------------------------
 // Are nodes in the list or valid?
 //-----------------------------------------------------------------------------
 template <class T, class I>
 inline bool CUtlMultiList<T,I>::IsValidIndex( I i ) const  
-{ 
-	return (i < m_MaxElementIndex) && (i >= 0) &&
-		((m_Memory[i].m_Previous != i) || (m_Memory[i].m_Next == i));
+{
+	return validindex_t<T, I>::IsValidIndex(this, i);
 }
 
 template <class T, class I>
 inline bool CUtlMultiList<T,I>::IsInList( I i ) const
 {
-	return (i < m_MaxElementIndex) && (i >= 0) && (Previous(i) != i);
+	return validindex_t<T, I>::IsInList(this, i);
 }
 
 

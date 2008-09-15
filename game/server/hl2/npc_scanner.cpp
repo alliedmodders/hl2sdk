@@ -498,7 +498,7 @@ void CNPC_CScanner::HandleAnimEvent( animevent_t *pEvent )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-char *CNPC_CScanner::GetEngineSound( void )
+const char *CNPC_CScanner::GetEngineSound( void )
 {
 	if( m_bIsClawScanner )
 		return "NPC_SScanner.FlyLoop";
@@ -1834,12 +1834,12 @@ void CNPC_CScanner::SpotlightUpdate(void)
 	}
 	else if (m_flSpotlightCurLength > m_flSpotlightMaxLength)		
 	{
-		m_hSpotlightTarget->SetRenderColorA( (1-((m_flSpotlightCurLength-m_flSpotlightMaxLength)/m_flSpotlightMaxLength)) );
+		m_hSpotlightTarget->SetRenderColorA( (byte)((1-((m_flSpotlightCurLength-m_flSpotlightMaxLength)/m_flSpotlightMaxLength))) );
 		m_hSpotlight->SetFadeLength(m_flSpotlightMaxLength);
 	}
 	else
 	{
-		m_hSpotlightTarget->SetRenderColorA( 1.0 );
+		m_hSpotlightTarget->SetRenderColorA( 1 );
 		m_hSpotlight->SetFadeLength(m_flSpotlightCurLength);
 	}
 
@@ -1988,7 +1988,7 @@ void CNPC_CScanner::BlindFlashTarget( CBaseEntity *pTarget )
 
 		if ( tr.startsolid == false && tr.fraction == 1.0)
 		{
-			color32 white = { 255, 255, 255, SCANNER_FLASH_MAX_VALUE * dotPr };
+			color32 white = { 255, 255, 255, (byte)(SCANNER_FLASH_MAX_VALUE * dotPr) };
 
 			if ( ( g_pMaterialSystemHardwareConfig != NULL ) && ( g_pMaterialSystemHardwareConfig->GetHDRType() != HDR_TYPE_NONE ) )
 			{
@@ -2261,7 +2261,7 @@ void CNPC_CScanner::StartTask( const Task_t *pTask )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-char *CNPC_CScanner::GetScannerSoundPrefix( void )
+const char *CNPC_CScanner::GetScannerSoundPrefix( void )
 {
 	if( m_bIsClawScanner )
 		return "NPC_SScanner";
@@ -2604,6 +2604,9 @@ float CNPC_CScanner::GetGoalDistance( void )
 	
 	case SCANNER_FLY_FOLLOW:
 		return ( SCANNER_FOLLOW_DIST );
+		break;
+
+	default:
 		break;
 	}
 

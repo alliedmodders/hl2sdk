@@ -34,7 +34,7 @@ public:
 	char				*GetStatsFilename( void );
 
 	// Set the filename to write stats to, if none is specified when writing
-	void				SetStatsFilename( char *sFilename );
+	void				SetStatsFilename( const char *sFilename );
 
 private:
 	char	m_szStatFilename[ MAX_PATH ];

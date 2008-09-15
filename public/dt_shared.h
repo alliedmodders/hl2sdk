@@ -51,7 +51,7 @@
 
 // Use these functions to setup your data tables.
 DataTableProp PropFloat(
-	char *pVarName,					// Variable name.
+	const char *pVarName,					// Variable name.
 	int offset,						// Offset into container structure.
 	int sizeofVar=SIZEOF_IGNORE,
 	int nBits=32,					// Number of bits to use when encoding.
@@ -61,7 +61,7 @@ DataTableProp PropFloat(
 	);
 
 DataTableProp PropVector(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar=SIZEOF_IGNORE,
 	int nBits=32,					// Number of bits (for each floating-point component) to use when encoding.
@@ -71,7 +71,7 @@ DataTableProp PropVector(
 	);
 
 DataTableProp PropAngle(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar=SIZEOF_IGNORE,
 	int nBits=32,
@@ -79,7 +79,7 @@ DataTableProp PropAngle(
 	);
 
 DataTableProp PropInt(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar=SIZEOF_IGNORE,	// Handled by SENDINFO macro.
 	int nBits=-1,					// Set to -1 to automatically pick (max) number of bits based on size of element.
@@ -88,14 +88,14 @@ DataTableProp PropInt(
 	);
 
 DataTableProp PropString(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int bufferLen,
 	int flags=0
 	);
 
 DataTableProp PropEHandle(
-	char *pVarName,
+	const char *pVarName,
 	int offset,
 	int sizeofVar=SIZEOF_IGNORE );
 

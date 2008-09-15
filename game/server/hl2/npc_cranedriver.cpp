@@ -259,6 +259,9 @@ int CNPC_CraneDriver::SelectSchedule( void )
 		// We can't attack him, so if we don't have anything on the crane, grab something
 		if ( m_hCrane->GetTotalMassOnCrane() == 0 )
 			return SCHED_CRANE_FIND_LARGE_OBJECT;
+
+	default:
+		break;
 	}
 
 	return BaseClass::SelectSchedule();

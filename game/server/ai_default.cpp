@@ -331,6 +331,8 @@ int CAI_BaseNPC::TranslateSchedule( int scheduleType )
 				return SCHED_ALERT_WALK;
 			case NPC_STATE_COMBAT:
 				return SCHED_COMBAT_WALK;
+			default:
+				break;
 			}
 		}
 		break;

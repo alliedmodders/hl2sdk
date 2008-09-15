@@ -185,7 +185,7 @@ void Bot_UpdateDirection( CPluginBot *pBot )
 {
 	float angledelta = 15.0;
 
-	int maxtries = (int)360.0/angledelta;
+	int maxtries = static_cast<int>(360.0f / angledelta);
 
 	if ( pBot->m_bLastTurnToRight )
 	{

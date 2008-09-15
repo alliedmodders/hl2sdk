@@ -120,13 +120,13 @@ private:
 //-----------------------------------------------------------------------------
 template <class T, class LessFunc> 
 CUtlSortVector<T, LessFunc>::CUtlSortVector( int nGrowSize, int initSize ) : 
-	m_pLessContext(NULL), CUtlVector<T>( nGrowSize, initSize ), m_bNeedsSort( false )
+	CUtlVector<T>( nGrowSize, initSize ), m_pLessContext(NULL), m_bNeedsSort( false )
 {
 }
 
 template <class T, class LessFunc> 
 CUtlSortVector<T, LessFunc>::CUtlSortVector( T* pMemory, int numElements ) :
-	m_pLessContext(NULL), CUtlVector<T>( pMemory, numElements ), m_bNeedsSort( false )
+	CUtlVector<T>( pMemory, numElements ), m_pLessContext(NULL), m_bNeedsSort( false )
 {
 }
 
@@ -148,9 +148,9 @@ int CUtlSortVector<T, LessFunc>::Insert( const T& src )
 	AssertFatal( !m_bNeedsSort );
 
 	int pos = FindLessOrEqual( src ) + 1;
-	GrowVector();
-	ShiftElementsRight(pos);
-	CopyConstruct<T>( &Element(pos), src );
+	CUtlVector<T>::GrowVector();
+	CUtlVector<T>::ShiftElementsRight(pos);
+	CopyConstruct<T>( &CUtlVector<T>::Element(pos), src );
 	return pos;
 }
 
@@ -160,9 +160,9 @@ int CUtlSortVector<T, LessFunc>::InsertNoSort( const T& src )
 	m_bNeedsSort = true;
 	int lastElement = CUtlVector<T>::m_Size;
 	// Just stick the new element at the end of the vector, but don't do a sort
-	GrowVector();
-	ShiftElementsRight(lastElement);
-	CopyConstruct( &Element(lastElement), src );
+	CUtlVector<T>::GrowVector();
+	CUtlVector<T>::ShiftElementsRight(lastElement);
+	CopyConstruct( &CUtlVector<T>::Element(lastElement), src );
 	return lastElement;
 }
 
@@ -181,14 +181,14 @@ void CUtlSortVector<T, LessFunc>::QuickSort( LessFunc& less, int nLower, int nUp
 	}
 #else
 	typedef int (__cdecl *QSortCompareFunc_t)( const void *, const void *);
-	if ( Count() > 1 )
+	if ( CUtlVector<T>::Count() > 1 )
 	{
 		QSortContext_t ctx;
 		ctx.m_pLessContext = m_pLessContext;
 		ctx.m_pLessFunc = &less;
 		g_pUtlSortVectorQSortContext = &ctx;
 
-		qsort( Base(), Count(), sizeof(T), (QSortCompareFunc_t)&CUtlSortVector<T, LessFunc>::CompareHelper );
+		qsort( CUtlVector<T>::Base(), CUtlVector<T>::Count(), sizeof(T), (QSortCompareFunc_t)&CUtlSortVector<T, LessFunc>::CompareHelper );
 	}
 #endif
 }
@@ -201,7 +201,7 @@ void CUtlSortVector<T, LessFunc>::RedoSort( bool bForceSort /*= false */ )
 
 	m_bNeedsSort = false;
 	LessFunc less;
-	QuickSort( less, 0, Count() - 1 );
+	QuickSort( less, 0, CUtlVector<T>::Count() - 1 );
 }
 
 //-----------------------------------------------------------------------------
@@ -214,15 +214,15 @@ int CUtlSortVector<T, LessFunc>::Find( const T& src ) const
 
 	LessFunc less;
 
-	int start = 0, end = Count() - 1;
+	int start = 0, end = CUtlVector<T>::Count() - 1;
 	while (start <= end)
 	{
 		int mid = (start + end) >> 1;
-		if ( less.Less( Element(mid), src, m_pLessContext ) )
+		if ( less.Less( CUtlVector<T>::Element(mid), src, m_pLessContext ) )
 		{
 			start = mid + 1;
 		}
-		else if ( less.Less( src, Element(mid), m_pLessContext ) )
+		else if ( less.Less( src, CUtlVector<T>::Element(mid), m_pLessContext ) )
 		{
 			end = mid - 1;
 		}
@@ -244,15 +244,15 @@ int CUtlSortVector<T, LessFunc>::FindLessOrEqual( const T& src ) const
 	AssertFatal( !m_bNeedsSort );
 
 	LessFunc less;
-	int start = 0, end = Count() - 1;
+	int start = 0, end = CUtlVector<T>::Count() - 1;
 	while (start <= end)
 	{
 		int mid = (start + end) >> 1;
-		if ( less.Less( Element(mid), src, m_pLessContext ) )
+		if ( less.Less( CUtlVector<T>::Element(mid), src, m_pLessContext ) )
 		{
 			start = mid + 1;
 		}
-		else if ( less.Less( src, Element(mid), m_pLessContext ) )
+		else if ( less.Less( src, CUtlVector<T>::Element(mid), m_pLessContext ) )
 		{
 			end = mid - 1;
 		}
@@ -270,11 +270,11 @@ int CUtlSortVector<T, LessFunc>::FindLess( const T& src ) const
 	AssertFatal( !m_bNeedsSort );
 
 	LessFunc less;
-	int start = 0, end = Count() - 1;
+	int start = 0, end = CUtlVector<T>::Count() - 1;
 	while (start <= end)
 	{
 		int mid = (start + end) >> 1;
-		if ( less.Less( Element(mid), src, m_pLessContext ) )
+		if ( less.Less( CUtlVector<T>::Element(mid), src, m_pLessContext ) )
 		{
 			start = mid + 1;
 		}

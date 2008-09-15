@@ -8,7 +8,7 @@
 
 #include "cbase.h"
 #include "ep1_gamestats.h"
-#include "tier1/UtlBuffer.h"
+#include "tier1/utlbuffer.h"
 static CEP1GameStats s_CEP1GS_ThisJustSitsInMemory;
 
 // A bit of a hack to redirect the gamestats API for ep2 (ep3, etc.)

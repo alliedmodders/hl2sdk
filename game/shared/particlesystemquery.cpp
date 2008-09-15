@@ -173,12 +173,12 @@ bool CParticleSystemQuery::MovePointInsideControllingObject(
 #endif
 }
 
+#ifndef GAME_DLL
 static float GetSurfaceCoord( float flRand, float flMinX, float flMaxX )
 {
 	return Lerp( flRand, flMinX, flMaxX );
-
 }
-
+#endif
 
 void CParticleSystemQuery::GetRandomPointsOnControllingObjectHitBox( 
 	CParticleCollection *pParticles,
@@ -559,7 +559,7 @@ static CollisionGroupNameRecord_t s_NameMap[]={
 
 int CParticleSystemQuery::GetCollisionGroupFromName( const char *pszCollisionGroupName )
 {
-	for(int i = 0; i < ARRAYSIZE( s_NameMap ); i++ )
+	for(size_t i = 0; i < ARRAYSIZE( s_NameMap ); i++ )
 	{
 		if ( ! stricmp( s_NameMap[i].m_pszGroupName, pszCollisionGroupName ) )
 			return s_NameMap[i].m_nGroupID;

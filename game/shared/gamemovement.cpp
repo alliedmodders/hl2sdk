@@ -491,7 +491,7 @@ void CGameMovement::DiffPrint( char const *fmt, ... )
 }
 
 #else
-static void DiffPrint( bool bServer, int nCommandNumber, char const *fmt, ... )
+/*static void DiffPrint( bool bServer, int nCommandNumber, char const *fmt, ... )
 {
 	// Nothing
 }
@@ -501,7 +501,7 @@ static void StartCommand( bool bServer, int nCommandNumber )
 
 static void Validate( bool bServer, int nCommandNumber )
 {
-}
+}*/
 
 #define CheckV( tick, ctx, vel )
 
@@ -512,12 +512,12 @@ void CGameMovement::DiffPrint( char const *fmt, ... )
 #endif // !PREDICTION_ERROR_CHECK_LEVEL
 
 #ifndef _XBOX
-void COM_Log( char *pszFile, char *fmt, ...)
+void COM_Log( const char *pszFile, const char *fmt, ...)
 {
 	va_list		argptr;
 	char		string[1024];
 	FileHandle_t fp;
-	char *pfilename;
+	const char *pfilename;
 	
 	if ( !pszFile )
 	{
@@ -3182,7 +3182,7 @@ extern Vector rgv3tStuckTable[54];
 void CreateStuckTable( void )
 {
 	float x, y, z;
-	int idx;
+	size_t idx;
 	int i;
 	float zi[3];
 	static int firsttime = 1;
@@ -4704,7 +4704,9 @@ void CGameMovement::FullTossMove( void )
 // Purpose: TF2 commander mode movement logic
 //-----------------------------------------------------------------------------
 
+#ifdef _MSC_VER
 #pragma warning (disable : 4701)
+#endif
 
 void CGameMovement::IsometricMove( void )
 {
@@ -4739,8 +4741,9 @@ void CGameMovement::IsometricMove( void )
 	mv->m_vecVelocity.Init();
 }
 
+#ifdef _MSC_VER
 #pragma warning (default : 4701)
-
+#endif
 
 bool CGameMovement::GameHasLadders() const
 {

@@ -25,7 +25,10 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#ifdef _MSC_VER
 #pragma warning( disable : 4244 )
+#endif
+
 #define iabs(i) (( (i) >= 0 ) ? (i) : -(i) )
 
 int ExtractBbox( CStudioHdr *pstudiohdr, int sequence, Vector& mins, Vector& maxs )

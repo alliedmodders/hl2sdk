@@ -201,6 +201,7 @@ public:
 	CAIHintVector &operator=( const CAIHintVector &src )
 	{
 		CopyArray( src.Base(), src.Count() );
+		return *this;
 	}
 };
 

@@ -26,8 +26,8 @@ BEGIN_DATADESC( CGrenadeEnergy )
 	DEFINE_FIELD( m_flLaunchTime, FIELD_TIME ),		
 
 	// Function pointers
-	DEFINE_FUNCTION( Animate ),
-	DEFINE_FUNCTION( GrenadeEnergyTouch ),
+	DEFINE_THINKFUNC( Animate ),
+	DEFINE_ENTITYFUNC( GrenadeEnergyTouch ),
 
 END_DATADESC()
 
@@ -41,8 +41,8 @@ void CGrenadeEnergy::Spawn( void )
 
 	SetModel( "Models/weapons/w_energy_grenade.mdl" );
 
-	SetUse( DetonateUse );
-	SetTouch( GrenadeEnergyTouch );
+	SetUse( &CBaseGrenade::DetonateUse );
+	SetTouch( &CGrenadeEnergy::GrenadeEnergyTouch );
 	SetNextThink( gpGlobals->curtime + 0.1f );
 
 	m_flDamage			= sk_dmg_energy_grenade.GetFloat();
@@ -50,14 +50,15 @@ void CGrenadeEnergy::Spawn( void )
 	m_takedamage	= DAMAGE_YES;
 	m_iHealth		= 1;
 
-	m_flCycle		= 0;
+	SetCycle(0);
+
 	m_flLaunchTime	= gpGlobals->curtime;
 
 	SetCollisionGroup( HL2COLLISION_GROUP_HOUNDEYE ); 
 
 	UTIL_SetSize( this, vec3_origin, vec3_origin );
 
-	m_flMaxFrame = (float) modelinfo->GetModelFrameCount( GetModel() ) - 1;
+	m_flMaxFrame = modelinfo->GetModelFrameCount( GetModel() ) - 1;
 
 }
 
@@ -75,7 +76,7 @@ void CGrenadeEnergy::Shoot( CBaseEntity* pOwner, const Vector &vStart, Vector vV
 	pEnergy->SetAbsVelocity( vVelocity );
 	pEnergy->SetOwnerEntity( pOwner );
 
-	pEnergy->SetThink ( Animate );
+	pEnergy->SetThink ( &CGrenadeEnergy::Animate );
 	pEnergy->SetNextThink( gpGlobals->curtime + 0.1f );
 
 	pEnergy->m_nRenderMode = kRenderTransAdd;
@@ -109,7 +110,7 @@ void CGrenadeEnergy::Animate( void )
 
 	StudioFrameAdvance( );
 
-	SetRenderColorA( flLifeLeft );
+	SetRenderColorA( (byte)flLifeLeft );
 }
 
 void CGrenadeEnergy::Event_Killed( const CTakeDamageInfo &info )

@@ -43,7 +43,7 @@
 #include "prop_combine_ball.h"
 #include "datacache/imdlcache.h"
 #include "eventqueue.h"
-#include "gamestats.h"
+#include "GameStats.h"
 #include "filters.h"
 #include "tier0/icommandline.h"
 
@@ -807,7 +807,7 @@ void CHL2_Player::PreThink(void)
 
 		if (vel)
 		{
-			m_iTrain = TrainSpeed(pTrain->m_flSpeed, ((CFuncTrackTrain*)pTrain)->GetMaxSpeed());
+			m_iTrain = TrainSpeed((int)pTrain->m_flSpeed, (int)((CFuncTrackTrain*)pTrain)->GetMaxSpeed());
 			m_iTrain |= TRAIN_ACTIVE|TRAIN_NEW;
 		}
 	} 
@@ -1315,7 +1315,7 @@ void CHL2_Player::StartZooming( void )
 //-----------------------------------------------------------------------------
 void CHL2_Player::StopZooming( void )
 {
-	int iFOV = GetZoomOwnerDesiredFOV( m_hZoomOwner );
+	int iFOV = (int)GetZoomOwnerDesiredFOV( m_hZoomOwner );
 
 	if ( SetFOV( this, iFOV, 0.2f ) )
 	{
@@ -1975,7 +1975,7 @@ bool CHL2_Player::ApplyBattery( float powerMultiplier )
 		int pct;
 		char szcharge[64];
 
-		IncrementArmorValue( sk_battery.GetFloat() * powerMultiplier, MAX_NORMAL_BATTERY );
+		IncrementArmorValue( (int)(sk_battery.GetFloat() * powerMultiplier), (int)MAX_NORMAL_BATTERY );
 
 		CPASAttenuationFilter filter( this, "ItemBattery.Touch" );
 		EmitSound( filter, entindex(), "ItemBattery.Touch" );
@@ -2804,7 +2804,7 @@ void CHL2_Player::PlayerUse ( void )
 				if ( pTrain && !(m_nButtons & IN_JUMP) && (GetFlags() & FL_ONGROUND) && (pTrain->ObjectCaps() & FCAP_DIRECTIONAL_USE) && pTrain->OnControls(this) )
 				{
 					m_afPhysicsFlags |= PFLAG_DIROVERRIDE;
-					m_iTrain = TrainSpeed(pTrain->m_flSpeed, ((CFuncTrackTrain*)pTrain)->GetMaxSpeed());
+					m_iTrain = TrainSpeed((int)pTrain->m_flSpeed, (int)((CFuncTrackTrain*)pTrain)->GetMaxSpeed());
 					m_iTrain |= TRAIN_NEW;
 					EmitSound( "HL2Player.TrainUse" );
 					return;
@@ -3222,8 +3222,8 @@ void CHL2_Player::UpdateClientData( void )
 		CSingleUserRecipientFilter user( this );
 		user.MakeReliable();
 		UserMessageBegin( user, "Damage" );
-			WRITE_BYTE( m_DmgSave );
-			WRITE_BYTE( m_DmgTake );
+			WRITE_BYTE( (int)m_DmgSave );
+			WRITE_BYTE( (int)m_DmgTake );
 			WRITE_LONG( visibleDamageBits );
 			WRITE_FLOAT( damageOrigin.x );	//BUG: Should be fixed point (to hud) not floats
 			WRITE_FLOAT( damageOrigin.y );	//BUG: However, the HUD does _not_ implement bitfield messages (yet)

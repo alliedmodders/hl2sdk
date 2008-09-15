@@ -363,7 +363,7 @@ public:
 
 	virtual float RandomFloat( float nMin, float nMax )
 	{
-		return m_RandomStream.RandomInt( nMin, nMax );
+		return m_RandomStream.RandomFloat( nMin, nMax );
 	}
 
 

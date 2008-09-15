@@ -212,12 +212,12 @@ static int g_nExpressers;
 #endif
 
 CAI_Expresser::CAI_Expresser( CBaseFlex *pOuter )
- :	m_pOuter( pOuter ),
-	m_pSink( NULL ),
+ :	m_pSink( NULL ),
 	m_flStopTalkTime( 0 ),
-	m_flBlockedTalkTime( 0 ),
 	m_flStopTalkTimeWithoutDelay( 0 ),
-	m_voicePitch( 100 )
+	m_flBlockedTalkTime( 0 ),
+	m_voicePitch( 100 ),
+	m_pOuter( pOuter )
 {
 #ifdef DEBUG
 	g_nExpressers++;
@@ -467,7 +467,7 @@ bool CAI_Expresser::SpeakDispatchResponse( AIConcept_t concept, AI_Response *res
 	if ( spoke )
 	{
 		m_flLastTimeAcceptedSpeak = gpGlobals->curtime;
-		if ( DebuggingSpeech() && g_pDeveloper->GetInt() > 0 && response && result->GetType() != RESPONSE_PRINT )
+		if ( DebuggingSpeech() && g_pDeveloper->GetInt() > 0 && response[0] != '\0' && result->GetType() != RESPONSE_PRINT )
 		{
 			Vector vPrintPos;
 			GetOuter()->CollisionProp()->NormalizedToWorldSpace( Vector(0.5,0.5,1.0f), &vPrintPos );
@@ -900,7 +900,7 @@ void CAI_ExpresserHost_NPC_DoModifyOrAppendCriteria( CAI_BaseNPC *pSpeaker, AI_C
 	}
 
 	static const char *pStateNames[] = { "None", "Idle", "Alert", "Combat", "Scripted", "PlayDead", "Dead" };
-	if ( (int)pSpeaker->m_NPCState < ARRAYSIZE(pStateNames) )
+	if ( (int)pSpeaker->m_NPCState < (int)ARRAYSIZE(pStateNames) )
 	{
 		set.AppendCriteria( "npcstate", UTIL_VarArgs( "[NPCState::%s]", pStateNames[pSpeaker->m_NPCState] ) );
 	}

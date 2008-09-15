@@ -232,7 +232,7 @@ void CPropJetski::Think(void)
 		int iSequence = SelectWeightedSequence( ACT_IDLE );
 		if ( iSequence > ACTIVITY_NOT_AVAILABLE )
 		{
-			m_flCycle = 0;
+			SetCycle(0);
 			m_flAnimTime = gpGlobals->curtime;
 			ResetSequence( iSequence );
 			ResetClientsideFrame();

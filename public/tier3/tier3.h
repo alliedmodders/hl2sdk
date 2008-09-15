@@ -92,7 +92,7 @@ public:
 		if ( !BaseClass::Connect( factory ) )
 			return false;
 
-		if ( IsPrimaryAppSystem() )
+		if ( CTier0AppSystem<IInterface>::IsPrimaryAppSystem() )
 		{
 			ConnectTier3Libraries( &factory, 1 );
 		}
@@ -101,7 +101,7 @@ public:
 
 	virtual void Disconnect() 
 	{
-		if ( IsPrimaryAppSystem() )
+		if ( CTier0AppSystem<IInterface>::IsPrimaryAppSystem() )
 		{
 			DisconnectTier3Libraries();
 		}

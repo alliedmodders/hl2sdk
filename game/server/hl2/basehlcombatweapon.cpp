@@ -10,7 +10,7 @@
 #include "ai_basenpc.h"
 #include "game.h"
 #include "in_buttons.h"
-#include "gamestats.h"
+#include "GameStats.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

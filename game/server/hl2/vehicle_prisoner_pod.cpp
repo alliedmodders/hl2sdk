@@ -41,10 +41,10 @@ class CPropVehiclePrisonerPod;
 
 
 // Pod bones that have physics followers
-static const char *pPodFollowerBoneNames[] =
+/*static const char *pPodFollowerBoneNames[] =
 {
 	"base",
-};
+};*/
 
 
 //-----------------------------------------------------------------------------

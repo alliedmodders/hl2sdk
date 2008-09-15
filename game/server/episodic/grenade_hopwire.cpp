@@ -38,7 +38,7 @@ class CGravityVortexController : public CBaseEntity
 
 public:
 	
-			CGravityVortexController( void ) : m_flEndTime( 0.0f ), m_flRadius( 256 ), m_flStrength( 256 ), m_flMass( 0.0f ) {}	
+		CGravityVortexController( void ) : m_flMass( 0.0f ), m_flEndTime( 0.0f ), m_flRadius( 256.0f ), m_flStrength( 256.0f ) {}	
 	float	GetConsumedMass( void ) const;
 
 	static CGravityVortexController *Create( const Vector &origin, float radius, float strength, float duration );

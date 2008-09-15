@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="Glview"
 	ProjectGUID="{BD1604CA-F401-4C4B-821C-251F5AE157FE}"
+	RootNamespace="Glview"
 	>
 	<Platforms>
 		<Platform
@@ -27,6 +28,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\glview.exe;..\..\..\game\bin\glview.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -128,7 +131,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -147,6 +149,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.exe&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\glview.exe;..\..\..\game\bin\glview.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -250,7 +254,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -261,33 +264,14 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath=".\glview.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\public\tier0\memoverride.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
 			<Filter
-				Name="common files"
+				Name="Common Files"
 				>
 				<File
 					RelativePath="..\common\cmdlib.cpp"
@@ -306,6 +290,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\public\tier0\memoverride.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\common\physdll.cpp"
 					>
 				</File>
@@ -313,6 +301,7 @@
 		</Filter>
 		<Filter
 			Name="Link Libraries"
+			Filter="lib"
 			>
 			<File
 				RelativePath="..\..\lib\public\mathlib.lib"
@@ -337,6 +326,7 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath="..\common\cmdlib.h"
@@ -348,14 +338,6 @@
 			</File>
 			<File
 				RelativePath="..\..\public\mathlib\mathlib.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			>
-			<File
-				RelativePath="C:\Program Files\Microsoft Visual Studio\VC98\Include\BASETSD.H"
 				>
 			</File>
 		</Filter>

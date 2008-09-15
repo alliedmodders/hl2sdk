@@ -1758,7 +1758,7 @@ void CAI_ScriptedSchedule::StartSchedule( CAI_BaseNPC *pTarget )
 	
 	pTarget->ForceDecisionThink();
 
-	Assert( m_nForceState >= 0 && m_nForceState < ARRAYSIZE(forcedStatesMap) );
+	Assert( m_nForceState >= 0 && m_nForceState < (int)ARRAYSIZE(forcedStatesMap) );
 	
 	NPC_STATE forcedState = forcedStatesMap[m_nForceState];
 
@@ -1834,6 +1834,9 @@ void CAI_ScriptedSchedule::StartSchedule( CAI_BaseNPC *pTarget )
 			bDidSetSchedule = true;
 			break;
 		}
+
+		default:
+			break;
 	}
 
 	if ( bDidSetSchedule )

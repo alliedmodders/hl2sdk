@@ -246,8 +246,8 @@ void CBaseTurret::Spawn()
 	Precache( );
 	SetNextThink( gpGlobals->curtime + 1 );
 	SetMoveType( MOVETYPE_FLY );
-	m_nSequence		= 0;
-	m_flCycle		= 0;
+	SetSequence(0);
+	SetCycle(0);
 	SetSolid( SOLID_SLIDEBOX );
 	m_takedamage		= DAMAGE_YES;
 	AddFlag( FL_AIMTARGET );
@@ -298,16 +298,16 @@ void CBaseTurret::Initialize(void)
 	if (m_iBaseTurnRate == 0) m_iBaseTurnRate = TURRET_TURNRATE;
 	if (m_flMaxWait == 0) m_flMaxWait = TURRET_MAXWAIT;
 
-	m_vecGoalAngles = GetAngles();
+	m_vecGoalAngles = GetAbsAngles();
 
 	if (m_iAutoStart)
 	{
 		m_flLastSight = gpGlobals->curtime + m_flMaxWait;
-		SetThink(AutoSearchThink);		
+		SetThink(&CBaseTurret::AutoSearchThink);		
 		SetNextThink( gpGlobals->curtime + .1 );
 	}
 	else
-		SetThink(SUB_DoNothing);
+		SetThink(&CBaseEntity::SUB_DoNothing);
 }
 
 
@@ -325,7 +325,7 @@ void CBaseTurret::InputToggle( inputdata_t &inputdata )
 		SetNextThink( gpGlobals->curtime + 0.1f );
 		m_iAutoStart = FALSE;// switching off a turret disables autostart
 		//!!!! this should spin down first!!BUGBUG
-		SetThink(Retire);
+		SetThink(&CBaseTurret::Retire);
 	}
 	else 
 	{
@@ -337,7 +337,7 @@ void CBaseTurret::InputToggle( inputdata_t &inputdata )
 			m_iAutoStart = TRUE;
 		}
 		
-		SetThink(Deploy);
+		SetThink(&CBaseTurret::Deploy);
 	}
 }
 
@@ -398,7 +398,7 @@ void CBaseTurret::ActiveThink(void)
 	{
 		SetEnemy( NULL );
 		m_flLastSight = gpGlobals->curtime + m_flMaxWait;
-		SetThink(SearchThink);
+		SetThink(&CBaseTurret::SearchThink);
 		return;
 	}
 	
@@ -415,7 +415,7 @@ void CBaseTurret::ActiveThink(void)
 			{	
 				SetEnemy( NULL );
 				m_flLastSight = gpGlobals->curtime + m_flMaxWait;
-				SetThink(SearchThink);
+				SetThink(&CBaseTurret::SearchThink);
 				return;
 			}
 		}
@@ -457,7 +457,7 @@ void CBaseTurret::ActiveThink(void)
 				ClearEnemyMemory();
 				SetEnemy( NULL );
 				m_flLastSight = gpGlobals->curtime + m_flMaxWait;
-				SetThink(SearchThink);
+				SetThink(&CBaseTurret::SearchThink);
 				return;
 			}
 		}
@@ -490,7 +490,7 @@ void CBaseTurret::ActiveThink(void)
 	// fire the gun
 	if (fAttack || m_fBeserk)
 	{
-		m_Activity = ACT_RESET;
+		SetActivity(ACT_RESET);
 		SetActivity( (Activity)ACT_TURRET_FIRE );
 		Shoot(vecMuzzle, vecMuzzleDir );
 	} 
@@ -529,7 +529,7 @@ void CBaseTurret::Deploy(void)
 	SetNextThink( gpGlobals->curtime + 0.1f );
 	StudioFrameAdvance( );
 
-	if ( m_Activity != ACT_TURRET_OPEN )
+	if ( GetActivity() != ACT_TURRET_OPEN )
 	{
 		m_iOn = 1;
 		SetActivity( (Activity)ACT_TURRET_OPEN );
@@ -554,7 +554,7 @@ void CBaseTurret::Deploy(void)
 		SetActivity( (Activity)ACT_TURRET_OPEN_IDLE );
 
 		m_flPlaybackRate = 0;
-		SetThink(SearchThink);
+		SetThink(&CBaseTurret::SearchThink);
 	}
 
 	m_flLastSight = gpGlobals->curtime + m_flMaxWait;
@@ -563,7 +563,7 @@ void CBaseTurret::Deploy(void)
 void CBaseTurret::Retire(void)
 {
 	// make the turret level
-	m_vecGoalAngles = GetAngles( );
+	m_vecGoalAngles = GetAbsAngles( );
 
 	SetNextThink( gpGlobals->curtime + 0.1f );
 
@@ -571,7 +571,7 @@ void CBaseTurret::Retire(void)
 
 	EyeOff( );
 
-	if ( m_Activity != ACT_TURRET_CLOSE )
+	if ( GetActivity() != ACT_TURRET_CLOSE )
 	{
 		SetActivity( (Activity)ACT_TURRET_OPEN_IDLE );
 		
@@ -602,12 +602,12 @@ void CBaseTurret::Retire(void)
 
 		if (m_iAutoStart)
 		{
-			SetThink(AutoSearchThink);		
+			SetThink(&CBaseTurret::AutoSearchThink);		
 			SetNextThink( gpGlobals->curtime + .1 );
 		}
 		else
 		{
-			SetThink(SUB_DoNothing);
+			SetThink(&CBaseEntity::SUB_DoNothing);
 		}
 	}
 }
@@ -646,7 +646,7 @@ void CBaseTurret::SearchThink(void)
 	if (GetEnemy() != NULL)
 	{
 		m_flLastSight = 0;
-		SetThink(ActiveThink);
+		SetThink(&CBaseTurret::ActiveThink);
 	}
 	else
 	{
@@ -655,7 +655,7 @@ void CBaseTurret::SearchThink(void)
 		{
 			//Before we retrace, make sure that we are spun down.
 			m_flLastSight = 0;
-			SetThink(Retire);
+			SetThink(&CBaseTurret::Retire);
 		}
 		
 		// generic hunt for new victims
@@ -696,7 +696,7 @@ void CBaseTurret::AutoSearchThink(void)
 
 	if (GetEnemy() != NULL)
 	{
-		SetThink(Deploy);
+		SetThink(&CBaseTurret::Deploy);
 		EmitSound( "NPC_Turret.Alert" );
 	}
 }
@@ -792,7 +792,7 @@ int CBaseTurret::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 
 		RemoveFlag( FL_NPC ); // why are they set in the first place???
 
-		SetThink(TurretDeath);
+		SetThink(&CBaseTurret::TurretDeath);
 
 		m_OnDamaged.FireOutput( info.GetInflictor(), this );
 
@@ -806,7 +806,7 @@ int CBaseTurret::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		if (m_iOn && (1 || random->RandomInt(0, 0x7FFF) > 800))
 		{
 			m_fBeserk = 1;
-			SetThink(SearchThink);
+			SetThink(&CBaseTurret::SearchThink);
 		}
 	}
 
@@ -909,6 +909,8 @@ LINK_ENTITY_TO_CLASS( npc_turret_ceiling, CCeilingTurret );
 
 void CCeilingTurret::Spawn()
 { 
+	Vector up;
+
 	Precache( );
 
 	SetModel( "models/combine_turrets/ceiling_turret.mdl" );
@@ -918,8 +920,8 @@ void CCeilingTurret::Spawn()
 	m_iHealth			= sk_turret_health.GetFloat();
 	m_HackedGunPos		= Vector( 0, 0, 12.75 );
 
-	AngleVectors( GetAngles(), NULL, NULL, &m_vecViewOffset );
-	m_vecViewOffset		= m_vecViewOffset * Vector( 0, 0, -64 );
+	AngleVectors( GetAbsAngles(), NULL, NULL, &up );
+	SetViewOffset( up * Vector( 0, 0, -64 ) );
 
 	m_flFieldOfView		= VIEW_FIELD_FULL;
 
@@ -928,14 +930,14 @@ void CCeilingTurret::Spawn()
 	m_iMinPitch	= -45;
 	UTIL_SetSize(this, Vector(-32, -32, -m_iRetractHeight), Vector(32, 32, m_iRetractHeight));
 	
-	SetThink(Initialize);	
+	SetThink(&CBaseTurret::Initialize);	
 
-	m_pEyeGlow = CSprite::SpriteCreate( TURRET_GLOW_SPRITE, GetOrigin(), FALSE );
+	m_pEyeGlow = CSprite::SpriteCreate( TURRET_GLOW_SPRITE, GetAbsOrigin(), FALSE );
 	m_pEyeGlow->SetTransparency( kRenderGlow, 255, 0, 0, 0, kRenderFxNoDissipation );
 	m_pEyeGlow->SetAttachment( this, 2 );
 	m_eyeBrightness = 0;
 
-	SetNextThink( gpGlobals->curtime + 0.3; );
+	SetNextThink( gpGlobals->curtime + 0.3 );
 }
 
 void CCeilingTurret::Precache()
@@ -1064,11 +1066,17 @@ void CSentry::Precache()
 
 void CSentry::Spawn()
 { 
+	Vector viewOffs;
+
 	Precache( );
 	SetModel( "models/sentry.mdl" );
 	m_iHealth			= sk_sentry_health.GetFloat();
 	m_HackedGunPos		= Vector( 0, 0, 48 );
-	m_vecViewOffset.z		= 48;
+
+	viewOffs = GetViewOffset();
+	viewOffs.z = 48;
+	SetViewOffset(viewOffs);
+
 	m_flMaxWait = 1E6;
 
 	CBaseTurret::Spawn();
@@ -1077,9 +1085,9 @@ void CSentry::Spawn()
 	m_iMinPitch	= -60;
 	UTIL_SetSize(this, Vector(-16, -16, -m_iRetractHeight), Vector(16, 16, m_iRetractHeight));
 
-	SetTouch(SentryTouch);
-	SetThink(Initialize);	
-	SetNextThink( gpGlobals->curtime + 0.3; );
+	SetTouch(&CSentry::SentryTouch);
+	SetThink(&CBaseTurret::Initialize);	
+	SetNextThink( gpGlobals->curtime + 0.3 );
 }
 
 void CSentry::Shoot(const Vector &vecSrc, const Vector &vecDirToEnemy)
@@ -1099,7 +1107,7 @@ int CSentry::OnTakeDamage( const CTakeDamageInfo &info )
 
 	if (!m_iOn)
 	{
-		SetThink( Deploy );
+		SetThink( &CBaseTurret::Deploy );
 		SetNextThink( gpGlobals->curtime + 0.1f );
 	}
 
@@ -1112,7 +1120,7 @@ int CSentry::OnTakeDamage( const CTakeDamageInfo &info )
 
 		RemoveFlag( FL_NPC ); // why are they set in the first place???
 
-		SetThink(SentryDeath);
+		SetThink(&CSentry::SentryDeath);
 		m_OnDamaged.FireOutput( info.GetInflictor(), this );
 		SetNextThink( gpGlobals->curtime + 0.1f );
 
@@ -1149,9 +1157,9 @@ void CSentry ::	SentryDeath( void )
 		SetActivity( (Activity)ACT_TURRET_CLOSE );
 
 		SetSolid( SOLID_NOT );
-		QAngle angles = GetAngles();
-		angles.y = UTIL_AngleMod( GetAngles().y + random->RandomInt( 0, 2 ) * 120 );
-		SetAngles( angles );
+		QAngle angles = GetAbsAngles();
+		angles.y = UTIL_AngleMod( angles.y + random->RandomInt( 0, 2 ) * 120 );
+		SetAbsAngles( angles );
 
 		EyeOn( );
 	}

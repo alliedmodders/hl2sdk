@@ -30,4 +30,4 @@ public:
 extern ISceneImage *g_pSceneImage;
 extern ISceneTokenProcessor *tokenprocessor;
 
-#endif SCENEIMAGE_H
+#endif // SCENEIMAGE_H

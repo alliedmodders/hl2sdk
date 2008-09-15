@@ -58,8 +58,8 @@ CTEFireBullets::~CTEFireBullets( void )
 
 IMPLEMENT_SERVERCLASS_ST_NOBASE(CTEFireBullets, DT_TEFireBullets)
 	SendPropVector( SENDINFO(m_vecOrigin), -1, SPROP_COORD ),
-	SendPropAngle( SENDINFO_VECTORELEM( m_vecAngles, 0 ), 13, 0 ),
-	SendPropAngle( SENDINFO_VECTORELEM( m_vecAngles, 1 ), 13, 0 ),
+	SendPropAngle( SENDINFO_VECTORELEM2( m_vecAngles, 0, x ), 13, 0 ),
+	SendPropAngle( SENDINFO_VECTORELEM2( m_vecAngles, 1, y ), 13, 0 ),
 	SendPropInt( SENDINFO( m_iWeaponID ), 5, SPROP_UNSIGNED ), // max 31 weapons
 	SendPropInt( SENDINFO( m_iMode ), 1, SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO( m_iSeed ), NUM_BULLET_SEED_BITS, SPROP_UNSIGNED ),

@@ -11,7 +11,7 @@
 #endif
 
 #include "basegrenade_shared.h"
-#include "sprite.h"
+#include "Sprite.h"
 
 extern ConVar hopwire_trap;
 

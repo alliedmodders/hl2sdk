@@ -61,10 +61,10 @@ extern ConVar g_debug_vehicledriver;
 
 class CPropVehicleChoreoGeneric;
 
-static const char *pChoreoGenericFollowerBoneNames[] =
+/*static const char *pChoreoGenericFollowerBoneNames[] =
 {
 	"base",
-};
+};*/
 
 
 //-----------------------------------------------------------------------------

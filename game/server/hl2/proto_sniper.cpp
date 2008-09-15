@@ -1158,7 +1158,7 @@ int CProtoSniper::IRelationPriority( CBaseEntity *pTarget )
 		if ( flDistance <= SNIPER_PROTECTION_MINDIST )
  		{
  			float flBonus = (1.0 - (flDistance / SNIPER_PROTECTION_MINDIST)) * SNIPER_PROTECTION_PRIORITYCAP;
-			priority += flBonus;
+			priority += (int)flBonus;
 
 			if ( m_debugOverlays & OVERLAY_NPC_SELECTED_BIT )
 			{

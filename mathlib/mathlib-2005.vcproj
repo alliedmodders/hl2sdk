@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="mathlib"
 	ProjectGUID="{884C66F2-7F84-4570-AE6C-B634C1113D69}"
+	RootNamespace="mathlib"
 	>
 	<Platforms>
 		<Platform
@@ -41,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				UseUnicodeResponseFiles="false"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\common;..\public;..\public\tier0;..\public\tier1;..\public\mathlib"
+				AdditionalIncludeDirectories="..\public;..\public\tier0;..\public\tier1;..\public\mathlib"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -137,7 +138,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="..\common;..\public;..\public\tier0;..\public\tier1;..\public\mathlib"
+				AdditionalIncludeDirectories="..\public;..\public\tier0;..\public\tier1;..\public\mathlib"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE"
 				StringPooling="true"
 				ExceptionHandling="0"
@@ -207,6 +208,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath=".\3dnow.cpp"
@@ -291,6 +293,7 @@
 		</Filter>
 		<Filter
 			Name="Public Header Files"
+			Filter="h"
 			>
 			<File
 				RelativePath="..\public\mathlib\amd3dx.h"
@@ -383,6 +386,7 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath=".\3dnow.h"

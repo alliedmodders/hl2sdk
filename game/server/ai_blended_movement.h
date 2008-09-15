@@ -214,8 +214,8 @@ class CAI_BlendingHost : public BASE_NPC
 {
 	DECLARE_CLASS_NOFRIEND( CAI_BlendingHost, BASE_NPC );
 public:
-	const CAI_BlendedMotor *GetBlendedMotor() const { return assert_cast<const CAI_BlendedMotor *>(GetMotor()); }
-	CAI_BlendedMotor *		GetBlendedMotor()		{ return assert_cast<CAI_BlendedMotor *>(GetMotor()); }
+	const CAI_BlendedMotor *GetBlendedMotor() const { return assert_cast<const CAI_BlendedMotor *>(this->GetMotor()); }
+	CAI_BlendedMotor *		GetBlendedMotor()		{ return assert_cast<CAI_BlendedMotor *>(this->GetMotor()); }
 
 	CAI_Motor *CreateMotor()
 	{
@@ -232,7 +232,7 @@ public:
 
 	float MaxYawSpeed( void )
 	{
-		float override = GetBlendedMotor()->OverrideMaxYawSpeed( GetActivity() );
+		float override = GetBlendedMotor()->OverrideMaxYawSpeed( this->GetActivity() );
 		if ( override != -1 )
 			return override;
 		return BaseClass::MaxYawSpeed();

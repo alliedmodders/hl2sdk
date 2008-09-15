@@ -834,7 +834,7 @@ void CBaseServerVehicle::ParseNPCRoles( KeyValues *pkvPassengerList )
 		Msg("Passenger Roles Parsed:\t%d\n\n", m_PassengerRoles.Count() );
 		for ( int i = 0; i < m_PassengerRoles.Count(); i++ )
 		{
-			Msg("\tPassenger Role:\t%s (%d seats)\n", m_PassengerRoles[i].m_strName, m_PassengerRoles[i].m_PassengerSeats.Count() );
+			Msg("\tPassenger Role:\t%s (%d seats)\n", STRING(m_PassengerRoles[i].m_strName), m_PassengerRoles[i].m_PassengerSeats.Count() );
 			
 			// Iterate through all information sets under this name
 			for ( int j = 0; j < m_PassengerRoles[i].m_PassengerSeats.Count(); j++ )
@@ -847,7 +847,7 @@ void CBaseServerVehicle::ParseNPCRoles( KeyValues *pkvPassengerList )
 
 				for ( int nEntry = 0; nEntry < m_PassengerRoles[i].m_PassengerSeats[j].m_EntryTransitions.Count(); nEntry++ )
 				{
-					Msg("\t\t\tAnimation:\t%s\t(Priority %d)\n", m_PassengerRoles[i].m_PassengerSeats[j].m_EntryTransitions[nEntry].m_strAnimationName, 
+					Msg("\t\t\tAnimation:\t%s\t(Priority %d)\n", STRING(m_PassengerRoles[i].m_PassengerSeats[j].m_EntryTransitions[nEntry].m_strAnimationName), 
 																 m_PassengerRoles[i].m_PassengerSeats[j].m_EntryTransitions[nEntry].m_nPriority );
 				}
 				
@@ -859,7 +859,7 @@ void CBaseServerVehicle::ParseNPCRoles( KeyValues *pkvPassengerList )
 
 				for ( int nExits = 0; nExits < m_PassengerRoles[i].m_PassengerSeats[j].m_ExitTransitions.Count(); nExits++ )
 				{
-					Msg("\t\t\tAnimation:\t%s\t(Priority %d)\n", m_PassengerRoles[i].m_PassengerSeats[j].m_ExitTransitions[nExits].m_strAnimationName, 
+					Msg("\t\t\tAnimation:\t%s\t(Priority %d)\n", STRING(m_PassengerRoles[i].m_PassengerSeats[j].m_ExitTransitions[nExits].m_strAnimationName), 
 																 m_PassengerRoles[i].m_PassengerSeats[j].m_ExitTransitions[nExits].m_nPriority );
 				}
 			}
@@ -1340,7 +1340,7 @@ int CBaseServerVehicle::GetExitAnimToUse( Vector &vecEyeExitEndpoint, bool &bAll
 		
 		if ( g_debug_vehicleexit.GetBool() )
 		{
-			NDebugOverlay::SweptBox( vecStart, vecEnd, VEC_HULL_MIN, Vector( VEC_HULL_MAX.x, VEC_HULL_MAX.y, VEC_HULL_MIN.y ), vec3_angle, 255, 255, 255, 8.0f, 20.0f );
+			NDebugOverlay::SweptBox( vecStart, vecEnd, VEC_HULL_MIN, Vector( VEC_HULL_MAX.x, VEC_HULL_MAX.y, VEC_HULL_MIN.y ), vec3_angle, 255, 255, 255, 8, 20.0f );
 		}
 		
 		if ( tr.fraction < 1.0f )
@@ -1353,14 +1353,14 @@ int CBaseServerVehicle::GetExitAnimToUse( Vector &vecEyeExitEndpoint, bool &bAll
 			{
 				if ( g_debug_vehicleexit.GetBool() )
 				{
-					NDebugOverlay::Box( tr.endpos, VEC_HULL_MIN, VEC_HULL_MAX, 255, 0, 0, 8.0f, 20.0f );
+					NDebugOverlay::Box( tr.endpos, VEC_HULL_MIN, VEC_HULL_MAX, 255, 0, 0, 8, 20.0f );
 				}
 				continue;
 			}
 
 			if ( g_debug_vehicleexit.GetBool() )
 			{
-				NDebugOverlay::Box( tr.endpos, VEC_HULL_MIN, VEC_HULL_MAX, 0, 255, 0, 8.0f, 20.0f );
+				NDebugOverlay::Box( tr.endpos, VEC_HULL_MIN, VEC_HULL_MAX, 0, 255, 0, 8, 20.0f );
 			}
 		}
 		else if ( tr.allsolid || ( ( tr.fraction == 1.0 ) && !GetDrivableVehicle()->AllowMidairExit( pPlayer, nRole ) ) )
@@ -1742,7 +1742,7 @@ const char *pSoundStateNames[] =
 
 static int SoundStateIndexFromName( const char *pName )
 {
-	for ( int i = 0; i < SS_NUM_STATES; i++ )
+	for ( size_t i = 0; i < SS_NUM_STATES; i++ )
 	{
 		Assert( i < ARRAYSIZE(pSoundStateNames) );
 		if ( !strcmpi( pSoundStateNames[i], pName ) )
@@ -1930,6 +1930,8 @@ sound_states CBaseServerVehicle::SoundState_ChooseState( vbs_sound_update_t &par
 		case SS_SHUTDOWN:
 		case SS_SHUTDOWN_WATER:
 			return m_soundState;
+		default:
+			break;
 		}
 		return SS_SHUTDOWN;
 	}
@@ -1983,6 +1985,9 @@ sound_states CBaseServerVehicle::SoundState_ChooseState( vbs_sound_update_t &par
 		}
 		if ( CheckCrash(params) )
 			return SS_IDLE;
+		break;
+
+	default:
 		break;
 	}
 
@@ -2214,6 +2219,8 @@ void CBaseServerVehicle::SoundStartDisabled()
 	{
 	case SS_START_WATER:
 		PlaySound( StateSoundName(newState) );
+		break;
+	default:
 		break;
 	}
 }
@@ -2593,7 +2600,7 @@ vehiclesound g_iSoundsToStopOnExit[] =
 	VS_ENGINE2_STOP,
 };
 
-char *vehiclesound_parsenames[VS_NUM_SOUNDS] =
+const char *vehiclesound_parsenames[VS_NUM_SOUNDS] =
 {
 	"skid_lowfriction",
 	"skid_normalfriction",

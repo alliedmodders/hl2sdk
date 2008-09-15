@@ -12,7 +12,7 @@
 #include "in_buttons.h"
 #include "antlion_maker.h"
 #include "grenade_bugbait.h"
-#include "gamestats.h"
+#include "GameStats.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -166,7 +166,7 @@ void CWeaponBugBait::Drop( const Vector &vecVelocity )
 
 		pSporeExplosion->m_flSpawnRate			= 16.0f;
 		pSporeExplosion->m_flParticleLifetime	= 0.5f;
-		pSporeExplosion->SetRenderColor( 0.0f, 0.5f, 0.25f, 0.15f );
+		pSporeExplosion->SetRenderColor( 0, (int)0.5f, (int)0.25f, (int)0.15f );
 
 		pSporeExplosion->m_flStartSize			= 32;
 		pSporeExplosion->m_flEndSize			= 48;

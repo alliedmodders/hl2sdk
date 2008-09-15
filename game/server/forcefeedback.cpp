@@ -105,7 +105,7 @@ void CForceFeedback::StartEffect( CBasePlayer *player, FORCEFEEDBACK_t effect, c
 		WRITE_BYTE( dir );
 
 		// encode duration as a signed int
-		int duration = (int)params.m_flDuration * 1000.0f;
+		int duration = (int)(params.m_flDuration * 1000.0f);
 		WRITE_LONG( duration );
 		
 		// encode gain as a byte

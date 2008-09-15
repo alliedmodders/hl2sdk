@@ -311,7 +311,7 @@ int CAI_HintManager::FindAllHints( CAI_BaseNPC *pNPC, const Vector &position, co
 	//  If we have no hints, bail
 	int c = CAI_HintManager::gm_AllHints.Count();
 	if ( !c )
-		return NULL;
+		return 0;
 
 	// Remove the nearest flag. It makes now sense with random.
 	bool hadNearest = hintCriteria.HasFlag( bits_HINT_NODE_NEAREST );
@@ -684,7 +684,7 @@ int CAI_HintManager::GetFlags( const char *token )
 
 	char *lowercase = (char *)_alloca( len + 1 );
 	Q_strncpy( lowercase, token, len+1 );
-	strlwr( lowercase );
+	Q_strlower( lowercase );
 
 	if ( strstr( "none", lowercase ) )
 	{
@@ -1038,6 +1038,8 @@ bool CAI_Hint::IsViewable(void)
 	case HINT_WORLD_VISUALLY_INTERESTING_DONT_AIM:
 	case HINT_WORLD_VISUALLY_INTERESTING_STEALTH:
 		return true;
+	default:
+		break;
 	}
 	
 	return false;
@@ -1625,7 +1627,7 @@ hinttypedescs_t g_pszHintDescriptions[] =
 //-----------------------------------------------------------------------------
 const char *GetHintTypeDescription( Hint_e iHintType )
 {
-	for ( int i = 0; i < ARRAYSIZE(g_pszHintDescriptions); i++ )
+	for ( size_t i = 0; i < ARRAYSIZE(g_pszHintDescriptions); i++ )
 	{
 		if ( g_pszHintDescriptions[i].iType == iHintType )
 			return g_pszHintDescriptions[i].pszDesc;
@@ -1655,7 +1657,7 @@ void CC_ai_drop_hint( const CCommand &args )
 	{
 		Msg("Invalid hint type specified. Format: ai_drop_hint <hint type>\nValid hint types:\n");
 
-		for ( int i = 0; i < ARRAYSIZE(g_pszHintDescriptions); i++ )
+		for ( size_t i = 0; i < ARRAYSIZE(g_pszHintDescriptions); i++ )
 		{
 			Msg("%d : %s\n", g_pszHintDescriptions[i].iType, g_pszHintDescriptions[i].pszDesc );
 		}

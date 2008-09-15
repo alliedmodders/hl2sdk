@@ -47,13 +47,13 @@ public:
 class CNodeFilter : public INodeListFilter
 {
 public:
-	CNodeFilter( CAI_BaseNPC *pNPC, const Vector &pos ) : m_pNPC(pNPC), m_pos(pos) 
+	CNodeFilter( CAI_BaseNPC *pNPC, const Vector &pos ) : m_pos(pos), m_pNPC(pNPC) 
 	{
 		if ( m_pNPC )
 			m_capabilities = m_pNPC->CapabilitiesGet();
 	}
 
-	CNodeFilter( const Vector &pos ) : m_pNPC(NULL), m_pos(pos) 
+	CNodeFilter( const Vector &pos ) : m_pos(pos), m_pNPC(NULL)
 	{
 	}
 

@@ -402,7 +402,7 @@ void CNPC_Barnacle::PlayerHasIlluminatedNPC( CBasePlayer *pPlayer, float flDot )
 	// Create a sound to scare friendly allies away from the base on the barnacle
 	if( IsAlive() )
 	{
- 		CSoundEnt::InsertSound( SOUND_MOVE_AWAY | SOUND_CONTEXT_ALLIES_ONLY, m_vecTip, 60.0f, FLASHLIGHT_NPC_CHECK_INTERVAL );
+ 		CSoundEnt::InsertSound( SOUND_MOVE_AWAY | SOUND_CONTEXT_ALLIES_ONLY, m_vecTip, 60, FLASHLIGHT_NPC_CHECK_INTERVAL );
 	}
 }
 
@@ -1989,7 +1989,7 @@ void CNPC_Barnacle::SpawnDeathGibs( void )
 	bool bDroppedAny = false;
 
 	// Drop a random number of gibs
-	for ( int i=0; i < ARRAYSIZE(m_szGibNames); i++ )
+	for ( size_t i=0; i < ARRAYSIZE(m_szGibNames); i++ )
 	{
 		if ( random->RandomInt( 0, 1 ) )
 		{
@@ -2296,7 +2296,7 @@ void CNPC_Barnacle::Precache()
 	PrecacheModel("models/barnacle.mdl");
 
 	// Precache all gibs
-	for ( int i=0; i < ARRAYSIZE(m_szGibNames); i++ )
+	for ( size_t i=0; i < ARRAYSIZE(m_szGibNames); i++ )
 	{
 		PrecacheModel( m_szGibNames[i] );
 	}

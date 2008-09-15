@@ -143,19 +143,19 @@ bool CBaseButton::KeyValue( const char *szKeyName, const char *szValue )
 {
 	if (FStrEq(szKeyName, "locked_sound"))
 	{
-		m_bLockedSound = atof(szValue);
+		m_bLockedSound = atoi(szValue);
 	}
 	else if (FStrEq(szKeyName, "locked_sentence"))
 	{
-		m_bLockedSentence = atof(szValue);
+		m_bLockedSentence = atoi(szValue);
 	}
 	else if (FStrEq(szKeyName, "unlocked_sound"))
 	{
-		m_bUnlockedSound = atof(szValue);
+		m_bUnlockedSound = atoi(szValue);
 	}
 	else if (FStrEq(szKeyName, "unlocked_sentence"))
 	{
-		m_bUnlockedSentence = atof(szValue);
+		m_bUnlockedSentence = atoi(szValue);
 	}
 	else
 	{
@@ -802,7 +802,7 @@ int CBaseButton::DrawDebugTextOverlays()
 
 	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
 	{
-		static char *pszStates[] =
+		static const char *pszStates[] =
 		{
 			"Pressed",
 			"Unpressed",

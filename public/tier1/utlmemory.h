@@ -21,9 +21,10 @@
 #include "tier0/memalloc.h"
 #include "tier0/memdbgon.h"
 
+#ifdef _MSC_VER
 #pragma warning (disable:4100)
 #pragma warning (disable:4514)
-
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -167,9 +168,9 @@ public:
 
 	void Grow( int nCount = 1 )
 	{
-		if ( IsExternallyAllocated() )
+		if ( CUtlMemory<T, I>::IsExternallyAllocated() )
 		{
-			ConvertToGrowableMemory( m_nMallocGrowSize );
+			CUtlMemory<T, I>::ConvertToGrowableMemory( m_nMallocGrowSize );
 		}
 		BaseClass::Grow( nCount );
 	}
@@ -179,10 +180,10 @@ public:
 		if ( CUtlMemory<T>::m_nAllocationCount >= num )
 			return;
 
-		if ( IsExternallyAllocated() )
+		if ( CUtlMemory<T, I>::IsExternallyAllocated() )
 		{
 			// Can't grow a buffer whose memory was externally allocated 
-			ConvertToGrowableMemory( m_nMallocGrowSize );
+			CUtlMemory<T, I>::ConvertToGrowableMemory( m_nMallocGrowSize );
 		}
 
 		BaseClass::EnsureCapacity( num );
@@ -206,7 +207,7 @@ public:
 	CUtlMemoryFixed( T* pMemory, int numElements )			{ Assert( 0 ); 										}
 
 	// Can we use this index?
-	bool IsIdxValid( int i ) const							{ return (i >= 0) && (i < SIZE); }
+	bool IsIdxValid( int i ) const							{ return (i >= 0) && (i < (int)SIZE); }
 	static int InvalidIndex()								{ return -1; }
 
 	// Gets the base address
@@ -230,7 +231,7 @@ public:
 	void Grow( int num = 1 )								{ Assert( 0 ); }
 
 	// Makes sure we've got at least this much memory
-	void EnsureCapacity( int num )							{ Assert( num <= SIZE ); }
+	void EnsureCapacity( int num )							{ Assert( num <= (int)SIZE ); }
 
 	// Memory deallocation
 	void Purge()											{}
@@ -503,7 +504,8 @@ inline int CUtlMemory<T,I>::Count() const
 template< class T, class I >
 inline bool CUtlMemory<T,I>::IsIdxValid( I i ) const
 {
-	return ( ((int) i) >= 0 ) && ( ((int) i) < m_nAllocationCount );
+	int idx = (int)i;
+	return idx >= 0 && idx < m_nAllocationCount;
 }
 
 //-----------------------------------------------------------------------------
@@ -757,7 +759,7 @@ CUtlMemoryAligned<T, nAlignment>::CUtlMemoryAligned( int nGrowSize, int nInitAll
 	CUtlMemory<T>::m_pMemory = 0; 
 	CUtlMemory<T>::m_nAllocationCount = nInitAllocationCount;
 	CUtlMemory<T>::m_nGrowSize = nGrowSize;
-	ValidateGrowSize();
+	CUtlMemory<T>::ValidateGrowSize();
 
 	// Alignment must be a power of two
 	COMPILE_TIME_ASSERT( (nAlignment & (nAlignment-1)) == 0 );
@@ -835,7 +837,7 @@ void CUtlMemoryAligned<T, nAlignment>::Grow( int num )
 {
 	Assert( num > 0 );
 
-	if ( IsExternallyAllocated() )
+	if ( CUtlMemory<T>::IsExternallyAllocated() )
 	{
 		// Can't grow a buffer whose memory was externally allocated 
 		Assert(0);
@@ -876,7 +878,7 @@ inline void CUtlMemoryAligned<T, nAlignment>::EnsureCapacity( int num )
 	if ( CUtlMemory<T>::m_nAllocationCount >= num )
 		return;
 
-	if ( IsExternallyAllocated() )
+	if ( CUtlMemory<T>::IsExternallyAllocated() )
 	{
 		// Can't grow a buffer whose memory was externally allocated 
 		Assert(0);
@@ -908,7 +910,7 @@ inline void CUtlMemoryAligned<T, nAlignment>::EnsureCapacity( int num )
 template< class T, int nAlignment >
 void CUtlMemoryAligned<T, nAlignment>::Purge()
 {
-	if ( !IsExternallyAllocated() )
+	if ( !CUtlMemory<T>::IsExternallyAllocated() )
 	{
 		if ( CUtlMemory<T>::m_pMemory )
 		{

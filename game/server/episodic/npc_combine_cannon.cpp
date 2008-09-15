@@ -466,7 +466,7 @@ void CNPC_Combine_Cannon::UpdateAncillaryBeams( float flConvergencePerc, const V
 		UTIL_TraceLine( vecOrigin, vecOrigin + ( vecFinal * LINE_LENGTH ), MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
 		// Move the beam to that position
-		m_pAncillaryBeams[i]->SetBrightness( 255.0f * flConvergencePerc );
+		m_pAncillaryBeams[i]->SetBrightness( static_cast<int>(255.0f * flConvergencePerc) );
 		m_pAncillaryBeams[i]->SetEndPos( tr.startpos );
 		m_pAncillaryBeams[i]->SetStartPos( tr.endpos );
 	}
@@ -523,7 +523,7 @@ void CNPC_Combine_Cannon::PaintTarget( const Vector &vecTarget, float flPaintTim
 	// Update our beam position
 	m_pBeam->SetEndPos( tr.startpos );
 	m_pBeam->SetStartPos( tr.endpos );
-	m_pBeam->SetBrightness( 255.0f * flPaintPerc );
+	m_pBeam->SetBrightness( static_cast<int>(255.0f * flPaintPerc) );
 	m_pBeam->RelinkBeam();
 
 	// Find points around that center point and make our designators converge at that point over time
@@ -834,13 +834,13 @@ bool CNPC_Combine_Cannon::FireBullet( const Vector &vecTarget, bool bDirectShot 
 
 	FireBulletsInfo_t info;
 	info.m_iShots = 1;
-	info.m_iTracerFreq = 1.0f;
+	info.m_iTracerFreq = 1;
 	info.m_vecDirShooting = vecDir;
 	info.m_vecSrc = vecBulletOrigin;
 	info.m_flDistance = MAX_TRACE_LENGTH;
 	info.m_pAttacker = this;
 	info.m_iAmmoType = m_iAmmoType;
-	info.m_iPlayerDamage = 20.0f;
+	info.m_iPlayerDamage = 20;
 	info.m_vecSpread = Vector( 0.015f, 0.015f, 0.015f );  // medium cone
 
 	FireBullets( info );

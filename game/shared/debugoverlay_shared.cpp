@@ -335,7 +335,7 @@ void NDebugOverlay::DrawTickMarkedLine(const Vector &startPos, const Vector &end
 	
 	Vector	lineDir		= (endPos - startPos);
 	float	lineDist	= VectorNormalize( lineDir );
-	int		numTicks	= lineDist/tickDist;
+	int		numTicks	= (int)(lineDist / tickDist);
 	Vector	vBodyDir;
 	
 #if defined( CLIENT_DLL )
@@ -563,7 +563,7 @@ void NDebugOverlay::Circle( const Vector &position, const QAngle &angles, float 
 
 void NDebugOverlay::Circle( const Vector &position, const Vector &xAxis, const Vector &yAxis, float radius, int r, int g, int b, int a, bool bNoDepthTest, float flDuration )
 {
-	const unsigned int nSegments = 16;
+	const int nSegments = 16;
 	const float flRadStep = (M_PI*2.0f) / (float) nSegments;
 
 	Vector vecLastPosition;

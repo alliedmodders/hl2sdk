@@ -31,7 +31,7 @@ public:
 	void Think();
 	virtual void HandleThink();
 
-	void CBaseSpriteProjectile::Spawn(	char *pszModel,
+	void Spawn(	char *pszModel,
 									const Vector &vecOrigin,
 									const Vector &vecVelocity,
 									edict_t *pOwner,

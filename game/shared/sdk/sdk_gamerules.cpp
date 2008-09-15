@@ -108,7 +108,7 @@ IMPLEMENT_NETWORKCLASS_ALIASED( SDKGameRulesProxy, DT_SDKGameRulesProxy )
 	// --------------------------------------------------------------------------------------------------- //
 
 	// NOTE: the indices here must match TEAM_TERRORIST, TEAM_CT, TEAM_SPECTATOR, etc.
-	char *sTeamNames[] =
+	const char *sTeamNames[] =
 	{
 		"Unassigned",
 		"Spectator",
@@ -134,7 +134,7 @@ IMPLEMENT_NETWORKCLASS_ALIASED( SDKGameRulesProxy, DT_SDKGameRulesProxy )
 	CSDKGameRules::CSDKGameRules()
 	{
 		// Create the team managers
-		for ( int i = 0; i < ARRAYSIZE( sTeamNames ); i++ )
+		for ( int i = 0; i < (int)ARRAYSIZE( sTeamNames ); i++ )
 		{
 			CTeam *pTeam = static_cast<CTeam*>(CreateEntityByName( "sdk_team_manager" ));
 			pTeam->Init( sTeamNames[i], i );

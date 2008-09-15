@@ -78,9 +78,10 @@ public:
 		m_string = from.m_string;
 	}
 
-	CUtlEnvelope<const char> &operator=( const CUtlEnvelope<const char *> &from )
+	CUtlEnvelope<const char *> &operator=( const CUtlEnvelope<const char *> &from )
 	{
 		m_string = from.m_string;
+		return *this;
 	}
 
 	operator char *()
@@ -190,7 +191,7 @@ inline CUtlDataEnvelope::operator void *() const
 //-----------------------------------------------------------------------------
 
 template <typename T>
-inline CUtlEnvelope<T>::CUtlEnvelope( const T *pData, int nElems = 1  )
+inline CUtlEnvelope<T>::CUtlEnvelope( const T *pData, int nElems  )
 	: CUtlDataEnvelope( pData, sizeof(T) * nElems )
 {
 }

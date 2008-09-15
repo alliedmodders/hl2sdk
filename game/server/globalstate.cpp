@@ -131,6 +131,7 @@ public:
 		entity.name = m_nameList.AddString( pGlobalname );
 		entity.levelName = m_nameList.AddString( pMapName );
 		entity.state = state;
+		entity.counter = 0;
 
 		int index = GetIndex( m_nameList.String( entity.name ) );
 		if ( index >= 0 )
@@ -234,7 +235,7 @@ CON_COMMAND(dump_globals, "Dump all global entities/states")
 //#ifdef _DEBUG
 void CGlobalState::DumpGlobals( void )
 {
-	static char *estates[] = { "Off", "On", "Dead" };
+	static const char *estates[] = { "Off", "On", "Dead" };
 
 	Msg( "-- Globals --\n" );
 	for ( int i = 0; i < m_list.Count(); i++ )

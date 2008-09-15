@@ -45,7 +45,7 @@ bool IsAmmoType( int iAmmoType, const char *pAmmoName )
 	return GetAmmoDef()->Index( pAmmoName ) == iAmmoType;
 }
 
-static const char * s_WeaponAliasInfo[] = 
+/*static const char * s_WeaponAliasInfo[] = 
 {
 	"none",	//	WEAPON_NONE = 0,
 
@@ -53,7 +53,7 @@ static const char * s_WeaponAliasInfo[] =
 	"shotgun",	//WEAPON_AMERKNIFE,
 	
 	NULL,		// end of list marker
-};
+};*/
 
 
 // ----------------------------------------------------------------------------- //

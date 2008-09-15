@@ -283,8 +283,10 @@ inline void CCycleCount::Init( int64 cycles )
 	m_Int64 = cycles;
 }
 
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4189) // warning C4189: local variable is initialized but not referenced
+#endif
 
 inline void CCycleCount::Sample()
 {
@@ -332,8 +334,9 @@ inline void CCycleCount::Sample()
 #endif
 }
 
+#ifdef _MSC_VER
 #pragma warning(pop)
-
+#endif
 
 inline CCycleCount& CCycleCount::operator+=( CCycleCount const &other )
 {

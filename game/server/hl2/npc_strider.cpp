@@ -3102,15 +3102,15 @@ int CNPC_Strider::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 			{
 				if( g_pGameRules->IsSkillLevel(SKILL_EASY) )
 				{
-					damage = GetMaxHealth() / sk_strider_num_missiles1.GetFloat();
+					damage = GetMaxHealth() / sk_strider_num_missiles1.GetInt();
 				}
 				else if( g_pGameRules->IsSkillLevel(SKILL_HARD) )
 				{
-					damage = GetMaxHealth() / sk_strider_num_missiles3.GetFloat();
+					damage = GetMaxHealth() / sk_strider_num_missiles3.GetInt();
 				}
 				else // Medium, or unspecified
 				{
-					damage = GetMaxHealth() / sk_strider_num_missiles2.GetFloat();
+					damage = GetMaxHealth() / sk_strider_num_missiles2.GetInt();
 				}
 			}
 
@@ -3213,7 +3213,7 @@ int CNPC_Strider::TakeDamageFromCombineBall( const CTakeDamageInfo &info )
 
 	m_iHealth -= damage;
 
-	return damage;
+	return (int)damage;
 }
 
 //---------------------------------------------------------

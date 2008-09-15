@@ -62,9 +62,9 @@ END_DATADESC();
 // Constructor
 //-----------------------------------------------------------------------------
 CAI_PassengerBehavior::CAI_PassengerBehavior( void ) : 
-m_bEnabled( false ), 
-m_hVehicle( NULL ), 
-m_PassengerState( PASSENGER_STATE_OUTSIDE ), 
+m_PassengerState( PASSENGER_STATE_OUTSIDE ),
+m_hVehicle( NULL ),
+m_bEnabled( false ),
 m_PassengerIntent( PASSENGER_INTENT_NONE ),
 m_nTransitionSequence( -1 )
 {
@@ -231,7 +231,7 @@ void CAI_PassengerBehavior::InitVehicleState( void )
 	m_vehicleState.m_flNextWarningTime = gpGlobals->curtime;
 	m_vehicleState.m_vecLastAngles = m_hVehicle->GetAbsAngles();
 
-	Vector	localVelocity;
+	Vector localVelocity(0.0f, 0.0f, 0.0f);
 	GetLocalVehicleVelocity( &m_vehicleState.m_vecLastLocalVelocity );
 
 	m_vehicleState.m_flLastSpeedSqr = localVelocity.LengthSqr();

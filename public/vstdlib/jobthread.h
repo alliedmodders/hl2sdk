@@ -97,15 +97,15 @@ enum JobPriority_t
 #define TP_MAX_POOL_THREADS	64
 struct ThreadPoolStartParams_t
 {
-	ThreadPoolStartParams_t( bool bIOThreads = false, unsigned nThreads = -1, int *pAffinities = NULL, ThreeState_t fDistribute = TRS_NONE, unsigned nStackSize = -1, int iThreadPriority = SHRT_MIN )
-		: bIOThreads( bIOThreads ), nThreads( nThreads ), fDistribute( fDistribute ), nStackSize( nStackSize ), iThreadPriority( iThreadPriority )
+	ThreadPoolStartParams_t( bool ioThreads = false, int threads = -1, int *pAffinities = NULL, ThreeState_t distribute = TRS_NONE, unsigned stackSize = 0, int threadPriority = SHRT_MIN )
+		: nThreads( threads ), fDistribute( distribute ), nStackSize( stackSize ), iThreadPriority( threadPriority ), bIOThreads( ioThreads )
 	{
-		bUseAffinityTable = ( pAffinities != NULL ) && ( fDistribute == TRS_TRUE ) && ( nThreads != -1 );
+		bUseAffinityTable = ( pAffinities != NULL ) && ( fDistribute == TRS_TRUE ) && ( nThreads != 0 );
 		if ( bUseAffinityTable )
 		{
 			// user supplied an optional 1:1 affinity mapping to override normal distribute behavior
 			nThreads = min( TP_MAX_POOL_THREADS, nThreads );
-			for ( unsigned int i = 0; i < nThreads; i++ )
+			for ( int i = 0; i < nThreads; i++ )
 			{
 				iAffinityTable[i] = pAffinities[i];
 			}
@@ -429,12 +429,12 @@ class CJob : public CRefCounted1<IRefCounted, CRefCountServiceMT>
 public:
 	CJob( JobPriority_t priority = JP_NORMAL )
 	  : m_status( JOB_STATUS_UNSERVICED ),
-		m_ThreadPoolData( JOB_NO_DATA ),
 		m_priority( priority ),
 		m_flags( 0 ),
+		m_iServicingThread( -1 ),
+		m_ThreadPoolData( JOB_NO_DATA ),
 		m_pThreadPool( NULL ),
-		m_CompleteEvent( true ),
-		m_iServicingThread( -1 )
+		m_CompleteEvent( true )
 	{
 	}
 
@@ -679,10 +679,12 @@ private:
 // Work splitting: array split, best when cost per item is roughly equal
 //-----------------------------------------------------------------------------
 
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable:4389)
 #pragma warning(disable:4018)
 #pragma warning(disable:4701)
+#endif
 
 #define DEFINE_NON_MEMBER_ITER_RANGE_PARALLEL(N) \
 	template <typename FUNCTION_CLASS, typename FUNCTION_RETTYPE FUNC_TEMPLATE_FUNC_PARAMS_##N FUNC_TEMPLATE_ARG_PARAMS_##N, typename ITERTYPE1, typename ITERTYPE2> \

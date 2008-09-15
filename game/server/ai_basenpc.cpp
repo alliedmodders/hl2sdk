@@ -171,7 +171,11 @@ extern ConVar ai_vehicle_avoidance;
 #ifdef DEBUG_AI_FRAME_THINK_LIMITS
 #define DbgFrameLimitMsg DevMsg
 #else
+#if defined __GNUC__ || (defined _MSC_VER && _MSC_VER >= 1400)
+#define DbgFrameLimitMsg(...)
+#else
 #define DbgFrameLimitMsg (void)
+#endif
 #endif
 
 // NPC damage adjusters
@@ -311,7 +315,7 @@ CJob *g_pQueuedNavigationQueryJob = NULL;
 static void ProcessNavigationQueries( CFunctor **pData, unsigned int nCount )
 {
 	// Run all queued navigation on a separate thread
-	for ( int i = 0; i < nCount; i++ )
+	for ( unsigned int i = 0; i < nCount; i++ )
 	{
 		(*pData[i])();
 	}
@@ -1067,7 +1071,7 @@ void CAI_BaseNPC::DecalTrace( trace_t *pTrace, char const *decalName )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CAI_BaseNPC::ImpactTrace( trace_t *pTrace, int iDamageType, char *pCustomImpactName )
+void CAI_BaseNPC::ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName )
 {
 	if ( m_fNoDamageDecal )
 	{
@@ -1356,7 +1360,7 @@ class CTriggerTraceEnum : public IEntityEnumerator
 {
 public:
 	CTriggerTraceEnum( Ray_t *pRay, const CTakeDamageInfo &info, const Vector& dir, int contentsMask ) :
-		m_info( info ),	m_VecDir(dir), m_ContentsMask(contentsMask), m_pRay(pRay)
+		m_VecDir(dir), m_ContentsMask(contentsMask), m_pRay(pRay), m_info( info )
 	{
 	}
 
@@ -1537,12 +1541,12 @@ void CBaseEntity::CreateBubbleTrailTracer( const Vector &vecShotSrc, const Vecto
 	if ( flLengthSqr > SHOT_UNDERWATER_BUBBLE_DIST * SHOT_UNDERWATER_BUBBLE_DIST )
 	{
 		VectorMA( vecShotSrc, SHOT_UNDERWATER_BUBBLE_DIST, vecShotDir, vecBubbleEnd );
-		nBubbles = WATER_BULLET_BUBBLES_PER_INCH * SHOT_UNDERWATER_BUBBLE_DIST;
+		nBubbles = static_cast<int>(WATER_BULLET_BUBBLES_PER_INCH * SHOT_UNDERWATER_BUBBLE_DIST);
 	}
 	else
 	{
 		float flLength = sqrt(flLengthSqr) - 0.1f;
-		nBubbles = WATER_BULLET_BUBBLES_PER_INCH * flLength;
+		nBubbles = static_cast<int>(WATER_BULLET_BUBBLES_PER_INCH * flLength);
 		VectorMA( vecShotSrc, flLength, vecShotDir, vecBubbleEnd );
 	}
 
@@ -2220,7 +2224,7 @@ CBaseGrenade* CAI_BaseNPC::IncomingGrenade(void)
 			continue;
 
 		// Check if it's near me
-		iDist = ( pBG->GetAbsOrigin() - GetAbsOrigin() ).Length();
+		iDist = (int)(pBG->GetAbsOrigin() - GetAbsOrigin()).Length();
 		if ( iDist <= NPC_GRENADE_FEAR_DIST )
 			return pBG;
 
@@ -3320,7 +3324,7 @@ void CAI_BaseNPC::UpdateEfficiency( bool bInPVS )
 	int iPVSOffset = (bInPVS) ? 0 : NO_PVS_OFFSET;
 	int iMapping = iStateOffset + iPVSOffset + iFacingOffset + range;
 
-	Assert( iMapping < ARRAYSIZE( mappings ) );
+	Assert( iMapping < (int)ARRAYSIZE( mappings ) );
 
 	AI_Efficiency_t efficiency = mappings[iMapping];
 
@@ -3602,7 +3606,7 @@ void CAI_BaseNPC::RebalanceThinks()
 		{
 			rebalanceCandidates.Sort( ThinkRebalanceCompare );
 
-			int iMaxThinkersPerTick = ceil( (float)( rebalanceCandidates.Count() + 1 ) / (float)iTicksPer10Hz ); // +1 to account for "this"
+			int iMaxThinkersPerTick = (int)ceil( (float)((rebalanceCandidates.Count() + 1) / iTicksPer10Hz) ); // +1 to account for "this"
 
 			int iCurTickDistributing = min( gpGlobals->tickcount, rebalanceCandidates[0].iNextThinkTick );
 			int iRemainingThinksToDistribute = iMaxThinkersPerTick - 1; // Start with one fewer first time because "this" is 
@@ -4376,6 +4380,8 @@ void CAI_BaseNPC::SetState( NPC_STATE State )
 			DevMsg( 2, "Stripped\n" );
 		}
 		break;
+	default:
+		break;
 	}
 
 	bool fNotifyChange = false;
@@ -5074,6 +5080,8 @@ NPC_STATE CAI_BaseNPC::SelectIdealState( void )
 				m_pSquad->SquadNewEnemy( GetEnemy() );
 			}
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -5118,6 +5126,9 @@ NPC_STATE CAI_BaseNPC::SelectIdealState( void )
 
 	case NPC_STATE_DEAD:
 		return NPC_STATE_DEAD;
+
+	default:
+		break;
 	}
 
 	// The best ideal state is the current ideal state.
@@ -5144,7 +5155,7 @@ void CAI_BaseNPC::GiveWeapon( string_t iszWeaponName )
 	// If I have a name, make my weapon match it with "_weapon" appended
 	if ( GetEntityName() != NULL_STRING )
 	{
-		pWeapon->SetName( AllocPooledString(UTIL_VarArgs("%s_weapon", GetEntityName())) );
+		pWeapon->SetName( AllocPooledString(UTIL_VarArgs("%s_weapon", STRING(GetEntityName()))) );
 	}
 
 	Weapon_Equip( pWeapon );
@@ -6395,6 +6406,8 @@ bool CAI_BaseNPC::IsActivityMovementPhased( Activity activity )
 	case ACT_RUN_CROUCH_AIM:
 	case ACT_RUN_PROTECTED:
 		return true;
+	default:
+		break;
 	}
 	return false;
 }
@@ -6415,7 +6428,7 @@ void CAI_BaseNPC::OnChangeActivity( Activity eNewActivity )
 //=========================================================
 // SetSequenceByName
 //=========================================================
-void CAI_BaseNPC::SetSequenceByName( char *szSequence )
+void CAI_BaseNPC::SetSequenceByName( const char *szSequence )
 {
 	int iSequence = LookupSequence( szSequence );
 
@@ -6853,7 +6866,7 @@ void CAI_BaseNPC::NPCInit ( void )
 				// If I have a name, make my weapon match it with "_weapon" appended
 				if ( GetEntityName() != NULL_STRING )
 				{
-					pWeapon->SetName( AllocPooledString(UTIL_VarArgs("%s_weapon", GetEntityName())) );
+					pWeapon->SetName( AllocPooledString(UTIL_VarArgs("%s_weapon", STRING(GetEntityName()))) );
 				}
 
 				if ( GetEffects() & EF_NOSHADOW )
@@ -7776,7 +7789,7 @@ CBaseEntity *CAI_BaseNPC::BestEnemy( void )
 				DbgEnemyMsg( this, "    (%s displaced)\n", pBestEnemy->GetDebugName() );
 
 			iBestPriority	 = IRelationPriority ( pEnemy );
-			iBestDistSq		 = (pEnemy->GetAbsOrigin() - GetAbsOrigin() ).LengthSqr();
+			iBestDistSq		 = (int)(pEnemy->GetAbsOrigin() - GetAbsOrigin()).LengthSqr();
 			pBestEnemy		 = pEnemy;
 			bBestUnreachable = bUnreachable;
 			fBestSeen		 = TRS_NONE;
@@ -7792,7 +7805,7 @@ CBaseEntity *CAI_BaseNPC::BestEnemy( void )
 			// currently think is the best visible enemy. No need to do
 			// a distance check, just get mad at this one for now.
 			iBestPriority	 = IRelationPriority ( pEnemy );
-			iBestDistSq		 = ( pEnemy->GetAbsOrigin() - GetAbsOrigin() ).LengthSqr();
+			iBestDistSq		 = (int)(pEnemy->GetAbsOrigin() - GetAbsOrigin()).LengthSqr();
 			pBestEnemy		 = pEnemy;
 			bBestUnreachable = bUnreachable;
 			fBestSeen		 = TRS_NONE;
@@ -7803,7 +7816,7 @@ CBaseEntity *CAI_BaseNPC::BestEnemy( void )
 			// this entity is disliked just as much as the entity that
 			// we currently think is the best visible enemy, so we only
 			// get mad at it if it is closer.
-			iDistSq = ( pEnemy->GetAbsOrigin() - GetAbsOrigin() ).LengthSqr();
+			iDistSq = (int)(pEnemy->GetAbsOrigin() - GetAbsOrigin()).LengthSqr();
 
 			bool bAcceptCurrent = false;
 			bool bCloser = ( ( iBestDistSq - iDistSq ) > EnemyDistTolerance() );
@@ -7967,6 +7980,8 @@ Activity CAI_BaseNPC::GetReloadActivity( CAI_Hint* pHint )
 				}
 				break;
 			}
+			default:
+				break;
 		}
 	}
 	return nReloadActivity;
@@ -7998,6 +8013,8 @@ Activity CAI_BaseNPC::GetCoverActivity( CAI_Hint *pHint )
 				nCoverActivity = ACT_COVER_LOW;
 				break;
 			}
+			default:
+				break;
 		}
 	}
 
@@ -8014,7 +8031,7 @@ Activity CAI_BaseNPC::GetCoverActivity( CAI_Hint *pHint )
 //=========================================================
 float CAI_BaseNPC::CalcIdealYaw( const Vector &vecTarget )
 {
-	Vector	vecProjection;
+	Vector	vecProjection = Vector(0.0f, 0.0f, 0.0f);
 
 	// strafing npc needs to face 90 degrees away from its goal
 	if ( GetNavigator()->GetMovementActivity() == ACT_STRAFE_LEFT )
@@ -8789,9 +8806,9 @@ void CAI_BaseNPC::DrawDebugGeometryOverlays(void)
 				CBaseCombatCharacter *npcEnemy = (eMemory->hEnemy)->MyCombatCharacterPointer();
 				if (npcEnemy)
 				{
-					float	r,g,b;
+					int	r,g,b;
 					char	debugText[255];
-					debugText[0] = NULL;
+					debugText[0] = '\0';
 
 					if (npcEnemy == GetEnemy())
 					{
@@ -8983,7 +9000,7 @@ int CAI_BaseNPC::DrawDebugTextOverlays(void)
 		// Print State
 		// --------------
 		static const char *pStateNames[] = { "None", "Idle", "Alert", "Combat", "Scripted", "PlayDead", "Dead" };
-		if ( (int)m_NPCState < ARRAYSIZE(pStateNames) )
+		if ( (size_t)m_NPCState < ARRAYSIZE(pStateNames) )
 		{
 			Q_snprintf(tempstr,sizeof(tempstr),"Stat: %s, ", pStateNames[m_NPCState] );
 			EntityText(text_offset,tempstr,0);
@@ -9005,7 +9022,7 @@ int CAI_BaseNPC::DrawDebugTextOverlays(void)
 		// -----------------
 		if( GetHintGroup() != NULL_STRING )
 		{
-			Q_snprintf(tempstr,sizeof(tempstr),"Hint Group: %s", GetHintGroup() );
+			Q_snprintf(tempstr,sizeof(tempstr),"Hint Group: %s", STRING(GetHintGroup()) );
 			EntityText(text_offset,tempstr,0);
 			text_offset++;
 		}
@@ -9015,8 +9032,8 @@ int CAI_BaseNPC::DrawDebugTextOverlays(void)
 		// -----------------
 		int navTypeIndex = (int)GetNavType() + 1;
 		static const char *pMoveNames[] = { "None", "Ground", "Jump", "Fly", "Climb" };
-		Assert( navTypeIndex >= 0 && navTypeIndex < ARRAYSIZE(pMoveNames) );
-		if ( navTypeIndex < ARRAYSIZE(pMoveNames) )
+		Assert( navTypeIndex >= 0 && navTypeIndex < (int)ARRAYSIZE(pMoveNames) );
+		if ( navTypeIndex < (int)ARRAYSIZE(pMoveNames) )
 		{
 			Q_snprintf(tempstr,sizeof(tempstr),"Move: %s, ", pMoveNames[navTypeIndex] );
 			EntityText(text_offset,tempstr,0);
@@ -9258,7 +9275,7 @@ void CAI_BaseNPC::ReportAIState( void )
 	static const char *pStateNames[] = { "None", "Idle", "Alert", "Combat", "Scripted", "PlayDead", "Dead" };
 
 	DevMsg( "%s: ", GetClassname() );
-	if ( (int)m_NPCState < ARRAYSIZE(pStateNames) )
+	if ( (size_t)m_NPCState < ARRAYSIZE(pStateNames) )
 		DevMsg( "State: %s, ", pStateNames[m_NPCState] );
 
 	if( m_Activity != ACT_INVALID && m_IdealActivity != ACT_INVALID )
@@ -9773,7 +9790,7 @@ Vector CAI_BaseNPC::GetActualShootTrajectory( const Vector &shootOrigin )
 
 	return shotDir;
 }
-#endif HL2_DLL
+#endif // HL2_DLL
 
 //-----------------------------------------------------------------------------
 
@@ -10336,7 +10353,7 @@ void CAI_BaseNPC::PickupWeapon( CBaseCombatWeapon *pWeapon )
 //=========================================================
 // DropItem - dead npc drops named item
 //=========================================================
-CBaseEntity *CAI_BaseNPC::DropItem ( char *pszItemName, Vector vecPos, QAngle vecAng )
+CBaseEntity *CAI_BaseNPC::DropItem ( const char *pszItemName, Vector vecPos, QAngle vecAng )
 {
 	if ( !pszItemName )
 	{
@@ -10419,7 +10436,7 @@ bool CAI_BaseNPC::ShouldPlayIdleSound( void )
 //-----------------------------------------------------------------------------
 void CAI_BaseNPC::MakeAIFootstepSound( float volume, float duration )
 {
-	CSoundEnt::InsertSound( SOUND_COMBAT, EyePosition(), volume, duration, this, SOUNDENT_CHANNEL_NPC_FOOTSTEP );
+	CSoundEnt::InsertSound( SOUND_COMBAT, EyePosition(), (int)volume, duration, this, SOUNDENT_CHANNEL_NPC_FOOTSTEP );
 }
 
 //-----------------------------------------------------------------------------
@@ -10952,7 +10969,7 @@ int CAI_BaseNPC::Save( ISave &save )
 	{
 		const char *pszSchedule = m_pSchedule->GetName();
 
-		Assert( Q_strlen( pszSchedule ) < sizeof( saveHeader.szSchedule ) - 1 );
+		Assert( Q_strlen( pszSchedule ) < (int)sizeof( saveHeader.szSchedule ) - 1 );
 		Q_strncpy( saveHeader.szSchedule, pszSchedule, sizeof( saveHeader.szSchedule ) );
 
 		CRC32_Init( &saveHeader.scheduleCrc );
@@ -10973,7 +10990,7 @@ int CAI_BaseNPC::Save( ISave &save )
 		if ( pIdealSchedule )
 		{
 			const char *pszIdealSchedule = pIdealSchedule->GetName();
-			Assert( Q_strlen( pszIdealSchedule ) < sizeof( saveHeader.szIdealSchedule ) - 1 );
+			Assert( Q_strlen( pszIdealSchedule ) < (int)sizeof( saveHeader.szIdealSchedule ) - 1 );
 			Q_strncpy( saveHeader.szIdealSchedule, pszIdealSchedule, sizeof( saveHeader.szIdealSchedule ) );
 		}
 	}
@@ -10985,7 +11002,7 @@ int CAI_BaseNPC::Save( ISave &save )
 		if ( pFailSchedule )
 		{
 			const char *pszFailSchedule = pFailSchedule->GetName();
-			Assert( Q_strlen( pszFailSchedule ) < sizeof( saveHeader.szFailSchedule ) - 1 );
+			Assert( Q_strlen( pszFailSchedule ) < (int)sizeof( saveHeader.szFailSchedule ) - 1 );
 			Q_strncpy( saveHeader.szFailSchedule, pszFailSchedule, sizeof( saveHeader.szFailSchedule ) );
 		}
 	}
@@ -10995,7 +11012,7 @@ int CAI_BaseNPC::Save( ISave &save )
 		const char *pszSequenceName = GetSequenceName( GetSequence() );
 		if ( pszSequenceName && *pszSequenceName )
 		{
-			Assert( Q_strlen( pszSequenceName ) < sizeof( saveHeader.szSequence ) - 1 );
+			Assert( Q_strlen( pszSequenceName ) < (int)sizeof( saveHeader.szSequence ) - 1 );
 			Q_strncpy( saveHeader.szSequence, pszSequenceName, sizeof(saveHeader.szSequence) );
 		}
 	}
@@ -14015,6 +14032,8 @@ bool CAI_BaseNPC::IsCrouchedActivity( Activity activity )
 		case ACT_COVER_SMG1_LOW:
 		case ACT_RELOAD_SMG1_LOW:
 			return true;
+		default:
+			break;
 	}
 
 	return false;

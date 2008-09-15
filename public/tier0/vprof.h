@@ -605,7 +605,6 @@ protected:
 
 DBG_INTERFACE CVProfile g_VProfCurrentProfile;
 
-
 //-----------------------------------------------------------------------------
 
 #ifdef VPROF_VTUNE_GROUP
@@ -658,9 +657,9 @@ public:
 
 inline CVProfNode::CVProfNode( const tchar * pszName, int detailLevel, CVProfNode *pParent, const tchar *pBudgetGroupName, int budgetFlags )
  :	m_pszName( pszName ),
+	m_nRecursions( 0 ),
 	m_nCurFrameCalls( 0 ),
 	m_nPrevFrameCalls( 0 ),
-	m_nRecursions( 0 ),
 	m_pParent( pParent ),
 	m_pChild( NULL ),
 	m_pSibling( NULL ),

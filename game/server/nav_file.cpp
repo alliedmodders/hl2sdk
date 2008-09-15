@@ -20,7 +20,7 @@
 
 //--------------------------------------------------------------------------------------------------------------
 /// The current version of the nav file format
-const int NavCurrentVersion = 9;
+const unsigned int NavCurrentVersion = 9;
 
 //--------------------------------------------------------------------------------------------------------------
 //
@@ -1165,6 +1165,8 @@ void CommandNavCheckFileConsistency( void )
 			break;
 		case NAV_OK:
 			Msg( "The nav file for %s is up-to-date\n", bspFilename );
+			break;
+		default:
 			break;
 		}
 

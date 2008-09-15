@@ -184,6 +184,8 @@ bool CNPC_Alyx::FValidateHintType( CAI_Hint *pHint )
 	case HINT_WORLD_VISUALLY_INTERESTING_STEALTH:
 		return true;
 		break;
+	default:
+		break;
 	}
 
 	return BaseClass::FValidateHintType( pHint );
@@ -573,7 +575,7 @@ void CNPC_Alyx::ReadinessLevelChanged( int iPriorLevel )
 			{ AIRL_STIMULATED, AIRL_RELAXED, ACT_IDLE, ACT_READINESS_STIMULATED_TO_RELAXED, }
 		};
 
-		for ( int i = 0; i < ARRAYSIZE( readinessTransitions ); i++ )
+		for ( size_t i = 0; i < ARRAYSIZE( readinessTransitions ); i++ )
 		{
 			if ( GetIdealActivity() != readinessTransitions[i].requiredActivity )
 				continue;
@@ -1611,13 +1613,15 @@ Activity CNPC_Alyx::NPC_TranslateActivity( Activity activity )
 	{
 		// !!!HACK - Alyx doesn't have the required animations for shotguns, 
 		// so trick her into using the rifle counterparts for now (sjb)
-		case ACT_RUN_AIM_SHOTGUN:			return ACT_RUN_AIM_RIFLE;
-		case ACT_WALK_AIM_SHOTGUN:			return ACT_WALK_AIM_RIFLE;
+		case ACT_RUN_AIM_SHOTGUN:		return ACT_RUN_AIM_RIFLE;
+		case ACT_WALK_AIM_SHOTGUN:		return ACT_WALK_AIM_RIFLE;
 		case ACT_IDLE_ANGRY_SHOTGUN:		return ACT_IDLE_ANGRY_SMG1;
 		case ACT_RANGE_ATTACK_SHOTGUN_LOW:	return ACT_RANGE_ATTACK_SMG1_LOW;
 
-		case ACT_PICKUP_RACK:				return (Activity)ACT_ALYX_PICKUP_RACK;
-		case ACT_DROP_WEAPON:				if ( HasShotgun() ) return (Activity)ACT_DROP_WEAPON_SHOTGUN;
+		case ACT_PICKUP_RACK:			return (Activity)ACT_ALYX_PICKUP_RACK;
+		case ACT_DROP_WEAPON:			if ( HasShotgun() ) return (Activity)ACT_DROP_WEAPON_SHOTGUN;
+
+		default:					break;
 	}
 
 	return activity;
@@ -1651,6 +1655,9 @@ void CNPC_Alyx::BuildScheduleTestBits()
 		case NPC_STATE_IDLE:
 			SetCustomInterruptCondition( COND_ALYX_HAS_INTERACT_TARGET );
 			SetCustomInterruptCondition( COND_ALYX_CAN_INTERACT_WITH_TARGET );
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -3191,6 +3198,9 @@ bool CNPC_Alyx::IsCrouchedActivity( Activity activity )
 	case ACT_RANGE_AIM_PISTOL_LOW:
 	case ACT_RANGE_AIM_AR2_LOW:
 		return true;
+
+	default:
+		break;
 	}
 	return false;
 }

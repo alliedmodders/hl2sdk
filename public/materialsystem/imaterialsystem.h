@@ -403,7 +403,7 @@ struct MaterialVideoMode_t
 // fixme: should move this into something else.
 struct FlashlightState_t
 {
-	FlashlightState_t::FlashlightState_t()
+	FlashlightState_t()
 	{
 		m_bEnableShadows = false;						// Provide reasonable defaults for shadow depth mapping parameters
 		m_bDrawShadowFrustum = false;

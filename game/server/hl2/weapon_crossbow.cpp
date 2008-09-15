@@ -5,10 +5,10 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "NPCEvent.h"
+#include "npcevent.h"
 #include "basehlcombatweapon_shared.h"
 #include "basecombatcharacter.h"
-#include "AI_BaseNPC.h"
+#include "ai_basenpc.h"
 #include "player.h"
 #include "gamerules.h"
 #include "in_buttons.h"
@@ -18,11 +18,11 @@
 #include "engine/IEngineSound.h"
 #include "IEffects.h"
 #include "te_effect_dispatch.h"
-#include "sprite.h"
-#include "spritetrail.h"
+#include "Sprite.h"
+#include "SpriteTrail.h"
 #include "beam_shared.h"
 #include "rumble_shared.h"
-#include "gamestats.h"
+#include "GameStats.h"
 #include "decals.h"
 
 #ifdef PORTAL
@@ -407,7 +407,7 @@ void CCrossbowBolt::BubbleThink( void )
 	SetNextThink( gpGlobals->curtime + 0.1f );
 
 	// Make danger sounds out in front of me, to scare snipers back into their hole
-	CSoundEnt::InsertSound( SOUND_DANGER_SNIPERONLY, GetAbsOrigin() + GetAbsVelocity() * 0.2, 120.0f, 0.5f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
+	CSoundEnt::InsertSound( SOUND_DANGER_SNIPERONLY, GetAbsOrigin() + GetAbsVelocity() * 0.2, 120, 0.5f, this, SOUNDENT_CHANNEL_REPEATED_DANGER );
 
 	if ( GetWaterLevel()  == 0 )
 		return;

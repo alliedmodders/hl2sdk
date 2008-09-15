@@ -909,7 +909,7 @@ public:
 	bool					IsWorld() { return entindex() == 0; }
 	virtual char const		*DamageDecal( int bitsDamageType, int gameMaterial );
 	virtual void			DecalTrace( trace_t *pTrace, char const *decalName );
-	virtual void			ImpactTrace( trace_t *pTrace, int iDamageType, char *pCustomImpactName = NULL );
+	virtual void			ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName = NULL );
 
 	void			AddPoints( int score, bool bAllowNegativeScore );
 	void			AddPointsToTeam( int score, bool bAllowNegativeScore );
@@ -1061,23 +1061,23 @@ public:
 #ifdef _DEBUG
 	void FunctionCheck( void *pFunction, const char *name );
 
-	ENTITYFUNCPTR TouchSet( ENTITYFUNCPTR func, char *name ) 
+	ENTITYFUNCPTR TouchSet( ENTITYFUNCPTR func, const char *name ) 
 	{ 
-		COMPILE_TIME_ASSERT( sizeof(func) == 4 );
+		COMPILE_TIME_ASSERT( sizeof(func) == MFP_SIZE );
 		m_pfnTouch = func; 
 		FunctionCheck( *(reinterpret_cast<void **>(&m_pfnTouch)), name ); 
 		return func;
 	}
-	USEPTR	UseSet( USEPTR func, char *name ) 
+	USEPTR	UseSet( USEPTR func, const char *name ) 
 	{ 
-		COMPILE_TIME_ASSERT( sizeof(func) == 4 );
+		COMPILE_TIME_ASSERT( sizeof(func) == MFP_SIZE );
 		m_pfnUse = func; 
 		FunctionCheck( *(reinterpret_cast<void **>(&m_pfnUse)), name ); 
 		return func;
 	}
-	ENTITYFUNCPTR	BlockedSet( ENTITYFUNCPTR func, char *name ) 
+	ENTITYFUNCPTR	BlockedSet( ENTITYFUNCPTR func, const char *name ) 
 	{ 
-		COMPILE_TIME_ASSERT( sizeof(func) == 4 );
+		COMPILE_TIME_ASSERT( sizeof(func) == MFP_SIZE );
 		m_pfnBlocked = func; 
 		FunctionCheck( *(reinterpret_cast<void **>(&m_pfnBlocked)), name ); 
 		return func;

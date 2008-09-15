@@ -319,7 +319,7 @@ void CPoseController::InputRandomizeFMod( inputdata_t &inputdata )
 void CPoseController::InputGetFMod( inputdata_t &inputdata )
 {
 	DevMsg( "FMod values for pose controller %s\nTYPE: %i\nTIME OFFSET: %f\nRATE: %f\nAMPLITUDE: %f\n", 
-			GetEntityName(), 
+			STRING(GetEntityName()), 
 			m_nFModType.Get(), 
 			m_fFModTimeOffset.Get(), 
 			m_fFModRate.Get(), 

@@ -263,7 +263,7 @@ int CTankTrainAI::SoundEnginePitch( void )
 	// we know this isn't NULL here
 	if ( pTrain->GetMaxSpeed() )
 	{
-		return 90 + (fabs(pTrain->GetCurrentSpeed()) * (20) / pTrain->GetMaxSpeed());
+		return (int)(90 + (fabs(pTrain->GetCurrentSpeed()) * (20) / pTrain->GetMaxSpeed()));
 	}
 	return 100;
 }

@@ -1,0 +1,35 @@
+*********
+* About *
+*********
+This version of the Source/Orange Box SDK attempts to remove as many
+warnings as possible when compiling on Windows or Linux.
+The -fpermissive option has been removed from the Linux makefiles and
+-Wall has been added. It is also now possible to cross-compile the SDK
+on 64-bit Linux systems with the addition of the -m32 option.
+
+*********
+* Notes *
+*********
+1: A Visual Studio project file for choreoobjects has been added to
+   the choreoobjects directory for the convenience of recompiling this
+   static library for Windows if it ever becomes necessary to do so.
+
+2: Makefiles for choreoobjects, mathlib, and tier1 have been added to
+   the linux_sdk directory for the convenience of recompiling these
+   static libraries for Linux if it ever becomes necessary to do so.
+   
+3: The vmpi directory has been removed as it seems to be an exact copy
+   of the one located in the utils directory. Nothing seems to depend
+   upon the files within it yet.
+
+****************
+* Known Issues *
+****************
+1: The SDK will not compile with GCC 4.3. This will be addressed in a
+   future update.
+   
+2: The SDK may not fully compile with Visual Studio 2008. This will be
+   addressed in a future update.
+
+3: The caption compiler which is located in utils/captioncompiler will
+   not link due to a missing static library (appframework.lib).

@@ -748,7 +748,7 @@ bool CAI_TacticalServices::FindLateralLos( const Vector &vecThreat, Vector *pRes
 	int iDelta = COVER_DELTA;
 
 	// If we're limited in how far we're allowed to move laterally, don't bother checking past it
-	int iMaxLateralDelta = GetOuter()->GetMaxTacticalLateralMovement();
+	int iMaxLateralDelta = (int)GetOuter()->GetMaxTacticalLateralMovement();
 	if ( iMaxLateralDelta != MAXTACLAT_IGNORE && iMaxLateralDelta < iDelta )
 	{
 		iChecks = 1;

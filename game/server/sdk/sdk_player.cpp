@@ -112,8 +112,8 @@ IMPLEMENT_SERVERCLASS_ST( CSDKPlayer, DT_SDKPlayer )
 	SendPropDataTable( "sdklocaldata", 0, &REFERENCE_SEND_TABLE(DT_SDKLocalPlayerExclusive), SendProxy_SendLocalDataTable ),
 	SendPropDataTable( "sdknonlocaldata", 0, &REFERENCE_SEND_TABLE(DT_SDKNonLocalPlayerExclusive), SendProxy_SendNonLocalDataTable ),
 
-	SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 0), 11 ),
-	SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 1), 11 ),
+	SendPropAngle( SENDINFO_VECTORELEM2(m_angEyeAngles, 0, x), 11 ),
+	SendPropAngle( SENDINFO_VECTORELEM2(m_angEyeAngles, 1, y), 11 ),
 	SendPropEHandle( SENDINFO( m_hRagdoll ) ),
 
 	SendPropInt( SENDINFO( m_iThrowGrenadeCounter ), THROWGRENADE_COUNTER_BITS, SPROP_UNSIGNED ),

@@ -14,8 +14,8 @@
 
 const char *pszItemCrateModelName[] =
 {
-	{"models/items/item_item_crate.mdl"},
-	("models/items/item_beacon_crate.mdl"),
+	"models/items/item_item_crate.mdl",
+	"models/items/item_beacon_crate.mdl",
 };
 
 //-----------------------------------------------------------------------------

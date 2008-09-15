@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="Phonemeextractor"
 	ProjectGUID="{8A35F55B-B5C2-47A0-8C4A-5857A8E20385}"
+	RootNamespace="Phonemeextractor"
 	>
 	<Platforms>
 		<Platform
@@ -27,6 +28,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\phonemeextractor.dll;..\..\..\game\bin\phonemeextractor.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -59,7 +62,7 @@
 				BrowseInformation="0"
 				BrowseInformationFile="$(IntDir)/"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 				CompileAs="2"
 				ErrorReporting="1"
@@ -123,7 +126,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -142,6 +144,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.dll&#x0D;&#x0A;if exist ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb attrib -r ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\..\game\bin\&quot;$(TargetName)&quot;.pdb&#x0D;&#x0A;"
+				Outputs="..\..\..\game\bin\phonemeextractor.dll;..\..\..\game\bin\phonemeextractor.pdb"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -176,7 +180,7 @@
 				BrowseInformation="0"
 				BrowseInformationFile="$(IntDir)/"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="2"
 				ErrorReporting="1"
@@ -242,7 +246,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 				ExcludedFromBuild="false"
 			/>
@@ -253,6 +256,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
 				RelativePath=".\extractor_utils.cpp"
@@ -261,22 +265,6 @@
 			<File
 				RelativePath="..\..\public\tier0\memoverride.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\public\phonemeconverter.cpp"
@@ -293,6 +281,7 @@
 		</Filter>
 		<Filter
 			Name="Link Libraries"
+			Filter="lib"
 			>
 			<File
 				RelativePath="..\..\lib\public\mathlib.lib"
@@ -317,6 +306,7 @@
 		</Filter>
 		<Filter
 			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath=".\talkback.h"
@@ -325,6 +315,7 @@
 		</Filter>
 		<Filter
 			Name="SAPI Header Files"
+			Filter="h"
 			>
 			<File
 				RelativePath="..\sapi51\include\sapi.h"
@@ -353,6 +344,7 @@
 		</Filter>
 		<Filter
 			Name="Public Header Files"
+			Filter="h"
 			>
 			<File
 				RelativePath="..\..\public\mathlib\amd3dx.h"

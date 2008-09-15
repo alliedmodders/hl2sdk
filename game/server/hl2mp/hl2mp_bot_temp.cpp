@@ -40,7 +40,7 @@ ConVar bot_crouch( "bot_crouch", "0", 0, "Bot crouches" );
 
 static int BotNumber = 1;
 static int g_iNextBotTeam = -1;
-static int g_iNextBotClass = -1;
+//static int g_iNextBotClass = -1;
 
 typedef struct
 {
@@ -250,7 +250,7 @@ void Bot_Think( CHL2MP_Player *pBot )
 			QAngle angle;
 			float angledelta = 15.0;
 
-			int maxtries = (int)360.0/angledelta;
+			int maxtries = (int)(360.0 / angledelta);
 
 			if ( botdata->lastturntoright )
 			{

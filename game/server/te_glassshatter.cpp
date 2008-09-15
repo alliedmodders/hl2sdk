@@ -108,12 +108,12 @@ IMPLEMENT_SERVERCLASS_ST(CTEShatterSurface, DT_TEShatterSurface)
 	SendPropFloat( SENDINFO(m_flHeight), 0, SPROP_NOSCALE ),
 	SendPropFloat( SENDINFO(m_flShardSize), 0, SPROP_NOSCALE ),
 	SendPropInt( SENDINFO(m_nSurfaceType), 2, SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO_ARRAYELEM( m_uchFrontColor, 0 ), 8, SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO_ARRAYELEM( m_uchFrontColor, 1 ), 8, SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO_ARRAYELEM( m_uchFrontColor, 2 ), 8, SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO_ARRAYELEM( m_uchBackColor, 0 ), 8, SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO_ARRAYELEM( m_uchBackColor, 1 ), 8, SPROP_UNSIGNED ),
-	SendPropInt( SENDINFO_ARRAYELEM( m_uchBackColor, 2 ), 8, SPROP_UNSIGNED ),
+	SendPropInt( SENDINFO_ARRAYELEM2( m_uchFrontColor, 0 ), 8, SPROP_UNSIGNED ),
+	SendPropInt( SENDINFO_ARRAYELEM2( m_uchFrontColor, 1 ), 8, SPROP_UNSIGNED ),
+	SendPropInt( SENDINFO_ARRAYELEM2( m_uchFrontColor, 2 ), 8, SPROP_UNSIGNED ),
+	SendPropInt( SENDINFO_ARRAYELEM2( m_uchBackColor, 0 ), 8, SPROP_UNSIGNED ),
+	SendPropInt( SENDINFO_ARRAYELEM2( m_uchBackColor, 1 ), 8, SPROP_UNSIGNED ),
+	SendPropInt( SENDINFO_ARRAYELEM2( m_uchBackColor, 2 ), 8, SPROP_UNSIGNED ),
 END_SEND_TABLE()
 
 

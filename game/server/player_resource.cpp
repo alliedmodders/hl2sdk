@@ -115,7 +115,7 @@ void CPlayerResource::UpdatePlayerData( void )
 				UTIL_GetPlayerConnectionInfo( i, ping, packetloss );
 				
 				// calc avg for scoreboard so it's not so jittery
-				ping = 0.8f * m_iPing.Get(i) + 0.2f * ping;
+				ping = (int)(0.8f * m_iPing.Get(i) + 0.2f * ping);
 
 				
 				m_iPing.Set( i, ping );

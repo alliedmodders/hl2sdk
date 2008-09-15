@@ -157,7 +157,7 @@ void CLogicMirrorMovement::Think()
 	{
 		// If we will never find a target, we don't have a use... shutdown
 		if ( m_strMirrorTarget == NULL_STRING )
-			SetNextThink ( NULL );
+			SetNextThink ( 0.0f );
 
 		//BUGBUG: If m_strSetMirrorTarget doesn't exist in ent list, we get per-think searches with no results ever...
 		SetMirrorTarget ( STRING(m_strMirrorTarget) );

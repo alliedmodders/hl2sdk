@@ -366,7 +366,7 @@ struct mstudiobbox_t
 	int					szhitboxnameindex;	// offset to the name of the hitbox.
 	int					unused[8];
 
-	char* pszHitboxName()
+	const char* pszHitboxName()
 	{
 		if( szhitboxnameindex == 0 )
 			return "";
@@ -974,15 +974,15 @@ public:
 	}
 	inline void SetDeltaFixed( const Vector& vInput )
 	{
-		delta[0] = vInput.x * g_VertAnimFixedPointScaleInv;
-		delta[1] = vInput.y * g_VertAnimFixedPointScaleInv;
-		delta[2] = vInput.z * g_VertAnimFixedPointScaleInv;
+		delta[0] = static_cast<short>(vInput.x * g_VertAnimFixedPointScaleInv);
+		delta[1] = static_cast<short>(vInput.y * g_VertAnimFixedPointScaleInv);
+		delta[2] = static_cast<short>(vInput.z * g_VertAnimFixedPointScaleInv);
 	}
 	inline void SetNDeltaFixed( const Vector& vInputNormal )
 	{
-		ndelta[0] = vInputNormal.x * g_VertAnimFixedPointScaleInv;
-		ndelta[1] = vInputNormal.y * g_VertAnimFixedPointScaleInv;
-		ndelta[2] = vInputNormal.z * g_VertAnimFixedPointScaleInv;
+		ndelta[0] = static_cast<short>(vInputNormal.x * g_VertAnimFixedPointScaleInv);
+		ndelta[1] = static_cast<short>(vInputNormal.y * g_VertAnimFixedPointScaleInv);
+		ndelta[2] = static_cast<short>(vInputNormal.z * g_VertAnimFixedPointScaleInv);
 	}
 
 	// Ick...can also force fp16 data into this structure for writing to file in legacy format...
@@ -1015,7 +1015,7 @@ struct mstudiovertanim_wrinkle_t : public mstudiovertanim_t
 
 	inline void SetWrinkleFixed( float flWrinkle )
 	{
-		int nWrinkleDeltaInt = flWrinkle * g_VertAnimFixedPointScaleInv;
+		int nWrinkleDeltaInt = static_cast<int>(flWrinkle * g_VertAnimFixedPointScaleInv);
 		wrinkledelta = clamp( nWrinkleDeltaInt, -32767, 32767 );
 	}
 
@@ -2100,7 +2100,7 @@ struct studiohdr_t
 //public:
 	int					EntryNode( int iSequence ) const;
 	int					ExitNode( int iSequence ) const;
-	char				*pszNodeName( int iNode ) const;
+	const char				*pszNodeName( int iNode ) const;
 	int					GetTransition( int iFrom, int iTo ) const;
 
 	int					numflexdesc;
@@ -2304,7 +2304,7 @@ public:
 
 	int					EntryNode( int iSequence ) const;
 	int					ExitNode( int iSequence ) const;
-	char				*pszNodeName( int iNode ) const;
+	const char				*pszNodeName( int iNode ) const;
 	// FIXME: where should this one be?
 	int					GetTransition( int iFrom, int iTo ) const;
 
@@ -2473,10 +2473,11 @@ public:
 
 		// ctor
 		CActivityToSequenceMapping( void ) 
-			: m_pSequenceTuples(NULL), m_iSequenceTuplesCount(0), m_ActToSeqHash(8,0,0), m_expectedPStudioHdr(NULL), m_expectedVModel(NULL) 
+			: m_pSequenceTuples(NULL), m_iSequenceTuplesCount(0),
 #if STUDIO_SEQUENCE_ACTIVITY_LAZY_INITIALIZE
-			, m_bIsInitialized(false) 
+			m_bIsInitialized(false),
 #endif
+			m_ActToSeqHash(8,0,0), m_expectedPStudioHdr(NULL), m_expectedVModel(NULL)
 		{};
 
 		// dtor -- not virtual because this class has no inheritors

@@ -1522,7 +1522,6 @@ void CChangeLevel::WarnAboutActiveLead( void )
 void CChangeLevel::ChangeLevelNow( CBaseEntity *pActivator )
 {
 	CBaseEntity	*pLandmark;
-	levellist_t	levels[16];
 
 	Assert(!FStrEq(m_szMapName, ""));
 
@@ -3637,7 +3636,7 @@ void CTriggerProximity::MeasureThink( void )
 //
 // ##################################################################################
 
-#define MAX_WIND_CHANGE		5.0f
+#define MAX_WIND_CHANGE		5
 
 //------------------------------------------------------------------------------
 // Purpose :
@@ -3765,7 +3764,7 @@ END_DATADESC()
 void CTriggerWind::Spawn( void )
 {
 	m_bSwitch = true;
-	m_nDirBase = GetLocalAngles().y;
+	m_nDirBase = (int)GetLocalAngles().y;
 
 	BaseClass::Spawn();
 
@@ -3888,7 +3887,7 @@ void CTriggerWind::WindThink( void )
 
 		// Set new target direction and speed
 		m_nSpeedTarget = m_nSpeedBase + random->RandomInt( -m_nSpeedNoise, m_nSpeedNoise );
-		m_nDirTarget = UTIL_AngleMod( m_nDirBase + random->RandomInt(-m_nDirNoise, m_nDirNoise) );
+		m_nDirTarget = (int)UTIL_AngleMod( m_nDirBase + random->RandomInt(-m_nDirNoise, m_nDirNoise) );
 	}
 	else
 	{
@@ -3903,7 +3902,7 @@ void CTriggerWind::WindThink( void )
 		if (abs(m_nDirTarget - m_nDirCurrent) > MAX_WIND_CHANGE)
 		{
 
-			m_nDirCurrent = UTIL_ApproachAngle( m_nDirTarget, m_nDirCurrent, MAX_WIND_CHANGE );
+			m_nDirCurrent = (int)UTIL_ApproachAngle( m_nDirTarget, m_nDirCurrent, MAX_WIND_CHANGE );
 			bDone = false;
 		}
 		

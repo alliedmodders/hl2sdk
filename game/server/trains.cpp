@@ -341,6 +341,7 @@ void CFuncPlat::Precache( )
 
 
 void CFuncPlat::Spawn( )
+
 {
 	Setup();
 	Precache();
@@ -1522,7 +1523,7 @@ void CFuncTrackTrain::SetSpeed( float flSpeed, bool bAccel /*= false */  )
 		m_flDesiredSpeed = fabs( flSpeed ) * m_dir;
 		m_flSpeedChangeTime = gpGlobals->curtime;
 
-		if ( m_flSpeed == 0 && abs(m_flDesiredSpeed) > 0 )
+		if ( m_flSpeed == 0 && fabs(m_flDesiredSpeed) > 0 )
 		{
 			m_flSpeed = 0.1;	// little push to get us going
 		}
@@ -1897,7 +1898,7 @@ void CFuncTrackTrain::UpdateTrainVelocity( CPathTrack *pPrev, CPathTrack *pNext,
 
 				if ( flPrevSpeed != flNextSpeed )
 				{
-					float flSpeedChangeTime = ( abs(flNextSpeed) > abs(flPrevSpeed) ) ? m_flAccelSpeed : m_flDecelSpeed;
+					float flSpeedChangeTime = ( fabs(flNextSpeed) > fabs(flPrevSpeed) ) ? m_flAccelSpeed : m_flDecelSpeed;
 					m_flSpeed = UTIL_Approach( m_flDesiredSpeed, m_flSpeed, flSpeedChangeTime * gpGlobals->frametime );
 				}
 			}

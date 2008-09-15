@@ -138,9 +138,9 @@ void CMakefileCreator::CreateDirectoryFriendlyName( const char *dirName, char *f
 void CMakefileCreator::CreateObjDirectoryFriendlyName ( char *name )
 {
 #ifdef _WIN32
-	char *updir = "..\\";
+	const char *updir = "..\\";
 #else
-	char *updir = "../";
+	const char *updir = "../";
 #endif
 
 	char *sep = Q_strstr( name, updir );	
@@ -231,7 +231,7 @@ void CMakefileCreator::OutputMainBuilder( FileHandle_t f )
 	{
 		FileWrite( f, "$(%s) ", m_BuildDirectories[i].m_ObjName.String()  );
 	}
-	FileWrite( f, "\n\t$(CLINK) $(SHLIBLDFLAGS) $(DEBUG) -o $(BUILD_DIR)/$@ "  );
+	FileWrite( f, "\n\t$(CLINK) -m32 $(SHLIBLDFLAGS) -o $(BUILD_DIR)/$@ "  );
 	for ( i = 0; i < m_BuildDirectories.Count(); i++ )
 	{
 		FileWrite( f, "$(%s) ", m_BuildDirectories[i].m_ObjName.String()  );

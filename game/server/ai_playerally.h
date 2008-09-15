@@ -14,6 +14,7 @@
 #include "ai_speechfilter.h"
 #ifndef _WIN32
 #undef min
+#undef max
 #endif
 #include "stdstring.h"
 #ifndef _WIN32

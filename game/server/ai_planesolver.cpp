@@ -54,8 +54,8 @@ inline float cube( float f )
 
 CAI_PlaneSolver::CAI_PlaneSolver( CAI_BaseNPC *pNpc ) 
  :	m_pNpc( pNpc ),
-	m_fSolvedPrev( false ),
 	m_PrevTarget( FLT_MAX, FLT_MAX, FLT_MAX ),
+	m_fSolvedPrev( false ),
 	m_PrevSolution( 0 ),
 	m_ClosestHaveBeenToCurrent( FLT_MAX ),
 	m_TimeLastProgress( FLT_MAX ),

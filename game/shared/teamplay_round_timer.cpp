@@ -956,7 +956,7 @@ void CTeamRoundTimer::InputRoundSpawn( inputdata_t &input )
 {
 	if ( !m_bResetTimeOnRoundStart && ( m_nState == RT_STATE_NORMAL ) )
 	{
-		m_nTimeToUseAfterSetupFinished = GetTimeRemaining();
+		m_nTimeToUseAfterSetupFinished = (int)GetTimeRemaining();
 	}
 	else
 	{
@@ -1090,7 +1090,7 @@ void CTeamRoundTimer::AddTimerSeconds( int iSecondsToAdd, int iTeamResponsible /
 		if ( GetTimeRemaining() + iSecondsToAdd > m_nTimerMaxLength )
 		{
 			// adjust to only add up to our max length
-			iSecondsToAdd = m_nTimerMaxLength - GetTimeRemaining();
+			iSecondsToAdd = (int)(m_nTimerMaxLength - GetTimeRemaining());
 		}
 	}
 
@@ -1227,14 +1227,14 @@ void CTeamRoundTimer::InputAddTeamTime( inputdata_t &input )
 
 	// get the team
 	p = nexttoken( token, p, ' ' );
-	if ( token )
+	if ( token[0] != '\0' )
 	{
 		nTeam = Q_atoi( token );
 	}
 
 	// get the time
 	p = nexttoken( token, p, ' ' );
-	if ( token )
+	if ( token[0] != '\0' )
 	{
 		nSeconds = Q_atoi( token );
 	}

@@ -72,6 +72,8 @@ CScratchPadGraph::LineID CScratchPadGraph::AddLine( Vector vColor )
 {
 	CScratchPadGraph::CLineInfo info;
 	info.m_bFirst = true;
+	info.m_flLastTime = 0.0f;
+	info.m_flLastValue = 0.0f;
 	info.m_vColor = vColor;
 	return m_LineInfos.AddToTail( info );
 }

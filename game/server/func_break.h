@@ -94,7 +94,7 @@ public:
 	float			GetDmgModClub( void ) { return m_flDmgModClub; }
 	float			GetDmgModExplosive( void ) { return m_flDmgModExplosive; }
 	void			SetExplosiveRadius( float flRadius ) { m_explodeRadius = flRadius; }
-	void			SetExplosiveDamage( float flDamage ) { m_ExplosionMagnitude = flDamage; }
+	void			SetExplosiveDamage( float flDamage ) { m_ExplosionMagnitude = (int)flDamage; }
 	float			GetExplosiveRadius( void ) { return m_explodeRadius; }
 	float			GetExplosiveDamage( void ) { return m_ExplosionMagnitude; }
 	void			SetPhysicsDamageTable( string_t iszTableName ) { m_iszPhysicsDamageTableName = iszTableName; }

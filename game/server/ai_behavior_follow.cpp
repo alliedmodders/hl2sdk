@@ -2542,7 +2542,7 @@ AI_FollowFormation_t *AIGetFormation( AI_Formations_t formation )
 {
 	if ( formation < 0 )
 		formation = (AI_Formations_t)0;
-	else if ( formation >= ARRAYSIZE( g_AI_Formations ) )
+	else if ( (size_t)formation >= ARRAYSIZE( g_AI_Formations ) )
 		formation = (AI_Formations_t)(ARRAYSIZE( g_AI_Formations ) - 1 );
 		
 	return g_AI_Formations[formation];

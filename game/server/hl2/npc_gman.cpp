@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 // Generic NPC - purely for scripted sequence work.
 //-----------------------------------------------------------------------------
+
 #include "cbase.h"
 #include "npcevent.h"
 #include "ai_basenpc.h"
@@ -84,7 +85,7 @@ void CNPC_GMan::HandleAnimEvent( animevent_t *pEvent )
 //-----------------------------------------------------------------------------
 int CNPC_GMan::GetSoundInterests ( void )
 {
-	return NULL;
+	return 0;
 }
 
 

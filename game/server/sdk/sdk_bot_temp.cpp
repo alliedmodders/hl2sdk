@@ -116,7 +116,7 @@ CBasePlayer *BotPutInServer( bool bFrozen )
 }
 
 // Handler for the "bot" command.
-CON_COMMAND_F( "bot_add", "Add a bot.", FCVAR_CHEAT )
+CON_COMMAND_F( bot_add, "Add a bot.", FCVAR_CHEAT )
 {
 	// Look at -count.
 	int count = args.FindArgInt( "-count", 1 );
@@ -249,7 +249,7 @@ void Bot_UpdateDirection( CSDKBot *pBot )
 	float angledelta = 15.0;
 	QAngle angle;
 
-	int maxtries = (int)360.0/angledelta;
+	int maxtries = (int)(360.0 / angledelta);
 
 	if ( pBot->m_bLastTurnToRight )
 	{
@@ -340,7 +340,9 @@ void Bot_HandleSendCmd( CSDKBot *pBot )
 	if ( strlen( bot_sendcmd.GetString() ) > 0 )
 	{
 		//send the cmd from this bot
-		pBot->ClientCommand( bot_sendcmd.GetString() );
+		CCommand args;
+		args.Tokenize( bot_sendcmd.GetString() );
+		pBot->ClientCommand( args );
 
 		bot_sendcmd.SetValue("");
 	}

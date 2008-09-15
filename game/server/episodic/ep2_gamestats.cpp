@@ -7,11 +7,11 @@
 #include "cbase.h"
 #endif
 #include "ep2_gamestats.h"
-#include "tier1/UtlBuffer.h"
+#include "tier1/utlbuffer.h"
 #include "vehicle_base.h"
-#include "tier1/UtlString.h"
+#include "tier1/utlstring.h"
 #include "filesystem.h"
-#include "ICommandLine.h"
+#include "icommandline.h"
 
 static CEP2GameStats s_CEP2GameStats_Singleton;
 CBaseGameStats *g_pEP2GameStats = &s_CEP2GameStats_Singleton;
