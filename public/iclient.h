@@ -23,7 +23,7 @@ public:
 	virtual	~IClient() {}
 
 	// connect client
-	virtual void	Connect(const char * szName, int nUserID, INetChannel *pNetChannel, bool bFakePlayer) = 0;
+	virtual void	Connect(const char * szName, int nUserID, INetChannel *pNetChannel, bool bFakePlayer, CUtlVector< NetMessageCvar_t > *) = 0;
 
 	// set the client in a pending state waiting for a new game
 	virtual void	Inactivate( void ) = 0;
@@ -80,6 +80,12 @@ public:
 	virtual bool	IsProximityHearingClient(int index) const = 0;
 
 	virtual void	SetMaxRoutablePayloadSize( int nMaxRoutablePayloadSize ) = 0;
+	
+	virtual bool	IsSplitScreenUser( void ) = 0;
+	virtual bool	CheckConnect ( void ) = 0;
+	virtual bool	IsLowViolenceClient( void ) = 0;
+	virtual int		GetSplitScreenOwner( void ) = 0;
+	virtual int		GetNumPlayers( void ) = 0;
 };
 
 #endif // ICLIENT_H

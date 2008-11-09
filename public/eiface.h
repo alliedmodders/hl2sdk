@@ -57,6 +57,7 @@ class CStandardSendProxies;
 class IAchievementMgr;
 class CGamestatsData;
 class CSteamID;
+struct bbox_t;
 
 typedef struct player_info_s player_info_t;
 
@@ -70,7 +71,7 @@ typedef struct player_info_s player_info_t;
 #define DLLEXPORT /* */
 #endif
 
-#define INTERFACEVERSION_VENGINESERVER	"VEngineServer021"
+#define INTERFACEVERSION_VENGINESERVER	"VEngineServer022"
 
 //-----------------------------------------------------------------------------
 // Purpose: Interface the engine exposes to the game DLL
@@ -123,13 +124,12 @@ public:
 	virtual int			GetPlayerUserId( const edict_t *e ) = 0; 
 	virtual const char	*GetPlayerNetworkIDString( const edict_t *e ) = 0;
 
+	virtual bool		IsUserIDInUse ( int userid ) = 0;
+	virtual int			GetLoadingProgressForUserID ( int userid ) = 0;
+
 	// Return the current number of used edict slots
 	virtual int			GetEntityCount( void ) = 0;
-	// Given an edict, returns the entity index
-	virtual int			IndexOfEdict( const edict_t *pEdict ) = 0;
-	// Given and entity index, returns the corresponding edict pointer
-	virtual edict_t		*PEntityOfEntIndex( int iEntIndex ) = 0;
-	
+
 	// Get stats info interface for a client netchannel
 	virtual INetChannelInfo* GetPlayerNetInfo( int playerIndex ) = 0;
 	
@@ -265,6 +265,7 @@ public:
 
 	// Print a message to the server log file
 	virtual void		LogPrint( const char *msg ) = 0;
+	virtual bool		IsLogEnabled( void ) = 0;
 
 	// Builds PVS information for an entity
 	virtual void		BuildEntityClusterList( edict_t *pEdict, PVSInfo_t *pPVSInfo ) = 0;
@@ -311,7 +312,7 @@ public:
 
 	// Is the engine in Commentary mode?
 	virtual int			IsInCommentaryMode( void ) = 0;
-	
+	virtual bool		IsLevelMainMenuBackground( void ) = 0;
 
 	// Mark some area portals as open/closed. It's more efficient to use this
 	// than a bunch of individual SetAreaPortalState calls.
@@ -338,6 +339,10 @@ public:
 	// Name of most recently load .sav file
 	virtual char const *GetMostRecentlyLoadedFileName() = 0;
 	virtual char const *GetSaveFileName() = 0;
+	virtual void WriteSavegameScreenshot( const char *filename ) = 0;
+	
+	virtual int GetLightForPointListenServerOnly(const Vector &, bool, Vector *) = 0;
+	virtual int TraceLightingListenServerOnly(const Vector &, const Vector &, Vector *, Vector *) = 0;
 
 	// Matchmaking
 	virtual void MultiplayerEndGame() = 0;
@@ -352,6 +357,7 @@ public:
 	virtual int	GetAppID() = 0;
 	
 	virtual bool IsLowViolence() = 0;
+	virtual bool IsAnyClientLowViolence() = 0;
 	
 	// Call this to find out the value of a cvar on the client.
 	//
@@ -370,16 +376,32 @@ public:
 	// Returns true if this client has been fully authenticated by Steam
 	virtual bool IsClientFullyAuthenticated( edict_t *pEdict ) = 0;
 
-	// This makes the host run 1 tick per frame instead of checking the system timer to see how many ticks to run in a certain frame.
-	// i.e. it does the same thing timedemo does.
-	virtual void SetDedicatedServerBenchmarkMode( bool bBenchmarkMode ) = 0;
+	virtual bool IsSplitScreenPlayer( int ) = 0;
+	virtual int GetSplitScreenPlayerAttachToEdict( int ) = 0;
+	virtual int GetNumSplitScreenUsersAttachedToEdict( int ) = 0;
+	virtual int GetSplitScreenPlayerForEdict( int, int ) = 0;
+	
+	virtual bool IsOverrideLoadGameEntsOn() = 0;
+	virtual void ForceFlushEntity( int ) = 0;
+	
+	virtual void *GetSinglePlayerSharedMemorySpace( char const * ) = 0;
+	
+	virtual void *AllocLevelStaticData( unsigned int ) = 0;
+	virtual int GetClusterCount() = 0;
+	virtual void *GetAllClusterBounds( bbox_t *, int ) = 0;
+	
+	virtual bool IsCreatingReslist() = 0;
+	virtual bool IsCreatingXboxReslist() = 0;
+	virtual bool IsDedicatedServerForXbox() = 0;
+	
+	virtual void Pause( bool, bool ) = 0;
 
 	// Methods to set/get a gamestats data container so client & server running in same process can send combined data
 	virtual void SetGamestatsData( CGamestatsData *pGamestatsData ) = 0;
 	virtual CGamestatsData *GetGamestatsData() = 0;
-
-	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
-	virtual const CSteamID	*GetClientSteamID( edict_t *pPlayerEdict ) = 0;
+	
+	virtual void HostValidateSession() = 0;
+	virtual void RefreshScreenIfNecessary() = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
@@ -487,6 +509,12 @@ public:
 	// iCookie is the value returned by IServerPluginHelpers::StartQueryCvarValue.
 	// Added with version 2 of the interface.
 	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) = 0;
+	
+	virtual void			PostToolsInit( void ) = 0;
+	virtual void			ApplyGameSettings( KeyValues * ) = 0;
+	virtual const char *	GetGameModeConfigFile( int ) = 0;
+	virtual int				GameGameModePlayerSlots( int ) = 0;
+	virtual void			GetMatchmakingTags( char *, unsigned int ) = 0; 
 };
 
 //-----------------------------------------------------------------------------
@@ -505,9 +533,6 @@ abstract_class IServerGameEnts
 public:
 	virtual					~IServerGameEnts()	{}
 
-	// Only for debugging. Set the edict base so you can get an edict's index in the debugger while debugging the game .dll
-	virtual void			SetDebugEdictBase(edict_t *base) = 0;
-	
 	// The engine wants to mark two entities as touching
 	virtual void			MarkEntitiesAsTouching( edict_t *e1, edict_t *e2 ) = 0;
 
@@ -524,6 +549,8 @@ public:
 	// This is also where an entity can force other entities to be transmitted if it refers to them
 	// with ehandles.
 	virtual void			CheckTransmit( CCheckTransmitInfo *pInfo, const unsigned short *pEdictIndices, int nEdicts ) = 0;
+	
+	virtual void			PrepareForFullUpdate( edict_t * ) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMECLIENTS		"ServerGameClients003"
@@ -582,9 +609,15 @@ public:
 	// Anything this game .dll wants to add to the bug reporter text (e.g., the entity/model under the picker crosshair)
 	//  can be added here
 	virtual void			GetBugReportInfo( char *buf, int buflen ) = 0;
+	
+	virtual void			ClientVoice( edict_t * ) = 0;
 
 	// A user has had their network id setup and validated 
 	virtual void			NetworkIDValidated( const char *pszUserName, const char *pszNetworkID ) = 0;
+	
+	virtual int 			GetMaxSplitscreenPlayers( void ) = 0;
+	
+	virtual int				GetMaxHumanPlayers( void ) = 0;
 };
 
 #define INTERFACEVERSION_UPLOADGAMESTATS		"ServerUploadGameStats001"

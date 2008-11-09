@@ -120,6 +120,10 @@ public:
 	virtual bool				IsFlagSet( int flag ) const;
 	// Set flag
 	virtual void				AddFlags( int flags );
+	// Remove flag
+	virtual void				RemoveFlags( int flags );
+	// Get flags
+	virtual int					GetFlags( void ) const;
 
 	// Return name of cvar
 	virtual const char			*GetName( void ) const;
@@ -342,13 +346,14 @@ public:
 
 	virtual						~ConVar( void );
 
+	virtual	bool				IsCommand( void ) const;
 	virtual bool				IsFlagSet( int flag ) const;
+	virtual void				AddFlags( int flags );
+	virtual int					GetFlags( void ) const;
+	virtual const char			*GetName( void ) const;
 	virtual const char*			GetHelpText( void ) const;
 	virtual bool				IsRegistered( void ) const;
-	virtual const char			*GetName( void ) const;
-	virtual void				AddFlags( int flags );
-	virtual	bool				IsCommand( void ) const;
-
+		
 	// Install a change callback (there shouldn't already be one....)
 	void InstallChangeCallback( FnChangeCallback_t callback );
 
@@ -357,6 +362,12 @@ public:
 	FORCEINLINE_CVAR int			GetInt( void ) const;
 	FORCEINLINE_CVAR bool			GetBool() const {  return !!GetInt(); }
 	FORCEINLINE_CVAR char const	   *GetString( void ) const;
+	
+	// Used internally by OneTimeInit to initialize.
+	virtual void				Init();
+	
+	virtual const char 			*GetBaseName( void ) const;
+	virtual int					GetSplitScreenPlayerSlot ( void ) const;
 
 	// Any function that allocates/frees memory needs to be virtual or else you'll have crashes
 	//  from alloc/free across dll/exe boundaries.
@@ -387,9 +398,6 @@ private:
 	virtual void				Create( const char *pName, const char *pDefaultValue, int flags = 0,
 									const char *pHelpString = 0, bool bMin = false, float fMin = 0.0,
 									bool bMax = false, float fMax = false, FnChangeCallback_t callback = 0 );
-
-	// Used internally by OneTimeInit to initialize.
-	virtual void				Init();
 
 private:
 

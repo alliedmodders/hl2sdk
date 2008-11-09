@@ -93,6 +93,10 @@ public:
 	// FireEvent is called by EventManager if event just occured
 	// KeyValue memory will be freed by manager if not needed anymore
 	virtual void FireGameEvent( IGameEvent *event ) = 0;
+	virtual int GetEventDebugID( void )
+	{
+		return 0;
+	}
 };
 
 abstract_class IGameEventManager2 : public IBaseInterface
@@ -117,7 +121,7 @@ public:
 
 	// create an event by name, but doesn't fire it. returns NULL is event is not
 	// known or no listener is registered for it. bForce forces the creation even if no listener is active
-	virtual IGameEvent *CreateEvent( const char *name, bool bForce = false ) = 0;
+	virtual IGameEvent *CreateEvent( const char *name, bool bForce = false, int *unknown=NULL) = 0;
 
 	// fires a server event created earlier, if bDontBroadcast is set, event is not send to clients
 	virtual bool FireEvent( IGameEvent *event, bool bDontBroadcast = false ) = 0;

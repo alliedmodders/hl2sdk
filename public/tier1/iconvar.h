@@ -104,10 +104,13 @@ public:
 
 	// Return name of command
 	virtual const char *GetName( void ) const = 0;
+	virtual const char *GetBaseName( void ) const = 0;
 
 	// Accessors.. not as efficient as using GetState()/GetInfo()
 	// if you call these methods multiple times on the same IConVar
 	virtual bool IsFlagSet( int nFlag ) const = 0;
+	
+	virtual int GetSplitScreenPlayerSlot( void ) const = 0;
 };
 
 

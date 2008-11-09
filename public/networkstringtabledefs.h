@@ -58,6 +58,24 @@ public:
 	virtual void			SetStringChangedCallback( void *object, pfnStringChanged changeFunc ) = 0;
 };
 
+class INetworkStringDict
+{
+public:
+
+	virtual					~INetworkStringDict( void ) {};
+	
+	virtual int				Count( void ) = 0;
+	virtual void			Purge( void ) = 0;
+	virtual const char 		*String( int index ) = 0;
+	virtual bool			IsValidIndex( int index ) = 0;
+	virtual int				Insert( const char *string ) = 0;
+	virtual int				Find( const char *string ) = 0;
+	virtual void			UpdateDictionary( int ) = 0;
+	virtual int				DictionaryIndex( int ) = 0;
+	virtual int				Element( int ) = 0;
+	virtual int				Element( int ) const = 0;
+};
+
 class INetworkStringTableContainer
 {
 public:
@@ -65,7 +83,7 @@ public:
 	virtual					~INetworkStringTableContainer( void ) {};
 	
 	// table creation/destruction
-	virtual INetworkStringTable	*CreateStringTable( const char *tableName, int maxentries, int userdatafixedsize = 0, int userdatanetworkbits = 0 ) = 0;
+	virtual INetworkStringTable	*CreateStringTable( const char *tableName, int maxentries, int userdatafixedsize = 0, int userdatanetworkbits = 0, int ) = 0;
 	virtual void				RemoveAllTables( void ) = 0;
 	
 	// table infos
@@ -73,8 +91,8 @@ public:
 	virtual INetworkStringTable	*GetTable( TABLEID stringTable ) const = 0;
 	virtual int					GetNumTables( void ) const = 0;
 
-	virtual INetworkStringTable	*CreateStringTableEx( const char *tableName, int maxentries, int userdatafixedsize = 0, int userdatanetworkbits = 0, bool bIsFilenames = false ) = 0;
 	virtual void				SetAllowClientSideAddString( INetworkStringTable *table, bool bAllowClientSideAddString ) = 0;
+	virtual INetworkStringDict	*CreateDictionary( const char *dictName ) = 0;
 };
 
 #endif // NETWORKSTRINGTABLEDEFS_H

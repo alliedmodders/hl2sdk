@@ -23,7 +23,6 @@ class CGameTrace;
 typedef CGameTrace trace_t;
 class ICollideable;
 class QAngle;
-class CTraceListData;
 class CPhysCollide;
 struct cplane_t;
 
@@ -43,6 +42,16 @@ abstract_class ITraceFilter
 public:
 	virtual bool ShouldHitEntity( IHandleEntity *pEntity, int contentsMask ) = 0;
 	virtual TraceType_t	GetTraceType() const = 0;
+};
+
+abstract_class ITraceListData
+{
+public:
+	virtual ~ITraceListData() {};
+
+	virtual void Reset() = 0;
+	virtual bool IsEmpty() = 0;
+	virtual bool CanTraceRay( const Ray_t &ray ) = 0;
 };
 
 
@@ -129,8 +138,9 @@ abstract_class IEngineTrace
 {
 public:
 	// Returns the contents mask + entity at a particular world-space position
-	virtual int		GetPointContents( const Vector &vecAbsPosition, IHandleEntity** ppEntity = NULL ) = 0;
+	virtual int		GetPointContents( const Vector &vecAbsPosition, int, IHandleEntity** ppEntity = NULL ) = 0;
 	
+	virtual int		GetPointContents_WorldOnly( const Vector &vecAbsPosition, int ) = 0;
 	// Get the point contents, but only test the specific entity. This works
 	// on static props and brush models.
 	//
@@ -148,9 +158,9 @@ public:
 	virtual void	TraceRay( const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace ) = 0;
 
 	// A version that sets up the leaf and entity lists and allows you to pass those in for collision.
-	virtual void	SetupLeafAndEntityListRay( const Ray_t &ray, CTraceListData &traceData ) = 0;
-	virtual void    SetupLeafAndEntityListBox( const Vector &vecBoxMin, const Vector &vecBoxMax, CTraceListData &traceData ) = 0;
-	virtual void	TraceRayAgainstLeafAndEntityList( const Ray_t &ray, CTraceListData &traceData, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace ) = 0;
+	virtual void	SetupLeafAndEntityListRay( const Ray_t &ray, ITraceListData *traceData ) = 0;
+	virtual void    SetupLeafAndEntityListBox( const Vector &vecBoxMin, const Vector &vecBoxMax, ITraceListData *traceData ) = 0;
+	virtual void	TraceRayAgainstLeafAndEntityList( const Ray_t &ray, ITraceListData *traceData, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace ) = 0;
 
 	// A version that sweeps a collideable through the world
 	// abs start + abs end represents the collision origins you want to sweep the collideable through
@@ -185,6 +195,9 @@ public:
 
 	// Walks bsp to find the leaf containing the specified point
 	virtual int GetLeafContainingPoint( const Vector &ptTest ) = 0;
+	
+	virtual ITraceListData *AllocTraceListData( void ) = 0;
+	virtual void FreeTraceListData( ITraceListData *traceData ) = 0;
 };
 
 

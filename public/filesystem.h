@@ -736,6 +736,17 @@ public:
 
 	// Installs a callback used to display a dirty disk dialog
 	virtual void			InstallDirtyDiskReportFunc( FSDirtyDiskReportFunc_t func ) = 0;
+	
+	virtual bool			IsLaunchedFromXboxHDD( void ) = 0;
+	virtual bool			IsInstalledToXboxHDDCache( void ) = 0;
+	virtual bool			IsDVDHosted( void ) = 0;
+	virtual bool			IsInstallAllowed( void ) = 0;
+	virtual void			GetSearchPathID( char *, int ) = 0;
+	virtual bool			FixupSearchPathsAfterInstall( void ) = 0;
+	
+	virtual FSDirtyDiskReportFunc_t	GetDirtyDiskReportFunc( void ) = 0;
+	
+	virtual int				AddVPKFile( const char *file ) = 0;
 };
 
 //-----------------------------------------------------------------------------

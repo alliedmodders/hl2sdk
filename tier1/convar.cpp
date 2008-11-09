@@ -241,6 +241,16 @@ void ConCommandBase::AddFlags( int flags )
 #endif
 }
 
+void ConCommandBase::RemoveFlags( int flags )
+{
+	m_nFlags &= ~flags;
+}
+
+int ConCommandBase::GetFlags( void ) const
+{
+	return m_nFlags;
+}
+
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -715,6 +725,11 @@ void ConVar::AddFlags( int flags )
 #endif
 }
 
+int ConVar::GetFlags( void ) const
+{
+	return m_pParent->m_nFlags;
+}
+
 bool ConVar::IsRegistered( void ) const
 {
 	return m_pParent->m_bRegistered;
@@ -741,6 +756,16 @@ bool ConVar::IsCommand( void ) const
 void ConVar::Init()
 {
 	BaseClass::Init();
+}
+
+const char *ConVar::GetBaseName( void ) const
+{
+	return m_pParent->m_pszName;
+}
+
+int ConVar::GetSplitScreenPlayerSlot( void ) const
+{
+	return 0;
 }
 
 //-----------------------------------------------------------------------------

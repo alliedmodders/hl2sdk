@@ -59,6 +59,14 @@ public:
 	bool			teamplay;
 	// current maxentities
 	int				maxEntities;
+	
+	// Number of servers spawned (-fork)
+	int				serverCount;
+	
+	// First edict/entity, usually worldspawn (0)
+	// - Replacement for IndexOfEntity: (edict - baseEdict) >> 4
+	// - Replacement for PEntityOfIndex: baseEdict + (entIndex << 4)
+	edict_t			*baseEdict;
 };
 
 inline CGlobalVars::CGlobalVars( bool bIsClient ) : 
