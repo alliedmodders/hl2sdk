@@ -138,9 +138,9 @@ abstract_class IEngineTrace
 {
 public:
 	// Returns the contents mask + entity at a particular world-space position
-	virtual int		GetPointContents( const Vector &vecAbsPosition, int, IHandleEntity** ppEntity = NULL ) = 0;
+	virtual int		GetPointContents( const Vector &vecAbsPosition, int mask = 0, IHandleEntity** ppEntity = NULL ) = 0;
 	
-	virtual int		GetPointContents_WorldOnly( const Vector &vecAbsPosition, int ) = 0;
+	virtual int		GetPointContents_WorldOnly( const Vector &vecAbsPosition, int mask = 0 ) = 0;
 	// Get the point contents, but only test the specific entity. This works
 	// on static props and brush models.
 	//
