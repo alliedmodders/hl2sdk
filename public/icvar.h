@@ -48,6 +48,15 @@ public:
 	virtual bool AreConVarsLinkable( const ConVar *child, const ConVar *parent ) = 0;
 };
 
+abstract_class ICvarIteratorInternal
+{
+public:
+	virtual void SetFirst( void ) = 0;
+	virtual void Next( void ) = 0;
+	virtual bool IsValid( void ) = 0;
+	virtual ConCommandBase *Get( void ) = 0;
+};
+
 
 //-----------------------------------------------------------------------------
 // Purpose: DLL interface to ConVars/ConCommands
@@ -111,7 +120,7 @@ public:
 	virtual void QueueMaterialThreadSetValue( ConVar *, float ) = 0;
 	virtual bool HasQueuedMaterialThreadConVarSets() const = 0;
 	virtual int ProcessQueuedMaterialThreadConVarSets() = 0;
-	virtual void FactoryInternalIterator() = 0;
+	virtual ICvarIteratorInternal *FactoryInternalIterator() = 0;
 };
 
 #define CVAR_INTERFACE_VERSION "VEngineCvar007"
