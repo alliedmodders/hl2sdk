@@ -83,7 +83,7 @@ public:
 	virtual					~INetworkStringTableContainer( void ) {};
 	
 	// table creation/destruction
-	virtual INetworkStringTable	*CreateStringTable( const char *tableName, int maxentries, int userdatafixedsize = 0, int userdatanetworkbits = 0, int ) = 0;
+	virtual INetworkStringTable	*CreateStringTable( const char *tableName, int maxentries, int userdatafixedsize = 0, int userdatanetworkbits = 0, int unknown = 0 ) = 0;
 	virtual void				RemoveAllTables( void ) = 0;
 	
 	// table infos
