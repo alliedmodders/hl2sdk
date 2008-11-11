@@ -183,7 +183,7 @@ public:
 	// Begin a message from a server side entity to its client side counterpart (func_breakable glass, e.g.)
 	virtual bf_write	*EntityMessageBegin( int ent_index, ServerClass * ent_class, bool reliable ) = 0;
 	// Begin a usermessage from the server to the client .dll
-	virtual bf_write	*UserMessageBegin( IRecipientFilter *filter, int msg_type ) = 0;
+	virtual bf_write	*UserMessageBegin( IRecipientFilter *filter, int msg_type, const char *name ) = 0;
 	// Finish the Entity or UserMessage and dispatch to network layer
 	virtual void		MessageEnd( void ) = 0;
 
