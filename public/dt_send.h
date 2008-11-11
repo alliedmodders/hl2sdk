@@ -249,21 +249,21 @@ public:
 	float			m_fLowValue;
 	float			m_fHighValue;
 	
-	SendProp		*m_pArrayProp;					// If this is an array, this is the property that defines each array element.
+	SendProp		*m_pArrayProp;				// If this is an array, this is the property that defines each array element.
 	ArrayLengthSendProxyFn	m_ArrayLengthProxy;	// This callback returns the array length.
 	
-	int				m_nElements;		// Number of elements in the array (or 1 if it's not an array).
-	int				m_ElementStride;	// Pointer distance between array elements.
+	int				m_nElements;				// Number of elements in the array (or 1 if it's not an array).
+	int				m_ElementStride;			// Pointer distance between array elements.
 
 	union
 	{
 		const char *m_pExcludeDTName;			// If this is an exclude prop, then this is the name of the datatable to exclude a prop from.
 		const char *m_pParentArrayPropName;
 	};
-
+	int				m_Unknown;
 	const char		*m_pVarName;
 	float			m_fHighLowMul;
-	
+
 private:
 
 	int					m_Flags;				// SPROP_ flags.
