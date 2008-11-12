@@ -260,6 +260,7 @@ struct typedescription_t
 	int					fieldOffset[ TD_OFFSET_COUNT ]; // 0 == normal, 1 == packed offset
 	unsigned short		fieldSize;
 	short				flags;
+	int					unknown[2];
 	// the name of the variable in the map/fgd data, or the name of the action
 	const char			*externalName;	
 	// pointer to the function set for save/restoring of custom data types
@@ -289,10 +290,10 @@ struct typedescription_t
 //-----------------------------------------------------------------------------
 struct datamap_t
 {
-	typedescription_t	*dataDesc;
-	int					dataNumFields;
-	char const			*dataClassName;
-	datamap_t			*baseMap;
+0	typedescription_t	*dataDesc;
+4	int					dataNumFields;
+8	char const			*dataClassName;
+12	datamap_t			*baseMap;
 
 	bool				chains_validated;
 	// Have the "packed" offsets been computed
