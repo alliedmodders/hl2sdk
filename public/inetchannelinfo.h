@@ -60,6 +60,7 @@ public:
 	virtual float		GetAvgData( int flow ) const = 0;	 // data flow in bytes/sec
 	virtual float		GetAvgPackets( int flow ) const = 0; // avg packets/sec
 	virtual int			GetTotalData( int flow ) const = 0;	 // total flow in/out in bytes
+	virtual int			GetTotalPackets( int flow ) const = 0;
 	virtual int			GetSequenceNr( int flow ) const = 0;	// last send seq number
 	virtual bool		IsValidPacket( int flow, int frame_number ) const = 0; // true if packet was not lost/dropped/chocked/flushed
 	virtual float		GetPacketTime( int flow, int frame_number ) const = 0; // time when packet was send

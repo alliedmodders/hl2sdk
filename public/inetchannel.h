@@ -71,7 +71,6 @@ public:
 	virtual void	SetFileTransmissionMode(bool bBackgroundMode) = 0;
 	virtual void	SetCompressionMode( bool bUseCompression ) = 0;
 	virtual unsigned int RequestFile(const char *filename) = 0;
-	virtual float	GetTimeSinceLastReceived( void ) const = 0;	// get time since last received packet in seconds
 
 	virtual void	SetMaxBufferSize(bool bReliable, int nBytes, bool bVoice = false ) = 0;
 
@@ -83,6 +82,11 @@ public:
 	// Max # of payload bytes before we must split/fragment the packet
 	virtual void	SetMaxRoutablePayloadSize( int nSplitSize ) = 0;
 	virtual int		GetMaxRoutablePayloadSize() = 0;
+	
+	virtual bool	SetActiveChannel( INetChannel *msg ) = 0;
+	virtual void	AttachSplitPlayer( int player, INetChannel *msg ) = 0;
+	virtual void	DetachSplitPlayer( int player ) = 0;
+	virtual bool	IsRemoteDisconnected() const = 0;
 };
 
 
