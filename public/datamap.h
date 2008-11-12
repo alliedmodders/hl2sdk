@@ -290,10 +290,10 @@ struct typedescription_t
 //-----------------------------------------------------------------------------
 struct datamap_t
 {
-0	typedescription_t	*dataDesc;
-4	int					dataNumFields;
-8	char const			*dataClassName;
-12	datamap_t			*baseMap;
+	typedescription_t	*dataDesc;
+	int					dataNumFields;
+	char const			*dataClassName;
+	datamap_t			*baseMap;
 
 	bool				chains_validated;
 	// Have the "packed" offsets been computed
