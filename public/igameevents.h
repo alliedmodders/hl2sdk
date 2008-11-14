@@ -95,7 +95,7 @@ public:
 	virtual void FireGameEvent( IGameEvent *event ) = 0;
 	virtual int GetEventDebugID( void )
 	{
-		return 0;
+		return 42;
 	}
 };
 
