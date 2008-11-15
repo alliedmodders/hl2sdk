@@ -64,8 +64,8 @@ public:
 	int				serverCount;
 	
 	// First edict/entity, usually worldspawn (0)
-	// - Replacement for IndexOfEntity: (edict - baseEdict) >> 4
-	// - Replacement for PEntityOfIndex: baseEdict + (entIndex << 4)
+	// - Replacement for IndexOfEntity: edict - baseEdict
+	// - Replacement for PEntityOfEntIndex: baseEdict + entIndex
 	edict_t			*baseEdict;
 };
 
@@ -421,7 +421,7 @@ public:
 	ICollideable *GetCollideable();
 
 	// The server timestampe at which the edict was freed (so we can try to use other edicts before reallocating this one)
-	float		freetime;	
+//	float		freetime;	
 };
 
 inline ICollideable *edict_t::GetCollideable()
