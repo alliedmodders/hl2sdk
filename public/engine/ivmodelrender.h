@@ -174,6 +174,13 @@ public:
 	virtual void SuppressEngineLighting( bool bSuppress ) = 0;
 
 	virtual void SetupColorMeshes( int nTotalVerts ) = 0;
+	
+	virtual void SetupLightingEx( const Vector &, unsigned short ) = 0;
+	virtual int GetBrightestShadowingLightSource( const Vector &, Vector &, Vector &, bool ) = 0;
+	virtual void ComputeLightingState( int, const LightingQuery_t *, MaterialLightingState_t *, ITexture **) = 0;
+	virtual void GetModelDecalHandles( StudioDecalHandle_t__ **, int, int, const unsigned short * ) = 0;
+	virtual void ComputeStaticLightingState( int, const StaticLightingQuery_t  *, MaterialLightingState_t *, MaterialLightingState_t *, ColorMeshInfo_t **, ITexture **, memhandle_t__ **) = 0;
+	virtual void CleanupStaticLightingState( int, memhandle_t__ **) = 0;
 };
 
 

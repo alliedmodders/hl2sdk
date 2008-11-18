@@ -269,6 +269,7 @@ public:
 	// begins parsing a vcollide.  NOTE: This keeps pointers to the text
 	// If you free the text and call members of IVPhysicsKeyParser, it will crash
 	virtual IVPhysicsKeyParser	*VPhysicsKeyParserCreate( const char *pKeyData ) = 0;
+	virtual IVPhysicsKeyParser 	*VPhysicsKeyParserCreate( vcollide_t * ) = 0;
 	// Free the parser created by VPhysicsKeyParserCreate
 	virtual void			VPhysicsKeyParserDestroy( IVPhysicsKeyParser *pParser ) = 0;
 
@@ -298,6 +299,11 @@ public:
 	// dumps info about the collide to Msg()
 	virtual void			OutputDebugInfo( const CPhysCollide *pCollide ) = 0;
 	virtual unsigned int	ReadStat( int statID ) = 0;
+	
+	virtual int				CollideGetRadius( const CPhysCollide *pCollide ) = 0;
+	virtual void			*VCollideAllocUserData( vcollide_t *, unsigned int ) = 0;
+	virtual void			VCollideFreeUserData( vcollide_t * ) = 0;
+	virtual int				VCollideCheck( vcollide_t *, const char * ) = 0;
 };
 
 // this can be used to post-process a collision model
@@ -657,6 +663,11 @@ public:
 
 	virtual void EnableConstraintNotify( bool bEnable ) = 0;
 	virtual void DebugCheckContacts(void) = 0;
+	
+	virtual void			SetAlternateGravity( const Vector& ) = 0;
+	virtual void			GetAlternateGravity( Vector * ) const = 0;
+	virtual float			GetDeltaFrameTime( int ) = 0;
+	virtual void			ForceObjectsToSleep( IPhysicsObject **, int ) = 0;
 };
 
 enum callbackflags
@@ -760,6 +771,7 @@ public:
 
 	// Get the radius if this is a sphere object (zero if this is a polygonal mesh)
 	virtual float			GetSphereRadius() const = 0;
+	virtual void			SetSphereRadius( float radius ) = 0;
 	virtual float			GetEnergy() const = 0;
 	virtual Vector			GetMassCenterLocalSpace() const = 0;
 
@@ -853,6 +865,10 @@ public:
 
 	// dumps info about the object to Msg()
 	virtual void			OutputDebugInfo() const = 0;
+	
+	virtual void			SetUseAlternateGravity( bool ) = 0;
+	virtual void			SetCollisionHints( unsigned int hint ) = 0;
+	virtual unsigned int	GetCollisionHints( void ) const = 0;
 
 };
 

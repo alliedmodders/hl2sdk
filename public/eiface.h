@@ -677,16 +677,4 @@ public:
 
 #define SERVER_DLL_SHARED_APPSYSTEMS		"VServerDllSharedAppSystems001"
 
-#define INTERFACEVERSION_SERVERGAMETAGS		"ServerGameTags001"
-
-//-----------------------------------------------------------------------------
-// Purpose: querying the game dll for Server cvar tags
-//-----------------------------------------------------------------------------
-abstract_class IServerGameTags
-{
-public:
-	// Get the list of cvars that require tags to show differently in the server browser
-	virtual void			GetTaggedConVarList( KeyValues *pCvarTagList ) = 0;
-};
-
 #endif // EIFACE_H
