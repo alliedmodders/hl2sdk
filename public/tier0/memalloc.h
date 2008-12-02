@@ -74,6 +74,8 @@ public:
 	// FIXME: Make a better stats interface
 	virtual void DumpStats() = 0;
 	virtual void DumpStatsFileBase( char const *pchFileBase ) = 0;
+	
+	virtual size_t ComputeMemoryUsedBy( const char *pFileName ) = 0;
 
 	// FIXME: Remove when we have our own allocator
 	virtual void* CrtSetReportFile( int nRptType, void* hFile ) = 0;
@@ -104,6 +106,9 @@ public:
 
 	// Returns 0 if no failure, otherwise the size_t of the last requested chunk
 	virtual size_t MemoryAllocFailed() = 0;
+	
+	virtual void CompactIncremental() = 0;
+	virtual void OutOfMemory( size_t ) = 0;
 };
 
 //-----------------------------------------------------------------------------

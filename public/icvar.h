@@ -120,6 +120,15 @@ public:
 	virtual void QueueMaterialThreadSetValue( ConVar *, float ) = 0;
 	virtual bool HasQueuedMaterialThreadConVarSets() const = 0;
 	virtual int ProcessQueuedMaterialThreadConVarSets() = 0;
+	
+	// Returns a cvar iterator pointer.
+	//
+	// If memoverride is not used, use g_pMemAlloc->Free() to deallocate the memory
+	// used by these iterators.
+	//
+	// If memoverride is used, you can use the delete operator even though there
+	// is no virtual destructor. This can be done because memoverride overloads the
+	// delete operator so that it will call g_pMemAlloc-Free().
 	virtual ICvarIteratorInternal *FactoryInternalIterator() = 0;
 };
 
