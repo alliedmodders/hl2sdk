@@ -247,7 +247,7 @@ struct typedescription_t;
 enum
 {
 	TD_OFFSET_NORMAL = 0,
-	TD_OFFSET_PACKED = 1,
+//	TD_OFFSET_PACKED = 1,
 
 	// Must be last
 	TD_OFFSET_COUNT,
@@ -260,7 +260,6 @@ struct typedescription_t
 	int					fieldOffset[ TD_OFFSET_COUNT ]; // 0 == normal, 1 == packed offset
 	unsigned short		fieldSize;
 	short				flags;
-	int					unknown[2];
 	// the name of the variable in the map/fgd data, or the name of the action
 	const char			*externalName;	
 	// pointer to the function set for save/restoring of custom data types
@@ -281,6 +280,8 @@ struct typedescription_t
   
 	// Tolerance for field errors for float fields
 	float				fieldTolerance;
+	
+	int					unknown[3];
 };
 
 
