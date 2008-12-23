@@ -21,7 +21,11 @@
 #define NEW_SOFTWARE_LIGHTING
 
 // need this for _alloca
+#if defined __APPLE__
+#include <alloca.h>
+#else
 #include <malloc.h>
+#endif
 #ifdef _MSC_VER
 #include <new.h>
 #elif defined __GNUC__

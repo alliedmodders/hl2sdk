@@ -2131,13 +2131,13 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 //-----------------------------------------------------------------------------
 // Purpose: memory allocator
 //-----------------------------------------------------------------------------
-void *KeyValues::operator new( unsigned int iAllocSize )
+void *KeyValues::operator new( size_t iAllocSize )
 {
 	MEM_ALLOC_CREDIT();
 	return KeyValuesSystem()->AllocKeyValuesMemory(iAllocSize);
 }
 
-void *KeyValues::operator new( unsigned int iAllocSize, int nBlockUse, const char *pFileName, int nLine )
+void *KeyValues::operator new( size_t iAllocSize, int nBlockUse, const char *pFileName, int nLine )
 {
 	MemAlloc_PushAllocDbgInfo( pFileName, nLine );
 	void *p = KeyValuesSystem()->AllocKeyValuesMemory(iAllocSize);

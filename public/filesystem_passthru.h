@@ -115,12 +115,13 @@ public:
 	virtual char			*ReadLine( char *pOutput, int maxChars, FileHandle_t file )							{ return m_pFileSystemPassThru->ReadLine( pOutput, maxChars, file ); }
 	virtual int				FPrintf( FileHandle_t file, char *pFormat, ... ) 
 	{ 
+		char _fmt[] = "%s";
 		char str[8192];
 		va_list marker;
 		va_start( marker, pFormat );
 		_vsnprintf( str, sizeof( str ), pFormat, marker );
 		va_end( marker );
-		return m_pFileSystemPassThru->FPrintf( file, "%s", str );
+		return m_pFileSystemPassThru->FPrintf( file, _fmt, str );
 	}
 	virtual CSysModule 		*LoadModule( const char *pFileName, const char *pPathID, bool bValidatedDllOnly )	{ return m_pFileSystemPassThru->LoadModule( pFileName, pPathID, bValidatedDllOnly ); }
 	virtual void			UnloadModule( CSysModule *pModule )													{ m_pFileSystemPassThru->UnloadModule( pModule ); }

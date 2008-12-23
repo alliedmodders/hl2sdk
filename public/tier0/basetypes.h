@@ -64,6 +64,9 @@ inline T AlignValue( T val, unsigned alignment )
 	( ((number) + ((boundary)-1)) / (boundary) ) * (boundary)
 
 // In case this ever changes
+#if defined M_PI
+#undef M_PI
+#endif
 #define M_PI			3.14159265358979323846
 
 #ifndef min
