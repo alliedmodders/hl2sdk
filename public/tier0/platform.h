@@ -42,7 +42,11 @@
 #include <alloca.h>
 #endif // _LINUX
 
+#if defined __APPLE__
+#include <stdlib.h>
+#else
 #include <malloc.h>
+#endif
 #ifdef _MSC_VER
 #include <new.h>
 #elif defined __GNUC__
