@@ -1410,6 +1410,9 @@ inline CThreadMutex::CThreadMutex()
 {
 	// enable recursive locks as we need them
 	pthread_mutexattr_init( &m_Attr );
+#if defined __APPLE__
+# define PTHREAD_MUTEX_RECURSIVE_NP PTHREAD_MUTEX_RECURSIVE
+#endif
 	pthread_mutexattr_settype( &m_Attr, PTHREAD_MUTEX_RECURSIVE_NP );
 	pthread_mutex_init( &m_Mutex, &m_Attr );
 }

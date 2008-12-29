@@ -122,7 +122,7 @@ inline void *MemAlloc_AllocAligned( size_t size, size_t align )
 {
 	unsigned char *pAlloc, *pResult;
 
-	if (!IsPowerOfTwo(align))
+	if (!IsPowerOfTwo(uint(align)))
 		return NULL;
 
 	align = (align > sizeof(void *) ? align : sizeof(void *)) - 1;
@@ -140,7 +140,7 @@ inline void *MemAlloc_AllocAligned( size_t size, size_t align, const char *pszFi
 {
 	unsigned char *pAlloc, *pResult;
 
-	if (!IsPowerOfTwo(align))
+	if (!IsPowerOfTwo(uint(align)))
 		return NULL;
 
 	align = (align > sizeof(void *) ? align : sizeof(void *)) - 1;
@@ -156,7 +156,7 @@ inline void *MemAlloc_AllocAligned( size_t size, size_t align, const char *pszFi
 
 inline void *MemAlloc_ReallocAligned( void *ptr, size_t size, size_t align )
 {
-	if ( !IsPowerOfTwo( align ) )
+	if ( !IsPowerOfTwo( uint(align) ) )
 		return NULL;
 
 	// Don't change alignment between allocation + reallocation.

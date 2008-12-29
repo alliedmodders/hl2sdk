@@ -167,8 +167,8 @@ public:
 	void SetColor( const char *keyName, Color value);
 
 	// Memory allocation (optimized)
-	void *operator new( unsigned int iAllocSize );
-	void *operator new( unsigned int iAllocSize, int nBlockUse, const char *pFileName, int nLine );
+	void *operator new( size_t iAllocSize );
+	void *operator new( size_t iAllocSize, int nBlockUse, const char *pFileName, int nLine );
 	void operator delete( void *pMem );
 	void operator delete( void *pMem, int nBlockUse, const char *pFileName, int nLine );
 
