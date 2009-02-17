@@ -32,6 +32,10 @@ typedef int FileFindHandle_t;
 typedef void (*FileSystemLoggingFunc_t)( const char *fileName, const char *accessType );
 typedef int WaitForResourcesHandle_t;
 
+// The handle is a CUtlSymbol for the dirname and the same for the filename, the accessor
+//  copies them into a static char buffer for return.
+typedef void* FileNameHandle_t;
+
 
 #ifdef _XBOX
 typedef void* HANDLE;
@@ -86,104 +90,6 @@ enum FileWarningLevel_t
 
 };
 
-// In non-retail builds, enable the file blocking access tracking stuff...
-#if defined( TRACK_BLOCKING_IO )
-enum FileBlockingWarning_t
-{
-	// Report how long synchronous i/o took to complete
-	FILESYSTEM_BLOCKING_SYNCHRONOUS = 0,
-	// Report how long async i/o took to complete if AsyncFileFinished caused it to load via "blocking" i/o
-	FILESYSTEM_BLOCKING_ASYNCHRONOUS_BLOCK,
-	// Report how long async i/o took to complete
-	FILESYSTEM_BLOCKING_ASYNCHRONOUS,
-	// Report how long the async "callback" took
-	FILESYSTEM_BLOCKING_CALLBACKTIMING,
-
-	FILESYSTEM_BLOCKING_NUMBINS,
-};
-
-#pragma pack(1)
-class FileBlockingItem
-{
-public:
-	enum
-	{
-		FB_ACCESS_OPEN = 1,
-		FB_ACCESS_CLOSE = 2,
-		FB_ACCESS_READ = 3,
-		FB_ACCESS_WRITE = 4,
-		FB_ACCESS_APPEND = 5,
-		FB_ACCESS_SIZE = 6
-	};
-
-	FileBlockingItem() :
-		m_ItemType( (FileBlockingWarning_t)0 ),
-		m_flElapsed( 0.0f ),
-		m_nAccessType( 0 )
-	{
-		SetFileName( NULL );
-	}
-
-	FileBlockingItem( int type, char const *filename, float elapsed, int accessType ) :
-		m_ItemType( (FileBlockingWarning_t)type ),
-		m_flElapsed( elapsed ),
-		m_nAccessType( accessType )
-	{
-		SetFileName( filename );
-	}
-
-	void SetFileName( char const *filename )
-	{
-		if ( !filename )
-		{
-			m_szFilename[ 0 ] = 0;
-			return;
-		}
-
-		int len = Q_strlen( filename );
-		if ( len >= sizeof( m_szFilename ) )
-		{
-			Q_strncpy( m_szFilename, &filename[ len - sizeof( m_szFilename ) + 1 ], sizeof( m_szFilename ) );
-		}
-		else
-		{
-			Q_strncpy( m_szFilename, filename, sizeof( m_szFilename ) );
-		}
-	}
-
-	char const *GetFileName() const
-	{
-		return m_szFilename;
-	}
-
-	FileBlockingWarning_t	m_ItemType;
-	float					m_flElapsed;
-	byte					m_nAccessType;
-private:
-
-	char					m_szFilename[ 32 ];
-};
-#pragma pack()
-
-class IBlockingFileItemList
-{
-public:
-	
-	// You can't call any of the below calls without locking first
-	virtual void	LockMutex() = 0;
-	virtual void	UnlockMutex() = 0;
-
-	virtual int		First() const = 0;
-	virtual int		Next( int i ) const = 0;
-	virtual int		InvalidIndex() const = 0;
-
-	virtual const	FileBlockingItem& Get( int index ) const = 0;
-
-	virtual void	Reset() = 0;
-};
-
-#endif // TRACK_BLOCKING_IO
-
 enum FilesystemMountRetval_t
 {
 	FILESYSTEM_MOUNT_OK = 0,
@@ -194,11 +100,6 @@ enum SearchPathAdd_t
 {
 	PATH_ADD_TO_HEAD,	// First path searched
 	PATH_ADD_TO_TAIL,	// Last path searched
-};
-
-enum FilesystemOpenExFlags_t
-{
-	FSOPEN_UNBUFFERED	= ( 1 << 0 ),
 };
 
 #define FILESYSTEM_INVALID_HANDLE	( FileHandle_t )0
@@ -554,77 +455,6 @@ public:
 
 	// Returns the file system statistics retreived by the implementation.  Returns NULL if not supported.
 	virtual const FileSystemStatistics *GetFilesystemStatistics() = 0;
-
-	//--------------------------------------------------------
-	// Start of new functions after Lost Coast release (7/05)
-	//--------------------------------------------------------
-
-	virtual FileHandle_t	OpenEx( const char *pFileName, const char *pOptions, unsigned flags = 0, const char *pathID = 0, char **ppszResolvedFilename = NULL ) = 0;
-
-	// Extended version of read provides more context to allow for more optimal reading
-	virtual int				ReadEx( void* pOutput, int sizeDest, int size, FileHandle_t file ) = 0;
-	virtual int				ReadFileEx( const char *pFileName, const char *pPath, void **ppBuf, bool bNullTerminate = false, bool bOptimalAlloc = false, int nMaxBytes = 0, int nStartingByte = 0, FSAllocFunc_t pfnAlloc = NULL ) = 0;
-
-	virtual FileNameHandle_t	FindFileName( char const *pFileName ) = 0;
-
-#if defined( TRACK_BLOCKING_IO )
-	virtual void				EnableBlockingFileAccessTracking( bool state ) = 0;
-	virtual bool				IsBlockingFileAccessEnabled() const = 0;
-
-	virtual IBlockingFileItemList *RetrieveBlockingFileAccessInfo() = 0;
-#endif
-
-	virtual void PurgePreloadedData() = 0;
-	virtual void PreloadData() = 0;
-
-	// Fixme, we could do these via a string embedded into the compiled data, etc...
-	enum KeyValuesPreloadType_t
-	{
-		TYPE_VMT,
-		TYPE_SOUNDEMITTER,
-		TYPE_SOUNDSCAPE,
-
-		NUM_PRELOAD_TYPES
-	};
-
-	virtual void LoadCompiledKeyValues( KeyValuesPreloadType_t type, char const *archiveFile ) = 0;
-
-	// If the "PreloadedData" hasn't been purged, then this'll try and instance the KeyValues using the fast path of compiled keyvalues loaded during startup.
-	// Otherwise, it'll just fall through to the regular KeyValues loading routines
-	virtual KeyValues	*LoadKeyValues( KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) = 0;
-	virtual bool		LoadKeyValues( KeyValues& head, KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) = 0;
-	virtual bool		ExtractRootKeyName( KeyValuesPreloadType_t type, char *outbuf, size_t bufsize, char const *filename, char const *pPathID = 0 ) = 0;
-
-	virtual FSAsyncStatus_t	AsyncWrite(const char *pFileName, const void *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t *pControl = NULL ) = 0;
-	// Async read functions with memory blame
-	FSAsyncStatus_t	AsyncReadCreditAlloc( const FileAsyncRequest_t &request, const char *pszFile, int line, FSAsyncControl_t *phControl = NULL )	{ return AsyncReadMultipleCreditAlloc( &request, 1, pszFile, line, phControl ); 	}
-	virtual FSAsyncStatus_t	AsyncReadMultipleCreditAlloc( const FileAsyncRequest_t *pRequests, int nRequests, const char *pszFile, int line, FSAsyncControl_t *phControls = NULL ) = 0;
-
-	virtual bool GetFileTypeForFullPath( char const *pFullPath, wchar_t *buf, size_t bufSizeInBytes ) = 0;
-
-	//--------------------------------------------------------
-	//--------------------------------------------------------
-	virtual bool		ReadToBuffer( FileHandle_t hFile, CUtlBuffer &buf, int nMaxBytes = 0, FSAllocFunc_t pfnAlloc = NULL ) = 0;
-
-	//--------------------------------------------------------
-	// Optimal IO operations
-	//--------------------------------------------------------
-	virtual bool GetOptimalIOConstraints( FileHandle_t hFile, unsigned *pOffsetAlign, unsigned *pSizeAlign, unsigned *pBufferAlign ) = 0;
-	inline unsigned GetOptimalReadSize( FileHandle_t hFile, unsigned nLogicalSize );
-	virtual void *AllocOptimalReadBuffer( FileHandle_t hFile, unsigned nSize = 0, unsigned nOffset = 0 ) = 0;
-	virtual void FreeOptimalReadBuffer( void * ) = 0;
-
-	//--------------------------------------------------------
-	//
-	//--------------------------------------------------------
-	virtual void BeginMapAccess() = 0;
-	virtual void EndMapAccess() = 0;
-
-	// Returns true on success, otherwise false if it can't be resolved
-	virtual bool FullPathToRelativePathEx( const char *pFullpath, const char *pPathId, char *pRelative, int maxlen ) = 0;
-
-	virtual int GetPathIndex( const FileNameHandle_t &handle ) = 0;
-	virtual long GetPathTime( const char *pPath, const char *pPathID ) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -659,19 +489,6 @@ private:
 #else
 #define DISK_INTENSIVE() ((void)0)
 #endif
-
-//-----------------------------------------------------------------------------
-
-inline unsigned IFileSystem::GetOptimalReadSize( FileHandle_t hFile, unsigned nLogicalSize ) 
-{ 
-	unsigned align; 
-	if ( IsPC() && GetOptimalIOConstraints( hFile, &align, NULL, NULL ) ) 
-		return AlignValue( nLogicalSize, align );
-	else if ( IsXbox() )
-		return AlignValue( nLogicalSize, 512 );
-	else
-		return nLogicalSize;
-}
 
 //-----------------------------------------------------------------------------
 

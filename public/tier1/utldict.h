@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2005, Valve Corporation, All rights reserved. =======//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: A dictionary mapping from symbol to structure 
 //
@@ -14,12 +14,9 @@
 #endif
 
 #include "tier0/dbg.h"
-#include "tier1/utlmap.h"
+#include "utlrbtree.h"
+#include "utlsymbol.h"
 
-// Include this because tons of code was implicitly getting utlsymbol or utlvector via utldict.h
-#include "tier1/utlsymbol.h"
-
-#include "tier0/memdbgon.h"
 
 //-----------------------------------------------------------------------------
 // A dictionary mapping from symbol to structure
@@ -33,8 +30,6 @@ public:
 	// at each increment.
 	CUtlDict( bool caseInsensitive = true, int growSize = 0, int initSize = 0 );
 	~CUtlDict( );
-
-	void EnsureCapacity( int );
 	
 	// gets particular elements
 	T&         Element( I i );
@@ -78,38 +73,44 @@ public:
 	I		Next( I i ) const;
 
 protected:
-	typedef CUtlMap<const char *, T, I> DictElementMap_t;
-	DictElementMap_t m_Elements;
+	struct DictElement_t
+	{
+		CUtlSymbol	m_Name;
+		T			m_Data;
+	};
+
+	static bool DictLessFunc( const DictElement_t &src1, const DictElement_t &src2 );
+	typedef CUtlRBTree< DictElement_t, I > DictElementMap_t;
+
+	DictElementMap_t		m_Elements;
+	mutable CUtlSymbolTable	m_SymbolTable;
 };
+
+
+//-----------------------------------------------------------------------------
+// less function
+//-----------------------------------------------------------------------------
+template <class T, class I>
+bool CUtlDict<T, I>::DictLessFunc( const DictElement_t &src1, const DictElement_t &src2 )
+{
+	return src1.m_Name < src2.m_Name;
+}
 
 
 //-----------------------------------------------------------------------------
 // constructor, destructor
 //-----------------------------------------------------------------------------
 template <class T, class I>
-CUtlDict<T, I>::CUtlDict( bool caseInsensitive, int growSize, int initSize ) : m_Elements( growSize, initSize )
+CUtlDict<T, I>::CUtlDict( bool caseInsensitive, int growSize, int initSize ) : m_Elements( growSize, initSize, DictLessFunc ), 
+	m_SymbolTable( growSize, initSize, caseInsensitive )
 {
-	if ( caseInsensitive )
-	{
-		m_Elements.SetLessFunc( CaselessStringLessThan );
-	}
-	else
-	{
-		m_Elements.SetLessFunc( StringLessThan );
-	}
 }
 
 template <class T, class I> 
 CUtlDict<T, I>::~CUtlDict()
 {
-	Purge();
 }
 
-template <class T, class I>
-inline void CUtlDict<T, I>::EnsureCapacity( int num )        
-{ 
-	return m_Elements.EnsureCapacity( num ); 
-}
 
 //-----------------------------------------------------------------------------
 // gets particular elements
@@ -117,13 +118,13 @@ inline void CUtlDict<T, I>::EnsureCapacity( int num )
 template <class T, class I>
 inline T& CUtlDict<T, I>::Element( I i )        
 { 
-	return m_Elements[i]; 
+	return m_Elements[i].m_Data; 
 }
 
 template <class T, class I>
 inline const T& CUtlDict<T, I>::Element( I i ) const  
 { 
-	return m_Elements[i]; 
+	return m_Elements[i].m_Data; 
 }
 
 //-----------------------------------------------------------------------------
@@ -132,13 +133,13 @@ inline const T& CUtlDict<T, I>::Element( I i ) const
 template <class T, class I>
 inline char *CUtlDict<T, I>::GetElementName( I i )
 {
-	return (char *)m_Elements.Key( i );
+	return (char *)( m_SymbolTable.String( m_Elements[ i ].m_Name ) );
 }
 
 template <class T, class I>
 inline char const *CUtlDict<T, I>::GetElementName( I i ) const
 {
-	return m_Elements.Key( i );
+	return m_SymbolTable.String( m_Elements[ i ].m_Name );
 }
 
 template <class T, class I>
@@ -156,12 +157,11 @@ inline const T & CUtlDict<T, I>::operator[]( I i ) const
 template <class T, class I>
 inline void CUtlDict<T, I>::SetElementName( I i, char const *pName )
 {
-	MEM_ALLOC_CREDIT_CLASS();
 	// TODO:  This makes a copy of the old element
 	// TODO:  This relies on the rb tree putting the most recently
 	//  removed element at the head of the insert list
-	free( (void *)m_Elements.Key( i ) );
-	m_Elements.Reinsert( strdup( pName ), i );
+	m_Elements[ i ].m_Name = m_SymbolTable.AddString( pName );
+	m_Elements.Reinsert( i );
 }
 
 //-----------------------------------------------------------------------------
@@ -200,7 +200,6 @@ inline I CUtlDict<T, I>::InvalidIndex()
 template <class T, class I>
 void CUtlDict<T, I>::RemoveAt(I elem) 
 {
-	free( (void *)m_Elements.Key( elem ) );
 	m_Elements.RemoveAt(elem);
 }
 
@@ -212,9 +211,7 @@ template <class T, class I> void CUtlDict<T, I>::Remove( const char *search )
 {
 	I node = Find( search );
 	if (node != InvalidIndex())
-	{
 		RemoveAt(node);
-	}
 }
 
 
@@ -224,20 +221,13 @@ template <class T, class I> void CUtlDict<T, I>::Remove( const char *search )
 template <class T, class I>
 void CUtlDict<T, I>::RemoveAll()
 {
-	typename DictElementMap_t::IndexType_t index = m_Elements.FirstInorder();
-	while ( index != m_Elements.InvalidIndex() )
-	{
-		free( (void *)m_Elements.Key( index ) );
-		index = m_Elements.NextInorder( index );
-	}
-
 	m_Elements.RemoveAll();
 }
 
 template <class T, class I>
 void CUtlDict<T, I>::Purge()
 {
-	RemoveAll();
+	m_Elements.RemoveAll();
 }
 
 
@@ -248,8 +238,7 @@ void CUtlDict<T, I>::PurgeAndDeleteElements()
 	I index = m_Elements.FirstInorder();
 	while ( index != m_Elements.InvalidIndex() )
 	{
-		free( (void *)m_Elements.Key( index ) );
-		delete m_Elements[index];
+		delete m_Elements[index].m_Data;
 		index = m_Elements.NextInorder( index );
 	}
 
@@ -263,15 +252,20 @@ void CUtlDict<T, I>::PurgeAndDeleteElements()
 template <class T, class I> 
 I CUtlDict<T, I>::Insert( const char *pName, const T &element )
 {
-	MEM_ALLOC_CREDIT_CLASS();
-	return m_Elements.Insert( strdup( pName ), element );
+	DictElement_t elem;
+	elem.m_Name = m_SymbolTable.AddString( pName );
+	I idx = m_Elements.Insert( elem );
+	m_Elements[idx].m_Data = element;
+	return idx;
 }
 
 template <class T, class I> 
 I CUtlDict<T, I>::Insert( const char *pName )
 {
-	MEM_ALLOC_CREDIT_CLASS();
-	return m_Elements.Insert( strdup( pName ) );
+	DictElement_t elem;
+	elem.m_Name = m_SymbolTable.AddString( pName );
+	I idx = m_Elements.Insert( elem );
+	return idx;
 }
 
 
@@ -281,11 +275,10 @@ I CUtlDict<T, I>::Insert( const char *pName )
 template <class T, class I> 
 I CUtlDict<T, I>::Find( const char *pName ) const
 {
-	MEM_ALLOC_CREDIT_CLASS();
-	if ( pName )
-		return m_Elements.Find( pName );
-	else
-		return InvalidIndex();
+	DictElement_t elem;
+	elem.m_Name = m_SymbolTable.AddString( pName );
+
+	return m_Elements.Find( elem );
 }
 
 
@@ -303,7 +296,5 @@ I CUtlDict<T, I>::Next( I i ) const
 {
 	return m_Elements.NextInorder(i);
 }
-
-#include "tier0/memdbgoff.h"
 
 #endif // UTLDICT_H

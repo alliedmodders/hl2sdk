@@ -19,8 +19,8 @@
 //-----------------------------------------------------------------------------
 //
 // Purpose:	An associative container. Pretty much identical to std::map.
+//			Note this class is not thread safe
 //
-//-----------------------------------------------------------------------------
 
 template <typename K, typename T, typename I = unsigned short> 
 class CUtlMap
@@ -39,17 +39,17 @@ public:
 	// at each increment.
 	// LessFunc_t is required, but may be set after the constructor using SetLessFunc() below
 	CUtlMap( int growSize = 0, int initSize = 0, LessFunc_t lessfunc = 0 )
-	 : m_Tree( growSize, initSize, CKeyLess( lessfunc ) )
+	 : m_Tree( growSize, initSize, TreeLessFunc )
 	{
+		m_pfnLess = lessfunc;
 	}
 	
 	CUtlMap( LessFunc_t lessfunc )
-	 : m_Tree( CKeyLess( lessfunc ) )
+	 : m_Tree( TreeLessFunc )
 	{
+		m_pfnLess = lessfunc;
 	}
 	
-	void EnsureCapacity( int num )							{ m_Tree.EnsureCapacity( num ); }
-
 	// gets particular elements
 	ElemType_t &		Element( IndexType_t i )			{ return m_Tree.Element( i ).elem; }
 	const ElemType_t &	Element( IndexType_t i ) const		{ return m_Tree.Element( i ).elem; }
@@ -77,7 +77,7 @@ public:
 	// Sets the less func
 	void SetLessFunc( LessFunc_t func )
 	{
-		m_Tree.SetLessFunc( CKeyLess( func ) );
+		m_pfnLess = func;
 	}
 	
 	// Insert method (inserts in order)
@@ -86,21 +86,18 @@ public:
 		Node_t node;
 		node.key = key;
 		node.elem = insert;
+		Assert( m_pfnLess );
+		KeyLessFunc( m_pfnLess );
 		return m_Tree.Insert( node );
 	}
 	
-	IndexType_t  Insert( const KeyType_t &key )
-	{
-		Node_t node;
-		node.key = key;
-		return m_Tree.Insert( node );
-	}
-
 	// Find method
 	IndexType_t  Find( const KeyType_t &key ) const
 	{
 		Node_t dummyNode;
 		dummyNode.key = key;
+		Assert( m_pfnLess );
+		KeyLessFunc( m_pfnLess );
 		return m_Tree.Find( dummyNode );
 	}
 	
@@ -110,6 +107,8 @@ public:
 	{
 		Node_t dummyNode;
 		dummyNode.key = key;
+		Assert( m_pfnLess );
+		KeyLessFunc( m_pfnLess );
 		return m_Tree.Remove( dummyNode );
 	}
 	
@@ -126,7 +125,7 @@ public:
 	void	Reinsert( const KeyType_t &key, IndexType_t i )
 	{
 		m_Tree[i].key = key;
-		m_Tree.Reinsert(i);
+		Reinsert(i);
 	}
 
 	IndexType_t InsertOrReplace( const KeyType_t &key, const ElemType_t &insert )
@@ -144,44 +143,38 @@ public:
 
 	struct Node_t
 	{
-		Node_t()
-		{
-		}
-
-		Node_t( const Node_t &from )
-		  : key( from.key ),
-			elem( from.elem )
-		{
-		}
-
 		KeyType_t	key;
 		ElemType_t	elem;
 	};
 	
-	class CKeyLess
-	{
-	public:
-		CKeyLess( LessFunc_t lessFunc ) : m_LessFunc(lessFunc) {}
-
-		bool operator!() const
-		{
-			return !m_LessFunc;
-		}
-
-		bool operator()( const Node_t &left, const Node_t &right ) const
-		{
-			return m_LessFunc( left.key, right.key );
-		}
-
-		LessFunc_t m_LessFunc;
-	};
-
-	typedef CUtlRBTree<Node_t, I, CKeyLess> CTree;
+	typedef CUtlRBTree<Node_t, I> CTree;
 
 	CTree *AccessTree()	{ return &m_Tree; }
 
 protected:
+		
+	static bool TreeLessFunc( const Node_t &left, const Node_t &right )
+	{
+		return (*KeyLessFunc())( left.key, right.key );
+	}
+	
+	static LessFunc_t KeyLessFunc( LessFunc_t pfnNew = NULL )
+	{
+		// @Note (toml 12-10-02): This is why the class is not thread safe. The way RB
+		//						  tree is implemented, I could see no other efficient
+		//						  and portable way to do this. This function local
+		//						  static approach is used to not require 
+		//						  instantiation of a static data member or use
+		//						  of Microsoft extensions (_declspec(selectany))
+		static LessFunc_t pfnLess;
+		
+		if ( pfnNew != NULL )
+			pfnLess = pfnNew;
+		return pfnLess;
+	}
+	
 	CTree 	   m_Tree;
+	LessFunc_t m_pfnLess;
 };
 
 //-----------------------------------------------------------------------------

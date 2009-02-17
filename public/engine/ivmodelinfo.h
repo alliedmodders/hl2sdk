@@ -99,10 +99,6 @@ public:
 	// Gets a virtual terrain collision model (creates if necessary)
 	// NOTE: This may return NULL if the terrain model cannot be virtualized
 	virtual CPhysCollide			*GetCollideForVirtualTerrain( const virtualterrainparams_t &params ) = 0;
-
-	virtual bool					IsUsingFBTexture( const model_t *model ) const = 0;
-
-	virtual const model_t			*FindOrLoadModel( const char *name ) const = 0;
 };
 
 

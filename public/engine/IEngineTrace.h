@@ -141,11 +141,17 @@ public:
 	// Traces a ray against a particular entity
 	virtual void	ClipRayToEntity( const Ray_t &ray, unsigned int fMask, IHandleEntity *pEnt, trace_t *pTrace ) = 0;
 
+	virtual void 	Unknown0( void *, void *, void *) = 0;
+	
+	virtual void	Unknown1( void *, void *, void *, void *, void *, void *, void *) = 0; 
+
 	// Traces a ray against a particular entity
 	virtual void	ClipRayToCollideable( const Ray_t &ray, unsigned int fMask, ICollideable *pCollide, trace_t *pTrace ) = 0;
 
 	// A version that simply accepts a ray (can work as a traceline or tracehull)
 	virtual void	TraceRay( const Ray_t &ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace ) = 0;
+	
+	virtual void 	Unknown2( void *, void *, void *, void *, void *) = 0;
 
 	// A version that sets up the leaf and entity lists and allows you to pass those in for collision.
 	virtual void	SetupLeafAndEntityListRay( const Ray_t &ray, CTraceListData &traceData ) = 0;
@@ -164,6 +170,8 @@ public:
 
 	// Same thing, but enumerate entitys within a box
 	virtual void	EnumerateEntities( const Vector &vecAbsMins, const Vector &vecAbsMaxs, IEntityEnumerator *pEnumerator ) = 0;
+
+	virtual int		Unknown3( void ) = 0;
 
 	// Convert a handle entity to a collideable.  Useful inside enumer
 	virtual ICollideable *GetCollideable( IHandleEntity *pEntity ) = 0;

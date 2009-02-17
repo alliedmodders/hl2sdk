@@ -9,16 +9,14 @@
 #ifndef UTLSYMBOL_H
 #define UTLSYMBOL_H
 
-#include "tier0/threadtools.h"
-#include "tier1/utlrbtree.h"
-#include "tier1/utlvector.h"
+#include "utlrbtree.h"
+#include "utlvector.h"
 
 //-----------------------------------------------------------------------------
 // forward declarations
 //-----------------------------------------------------------------------------
 
 class CUtlSymbolTable;
-class CUtlSymbolTableMT;
 
 
 //-----------------------------------------------------------------------------
@@ -64,10 +62,10 @@ protected:
 	static void Initialize();
 	
 	// returns the current symbol table
-	static CUtlSymbolTableMT* CurrTable();
+	static CUtlSymbolTable* CurrTable();
 		
 	// The standard global symbol table
-	static CUtlSymbolTableMT* s_pSymbolTable; 
+	static CUtlSymbolTable* s_pSymbolTable; 
 
 	static bool s_bAllowStaticSymbolTable;
 
@@ -131,28 +129,8 @@ protected:
 		unsigned short m_iOffset;	// Index into the string pool.
 	};
 
-	class CLess
-	{
-	public:
-		CLess( int ignored = 0 ) {} // permits default initialization to NULL in CUtlRBTree
-		bool operator!() const { return false; }
-		bool operator()( const CStringPoolIndex &left, const CStringPoolIndex &right ) const;
-	};
-
-	friend class CLess;
-
 	// Stores the symbol lookup
-	class CTree : public CUtlRBTree<CStringPoolIndex, unsigned short, CLess>
-	{
-	public:
-		CTree(  int growSize, int initSize ) : CUtlRBTree<CStringPoolIndex, unsigned short, CLess>( growSize, initSize ) {}
-		friend class CUtlSymbolTable::CLess; // Needed to allow CLess to calculate pointer to symbol table
-	};
-
-	CTree m_Lookup;
-	bool m_bInsensitive;
-	char const* m_pUserSearchString;
-
+	CUtlRBTree< CStringPoolIndex, unsigned short, CLessFuncCallerUserData<CStringPoolIndex> >	m_Lookup;
 
 	typedef struct
 	{	
@@ -163,7 +141,9 @@ protected:
 
 	// stores the string data
 	CUtlVector<StringPool_t*> m_StringPools;
-
+	
+	// Stored before using the RBTree comparisons.
+	const char *m_pLessCtxUserString;
 
 
 private:
@@ -172,89 +152,10 @@ private:
 
 	const char* StringFromIndex( const CStringPoolIndex &index ) const;
 		
-};
-
-class CUtlSymbolTableMT : private CUtlSymbolTable
-{
-public:
-	CUtlSymbolTableMT( int growSize = 0, int initSize = 32, bool caseInsensitive = false )
-		: CUtlSymbolTable( growSize, initSize, caseInsensitive )
-	{
-	}
-
-	CUtlSymbol AddString( char const* pString )
-	{
-		m_mutex.Lock();
-		CUtlSymbol result = CUtlSymbolTable::AddString( pString );
-		m_mutex.Unlock();
-		return result;
-	}
-
-	CUtlSymbol Find( char const* pString )
-	{
-		m_mutex.Lock();
-		CUtlSymbol result = CUtlSymbolTable::Find( pString );
-		m_mutex.Unlock();
-		return result;
-	}
-
-	char const* String( CUtlSymbol id ) const
-	{
-		m_mutex.Lock();
-		const char *pszResult = CUtlSymbolTable::String( id );
-		m_mutex.Unlock();
-		return pszResult;
-	}
-
-private:
-	CThreadMutex m_mutex;
-};
-
-
-
-//-----------------------------------------------------------------------------
-// CUtlFilenameSymbolTable:
-// description:
-//    This class defines a symbol table of individual filenames, stored more
-//	  efficiently than a standard symbol table.  Internally filenames are broken
-//	  up into file and path entries, and a file handle class allows convenient 
-//	  access to these.
-//-----------------------------------------------------------------------------
-
-// The handle is a CUtlSymbol for the dirname and the same for the filename, the accessor
-//  copies them into a static char buffer for return.
-typedef void* FileNameHandle_t;
-
-// Symbol table for more efficiently storing filenames by breaking paths and filenames apart.
-// Refactored from BaseFileSystem.h
-class CUtlFilenameSymbolTable
-{
-	// Internal representation of a FileHandle_t
-	//  If we get more than 64K filenames, we'll have to revisit...
-	// Right now CUtlSymbol is a short, so this packs into an int/void * pointer size...
-	struct FileNameHandleInternal_t
-	{
-		FileNameHandleInternal_t()
-		{
-			path = 0;
-			file = 0;
-		}
-
-		// Part before the final '/' character
-		unsigned short path;
-		// Part after the final '/', including extension
-		unsigned short file;
-	};
-
-	// Symbol table storing the file names:
-	CUtlSymbolTableMT	m_FileNames;
-
-public:
-	FileNameHandle_t	FindOrAddFileName( char const *pFileName );
-	FileNameHandle_t	FindFileName( char const *pFileName );
-	int					PathIndex(const FileNameHandle_t &handle) { return (( const FileNameHandleInternal_t * )&handle)->path; }
-
-	bool				String( const FileNameHandle_t& handle, char *buf, int buflen );	
+	// Less function, for sorting strings
+	static bool SymLess( CStringPoolIndex const& i1, CStringPoolIndex const& i2, void *pUserData );
+	// case insensitive less function
+	static bool SymLessi( CStringPoolIndex const& i1, CStringPoolIndex const& i2, void *pUserData );
 };
 
 

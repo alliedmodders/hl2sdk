@@ -75,8 +75,11 @@ class CStandardSendProxies;
 abstract_class IVEngineServer
 {
 public:
-	// Tell engine to change level ( "changelevel s1\n" or "changelevel2 s1 s2\n" )
-	virtual void		ChangeLevel( const char *s1, const char *s2 ) = 0;
+	// Tell engine to change level.
+	// changelevel s1 (multiplayer)
+	// changelevel2 s1 s2 bLongLoading (single player)
+	// changelevel3 s1 s2 video bLongLoading (single player)
+	virtual void		ChangeLevel( const char *s1, const char *s2, const char *video = NULL, bool bLongLoading = false ) = 0;
 	
 	// Ask engine whether the specified map is a valid map file (exists and has valid version number).
 	virtual int			IsMapValid( const char *filename ) = 0;
@@ -86,6 +89,8 @@ public:
 	
 	// Is in Hammer editing mode?
 	virtual int			IsInEditMode( void ) = 0;
+	
+	virtual bool		Unknown0( void ) = 0;
 	
 	// Add to the server/client lookup/precache table, the specified string is given a unique index
 	// NOTE: The indices for PrecacheModel are 1 based
@@ -119,6 +124,8 @@ public:
 	//  returns -1 if the edict couldn't be found in the list of players.
 	virtual int			GetPlayerUserId( const edict_t *e ) = 0; 
 	virtual const char	*GetPlayerNetworkIDString( const edict_t *e ) = 0;
+	
+	virtual int			Unknown1( void *a ) = 0;
 
 	// Return the current number of used edict slots
 	virtual int			GetEntityCount( void ) = 0;
@@ -136,6 +143,8 @@ public:
 	virtual edict_t		*CreateEdict( int iForceEdictIndex = -1 ) = 0;
 	// Remove the specified edict and place back into the free edict list
 	virtual void		RemoveEdict( edict_t *e ) = 0;
+	
+	virtual void		Unknown2( void *a ) = 0;
 	
 	// Memory allocation for entity class data
 	virtual void		*PvAllocEntPrivateData( long cb ) = 0;
@@ -327,37 +336,13 @@ public:
 	// than a bunch of individual SetAreaPortalState calls.
 	virtual void		SetAreaPortalStates( const int *portalNumbers, const int *isOpen, int nPortals ) = 0;
 
-	// Called when relevant edict state flags change.
-	virtual void		NotifyEdictFlagsChange( int iEdict ) = 0;
-	
-	// Only valid during CheckTransmit. Also, only the PVS, networked areas, and
-	// m_pTransmitInfo are valid in the returned strucutre.
-	virtual const CCheckTransmitInfo* GetPrevCheckTransmitInfo( edict_t *pPlayerEdict ) = 0;
-	
-	virtual CSharedEdictChangeInfo* GetSharedEdictChangeInfo() = 0;
-
-	// Tells the engine we can immdiately re-use all edict indices
-	// even though we may not have waited enough time
-	virtual void			AllowImmediateEdictReuse( ) = 0;
-
-	// Returns true if the engine is an internal build. i.e. is using the internal bugreporter.
-	virtual bool		IsInternalBuild( void ) = 0;
-
-	virtual IChangeInfoAccessor *GetChangeAccessor( const edict_t *pEdict ) = 0;
-	
-	// Call this to find out the value of a cvar on the client.
-	//
-	// It is an asynchronous query, and it will call IServerGameDLL::OnQueryCvarValueFinished when 
-	// the value comes in from the client.
-	//
-	// Store the return value if you want to match this specific query to the OnQueryCvarValueFinished call.
-	// Returns InvalidQueryCvarCookie if the entity is invalid.
-	virtual QueryCvarCookie_t StartQueryCvarValue( edict_t *pPlayerEntity, const char *pName ) = 0;
+	virtual void		Unknown3( void ) = 0;
+	virtual void		*Unknown4( void *, void *) = 0;
+	virtual bool		Unknown5( void ) = 0;
+	virtual void		Unknown6( int ) = 0;
 };
 
-#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
-#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_5	"ServerGameDLL005"
-#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL006"
+#define INTERFACEVERSION_SERVERGAMEDLL	"ServerGameDLL004"
 
 //-----------------------------------------------------------------------------
 // Purpose: These are the interfaces that the game .dll exposes to the engine
@@ -397,6 +382,9 @@ public:
 
 	// Called once during DLL shutdown
 	virtual void			DLLShutdown( void ) = 0;
+	
+	virtual int				Unknown0 ( void ) = 0;
+	virtual int				Unknown1 ( void ) = 0;
 
 	// Get the simulation interval (must be compiled with identical values into both client and game .dll for MOD!!!)
 	// Right now this is only requested at server startup time so it can't be changed on the fly, etc.
@@ -437,25 +425,16 @@ public:
 
 	// Hand over the StandardSendProxies in the game DLL's module.
 	virtual CStandardSendProxies*	GetStandardSendProxies() = 0;
+	
+	virtual void 			Unknown2( int, int, int, int ) = 0;
+	virtual void			Unknown3( void ) = 0;
 
 	// Called once during startup for non-dedicated servers, after the game .dll has been loaded and after the client .dll has also been loaded
 	virtual void			PostInit() = 0;
 	// Called once per frame even when no level is loaded...
 	virtual void			Think( bool finalTick ) = 0;
-
-	virtual void			GetSaveCommentEx( char *comment, int maxlength, float flMinutes, float flSeconds  ) = 0;
-#ifdef _XBOX
-	virtual void			GetTitleName( const char *pMapName, char* pTitleBuff, int titleBuffSize ) = 0;
-#endif
-
-	// * This function is new with version 6 of the interface.
-	//
-	// This is called when a query from IVEngineServer::StartQueryCvarValue is finished.
-	// iCookie is the value returned by IVEngineServer::StartQueryCvarValue.
-	// Added with version 2 of the interface.
-	virtual void OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue )
-	{
-	}
+	
+	virtual void			Unknown4( void * ) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -570,17 +549,6 @@ public:
 
 	// Call periodically to poll steam for a CSER connection
 	virtual void UpdateConnection( void ) = 0;
-
-	// If user has disabled stats tracking, do nothing
-	virtual bool IsGameStatsLoggingEnabled() = 0;
-
-	// Gets a non-personally identifiable unique ID for this steam user, used for tracking total gameplay time across
-	//  multiple stats sessions, but isn't trackable back to their Steam account or id.
-	// Buffer should be 16 bytes, ID will come back as a hexadecimal string version of a GUID
-	virtual void GetPseudoUniqueId( char *buf, size_t bufsize ) = 0;
-
-	// For determining general % of users running using cyber cafe accounts...
-	virtual bool IsCyberCafeUser( void ) = 0;
 };
 
 #define INTERFACEVERSION_PLUGINHELPERSCHECK		"PluginHelpersCheck001"

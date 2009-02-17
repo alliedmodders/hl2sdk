@@ -469,24 +469,21 @@ void KeyValues::UsesEscapeSequences(bool state)
 bool KeyValues::LoadFromFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID )
 {
 	Assert(filesystem);
-	#ifndef _LINUX
-	Assert( IsXbox() || ( IsPC() && _heapchk() == _HEAPOK ) );
-	#endif
+#ifdef _MSC_VER
+	Assert(_heapchk() == _HEAPOK);
+#endif
+
 	FileHandle_t f = filesystem->Open(resourceName, "rb", pathID);
 	if (!f)
 		return false;
 
-	s_LastFileLoadingFrom = (char*)resourceName;
-
 	// load file into a null-terminated buffer
 	int fileSize = filesystem->Size(f);
-	unsigned bufSize = ((IFileSystem *)filesystem)->GetOptimalReadSize( f, fileSize + 1 );
+	char *buffer = (char *)MemAllocScratch(fileSize + 1);
 
-	char *buffer = (char*)((IFileSystem *)filesystem)->AllocOptimalReadBuffer( f, bufSize );
-	
 	Assert(buffer);
-	
-	((IFileSystem *)filesystem)->ReadEx(buffer, bufSize, fileSize, f); // read into local buffer
+
+	filesystem->Read(buffer, fileSize, f); // read into local buffer
 
 	buffer[fileSize] = 0; // null terminate file as EOF
 
@@ -494,7 +491,7 @@ bool KeyValues::LoadFromFile( IBaseFileSystem *filesystem, const char *resourceN
 
 	bool retOK = LoadFromBuffer( resourceName, buffer, filesystem );
 
-	((IFileSystem *)filesystem)->FreeOptimalReadBuffer( buffer );
+	MemFreeScratch();
 
 	return retOK;
 }

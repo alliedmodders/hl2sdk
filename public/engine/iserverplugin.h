@@ -28,19 +28,7 @@ typedef enum
 	PLUGIN_STOP, // don't run the game dll function at all
 } PLUGIN_RESULT;
 
-typedef enum
-{
-	eQueryCvarValueStatus_ValueIntact=0,	// It got the value fine.
-	eQueryCvarValueStatus_CvarNotFound=1,
-	eQueryCvarValueStatus_NotACvar=2,		// There's a ConCommand, but it's not a ConVar.
-	eQueryCvarValueStatus_CvarProtected=3	// The cvar was marked with FCVAR_SERVER_CAN_NOT_QUERY, so the server is not allowed to have its value.
-} EQueryCvarValueStatus;
-
-typedef int QueryCvarCookie_t;
-
-#define InvalidQueryCvarCookie -1
-#define INTERFACEVERSION_ISERVERPLUGINCALLBACKS_VERSION_1	"ISERVERPLUGINCALLBACKS001"
-#define INTERFACEVERSION_ISERVERPLUGINCALLBACKS				"ISERVERPLUGINCALLBACKS002"
+#define INTERFACEVERSION_ISERVERPLUGINCALLBACKS	"ISERVERPLUGINCALLBACKS001"
 //-----------------------------------------------------------------------------
 // Purpose: callbacks the engine exposes to the 3rd party plugins (ala MetaMod)
 //-----------------------------------------------------------------------------
@@ -99,13 +87,6 @@ public:
 
 	// A user has had their network id setup and validated 
 	virtual PLUGIN_RESULT	NetworkIDValidated( const char *pszUserName, const char *pszNetworkID ) = 0;
-	
-	// This is called when a query from IServerPluginHelpers::StartQueryCvarValue is finished.
-	// iCookie is the value returned by IServerPluginHelpers::StartQueryCvarValue.
-	// Added with version 2 of the interface.
-	virtual void OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue )
-	{
-	}
 };
 
 #define INTERFACEVERSION_ISERVERPLUGINHELPERS	"ISERVERPLUGINHELPERS001"
@@ -139,15 +120,6 @@ public:
 	//
 	virtual void CreateMessage( edict_t *pEntity, DIALOG_TYPE type, KeyValues *data, IServerPluginCallbacks *plugin ) = 0;
 	virtual void ClientCommand( edict_t *pEntity, const char *cmd ) = 0;
-
-	// Call this to find out the value of a cvar on the client.
-	//
-	// It is an asynchronous query, and it will call IServerPluginCallbacks::OnQueryCvarValueFinished when
-	// the value comes in from the client.
-	//
-	// Store the return value if you want to match this specific query to the OnQueryCvarValueFinished call.
-	// Returns InvalidQueryCvarCookie if the entity is invalid.
-	virtual QueryCvarCookie_t StartQueryCvarValue( edict_t *pEntity, const char *pName ) = 0;
 };
 
 #endif //ISERVERPLUGIN_H

@@ -112,8 +112,6 @@ public:
 
 	// Retrieves list of all active sounds
 	virtual void	GetActiveSounds( CUtlVector< SndInfo_t >& sndlist ) = 0;
-
-	virtual void	PrecacheSentenceGroup( const char *pGroupName ) = 0;
 };
 
 

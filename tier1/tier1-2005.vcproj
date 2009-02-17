@@ -276,15 +276,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\utlstring.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\utlsymbol.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\xboxstubs.cpp"
 				>
 			</File>
 		</Filter>

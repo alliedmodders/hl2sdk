@@ -83,6 +83,8 @@ class IServerNetworkable
 public:
 	// Gets at the entity handle associated with the collideable
 	virtual IHandleEntity	*GetEntityHandle() = 0;
+	
+	virtual void			*Unknown() = 0;
 
 	// Tell the engine which class this object is.
 	virtual ServerClass*	GetServerClass() = 0;
