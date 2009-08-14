@@ -261,6 +261,7 @@ public:
 		const char *m_pParentArrayPropName;
 	};
 
+	void			*m_pUnknown;
 	const char		*m_pVarName;
 	float			m_fHighLowMul;
 	
