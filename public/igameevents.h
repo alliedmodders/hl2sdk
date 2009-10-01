@@ -75,7 +75,7 @@ public:
 	// Data access
 	virtual bool  GetBool( const char *keyName = NULL, bool defaultValue = false ) = 0;
 	virtual int   GetInt( const char *keyName = NULL, int defaultValue = 0 ) = 0;
-	virtual unsigned long long GetUint64 ( const char *keyName = NULL, unsigned long long defaultValue = 0);
+	virtual unsigned long long GetUint64 ( const char *keyName = NULL, unsigned long long defaultValue = 0) = 0;
 	virtual float GetFloat( const char *keyName = NULL, float defaultValue = 0.0f ) = 0;
 	virtual const char *GetString( const char *keyName = NULL, const char *defaultValue = "" ) = 0;
 
