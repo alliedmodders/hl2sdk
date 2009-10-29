@@ -266,6 +266,8 @@ public:
 
 private:
 
+	unsigned char		m_Unknown2;
+
 	int					m_Flags;				// SPROP_ flags.
 
 	SendVarProxyFn		m_ProxyFn;				// NULL for DPT_DataTable.

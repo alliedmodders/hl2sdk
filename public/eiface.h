@@ -90,6 +90,8 @@ public:
 	
 	// Is in Hammer editing mode?
 	virtual int			IsInEditMode( void ) = 0;
+
+	virtual KeyValues	*GetLaunchOptions( void ) = 0;
 	
 	// Add to the server/client lookup/precache table, the specified string is given a unique index
 	// NOTE: The indices for PrecacheModel are 1 based
@@ -202,7 +204,7 @@ public:
 	virtual void		SetView( const edict_t *pClient, const edict_t *pViewent ) = 0;
 
 	// Get a high precision timer for doing profiling work
-	virtual float		Time( void ) = 0;
+	virtual float		OBSOLETE_Time( void ) = 0;
 
 	// Set the player's crosshair angle
 	virtual void		CrosshairAngle( const edict_t *pClient, float pitch, float yaw ) = 0;
@@ -295,7 +297,9 @@ public:
 	virtual const CBitVec<MAX_EDICTS>* GetEntityTransmitBitsForClient( int iClientIndex ) = 0;
 	
 	// Is the game paused?
-	virtual bool		IsPaused() = 0;
+	virtual bool		IsPaused( void ) = 0;
+
+	virtual float		GetTimescale( void ) const = 0;
 	
 	// Marks the filename for consistency checking.  This should be called after precaching the file.
 	virtual void		ForceExactFile( const char *s ) = 0;
@@ -344,10 +348,6 @@ public:
 	virtual int GetLightForPointListenServerOnly(const Vector &, bool, Vector *) = 0;
 	virtual int TraceLightingListenServerOnly(const Vector &, const Vector &, Vector *, Vector *) = 0;
 
-	// Matchmaking
-	virtual void MultiplayerEndGame() = 0;
-	virtual void ChangeTeam( const char *pTeamName ) = 0;
-
 	// Cleans up the cluster list
 	virtual void CleanUpEntityClusterList( PVSInfo_t *pPVSInfo ) = 0;
 
@@ -376,6 +376,10 @@ public:
 	// Returns true if this client has been fully authenticated by Steam
 	virtual bool IsClientFullyAuthenticated( edict_t *pEdict ) = 0;
 
+	// This makes the host run 1 tick per frame instead of checking the system timer to see how many ticks to run in a certain frame.
+	// i.e. it does the same thing timedemo does.
+	virtual void SetDedicatedServerBenchmarkMode( bool bBenchmarkMode ) = 0;
+
 	virtual bool IsSplitScreenPlayer( int ) = 0;
 	virtual int GetSplitScreenPlayerAttachToEdict( int ) = 0;
 	virtual int GetNumSplitScreenUsersAttachedToEdict( int ) = 0;
@@ -396,12 +400,21 @@ public:
 	
 	virtual void Pause( bool, bool ) = 0;
 
+	virtual void SetTimescale( float ) = 0;
+
 	// Methods to set/get a gamestats data container so client & server running in same process can send combined data
 	virtual void SetGamestatsData( CGamestatsData *pGamestatsData ) = 0;
 	virtual CGamestatsData *GetGamestatsData() = 0;
+
+	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
+	virtual const CSteamID *GetClientSteamID( edict_t *pPlayerEdict ) = 0;
 	
 	virtual void HostValidateSession() = 0;
 	virtual void RefreshScreenIfNecessary() = 0;
+
+	virtual void *AllocLevelStaticDataName( unsigned int, const char * ) = 0;
+	virtual void ClientCommandKeyValues( edict_t *pEdict, KeyValues * ) = 0;
+	virtual int64 GetClientXUID( edict_t * ) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
@@ -474,6 +487,7 @@ public:
 	virtual void			ReadRestoreHeaders( CSaveRestoreData * ) = 0;
 	virtual void			Restore( CSaveRestoreData *, bool ) = 0;
 	virtual bool			IsRestoring() = 0;
+	virtual bool            SupportsSaveRestore() = 0;
 
 	// Returns the number of entities moved across the transition
 	virtual int				CreateEntityTransitionList( CSaveRestoreData *, int ) = 0;
@@ -511,10 +525,11 @@ public:
 	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) = 0;
 	
 	virtual void			PostToolsInit( void ) = 0;
-	virtual void			ApplyGameSettings( KeyValues * ) = 0;
-	virtual const char *	GetGameModeConfigFile( int ) = 0;
-	virtual int				GameGameModePlayerSlots( int ) = 0;
-	virtual void			GetMatchmakingTags( char *, unsigned int ) = 0; 
+	virtual void            ApplyGameSettings( KeyValues * ) = 0;
+	virtual void            GetMatchmakingTags( char *, unsigned int ) = 0;
+	virtual void            ServerHibernationUpdate( bool ) = 0;
+	virtual void            GenerateLumpFileName( const char *, char *, int, int ) = 0;
+	virtual void            *GetMatchmakingGameData( char *, unsigned int ) = 0; 
 };
 
 //-----------------------------------------------------------------------------
@@ -618,6 +633,8 @@ public:
 	virtual int 			GetMaxSplitscreenPlayers( void ) = 0;
 	
 	virtual int				GetMaxHumanPlayers( void ) = 0;
+
+	virtual void            ClientCommandKeyValues( edict_t *pEdict, KeyValues * ) = 0;
 };
 
 #define INTERFACEVERSION_UPLOADGAMESTATS		"ServerUploadGameStats001"

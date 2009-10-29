@@ -251,10 +251,9 @@ protected:
 	do {																\
 		if (!(_exp)) 													\
 		{ 																\
-			_SpewInfo( SPEW_ASSERT, __TFILE__, __LINE__ );				\
-			SpewRetval_t ret = _SpewMessage(_msg);						\
+			int ret = LoggingSystem_LogAssert("%s", _msg);				\
 			_executeExp; 												\
-			if ( ret == SPEW_DEBUGGER)									\
+			if ( ret )													\
 			{															\
 				if ( !ShouldUseNewAssertDialog() || DoNewAssertDialog( __TFILE__, __LINE__, _msg ) ) \
 					DebuggerBreak();									\

@@ -926,6 +926,16 @@ void ConVar::InternalSetIntValue( int nValue )
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : *value - 
+//-----------------------------------------------------------------------------
+void ConVar::InternalSetColorValue( Color cValue )
+{
+	int color = cValue.GetRawColor();
+	InternalSetIntValue( color );
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: Private creation
 //-----------------------------------------------------------------------------
 void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*= 0*/,
@@ -1000,6 +1010,16 @@ void ConVar::SetValue( int value )
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : value - 
+//-----------------------------------------------------------------------------
+void ConVar::SetValue( Color value )
+{
+	ConVar *var = ( ConVar * )m_pParent;
+	var->InternalSetColorValue( value );
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: Reset to default value
 //-----------------------------------------------------------------------------
 void ConVar::Revert( void )
@@ -1052,6 +1072,7 @@ public:
 	virtual void SetValue( const char *pValue ) {}
 	virtual void SetValue( float flValue ) {}
 	virtual void SetValue( int nValue ) {}
+	virtual void SetValue( Color cValue ) {}
 	virtual const char *GetName( void ) const { return ""; }
 	virtual bool IsFlagSet( int nFlags ) const { return false; }
 };

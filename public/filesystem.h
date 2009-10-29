@@ -640,13 +640,10 @@ public:
 		NUM_PRELOAD_TYPES
 	};
 
-	virtual void		LoadCompiledKeyValues( KeyValuesPreloadType_t type, char const *archiveFile ) = 0;
-
 	// If the "PreloadedData" hasn't been purged, then this'll try and instance the KeyValues using the fast path of compiled keyvalues loaded during startup.
 	// Otherwise, it'll just fall through to the regular KeyValues loading routines
 	virtual KeyValues	*LoadKeyValues( KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) = 0;
 	virtual bool		LoadKeyValues( KeyValues& head, KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) = 0;
-	virtual bool		ExtractRootKeyName( KeyValuesPreloadType_t type, char *outbuf, size_t bufsize, char const *filename, char const *pPathID = 0 ) = 0;
 
 	virtual FSAsyncStatus_t	AsyncWrite(const char *pFileName, const void *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t *pControl = NULL ) = 0;
 	virtual FSAsyncStatus_t	AsyncWriteFile(const char *pFileName, const CUtlBuffer *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t *pControl = NULL ) = 0;
@@ -746,7 +743,7 @@ public:
 	
 	virtual FSDirtyDiskReportFunc_t	GetDirtyDiskReportFunc( void ) = 0;
 	
-	virtual int				AddVPKFile( const char *file ) = 0;
+	virtual int				AddVPKFile( const char *file, SearchPathAdd_t ) = 0;
 };
 
 //-----------------------------------------------------------------------------

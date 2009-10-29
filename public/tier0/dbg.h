@@ -175,6 +175,7 @@ enum SpewRetval_t
 	SPEW_ABORT
 };
 
+#if 0
 /* type of externally defined function used to display debug spew */
 typedef SpewRetval_t (*SpewOutputFunc_t)( SpewType_t spewType, const tchar *pMsg );
 
@@ -198,6 +199,9 @@ DBG_INTERFACE void   _SpewInfo( SpewType_t type, const tchar* pFile, int line );
 DBG_INTERFACE SpewRetval_t   _SpewMessage( const tchar* pMsg, ... );
 DBG_INTERFACE SpewRetval_t   _DSpewMessage( const tchar *pGroupName, int level, const tchar* pMsg, ... );
 DBG_INTERFACE SpewRetval_t   ColorSpewMessage( SpewType_t type, const Color *pColor, const tchar* pMsg, ... );
+#endif
+
+DBG_INTERFACE int LoggingSystem_LogAssert( const tchar *pMsg, ... );
 DBG_INTERFACE void _ExitOnFatalAssert( const tchar* pFile, int line );
 DBG_INTERFACE bool ShouldUseNewAssertDialog();
 
@@ -212,10 +216,9 @@ DBG_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const tchar 
 	do {																\
 		if (!(_exp)) 													\
 		{ 																\
-			_SpewInfo( SPEW_ASSERT, __TFILE__, __LINE__ );				\
-			SpewRetval_t ret = _SpewMessage("%s", _msg);	\
+			int ret = LoggingSystem_LogAssert("%s", _msg);				\
 			_executeExp; 												\
-			if ( ret == SPEW_DEBUGGER)									\
+			if ( ret )													\
 			{															\
 				if ( !ShouldUseNewAssertDialog() || DoNewAssertDialog( __TFILE__, __LINE__, _msg ) ) \
 					DebuggerBreak();									\
@@ -231,7 +234,7 @@ DBG_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const tchar 
 		if (!fAsserted )												\
 		{ 																\
 			_AssertMsg( _exp, _msg, (fAsserted = true), _bFatal );		\
-		}																\
+		}														\
 	} while (0)
 
 /* Spew macros... */
@@ -345,24 +348,13 @@ DBG_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const tchar 
 
 /* These are always compiled in */
 DBG_INTERFACE void Msg( const tchar* pMsg, ... );
-DBG_INTERFACE void DMsg( const tchar *pGroupName, int level, const tchar *pMsg, ... );
-
 DBG_INTERFACE void Warning( const tchar *pMsg, ... );
-DBG_INTERFACE void DWarning( const tchar *pGroupName, int level, const tchar *pMsg, ... );
-
-DBG_INTERFACE void Log( const tchar *pMsg, ... );
-DBG_INTERFACE void DLog( const tchar *pGroupName, int level, const tchar *pMsg, ... );
-
 DBG_INTERFACE void Error( const tchar *pMsg, ... );
 
 #else
 
 inline void Msg( ... ) {}
-inline void DMsg( ... ) {}
 inline void Warning( const tchar *pMsg, ... ) {}
-inline void DWarning( ... ) {}
-inline void Log( ... ) {}
-inline void DLog( ... ) {}
 inline void Error( ... ) {}
 
 #endif
@@ -386,48 +378,25 @@ inline void Error( ... ) {}
 /* These looked at the "developer" group */
 DBG_INTERFACE void DevMsg( int level, const tchar* pMsg, ... );
 DBG_INTERFACE void DevWarning( int level, const tchar *pMsg, ... );
-DBG_INTERFACE void DevLog( int level, const tchar *pMsg, ... );
 
 /* default level versions (level 1) */
 DBG_OVERLOAD void DevMsg( const tchar* pMsg, ... );
 DBG_OVERLOAD void DevWarning( const tchar *pMsg, ... );
-DBG_OVERLOAD void DevLog( const tchar *pMsg, ... );
-
-/* These looked at the "console" group */
-DBG_INTERFACE void ConColorMsg( int level, const Color& clr, const tchar* pMsg, ... );
-DBG_INTERFACE void ConMsg( int level, const tchar* pMsg, ... );
-DBG_INTERFACE void ConWarning( int level, const tchar *pMsg, ... );
-DBG_INTERFACE void ConLog( int level, const tchar *pMsg, ... );
 
 /* default console version (level 1) */
 DBG_OVERLOAD void ConColorMsg( const Color& clr, const tchar* pMsg, ... );
 DBG_OVERLOAD void ConMsg( const tchar* pMsg, ... );
-DBG_OVERLOAD void ConWarning( const tchar *pMsg, ... );
-DBG_OVERLOAD void ConLog( const tchar *pMsg, ... );
 
 /* developer console version (level 2) */
-DBG_INTERFACE void ConDColorMsg( const Color& clr, const tchar* pMsg, ... );
 DBG_INTERFACE void ConDMsg( const tchar* pMsg, ... );
-DBG_INTERFACE void ConDWarning( const tchar *pMsg, ... );
-DBG_INTERFACE void ConDLog( const tchar *pMsg, ... );
-
-/* These looked at the "network" group */
-DBG_INTERFACE void NetMsg( int level, const tchar* pMsg, ... );
-DBG_INTERFACE void NetWarning( int level, const tchar *pMsg, ... );
-DBG_INTERFACE void NetLog( int level, const tchar *pMsg, ... );
-
-void ValidateSpew( class CValidator &validator );
 
 #else
 
 inline void DevMsg( ... ) {}
 inline void DevWarning( ... ) {}
-inline void DevLog( ... ) {}
+inline void ConColorMsg( ... ) {}
 inline void ConMsg( ... ) {}
-inline void ConLog( ... ) {}
-inline void NetMsg( ... ) {}
-inline void NetWarning( ... ) {}
-inline void NetLog( ... ) {}
+inline void ConDMsg( ... ) {}
 
 #endif
 

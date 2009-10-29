@@ -188,13 +188,11 @@ public:
 	virtual void			SetupPreloadData() {}
 	virtual void			DiscardPreloadData() {}
 
-	virtual void			LoadCompiledKeyValues( KeyValuesPreloadType_t type, char const *archiveFile ) { m_pFileSystemPassThru->LoadCompiledKeyValues( type, archiveFile ); }
 
 	// If the "PreloadedData" hasn't been purged, then this'll try and instance the KeyValues using the fast path of compiled keyvalues loaded during startup.
 	// Otherwise, it'll just fall through to the regular KeyValues loading routines
 	virtual KeyValues		*LoadKeyValues( KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) { return m_pFileSystemPassThru->LoadKeyValues( type, filename, pPathID ); }
 	virtual bool			LoadKeyValues( KeyValues& head, KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) { return m_pFileSystemPassThru->LoadKeyValues( head, type, filename, pPathID ); }
-	virtual bool			ExtractRootKeyName( KeyValuesPreloadType_t type, char *outbuf, size_t bufsize, char const *filename, char const *pPathID = 0 ) { return m_pFileSystemPassThru->ExtractRootKeyName( type, outbuf, bufsize, filename, pPathID ); }
 
 	virtual bool			GetFileTypeForFullPath( char const *pFullPath, wchar_t *buf, size_t bufSizeInBytes ) { return m_pFileSystemPassThru->GetFileTypeForFullPath( pFullPath, buf, bufSizeInBytes ); }
 
@@ -236,7 +234,7 @@ public:
 	virtual void GetSearchPathID( char *a, int b ) { m_pFileSystemPassThru->GetSearchPathID(a, b); }
 	virtual bool FixupSearchPathsAfterInstall() { return m_pFileSystemPassThru->FixupSearchPathsAfterInstall(); }
 	virtual FSDirtyDiskReportFunc_t	GetDirtyDiskReportFunc() { return m_pFileSystemPassThru->GetDirtyDiskReportFunc(); }
-	virtual int	AddVPKFile( const char *file ) { return m_pFileSystemPassThru->AddVPKFile(file); }
+	virtual int	AddVPKFile( const char *file, SearchPathAdd_t path ) { return m_pFileSystemPassThru->AddVPKFile(file, path); }
 
 protected:
 	IFileSystem *m_pFileSystemPassThru;

@@ -101,6 +101,7 @@ public:
 	virtual void SetValue( const char *pValue ) = 0;
 	virtual void SetValue( float flValue ) = 0;
 	virtual void SetValue( int nValue ) = 0;
+	virtual void SetValue( Color cValue ) = 0;
 
 	// Return name of command
 	virtual const char *GetName( void ) const = 0;

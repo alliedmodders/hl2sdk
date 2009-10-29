@@ -2,8 +2,8 @@
 * About *
 *********
 This version of the Source SDK is meant only for compiling server plugins for
-the engine that runs Valve's Left 4 Dead game. An official SDK is not yet
+the engine that runs Valve's Left 4 Dead 2 game. An official SDK is not yet
 available.
 
 This is a modified version of the Orange Box SDK. Changes to it were reverse
-engineered from the Left 4 Dead engine and game binaries.
+engineered from the Left 4 Dead 2 engine and game binaries.
