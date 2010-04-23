@@ -401,7 +401,7 @@ public:
 // Main file system interface
 //-----------------------------------------------------------------------------
 
-#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem017"
+#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem018"
 
 abstract_class IFileSystem : public IAppSystem, public IBaseFileSystem
 {
