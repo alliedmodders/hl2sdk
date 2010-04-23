@@ -455,6 +455,7 @@ public:
 	// interface for custom pack files > 4Gb
 	virtual bool			AddPackFile( const char *fullpath, const char *pathID ) = 0;
 
+	virtual bool			IsLocalizedPath ( const char * ) = 0;
 	//--------------------------------------------------------
 	// File manipulation operations
 	//--------------------------------------------------------

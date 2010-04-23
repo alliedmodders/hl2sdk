@@ -235,7 +235,7 @@ public:
 	virtual bool FixupSearchPathsAfterInstall() { return m_pFileSystemPassThru->FixupSearchPathsAfterInstall(); }
 	virtual FSDirtyDiskReportFunc_t	GetDirtyDiskReportFunc() { return m_pFileSystemPassThru->GetDirtyDiskReportFunc(); }
 	virtual int	AddVPKFile( const char *file, SearchPathAdd_t path ) { return m_pFileSystemPassThru->AddVPKFile(file, path); }
-
+	virtual bool IsLocalizedPath ( const char *path ) { return m_pFileSystemPassThru->IsLocalizedPath(path); }
 protected:
 	IFileSystem *m_pFileSystemPassThru;
 };
