@@ -254,7 +254,7 @@ typedef void * HINSTANCE;
 #elif _LINUX
 	#define ALIGN16 __attribute__((aligned(16)))
 	#define ALIGN32 __attribute__((aligned(32)))
-#elif
+#else
 	#define ALIGN16 /* */
 	#define ALIGN32 /* */
 #endif
