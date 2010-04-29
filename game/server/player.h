@@ -188,6 +188,7 @@ public:
 	virtual int			GetArmorValue();
 
 	virtual bool IsHLTV();
+	virtual bool IsReplay();
 	virtual bool IsPlayer();
 	virtual bool IsFakeClient();
 	virtual bool IsDead();
