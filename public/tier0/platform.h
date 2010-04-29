@@ -288,7 +288,7 @@ typedef void * HINSTANCE;
 
 #elif _LINUX
 	#define DECL_ALIGN(x) __attribute__((aligned(x)))
-#elif
+#else
         #define DECL_ALIGN(x) /* */
 #endif
 
