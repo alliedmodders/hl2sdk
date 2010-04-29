@@ -489,7 +489,7 @@ bool IsLowViolenceBuild( void )
 	return retVal;
 #elif _LINUX
 	return false;
-#elif
+#else
 #error "Fix me"
 #endif
 }
