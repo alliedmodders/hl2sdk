@@ -39,6 +39,8 @@ public:
 	virtual void FileReceived(const char *fileName, unsigned int transferID) = 0; // we received a file
 	
 	virtual void FileDenied(const char *fileName, unsigned int transferID) = 0;	// a file request was denied by other side
+
+	virtual void FileSent(const char *fileName, unsigned int transferID) = 0;
 };
 
 #define PROCESS_NET_MESSAGE( name )	\
