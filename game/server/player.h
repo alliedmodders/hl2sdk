@@ -188,7 +188,6 @@ public:
 	virtual int			GetArmorValue();
 
 	virtual bool IsHLTV();
-	virtual bool IsReplay();
 	virtual bool IsPlayer();
 	virtual bool IsFakeClient();
 	virtual bool IsDead();
@@ -219,6 +218,7 @@ public:
 	virtual void SetLastUserCommand( const CBotCmd &cmd );
 
 	virtual CBotCmd GetLastUserCommand();
+	virtual bool IsReplay();
 
 private:
 	CBasePlayer *m_pParent; 

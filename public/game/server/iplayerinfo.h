@@ -124,7 +124,6 @@ public:
 
 	// various player flags
 	virtual bool IsHLTV() = 0;
-	virtual bool IsReplay() = 0;
 	virtual bool IsPlayer() = 0;
 	virtual bool IsFakeClient() = 0;
 	virtual bool IsDead() = 0;
@@ -146,6 +145,7 @@ public:
 	virtual const int GetMaxHealth() = 0;
 	// the last user input from this player
 	virtual CBotCmd GetLastUserCommand() = 0;
+	virtual bool IsReplay() = 0;
 };
 
 
