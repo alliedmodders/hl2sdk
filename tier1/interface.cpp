@@ -27,7 +27,7 @@
 #include "tier0/threadtools.h"
 #ifdef _WIN32
 #include <direct.h> // getcwd
-#elif _LINUX
+#elif defined _LINUX || defined __APPLE__
 #define _getcwd getcwd
 #endif
 #if defined( _X360 )
@@ -79,7 +79,7 @@ void* CreateInterface( const char *pName, int *pReturnCode )
 }
 
 
-#ifdef _LINUX
+#if defined _LINUX || defined __APPLE__
 // Linux doesn't have this function so this emulates its functionality
 void *GetModuleHandle(const char *name)
 {
@@ -170,6 +170,9 @@ HMODULE Sys_LoadLibrary( const char *pLibraryName )
 #elif defined( _LINUX )
 	const char *pModuleExtension = ".so";
 	const char *pModuleAddition = "_i486.so"; // if an extension is on the filename assume the i486 binary set
+#elif defined( __APPLE__ )
+	const char *pModuleExtension = ".dylib";
+	const char *pModuleAddition = ".dylib";
 #endif
 	Q_strncpy( str, pLibraryName, sizeof(str) );
 	if ( !Q_stristr( str, pModuleExtension ) )
@@ -206,7 +209,7 @@ HMODULE Sys_LoadLibrary( const char *pLibraryName )
 	ReleaseThreadHandle( h );
 	return context.m_hLibrary;
 
-#elif _LINUX
+#elif defined _LINUX || defined __APPLE__
 	HMODULE ret = dlopen( str, RTLD_NOW );
 	if ( ! ret )
 	{
@@ -327,7 +330,7 @@ void Sys_UnloadModule( CSysModule *pModule )
 
 #ifdef _WIN32
 	FreeLibrary( hDLL );
-#elif defined(_LINUX)
+#elif defined(_LINUX) || defined(__APPLE__)
 	dlclose((void *)hDLL);
 #endif
 }
@@ -346,7 +349,7 @@ CreateInterfaceFn Sys_GetFactory( CSysModule *pModule )
 	HMODULE	hDLL = reinterpret_cast<HMODULE>(pModule);
 #ifdef _WIN32
 	return reinterpret_cast<CreateInterfaceFn>(GetProcAddress( hDLL, CREATEINTERFACE_PROCNAME ));
-#elif defined(_LINUX)
+#elif defined(_LINUX) || defined (__APPLE__)
 	// Linux gives this error:
 	//../public/interface.cpp: In function `IBaseInterface *(*Sys_GetFactory
 	//(CSysModule *)) (const char *, int *)':
@@ -376,7 +379,7 @@ CreateInterfaceFn Sys_GetFactory( const char *pModuleName )
 {
 #ifdef _WIN32
 	return static_cast<CreateInterfaceFn>( Sys_GetProcAddress( pModuleName, CREATEINTERFACE_PROCNAME ) );
-#elif defined(_LINUX)
+#elif defined(_LINUX) || defined(__APPLE__)
 	// see Sys_GetFactory( CSysModule *pModule ) for an explanation
 	return (CreateInterfaceFn)( Sys_GetProcAddress( pModuleName, CREATEINTERFACE_PROCNAME ) );
 #endif

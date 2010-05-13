@@ -12,7 +12,7 @@
 #include <direct.h>
 #include <io.h>
 #include <process.h>
-#elif defined( _LINUX )
+#elif defined( _LINUX ) || defined( __APPLE__ )
 #include <unistd.h>
 #define _putenv putenv
 #define _chdir chdir

@@ -327,7 +327,7 @@ void inline SinCos( float radians, float *sine, float *cosine )
 		fstp DWORD PTR [edx]
 		fstp DWORD PTR [eax]
 	}
-#elif defined( _LINUX )
+#elif defined( _LINUX ) || defined ( __APPLE__ )
 	register double __cosr, __sinr;
  	__asm __volatile__
     		("fsincos"
@@ -1091,7 +1091,7 @@ FORCEINLINE int RoundFloatToInt(float f)
 		fld f
 		fistp nResult
 	}
-#elif _LINUX
+#elif defined( _LINUX ) || defined( __APPLE__ )
 	__asm __volatile__ (
 		"fistpl %0;": "=m" (nResult): "t" (f) : "st"
 	);
@@ -1128,7 +1128,7 @@ FORCEINLINE unsigned char RoundFloatToByte(float f)
 		fld f
 		fistp nResult
 	}
-#elif _LINUX
+#elif defined( _LINUX ) || defined( __APPLE__ )
 	__asm __volatile__ (
 		"fistpl %0;": "=m" (nResult): "t" (f) : "st"
 	);
@@ -1167,7 +1167,7 @@ FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
 		fld f
 		fistp       qword ptr nResult
 	}
-#elif _LINUX
+#elif defined( _LINUX ) || defined( __APPLE__ )
 	__asm __volatile__ (
 		"fistpl %0;": "=m" (nResult): "t" (f) : "st"
 	);
@@ -1212,7 +1212,7 @@ FORCEINLINE int Float2Int( float a )
 		fistp  RetVal				// Store and converted (to int) result
 		fldcw  CtrlwdHolder		// Restore control word
 	}
-#elif _LINUX
+#elif defined( _LINUX ) || defined ( __APPLE__ ) 
 	RetVal = static_cast<int>( a );
 #endif
 
@@ -1242,7 +1242,7 @@ inline int Floor2Int( float a )
       fistp  RetVal				// Store floored and converted (to int) result
       fldcw  CtrlwdHolder		// Restore control word
    }
-#elif _LINUX
+#elif defined( _LINUX ) || defined( __APPLE__ )
 	RetVal = static_cast<int>( floor(a) );
 #endif
 
@@ -1300,7 +1300,7 @@ inline int Ceil2Int( float a )
       fistp  RetVal				// Store floored and converted (to int) result
       fldcw  CtrlwdHolder		// Restore control word
    }
-#elif _LINUX
+#elif defined( _LINUX ) || defined( __APPLE__ )
 	RetVal = static_cast<int>( ceil(a) );
 #endif
 
