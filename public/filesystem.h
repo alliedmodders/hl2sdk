@@ -26,6 +26,7 @@
 //-----------------------------------------------------------------------------
 
 class CUtlBuffer;
+class CUtlString;
 class KeyValues;
 class IFileList;
 
