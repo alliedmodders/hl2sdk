@@ -236,6 +236,7 @@ public:
 	virtual FSDirtyDiskReportFunc_t	GetDirtyDiskReportFunc() { return m_pFileSystemPassThru->GetDirtyDiskReportFunc(); }
 	virtual int	AddVPKFile( const char *file, SearchPathAdd_t path ) { return m_pFileSystemPassThru->AddVPKFile(file, path); }
 	virtual bool IsLocalizedPath ( const char *path ) { return m_pFileSystemPassThru->IsLocalizedPath(path); }
+	virtual void FindFileAbsoluteList( CUtlVector<CUtlString> &a, const char *b, const char *c ) { m_pFileSystemPassThru->FindFileAbsoluteList(a, b, c); }
 protected:
 	IFileSystem *m_pFileSystemPassThru;
 };

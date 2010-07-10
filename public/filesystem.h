@@ -361,7 +361,7 @@ public:
 
 // This is the minimal interface that can be implemented to provide access to
 // a named set of files.
-#define BASEFILESYSTEM_INTERFACE_VERSION		"VBaseFileSystem011"
+#define BASEFILESYSTEM_INTERFACE_VERSION		"VBaseFileSystem012"
 
 abstract_class IBaseFileSystem
 {
@@ -511,6 +511,8 @@ public:
 		const char *pPathID,
 		FileFindHandle_t *pHandle
 		) = 0;
+
+	virtual void			FindFileAbsoluteList( CUtlVector<CUtlString> &, const char *, const char * ) = 0;
 
 	//--------------------------------------------------------
 	// File name and directory operations
