@@ -12,12 +12,12 @@
 
 #include <inetmsghandler.h>
 #include "tier0/platform.h"
-#include "userid.h"
 #include "tier1/utlvector.h"
 
 class IServer;
 class INetMessage;
 struct NetMessageCvar_t;
+struct USERID_t;
 
 abstract_class IClient : public INetChannelHandler
 {
