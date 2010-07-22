@@ -202,7 +202,7 @@ public:
 	
 	// If it's one of the numbered "000", "001", etc properties in an array, then
 	// these can be used to get its array property name for debugging.
-	const char*			GetParentArrayPropName();
+	const char*			GetParentArrayPropName() const;
 	void				SetParentArrayPropName( const char *pArrayPropName );
 
 	const char*			GetName() const;
@@ -249,18 +249,15 @@ public:
 	float			m_fLowValue;
 	float			m_fHighValue;
 	
-	SendProp		*m_pArrayProp;				// If this is an array, this is the property that defines each array element.
+	SendProp		*m_pArrayProp;					// If this is an array, this is the property that defines each array element.
 	ArrayLengthSendProxyFn	m_ArrayLengthProxy;	// This callback returns the array length.
 	
-	int				m_nElements;				// Number of elements in the array (or 1 if it's not an array).
-	int				m_ElementStride;			// Pointer distance between array elements.
+	int				m_nElements;		// Number of elements in the array (or 1 if it's not an array).
+	int				m_ElementStride;	// Pointer distance between array elements.
 
-	union
-	{
-		const char *m_pExcludeDTName;			// If this is an exclude prop, then this is the name of the datatable to exclude a prop from.
-		const char *m_pParentArrayPropName;
-	};
-	int				m_Unknown;
+	const char *m_pExcludeDTName;			// If this is an exclude prop, then this is the name of the datatable to exclude a prop from.
+	const char *m_pParentArrayPropName;
+
 	const char		*m_pVarName;
 	float			m_fHighLowMul;
 
@@ -329,7 +326,7 @@ inline char const* SendProp::GetExcludeDTName() const
 	return m_pExcludeDTName; 
 }
 
-inline const char* SendProp::GetParentArrayPropName()
+inline const char* SendProp::GetParentArrayPropName() const
 {
 	return m_pParentArrayPropName;
 }
@@ -614,6 +611,7 @@ void SendProxy_QAngles			( const SendProp *pProp, const void *pStruct, const voi
 void SendProxy_AngleToFloat		( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
 void SendProxy_FloatToFloat		( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
 void SendProxy_VectorToVector	( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
+void SendProxy_VectorXYToVectorXY( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
 #if 0 // We can't ship this since it changes the size of DTVariant to be 20 bytes instead of 16 and that breaks MODs!!!
 void SendProxy_QuaternionToQuaternion( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
 #endif
@@ -656,6 +654,16 @@ SendProp SendPropVector(
 	float fLowValue=0.0f,			// For floating point, low and high values.
 	float fHighValue=HIGH_DEFAULT,	// High value. If HIGH_DEFAULT, it's (1<<nBits).
 	SendVarProxyFn varProxy=SendProxy_VectorToVector
+	);
+SendProp SendPropVectorXY(
+	const char *pVarName,
+	int offset,
+	int sizeofVar=SIZEOF_IGNORE,
+	int nBits=32,					// Number of bits (for each floating-point component) to use when encoding.
+	int flags=SPROP_NOSCALE,
+	float fLowValue=0.0f,			// For floating point, low and high values.
+	float fHighValue=HIGH_DEFAULT,	// High value. If HIGH_DEFAULT, it's (1<<nBits).
+	SendVarProxyFn varProxy=SendProxy_VectorXYToVectorXY
 	);
 
 #if 0 // We can't ship this since it changes the size of DTVariant to be 20 bytes instead of 16 and that breaks MODs!!!

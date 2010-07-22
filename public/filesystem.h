@@ -26,6 +26,7 @@
 //-----------------------------------------------------------------------------
 
 class CUtlBuffer;
+class CUtlString;
 class KeyValues;
 class IFileList;
 
@@ -736,17 +737,20 @@ public:
 
 	// Installs a callback used to display a dirty disk dialog
 	virtual void			InstallDirtyDiskReportFunc( FSDirtyDiskReportFunc_t func ) = 0;
+
+	virtual bool			IsLaunchedFromXboxHDD() = 0;
+	virtual bool			IsInstalledToXboxHDDCache() = 0;
+	virtual bool			IsDVDHosted() = 0;
+	virtual bool			IsInstallAllowed() = 0;
+
+	virtual int				GetSearchPathID( char *pPath, int nMaxLen ) = 0;
+	virtual bool			FixupSearchPathsAfterInstall() = 0;
 	
-	virtual bool			IsLaunchedFromXboxHDD( void ) = 0;
-	virtual bool			IsInstalledToXboxHDDCache( void ) = 0;
-	virtual bool			IsDVDHosted( void ) = 0;
-	virtual bool			IsInstallAllowed( void ) = 0;
-	virtual void			GetSearchPathID( char *, int ) = 0;
-	virtual bool			FixupSearchPathsAfterInstall( void ) = 0;
-	
-	virtual FSDirtyDiskReportFunc_t	GetDirtyDiskReportFunc( void ) = 0;
-	
-	virtual int				AddVPKFile( const char *file ) = 0;
+	virtual FSDirtyDiskReportFunc_t		GetDirtyDiskReportFunc() = 0;
+
+	virtual void AddVPKFile( char const *pszName, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) = 0;
+	virtual void RemoveVPKFile( char const *pszName ) = 0;
+	virtual void GetVPKFileNames( CUtlVector<CUtlString> &destVector ) = 0;
 };
 
 //-----------------------------------------------------------------------------

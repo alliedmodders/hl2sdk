@@ -54,6 +54,9 @@ public:
     virtual void  Free( void *pMem, const char *pFileName, int nLine ) = 0;
     virtual void *Expand_NoLongerSupported( void *pMem, size_t nSize, const char *pFileName, int nLine ) = 0;
 
+	inline void *IndirectAlloc( size_t nSize )										{ return Alloc( nSize ); }
+	inline void *IndirectAlloc( size_t nSize, const char *pFileName, int nLine )	{ return Alloc( nSize, pFileName, nLine ); }
+
 	// Returns size of a particular allocation
 	virtual size_t GetSize( void *pMem ) = 0;
 
@@ -63,7 +66,7 @@ public:
 
 	// FIXME: Remove when we have our own allocator
 	// these methods of the Crt debug code is used in our codebase currently
-	virtual long CrtSetBreakAlloc( long lNewBreakAlloc ) = 0;
+	virtual int32 CrtSetBreakAlloc( int32 lNewBreakAlloc ) = 0;
 	virtual	int CrtSetReportMode( int nReportType, int nReportMode ) = 0;
 	virtual int CrtIsValidHeapPointer( const void *pMem ) = 0;
 	virtual int CrtIsValidPointer( const void *pMem, unsigned int size, int access ) = 0;
@@ -74,8 +77,7 @@ public:
 	// FIXME: Make a better stats interface
 	virtual void DumpStats() = 0;
 	virtual void DumpStatsFileBase( char const *pchFileBase ) = 0;
-	
-	virtual size_t ComputeMemoryUsedBy( const char *pFileName ) = 0;
+	virtual size_t ComputeMemoryUsedBy( char const *pchSubStr ) = 0;
 
 	// FIXME: Remove when we have our own allocator
 	virtual void* CrtSetReportFile( int nRptType, void* hFile ) = 0;
@@ -88,8 +90,8 @@ public:
 	virtual bool IsDebugHeap() = 0;
 
 	virtual void GetActualDbgInfo( const char *&pFileName, int &nLine ) = 0;
-	virtual void RegisterAllocation( const char *pFileName, int nLine, int nLogicalSize, int nActualSize, unsigned nTime ) = 0;
-	virtual void RegisterDeallocation( const char *pFileName, int nLine, int nLogicalSize, int nActualSize, unsigned nTime ) = 0;
+	virtual void RegisterAllocation( const char *pFileName, int nLine, size_t nLogicalSize, size_t nActualSize, unsigned nTime ) = 0;
+	virtual void RegisterDeallocation( const char *pFileName, int nLine, size_t nLogicalSize, size_t nActualSize, unsigned nTime ) = 0;
 
 	virtual int GetVersion() = 0;
 
@@ -106,9 +108,10 @@ public:
 
 	// Returns 0 if no failure, otherwise the size_t of the last requested chunk
 	virtual size_t MemoryAllocFailed() = 0;
-	
-	virtual void CompactIncremental() = 0;
-	virtual void OutOfMemory( size_t ) = 0;
+
+	virtual void CompactIncremental() = 0; 
+
+	virtual void OutOfMemory( size_t nBytesAttempted = 0 ) = 0;
 };
 
 //-----------------------------------------------------------------------------

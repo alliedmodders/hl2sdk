@@ -13,13 +13,30 @@
 #include "tier0/platform.h"
 #include "inetchannelinfo.h"
 #include "tier1/bitbuf.h"
+#include "tier1/netadr.h"
 
 class	IDemoRecorder;
 class	INetMessage;
 class	INetChannelHandler;
 class	INetChannelInfo;
 typedef struct netpacket_s netpacket_t;
-typedef struct netadr_s	netadr_t;
+
+#ifndef NET_PACKET_ST_DEFINED
+#define NET_PACKET_ST_DEFINED
+typedef struct netpacket_s
+{
+	netadr_t		from;		// sender IP
+	int				source;		// received source 
+	double			received;	// received time
+	unsigned char	*data;		// pointer to raw packet data
+	bf_read			message;	// easy bitbuf data access
+	int				size;		// size in bytes
+	int				wiresize;   // size in bytes before decompression
+	bool			stream;		// was send as stream
+	struct netpacket_s *pNext;	// for internal use, should be NULL in public
+} netpacket_t;
+#endif // NET_PACKET_ST_DEFINED
+
 
 abstract_class INetChannel : public INetChannelInfo
 {
@@ -30,7 +47,7 @@ public:
 	virtual bool	RegisterMessage(INetMessage *msg) = 0;
 	virtual bool	StartStreaming( unsigned int challengeNr ) = 0;
 	virtual void	ResetStreaming( void ) = 0;
-	virtual void	SetTimeout(float seconds) = 0;
+	virtual void	SetTimeout(float seconds, bool bForceExact = false) = 0;
 	virtual void	SetDemoRecorder(IDemoRecorder *recorder) = 0;
 	virtual void	SetChallengeNr(unsigned int chnr) = 0;
 	
@@ -82,10 +99,12 @@ public:
 	// Max # of payload bytes before we must split/fragment the packet
 	virtual void	SetMaxRoutablePayloadSize( int nSplitSize ) = 0;
 	virtual int		GetMaxRoutablePayloadSize() = 0;
-	
-	virtual bool	SetActiveChannel( INetChannel *msg ) = 0;
-	virtual void	AttachSplitPlayer( int player, INetChannel *msg ) = 0;
-	virtual void	DetachSplitPlayer( int player ) = 0;
+
+	// For routing messages to a different handler
+	virtual bool	SetActiveChannel( INetChannel *pNewChannel ) = 0;
+	virtual void	AttachSplitPlayer( int nSplitPlayerSlot, INetChannel *pChannel ) = 0;
+	virtual void	DetachSplitPlayer( int nSplitPlayerSlot ) = 0;
+
 	virtual bool	IsRemoteDisconnected() const = 0;
 };
 

@@ -50,9 +50,6 @@ public:
 #define PROCESS_CLC_MESSAGE( name )	\
 	virtual bool Process##name( CLC_##name *msg )
 
-#define PROCESS_MM_MESSAGE( name )	\
-	virtual bool Process##name( MM_##name *msg )
-
 
 #define REGISTER_NET_MSG( name )				\
 	NET_##name * p##name = new NET_##name();	\
@@ -69,16 +66,13 @@ public:
 	p##name->m_pMessageHandler = this;			\
 	chan->RegisterMessage( p##name );			\
 
-#define REGISTER_MM_MSG( name )					\
-	MM_##name * p##name = new MM_##name();		\
-	p##name->m_pMessageHandler = this;			\
-	chan->RegisterMessage( p##name );			\
 
 class NET_Tick;
 class NET_StringCmd;
 class NET_SetConVar;
 class NET_SignonState;
 class NET_SplitScreenUser;
+
 
 class INetMessageHandler 
 {
@@ -101,6 +95,7 @@ class CLC_RespondCvarValue;
 class CLC_SplitPlayerConnect;
 class CLC_FileCRCCheck;
 class CLC_LoadingProgress;
+class CLC_CmdKeyValues;
 
 class IClientMessageHandler : public INetMessageHandler
 {
@@ -116,6 +111,7 @@ public:
 	PROCESS_CLC_MESSAGE( SplitPlayerConnect ) = 0;
 	PROCESS_CLC_MESSAGE( FileCRCCheck ) = 0;
 	PROCESS_CLC_MESSAGE( LoadingProgress ) = 0;
+	PROCESS_CLC_MESSAGE( CmdKeyValues ) = 0;
 };
 
 class SVC_Print;
@@ -142,6 +138,7 @@ class SVC_Menu;
 class SVC_GameEventList;
 class SVC_GetCvarValue;
 class SVC_SplitScreen;
+class SVC_CmdKeyValues;
 
 class IServerMessageHandler : public INetMessageHandler
 {
@@ -172,34 +169,7 @@ public:
 	PROCESS_SVC_MESSAGE( GameEventList ) = 0;
 	PROCESS_SVC_MESSAGE( GetCvarValue ) = 0;
 	PROCESS_SVC_MESSAGE( SplitScreen ) = 0;
-};
-
-class MM_Heartbeat;
-class MM_ClientInfo;
-class MM_ClientJoinRequest;
-class MM_RegisterResponse;
-class MM_Mutelist;
-class MM_Checkpoint;
-class MM_JoinResponse;
-class MM_Migrate;
-class MM_ClientChat;
-class MM_ClientRequest;
-
-class IMatchmakingMessageHandler : public INetMessageHandler
-{
-public:
-	virtual ~IMatchmakingMessageHandler( void ) {};
-
-	PROCESS_MM_MESSAGE( Heartbeat ) = 0;
-	PROCESS_MM_MESSAGE( ClientInfo ) = 0;
-	PROCESS_MM_MESSAGE( ClientJoinRequest ) = 0;
-	PROCESS_MM_MESSAGE( RegisterResponse ) = 0;
-	PROCESS_MM_MESSAGE( Mutelist ) = 0;
-	PROCESS_MM_MESSAGE( Checkpoint) = 0;
-	PROCESS_MM_MESSAGE( JoinResponse ) = 0;
-	PROCESS_MM_MESSAGE( Migrate ) = 0;
-	PROCESS_MM_MESSAGE( ClientChat ) = 0;
-	PROCESS_MM_MESSAGE( ClientRequest ) = 0;
+	PROCESS_SVC_MESSAGE( CmdKeyValues ) = 0;
 };
 
 class IConnectionlessPacketHandler

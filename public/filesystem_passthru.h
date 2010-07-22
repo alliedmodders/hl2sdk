@@ -229,14 +229,19 @@ public:
 	virtual void SetWhitelistSpewFlags( int spewFlags )
 		{ m_pFileSystemPassThru->SetWhitelistSpewFlags( spewFlags ); }
 	virtual void InstallDirtyDiskReportFunc( FSDirtyDiskReportFunc_t func ) { m_pFileSystemPassThru->InstallDirtyDiskReportFunc( func ); }
-	virtual bool IsLaunchedFromXboxHDD() { return m_pFileSystemPassThru->IsLaunchedFromXboxHDD(); }
-	virtual bool IsInstalledToXboxHDDCache() { return m_pFileSystemPassThru->IsInstalledToXboxHDDCache(); }
-	virtual bool IsDVDHosted() { return m_pFileSystemPassThru->IsDVDHosted(); }
-	virtual bool IsInstallAllowed() { return m_pFileSystemPassThru->IsInstallAllowed(); }
-	virtual void GetSearchPathID( char *a, int b ) { m_pFileSystemPassThru->GetSearchPathID(a, b); }
-	virtual bool FixupSearchPathsAfterInstall() { return m_pFileSystemPassThru->FixupSearchPathsAfterInstall(); }
+
+	virtual bool			IsLaunchedFromXboxHDD() { return m_pFileSystemPassThru->IsLaunchedFromXboxHDD(); }
+	virtual bool			IsInstalledToXboxHDDCache() { return m_pFileSystemPassThru->IsInstalledToXboxHDDCache(); }
+	virtual bool			IsDVDHosted() { return m_pFileSystemPassThru->IsDVDHosted(); }
+	virtual bool			IsInstallAllowed() { return m_pFileSystemPassThru->IsInstallAllowed(); }
+	virtual int				GetSearchPathID( char *pPath, int nMaxLen	) { return m_pFileSystemPassThru->GetSearchPathID( pPath, nMaxLen ); }
+	virtual bool			FixupSearchPathsAfterInstall() { return m_pFileSystemPassThru->FixupSearchPathsAfterInstall(); }
+
 	virtual FSDirtyDiskReportFunc_t	GetDirtyDiskReportFunc() { return m_pFileSystemPassThru->GetDirtyDiskReportFunc(); }
-	virtual int	AddVPKFile( const char *file ) { return m_pFileSystemPassThru->AddVPKFile(file); }
+
+	virtual void AddVPKFile( char const *pPkName, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) { m_pFileSystemPassThru->AddVPKFile( pPkName, addType ); }
+	virtual void RemoveVPKFile( char const *pPkName ) { m_pFileSystemPassThru->RemoveVPKFile( pPkName ); }
+	virtual void GetVPKFileNames( CUtlVector<CUtlString> &destVector ) { m_pFileSystemPassThru->GetVPKFileNames( destVector ); }
 
 protected:
 	IFileSystem *m_pFileSystemPassThru;

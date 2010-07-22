@@ -64,6 +64,8 @@ typedef enum _fieldtypes
 	FIELD_MATERIALINDEX,	// a material index (using the material precache string table)
 	
 	FIELD_VECTOR2D,			// 2 floats
+	FIELD_INTEGER64,		// 64bit integer
+
 
 	FIELD_TYPECOUNT,		// MUST BE LAST
 } fieldtype_t;
@@ -98,6 +100,7 @@ DECLARE_FIELD_SIZE( FIELD_VECTOR,		3 * sizeof(float) )
 DECLARE_FIELD_SIZE( FIELD_VECTOR2D,		2 * sizeof(float) )
 DECLARE_FIELD_SIZE( FIELD_QUATERNION,	4 * sizeof(float))
 DECLARE_FIELD_SIZE( FIELD_INTEGER,		sizeof(int))
+DECLARE_FIELD_SIZE( FIELD_INTEGER64,	sizeof(int64))
 DECLARE_FIELD_SIZE( FIELD_BOOLEAN,		sizeof(char))
 DECLARE_FIELD_SIZE( FIELD_SHORT,		sizeof(short))
 DECLARE_FIELD_SIZE( FIELD_CHARACTER,	sizeof(char))
@@ -165,6 +168,7 @@ DECLARE_FIELD_SIZE( FIELD_MATERIALINDEX,	sizeof(int) )
 
 #ifndef NO_ENTITY_PREDICTION
 
+// FTYPEDESC_KEY tells the prediction copy system to report the full nameof the field when reporting errors
 #define DEFINE_PRED_TYPEDESCRIPTION( name, fieldtype )						\
 	{ FIELD_EMBEDDED, #name, { offsetof(classNameTypedef, name), 0 }, 1, FTYPEDESC_SAVE, NULL, NULL, NULL, &fieldtype::m_PredMap }
 
@@ -247,7 +251,7 @@ struct typedescription_t;
 enum
 {
 	TD_OFFSET_NORMAL = 0,
-//	TD_OFFSET_PACKED = 1,
+	TD_OFFSET_PACKED = 1,
 
 	// Must be last
 	TD_OFFSET_COUNT,
@@ -257,7 +261,7 @@ struct typedescription_t
 {
 	fieldtype_t			fieldType;
 	const char			*fieldName;
-	int					fieldOffset[ TD_OFFSET_COUNT ]; // 0 == normal, 1 == packed offset
+	int					fieldOffset; // Local offset value
 	unsigned short		fieldSize;
 	short				flags;
 	// the name of the variable in the map/fgd data, or the name of the action
@@ -280,8 +284,10 @@ struct typedescription_t
   
 	// Tolerance for field errors for float fields
 	float				fieldTolerance;
-	
-	int					unknown[3];
+
+	// For raw fields (including children of embedded stuff) this is the flattened offset
+	int					flatOffset[ TD_OFFSET_COUNT ];
+	unsigned short		flatGroup;
 };
 
 

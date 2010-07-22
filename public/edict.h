@@ -19,6 +19,7 @@
 #include "engine/ICollideable.h"
 #include "iservernetworkable.h"
 #include "bitvec.h"
+#include "tier1/convar.h"
 
 struct edict_t;
 
@@ -59,19 +60,15 @@ public:
 	bool			teamplay;
 	// current maxentities
 	int				maxEntities;
-	
-	// Number of servers spawned (-fork)
+
 	int				serverCount;
-	
-	// First edict/entity, usually worldspawn (0)
-	// - Replacement for IndexOfEntity: edict - baseEdict
-	// - Replacement for PEntityOfEntIndex: baseEdict + entIndex
-	edict_t			*baseEdict;
+	edict_t			*pEdicts;
 };
 
 inline CGlobalVars::CGlobalVars( bool bIsClient ) : 
 	CGlobalVarsBase( bIsClient )
 {
+	serverCount = 0;
 }
 
 
@@ -268,8 +265,8 @@ inline void	CBaseEdict::ClearStateChanged()
 
 inline void	CBaseEdict::StateChanged()
 {
-	// Note: this should only happen for properties in data tables that used some
-	// kind of pointer dereference. If the data is directly offsetable 
+	// Note: this should only happen for properties in data tables that used some kind of pointer
+	//   dereference. If the data is directly offsetable, then changes will automatically be detected
 	m_fStateFlags |= (FL_EDICT_CHANGED | FL_FULL_EDICT_CHANGED);
 	SetChangeInfoSerialNumber( 0 );
 }
@@ -419,9 +416,6 @@ struct edict_t : public CBaseEdict
 {
 public:
 	ICollideable *GetCollideable();
-
-	// The server timestampe at which the edict was freed (so we can try to use other edicts before reallocating this one)
-//	float		freetime;	
 };
 
 inline ICollideable *edict_t::GetCollideable()
