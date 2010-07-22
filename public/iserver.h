@@ -35,6 +35,7 @@ public:
 	virtual float	GetTime( void ) const = 0;	// returns game world time
 	virtual int		GetTick( void ) const = 0;	// returns game world tick
 	virtual float	GetTickInterval( void ) const = 0; // tick interval in seconds
+	virtual float	GetTimescale( void ) const = 0; // returns the game time scale (multiplied in conjunction with host_timescale)
 	virtual const char *GetName( void ) const = 0;	// public server name
 	virtual const char *GetMapName( void ) const = 0; // current map name (BSP)
 	virtual int		GetSpawnCount( void ) const = 0;	
@@ -55,6 +56,7 @@ public:
 	virtual const char * GetPassword() const = 0;	// returns the password or NULL if none set	
 
 	virtual void	SetPaused(bool paused) = 0;
+	virtual void	SetTimescale( float flTimescale ) = 0;
 	virtual void	SetPassword(const char *password) = 0; // set password (NULL to disable)
 
 	virtual void	BroadcastMessage( INetMessage &msg, bool onlyActive = false, bool reliable = false) = 0;

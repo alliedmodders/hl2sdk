@@ -49,31 +49,19 @@ public:
 	// Accessors (length -1 means don't change user data if string already exits)
 	virtual int				AddString( bool bIsServer, const char *value, int length = -1, const void *userdata = 0 ) = 0; 
 
-	virtual const char		*GetString( int stringNumber ) = 0;
+	virtual const char		*GetString( int stringNumber ) const = 0;
 	virtual void			SetStringUserData( int stringNumber, int length, const void *userdata ) = 0;
-	virtual const void		*GetStringUserData( int stringNumber, int *length ) = 0;
+	virtual const void		*GetStringUserData( int stringNumber, int *length ) const = 0;
 	virtual int				FindStringIndex( char const *string ) = 0; // returns INVALID_STRING_INDEX if not found
 
 	// Callbacks
 	virtual void			SetStringChangedCallback( void *object, pfnStringChanged changeFunc ) = 0;
 };
 
-class INetworkStringDict
+enum ENetworkStringtableFlags
 {
-public:
-
-	virtual					~INetworkStringDict( void ) {};
-	
-	virtual int				Count( void ) = 0;
-	virtual void			Purge( void ) = 0;
-	virtual const char 		*String( int index ) = 0;
-	virtual bool			IsValidIndex( int index ) = 0;
-	virtual int				Insert( const char *string ) = 0;
-	virtual int				Find( const char *string ) = 0;
-	virtual void			UpdateDictionary( int ) = 0;
-	virtual int				DictionaryIndex( int ) = 0;
-	virtual int				Element( int ) = 0;
-	virtual int				Element( int ) const = 0;
+	NSF_NONE = 0,
+	NSF_DICTIONARY_ENABLED  = (1<<0), // Uses pre-calculated per map dictionaries to reduce bandwidth
 };
 
 class INetworkStringTableContainer
@@ -83,7 +71,7 @@ public:
 	virtual					~INetworkStringTableContainer( void ) {};
 	
 	// table creation/destruction
-	virtual INetworkStringTable	*CreateStringTable( const char *tableName, int maxentries, int userdatafixedsize = 0, int userdatanetworkbits = 0, int unknown = 0 ) = 0;
+	virtual INetworkStringTable	*CreateStringTable( const char *tableName, int maxentries, int userdatafixedsize = 0, int userdatanetworkbits = 0, int flags = NSF_NONE ) = 0;
 	virtual void				RemoveAllTables( void ) = 0;
 	
 	// table infos
@@ -92,7 +80,8 @@ public:
 	virtual int					GetNumTables( void ) const = 0;
 
 	virtual void				SetAllowClientSideAddString( INetworkStringTable *table, bool bAllowClientSideAddString ) = 0;
-	virtual INetworkStringDict	*CreateDictionary( const char *dictName ) = 0;
+
+	virtual void				CreateDictionary( char const *pchMapName ) = 0;
 };
 
 #endif // NETWORKSTRINGTABLEDEFS_H

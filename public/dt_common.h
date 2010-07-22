@@ -103,7 +103,7 @@ typedef enum
 	DPT_Int=0,
 	DPT_Float,
 	DPT_Vector,
-	DPT_VectorXY,
+	DPT_VectorXY, // Only encodes the XY of a vector, ignores Z
 	DPT_String,
 	DPT_Array,	// An array of the base types (can't be of datatables).
 	DPT_DataTable,
@@ -117,50 +117,54 @@ typedef enum
 class DVariant
 {
 public:
-				DVariant()				{m_Type = DPT_Float;}
-				DVariant(float val)		{m_Type = DPT_Float; m_Float = val;}
+	DVariant()				{m_Type = DPT_Float;}
+	DVariant(float val)		{m_Type = DPT_Float; m_Float = val;}
 				
-				const char *ToString()
-				{
-					static char text[128];
+	const char *ToString()
+	{
+		static char text[128];
 
-					switch ( m_Type )
-					{
-						case DPT_Int : 
-							Q_snprintf( text, sizeof(text), "%i", m_Int );
-							break;
-						case DPT_Float :
-							Q_snprintf( text, sizeof(text), "%.3f", m_Float );
-							break;
-						case DPT_Vector :
-							Q_snprintf( text, sizeof(text), "(%.3f,%.3f,%.3f)", 
-								m_Vector[0], m_Vector[1], m_Vector[2] );
-							break;
+		switch ( m_Type )
+		{
+			case DPT_Int : 
+				Q_snprintf( text, sizeof(text), "%i", m_Int );
+				break;
+			case DPT_Float :
+				Q_snprintf( text, sizeof(text), "%.3f", m_Float );
+				break;
+			case DPT_Vector :
+				Q_snprintf( text, sizeof(text), "(%.3f,%.3f,%.3f)", 
+							m_Vector[0], m_Vector[1], m_Vector[2] );
+				break;
+			case DPT_VectorXY :
+				Q_snprintf( text, sizeof(text), "(%.3f,%.3f)", 
+							m_Vector[0], m_Vector[1] );
+				break;
 #if 0 // We can't ship this since it changes the size of DTVariant to be 20 bytes instead of 16 and that breaks MODs!!!
-						case DPT_Quaternion :
-							Q_snprintf( text, sizeof(text), "(%.3f,%.3f,%.3f %.3f)", 
-								m_Vector[0], m_Vector[1], m_Vector[2], m_Vector[3] );
-							break;
+			case DPT_Quaternion :
+				Q_snprintf( text, sizeof(text), "(%.3f,%.3f,%.3f %.3f)", 
+							m_Vector[0], m_Vector[1], m_Vector[2], m_Vector[3] );
+				break;
 #endif
-						case DPT_String : 
-							if ( m_pString ) 
-								return m_pString;
-							else
-								return "NULL";
-							break;
-						case DPT_Array :
-							Q_snprintf( text, sizeof(text), "Array" ); 
-							break;
-						case DPT_DataTable :
-							Q_snprintf( text, sizeof(text), "DataTable" ); 
-							break;
-						default :
-							Q_snprintf( text, sizeof(text), "DVariant type %i unknown", m_Type ); 
-							break;
-					}
+			case DPT_String : 
+				if ( m_pString ) 
+					return m_pString;
+				else
+					return "NULL";
+				break;
+			case DPT_Array :
+				Q_snprintf( text, sizeof(text), "Array" ); 
+				break;
+			case DPT_DataTable :
+				Q_snprintf( text, sizeof(text), "DataTable" ); 
+				break;
+			default :
+				Q_snprintf( text, sizeof(text), "DVariant type %i unknown", m_Type ); 
+				break;
+		}
 
-					return text;
-				}
+		return text;
+	}
 
 	union
 	{

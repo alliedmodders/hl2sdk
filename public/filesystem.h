@@ -737,17 +737,40 @@ public:
 
 	// Installs a callback used to display a dirty disk dialog
 	virtual void			InstallDirtyDiskReportFunc( FSDirtyDiskReportFunc_t func ) = 0;
+
+	virtual bool			IsLaunchedFromXboxHDD() = 0;
+	virtual bool			IsInstalledToXboxHDDCache() = 0;
+	virtual bool			IsDVDHosted() = 0;
+	virtual bool			IsInstallAllowed() = 0;
+
+	virtual int				GetSearchPathID( char *pPath, int nMaxLen ) = 0;
+	virtual bool			FixupSearchPathsAfterInstall() = 0;
 	
-	virtual bool			IsLaunchedFromXboxHDD( void ) = 0;
-	virtual bool			IsInstalledToXboxHDDCache( void ) = 0;
-	virtual bool			IsDVDHosted( void ) = 0;
-	virtual bool			IsInstallAllowed( void ) = 0;
-	virtual void			GetSearchPathID( char *, int ) = 0;
-	virtual bool			FixupSearchPathsAfterInstall( void ) = 0;
+	virtual FSDirtyDiskReportFunc_t		GetDirtyDiskReportFunc() = 0;
+
+	virtual void AddVPKFile( char const *pszName, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) = 0;
+	virtual void RemoveVPKFile( char const *pszName ) = 0;
+	virtual void GetVPKFileNames( CUtlVector<CUtlString> &destVector ) = 0;
+	virtual void			RemoveAllMapSearchPaths() = 0;
+	virtual void			SyncDvdDevCache() = 0;
+
+	virtual bool			GetStringFromKVPool( CRC32_t poolKey, unsigned int key, char *pOutBuff, int buflen ) = 0;
+
+	virtual bool			DiscoverDLC( int iController ) = 0;
+	virtual int				IsAnyDLCPresent( bool *pbDLCSearchPathMounted = NULL ) = 0;
+	virtual bool			GetAnyDLCInfo( int iDLC, unsigned int *pLicenseMask, wchar_t *pTitleBuff, int nOutTitleSize ) = 0;
+	virtual int				IsAnyCorruptDLC() = 0;
+	virtual bool			GetAnyCorruptDLCInfo( int iCorruptDLC, wchar_t *pTitleBuff, int nOutTitleSize ) = 0;
+	virtual bool			AddDLCSearchPaths() = 0;
+	virtual bool			IsSpecificDLCPresent( unsigned int nDLCPackage ) = 0;
+
+	// call this to look for CPU-hogs during loading processes. When you set this, a breakpoint
+	// will be issued whenever the indicated # of seconds go by without an i/o request.  Passing
+	// 0.0 will turn off the functionality.
+	virtual void            SetIODelayAlarm( float flThreshhold ) = 0;
 	
-	virtual FSDirtyDiskReportFunc_t	GetDirtyDiskReportFunc( void ) = 0;
-	
-	virtual int				AddVPKFile( const char *file, SearchPathAdd_t ) = 0;
+	virtual void			AddXLSPUpdateSearchPath(const void *, int) = 0;
+
 };
 
 //-----------------------------------------------------------------------------

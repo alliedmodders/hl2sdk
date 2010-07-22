@@ -59,8 +59,6 @@ public:
 	virtual bool PrecacheSound( const char *pSample, bool bPreload = false, bool bIsUISound = false ) = 0;
 	virtual bool IsSoundPrecached( const char *pSample ) = 0;
 	virtual void PrefetchSound( const char *pSample ) = 0;
-	
-	// Client only
 	virtual bool IsLoopingSound( const char *pSample ) = 0;
 
 	// Just loads the file header and checks for duration (not hooked up for .mp3's yet)
@@ -119,9 +117,11 @@ public:
 	virtual void	PrecacheSentenceGroup( const char *pGroupName ) = 0;
 	virtual void	NotifyBeginMoviePlayback() = 0;
 	virtual void	NotifyEndMoviePlayback() = 0;
+
+	virtual bool	GetSoundChannelVolume( const char* sound, float &flVolumeLeft, float &flVolumeRight ) = 0;
 	
-	// Client only
-	virtual float	GetSoundChannelVolume( const char *, float &, float & ) = 0;
+	virtual float	GetElapsedTimeByGuid( int guid ) = 0;
+
 };
 
 

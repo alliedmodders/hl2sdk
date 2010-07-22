@@ -50,9 +50,6 @@ public:
 #define PROCESS_CLC_MESSAGE( name )	\
 	virtual bool Process##name( CLC_##name *msg )
 
-#define PROCESS_MM_MESSAGE( name )	\
-	virtual bool Process##name( MM_##name *msg )
-
 
 #define REGISTER_NET_MSG( name )				\
 	NET_##name * p##name = new NET_##name();	\
@@ -69,11 +66,13 @@ public:
 	p##name->m_pMessageHandler = this;			\
 	chan->RegisterMessage( p##name );			\
 
+
 class NET_Tick;
 class NET_StringCmd;
 class NET_SetConVar;
 class NET_SignonState;
 class NET_SplitScreenUser;
+
 
 class INetMessageHandler 
 {

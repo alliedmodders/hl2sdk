@@ -93,6 +93,19 @@ typedef CGameTrace trace_t;
 
 //=============================================================================
 
+class ITraceListData
+{
+public:
+	virtual ~ITraceListData() {}
+
+	virtual void Reset() = 0;
+	virtual bool IsEmpty() = 0;
+	// CanTraceRay will return true if the current volume encloses the ray
+	// NOTE: The leaflist trace will NOT check this.  Traces are intersected
+	// against the culled volume exclusively.
+	virtual bool CanTraceRay( const Ray_t &ray ) = 0;
+};
+
 #define TLD_DEF_LEAF_MAX	256
 #define TLD_DEF_ENTITY_MAX	1024
 

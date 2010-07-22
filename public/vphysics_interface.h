@@ -269,7 +269,7 @@ public:
 	// begins parsing a vcollide.  NOTE: This keeps pointers to the text
 	// If you free the text and call members of IVPhysicsKeyParser, it will crash
 	virtual IVPhysicsKeyParser	*VPhysicsKeyParserCreate( const char *pKeyData ) = 0;
-	virtual IVPhysicsKeyParser 	*VPhysicsKeyParserCreate( vcollide_t * ) = 0;
+	virtual IVPhysicsKeyParser *VPhysicsKeyParserCreate( vcollide_t *pVCollide ) = 0;
 	// Free the parser created by VPhysicsKeyParserCreate
 	virtual void			VPhysicsKeyParserDestroy( IVPhysicsKeyParser *pParser ) = 0;
 
@@ -299,12 +299,16 @@ public:
 	// dumps info about the collide to Msg()
 	virtual void			OutputDebugInfo( const CPhysCollide *pCollide ) = 0;
 	virtual unsigned int	ReadStat( int statID ) = 0;
-	
-	virtual int				CollideGetRadius( const CPhysCollide *pCollide ) = 0;
-	virtual void			*VCollideAllocUserData( vcollide_t *, unsigned int ) = 0;
-	virtual void			VCollideFreeUserData( vcollide_t * ) = 0;
-	virtual int				VCollideCheck( vcollide_t *, const char * ) = 0;
+
+	// Get an AABB for an oriented collision model
+	virtual float			CollideGetRadius( const CPhysCollide *pCollide ) = 0;
+
+	virtual void			*VCollideAllocUserData( vcollide_t *pVCollide, size_t userDataSize ) = 0;
+	virtual void			VCollideFreeUserData( vcollide_t *pVCollide ) = 0;
+	virtual void			VCollideCheck( vcollide_t *pVCollide, const char *pName ) = 0;
 };
+
+
 
 // this can be used to post-process a collision model
 abstract_class ICollisionQuery
@@ -663,11 +667,12 @@ public:
 
 	virtual void EnableConstraintNotify( bool bEnable ) = 0;
 	virtual void DebugCheckContacts(void) = 0;
-	
-	virtual void			SetAlternateGravity( const Vector& ) = 0;
-	virtual void			GetAlternateGravity( Vector * ) const = 0;
-	virtual float			GetDeltaFrameTime( int ) = 0;
-	virtual void			ForceObjectsToSleep( IPhysicsObject **, int ) = 0;
+
+	virtual void			SetAlternateGravity( const Vector &gravityVector ) = 0;
+	virtual void			GetAlternateGravity( Vector *pGravityVector ) const = 0;
+
+	virtual float			GetDeltaFrameTime( int maxTicks ) const = 0;
+	virtual void			ForceObjectsToSleep( IPhysicsObject **pList, int listCount ) = 0;
 };
 
 enum callbackflags
@@ -771,6 +776,7 @@ public:
 
 	// Get the radius if this is a sphere object (zero if this is a polygonal mesh)
 	virtual float			GetSphereRadius() const = 0;
+	// Set the radius on a sphere. May need to force recalculation of contact points
 	virtual void			SetSphereRadius( float radius ) = 0;
 	virtual float			GetEnergy() const = 0;
 	virtual Vector			GetMassCenterLocalSpace() const = 0;
@@ -865,11 +871,18 @@ public:
 
 	// dumps info about the object to Msg()
 	virtual void			OutputDebugInfo() const = 0;
-	
-	virtual void			SetUseAlternateGravity( bool ) = 0;
-	virtual void			SetCollisionHints( unsigned int hint ) = 0;
-	virtual unsigned int	GetCollisionHints( void ) const = 0;
 
+#if OBJECT_WELDING
+	virtual void			WeldToObject( IPhysicsObject *pParent ) = 0;
+	virtual void			RemoveWeld( IPhysicsObject *pOther ) = 0;
+	virtual void			RemoveAllWelds( void ) = 0;
+#endif
+
+	// EnableGravity still determines whether to apply gravity
+	// This flag determines which gravity constant to use for an alternate gravity effect
+	virtual void			SetUseAlternateGravity( bool bSet ) = 0;
+	virtual void			SetCollisionHints( uint32 collisionHints ) = 0;
+	virtual uint32			GetCollisionHints() const = 0;
 };
 
 
@@ -920,8 +933,10 @@ struct surfaceaudioparams_t
 
 struct surfacesoundnames_t
 {
-	unsigned short	stepleft;
-	unsigned short	stepright;
+	unsigned short	walkStepLeft;
+	unsigned short	walkStepRight;
+	unsigned short	runStepLeft;
+	unsigned short	runStepRight;
 
 	unsigned short	impactSoft;
 	unsigned short	impactHard;
@@ -938,8 +953,10 @@ struct surfacesoundnames_t
 
 struct surfacesoundhandles_t
 {
-	short	stepleft;
-	short	stepright;
+	short	walkStepLeft;
+	short	walkStepRight;
+	short	runStepLeft;
+	short	runStepRight;
 
 	short	impactSoft;
 	short	impactHard;
@@ -1092,6 +1109,7 @@ struct convertconvexparams_t
 	bool		buildOuterConvexHull;
 	bool		buildDragAxisAreas;
 	bool		buildOptimizedTraceTables;
+	bool		checkOptimalTracing;
 	float		dragAreaEpsilon;
 	CPhysConvex *pForcedOuterHull;
 
@@ -1101,6 +1119,7 @@ struct convertconvexparams_t
 		buildOuterConvexHull = false;
 		buildDragAxisAreas = false;
 		buildOptimizedTraceTables = false;
+		checkOptimalTracing = false;
 		pForcedOuterHull = NULL;
 	}
 };

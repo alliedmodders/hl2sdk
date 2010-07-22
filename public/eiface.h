@@ -57,7 +57,8 @@ class CStandardSendProxies;
 class IAchievementMgr;
 class CGamestatsData;
 class CSteamID;
-struct bbox_t;
+class ISPSharedMemory;
+class CGamestatsData;
 
 typedef struct player_info_s player_info_t;
 
@@ -72,6 +73,12 @@ typedef struct player_info_s player_info_t;
 #endif
 
 #define INTERFACEVERSION_VENGINESERVER	"VEngineServer022"
+
+struct bbox_t
+{
+	Vector mins;
+	Vector maxs;
+};
 
 //-----------------------------------------------------------------------------
 // Purpose: Interface the engine exposes to the game DLL
@@ -91,7 +98,8 @@ public:
 	// Is in Hammer editing mode?
 	virtual int			IsInEditMode( void ) = 0;
 
-	virtual KeyValues	*GetLaunchOptions( void ) = 0;
+	// get arbitrary launch options
+	virtual KeyValues* GetLaunchOptions( void ) = 0;
 	
 	// Add to the server/client lookup/precache table, the specified string is given a unique index
 	// NOTE: The indices for PrecacheModel are 1 based
@@ -125,13 +133,12 @@ public:
 	//  returns -1 if the edict couldn't be found in the list of players.
 	virtual int			GetPlayerUserId( const edict_t *e ) = 0; 
 	virtual const char	*GetPlayerNetworkIDString( const edict_t *e ) = 0;
-
-	virtual bool		IsUserIDInUse ( int userid ) = 0;
-	virtual int			GetLoadingProgressForUserID ( int userid ) = 0;
+	virtual bool		IsUserIDInUse( int userID ) = 0;	// TERROR: used for transitioning
+	virtual int			GetLoadingProgressForUserID( int userID ) = 0;	// TERROR: used for transitioning
 
 	// Return the current number of used edict slots
 	virtual int			GetEntityCount( void ) = 0;
-
+	
 	// Get stats info interface for a client netchannel
 	virtual INetChannelInfo* GetPlayerNetInfo( int playerIndex ) = 0;
 	
@@ -185,7 +192,7 @@ public:
 	// Begin a message from a server side entity to its client side counterpart (func_breakable glass, e.g.)
 	virtual bf_write	*EntityMessageBegin( int ent_index, ServerClass * ent_class, bool reliable ) = 0;
 	// Begin a usermessage from the server to the client .dll
-	virtual bf_write	*UserMessageBegin( IRecipientFilter *filter, int msg_type, const char *name ) = 0;
+	virtual bf_write	*UserMessageBegin( IRecipientFilter *filter, int msg_type, char const *pchMsgName ) = 0;
 	// Finish the Entity or UserMessage and dispatch to network layer
 	virtual void		MessageEnd( void ) = 0;
 
@@ -267,8 +274,7 @@ public:
 
 	// Print a message to the server log file
 	virtual void		LogPrint( const char *msg ) = 0;
-	virtual bool		IsLogEnabled( void ) = 0;
-
+	virtual bool		IsLogEnabled() = 0;
 	// Builds PVS information for an entity
 	virtual void		BuildEntityClusterList( edict_t *pEdict, PVSInfo_t *pPVSInfo ) = 0;
 
@@ -297,9 +303,10 @@ public:
 	virtual const CBitVec<MAX_EDICTS>* GetEntityTransmitBitsForClient( int iClientIndex ) = 0;
 	
 	// Is the game paused?
-	virtual bool		IsPaused( void ) = 0;
+	virtual bool		IsPaused() = 0;
 
-	virtual float		GetTimescale( void ) const = 0;
+	// What is the game timescale multiplied with the host_timescale?
+	virtual float GetTimescale( void ) const = 0;
 	
 	// Marks the filename for consistency checking.  This should be called after precaching the file.
 	virtual void		ForceExactFile( const char *s ) = 0;
@@ -316,6 +323,8 @@ public:
 
 	// Is the engine in Commentary mode?
 	virtual int			IsInCommentaryMode( void ) = 0;
+
+	// Is the engine running a background map?
 	virtual bool		IsLevelMainMenuBackground( void ) = 0;
 
 	// Mark some area portals as open/closed. It's more efficient to use this
@@ -357,8 +366,9 @@ public:
 	virtual int	GetAppID() = 0;
 	
 	virtual bool IsLowViolence() = 0;
+
 	virtual bool IsAnyClientLowViolence() = 0;
-	
+
 	// Call this to find out the value of a cvar on the client.
 	//
 	// It is an asynchronous query, and it will call IServerGameDLL::OnQueryCvarValueFinished when
@@ -380,27 +390,34 @@ public:
 	// i.e. it does the same thing timedemo does.
 	virtual void SetDedicatedServerBenchmarkMode( bool bBenchmarkMode ) = 0;
 
-	virtual bool IsSplitScreenPlayer( int ) = 0;
-	virtual int GetSplitScreenPlayerAttachToEdict( int ) = 0;
-	virtual int GetNumSplitScreenUsersAttachedToEdict( int ) = 0;
-	virtual int GetSplitScreenPlayerForEdict( int, int ) = 0;
-	
+	virtual bool IsSplitScreenPlayer( int ent_num ) = 0;
+	virtual edict_t *GetSplitScreenPlayerAttachToEdict( int ent_num ) = 0;
+	virtual int	GetNumSplitScreenUsersAttachedToEdict( int ent_num ) = 0;
+	virtual edict_t *GetSplitScreenPlayerForEdict( int ent_num, int nSlot ) = 0;
+
+	// Used by Foundry to hook into the loadgame process and override the entities that are getting loaded.
 	virtual bool IsOverrideLoadGameEntsOn() = 0;
-	virtual void ForceFlushEntity( int ) = 0;
-	
-	virtual void *GetSinglePlayerSharedMemorySpace( char const * ) = 0;
-	
-	virtual void *AllocLevelStaticData( unsigned int ) = 0;
+
+	// Used by Foundry when it changes an entity (and possibly its class) but preserves its serial number.
+	virtual void ForceFlushEntity( int iEntity ) = 0;
+
+	//Finds or Creates a shared memory space, the returned pointer will automatically be AddRef()ed
+	virtual ISPSharedMemory *GetSinglePlayerSharedMemorySpace( const char *szName, int ent_num = MAX_EDICTS ) = 0;
+
+	// Allocate hunk memory
+	virtual void *AllocLevelStaticData( size_t bytes ) = 0;
+
+	// Gets a list of all clusters' bounds.  Returns total number of clusters.
 	virtual int GetClusterCount() = 0;
-	virtual void *GetAllClusterBounds( bbox_t *, int ) = 0;
-	
+	virtual int GetAllClusterBounds( bbox_t *pBBoxList, int maxBBox ) = 0;
+
 	virtual bool IsCreatingReslist() = 0;
 	virtual bool IsCreatingXboxReslist() = 0;
 	virtual bool IsDedicatedServerForXbox() = 0;
-	
-	virtual void Pause( bool, bool ) = 0;
 
-	virtual void SetTimescale( float ) = 0;
+	virtual void Pause( bool bPause, bool bForce = false ) = 0;
+
+	virtual void SetTimescale( float flTimescale ) = 0;
 
 	// Methods to set/get a gamestats data container so client & server running in same process can send combined data
 	virtual void SetGamestatsData( CGamestatsData *pGamestatsData ) = 0;
@@ -409,15 +426,22 @@ public:
 	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
 	virtual const CSteamID *GetClientSteamID( edict_t *pPlayerEdict ) = 0;
 	
+	// Validate session
 	virtual void HostValidateSession() = 0;
+
+	// Update the 360 pacifier/spinner
 	virtual void RefreshScreenIfNecessary() = 0;
 
 	virtual void *AllocLevelStaticDataName( unsigned int, const char * ) = 0;
-	virtual void ClientCommandKeyValues( edict_t *pEdict, KeyValues * ) = 0;
-	virtual int64 GetClientXUID( edict_t * ) = 0;
+
+	// Send a client command keyvalues
+	// keyvalues are deleted inside the function
+	virtual void ClientCommandKeyValues( edict_t *pEdict, KeyValues *pCommand ) = 0;
+
+	// Returns the XUID of the specified player. It'll be NULL if the player hasn't connected yet.
+	virtual uint64 GetClientXUID( edict_t *pPlayerEdict ) = 0;
 };
 
-#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
 
 //-----------------------------------------------------------------------------
@@ -487,7 +511,7 @@ public:
 	virtual void			ReadRestoreHeaders( CSaveRestoreData * ) = 0;
 	virtual void			Restore( CSaveRestoreData *, bool ) = 0;
 	virtual bool			IsRestoring() = 0;
-	virtual bool            SupportsSaveRestore() = 0;
+	virtual bool			SupportsSaveRestore() = 0;
 
 	// Returns the number of entities moved across the transition
 	virtual int				CreateEntityTransitionList( CSaveRestoreData *, int ) = 0;
@@ -523,13 +547,20 @@ public:
 	// iCookie is the value returned by IServerPluginHelpers::StartQueryCvarValue.
 	// Added with version 2 of the interface.
 	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) = 0;
+
+	// Called after tools are initialized (i.e. when Foundry is initialized so we can get IServerFoundry).
+	virtual void			PostToolsInit() = 0;
 	
-	virtual void			PostToolsInit( void ) = 0;
-	virtual void            ApplyGameSettings( KeyValues * ) = 0;
-	virtual void            GetMatchmakingTags( char *, unsigned int ) = 0;
-	virtual void            ServerHibernationUpdate( bool ) = 0;
+	// Called to apply lobby settings to a dedicated server
+	virtual void			ApplyGameSettings( KeyValues *pKV ) = 0;
+
+	virtual void			GetMatchmakingTags( char *buf, size_t bufSize ) = 0;
+
+	virtual void			ServerHibernationUpdate( bool bHibernating ) = 0;
+
 	virtual void            GenerateLumpFileName( const char *, char *, int, int ) = 0;
-	virtual void            *GetMatchmakingGameData( char *, unsigned int ) = 0; 
+
+	virtual void            GetMatchmakingGameData( char *buf, size_t bufSize ) = 0; 
 };
 
 //-----------------------------------------------------------------------------
@@ -564,8 +595,9 @@ public:
 	// This is also where an entity can force other entities to be transmitted if it refers to them
 	// with ehandles.
 	virtual void			CheckTransmit( CCheckTransmitInfo *pInfo, const unsigned short *pEdictIndices, int nEdicts ) = 0;
-	
-	virtual void			PrepareForFullUpdate( edict_t * ) = 0;
+
+	// TERROR: Perform any PVS cleanup before a full update
+	virtual void			PrepareForFullUpdate( edict_t *pEdict ) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMECLIENTS		"ServerGameClients003"
@@ -624,17 +656,21 @@ public:
 	// Anything this game .dll wants to add to the bug reporter text (e.g., the entity/model under the picker crosshair)
 	//  can be added here
 	virtual void			GetBugReportInfo( char *buf, int buflen ) = 0;
-	
-	virtual void			ClientVoice( edict_t * ) = 0;
+
+	// TERROR: A player sent a voice packet
+	virtual void			ClientVoice( edict_t *pEdict ) = 0;
 
 	// A user has had their network id setup and validated 
 	virtual void			NetworkIDValidated( const char *pszUserName, const char *pszNetworkID ) = 0;
-	
-	virtual int 			GetMaxSplitscreenPlayers( void ) = 0;
-	
-	virtual int				GetMaxHumanPlayers( void ) = 0;
 
-	virtual void            ClientCommandKeyValues( edict_t *pEdict, KeyValues * ) = 0;
+	// Returns max splitscreen slot count ( 1 == no splits, 2 for 2-player split screen )
+	virtual int				GetMaxSplitscreenPlayers() = 0;
+
+	// Return # of human slots, -1 if can't determine or don't care (engine will assume it's == maxplayers )
+	virtual int				GetMaxHumanPlayers() = 0;
+
+	// The client has submitted a keyvalues command
+	virtual void			ClientCommandKeyValues( edict_t *pEntity, KeyValues *pKeyValues ) = 0;
 };
 
 #define INTERFACEVERSION_UPLOADGAMESTATS		"ServerUploadGameStats001"
@@ -693,5 +729,17 @@ public:
 };
 
 #define SERVER_DLL_SHARED_APPSYSTEMS		"VServerDllSharedAppSystems001"
+
+#define INTERFACEVERSION_SERVERGAMETAGS		"ServerGameTags001"
+
+//-----------------------------------------------------------------------------
+// Purpose: querying the game dll for Server cvar tags
+//-----------------------------------------------------------------------------
+abstract_class IServerGameTags
+{
+public:
+	// Get the list of cvars that require tags to show differently in the server browser
+	virtual void			GetTaggedConVarList( KeyValues *pCvarTagList ) = 0;
+};
 
 #endif // EIFACE_H

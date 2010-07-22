@@ -20,8 +20,8 @@
 #include "tier1/iconvar.h"
 #include "tier1/utlvector.h"
 #include "tier1/utlstring.h"
-#include "icvar.h"
 #include "Color.h"
+#include "icvar.h"
 
 #ifdef _WIN32
 #define FORCEINLINE_CVAR FORCEINLINE
@@ -121,10 +121,10 @@ public:
 	virtual bool				IsFlagSet( int flag ) const;
 	// Set flag
 	virtual void				AddFlags( int flags );
-	// Remove flag
+	// Clear flag
 	virtual void				RemoveFlags( int flags );
-	// Get flags
-	virtual int					GetFlags( void ) const;
+
+	virtual int					GetFlags() const;
 
 	// Return name of cvar
 	virtual const char			*GetName( void ) const;
@@ -329,6 +329,7 @@ class ConVar : public ConCommandBase, public IConVar
 {
 friend class CCvar;
 friend class ConVarRef;
+
 
 public:
 	typedef ConCommandBase BaseClass;
