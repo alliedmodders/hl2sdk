@@ -181,6 +181,7 @@ FoundGameListItem::FoundGameListItem( vgui::Panel *parent, const char *panelName
 	m_pLblPing = NULL;
 	m_pLblPlayerGamerTag = NULL;
 	m_pLblDifficulty = NULL;
+	m_pLblSwarmState = NULL;
 	m_pLblPlayers = NULL;
 	m_pLblNotJoinable = NULL;
 
@@ -325,6 +326,7 @@ void FoundGameListItem::SetGameIndex( const Info& fi )
 
 		SetGamePlayerCount( 0, 0 );
 		SetGameDifficulty( "" );
+		SetSwarmState( "" );
 	}
 	else if ( char const *szOtherTitle = fi.IsOtherTitle() )
 	{
@@ -340,6 +342,7 @@ void FoundGameListItem::SetGameIndex( const Info& fi )
 
 		SetGamePlayerCount( 0, 0 );
 		SetGameDifficulty( "" );
+		SetSwarmState( "" );
 	}
 	else if ( fi.IsJoinable() || fi.IsDownloadable() )
 	{
@@ -366,6 +369,18 @@ void FoundGameListItem::SetGameIndex( const Info& fi )
 			char chDiffBuffer[64];
 			Q_snprintf( chDiffBuffer, sizeof( chDiffBuffer ), "#L4D360UI_Difficulty_%s_%s", szDiff, szMode );
 			SetGameDifficulty( chDiffBuffer );
+		}
+
+		char const *szDiff = fi.mpGameDetails->GetString( "game/swarmstate", "ingame" );
+		Msg( "Adding a server to the list:\n" );
+		KeyValuesDumpAsDevMsg( fi.mpGameDetails );
+		if ( !Q_stricmp( szDiff, "ingame" ) )
+		{
+			SetSwarmState( "#L4D360UI_ingame" );
+		}
+		else
+		{
+			SetSwarmState( "#L4D360UI_briefing" );
 		}
 	}
 	else
@@ -435,6 +450,15 @@ void FoundGameListItem::SetGameDifficulty( const char *difficultyName )
 	if( m_pLblDifficulty )
 	{
 		m_pLblDifficulty->SetText( difficultyName ? difficultyName : "" );
+	}
+}
+
+//=============================================================================
+void FoundGameListItem::SetSwarmState( const char *szSwarmStateText )
+{
+	if( m_pLblSwarmState )
+	{
+		m_pLblSwarmState->SetText( szSwarmStateText ? szSwarmStateText : "" );
 	}
 }
 
@@ -618,6 +642,7 @@ void FoundGameListItem::PaintBackground()
 	{
 		DrawListItemLabel( m_pLblDifficulty, true );
 		DrawListItemLabel( m_pLblPlayers, true );
+		DrawListItemLabel( m_pLblSwarmState, true );
 	}
 	else
 	{
@@ -835,6 +860,11 @@ void FoundGameListItem::ApplySchemeSettings( IScheme *pScheme )
 	{
 		m_pLblDifficulty->SetVisible( false );
 	}
+	m_pLblSwarmState = dynamic_cast< vgui::Label * > ( FindChildByName( "LblSwarmState" ) );
+	if ( m_pLblSwarmState )
+	{
+		m_pLblSwarmState->SetVisible( false );
+	}
 	m_pLblPlayers = dynamic_cast< vgui::Label * > ( FindChildByName( "LblNumPlayers" ) );
 	if ( m_pLblPlayers )
 	{
@@ -847,8 +877,8 @@ void FoundGameListItem::ApplySchemeSettings( IScheme *pScheme )
 		m_pLblNotJoinable->SetVisible( false );
 	}
 	
-	m_hTextFont = pScheme->GetFont( "DefaultBold", true );
-	m_hTextBlurFont = pScheme->GetFont( "DefaultBoldBlur", true );
+	m_hTextFont = pScheme->GetFont( "Default", true );
+	m_hTextBlurFont = pScheme->GetFont( "DefaultBlur", true );
 
 	m_hSmallTextFont = pScheme->GetFont( "DefaultMedium", true );
 	m_hSmallTextBlurFont = pScheme->GetFont( "DefaultMediumBlur", true );

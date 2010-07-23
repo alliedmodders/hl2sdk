@@ -195,8 +195,24 @@ void CASW_Weapon::ItemBusyFrame( void )
 					}
 				}
 #endif
+				CSoundParameters params;
+				if ( !GetParametersForSound( "FastReload.Success", params, NULL ) )
+					return;
 
-				EmitSound( "FastReload.Success" );	
+				EmitSound_t playparams(params);
+				playparams.m_nPitch = params.pitch;
+
+				CASW_Player *pPlayer = GetCommander();
+				if ( pPlayer )
+				{
+					CSingleUserRecipientFilter filter( pMarine->GetCommander() );
+					if ( IsPredicted() && CBaseEntity::GetPredictionPlayer() )
+					{
+						filter.UsePredictionRules();
+					}
+					EmitSound(filter, entindex(), playparams);
+				}
+				
 				//Msg("%f RELOAD SUCCESS! - bAttack1 = %d, bOldAttack1 = %d\n", gpGlobals->curtime, bAttack1, bOldAttack1 );
 				//Msg( "S: %f - %f - %f RELOAD SUCCESS! -- Progress = %f\n", gpGlobals->curtime, fFastStart, fFastEnd, flProgress );
 #ifdef GAME_DLL				
@@ -207,7 +223,23 @@ void CASW_Weapon::ItemBusyFrame( void )
 			}
 			else if (m_fFastReloadStart != 0)
 			{
-				EmitSound( "FastReload.Miss" );	
+				CSoundParameters params;
+				if ( !GetParametersForSound( "FastReload.Miss", params, NULL ) )
+					return;
+
+				EmitSound_t playparams(params);
+				playparams.m_nPitch = params.pitch;
+
+				CASW_Player *pPlayer = GetCommander();
+				if ( pPlayer )
+				{
+					CSingleUserRecipientFilter filter( pMarine->GetCommander() );
+					if ( IsPredicted() && CBaseEntity::GetPredictionPlayer() )
+					{
+						filter.UsePredictionRules();
+					}
+					EmitSound(filter, entindex(), playparams);
+				}
 				//Msg("%f RELOAD MISSED! - bAttack1 = %d, bOldAttack1 = %d\n", gpGlobals->curtime, bAttack1, bOldAttack1 );
 				//Msg( "S: %f - %f - %f RELOAD MISSED! -- Progress = %f\n", gpGlobals->curtime, fFastStart, fFastEnd, flProgress );
 				m_fFastReloadEnd = 0;

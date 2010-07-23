@@ -51,6 +51,10 @@ public:
 	DECLARE_DATADESC();
 
 	int m_iSpeedrunTime;
+
+#ifdef CLIENT_DLL
+	virtual void OnDataChanged( DataUpdateType_t updateType );
+#endif
 };
 
 class CASW_Player;
@@ -399,6 +403,11 @@ public:
 	virtual int	GetGameState() { return m_iGameState; }
 	virtual void SetGameState(int iNewState) { m_iGameState = iNewState; }
 	CNetworkVar(unsigned char, m_iGameState);
+#ifdef CLIENT_DLL
+
+	virtual void OnDataChanged( DataUpdateType_t updateType );
+	unsigned char m_iPreviousGameState;
+#endif
 
 	// misc
 	virtual void CreateStandardEntities( void );	

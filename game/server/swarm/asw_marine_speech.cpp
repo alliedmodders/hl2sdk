@@ -30,14 +30,14 @@ extern ISoundEmitterSystemBase *soundemitterbase;
 ConVar asw_debug_marine_chatter("asw_debug_marine_chatter", "0", 0, "Show debug info about when marine chatter is triggered");
 
 #define ACTOR_SARGE (1 << 0)
-#define ACTOR_JAEGER (1 << 1)
-#define ACTOR_WILDCAT (1 << 2)
-#define ACTOR_WOLFE (1 << 3)
-#define ACTOR_FAITH (1 << 4)
-#define ACTOR_BASTILLE (1 << 5)
-#define ACTOR_CRASH (1 << 6)
-#define ACTOR_FLYNN (1 << 7)
-#define ACTOR_VEGAS (1 << 8)
+#define ACTOR_WILDCAT (1 << 1)
+#define ACTOR_FAITH (1 << 2)
+#define ACTOR_CRASH (1 << 3)
+#define ACTOR_JAEGER (1 << 4)
+#define ACTOR_WOLFE (1 << 5)
+#define ACTOR_BASTILLE (1 << 6)
+#define ACTOR_VEGAS (1 << 7)
+#define ACTOR_FLYNN (1 << 8)
 #define ACTOR_ALL (ACTOR_SARGE | ACTOR_JAEGER | ACTOR_WILDCAT | ACTOR_WOLFE | ACTOR_FAITH | ACTOR_BASTILLE | ACTOR_CRASH | ACTOR_FLYNN)
 
 int CASW_MarineSpeech::s_CurrentConversation = CONV_NONE;

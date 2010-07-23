@@ -18,6 +18,7 @@
 #include "filesystem.h"
 #include "tier1/utlintrusivelist.h"
 #include "tier1/utlvector.h"
+#include "tier1/utlmap.h"
 
 class CPackedStore;
 
@@ -127,14 +128,14 @@ public:
 
 	// Get a list of all the files in the zip You are responsible for freeing the contents of
 	// outFilenames (call outFilenames.PurgeAndDeleteElements).
-	int GetFileList( CUtlStringList &outFilenames, bool bFormattedOutput = false );
+	int GetFileList( CUtlStringList &outFilenames, bool bFormattedOutput, bool bSortedOutput );
 
 	// Get a list of all files that match the given wildcard string
-	int GetFileList( const char *pWildCard, CUtlStringList &outFilenames, bool bFormattedOutput = false );
+	int GetFileList( const char *pWildCard, CUtlStringList &outFilenames, bool bFormattedOutput, bool bSortedOutput );
 	
 	// Get a list of all directories of the given wildcard
-	int GetDirList( const char *pWildCard, CUtlStringList &outDirnames );
-	int GetDirList( CUtlStringList &outDirnames );
+	int GetFileAndDirLists( const char *pWildCard, CUtlStringList &outDirnames, CUtlStringList &outFilenames, bool bSortedOutput );
+	int GetFileAndDirLists( CUtlStringList &outDirnames, CUtlStringList &outFilenames, bool bSortedOutput );
 
 	bool IsEmpty( void ) const;
 
@@ -186,7 +187,10 @@ private:
 	FileHandle_t GetWriteHandle( int nChunkIdx );
 	void CloseWriteHandle( void );
 
-
+	// For cache-ing directory and contents data
+	CUtlStringList m_directoryList; // The index of this list of directories...
+	CUtlMap<int, CUtlStringList*> m_dirContents; // ...is the key to this map of filenames
+	void BuildFindFirstCache();
 
 };
 

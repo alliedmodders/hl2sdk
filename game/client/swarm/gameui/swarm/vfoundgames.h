@@ -84,6 +84,7 @@ public:
 
 	void SetGamePing( Info::GAME_PING ping );
 	void SetGameDifficulty( const char* difficultyName );
+	void SetSwarmState( const char* szSwarmStateText );
 	void SetGamePlayerCount( int current, int max );
 
 	void DrawListItemLabel( vgui::Label* label, bool bSmallFont, bool bEastAligned = false );
@@ -133,6 +134,7 @@ private:
 	vgui::Label			*m_pLblPing;
 	vgui::Label			*m_pLblPlayerGamerTag;
 	vgui::Label			*m_pLblDifficulty;
+	vgui::Label			*m_pLblSwarmState;
 	vgui::Label			*m_pLblPlayers;
 	vgui::Label			*m_pLblNotJoinable;
 

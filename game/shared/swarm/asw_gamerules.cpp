@@ -134,6 +134,7 @@ extern ConVar old_radius_damage;
 	ConVar asw_adjust_difficulty_by_number_of_marines( "asw_adjust_difficulty_by_number_of_marines", "1", FCVAR_CHEAT, "If enabled, difficulty will be reduced when there are only 3 or 2 marines." );
 	ConVar sv_vote_kick_ban_duration("sv_vote_kick_ban_duration", "5", 0, "How long should a kick vote ban someone from the server? (in minutes)");
 	ConVar sv_timeout_when_fully_connected( "sv_timeout_when_fully_connected", "30", FCVAR_NONE, "Once fully connected, player will be kicked if he doesn't send a network message within this interval." );
+	ConVar mm_swarm_state( "mm_swarm_state", "ingame", FCVAR_DEVELOPMENTONLY );
 #else
 	extern ConVar asw_controls;
 #endif
@@ -327,6 +328,15 @@ LINK_ENTITY_TO_CLASS( asw_gamerules, CAlienSwarmProxy );
 IMPLEMENT_NETWORKCLASS_ALIASED( AlienSwarmProxy, DT_AlienSwarmProxy )
 
 #ifdef CLIENT_DLL
+	void CAlienSwarmProxy::OnDataChanged( DataUpdateType_t updateType )
+	{
+		BaseClass::OnDataChanged( updateType );
+		if ( ASWGameRules() )
+		{
+			ASWGameRules()->OnDataChanged( updateType );
+		}
+	}
+
 	void RecvProxy_ASWGameRules( const RecvProp *pProp, void **pOut, void *pData, int objectID )
 	{
 		CAlienSwarm *pRules = ASWGameRules();
@@ -496,6 +506,7 @@ CAlienSwarm::CAlienSwarm()
 	m_nMarineDeathCamStep = 0;
 	m_hMarineDeathRagdoll = NULL;
 	m_fDeathCamYawAngleOffset = 0.0f;
+	m_iPreviousGameState = 200;
 
 	engine->SetPitchScale( 1.0f );
 
@@ -574,6 +585,21 @@ float CAlienSwarm::GetMarineDeathCamInterp( void )
 	}
 
 	return 0.0f;
+}
+
+void CAlienSwarm::OnDataChanged( DataUpdateType_t updateType )
+{
+	if ( m_iPreviousGameState != GetGameState() )
+	{
+		m_iPreviousGameState = GetGameState();
+
+		IGameEvent * event = gameeventmanager->CreateEvent( "swarm_state_changed" );
+		if ( event )
+		{
+			event->SetInt( "state", m_iPreviousGameState );
+			gameeventmanager->FireEventClientSide( event );
+		}
+	}
 }
 
 #else
@@ -935,6 +961,7 @@ void CAlienSwarm::AllowBriefing()
 {
 	DevMsg( "Cheat allowing return to briefing\n" );
 	SetGameState( ASW_GS_BRIEFING );
+	mm_swarm_state.SetValue( "briefing" );
 }
 
 
@@ -1571,6 +1598,7 @@ void CAlienSwarm::StartMission()
 	Msg("==STARTMISSION==\n");
 
 	SetGameState(ASW_GS_LAUNCHING);
+	mm_swarm_state.SetValue( "ingame" );
 	m_fNextLaunchingStep = gpGlobals->curtime + ASW_LAUNCHING_STEP;
 
 	// reset fail advice
@@ -1680,6 +1708,7 @@ void CAlienSwarm::UpdateLaunching()
 		}
 
 		SetGameState(ASW_GS_INGAME);
+		mm_swarm_state.SetValue( "ingame" );
 		DevMsg( "Setting game state to ingame\n" );
 
 		// Alert gamestats of spawning
@@ -6508,6 +6537,7 @@ void CAlienSwarm::LevelInitPostEntity()
 	}
 	
 	SetGameState(ASW_GS_BRIEFING);
+	mm_swarm_state.SetValue( "briefing" );
 	SetMaxMarines();
 	SetInitialGameMode();
 

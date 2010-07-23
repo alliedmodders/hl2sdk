@@ -364,6 +364,14 @@ static int __cdecl FoundPublicGamesSortFunc( vgui::Panel* const *a, vgui::Panel*
 		return ( builtInA ? -1 : 1 );
 	}
 
+	// now by swarm state
+	const char *stateA = ia.mpGameDetails->GetString( "game/swarmstate", "" );
+	const char *stateB = ib.mpGameDetails->GetString( "game/swarmstate", "" );
+	if ( int iResult = Q_stricmp( stateA, stateB ) )
+	{
+		return iResult;
+	}
+
 	// now by campaign
 	const char *campaignNameA = ia.mpGameDetails->GetString( "game/missioninfo/displaytitle", "" );
 	const char *campaignNameB = ib.mpGameDetails->GetString( "game/missioninfo/displaytitle", "" );
