@@ -120,6 +120,8 @@ void CNB_Weapon_Detail::UpdateLabels( CASW_WeaponInfo *pWeaponData )
 					nBonusDmg = MarineSkills()->GetSkillBasedValue(pProfile, ASW_MARINE_SKILL_ACCURACY, ASW_MARINE_SUBSKILL_ACCURACY_PDW_DMG);
 				else if ( FStrEq("asw_weapon_sniper_rifle", pWeaponData->szClassName) )
 					nBonusDmg = MarineSkills()->GetSkillBasedValue(pProfile, ASW_MARINE_SKILL_ACCURACY, ASW_MARINE_SUBSKILL_ACCURACY_SNIPER_RIFLE_DMG);
+				else if ( FStrEq("asw_weapon_tesla_gun", pWeaponData->szClassName) )
+					nBonusDmg = 0.5f + MarineSkills()->GetSkillBasedValue(pProfile, ASW_MARINE_SKILL_ACCURACY, ASW_MARINE_SUBSKILL_ACCURACY_TESLA_CANNON_DMG);
 				else if ( FStrEq("asw_weapon_chainsaw", pWeaponData->szClassName) )
 				{
 					flBaseSkillDmgShift = asw_skill_melee_dmg_base.GetFloat();
@@ -170,7 +172,7 @@ void CNB_Weapon_Detail::UpdateLabels( CASW_WeaponInfo *pWeaponData )
 			else if ( iDamValue > 0 )
 				flCurrent = MAX( (flDamage-5.0f) / 55.0f, 0.05f );
 
-			if ( flDamage <= 1.0f )
+			if ( flDamage <= 0.0f )
 			{
 				m_pValueLabel->SetText( L"N/A" );
 				m_pStatsBar->SetVisible( false );

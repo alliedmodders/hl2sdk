@@ -794,11 +794,11 @@ void CASW_MarineSpeech::Update()
 									int iProfileIndex = s_hActor2.Get()->GetMarineProfile()->m_ProfileIndex;
 									// change the line to one appropriate for who we're talking to
 									if (iProfileIndex == 0) iCurrentConvLine = CHATTER_TEQUILA_REPLY_SARGE;
-									else if (iProfileIndex == 1) iCurrentConvLine = CHATTER_TEQUILA_REPLY_JAEGER;
-									else if (iProfileIndex == 2) iCurrentConvLine = CHATTER_TEQUILA_REPLY_WILDCAT;
-									else if (iProfileIndex == 3) iCurrentConvLine = CHATTER_TEQUILA_REPLY_WOLFE;
-									else if (iProfileIndex == 4) iCurrentConvLine = CHATTER_TEQUILA_REPLY_FAITH;
-									else if (iProfileIndex == 5) iCurrentConvLine = CHATTER_TEQUILA_REPLY_BASTILLE;
+									else if (iProfileIndex == 4) iCurrentConvLine = CHATTER_TEQUILA_REPLY_JAEGER;
+									else if (iProfileIndex == 1) iCurrentConvLine = CHATTER_TEQUILA_REPLY_WILDCAT;
+									else if (iProfileIndex == 5) iCurrentConvLine = CHATTER_TEQUILA_REPLY_WOLFE;
+									else if (iProfileIndex == 2) iCurrentConvLine = CHATTER_TEQUILA_REPLY_FAITH;
+									else if (iProfileIndex == 6) iCurrentConvLine = CHATTER_TEQUILA_REPLY_BASTILLE;
 									else iCurrentConvLine = -1;
 								}
 								else if (s_CurrentConversation == CONV_SERIOUS_INJURY)

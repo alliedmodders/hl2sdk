@@ -188,9 +188,9 @@ ConVar	sk_plr_dmg_asw_ml			( "sk_plr_dmg_asw_ml","0", FCVAR_REPLICATED );
 ConVar	sk_npc_dmg_asw_ml			( "sk_npc_dmg_asw_ml","0", FCVAR_REPLICATED);
 ConVar	sk_max_asw_ml				( "sk_max_asw_ml","0", FCVAR_REPLICATED);
 // TeslaGun
-ConVar	sk_plr_dmg_asw_tg			( "sk_plr_dmg_asw_ml","0", FCVAR_REPLICATED );
-ConVar	sk_npc_dmg_asw_tg			( "sk_npc_dmg_asw_ml","0", FCVAR_REPLICATED);
-ConVar	sk_max_asw_tg				( "sk_max_asw_ml","0", FCVAR_REPLICATED);
+ConVar	sk_plr_dmg_asw_tg			( "sk_plr_dmg_asw_tg","0", FCVAR_REPLICATED );
+ConVar	sk_npc_dmg_asw_tg			( "sk_npc_dmg_asw_tg","0", FCVAR_REPLICATED);
+ConVar	sk_max_asw_tg				( "sk_max_asw_tg","0", FCVAR_REPLICATED);
 // Chainsaw
 ConVar	sk_plr_dmg_asw_cs			( "sk_plr_dmg_asw_cs","0", FCVAR_REPLICATED );
 ConVar	sk_npc_dmg_asw_cs			( "sk_npc_dmg_asw_cs","0", FCVAR_REPLICATED);
@@ -456,6 +456,8 @@ CAmmoDef *GetAmmoDef()
 		def.AddAmmoType("ASW_P",			DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_asw_p",			"sk_npc_dmg_asw_p",			"sk_max_asw_p",			BULLET_IMPULSE(200, 1225),	0 );
 		// mining laser
 		def.AddAmmoType("ASW_ML",			DMG_ENERGYBEAM,				TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_asw_ml",		"sk_npc_dmg_asw_ml",		"sk_max_asw_ml",		BULLET_IMPULSE(200, 1225),	0 );
+		// mining laser
+		def.AddAmmoType("ASW_TG",			DMG_ENERGYBEAM,				TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_asw_tg",		"sk_npc_dmg_asw_tg",		"sk_max_asw_tg",		BULLET_IMPULSE(200, 1225),	0 );
 		// railgun
 		def.AddAmmoType("ASW_RG",			DMG_SONIC,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_asw_rg",		"sk_npc_dmg_asw_rg",		"sk_max_asw_rg",		BULLET_IMPULSE(200, 1225),	0 );
 		// chainsaw

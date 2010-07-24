@@ -5,6 +5,8 @@
 #include "takedamageinfo.h"
 #include "gamerules.h"
 #include "in_buttons.h"
+#include "asw_weapon_parse.h"
+#include "asw_marine_skills.h"
 
 #ifdef CLIENT_DLL
 #include "c_baseplayer.h"
@@ -89,6 +91,8 @@ CASW_Weapon_Tesla_Gun::CASW_Weapon_Tesla_Gun( void )
 #ifdef GAME_DLL
 	m_fLastForcedFireTime = 0;	// last time we forced an AI marine to push its fire button
 #endif
+	m_flLastShockTime = 0.0f;
+	m_flLastDischargeTime = 0.0f;
 }
 
 //-----------------------------------------------------------------------------
@@ -180,8 +184,14 @@ void CASW_Weapon_Tesla_Gun::PrimaryAttack( void )
 						break;
 					}
 				}
-				
 			}
+
+			if ( gpGlobals->curtime > m_flLastDischargeTime + (GetFireRate()*3) )
+			{
+				m_iClip1 = MAX( 0, m_iClip1 - 1 );
+				m_flLastDischargeTime = gpGlobals->curtime;
+			}
+
 			m_flNextPrimaryAttack = gpGlobals->curtime;
 			break;
 		}
@@ -233,7 +243,7 @@ void CASW_Weapon_Tesla_Gun::PrimaryAttack( void )
 			}
 
 
-			if ( gpGlobals->curtime > m_flLastShockTime + GetFireRate() )
+			if ( gpGlobals->curtime >= m_flLastShockTime + GetFireRate() )
 			{
 				ShockEntity();
 				m_flLastShockTime = gpGlobals->curtime;
@@ -254,6 +264,18 @@ void CASW_Weapon_Tesla_Gun::PrimaryAttack( void )
 #endif
 
 	m_fSlowTime = gpGlobals->curtime + GetFireRate();
+}
+
+float CASW_Weapon_Tesla_Gun::GetWeaponDamage()
+{
+	float flDamage = GetWeaponInfo()->m_flBaseDamage;
+
+	if ( GetMarine() )
+	{
+		flDamage += MarineSkills()->GetSkillBasedValueByMarine(GetMarine(), ASW_MARINE_SKILL_ACCURACY, ASW_MARINE_SUBSKILL_ACCURACY_TESLA_CANNON_DMG);
+	}
+
+	return flDamage;
 }
 
 void CASW_Weapon_Tesla_Gun::ShockEntity()

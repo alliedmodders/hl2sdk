@@ -308,7 +308,7 @@ float CASW_Marine_Resource::OnFired_GetDamageScale()
 
 	// damage amp causes double damage always
 	CASW_Marine *pMarine = GetMarineEntity();
-	if ( pMarine && pMarine->GetDamageBuffEndTime() > 0.0f )
+	if ( pMarine && pMarine->GetDamageBuffEndTime() > gpGlobals->curtime )
 	{
 		flDamageScale *= 2.0f;
 	}

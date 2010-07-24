@@ -35,7 +35,7 @@ int ASW_GiveAmmo( CASW_Marine *pMarine, float flCount, const char *pszAmmoName, 
 		pMarine->TookAmmoPickup( pAmmoEntity );
 
 		// Check the ammo type... for some doing a spilling bullet effect isn't fictionally appropriate
-		if ( iAmmoType != GetAmmoDef()->Index( "ASW_F" ) && iAmmoType != GetAmmoDef()->Index( "ASW_ML" ) && iAmmoType != GetAmmoDef()->Index( "ASW_GL" ) )
+		if ( iAmmoType != GetAmmoDef()->Index( "ASW_F" ) && iAmmoType != GetAmmoDef()->Index( "ASW_ML" ) && iAmmoType != GetAmmoDef()->Index( "ASW_TG" ) && iAmmoType != GetAmmoDef()->Index( "ASW_GL" ) )
 		{
 			// Do effects
 			int iAmmoCost = CASW_Ammo_Drop_Shared::GetAmmoUnitCost( iAmmoType );

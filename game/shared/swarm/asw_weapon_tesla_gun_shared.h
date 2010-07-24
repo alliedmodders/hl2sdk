@@ -59,6 +59,7 @@ public:
 	virtual bool HasAmmo();
 	virtual bool ShouldMarineMoveSlow();
 
+	virtual float GetWeaponDamage( void );
 	virtual float GetWeaponRange( void ) { return 240; }
 
 	virtual Class_T Classify( void ) { return (Class_T)CLASS_ASW_TESLA_GUN; }
