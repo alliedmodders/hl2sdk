@@ -19,124 +19,124 @@
 #include "tier0/memdbgon.h"
 
 // base convars
-ConVar asw_skill_leadership_accuracy_chance_base("asw_skill_leadership_accuracy_chance_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_leadership_damage_resist_base("asw_skill_leadership_damage_resist_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_vindicator_dmg_base("asw_skill_vindicator_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_vindicator_pellets_base("asw_skill_vindicator_pellets_base", "0", FCVAR_REPLICATED );
+ConVar asw_skill_leadership_accuracy_chance_base("asw_skill_leadership_accuracy_chance_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_leadership_damage_resist_base("asw_skill_leadership_damage_resist_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_vindicator_dmg_base("asw_skill_vindicator_dmg_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_vindicator_pellets_base("asw_skill_vindicator_pellets_base", "7", FCVAR_REPLICATED | FCVAR_CHEAT );
 
-ConVar asw_skill_autogun_base("asw_skill_autogun_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_piercing_base("asw_skill_piercing_base", "0", FCVAR_REPLICATED );
+ConVar asw_skill_autogun_base("asw_skill_autogun_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_piercing_base("asw_skill_piercing_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
 
-ConVar asw_skill_healing_charges_base("asw_skill_healing_charges_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_self_healing_charges_base("asw_skill_self_healing_charges_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_healing_medkit_hps_base("asw_skill_healing_medkit_hps_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_healing_hps_base("asw_skill_healing_hps_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_healing_grenade_base("asw_skill_healing_grenade_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_healing_gun_charges_base("asw_skill_healing_gun_charges_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_healing_gun_base("asw_skill_healing_gun_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_xenowounds_base("asw_skill_xenowounds_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_drugs_base("asw_skill_drugs_base", "0", FCVAR_REPLICATED );
+ConVar asw_skill_healing_charges_base("asw_skill_healing_charges_base", "4", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_self_healing_charges_base("asw_skill_self_healing_charges_base", "2", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_healing_medkit_hps_base("asw_skill_healing_medkit_hps_base", "50", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_healing_hps_base("asw_skill_healing_hps_base", "25", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_healing_grenade_base("asw_skill_healing_grenade_base", "50", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_healing_gun_charges_base("asw_skill_healing_gun_charges_base", "40", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_healing_gun_base("asw_skill_healing_gun_base", "5", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_xenowounds_base("asw_skill_xenowounds_base", "100", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_drugs_base("asw_skill_drugs_base", "5", FCVAR_REPLICATED | FCVAR_CHEAT );
 
-ConVar asw_skill_hacking_speed_base("asw_skill_hacking_speed_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_scanner_base("asw_skill_scanner_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_engineering_welding_base("asw_skill_engineering_welding_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_engineering_sentry_base("asw_skill_engineering_sentry_base", "0", FCVAR_REPLICATED );
+ConVar asw_skill_hacking_speed_base("asw_skill_hacking_speed_base", "2.0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_scanner_base("asw_skill_scanner_base", "600", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_engineering_welding_base("asw_skill_engineering_welding_base", "0.8", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_engineering_sentry_base("asw_skill_engineering_sentry_base", "1.0", FCVAR_REPLICATED | FCVAR_CHEAT );
 
-ConVar asw_skill_grenades_radius_base("asw_skill_grenades_radius_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_dmg_base("asw_skill_grenades_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_incendiary_dmg_base("asw_skill_grenades_incendiary_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_cluster_dmg_base("asw_skill_grenades_cluster_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_clusters_base("asw_skill_grenades_clusters_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_flechette_dmg_base("asw_skill_grenades_flechette_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_hornet_dmg_base("asw_skill_grenades_hornet_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_hornet_count_base("asw_skill_grenades_hornet_count_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_hornet_interval_base("asw_skill_grenades_hornet_interval_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_freeze_radius_base("asw_skill_grenades_freeze_radius_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_freeze_duration_base("asw_skill_grenades_freeze_duration_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_smart_count_base("asw_skill_grenades_smart_count_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_smart_interval_base("asw_skill_grenades_smart_interval_base", "0", FCVAR_REPLICATED );
+ConVar asw_skill_grenades_radius_base("asw_skill_grenades_radius_base", "280", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_dmg_base("asw_skill_grenades_dmg_base", "80", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_incendiary_dmg_base("asw_skill_grenades_incendiary_dmg_base", "80", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_cluster_dmg_base("asw_skill_grenades_cluster_dmg_base", "80", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_clusters_base("asw_skill_grenades_clusters_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_flechette_dmg_base("asw_skill_grenades_flechette_dmg_base", "10", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_hornet_dmg_base("asw_skill_grenades_hornet_dmg_base", "50", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_hornet_count_base("asw_skill_grenades_hornet_count_base", "8", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_hornet_interval_base("asw_skill_grenades_hornet_interval_base", "0.09", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_freeze_radius_base("asw_skill_grenades_freeze_radius_base", "210", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_freeze_duration_base("asw_skill_grenades_freeze_duration_base", "3.0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_smart_count_base("asw_skill_grenades_smart_count_base", "32", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_smart_interval_base("asw_skill_grenades_smart_interval_base", "0.09", FCVAR_REPLICATED | FCVAR_CHEAT );
 
-ConVar asw_skill_health_base("asw_skill_health_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_melee_dmg_base("asw_skill_melee_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_melee_force_base("asw_skill_melee_force_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_melee_speed_base("asw_skill_melee_speed_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_reloading_base("asw_skill_reloading_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_reloading_fast_base( "asw_skill_reloading_fast_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_agility_movespeed_base("asw_skill_agility_movespeed_base", "0", FCVAR_REPLICATED );
+ConVar asw_skill_health_base("asw_skill_health_base", "80", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_melee_dmg_base("asw_skill_melee_dmg_base", "30", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_melee_force_base("asw_skill_melee_force_base", "10", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_melee_speed_base("asw_skill_melee_speed_base", "1.0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_reloading_base("asw_skill_reloading_base", "1.4", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_reloading_fast_base( "asw_skill_reloading_fast_base", "1.0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_agility_movespeed_base("asw_skill_agility_movespeed_base", "290", FCVAR_REPLICATED | FCVAR_CHEAT );
 
 // step convars
-ConVar asw_skill_leadership_accuracy_chance_step("asw_skill_leadership_accuracy_chance_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_leadership_damage_resist_step("asw_skill_leadership_damage_resist_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_vindicator_dmg_step("asw_skill_vindicator_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_vindicator_pellets_step("asw_skill_vindicator_pellets_step", "0", FCVAR_REPLICATED );
+ConVar asw_skill_leadership_accuracy_chance_step("asw_skill_leadership_accuracy_chance_step", "0.03", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_leadership_damage_resist_step("asw_skill_leadership_damage_resist_step", "0.06", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_vindicator_dmg_step("asw_skill_vindicator_dmg_step", "2.0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_vindicator_pellets_step("asw_skill_vindicator_pellets_step", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
 
-ConVar asw_skill_autogun_step("asw_skill_autogun_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_piercing_step("asw_skill_piercing_step", "0", FCVAR_REPLICATED );
+ConVar asw_skill_autogun_step("asw_skill_autogun_step", "1", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_piercing_step("asw_skill_piercing_step", "0.20", FCVAR_REPLICATED | FCVAR_CHEAT );
 
-ConVar asw_skill_healing_charges_step("asw_skill_healing_charges_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_self_healing_charges_step("asw_skill_self_healing_charges_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_healing_hps_step("asw_skill_healing_hps_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_healing_grenade_step("asw_skill_healing_grenade_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_healing_gun_charges_step("asw_skill_healing_gun_charges_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_healing_gun_step("asw_skill_healing_gun_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_healing_medkit_hps_step("asw_skill_healing_medkit_hps_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_xenowounds_step("asw_skill_xenowounds_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_drugs_step("asw_skill_drugs_step", "0", FCVAR_REPLICATED );
+ConVar asw_skill_healing_charges_step("asw_skill_healing_charges_step", "1", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_self_healing_charges_step("asw_skill_self_healing_charges_step", "0.5", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_healing_hps_step("asw_skill_healing_hps_step", "8", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_healing_grenade_step("asw_skill_healing_grenade_step", "10", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_healing_gun_charges_step("asw_skill_healing_gun_charges_step", "10", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_healing_gun_step("asw_skill_healing_gun_step", "1", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_healing_medkit_hps_step("asw_skill_healing_medkit_hps_step", "5", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_xenowounds_step("asw_skill_xenowounds_step", "-25", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_drugs_step("asw_skill_drugs_step", "0.8", FCVAR_REPLICATED | FCVAR_CHEAT );
 
-ConVar asw_skill_hacking_speed_step("asw_skill_hacking_speed_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_scanner_step("asw_skill_scanner_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_engineering_welding_step("asw_skill_engineering_welding_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_engineering_sentry_step("asw_skill_engineering_sentry_step", "0", FCVAR_REPLICATED );
+ConVar asw_skill_hacking_speed_step("asw_skill_hacking_speed_step", "0.1", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_scanner_step("asw_skill_scanner_step", "150", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_engineering_welding_step("asw_skill_engineering_welding_step", "0.5", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_engineering_sentry_step("asw_skill_engineering_sentry_step", "0.25", FCVAR_REPLICATED | FCVAR_CHEAT );
 
-ConVar asw_skill_grenades_radius_step("asw_skill_grenades_radius_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_dmg_step("asw_skill_grenades_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_incendiary_dmg_step("asw_skill_grenades_incendiary_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_cluster_dmg_step("asw_skill_grenades_cluster_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_clusters_step("asw_skill_grenades_clusters_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_flechette_dmg_step("asw_skill_grenades_flechette_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_hornet_dmg_step("asw_skill_grenades_hornet_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_hornet_count_step("asw_skill_grenades_hornet_count_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_hornet_interval_step("asw_skill_grenades_hornet_interval_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_freeze_radius_step("asw_skill_grenades_freeze_radius_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_freeze_duration_step("asw_skill_grenades_freeze_duration_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_smart_count_step("asw_skill_grenades_smart_count_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_grenades_smart_interval_step("asw_skill_grenades_smart_interval_step", "0", FCVAR_REPLICATED );
+ConVar asw_skill_grenades_radius_step("asw_skill_grenades_radius_step", "20", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_dmg_step("asw_skill_grenades_dmg_step", "10", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_incendiary_dmg_step("asw_skill_grenades_incendiary_dmg_step", "10", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_cluster_dmg_step("asw_skill_grenades_cluster_dmg_step", "10", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_clusters_step("asw_skill_grenades_clusters_step", "1", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_flechette_dmg_step("asw_skill_grenades_flechette_dmg_step", "1", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_hornet_dmg_step("asw_skill_grenades_hornet_dmg_step", "1", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_hornet_count_step("asw_skill_grenades_hornet_count_step", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_hornet_interval_step("asw_skill_grenades_hornet_interval_step", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_freeze_radius_step("asw_skill_grenades_freeze_radius_step", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_freeze_duration_step("asw_skill_grenades_freeze_duration_step", "0.3", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_smart_count_step("asw_skill_grenades_smart_count_step", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_grenades_smart_interval_step("asw_skill_grenades_smart_interval_step", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
 
-ConVar asw_skill_health_step("asw_skill_health_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_melee_dmg_step("asw_skill_melee_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_melee_force_step("asw_skill_melee_force_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_melee_speed_step("asw_skill_melee_speed_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_reloading_step("asw_skill_reloading_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_reloading_fast_step( "asw_skill_reloading_fast_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_agility_movespeed_step("asw_skill_agility_movespeed_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_agility_reload_step("asw_skill_agility_reload_step", "0", FCVAR_REPLICATED );
+ConVar asw_skill_health_step("asw_skill_health_step", "15", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_melee_dmg_step("asw_skill_melee_dmg_step", "6", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_melee_force_step("asw_skill_melee_force_step", "1.0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_melee_speed_step("asw_skill_melee_speed_step", "0.1", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_reloading_step("asw_skill_reloading_step", "-0.14", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_reloading_fast_step( "asw_skill_reloading_fast_step", "0.05", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_agility_movespeed_step("asw_skill_agility_movespeed_step", "10", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_agility_reload_step("asw_skill_agility_reload_step", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
 
-ConVar asw_skill_mines_fires_base("asw_skill_mines_fires_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_mines_fires_step("asw_skill_mines_fires_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_mines_duration_base("asw_skill_mines_duration_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_mines_duration_step("asw_skill_mines_duration_step", "0", FCVAR_REPLICATED );
+ConVar asw_skill_mines_fires_base("asw_skill_mines_fires_base", "1", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_mines_fires_step("asw_skill_mines_fires_step", "0.5", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_mines_duration_base("asw_skill_mines_duration_base", "10.0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_mines_duration_step("asw_skill_mines_duration_step", "5.0", FCVAR_REPLICATED | FCVAR_CHEAT );
 
 // accuracy convars
-ConVar asw_skill_accuracy_rifle_dmg_base("asw_skill_accuracy_rifle_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_rifle_dmg_step("asw_skill_accuracy_rifle_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_prifle_dmg_base("asw_skill_accuracy_prifle_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_prifle_dmg_step("asw_skill_accuracy_prifle_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_shotgun_dmg_base("asw_skill_accuracy_shotgun_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_shotgun_dmg_step("asw_skill_accuracy_shotgun_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_railgun_dmg_base("asw_skill_accuracy_railgun_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_railgun_dmg_step("asw_skill_accuracy_railgun_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_flamer_dmg_base("asw_skill_accuracy_flamer_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_flamer_dmg_step("asw_skill_accuracy_flamer_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_pistol_dmg_base("asw_skill_accuracy_pistol_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_pistol_dmg_step("asw_skill_accuracy_pistol_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_pdw_dmg_base("asw_skill_accuracy_pdw_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_pdw_dmg_step("asw_skill_accuracy_pdw_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_muzzle_flash_base("asw_skill_muzzle_flash_base", "1.0", FCVAR_REPLICATED );
-ConVar asw_skill_muzzle_flash_step("asw_skill_muzzle_flash_step", "0.2", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_sniper_rifle_dmg_base("asw_skill_accuracy_sniper_rifle_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_sniper_rifle_dmg_step("asw_skill_accuracy_sniper_rifle_dmg_step", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_tesla_cannon_dmg_base("asw_skill_accuracy_tesla_cannon_dmg_base", "0", FCVAR_REPLICATED );
-ConVar asw_skill_accuracy_tesla_cannon_dmg_step("asw_skill_accuracy_tesla_cannon_dmg_step", "0", FCVAR_REPLICATED );
+ConVar asw_skill_accuracy_rifle_dmg_base("asw_skill_accuracy_rifle_dmg_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_rifle_dmg_step("asw_skill_accuracy_rifle_dmg_step", "1", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_prifle_dmg_base("asw_skill_accuracy_prifle_dmg_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_prifle_dmg_step("asw_skill_accuracy_prifle_dmg_step", "1", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_shotgun_dmg_base("asw_skill_accuracy_shotgun_dmg_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_shotgun_dmg_step("asw_skill_accuracy_shotgun_dmg_step", "2", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_railgun_dmg_base("asw_skill_accuracy_railgun_dmg_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_railgun_dmg_step("asw_skill_accuracy_railgun_dmg_step", "10", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_flamer_dmg_base("asw_skill_accuracy_flamer_dmg_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_flamer_dmg_step("asw_skill_accuracy_flamer_dmg_step", "0.5", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_pistol_dmg_base("asw_skill_accuracy_pistol_dmg_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_pistol_dmg_step("asw_skill_accuracy_pistol_dmg_step", "2", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_pdw_dmg_base("asw_skill_accuracy_pdw_dmg_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_pdw_dmg_step("asw_skill_accuracy_pdw_dmg_step", "1.0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_muzzle_flash_base("asw_skill_muzzle_flash_base", "1.0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_muzzle_flash_step("asw_skill_muzzle_flash_step", "0.2", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_sniper_rifle_dmg_base("asw_skill_accuracy_sniper_rifle_dmg_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_sniper_rifle_dmg_step("asw_skill_accuracy_sniper_rifle_dmg_step", "10", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_tesla_cannon_dmg_base("asw_skill_accuracy_tesla_cannon_dmg_base", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar asw_skill_accuracy_tesla_cannon_dmg_step("asw_skill_accuracy_tesla_cannon_dmg_step", "025", FCVAR_REPLICATED | FCVAR_CHEAT );
 
 namespace
 {

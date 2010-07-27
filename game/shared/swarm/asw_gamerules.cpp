@@ -627,6 +627,19 @@ const char * GenerateNewSaveGameName()
 	return NULL;
 }
 
+void UpdateMatchmakingTags()
+{
+	// update sv_tags to force an update of the matchmaking tags
+	static ConVarRef sv_tags( "sv_tags" );
+
+	if ( sv_tags.IsValid() )
+	{
+		char buffer[ 1024 ];
+		Q_snprintf( buffer, sizeof( buffer ), "%s", sv_tags.GetString() );
+		sv_tags.SetValue( buffer );
+	}
+}
+
 CAlienSwarm::CAlienSwarm()
 {
 	Msg("CAlienSwarm created\n");
@@ -5186,6 +5199,8 @@ void CAlienSwarm::OnSkillLevelChanged( int iNewLevel )
 			gameeventmanager->FireEvent( event );
 		}
 	}
+
+	UpdateMatchmakingTags();
 		
 	m_iSkillLevel = iNewLevel;
 }

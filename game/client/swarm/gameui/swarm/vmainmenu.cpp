@@ -1279,7 +1279,7 @@ CON_COMMAND_F( openserverbrowser, "Opens server browser", 0 )
 
 #ifdef INFESTED_DLL
 		KeyValues *pSchemeKV = new KeyValues( "SetCustomScheme" );
-		pSchemeKV->SetString( "SchemeName", "SwarmFrameScheme" );
+		pSchemeKV->SetString( "SchemeName", "SwarmServerBrowserScheme" );
 		g_VModuleLoader.PostMessageToAllModules( pSchemeKV );
 #endif
 	}

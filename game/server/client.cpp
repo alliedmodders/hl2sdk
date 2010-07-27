@@ -388,6 +388,52 @@ void ClientPrecache( void )
 	// Game Instructor lessons - don't want people making simple scripted wall hacks
 	engine->ForceExactFile( "scripts/instructor_lessons.txt" );
 	engine->ForceExactFile( "scripts/mod_lessons.txt" );
+
+	// weapon scripts
+	engine->ForceExactFile( "scripts/asw_weapon_ammo_bag.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_ammo_satchel.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_autogun.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_blink.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_buff_grenade.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_chainsaw.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_electrified_armor.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_fire_extinguisher.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_fist.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_flamer.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_flares.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_flashlight.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_freeze_grenades.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_grenades.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_grenade_launcher.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_heal_grenade.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_heal_gun.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_hornet_barrage.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_jump_jet.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_laser_mines.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_medical_satchel.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_medkit.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_mines.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_minigun.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_mining_laser.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_night_vision.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_normal_armor.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_pdw.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_pistol.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_prifle.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_railgun.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_rifle.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_sentry.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_sentry_cannon.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_sentry_flamer.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_sentry_freeze.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_shotgun.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_smart_bomb.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_sniper_rifle.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_stim.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_tesla_gun.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_tesla_trap.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_vindicator.txt" );
+	engine->ForceExactFile( "scripts/asw_weapon_welder.txt" );
 }
 
 CON_COMMAND_F( cast_ray, "Tests collision detection", FCVAR_CHEAT )

@@ -1896,6 +1896,49 @@ void CServerGameDLL::GetMatchmakingTags( char *buf, size_t bufSize )
 
 	Q_strncpy( buf, mp_gamemode.GetString(), bufSize );
 #endif
+
+#ifdef INFESTED_DLL
+	extern ConVar asw_marine_ff_absorption;
+	extern ConVar asw_sentry_friendly_fire_scale;
+	extern ConVar asw_skill;
+
+	char * const bufBase = buf;
+	int len = 0;
+
+	// hardcore friendly fire
+	if ( asw_marine_ff_absorption.GetInt() != 1 || asw_sentry_friendly_fire_scale.GetFloat() != 0.0f )
+	{
+		Q_strncpy( buf, "HardcoreFF,", bufSize );
+		len = strlen( buf );
+		buf += len;
+		bufSize -= len;
+	}
+
+	// difficulty level
+	const char *szSkill = "Normal,";
+	switch( asw_skill.GetInt() )
+	{
+		case 1: szSkill = "Easy,"; break;
+		case 3: szSkill = "Hard,"; break;
+		case 4: szSkill = "Insane,"; break;
+	}
+	Q_strncpy( buf, szSkill, bufSize );
+	len = strlen( buf );
+	buf += len;
+	bufSize -= len;
+	
+	if ( ASWGameRules() && ASWGameRules()->GetGameState() == ASW_GS_BRIEFING )
+	{
+		Q_strncpy( buf, "Briefing,", bufSize );
+		len = strlen( buf );
+		buf += len;
+		bufSize -= len;
+	}
+
+	// Trim the last comma if anything was written
+	if ( buf > bufBase )
+		buf[ -1 ] = 0;
+#endif
 }
 
 void CServerGameDLL::GetMatchmakingGameData( char *buf, size_t bufSize )
