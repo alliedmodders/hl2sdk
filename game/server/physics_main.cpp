@@ -310,7 +310,7 @@ bool CPhysicsPushedEntities::SpeculativelyCheckPush( PhysicsPushedInfo_t &info, 
 			}
 		}
 		pBlocker->SetAbsOrigin( pushDestPosition );
-		DevMsg(1, "Ignoring player blocking train!\n");
+		//DevMsg(1, "Ignoring player blocking train!\n");
 		return true;
 	}
 	else

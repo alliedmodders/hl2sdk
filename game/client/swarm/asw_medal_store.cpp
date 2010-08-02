@@ -51,10 +51,22 @@ void C_ASW_Medal_Store::LoadMedalStore()
 #else
 	ISteamRemoteStorage *pRemoteStorage = SteamClient() ? ( ISteamRemoteStorage * )SteamClient()->GetISteamGenericInterface(
 		SteamAPI_GetHSteamUser(), SteamAPI_GetHSteamPipe(), STEAMREMOTESTORAGE_INTERFACE_VERSION ) : NULL;
+	ISteamUser *pSteamUser = steamapicontext ? steamapicontext->SteamUser() : NULL;
+	if ( !pSteamUser )
+		return;
+
+	char szMedalFile[ 256 ];
+	Q_snprintf( szMedalFile, sizeof( szMedalFile ), "cfg/clientc_%s.dat", pSteamUser->GetSteamID().Render() );
+	int len = Q_strlen( szMedalFile );
+	for ( int i = 0; i < len; i++ )
+	{
+		if ( szMedalFile[ i ] == ':' )
+			szMedalFile[i] = '_';
+	}
 
 	if ( asw_steam_cloud.GetBool() && pRemoteStorage )
 	{
-		if ( !GetFileFromRemoteStorage( pRemoteStorage, "PersistentMarines.dat", "cfg/clientc.dat" ) )
+		if ( !GetFileFromRemoteStorage( pRemoteStorage, "PersistentMarines.dat", szMedalFile ) )
 		{
 #ifdef _DEBUG
 			Warning( "Failed to get client.dat from Steam Cloud.\n" );
@@ -74,7 +86,7 @@ void C_ASW_Medal_Store::LoadMedalStore()
 
 	m_bLoaded = true;
 
-	FileHandle_t f = filesystem->Open( "cfg/clientc.dat", "rb", "MOD" );
+	FileHandle_t f = filesystem->Open( szMedalFile, "rb", "MOD" );
 	if ( !f )
 		return;		// if we get here, it means the player has no clientc.dat file and therefore no medals
 
@@ -211,6 +223,9 @@ void C_ASW_Medal_Store::LoadMedalStore()
 
 bool C_ASW_Medal_Store::SaveMedalStore()
 {
+	if ( !m_bLoaded )
+		return false;
+
 	KeyValues *kv = new KeyValues( "CLIENTDAT" );
 	
 	// output missions/campaigns/kills
@@ -302,19 +317,34 @@ bool C_ASW_Medal_Store::SaveMedalStore()
 	}
 	UTIL_EncodeICE( (unsigned char*) buf.Base(), buf.TellPut(), g_ucMedalStoreEncryptionKey );
 
-	bool bResult = filesystem->WriteFile( "cfg/clientc.dat", "MOD", buf );
+	ISteamUser *pSteamUser = steamapicontext ? steamapicontext->SteamUser() : NULL;
+	if ( !pSteamUser )
+		return false;
 
-#if defined(NO_STEAM)
-	AssertMsg( false, "SteamCloud not available." );
-#else
-	ISteamRemoteStorage *pRemoteStorage = SteamClient() ? ( ISteamRemoteStorage * )SteamClient()->GetISteamGenericInterface(
-		SteamAPI_GetHSteamUser(), SteamAPI_GetHSteamPipe(), STEAMREMOTESTORAGE_INTERFACE_VERSION ) : NULL;
-
-	if ( asw_steam_cloud.GetBool() && pRemoteStorage )
+	char szMedalFile[ 256 ];
+	Q_snprintf( szMedalFile, sizeof( szMedalFile ), "cfg/clientc_%s.dat", pSteamUser->GetSteamID().Render() );
+	int len = Q_strlen( szMedalFile );
+	for ( int i = 0; i < len; i++ )
 	{
-		WriteFileToRemoteStorage( pRemoteStorage, "PersistentMarines.dat", "cfg/clientc.dat" );
+		if ( szMedalFile[ i ] == ':' )
+			szMedalFile[i] = '_';
 	}
-#endif
+
+	bool bResult = filesystem->WriteFile( szMedalFile, "MOD", buf );
+	if ( bResult )
+	{
+	#if defined(NO_STEAM)
+		AssertMsg( false, "SteamCloud not available." );
+	#else
+		ISteamRemoteStorage *pRemoteStorage = SteamClient() ? ( ISteamRemoteStorage * )SteamClient()->GetISteamGenericInterface(
+			SteamAPI_GetHSteamUser(), SteamAPI_GetHSteamPipe(), STEAMREMOTESTORAGE_INTERFACE_VERSION ) : NULL;
+
+		if ( asw_steam_cloud.GetBool() && pRemoteStorage )
+		{
+			WriteFileToRemoteStorage( pRemoteStorage, "PersistentMarines.dat", szMedalFile );
+		}
+	#endif
+	}
 
 	return bResult;
 }

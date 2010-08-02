@@ -96,12 +96,6 @@ bool CASW_Base_Spawner::CanSpawn( const Vector &vecHullMins, const Vector &vecHu
 		}
 	}
 
-	if (m_iMoveAsideCount > 5)
-	{
-		// we've tried to move aliens aside 5 times, don't do it anymore, else they'll never go to sleep and save CPU
-		return false;
-	}
-
 	Vector mins = GetAbsOrigin() - Vector( 23, 23, 0 );
 	Vector maxs = GetAbsOrigin() + Vector( 23, 23, 0 );
 	CBaseEntity *pList[128];
@@ -132,15 +126,17 @@ bool CASW_Base_Spawner::CanSpawn( const Vector &vecHullMins, const Vector &vecHu
 
 				if (tr.fraction < 1.0f && tr.DidHitNonWorldEntity())
 				{
-					bool bMovedSomethingAside = false;
 					// some non-world entity is blocking the spawn point, so don't spawn
 					if (tr.m_pEnt)
 					{
-						IASW_Spawnable_NPC *pSpawnable = dynamic_cast<IASW_Spawnable_NPC*>(tr.m_pEnt);
-						if (pSpawnable)
+						if ( m_iMoveAsideCount < 6 )	// don't send 'move aside' commands more than 5 times in a row, else you'll stop blocked NPCs going to sleep.
 						{
-							pSpawnable->MoveAside();		// try and make him move aside
-							bMovedSomethingAside = true;
+							IASW_Spawnable_NPC *pSpawnable = dynamic_cast<IASW_Spawnable_NPC*>(tr.m_pEnt);
+							if (pSpawnable)
+							{
+								pSpawnable->MoveAside();		// try and make him move aside
+								m_iMoveAsideCount++;
+							}
 						}
 						if (asw_debug_spawners.GetBool())
 							Msg("asw_spawner(%s): Alien can't spawn because a non-world entity is blocking the spawn point: %s\n", GetEntityName(), tr.m_pEnt->GetClassname());
@@ -150,9 +146,7 @@ bool CASW_Base_Spawner::CanSpawn( const Vector &vecHullMins, const Vector &vecHu
 						if (asw_debug_spawners.GetBool())
 							Msg("asw_spawner(%s): Alien can't spawn because a non-world entity is blocking the spawn point.\n", GetEntityName());
 					}
-					
-					if (bMovedSomethingAside)
-						m_iMoveAsideCount++;
+						
 					return false;
 				}
 			}
