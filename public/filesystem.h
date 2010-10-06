@@ -362,7 +362,7 @@ public:
 
 // This is the minimal interface that can be implemented to provide access to
 // a named set of files.
-#define BASEFILESYSTEM_INTERFACE_VERSION		"VBaseFileSystem011"
+#define BASEFILESYSTEM_INTERFACE_VERSION		"VBaseFileSystem012"
 
 abstract_class IBaseFileSystem
 {
@@ -402,7 +402,7 @@ public:
 // Main file system interface
 //-----------------------------------------------------------------------------
 
-#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem017"
+#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem018"
 
 abstract_class IFileSystem : public IAppSystem, public IBaseFileSystem
 {
@@ -455,6 +455,8 @@ public:
 
 	// interface for custom pack files > 4Gb
 	virtual bool			AddPackFile( const char *fullpath, const char *pathID ) = 0;
+
+	virtual bool			IsLocalizedPath ( const char *path, const char *pathID ) = 0;
 
 	//--------------------------------------------------------
 	// File manipulation operations
@@ -512,6 +514,7 @@ public:
 		FileFindHandle_t *pHandle
 		) = 0;
 
+	virtual void			FindFileAbsoluteList( CUtlVector<CUtlString> &, const char *, const char * ) = 0;
 	//--------------------------------------------------------
 	// File name and directory operations
 	//--------------------------------------------------------
