@@ -1208,6 +1208,9 @@ void SoundSystemPreloadSounds( void )
 
 CON_COMMAND( sv_soundemitter_flush, "Flushes the sounds.txt system (server only)" )
 {
+	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+		return;
+
 	// save the current soundscape
 	// kill the system
 	g_SoundEmitterSystem.Flush();
@@ -1222,12 +1225,18 @@ CON_COMMAND( sv_soundemitter_flush, "Flushes the sounds.txt system (server only)
 
 CON_COMMAND( sv_soundemitter_filecheck, "Report missing wave files for sounds and game_sounds files." )
 {
+	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+		return;
+
 	int missing = soundemitterbase->CheckForMissingWavFiles( true );
 	DevMsg( "---------------------------\nTotal missing files %i\n", missing );
 }
 
 CON_COMMAND( sv_findsoundname, "Find sound names which reference the specified wave files." )
-{
+{	
+	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+		return;
+
 	if ( args.ArgC() != 2 )
 		return;
 

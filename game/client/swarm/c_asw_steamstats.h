@@ -34,9 +34,13 @@ struct MissionStats_t
 	int32 m_iKillsTotal;
 	int32 m_iDamageTotal;
 	int32 m_iFFTotal;
-	int32 m_iKillsAvg;
-	int32 m_iDamageAvg;
-	int32 m_iFFAvg;
+	float32 m_fKillsAvg;
+	float32 m_fDamageAvg;
+	float32 m_fFFAvg;
+	int32 m_iTimeTotal;
+	int32 m_iTimeAvg;
+	int32 m_iHighestDifficulty;
+	int32 m_iBestSpeedrunTimes[5];
 };
 
 struct WeaponStats_t
@@ -105,7 +109,7 @@ private:
 	StatList_Int_t m_MarineSelectionCounts;
 	StatList_Int_t m_DifficultyCounts;
 
-	DifficultyStats_t m_DifficultyStats[4];
+	DifficultyStats_t m_DifficultyStats[5];
 	MissionStats_t m_MissionStats;
 	WeaponStatList_t m_WeaponStats;
 	

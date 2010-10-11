@@ -21,6 +21,7 @@ public:
 	virtual void Spawn();
 	virtual void Precache();
 	virtual void InitAlienClassName();
+	virtual int  DrawDebugTextOverlays();
 
 	Class_T Classify() { return (Class_T) CLASS_ASW_SPAWNER; }
 

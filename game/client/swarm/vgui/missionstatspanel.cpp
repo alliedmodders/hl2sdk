@@ -115,29 +115,25 @@ void MissionStatsPanel::SetMissionLabels(vgui::Label *pMissionLabel, vgui::Label
 		pszToken = "#asw_difficulty_easy";
 	else if (iDiff == 3)
 		pszToken = "#asw_difficulty_hard";
-	else if (iDiff >= 4)
+	else if (iDiff == 4)
 		pszToken = "#asw_difficulty_insane";
+	else if (iDiff >= 5)
+		pszToken = "#asw_difficulty_imba";
 	const wchar_t *pDiff = g_pVGuiLocalize->Find( pszToken );
 
-	// find campaign/single mission
-	if (bCampaign)
-		pszToken = "#asw_difficulty_campaign";
-	else
-		pszToken = "#asw_difficulty_mission";
-	const wchar_t *pCampaign = g_pVGuiLocalize->Find( pszToken );
+	bool bOnslaught = CAlienSwarm::IsOnslaught();
 
-	// find style
-	if (bUber)
-		pszToken = "#asw_difficulty_uber";
-	else if (bCarnage)
-		pszToken = "#asw_difficulty_carnage";
-	else if (bHardcore)
-		pszToken = "#asw_difficulty_hardcore";
-	
-	const wchar_t *pStyle = L"";
-	if (bUber || bCarnage || bHardcore)
+	const wchar_t *pOnslaught = L"";
+	if ( bOnslaught )
 	{
-		pStyle = g_pVGuiLocalize->Find( pszToken );
+		pOnslaught = g_pVGuiLocalize->Find( "#nb_onslaught_title" );
+	}
+
+	bool bHardcoreFriendlyFire = CAlienSwarm::IsHardcoreFF();
+	const wchar_t *pHardcoreFF = L"";
+	if ( bHardcoreFriendlyFire )
+	{
+		pHardcoreFF = g_pVGuiLocalize->Find( "#asw_hardcore_ff" );
 	}
 
 	const wchar_t *pCheated = L"";
@@ -149,7 +145,7 @@ void MissionStatsPanel::SetMissionLabels(vgui::Label *pMissionLabel, vgui::Label
 	wchar_t mission_difficulty[96];
 	g_pVGuiLocalize->ConstructString( mission_difficulty, sizeof(mission_difficulty),
 		g_pVGuiLocalize->Find("#asw_mission_difficulty"), 4,
-			pCampaign, pDiff, pStyle, pCheated);
+			pDiff, pOnslaught, pHardcoreFF, pCheated);
 	pDifficultyLabel->SetText(mission_difficulty);
 }
 

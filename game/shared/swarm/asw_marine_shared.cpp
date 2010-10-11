@@ -296,6 +296,7 @@ float CASW_Marine::MaxSpeed()
 	// adjust the speed by difficulty level
 	switch (ASWGameRules()->GetSkillLevel())
 	{
+		case 5: speedscale *= asw_marine_speed_scale_insane.GetFloat(); break;
 		case 4: speedscale *= asw_marine_speed_scale_insane.GetFloat(); break;
 		case 3: speedscale *= asw_marine_speed_scale_hard.GetFloat(); break;
 		case 2: speedscale *= asw_marine_speed_scale_normal.GetFloat(); break;

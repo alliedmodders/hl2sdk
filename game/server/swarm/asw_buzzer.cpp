@@ -2745,7 +2745,9 @@ float CASW_Buzzer::GetMaxEnginePower()
 
 	if (ASWGameRules())
 	{
-		return ASWGameRules()->GetSkillLevel() + 0.1f;
+		int nSkillLevel = ASWGameRules()->GetSkillLevel();
+		nSkillLevel = clamp<int>( nSkillLevel, 1, 4 );
+		return nSkillLevel + 0.1f;
 	}
 	return 2.0f;
 }

@@ -55,6 +55,7 @@ namespace BaseModUI {
 #endif
 
 		DropDownMenu* m_drpDifficulty;
+		DropDownMenu* m_drpOnslaught;
 		DropDownMenu* m_drpGameStatus;
 		DropDownMenu* m_drpCampaign;
 		BaseModUI::BaseModHybridButton *m_btnFilters;

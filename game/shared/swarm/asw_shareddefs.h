@@ -583,8 +583,6 @@ enum
 };
 
 #define ASW_XP_CAP 42250
-#define ASW_LEVEL_CAP 26
-#define ASW_PROMOTION_CAP 3
 
 extern ConVar asw_visrange_generic;
 
@@ -601,5 +599,14 @@ public:
 };
 
 #endif
+
+enum CASW_Flock_Leader_State
+{
+	ASW_FL_CHASING = 0,
+	ASW_FL_CHARGING,
+	ASW_FL_FLEEING,
+
+	NUM_FLOCK_LEADER_STATES,
+};
 
 #endif // ASW_SHAREDDEFS_H

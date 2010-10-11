@@ -11,6 +11,7 @@
 #include <vgui/ILocalize.h>
 #include "asw_shareddefs.h"
 #include "c_asw_marine_resource.h"
+#include "c_asw_campaign_save.h"
 
 CASW_Steamstats g_ASW_Steamstats;
 
@@ -39,15 +40,56 @@ namespace
 	const char* szShotsTotal = ".shotsfired.total";
 	const char* szShotsHit = ".shotshit.total";
 	const char* szHealingTotal = ".healing.total";
+	const char* szTimeTotal = ".time.total";
+	const char* szKillsAvg = ".kills.avg";
+	const char* szDamageAvg = ".damage.avg";
+	const char* szFFAvg = ".ff.avg";
+	const char* szTimeAvg = ".time.avg";
+	const char* szBestDifficulty = ".difficulty.best";
+	const char* szBestTime = ".time.best";
+	const char* szBestSpeedrunDifficulty = ".time.best.difficulty";
 
+	// difficulty names used when fetching steam stats
 	const char* g_szDifficulties[] =
 	{
 		"Easy",
 		"Normal",
 		"Hard",
-		"Insane"
+		"Insane",
+		"imba"
 	};
 
+	const char *g_OfficialMaps[] =
+	{
+		"asi-jac1-landingbay_01",
+		"asi-jac1-landingbay_02",
+		"asi-jac2-deima",
+		"asi-jac3-rydberg",
+		"asi-jac4-residential",
+		"asi-jac6-sewerjunction",
+		"asi-jac7-timorstation"
+	};
+}
+
+bool IsOfficialCampaign()
+{
+	if( !ASWGameRules()->IsCampaignGame() )
+		return false;
+
+	CASW_Campaign_Save *pCampaign = ASWGameRules()->GetCampaignSave();
+
+	const char *szMapName = engine->GetLevelNameShort();
+	const char *szCampaignName = pCampaign->GetCampaignName();
+	if( FStrEq( szCampaignName, "jacob" ) )
+	{
+		for( int i=0; i < ARRAYSIZE( g_OfficialMaps ); ++i )
+		{
+			if( FStrEq( szMapName, g_OfficialMaps[i] ) )
+				return true;
+		}
+	}
+
+	return false;
 }
 
 bool IsDamagingWeapon( const char* szWeaponName, bool bIsExtraEquip )
@@ -148,6 +190,10 @@ bool CASW_Steamstats::FetchStats( CSteamID playerSteamID, CASW_Player *pPlayer )
 	m_MarineSelectionCounts.Purge();
 	m_DifficultyCounts.Purge();
 	m_WeaponStats.Purge();
+
+	// Returns true so we don't re-fetch stats
+	if( !IsOfficialCampaign() )
+		return true;
 
 	// Fetch the player's overall stats
 	FETCH_STEAM_STATS( "iTotalKills", m_iTotalKills );
@@ -253,7 +299,7 @@ bool CASW_Steamstats::FetchStats( CSteamID playerSteamID, CASW_Player *pPlayer )
 	}
 
 	// Get difficulty counts
-	for( int i=0; i < 4; ++i )
+	for( int i=0; i < 5; ++i )
 	{
 		int32 iTempCount;
 		FETCH_STEAM_STATS( CFmtStr( "%s.games.total", g_szDifficulties[ i ] ), iTempCount );
@@ -275,7 +321,13 @@ void CASW_Steamstats::PrepStatsForSend( CASW_Player *pPlayer )
 		return;
 
 	// Update stats from the briefing screen
-	if( !GetDebriefStats() || !ASWGameResource() )
+	if( !GetDebriefStats() 
+		|| !ASWGameResource() 
+		|| !IsOfficialCampaign() 
+#ifndef DEBUG 
+		|| ASWGameRules()->m_bCheated 
+#endif
+		)
 		return;
 
 	if( m_MarineSelectionCounts.Count() == 0 || 
@@ -386,7 +438,10 @@ void CASW_Steamstats::PrepStatsForSend( CASW_Player *pPlayer )
 	SEND_STEAM_STATS( CFmtStr( "marines.%i.total", iMarineProfileIndex ), m_MarineSelectionCounts[iMarineProfileIndex] );
 	int iLevel = pPlayer->GetLevel();
 	SEND_STEAM_STATS( "level", iLevel );
-	SEND_STEAM_STATS( "level.xprequired", ( iLevel == NELEMS( g_iLevelExperience ) ) ? 0 : g_iLevelExperience[ iLevel ] );
+	int iPromotion = pPlayer->GetPromotion();
+	float flXPRequired = ( iLevel == NELEMS( g_iLevelExperience ) ) ? 0 : g_iLevelExperience[ iLevel ];
+	flXPRequired *= g_flPromotionXPScale[ iPromotion ];
+	SEND_STEAM_STATS( "level.xprequired", (int) flXPRequired );
 
 	// Send favorite equip info
 	SEND_STEAM_STATS( "equips.primary.fav", GetFavoriteEquip(0) );
@@ -560,6 +615,8 @@ bool DifficultyStats_t::FetchDifficultyStats( CSteamAPIContext * pSteamContext, 
 			break;
 		case 4: szDifficulty = "insane";
 			break;
+		case 5: szDifficulty = "imba";
+			break;
 	}
 	if( szDifficulty )
 	{
@@ -618,6 +675,8 @@ void DifficultyStats_t::PrepStatsForSend( CASW_Player *pPlayer )
 		break;
 	case 4: szDifficulty = "insane";
 		break;
+	case 5: szDifficulty = "imba";
+		break;
 	}
 	if( szDifficulty )
 	{
@@ -652,6 +711,12 @@ bool MissionStats_t::FetchMissionStats( CSteamAPIContext * pSteamContext, CSteam
 	FETCH_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szKillsTotal ), m_iKillsTotal );
 	FETCH_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szDamageTotal ), m_iDamageTotal );
 	FETCH_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szFFTotal ), m_iFFTotal );
+	FETCH_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szTimeTotal ), m_iTimeTotal );
+	FETCH_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szBestDifficulty ), m_iHighestDifficulty );
+	for( int i=0; i<5; ++i )
+	{
+		FETCH_STEAM_STATS( CFmtStr( "%s%s.%s", szLevelName, szBestTime, g_szDifficulties[i] ), m_iBestSpeedrunTimes[i] );
+	}
 
 	return bOK;
 }
@@ -663,6 +728,7 @@ void MissionStats_t::PrepStatsForSend( CASW_Player *pPlayer )
 		return;
 
 	CASW_Marine_Resource *pMR = ASWGameResource()->GetFirstMarineResourceForPlayer( pPlayer );
+	int iDifficulty = ASWGameRules()->GetSkillLevel();
 	if ( pMR )
 	{
 		int iMarineIndex = ASWGameResource()->GetMarineResourceIndex( pMR );
@@ -674,6 +740,24 @@ void MissionStats_t::PrepStatsForSend( CASW_Player *pPlayer )
 			m_iGamesTotal++;
 			m_iGamesSuccess += ASWGameRules()->GetMissionSuccess() ? 1 : 0;
 			m_fGamesSuccessPercent = m_iGamesSuccess / (float)m_iGamesTotal * 100.0f;
+			m_iTimeTotal += GetDebriefStats()->m_fTimeTaken;
+			if( ASWGameRules()->GetMissionSuccess() )
+			{
+				if( iDifficulty > m_iHighestDifficulty )
+					m_iHighestDifficulty = iDifficulty;
+
+				if( (unsigned int)m_iBestSpeedrunTimes[ iDifficulty - 1 ] > GetDebriefStats()->m_fTimeTaken )
+				{
+					m_iBestSpeedrunTimes[ iDifficulty - 1 ] = GetDebriefStats()->m_fTimeTaken;
+				}
+			}
+			
+			
+			// Safely compute averages
+			m_fKillsAvg = m_iKillsTotal / (float)m_iGamesTotal;
+			m_fFFAvg = m_iFFTotal / (float)m_iGamesTotal;
+			m_fDamageAvg = m_iDamageTotal / (float)m_iGamesTotal;
+			m_iTimeAvg = m_iTimeTotal / (float)m_iGamesTotal;
 		}
 	}
 
@@ -692,7 +776,13 @@ void MissionStats_t::PrepStatsForSend( CASW_Player *pPlayer )
 	SEND_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szKillsTotal ), m_iKillsTotal );
 	SEND_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szDamageTotal ), m_iDamageTotal );
 	SEND_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szFFTotal ), m_iFFTotal );
-
+	SEND_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szTimeTotal ), m_iTimeTotal );
+	SEND_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szKillsAvg ), m_fKillsAvg );
+	SEND_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szDamageAvg ), m_fDamageAvg );
+	SEND_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szFFAvg ), m_fFFAvg );
+	SEND_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szTimeAvg ), m_iTimeAvg );
+	SEND_STEAM_STATS( CFmtStr( "%s%s", szLevelName, szBestDifficulty ), m_iHighestDifficulty );
+	SEND_STEAM_STATS( CFmtStr( "%s%s.%s", szLevelName, szBestTime, g_szDifficulties[ iDifficulty - 1 ] ), m_iBestSpeedrunTimes[ iDifficulty - 1 ] );
 }
 
 bool WeaponStats_t::FetchWeaponStats( CSteamAPIContext * pSteamContext, CSteamID playerSteamID, const char *szClassName )

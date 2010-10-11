@@ -345,13 +345,6 @@ BEGIN_DATADESC( CASW_Marine )
 	DEFINE_FIELD( m_bPowerupExpires, FIELD_BOOLEAN ),
 END_DATADESC()
 
-void UpdateMatchmakingTags();
-
-static void FriendlyFireCallback( IConVar *pConVar, const char *pOldValue, float flOldValue )
-{
-	UpdateMatchmakingTags();
-}
-
 extern ConVar weapon_showproficiency;
 extern ConVar asw_leadership_radius;
 extern ConVar asw_buzzer_poison_duration;
@@ -381,7 +374,6 @@ ConVar asw_marine_ff("asw_marine_ff", "1", FCVAR_CHEAT, "Marine friendly fire se
 ConVar asw_marine_ff_guard_time("asw_marine_ff_guard_time", "5.0", FCVAR_CHEAT, "Amount of time firing is disabled for when activating friendly fire guard");
 ConVar asw_marine_ff_dmg_base("asw_marine_ff_dmg_base", "1.0", FCVAR_CHEAT, "Amount of friendly fire damage on mission difficulty 5");
 ConVar asw_marine_ff_dmg_step("asw_marine_ff_dmg_step", "0.2", FCVAR_CHEAT, "Amount friendly fire damage is modified per mission difficuly level away from 5");
-ConVar asw_marine_ff_absorption("asw_marine_ff_absorption", "1", FCVAR_NONE, "Friendly fire absorption style (0=none 1=ramp up 2=ramp down)", FriendlyFireCallback );
 ConVar asw_marine_ff_absorption_decay_rate("asw_marine_ff_absorption_decay_rate", "0.33f", FCVAR_CHEAT, "Rate of FF absorption decay");
 ConVar asw_marine_ff_absorption_build_rate("asw_marine_ff_absorption_build_rate", "0.25f", FCVAR_CHEAT, "Rate of FF absorption decay build up when being shot by friendlies");
 ConVar asw_marine_burn_time_easy("asw_marine_burn_time_easy", "6", FCVAR_CHEAT, "Amount of time marine burns for when ignited on easy difficulty");
@@ -395,7 +387,8 @@ ConVar asw_marine_special_idle_chatter_chance("asw_marine_special_idle_chatter_c
 ConVar asw_force_ai_fire("asw_force_ai_fire", "0", FCVAR_CHEAT, "Forces all AI marines to fire constantly");
 ConVar asw_realistic_death_chatter("asw_realistic_death_chatter", "0", FCVAR_NONE, "If true, only 1 nearby marine will shout about marine deaths");
 ConVar asw_god( "asw_god", "0", FCVAR_CHEAT, "Set to 1 to make marines invulnerable" );
-ConVar asw_sentry_friendly_fire_scale( "asw_sentry_friendly_fire_scale", "0", FCVAR_NONE, "Damage scale for sentry gun friendly fire", FriendlyFireCallback );
+extern ConVar asw_sentry_friendly_fire_scale;
+extern ConVar asw_marine_ff_absorption;
 ConVar asw_movement_direction_tolerance( "asw_movement_direction_tolerance", "30.0", FCVAR_CHEAT );
 ConVar asw_movement_direction_interval( "asw_movement_direction_interval", "0.5", FCVAR_CHEAT );
 
@@ -4058,7 +4051,7 @@ void CASW_Marine::ASW_Ignite( float flFlameLifetime, float flSize, CBaseEntity *
 		flFlameLifetime *= asw_marine_burn_time_normal.GetFloat();
 	else if (iDiff == 3)
 		flFlameLifetime *= asw_marine_burn_time_hard.GetFloat();
-	else if (iDiff == 4)
+	else if (iDiff == 4 || iDiff == 5)
 		flFlameLifetime *= asw_marine_burn_time_insane.GetFloat();	
 
 	if ( m_flFirstBurnTime == 0 )
@@ -4127,7 +4120,8 @@ bool CASW_Marine::AllowedToIgnite( void )
 	if ( m_iJumpJetting.Get() != 0 )
 		return false;
 
-	if ( m_flFirstBurnTime > 0 && (gpGlobals->curtime - m_flFirstBurnTime) >= asw_marine_time_until_ignite.GetFloat() )
+	float flBurnTime = ( asw_marine_ff_absorption.GetInt() > 0 ) ? asw_marine_time_until_ignite.GetFloat() : 0.2f;
+	if ( m_flFirstBurnTime > 0 && (gpGlobals->curtime - m_flFirstBurnTime) >= flBurnTime )
 		return true;
 
 	// don't ignite, but play a flesh burn sound if we aren't on fire already

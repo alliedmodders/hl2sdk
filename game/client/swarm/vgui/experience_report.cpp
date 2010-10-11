@@ -161,7 +161,7 @@ void CExperienceReport::PerformLayout()
 	if ( pPlayer )
 	{
 		int nPlayerLevel = pPlayer->GetLevel();
-		m_pWeaponUnlockPanel->SetVisible( nPlayerLevel < ASW_LEVEL_CAP );
+		m_pWeaponUnlockPanel->SetVisible( nPlayerLevel < ASW_NUM_EXPERIENCE_LEVELS );
 
 		if ( ASWGameRules() && ASWGameRules()->m_iSkillLevel == 2 && !ASWGameRules()->IsOfflineGame() &&
 			 !( ASWGameRules()->IsCampaignGame() && ASWGameRules()->CampaignMissionsLeft() <= 1 ) )
@@ -194,26 +194,28 @@ void CExperienceReport::OnThink()
 	
 	// monitor local player's experience bar to see when it loops
 	float flBarMin = m_pExperienceBar[ 0 ]->m_pExperienceBar->GetBarMin();
-	bool bCapped = ( (int) m_pExperienceBar[ 0 ]->m_pExperienceBar->m_fCurrent ) == ASW_XP_CAP;
-
-	if ( m_flOldBarMin == -1 )
+	bool bCapped = false;
+	
+	C_ASW_Player *pPlayer = C_ASW_Player::GetLocalASWPlayer();
+	if ( pPlayer )
 	{
-		m_bOldCapped = bCapped;
-	}
-
-	if ( m_flOldBarMin != -1 && ( m_flOldBarMin != flBarMin || m_bOldCapped != bCapped ) )		// bar min has changed - player has levelled up!
-	{
-		m_bPendingUnlockSequence = true;
-		IGameEvent *event = gameeventmanager->CreateEvent( "level_up" );
-		int nNewLevel = LevelFromXP( (int) m_pExperienceBar[ 0 ]->m_pExperienceBar->m_fCurrent );
-		if ( event )
+		bCapped = ( (int) m_pExperienceBar[ 0 ]->m_pExperienceBar->m_fCurrent ) >= ASW_XP_CAP * g_flPromotionXPScale[ pPlayer->GetPromotion() ];
+		if ( m_flOldBarMin == -1 )
 		{
-			event->SetInt( "level", nNewLevel );
-			gameeventmanager->FireEventClientSide( event );
+			m_bOldCapped = bCapped;
 		}
-		C_ASW_Player *pPlayer = C_ASW_Player::GetLocalASWPlayer();
-		if ( pPlayer )
+
+		if ( m_flOldBarMin != -1 && ( m_flOldBarMin != flBarMin || m_bOldCapped != bCapped ) )		// bar min has changed - player has levelled up!
 		{
+			m_bPendingUnlockSequence = true;
+			IGameEvent *event = gameeventmanager->CreateEvent( "level_up" );
+			int nNewLevel = LevelFromXP( (int) m_pExperienceBar[ 0 ]->m_pExperienceBar->m_fCurrent, pPlayer->GetPromotion() );
+			if ( event )
+			{
+				event->SetInt( "level", nNewLevel );
+				gameeventmanager->FireEventClientSide( event );
+			}
+			
 			const char *szWeaponClassUnlocked = pPlayer->GetWeaponUnlockedAtLevel( nNewLevel );
 			if ( szWeaponClassUnlocked )
 			{
@@ -227,9 +229,10 @@ void CExperienceReport::OnThink()
 					pComplete->OnWeaponUnlocked( szWeaponClassUnlocked );
 				}
 			}
+
+			CLocalPlayerFilter filter;
+			C_BaseEntity::EmitSound( filter, -1 /*SOUND_FROM_LOCAL_PLAYER*/, "ASW_XP.LevelUp" );
 		}
-		CLocalPlayerFilter filter;
-		C_BaseEntity::EmitSound( filter, -1 /*SOUND_FROM_LOCAL_PLAYER*/, "ASW_XP.LevelUp" );
 	}
 
 	m_flOldBarMin = flBarMin;
@@ -256,6 +259,7 @@ void CExperienceReport::OnThink()
 		case 2: m_pXPDifficultyScaleNumber->SetText( "" ); flTotalXP *= g_flXPDifficultyScale[1]; break;
 		case 3: m_pXPDifficultyScaleNumber->SetText( "+20%" ); flTotalXP *= g_flXPDifficultyScale[2]; break;
 		case 4: m_pXPDifficultyScaleNumber->SetText( "+40%" ); flTotalXP *= g_flXPDifficultyScale[3]; break;
+		case 5: m_pXPDifficultyScaleNumber->SetText( "+50%" ); flTotalXP *= g_flXPDifficultyScale[4]; break;
 		}
 		bool bShowDifficultyBonus = ( ASWGameRules()->GetSkillLevel() != 2 );
 		m_pXPDifficultyScaleNumber->SetVisible( bShowDifficultyBonus );

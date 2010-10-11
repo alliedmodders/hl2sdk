@@ -169,6 +169,7 @@ float CASW_Marine::GetCloseCombatSightRange()
 		case 2: return ASW_CLOSE_COMBAT_SIGHT_RANGE_NORMAL; break;
 		case 3: return ASW_CLOSE_COMBAT_SIGHT_RANGE_HARD; break;
 		case 4: 
+		case 5:
 		default: return ASW_CLOSE_COMBAT_SIGHT_RANGE_INSANE; break;
 		}
 	}

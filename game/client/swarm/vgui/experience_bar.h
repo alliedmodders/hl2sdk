@@ -32,6 +32,7 @@ public:
 
 	void InitFor( C_ASW_Player *pPlayer );
 	void UpdateLevelLabel();
+	void UpdateMinMaxes( int nPromotion );
 
 	bool IsDoneAnimating();
 
@@ -51,6 +52,7 @@ public:
 	int m_iPlayerLevel;
 	int m_nOldPlayerXP;
 	CSteamID m_lastSteamID;
+	int m_nLastPromotion;
 };
 
 class ExperienceBarSmall : public ExperienceBar

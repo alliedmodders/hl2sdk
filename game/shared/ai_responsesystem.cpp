@@ -639,6 +639,11 @@ IResponseSystem *g_pResponseSystem = &defaultresponsesytem;
 
 CON_COMMAND( rr_reloadresponsesystems, "Reload all response system scripts." )
 {
+#ifdef GAME_DLL
+	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+		return;
+#endif
+
 	defaultresponsesytem.ReloadAllResponseSystems();
 }
 

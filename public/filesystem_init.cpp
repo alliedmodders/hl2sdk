@@ -1532,9 +1532,32 @@ void FileSystem_AddSearchPath_Platform( IFileSystem *pFileSystem, const char *sz
 	}
 	else
 	{
-		Q_strncpy( platform, szGameInfoPath, MAX_PATH );
-		Q_StripTrailingSlash( platform );
-		Q_strncat( platform, "/../platform", MAX_PATH, MAX_PATH );
+		if ( !Sys_GetExecutableName( platform, sizeof( platform ) ) )
+		{
+			// fall back to old method if we can't get the executable name
+			Q_strncpy( platform, szGameInfoPath, MAX_PATH );
+			Q_StripTrailingSlash( platform );
+			Q_strncat( platform, "/../platform", MAX_PATH, MAX_PATH );
+		}
+		else
+		{
+			Q_StripFilename( platform );
+			Q_StripTrailingSlash( platform );
+			Q_FixSlashes( platform );
+
+			// remove bin folder if necessary
+			int nLen = Q_strlen( platform );
+			if ( ( nLen > 4 )
+					&& platform[ nLen - 4 ] == CORRECT_PATH_SEPARATOR
+					&& !Q_stricmp( "bin", platform + ( nLen - 3 ) )
+				)
+			{
+				Q_StripLastDir( platform, sizeof( platform ) );
+				Q_StripTrailingSlash( platform );
+			}
+			// go into platform folder
+			Q_strncat( platform, "/platform", MAX_PATH, MAX_PATH );
+		}
 	}
 
 	pFileSystem->AddSearchPath( platform, "PLATFORM" );

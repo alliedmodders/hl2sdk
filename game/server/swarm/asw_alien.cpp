@@ -29,6 +29,7 @@
 #include "datacache/imdlcache.h"
 #include "asw_tesla_trap.h"
 #include "sendprop_priorities.h"
+#include "asw_spawn_manager.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -151,6 +152,7 @@ IMPLEMENT_AUTO_LIST( IAlienAutoList );
 CASW_Alien::CASW_Alien( void ) :
 	m_BehaviorParms( DefLessFunc( const CUtlSymbol ) )
 {
+	m_bRegisteredAsAwake = false;
 	m_pszAlienModelName = NULL;
 	m_bRunAtChasingPathEnds = true;	
 	m_bPerformingZigZag = false;
@@ -493,6 +495,32 @@ void CASW_Alien::UpdateSleepState(bool bInPVS)
 			}
 		}
 	}
+	if ( GetSleepState() == AISS_AWAKE )
+	{
+		if ( !m_bRegisteredAsAwake )
+		{
+			ASWSpawnManager()->OnAlienWokeUp( this );
+			m_bRegisteredAsAwake = true;
+		}
+	}
+	else
+	{
+		if ( m_bRegisteredAsAwake )
+		{
+			ASWSpawnManager()->OnAlienSleeping( this );
+			m_bRegisteredAsAwake = false;
+		}
+	}
+}
+
+void CASW_Alien::UpdateOnRemove()
+{
+	if ( m_bRegisteredAsAwake )
+	{
+		m_bRegisteredAsAwake = false;
+		ASWSpawnManager()->OnAlienSleeping( this );
+	}
+	BaseClass::UpdateOnRemove();
 }
 
 void CASW_Alien::SetDistSwarmSense( float flDistSense )

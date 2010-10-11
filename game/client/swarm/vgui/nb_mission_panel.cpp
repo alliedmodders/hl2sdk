@@ -19,6 +19,8 @@
 #include "c_asw_game_resource.h"
 #include "asw_input.h"
 #include "nb_island.h"
+#include "gameui/swarm/basemodpanel.h"
+#include "gameui/swarm/VFooterPanel.h"
 
 using namespace vgui;
 
@@ -45,6 +47,8 @@ CNB_Mission_Panel::CNB_Mission_Panel( vgui::Panel *parent, const char *name ) : 
 	// == MANAGED_MEMBER_CREATION_END ==
 	m_pBackButton = new CNB_Button( this, "BackButton", "", this, "BackButton" );
 	m_drpDifficulty = new BaseModUI::DropDownMenu( this, "DrpDifficulty" );
+	m_drpFriendlyFire = new BaseModUI::DropDownMenu( this, "DrpFriendlyFire" );
+	m_drpOnslaught = new BaseModUI::DropDownMenu( this, "DrpOnslaught" );
 	m_drpFixedSkillPoints = new BaseModUI::DropDownMenu( this, "DrpFixedSkillPoints" );
 
 	m_pHeaderFooter->SetTitle( "#nb_mission_details" );
@@ -61,6 +65,8 @@ CNB_Mission_Panel::CNB_Mission_Panel( vgui::Panel *parent, const char *name ) : 
 
 	m_iLastSkillLevel = -1;
 	m_iLastFixedSkillPoints = -1;
+	m_iLastHardcoreFF = -1;
+	m_iLastOnslaught = -1;
 }
 
 CNB_Mission_Panel::~CNB_Mission_Panel()
@@ -165,6 +171,8 @@ void CNB_Mission_Panel::OnThink()
 	bool bLeader = ( pPlayer && (pPlayer->entindex() == iLeaderIndex ) );
 
 	m_drpDifficulty->SetEnabled( ASWGameRules()->GetGameState() == ASW_GS_BRIEFING && bLeader );
+	m_drpFriendlyFire->SetEnabled( ASWGameRules()->GetGameState() == ASW_GS_BRIEFING && bLeader );
+	m_drpOnslaught->SetEnabled( ASWGameRules()->GetGameState() == ASW_GS_BRIEFING && bLeader );
 	m_drpFixedSkillPoints->SetEnabled( false ); //ASWGameRules()->GetGameState() == ASW_GS_BRIEFING && bLeader );
 
 	if (m_iLastSkillLevel != ASWGameRules()->GetSkillLevel())
@@ -173,27 +181,69 @@ void CNB_Mission_Panel::OnThink()
 		if (m_iLastSkillLevel == 4)
 		{
 			m_drpDifficulty->SetCurrentSelection("#L4D360UI_Difficulty_insane");
-			m_pDifficultyDescription->SetText( "#asw_difficulty_chooser_insaned" );
+			//m_pDifficultyDescription->SetText( "#asw_difficulty_chooser_insaned" );
 		}
 		else if (m_iLastSkillLevel == 3)
 		{
 			m_drpDifficulty->SetCurrentSelection("#L4D360UI_Difficulty_hard");
-			m_pDifficultyDescription->SetText( "#asw_difficulty_chooser_hardd" );
+			//m_pDifficultyDescription->SetText( "#asw_difficulty_chooser_hardd" );
 		}
 		else if (m_iLastSkillLevel == 1)
 		{
 			m_drpDifficulty->SetCurrentSelection("#L4D360UI_Difficulty_easy");
-			m_pDifficultyDescription->SetText( "#asw_difficulty_chooser_easyd" );
+			//m_pDifficultyDescription->SetText( "#asw_difficulty_chooser_easyd" );
+		}
+		else if (m_iLastSkillLevel == 5)
+		{
+			m_drpDifficulty->SetCurrentSelection("#L4D360UI_Difficulty_imba");
+			//m_pDifficultyDescription->SetText( "#asw_difficulty_chooser_imbad" );
 		}
 		else 
 		{
 			m_drpDifficulty->SetCurrentSelection("#L4D360UI_Difficulty_normal");
-			m_pDifficultyDescription->SetText( "#asw_difficulty_chooser_normald" );
+			//m_pDifficultyDescription->SetText( "#asw_difficulty_chooser_normald" );
 		}
+	}
+	extern ConVar asw_sentry_friendly_fire_scale;
+	extern ConVar asw_marine_ff_absorption;
+	int nHardcoreFF = ( asw_sentry_friendly_fire_scale.GetFloat() != 0.0f || asw_marine_ff_absorption.GetInt() != 1 ) ? 1 : 0;
+	if ( m_iLastHardcoreFF != nHardcoreFF )
+	{
+		m_iLastHardcoreFF = nHardcoreFF;
+		if ( nHardcoreFF == 1 )
+		{
+			m_drpFriendlyFire->SetCurrentSelection( "#L4D360UI_HardcoreFF" );
+		}
+		else
+		{
+			m_drpFriendlyFire->SetCurrentSelection( "#L4D360UI_RegularFF" );
+		}
+	}
+	extern ConVar asw_horde_override;
+	extern ConVar asw_wanderer_override;
+	int nOnslaught = ( asw_horde_override.GetBool() || asw_wanderer_override.GetBool() ) ? 1 : 0;
+	if ( m_iLastOnslaught != nOnslaught )
+	{
+		m_iLastOnslaught = nOnslaught;
+		if ( nOnslaught == 1 )
+		{
+			m_drpOnslaught->SetCurrentSelection( "#L4D360UI_OnslaughtEnabled" );
+		}
+		else
+		{
+			m_drpOnslaught->SetCurrentSelection( "#L4D360UI_OnslaughtDisabled" );
+		}
+	}
+
+	BaseModUI::CBaseModFooterPanel *footer = BaseModUI::CBaseModPanel::GetSingleton().GetFooterPanel();
+	if ( footer )
+	{
+		m_pDifficultyDescription->SetText( footer->GetHelpText() );
 	}
 
 	// only show insane in multiplayer
 	m_drpDifficulty->SetFlyoutItemEnabled( "BtnImpossible", gpGlobals->maxClients > 1 );
+	m_drpDifficulty->SetFlyoutItemEnabled( "BtnImba", gpGlobals->maxClients > 1 );
 
 	if ( ASWGameRules()->IsCampaignGame() && ASWGameRules()->GetCampaignSave() && ASWGameRules()->GetGameState() != ASW_GS_INGAME )
 	{
@@ -263,6 +313,31 @@ void CNB_Mission_Panel::OnCommand( const char *command )
 	else if ( !Q_stricmp( command, "#L4D360UI_Difficulty_insane" ) )
 	{
 		engine->ClientCmd( "cl_skill 4" );
+		return;
+	}
+	else if ( !Q_stricmp( command, "#L4D360UI_Difficulty_imba" ) )
+	{
+		engine->ClientCmd( "cl_skill 5" );
+		return;
+	}
+	else if ( !Q_stricmp( command, "#L4D360UI_RegularFF" ) )
+	{
+		engine->ClientCmd( "cl_hardcore_ff 0" );
+		return;
+	}
+	else if ( !Q_stricmp( command, "#L4D360UI_HardcoreFF" ) )
+	{
+		engine->ClientCmd( "cl_hardcore_ff 1" );
+		return;
+	}
+	else if ( !Q_stricmp( command, "#L4D360UI_OnslaughtDisabled" ) )
+	{
+		engine->ClientCmd( "cl_onslaught 0" );
+		return;
+	}
+	else if ( !Q_stricmp( command, "#L4D360UI_OnslaughtEnabled" ) )
+	{
+		engine->ClientCmd( "cl_onslaught 1" );
 		return;
 	}
 	BaseClass::OnCommand( command );

@@ -68,6 +68,8 @@ public:
 	void OnMarineStartedHack( CASW_Marine *pMarine, CBaseEntity *pComputer );
 	void UpdateMarineInsideEscapeRoom( CASW_Marine *pMarine );
 
+	void OnMissionStarted();
+
 	// Spawning hordes of aliens
 	void OnHordeFinishedSpawning();
 

@@ -1089,6 +1089,7 @@ void CASW_Parasite::UpdatePlaybackRate()
 	float boost = asw_parasite_speedboost.GetFloat();
 	switch (ASWGameRules()->GetSkillLevel())
 	{
+		case 5: boost *= asw_alien_speed_scale_insane.GetFloat(); break;
 		case 4: boost *= asw_alien_speed_scale_insane.GetFloat(); break;
 		case 3: boost *= asw_alien_speed_scale_hard.GetFloat(); break;
 		case 2: boost *= asw_alien_speed_scale_normal.GetFloat(); break;

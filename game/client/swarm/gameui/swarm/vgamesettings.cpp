@@ -55,13 +55,15 @@ GameSettings::GameSettings( vgui::Panel *parent, const char *panelName ):
 	m_drpStartingMission( NULL ),
 	m_bEditingSession( false ),
 	m_bAllowChangeToCustomCampaign( true ),
-	m_bPreventSessionModifications( false )
+	m_bPreventSessionModifications( false ),
+	m_drpFriendlyFire( NULL ),
+	m_drpOnslaught( NULL )
 {
 	m_pHeaderFooter = new CNB_Header_Footer( this, "HeaderFooter" );
 	m_pHeaderFooter->SetTitle( "" );
 	m_pHeaderFooter->SetHeaderEnabled( false );
 	m_pHeaderFooter->SetGradientBarEnabled( true );
-	m_pHeaderFooter->SetGradientBarPos( 150, 170 );
+	m_pHeaderFooter->SetGradientBarPos( 140, 190 );
 	m_pTitle = new vgui::Label( this, "Title", "" );
 	SetDeleteSelfOnClose(true);
 	SetProportional( true );
@@ -203,6 +205,36 @@ void GameSettings::Activate()
 			m_pSettings->GetString( "game/difficulty", "normal" ) ) );
 
 		if ( FlyoutMenu* flyout = m_drpDifficulty->GetCurrentFlyout() )
+			flyout->CloseMenu( NULL );
+	}
+
+	if ( m_drpFriendlyFire )
+	{
+		if ( m_pSettings->GetInt( "game/hardcoreFF", 0 ) == 1 )
+		{
+			m_drpFriendlyFire->SetCurrentSelection( "#L4D360UI_HardcoreFF" );
+		}
+		else
+		{
+			m_drpFriendlyFire->SetCurrentSelection( "#L4D360UI_RegularFF" );
+		}
+
+		if ( FlyoutMenu* flyout = m_drpFriendlyFire->GetCurrentFlyout() )
+			flyout->CloseMenu( NULL );
+	}
+
+	if ( m_drpOnslaught )
+	{
+		if ( m_pSettings->GetInt( "game/onslaught", 0 ) == 1 )
+		{
+			m_drpOnslaught->SetCurrentSelection( "#L4D360UI_OnslaughtEnabled" );
+		}
+		else
+		{
+			m_drpOnslaught->SetCurrentSelection( "#L4D360UI_OnslaughtDisabled" );
+		}
+
+		if ( FlyoutMenu* flyout = m_drpOnslaught->GetCurrentFlyout() )
 			flyout->CloseMenu( NULL );
 	}
 
@@ -581,6 +613,94 @@ void GameSettings::OnCommand(const char *command)
 				pFlyout->SetListener( this );
 		}
 	}
+	else if ( !Q_strcmp( command, "#L4D360UI_RegularFF" ) )
+	{
+		KeyValues *pSettings = KeyValues::FromString(
+			"update",
+			" update { "
+			" game { "
+			" hardcoreFF = "
+			" } "
+			" } "
+			);
+		KeyValues::AutoDelete autodelete( pSettings );
+
+		pSettings->SetInt( "update/game/hardcoreFF", 0 );
+
+		UpdateSessionSettings( pSettings );
+
+		if( m_drpFriendlyFire )
+		{
+			if ( FlyoutMenu* pFlyout = m_drpFriendlyFire->GetCurrentFlyout() )
+				pFlyout->SetListener( this );
+		}
+	}
+	else if ( !Q_strcmp( command, "#L4D360UI_HardcoreFF" ) )
+	{
+		KeyValues *pSettings = KeyValues::FromString(
+			"update",
+			" update { "
+			" game { "
+			" hardcoreFF = "
+			" } "
+			" } "
+			);
+		KeyValues::AutoDelete autodelete( pSettings );
+
+		pSettings->SetInt( "update/game/hardcoreFF", 1 );
+
+		UpdateSessionSettings( pSettings );
+
+		if( m_drpFriendlyFire )
+		{
+			if ( FlyoutMenu* pFlyout = m_drpFriendlyFire->GetCurrentFlyout() )
+				pFlyout->SetListener( this );
+		}
+	}
+	else if ( !Q_strcmp( command, "#L4D360UI_OnslaughtDisabled" ) )
+	{
+		KeyValues *pSettings = KeyValues::FromString(
+			"update",
+			" update { "
+			" game { "
+			" onslaught = "
+			" } "
+			" } "
+			);
+		KeyValues::AutoDelete autodelete( pSettings );
+
+		pSettings->SetInt( "update/game/onslaught", 0 );
+
+		UpdateSessionSettings( pSettings );
+
+		if( m_drpOnslaught )
+		{
+			if ( FlyoutMenu* pFlyout = m_drpOnslaught->GetCurrentFlyout() )
+				pFlyout->SetListener( this );
+		}
+	}
+	else if ( !Q_strcmp( command, "#L4D360UI_OnslaughtEnabled" ) )
+	{
+		KeyValues *pSettings = KeyValues::FromString(
+			"update",
+			" update { "
+			" game { "
+			" onslaught = "
+			" } "
+			" } "
+			);
+		KeyValues::AutoDelete autodelete( pSettings );
+
+		pSettings->SetInt( "update/game/onslaught", 1 );
+
+		UpdateSessionSettings( pSettings );
+
+		if( m_drpOnslaught )
+		{
+			if ( FlyoutMenu* pFlyout = m_drpOnslaught->GetCurrentFlyout() )
+				pFlyout->SetListener( this );
+		}
+	}
 	else if ( const char *szRoundLimitValue = StringAfterPrefix( command, "#L4D360UI_RoundLimit_" ) )
 	{
 		KeyValues *pSettings = new KeyValues( "update" );
@@ -654,6 +774,8 @@ void GameSettings::ApplySchemeSettings( vgui::IScheme *pScheme )
 
 	m_drpDifficulty = dynamic_cast< DropDownMenu* >( FindChildByName( "DrpDifficulty" ) );
 	m_drpGameType = dynamic_cast< DropDownMenu* >( FindChildByName( "DrpGameType" ) );
+	m_drpFriendlyFire = dynamic_cast< DropDownMenu* >( FindChildByName( "DrpFriendlyFire" ) );
+	m_drpOnslaught = dynamic_cast< DropDownMenu* >( FindChildByName( "DrpOnslaught" ) );
 
 	m_drpGameAccess = dynamic_cast< DropDownMenu* >( FindChildByName( "DrpGameAccess" ) );
 	if ( m_drpGameAccess )
@@ -709,6 +831,12 @@ void GameSettings::OnClose()
 
 	if( m_drpGameType )
 		m_drpGameType->CloseDropDown();
+
+	if( m_drpFriendlyFire )
+		m_drpFriendlyFire->CloseDropDown();
+
+	if( m_drpOnslaught )
+		m_drpOnslaught->CloseDropDown();
 
 	m_pSettings = NULL;	// NULL out settings in case we get some calls
 	// after we are closed

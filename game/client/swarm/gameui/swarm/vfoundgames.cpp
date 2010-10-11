@@ -966,7 +966,7 @@ FoundGames::FoundGames( Panel *parent, const char *panelName ):
 	m_pHeaderFooter->SetHeaderEnabled( false );
 	m_pHeaderFooter->SetFooterEnabled( true );
 	m_pHeaderFooter->SetGradientBarEnabled( true );
-	m_pHeaderFooter->SetGradientBarPos( 80, 300 );
+	m_pHeaderFooter->SetGradientBarPos( 80, 315 );
 
 	m_pTitle = new vgui::Label( this, "Title", "" );
 

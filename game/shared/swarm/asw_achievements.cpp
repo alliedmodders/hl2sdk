@@ -762,7 +762,7 @@ class CAchievement_Unlock_All_Weapons : public CASW_Achievement
 	{
 		if ( !Q_stricmp( event->GetName(), "level_up" ) )
 		{
-			if ( event->GetInt( "level" ) >= ASW_LEVEL_CAP )
+			if ( event->GetInt( "level" ) >= ASW_NUM_EXPERIENCE_LEVELS )
 			{
 				IncrementCount();
 			}
@@ -1077,5 +1077,73 @@ class CAchievement_Para_Hat : public CASW_Achievement
 };
 DECLARE_ACHIEVEMENT_ORDER( CAchievement_Para_Hat, ACHIEVEMENT_ASW_PARA_HAT, "ASW_PARA_HAT", 5, 149 );
 
+class CAchievement_Imba_Campaign : public CASW_Achievement
+{
+	void Init() 
+	{
+		SetFlags( ACH_SAVE_GLOBAL | ACH_HAS_COMPONENTS );
+		SetStoreProgressInSteam( true );
+		SetGoal( NELEMS( g_szAchievementMapNames ) );
+	}
 
+	virtual void ListenForEvents( void )
+	{
+		ListenForGameEvent( "mission_success" );
+	}
+
+	void FireGameEvent_Internal( IGameEvent *event )
+	{
+		if ( !Q_stricmp( event->GetName(), "mission_success" ) && ASWGameRules() && ASWGameRules()->GetSkillLevel() >= 5 )
+		{
+			if ( LocalPlayerWasSpectating() )
+				return;
+
+			const char *szMapName = event->GetString( "strMapName" );
+			for ( int i = 0; i < NELEMS( g_szAchievementMapNames ); i++ )
+			{
+				if ( !Q_stricmp( szMapName, g_szAchievementMapNames[i] ) )
+				{
+					EnsureComponentBitSetAndEvaluate( i );
+					break;
+				}
+			}
+		}
+	}
+};
+DECLARE_ACHIEVEMENT_ORDER( CAchievement_Imba_Campaign, ACHIEVEMENT_ASW_IMBA_CAMPAIGN, "ASW_IMBA_CAMPAIGN", 5, 182 );
+
+class CAchievement_Hardcore : public CASW_Achievement
+{
+	void Init() 
+	{
+		SetFlags( ACH_SAVE_GLOBAL );
+		SetGoal( 1 );
+	}
+	
+	virtual void ListenForEvents( void )
+	{
+		ListenForGameEvent( "mission_success" );
+	}
+
+	void FireGameEvent_Internal( IGameEvent *event )
+	{
+		if ( !Q_stricmp( event->GetName(), "mission_success" ) && ASWGameRules() && ASWGameRules()->GetSkillLevel() >= 5
+			&& CAlienSwarm::IsHardcoreFF() && CAlienSwarm::IsOnslaught() )
+		{
+			if ( LocalPlayerWasSpectating() )
+				return;
+
+			const char *szMapName = event->GetString( "strMapName" );
+			for ( int i = 0; i < NELEMS( g_szAchievementMapNames ); i++ )
+			{
+				if ( !Q_stricmp( szMapName, g_szAchievementMapNames[i] ) )
+				{
+					IncrementCount();
+					break;
+				}
+			}
+		}
+	}
+};
+DECLARE_ACHIEVEMENT_ORDER( CAchievement_Hardcore, ACHIEVEMENT_ASW_HARDCORE, "ASW_HARDCORE", 5, 184 );
 #endif

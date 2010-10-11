@@ -954,7 +954,7 @@ float UTIL_ASW_CalcFastDoorHackTime(int iNumRows, int iNumColumns, int iNumWires
 		ideal_time *= 1.05f;	// 5% slower on easy mode
 	else if (iSkill == 3)
 		ideal_time *= 0.95f;	// 5% faster on hard mode
-	else if (iSkill == 4)
+	else if (iSkill == 4 || iSkill == 5)
 		ideal_time *= 0.90f;	// 10% faster on insane mode
 	
 	return ideal_time;

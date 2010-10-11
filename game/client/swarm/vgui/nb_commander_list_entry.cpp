@@ -87,7 +87,7 @@ void CNB_Commander_List_Entry::OnThink()
 	m_pCommanderName->SetText( pPlayer->GetPlayerName() );
 
 	int nXP = pPlayer->GetExperienceBeforeDebrief() + pPlayer->GetEarnedXP( ASW_XP_TOTAL );
-	int nLevel = LevelFromXP( nXP );
+	int nLevel = LevelFromXP( nXP, pPlayer->GetPromotion() );
 
 	wchar_t szLevelNum[16]=L"";
 	_snwprintf( szLevelNum, ARRAYSIZE( szLevelNum ), L"%i", nLevel + 1 );  // levels start at 0 in code, but show from 1 in the UI

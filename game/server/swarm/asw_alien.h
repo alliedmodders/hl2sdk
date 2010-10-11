@@ -93,6 +93,8 @@ public:
 	// make the aliens wake up when a marine gets within a certain distance
 	void UpdateSleepState( bool bInPVS );
 	void UpdateEfficiency( bool bInPVS );
+	virtual void UpdateOnRemove();
+	bool m_bRegisteredAsAwake;
 	float m_fLastSleepCheckTime;
 	bool m_bVisibleWhenAsleep;
 	

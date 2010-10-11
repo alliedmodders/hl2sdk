@@ -92,7 +92,8 @@ void InGameDifficultySelect::OnCommand(const char *command)
 	if ( !Q_strcmp( command, "Easy" ) ||
 		 !Q_strcmp( command, "Normal" ) ||
 		 !Q_strcmp( command, "Hard" ) ||
-		 !Q_strcmp( command, "Insane" ) )
+		 !Q_strcmp( command, "Insane" ) ||
+		 !Q_strcmp( command, "Imba" ) )
 	{
 		CGameUIConVarRef z_difficulty("z_difficulty");
 

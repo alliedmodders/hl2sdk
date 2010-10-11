@@ -68,6 +68,7 @@ public:
 	char m_szLastWeaponImage[ ASW_NUM_INVENTORY_SLOTS ][ 255 ];
 	char m_szLastPortraitImage[ 255 ];
 	CSteamID m_lastSteamID;
+	int m_nLastPromotion;
 
 	int m_nLobbySlot;
 };

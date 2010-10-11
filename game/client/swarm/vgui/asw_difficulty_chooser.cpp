@@ -140,6 +140,7 @@ CASW_Difficulty_Entry::CASW_Difficulty_Entry( vgui::Panel *pParent, const char *
 	case 2: m_pDifficultyLabel->SetText("#asw_difficulty_chooser_normal"); break;
 	case 3: m_pDifficultyLabel->SetText("#asw_difficulty_chooser_hard"); break;
 	case 4: m_pDifficultyLabel->SetText("#asw_difficulty_chooser_insane"); break;
+	case 5: m_pDifficultyLabel->SetText("#asw_difficulty_chooser_imba"); break;
 	default: m_pDifficultyLabel->SetText("???"); break;
 	}
 
@@ -149,6 +150,7 @@ CASW_Difficulty_Entry::CASW_Difficulty_Entry( vgui::Panel *pParent, const char *
 	case 2: m_pDifficultyDescriptionLabel->SetText("#asw_difficulty_chooser_normald"); break;
 	case 3: m_pDifficultyDescriptionLabel->SetText("#asw_difficulty_chooser_hardd"); break;
 	case 4: m_pDifficultyDescriptionLabel->SetText("#asw_difficulty_chooser_insaned"); break;
+	case 5: m_pDifficultyDescriptionLabel->SetText("#asw_difficulty_chooser_imbad"); break;
 	default: m_pDifficultyDescriptionLabel->SetText("???"); break;
 	}
 
@@ -158,6 +160,7 @@ CASW_Difficulty_Entry::CASW_Difficulty_Entry( vgui::Panel *pParent, const char *
 	case 2: m_pImagePanel->SetImage("swarm/MissionPics/DifficultyPicNormal"); break;
 	case 3: m_pImagePanel->SetImage("swarm/MissionPics/DifficultyPicHard"); break;
 	case 4: m_pImagePanel->SetImage("swarm/MissionPics/DifficultyPicInsane"); break;
+	case 5: m_pImagePanel->SetImage("swarm/MissionPics/DifficultyPicInsane"); break;
 	default: m_pImagePanel->SetImage("swarm/MissionPics/UnknownMissionPic"); break;
 	}
 

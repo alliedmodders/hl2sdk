@@ -22,12 +22,12 @@ ConVar asw_director_debug("asw_director_debug", "0", FCVAR_CHEAT, "Displays dire
 extern ConVar asw_intensity_far_range;
 extern ConVar asw_spawning_enabled;
 
-ConVar asw_horde_override( "asw_horde_override", "0", FCVAR_NONE, "Forces hordes to spawn" );
-ConVar asw_wanderer_override( "asw_wanderer_override", "0", FCVAR_NONE, "Forces wanderers to spawn" );
-ConVar asw_horde_interval_min("asw_horde_interval_min", "40", FCVAR_CHEAT, "Min time between hordes" );
-ConVar asw_horde_interval_max("asw_horde_interval_max", "60", FCVAR_CHEAT, "Min time between hordes" );
+extern ConVar asw_horde_override;
+extern ConVar asw_wanderer_override;
+ConVar asw_horde_interval_min("asw_horde_interval_min", "45", FCVAR_CHEAT, "Min time between hordes" );
+ConVar asw_horde_interval_max("asw_horde_interval_max", "65", FCVAR_CHEAT, "Min time between hordes" );
 ConVar asw_horde_size_min("asw_horde_size_min", "9", FCVAR_CHEAT, "Min horde size" );
-ConVar asw_horde_size_max("asw_horde_size_max", "12", FCVAR_CHEAT, "Max horde size" );
+ConVar asw_horde_size_max("asw_horde_size_max", "14", FCVAR_CHEAT, "Max horde size" );
 
 ConVar asw_director_relaxed_min_time("asw_director_relaxed_min_time", "25", FCVAR_CHEAT, "Min time that director stops spawning aliens");
 ConVar asw_director_relaxed_max_time("asw_director_relaxed_max_time", "40", FCVAR_CHEAT, "Max time that director stops spawning aliens");
@@ -102,6 +102,11 @@ void CASW_Director::LevelInitPreEntity()
 void CASW_Director::LevelInitPostEntity()
 {
 	Init();
+
+	if ( ASWSpawnManager() )
+	{
+		ASWSpawnManager()->LevelInitPostEntity();
+	}
 }
 
 void CASW_Director::FrameUpdatePreEntityThink()
@@ -250,60 +255,76 @@ void CASW_Director::MarineTookDamage( CASW_Marine *pMarine, const CTakeDamageInf
 
 void CASW_Director::UpdateHorde()
 {
-	bool bHordesEnabled = m_bHordesEnabled || asw_horde_override.GetBool();
-	if ( !bHordesEnabled || !ASWSpawnManager() )
-		return;
-
 	if ( asw_director_debug.GetInt() > 0 )
 	{
 		if ( m_bHordeInProgress )
 		{
 			engine->Con_NPrintf( 11, "Horde in progress.  Left to spawn = %d", ASWSpawnManager()->GetHordeToSpawn() );
 		}
-		else
-		{
-			engine->Con_NPrintf( 11, "Next Horde due: %f", m_HordeTimer.GetRemainingTime() );
-		}
+		engine->Con_NPrintf( 12, "Next Horde due: %f", m_HordeTimer.GetRemainingTime() );
+
+		engine->Con_NPrintf( 15, "Awake aliens: %d\n", ASWSpawnManager()->GetAwakeAliens() );
+		engine->Con_NPrintf( 16, "Awake drones: %d\n", ASWSpawnManager()->GetAwakeDrones() );
 	}
 
-	if ( !m_bHordeInProgress )
+	bool bHordesEnabled = m_bHordesEnabled || asw_horde_override.GetBool();
+	if ( !bHordesEnabled || !ASWSpawnManager() )
+		return;
+
+	if ( !m_HordeTimer.HasStarted() )
 	{
-		if ( !m_HordeTimer.HasStarted() )
+		float flDuration = RandomFloat( asw_horde_interval_min.GetFloat(), asw_horde_interval_max.GetFloat() );
+		if ( m_bFinale )
 		{
-			float flDuration = RandomFloat( asw_horde_interval_min.GetFloat(), asw_horde_interval_max.GetFloat() );
-			if ( m_bFinale )
-			{
-				flDuration = RandomFloat( 5.0f, 10.0f );
-			}
-			Msg( "Will be spawning a horde in %f seconds\n", flDuration );
-			m_HordeTimer.Start( flDuration );
+			flDuration = RandomFloat( 5.0f, 10.0f );
 		}
-		else if ( m_HordeTimer.IsElapsed() )
+		if ( asw_director_debug.GetBool() )
+		{
+			Msg( "Will be spawning a horde in %f seconds\n", flDuration );
+		}
+		m_HordeTimer.Start( flDuration );
+	}
+	else if ( m_HordeTimer.IsElapsed() )
+	{
+		if ( ASWSpawnManager()->GetAwakeDrones() < 25 )
 		{
 			int iNumAliens = RandomInt( asw_horde_size_min.GetInt(), asw_horde_size_max.GetInt() );
+
 			if ( ASWSpawnManager()->AddHorde( iNumAliens ) )
 			{
-				Msg("Created horde of size %d\n", iNumAliens);
+				if ( asw_director_debug.GetBool() )
+				{
+					Msg("Created horde of size %d\n", iNumAliens);
+				}
 				m_bHordeInProgress = true;
 
 				if ( ASWGameRules() )
 				{
 					ASWGameRules()->BroadcastSound( "Spawner.Horde" );
 				}
+				m_HordeTimer.Invalidate();
 			}
 			else
 			{
-				m_HordeTimer.Invalidate();
+				// if we failed to find a horde position, try again shortly.
+				m_HordeTimer.Start( RandomFloat( 10.0f, 16.0f ) );
 			}
+		}
+		else
+		{
+			// if there are currently too many awake aliens, then wait 10 seconds before trying again
+			m_HordeTimer.Start( 10.0f );
 		}
 	}
 }
 
 void CASW_Director::OnHordeFinishedSpawning()
 {
-	Msg("Horde finishes spawning\n");
+	if ( asw_director_debug.GetBool() )
+	{
+		Msg("Horde finishes spawning\n");
+	}
 	m_bHordeInProgress = false;
-	m_HordeTimer.Invalidate();
 }
 
 void CASW_Director::UpdateSpawningState()
@@ -418,7 +439,10 @@ void CASW_Director::UpdateWanderers()
 
 		if ( ASWSpawnManager() )
 		{
-			ASWSpawnManager()->AddAlien();
+			if ( ASWSpawnManager()->GetAwakeDrones() < 20 )
+			{
+				ASWSpawnManager()->AddAlien();
+			}
 		}
 	}
 }
@@ -496,4 +520,36 @@ void CASW_Director::UpdateMarineInsideEscapeRoom( CASW_Marine *pMarine )
 	}
 
 	m_bFiredEscapeRoom = true;
+}
+
+void CASW_Director::OnMissionStarted()
+{
+	// if we have wanders turned on, spawn a couple of encounters
+	if ( asw_wanderer_override.GetBool() && ASWGameRules() )
+	{
+		ASWSpawnManager()->SpawnRandomShieldbug();
+
+		int nParasites = 1;
+		switch( ASWGameRules()->GetSkillLevel() )
+		{
+			case 1: nParasites = RandomInt( 4, 6 ); break;
+			default:
+			case 2: nParasites = RandomInt( 4, 6 ); break;
+			case 3: nParasites = RandomInt( 5, 7 ); break;
+			case 4: nParasites = RandomInt( 5, 9 ); break;
+			case 5: nParasites = RandomInt( 5, 10 ); break;
+		}
+		while ( nParasites > 0 )
+		{
+			int nParasitesInThisPack = RandomInt( 3, 6 );
+			if ( ASWSpawnManager()->SpawnRandomParasitePack( nParasitesInThisPack ) )
+			{
+				nParasites -= nParasitesInThisPack;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
 }

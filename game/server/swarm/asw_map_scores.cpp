@@ -144,6 +144,7 @@ const char* CASW_Map_Scores::GetBestKillsKeyName(int iSkill)
 		case 1: return "BestKillsEasy"; break;
 		case 3: return "BestKillsHard"; break;
 		case 4: return "BestKillsInsane"; break;
+		case 5: return "BestKillsImba"; break;
 		default: break;
 	}
 	return "BestKillsNormal";
@@ -156,6 +157,7 @@ const char* CASW_Map_Scores::GetBestTimeKeyName(int iSkill)
 		case 1: return "BestTimeEasy"; break;
 		case 3: return "BestTimeHard"; break;
 		case 4: return "BestTimeInsane"; break;
+		case 5: return "BestTimeImba"; break;
 		default: break;
 	}
 	return "BestTimeNormal";

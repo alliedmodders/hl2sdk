@@ -7,6 +7,8 @@
 class CAI_Network;
 class CTriggerMultiple;
 struct AI_Waypoint_t;
+class CAI_Node;
+class CASW_Alien;
 
 // The spawn manager can spawn aliens and groups of aliens
 
@@ -18,6 +20,23 @@ public:
 	const char *m_pszAlienClass;
 	string_t m_iszAlienClass;
 	int m_nHullType;
+};
+
+class CASW_Open_Area
+{
+public:
+	CASW_Open_Area()
+	{
+		m_flArea = 0.0f;
+		m_nTotalLinks = 0;
+		m_vecOrigin = vec3_origin;
+		m_pNode = NULL;
+	}
+	float m_flArea;
+	int m_nTotalLinks;
+	Vector m_vecOrigin;
+	CAI_Node *m_pNode;
+	CUtlVector<CAI_Node*> m_aAreaNodes;
 };
 
 class CASW_Spawn_Manager
@@ -41,10 +60,19 @@ public:
 	bool GetAlienBounds( const char *szAlienClass, Vector &vecMins, Vector &vecMaxs );
 	bool GetAlienBounds( string_t iszAlienClass, Vector &vecMins, Vector &vecMaxs );
 
-	int GetHordeToSpawn() { return m_iHordeToSpawn; }	
+	int GetHordeToSpawn() { return m_iHordeToSpawn; }
+
+	void OnAlienWokeUp( CASW_Alien *pAlien );
+	void OnAlienSleeping( CASW_Alien *pAlien );
+	int GetAwakeAliens() { return m_nAwakeAliens; }
+	int GetAwakeDrones() { return m_nAwakeDrones; }
 
 	int GetNumAlienClasses();
 	ASW_Alien_Class_Entry* GetAlienClass( int i );
+
+	// spawns a shieldbug somewhere randomly in the map
+	bool SpawnRandomShieldbug();
+	bool SpawnRandomParasitePack( int nParasites );
 
 private:
 	void UpdateCandidateNodes();
@@ -54,11 +82,17 @@ private:
 	void FindEscapeTriggers();
 	void DeleteRoute( AI_Waypoint_t *pWaypointList );
 
+	// finds an area with good node connectivity.  Caller should take ownership of the CASW_Open_Area instance.
+	CASW_Open_Area* FindNearbyOpenArea( const Vector &vecSearchOrigin, int nSearchHull );
+
 	CountdownTimer m_batchInterval;
 	Vector m_vecHordePosition;
 	QAngle m_angHordeAngle;
 	int m_iHordeToSpawn;
 	int m_iAliensToSpawn;
+
+	int m_nAwakeAliens;
+	int m_nAwakeDrones;
 
 	// maintaining a list of possible nodes to spawn aliens from
 	CUtlVector<int> m_northCandidateNodes;

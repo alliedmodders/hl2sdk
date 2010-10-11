@@ -105,14 +105,31 @@ void CNB_Mission_Summary::OnThink()
 		return;
 
 	int nSkillLevel = ASWGameRules()->GetSkillLevel();
-	if (nSkillLevel == 4)
-		m_pDifficultyLabel->SetText("#asw_difficulty_insane");
-	else if (nSkillLevel == 3)
-		m_pDifficultyLabel->SetText("#asw_difficulty_hard");
-	else if (nSkillLevel == 1)
-		m_pDifficultyLabel->SetText("#asw_difficulty_easy");
-	else 
-		m_pDifficultyLabel->SetText("#asw_difficulty_normal");
+	const wchar_t *pDifficulty = NULL;
+	switch( nSkillLevel )
+	{
+		case 1: pDifficulty = g_pVGuiLocalize->Find( "#asw_difficulty_easy" ); break;
+		default:
+		case 2: pDifficulty = g_pVGuiLocalize->Find( "#asw_difficulty_normal" ); break;
+		case 3: pDifficulty = g_pVGuiLocalize->Find( "#asw_difficulty_hard" ); break;
+		case 4: pDifficulty = g_pVGuiLocalize->Find( "#asw_difficulty_insane" ); break;
+		case 5: pDifficulty = g_pVGuiLocalize->Find( "#asw_difficulty_imba" ); break;
+	}
+	if ( !pDifficulty )
+	{
+		pDifficulty = L"";
+	}
+
+	if ( CAlienSwarm::IsOnslaught() )
+	{
+		wchar_t wszText[ 128 ];
+		_snwprintf( wszText, sizeof( wszText ), L"%s %s", pDifficulty, g_pVGuiLocalize->FindSafe( "#nb_onslaught_title" ) );
+		m_pDifficultyLabel->SetText( wszText );
+	}
+	else
+	{
+		m_pDifficultyLabel->SetText( pDifficulty );
+	}
 
 	CASWHudMinimap *pMap = GET_HUDELEMENT( CASWHudMinimap );
 	if ( pMap )

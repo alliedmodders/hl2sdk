@@ -100,15 +100,28 @@ int g_iXPAward[ ASW_NUM_XP_TYPES ]=
  	50, // ASW_XP_HACKING
 };
 
+// scalar applied to XP required to level, based on your current promotion
+float g_flPromotionXPScale[ ASW_PROMOTION_CAP + 1 ]=
+{
+	1.0f,
+	1.0f,
+	1.0f,
+	1.0f,
+	2.0f,
+	4.0f,
+	6.0f,
+};
+
 #define ASW_MISSION_XP_AWARD_ON_FAILURE 750					// XP award divided up between objectives
 
 // NOTE: If you change this, update the labels in CExperienceReport::OnThink too
-float g_flXPDifficultyScale[4]=
+float g_flXPDifficultyScale[5]=
 {
 	0.5f,	// easy
 	1.0f,	// normal
 	1.2f,	// hard
 	1.4f,	// insane
+	1.5f,	// imba
 };
 
 // Weapon unlocks
@@ -153,17 +166,18 @@ ASW_Weapon_Unlock g_WeaponUnlocks[]=
 	ASW_Weapon_Unlock( "asw_weapon_night_vision",				23 ),//
 	ASW_Weapon_Unlock( "asw_weapon_sentry_cannon",				24 ),
 	ASW_Weapon_Unlock( "asw_weapon_smart_bomb",					25 ),//
-	ASW_Weapon_Unlock( "asw_weapon_grenade_launcher",			26 ),		// ASW_LEVEL_CAP
+	ASW_Weapon_Unlock( "asw_weapon_grenade_launcher",			26 ),		// ASW_NUM_EXPERIENCE_LEVELS
 };
 
 // given an Experience total, this tells you the player's level
-int LevelFromXP( int iExperience )
+int LevelFromXP( int iExperience, int iPromotion )
 {
-	iExperience = MIN( iExperience, ASW_XP_CAP );
+	iExperience = MIN( iExperience, ASW_XP_CAP * g_flPromotionXPScale[ iPromotion ] );
 
 	for ( int i = 0; i < NELEMS( g_iLevelExperience ); i++ )
 	{
-		if ( iExperience < g_iLevelExperience[ i ] )
+		int iRequiredXP = (int) ( g_flPromotionXPScale[ iPromotion ] * g_iLevelExperience[ i ] );
+		if ( iExperience < iRequiredXP )
 		{
 			return i;
 		}
@@ -368,13 +382,13 @@ void CASW_Player::CalculateEarnedXP()
 
 int CASW_Player::GetLevel()
 {
-	return LevelFromXP( GetExperience() );
+	return LevelFromXP( GetExperience(), GetPromotion() );
 }
 
 
 int CASW_Player::GetLevelBeforeDebrief()
 {
-	return LevelFromXP( GetExperienceBeforeDebrief() );
+	return LevelFromXP( GetExperienceBeforeDebrief(), GetPromotion() );
 }
 
 void CASW_Player::RequestExperience()
@@ -460,7 +474,7 @@ void CASW_Player::AwardExperience()
 	Msg( "%s: AwardExperience: Pre XP is %d\n", IsServerDll() ? "S" : "C", m_iExperience );
 
 	m_iExperience += m_iEarnedXP[ ASW_XP_TOTAL ];
-	m_iExperience = MIN( m_iExperience, ASW_XP_CAP );
+	m_iExperience = MIN( m_iExperience, ASW_XP_CAP * g_flPromotionXPScale[ GetPromotion() ] );
 
 #ifdef CLIENT_DLL
 	if ( IsLocalPlayer() )
@@ -646,7 +660,7 @@ void CASW_Player::Steam_OnUserStatsReceived( UserStatsReceived_t *pUserStatsRece
 	if( GetLocalASWPlayer() == this )
 		g_ASW_Steamstats.FetchStats( steamID, this );
 
-	if ( IsLocalPlayer() && GetLevel() >= ASW_LEVEL_CAP )
+	if ( IsLocalPlayer() && GetLevel() >= ASW_NUM_EXPERIENCE_LEVELS )
 	{
 		CAchievementMgr *pAchievementMgr = dynamic_cast<CAchievementMgr *>( engine->GetAchievementMgr() );
 		if ( !pAchievementMgr )
@@ -694,7 +708,7 @@ ConCommand asw_debug_xp( "asw_debug_xp", asw_debug_xp_f, "Lists XP details for l
 
 void CASW_Player::AcceptPromotion()
 {
-	if ( GetExperience() < ASW_XP_CAP )
+	if ( GetExperience() < ASW_XP_CAP * g_flPromotionXPScale[ GetPromotion() ] )
 		return;
 
 	if ( GetPromotion() >= ASW_PROMOTION_CAP )

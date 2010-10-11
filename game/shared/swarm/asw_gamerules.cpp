@@ -84,6 +84,7 @@
 	#include "EntityFlame.h"
 	#include "asw_buffgrenade_projectile.h"
 	#include "asw_achievements.h"
+	#include "asw_director.h"
 #endif
 #include "game_timescale_shared.h"
 #include "asw_gamerules.h"
@@ -135,6 +136,19 @@ extern ConVar old_radius_damage;
 	ConVar sv_vote_kick_ban_duration("sv_vote_kick_ban_duration", "5", 0, "How long should a kick vote ban someone from the server? (in minutes)");
 	ConVar sv_timeout_when_fully_connected( "sv_timeout_when_fully_connected", "30", FCVAR_NONE, "Once fully connected, player will be kicked if he doesn't send a network message within this interval." );
 	ConVar mm_swarm_state( "mm_swarm_state", "ingame", FCVAR_DEVELOPMENTONLY );
+
+	static void UpdateMatchmakingTagsCallback( IConVar *pConVar, const char *pOldValue, float flOldValue )
+	{
+		// update sv_tags to force an update of the matchmaking tags
+		static ConVarRef sv_tags( "sv_tags" );
+
+		if ( sv_tags.IsValid() )
+		{
+			char buffer[ 1024 ];
+			Q_snprintf( buffer, sizeof( buffer ), "%s", sv_tags.GetString() );
+			sv_tags.SetValue( buffer );
+		}
+	}
 #else
 	extern ConVar asw_controls;
 #endif
@@ -153,6 +167,30 @@ ConVar asw_stim_time_scale("asw_stim_time_scale", "0.35", FCVAR_REPLICATED | FCV
 ConVar asw_time_scale_delay("asw_time_scale_delay", "0.15", FCVAR_REPLICATED | FCVAR_CHEAT, "Delay before timescale changes to give a chance for the client to comply and predict.");
 ConVar asw_ignore_need_two_player_requirement("asw_ignore_need_two_player_requirement", "0", FCVAR_REPLICATED, "If set to 1, ignores the mission setting that states two players are needed to start the mission.");
 ConVar mp_gamemode( "mp_gamemode", "campaign", FCVAR_REPLICATED | FCVAR_DEVELOPMENTONLY, "Current game mode, acceptable values are campaign and single_mission.", false, 0.0f, false, 0.0f );
+ConVar asw_sentry_friendly_fire_scale( "asw_sentry_friendly_fire_scale", "0", FCVAR_REPLICATED, "Damage scale for sentry gun friendly fire"
+#ifdef GAME_DLL
+	,UpdateMatchmakingTagsCallback );
+#else
+	 );
+#endif
+ConVar asw_marine_ff_absorption("asw_marine_ff_absorption", "1", FCVAR_REPLICATED, "Friendly fire absorption style (0=none 1=ramp up 2=ramp down)"
+#ifdef GAME_DLL
+	,UpdateMatchmakingTagsCallback );
+#else
+	);
+#endif
+ConVar asw_horde_override( "asw_horde_override", "0", FCVAR_REPLICATED, "Forces hordes to spawn"
+#ifdef GAME_DLL
+	  ,UpdateMatchmakingTagsCallback );
+#else
+	  );
+#endif
+ConVar asw_wanderer_override( "asw_wanderer_override", "0", FCVAR_REPLICATED, "Forces wanderers to spawn"
+#ifdef GAME_DLL
+	 ,UpdateMatchmakingTagsCallback );
+#else
+	 );
+#endif
 
 // ASW Weapons
 // Rifle
@@ -251,7 +289,7 @@ ConVar asw_vote_kick_fraction("asw_vote_kick_fraction", "0.6", FCVAR_REPLICATED 
 ConVar asw_vote_leader_fraction("asw_vote_leader_fraction", "0.6", FCVAR_REPLICATED | FCVAR_ARCHIVE, "Fraction of players needed to activate a leader vote");
 ConVar asw_vote_map_fraction("asw_vote_map_fraction", "0.6", FCVAR_REPLICATED | FCVAR_ARCHIVE, "Fraction of players needed to activate a map vote");
 ConVar asw_marine_collision("asw_marine_collision", "0", FCVAR_REPLICATED, "Whether marines collide with each other or not, in a multiplayer game");
-ConVar asw_skill( "asw_skill","2", FCVAR_REPLICATED | FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX, "Game skill level (1-4).", true, 1, true, 4 );
+ConVar asw_skill( "asw_skill","2", FCVAR_REPLICATED | FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX, "Game skill level (1-5).", true, 1, true, 5 );
 ConVar asw_money( "asw_money", "0", FCVAR_REPLICATED, "Can players collect money?" );
 ConVar asw_client_build_maps("asw_client_build_maps", "0", FCVAR_REPLICATED, "Whether clients compile random maps rather than getting sent them");
 
@@ -456,7 +494,7 @@ CAmmoDef *GetAmmoDef()
 		def.AddAmmoType("ASW_P",			DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_asw_p",			"sk_npc_dmg_asw_p",			"sk_max_asw_p",			BULLET_IMPULSE(200, 1225),	0 );
 		// mining laser
 		def.AddAmmoType("ASW_ML",			DMG_ENERGYBEAM,				TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_asw_ml",		"sk_npc_dmg_asw_ml",		"sk_max_asw_ml",		BULLET_IMPULSE(200, 1225),	0 );
-		// mining laser
+		// tesla gun - happy LJ?
 		def.AddAmmoType("ASW_TG",			DMG_ENERGYBEAM,				TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_asw_tg",		"sk_npc_dmg_asw_tg",		"sk_max_asw_tg",		BULLET_IMPULSE(200, 1225),	0 );
 		// railgun
 		def.AddAmmoType("ASW_RG",			DMG_SONIC,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_asw_rg",		"sk_npc_dmg_asw_rg",		"sk_max_asw_rg",		BULLET_IMPULSE(200, 1225),	0 );
@@ -625,19 +663,6 @@ const char * GenerateNewSaveGameName()
 	}
 
 	return NULL;
-}
-
-void UpdateMatchmakingTags()
-{
-	// update sv_tags to force an update of the matchmaking tags
-	static ConVarRef sv_tags( "sv_tags" );
-
-	if ( sv_tags.IsValid() )
-	{
-		char buffer[ 1024 ];
-		Q_snprintf( buffer, sizeof( buffer ), "%s", sv_tags.GetString() );
-		sv_tags.SetValue( buffer );
-	}
 }
 
 CAlienSwarm::CAlienSwarm()
@@ -1609,6 +1634,11 @@ void CAlienSwarm::StartMission()
 	}	
 
 	m_Medals.OnStartMission();	
+
+	if ( ASWDirector() )
+	{
+		ASWDirector()->OnMissionStarted();
+	}
 
 	Msg("==STARTMISSION==\n");
 
@@ -3319,7 +3349,7 @@ void CAlienSwarm::MissionComplete( bool bSuccess )
 				if (!MapScores()->IsModeUnlocked(mapName, GetSkillLevel(), ASW_SM_CARNAGE))
 				{					
 					// check for unlocking carnage (if we completed the mission on Insane)
-					bJustUnlockedCarnage = (GetSkillLevel() == 4);
+					bJustUnlockedCarnage = (GetSkillLevel() >= 4);
 					//Msg("Checked just carnage unlock = %d\n", bJustUnlockedCarnage);
 				}
 				if (!MapScores()->IsModeUnlocked(mapName, GetSkillLevel(), ASW_SM_UBER))
@@ -5144,6 +5174,11 @@ void CAlienSwarm::OnSkillLevelChanged( int iNewLevel )
 		m_iMissionDifficulty = 10;
 		szDifficulty = "insane";
 	}
+	else if (iNewLevel == 5) // imba
+	{
+		m_iMissionDifficulty = 13;
+		szDifficulty = "imba";
+	}
 	else  // normal
 	{
 		m_iMissionDifficulty = 5;
@@ -5200,7 +5235,7 @@ void CAlienSwarm::OnSkillLevelChanged( int iNewLevel )
 		}
 	}
 
-	UpdateMatchmakingTags();
+	UpdateMatchmakingTagsCallback( NULL, "0", 0.0f );
 		
 	m_iSkillLevel = iNewLevel;
 }
@@ -5226,12 +5261,28 @@ void CAlienSwarm::RequestSkill( CASW_Player *pPlayer, int nSkill )
 	if ( !( m_iGameState == ASW_GS_BRIEFING || m_iGameState == ASW_GS_DEBRIEF ) )	// don't allow skill change outside of briefing
 		return;
 
-	if ( nSkill >= 1 && nSkill <= 4 && ASWGameResource() && ASWGameResource()->GetLeader() == pPlayer )
+	if ( nSkill >= 1 && nSkill <= 5 && ASWGameResource() && ASWGameResource()->GetLeader() == pPlayer )
 	{
 		ConVar *var = (ConVar *)cvar->FindVar( "asw_skill" );
 		if (var)
 		{
+			int iOldSkill = var->GetInt();
+
 			var->SetValue( nSkill );
+
+			if ( iOldSkill != var->GetInt() )
+			{
+				CReliableBroadcastRecipientFilter filter;
+				filter.RemoveRecipient( pPlayer );		// notify everyone except the player changing the difficulty level
+				switch(var->GetInt())
+				{
+				case 1: UTIL_ClientPrintFilter( filter, ASW_HUD_PRINTTALKANDCONSOLE, "#asw_set_difficulty_easy", pPlayer->GetPlayerName() ); break;
+				case 2: UTIL_ClientPrintFilter( filter, ASW_HUD_PRINTTALKANDCONSOLE, "#asw_set_difficulty_normal", pPlayer->GetPlayerName() ); break;
+				case 3: UTIL_ClientPrintFilter( filter, ASW_HUD_PRINTTALKANDCONSOLE, "#asw_set_difficulty_hard", pPlayer->GetPlayerName() ); break;
+				case 4: UTIL_ClientPrintFilter( filter, ASW_HUD_PRINTTALKANDCONSOLE, "#asw_set_difficulty_insane", pPlayer->GetPlayerName() ); break;
+				case 5: UTIL_ClientPrintFilter( filter, ASW_HUD_PRINTTALKANDCONSOLE, "#asw_set_difficulty_imba", pPlayer->GetPlayerName() ); break;
+				}
+			}
 		}
 	}
 }
@@ -5241,7 +5292,7 @@ void CAlienSwarm::RequestSkillUp(CASW_Player *pPlayer)
 	if (m_iGameState != ASW_GS_BRIEFING)	// don't allow skill change outside of briefing
 		return;
 
-	if (m_iSkillLevel < 4 && ASWGameResource() && ASWGameResource()->GetLeader() == pPlayer)
+	if (m_iSkillLevel < 5 && ASWGameResource() && ASWGameResource()->GetLeader() == pPlayer)
 	{
 		ConVar *var = (ConVar *)cvar->FindVar( "asw_skill" );
 		if (var)
@@ -6598,6 +6649,8 @@ int CAlienSwarm::TotalInfestDamage()
 		return 270;
 	case 4:
 		return 280;	// BARELY survivable with Bastille and heal beacon
+	case 5:
+		return 280;
 	}
 
 	// ASv1 Total infest damage = 90 + difficulty * 20;
@@ -6748,4 +6801,14 @@ const QAngle& CAlienSwarm::GetTopDownMovementAxis()
 {
 	static QAngle axis = ASW_MOVEMENT_AXIS;
 	return axis;
+}
+
+bool CAlienSwarm::IsHardcoreFF()
+{
+	return ( asw_marine_ff_absorption.GetInt() != 1 || asw_sentry_friendly_fire_scale.GetFloat() != 0.0f );
+}
+
+bool CAlienSwarm::IsOnslaught()
+{
+	return ( asw_horde_override.GetBool() || asw_wanderer_override.GetBool() );
 }

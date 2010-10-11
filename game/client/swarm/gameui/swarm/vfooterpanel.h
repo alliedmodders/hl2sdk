@@ -58,6 +58,7 @@ public:
 	FooterFormat_t	GetFormat();
 	bool			GetHelpTextEnabled();
 	void			SetHelpText( const char *text );
+	const char *	GetHelpText() { return m_HelpText; }
 	void			FadeHelpText( void );
 	void			GetPosition( int &x, int &y );
 	bool			HasContent( void );

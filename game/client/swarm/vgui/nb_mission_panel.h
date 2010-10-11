@@ -45,6 +45,8 @@ public:
 	CNB_Button	*m_pBackButton;
 	BaseModUI::DropDownMenu* m_drpDifficulty;
 	BaseModUI::DropDownMenu* m_drpFixedSkillPoints;
+	BaseModUI::DropDownMenu* m_drpFriendlyFire;
+	BaseModUI::DropDownMenu* m_drpOnslaught;
 
 	ObjectiveListBox* m_pObjectiveList;
 	ObjectiveDetailsPanel* m_pObjectiveDetails;
@@ -59,6 +61,8 @@ public:
 
 	int m_iLastSkillLevel;
 	int m_iLastFixedSkillPoints;
+	int m_iLastHardcoreFF;
+	int m_iLastOnslaught;
 };
 
 class InGameMissionPanelFrame : public vgui::Frame

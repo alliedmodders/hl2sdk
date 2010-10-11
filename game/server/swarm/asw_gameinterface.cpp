@@ -32,6 +32,9 @@ void CServerGameClients::GetPlayerLimits( int& minplayers, int& maxplayers, int 
 
 void CServerGameDLL::LevelInit_ParseAllEntities( const char *pMapEntities )
 {
+	// precache even if not in the level, for onslaught mode
+	UTIL_PrecacheOther( "asw_shieldbug" );
+	UTIL_PrecacheOther( "asw_parasite" );
 }
 
 bool g_bOfflineGame = false;
@@ -121,6 +124,38 @@ void CServerGameDLL::ApplyGameSettings( KeyValues *pKV )
 	else if ( !Q_stricmp( szDifficulty, "insane" ) )
 	{
 		asw_skill.SetValue( 4 );
+	}
+	else if ( !Q_stricmp( szDifficulty, "imba" ) )
+	{
+		asw_skill.SetValue( 5 );
+	}
+
+	extern ConVar asw_sentry_friendly_fire_scale;
+	extern ConVar asw_marine_ff_absorption;
+	int nHardcoreFF = pKV->GetInt( "game/hardcoreFF", 0 );
+	if ( nHardcoreFF == 1 )
+	{
+		asw_sentry_friendly_fire_scale.SetValue( 1.0f );
+		asw_marine_ff_absorption.SetValue( 0 );
+	}
+	else
+	{
+		asw_sentry_friendly_fire_scale.SetValue( 0.0f );
+		asw_marine_ff_absorption.SetValue( 1 );
+	}
+
+	extern ConVar asw_horde_override;
+	extern ConVar asw_wanderer_override;
+	int nOnslaught = pKV->GetInt( "game/onslaught", 0 );
+	if ( nOnslaught == 1 )
+	{
+		asw_horde_override.SetValue( 1 );
+		asw_wanderer_override.SetValue( 1 );
+	}
+	else
+	{
+		asw_horde_override.SetValue( 0 );
+		asw_wanderer_override.SetValue( 0 );
 	}
 
 	char const *szMapCommand = pKV->GetString( "map/mapcommand", "map" );

@@ -885,6 +885,7 @@ bool CASW_Weapon::ASWReload( int iClipSize1, int iClipSize2, int iActivity )
 		case 2: flFastReloadWidth = random->RandomFloat( 0.10f, 0.1f ); break;		// easy/normal
 		case 3: flFastReloadWidth = random->RandomFloat( 0.08f, 0.12f ); break;		// hard
 		case 4: flFastReloadWidth = random->RandomFloat( 0.06f, 0.10f ); break;		// insane
+		case 5: flFastReloadWidth = random->RandomFloat( 0.055f, 0.09f ); break;		// imba
 	}
 	// scale by marine skills
 	flFastReloadWidth *= MarineSkills()->GetSkillBasedValueByMarine( pMarine, ASW_MARINE_SKILL_RELOADING, ASW_MARINE_SUBSKILL_RELOADING_FAST_WIDTH_SCALE );

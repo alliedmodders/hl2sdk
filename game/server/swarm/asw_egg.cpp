@@ -297,7 +297,7 @@ void CASW_Egg::AnimThink( void )
 			}
 			else
 			{
-				if (ASWGameRules() && ASWGameRules()->GetSkillLevel() == 4 )
+				if (ASWGameRules() && ASWGameRules()->GetSkillLevel() >= 4 )
 				{
 					m_fNextMarineCheckTime = gpGlobals->curtime + 1.5f;
 				}

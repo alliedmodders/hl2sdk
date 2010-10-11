@@ -115,7 +115,7 @@ void CASW_Weapon_Jump_Jet::PrimaryAttack( void )
 void CASW_Weapon_Jump_Jet::DoJumpJet()
 {
 	CASW_Marine *pMarine = GetMarine();
-	if ( !pMarine )
+	if ( !pMarine || pMarine->m_iJumpJetting != JJ_NONE )
 		return;
 
 	pMarine->m_iJumpJetting = JJ_JUMP_JETS;

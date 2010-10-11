@@ -177,7 +177,7 @@ void CASW_Hack_Computer::SelectHackOption(int i)
 				diff_factor = 1.55f;
 			else if (iSkill == 3)
 				diff_factor = 1.50f;
-			else if (iSkill == 4)
+			else if (iSkill >= 4)
 				diff_factor = 1.45f;
 			// estimate the time for a fast hack
 			// try, time taken for each column to rotate through twice

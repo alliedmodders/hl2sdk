@@ -299,7 +299,7 @@ void ASW_DrawAwakeAI()
 	int iVEfficient = 0;
 	int iSEfficient = 0;
 	int iNormal = 0;
-	int nprintIndex = 0;
+	int nprintIndex = 18;
 	engine->Con_NPrintf( nprintIndex, "AI (awake/asleep) (normal/efficient/very efficient/super efficient/dormant)");
 	nprintIndex++;
 	engine->Con_NPrintf( nprintIndex, "================================");
@@ -787,6 +787,76 @@ bool CASW_Player::ClientCommand( const CCommand &args )
 			{
 				if (ASWGameRules())
 					ASWGameRules()->RequestSkillDown(this);
+				return true;
+			}
+			else if ( FStrEq( pcmd, "cl_hardcore_ff") )
+			{
+				if ( args.ArgC() < 2 )
+				{
+					Warning("Player sent a bad cl_hardcore_ff command\n");
+					return false;
+				}
+
+				if ( ASWGameResource() && ASWGameResource()->GetLeader() == this )
+				{
+					bool bOldHardcoreMode = CAlienSwarm::IsHardcoreFF();
+					int nHardcore = atoi( args[1] );
+					nHardcore = clamp<int>( nHardcore, 0, 1 );
+
+					extern ConVar asw_sentry_friendly_fire_scale;
+					extern ConVar asw_marine_ff_absorption;
+					asw_sentry_friendly_fire_scale.SetValue( nHardcore );
+					asw_marine_ff_absorption.SetValue( 1 - nHardcore );
+
+					if ( CAlienSwarm::IsHardcoreFF() != bOldHardcoreMode )
+					{
+						CReliableBroadcastRecipientFilter filter;
+						filter.RemoveRecipient( this );		// notify everyone except the player changing the setting
+						if ( nHardcore > 0 )
+						{
+							UTIL_ClientPrintFilter( filter, ASW_HUD_PRINTTALKANDCONSOLE, "#asw_enabled_hardcoreff", GetPlayerName() );
+						}
+						else
+						{
+							UTIL_ClientPrintFilter( filter, ASW_HUD_PRINTTALKANDCONSOLE, "#asw_disabled_hardcoreff", GetPlayerName() );
+						}
+					}
+				}
+				return true;
+			}
+			else if ( FStrEq( pcmd, "cl_onslaught") )
+			{
+				if ( args.ArgC() < 2 )
+				{
+					Warning("Player sent a bad cl_onslaught command\n");
+					return false;
+				}
+
+				if ( ASWGameResource() && ASWGameResource()->GetLeader() == this )
+				{
+					bool bOldOnslaughtMode = CAlienSwarm::IsOnslaught();
+					int nOnslaught = atoi( args[1] );
+					nOnslaught = clamp<int>( nOnslaught, 0, 1 );
+
+					extern ConVar asw_horde_override;
+					extern ConVar asw_wanderer_override;
+					asw_horde_override.SetValue( nOnslaught );
+					asw_wanderer_override.SetValue( nOnslaught );
+
+					if ( CAlienSwarm::IsOnslaught() != bOldOnslaughtMode )
+					{
+						CReliableBroadcastRecipientFilter filter;
+						filter.RemoveRecipient( this );		// notify everyone except the player changing the setting
+						if ( nOnslaught > 0 )
+						{
+							UTIL_ClientPrintFilter( filter, ASW_HUD_PRINTTALKANDCONSOLE, "#asw_enabled_onslaught", GetPlayerName() );
+						}
+						else
+						{
+							UTIL_ClientPrintFilter( filter, ASW_HUD_PRINTTALKANDCONSOLE, "#asw_disabled_onslaught", GetPlayerName() );
+						}
+					}
+				}
 				return true;
 			}
 			else if ( FStrEq( pcmd, "cl_fixedskills") )

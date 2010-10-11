@@ -234,9 +234,9 @@ public:
 		{
 			iLevel = 1;
 		}
-		else if ( iLevel > 4 )
+		else if ( iLevel > 5 )
 		{
-			iLevel = 4; 
+			iLevel = 5; 
 		}
 
 		m_iSkillLevel = iLevel;
@@ -386,8 +386,8 @@ public:
 	virtual void RefreshSkillData ( bool forceUpdate );
 
 	// difficulty
-	virtual int GetSkillLevel() { return m_iSkillLevel; }		// skill level (expanded HL2 style: 1 = easy, 2 = normal, 3 = hard, 4 = insane )
-	CNetworkVar(int, m_iSkillLevel);	// 1 = easy, 2 = normal, 3 = hard, 4 = insane
+	virtual int GetSkillLevel() { return m_iSkillLevel; }		// skill level (expanded HL2 style: 1 = easy, 2 = normal, 3 = hard, 4 = insane, 5 = imba )
+	CNetworkVar(int, m_iSkillLevel);	// 1 = easy, 2 = normal, 3 = hard, 4 = insane, 5 = imba
 	int GetMissionDifficulty() { return m_iMissionDifficulty; }	// overall difficulty of the mission from 2-10, based on skill level and campaign modifier	
 	CNetworkVar(int, m_iMissionDifficulty);	
 	CNetworkVar(bool, m_bCheated);
@@ -475,6 +475,8 @@ public:
 	bool IsIntroMap() { return m_bIsIntro; }
 	bool IsOutroMap() { return m_bIsOutro; }
 	bool IsLobbyMap() { return m_bIsLobby; }
+	static bool IsHardcoreFF();
+	static bool IsOnslaught();
 
 	bool m_bIsTutorial;
 	bool m_bIsIntro;

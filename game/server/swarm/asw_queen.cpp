@@ -1418,6 +1418,7 @@ void CASW_Queen::SetHealthByDifficultyLevel()
 		case 2: health = asw_queen_health_normal.GetInt(); break;
 		case 3: health = asw_queen_health_hard.GetInt(); break;
 		case 4: health = asw_queen_health_insane.GetInt(); break;
+		case 5: health = asw_queen_health_insane.GetInt(); break;
 		default: 5000;
 		}
 	}

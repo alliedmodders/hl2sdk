@@ -73,6 +73,8 @@ private:
 	DropDownMenu* m_drpGameAccess;
 	DropDownMenu* m_drpServerType;
 	DropDownMenu* m_drpStartingMission;
+	DropDownMenu* m_drpFriendlyFire;
+	DropDownMenu* m_drpOnslaught;
 	CNB_Header_Footer *m_pHeaderFooter;
 	vgui::Label *m_pTitle;
 

@@ -153,6 +153,9 @@ void CASW_Spawner::AlienKilled( CBaseEntity *pVictim )
 
 	m_nCurrentLiveAliens--;
 
+	if (asw_debug_spawners.GetBool())
+		Msg("%d AlienKilled NumLive = %d\n", entindex(), m_nCurrentLiveAliens );
+
 	// If we're here, we're getting erroneous death messages from children we haven't created
 	AssertMsg( m_nCurrentLiveAliens >= 0, "asw_spawner receiving child death notice but thinks has no children\n" );
 
@@ -291,6 +294,22 @@ bool CASW_Spawner::ApplyCarnageMode( float fScaler, float fInvScaler )
 	
 	Msg( "[%d] Found a spawner but it's not set to spawn drones or drone jumpers\n", entindex() );
 	return false;
+}
+
+int	CASW_Spawner::DrawDebugTextOverlays()
+{
+	int text_offset = BaseClass::DrawDebugTextOverlays();
+
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
+	{
+		NDebugOverlay::EntityText( entindex(),text_offset,CFmtStr( "Num Live Aliens: %d", m_nCurrentLiveAliens ),0 );
+		text_offset++;
+		NDebugOverlay::EntityText( entindex(),text_offset,CFmtStr( "Max Live Aliens: %d", m_nMaxLiveAliens ),0 );
+		text_offset++;
+		NDebugOverlay::EntityText( entindex(),text_offset,CFmtStr( "Alien supply: %d", m_bInfiniteAliens ? -1 : m_nNumAliens ),0 );
+		text_offset++;
+	}
+	return text_offset;
 }
 
 void ASW_ApplyCarnage_f(float fScaler)

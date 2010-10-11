@@ -70,6 +70,8 @@ void CNB_Mission_Options::OnThink()
 			m_pSkillLevelLabel->SetText("#asw_difficulty_hard");
 		else if (m_iLastSkillLevel == 1)
 			m_pSkillLevelLabel->SetText("#asw_difficulty_easy");
+		else if (m_iLastSkillLevel == 5)
+			m_pSkillLevelLabel->SetText("#asw_difficulty_imba");
 		else 
 			m_pSkillLevelLabel->SetText("#asw_difficulty_normal");
 
@@ -80,6 +82,7 @@ void CNB_Mission_Options::OnThink()
 		case 2: m_pSkillDescriptionLabel->SetText("#asw_difficulty_chooser_normald"); break;
 		case 3: m_pSkillDescriptionLabel->SetText("#asw_difficulty_chooser_hardd"); break;
 		case 4: m_pSkillDescriptionLabel->SetText("#asw_difficulty_chooser_insaned"); break;
+		case 5: m_pSkillDescriptionLabel->SetText("#asw_difficulty_chooser_imbad"); break;
 		default: m_pSkillDescriptionLabel->SetText("???"); break;
 		}
 

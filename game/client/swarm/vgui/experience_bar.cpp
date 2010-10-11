@@ -40,15 +40,26 @@ ExperienceBar::ExperienceBar(vgui::Panel *parent, const char *name) :
 	m_pExperienceBar->SetShowMaxOnCounter( true );
 	m_pExperienceBar->SetColors( Color( 255, 255, 255, 0 ), Color( 93,148,192,255 ), Color( 255, 255, 255, 255 ), Color( 17,37,57,255 ), Color( 35, 77, 111, 255 ) );
 	//m_pExperienceBar->m_bShowCumulativeTotal = true;
-	m_pExperienceBar->AddMinMax( 0, g_iLevelExperience[ 0 ] );
-	for ( int i = 0; i < ASW_NUM_EXPERIENCE_LEVELS - 1; i++ )
-	{
-		m_pExperienceBar->AddMinMax( g_iLevelExperience[ i ], g_iLevelExperience[ i + 1 ] );
-	}
+	m_nLastPromotion = -1;
+	UpdateMinMaxes( 0 );
 
 	m_pExperienceBar->m_flBorder = 1.5f;
 
 	vgui::ivgui()->AddTickSignal( GetVPanel() );
+}
+
+void ExperienceBar::UpdateMinMaxes( int nPromotion )
+{
+	if ( m_nLastPromotion == nPromotion )
+		return;
+
+	m_nLastPromotion = nPromotion;
+	m_pExperienceBar->ClearMinMax();
+	m_pExperienceBar->AddMinMax( 0, g_iLevelExperience[ 0 ] * g_flPromotionXPScale[ m_nLastPromotion ] );
+	for ( int i = 0; i < ASW_NUM_EXPERIENCE_LEVELS - 1; i++ )
+	{
+		m_pExperienceBar->AddMinMax( g_iLevelExperience[ i ] * g_flPromotionXPScale[ m_nLastPromotion ] , g_iLevelExperience[ i + 1 ] * g_flPromotionXPScale[ m_nLastPromotion ] );
+	}
 }
 
 void ExperienceBar::ApplySchemeSettings( vgui::IScheme *pScheme )
@@ -97,9 +108,9 @@ void ExperienceBar::OnTick()
 		}
 	}
 
-	if ( ASWGameRules()->GetGameState() <= ASW_GS_BRIEFING )
+	if ( m_hPlayer.Get() )
 	{
-		if ( m_hPlayer.Get() )
+		if ( ASWGameRules()->GetGameState() <= ASW_GS_BRIEFING )
 		{
 			int nXP = m_hPlayer->GetExperience();
 			if ( nXP != m_nOldPlayerXP )
@@ -114,32 +125,32 @@ void ExperienceBar::OnTick()
 
 			m_pPlayerNameLabel->SetText( m_hPlayer->GetPlayerName() );
 		}
-	}
-	else
-	{
-		float flBarMin = m_pExperienceBar->GetBarMin();
-		bool bCapped = ( (int) m_pExperienceBar->m_fCurrent ) == ASW_XP_CAP;
-
-		if ( m_flOldBarMin == -1 )
+		else
 		{
+			float flBarMin = m_pExperienceBar->GetBarMin();
+			bool bCapped = ( (int) m_pExperienceBar->m_fCurrent ) >= ASW_XP_CAP * g_flPromotionXPScale[ m_hPlayer->GetPromotion() ];
+
+			if ( m_flOldBarMin == -1 )
+			{
+				m_bOldCapped = bCapped;
+			}
+
+			if ( m_flOldBarMin != -1 && ( m_flOldBarMin != flBarMin || m_bOldCapped != bCapped ) )		// bar min has changed - player has levelled up!
+			{
+				m_iPlayerLevel = LevelFromXP( m_pExperienceBar->m_fCurrent, m_hPlayer->GetPromotion() );
+				UpdateLevelLabel();
+
+				m_pLevelUpLabel->SetVisible( true );
+				SkillAnimPanel *pSkillAnim = dynamic_cast<SkillAnimPanel*>(GetClientMode()->GetViewport()->FindChildByName("SkillAnimPanel", true));
+				if ( pSkillAnim )
+				{
+					pSkillAnim->AddParticlesAroundPanel( m_pPlayerLevelLabel );
+				}
+			}
+			
+			m_flOldBarMin = flBarMin;
 			m_bOldCapped = bCapped;
 		}
-
-		if ( m_flOldBarMin != -1 && ( m_flOldBarMin != flBarMin || m_bOldCapped != bCapped ) )		// bar min has changed - player has levelled up!
-		{
-			m_iPlayerLevel = LevelFromXP( m_pExperienceBar->m_fCurrent );
-			UpdateLevelLabel();
-
-			m_pLevelUpLabel->SetVisible( true );
-			SkillAnimPanel *pSkillAnim = dynamic_cast<SkillAnimPanel*>(GetClientMode()->GetViewport()->FindChildByName("SkillAnimPanel", true));
-			if ( pSkillAnim )
-			{
-				pSkillAnim->AddParticlesAroundPanel( m_pPlayerLevelLabel );
-			}
-		}
-		
-		m_flOldBarMin = flBarMin;
-		m_bOldCapped = bCapped;
 	}
 }
 
@@ -157,11 +168,6 @@ void ExperienceBar::InitFor( C_ASW_Player *pPlayer )
 			m_pPlayerNameLabel->SetText( "Player" );
 			m_pPlayerLevelLabel->SetText( "Level 5" );
 			m_pExperienceBar->Init( 1200, 1500, 1500.0f / 4.0f, true, false );
-			m_pExperienceBar->AddMinMax( 0, g_iLevelExperience[ 0 ] );
-			for ( int i = 0; i < ASW_NUM_EXPERIENCE_LEVELS - 1; i++ )
-			{
-				m_pExperienceBar->AddMinMax( g_iLevelExperience[ i ], g_iLevelExperience[ i + 1 ] );
-			}
 			m_pExperienceBar->SetStartCountingTime( gpGlobals->curtime + 15.0f );
 		}
 		return;
@@ -188,6 +194,7 @@ void ExperienceBar::InitFor( C_ASW_Player *pPlayer )
 	}
 #endif
 
+	UpdateMinMaxes( pPlayer->GetPromotion() );
 	if ( ASWGameRules()->GetGameState() <= ASW_GS_BRIEFING )
 	{
 		m_iPlayerLevel = pPlayer->GetLevel();
@@ -204,7 +211,7 @@ void ExperienceBar::InitFor( C_ASW_Player *pPlayer )
 
 		int iEarnedXP = pPlayer->GetEarnedXP( ASW_XP_TOTAL );
 		int nGoalXP = pPlayer->GetExperienceBeforeDebrief() + iEarnedXP;
-		nGoalXP = MIN( nGoalXP, ASW_XP_CAP );
+		nGoalXP = MIN( nGoalXP, ASW_XP_CAP * g_flPromotionXPScale[ pPlayer->GetPromotion() ] );
 		float flRate = (float) iEarnedXP / 3.0f;	// take 4 seconds to increase XP.
 		if ( iEarnedXP < 150 )		// if XP is really low, count it up in 1 second
 		{

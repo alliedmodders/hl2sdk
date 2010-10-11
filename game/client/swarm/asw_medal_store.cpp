@@ -56,7 +56,7 @@ void C_ASW_Medal_Store::LoadMedalStore()
 		return;
 
 	char szMedalFile[ 256 ];
-	Q_snprintf( szMedalFile, sizeof( szMedalFile ), "cfg/clientc_%s.dat", pSteamUser->GetSteamID().Render() );
+	Q_snprintf( szMedalFile, sizeof( szMedalFile ), "cfg/clientc_%I64u.dat", pSteamUser->GetSteamID().ConvertToUint64() );
 	int len = Q_strlen( szMedalFile );
 	for ( int i = 0; i < len; i++ )
 	{
@@ -322,7 +322,7 @@ bool C_ASW_Medal_Store::SaveMedalStore()
 		return false;
 
 	char szMedalFile[ 256 ];
-	Q_snprintf( szMedalFile, sizeof( szMedalFile ), "cfg/clientc_%s.dat", pSteamUser->GetSteamID().Render() );
+	Q_snprintf( szMedalFile, sizeof( szMedalFile ), "cfg/clientc_%I64u.dat", pSteamUser->GetSteamID().ConvertToUint64() );
 	int len = Q_strlen( szMedalFile );
 	for ( int i = 0; i < len; i++ )
 	{

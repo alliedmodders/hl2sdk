@@ -1900,15 +1900,26 @@ void CServerGameDLL::GetMatchmakingTags( char *buf, size_t bufSize )
 #ifdef INFESTED_DLL
 	extern ConVar asw_marine_ff_absorption;
 	extern ConVar asw_sentry_friendly_fire_scale;
+	extern ConVar asw_horde_override;
+	extern ConVar asw_wanderer_override;
 	extern ConVar asw_skill;
 
 	char * const bufBase = buf;
 	int len = 0;
 
 	// hardcore friendly fire
-	if ( asw_marine_ff_absorption.GetInt() != 1 || asw_sentry_friendly_fire_scale.GetFloat() != 0.0f )
+	if ( CAlienSwarm::IsHardcoreFF() )
 	{
 		Q_strncpy( buf, "HardcoreFF,", bufSize );
+		len = strlen( buf );
+		buf += len;
+		bufSize -= len;
+	}
+
+	// onslaught
+	if ( CAlienSwarm::IsOnslaught() )
+	{
+		Q_strncpy( buf, "Onslaught,", bufSize );
 		len = strlen( buf );
 		buf += len;
 		bufSize -= len;
@@ -1921,6 +1932,7 @@ void CServerGameDLL::GetMatchmakingTags( char *buf, size_t bufSize )
 		case 1: szSkill = "Easy,"; break;
 		case 3: szSkill = "Hard,"; break;
 		case 4: szSkill = "Insane,"; break;
+		case 5: szSkill = "Imba,"; break;
 	}
 	Q_strncpy( buf, szSkill, bufSize );
 	len = strlen( buf );

@@ -158,7 +158,7 @@ void CNB_Main_Panel::OnThink()
 	m_pChatButton->SetVisible( gpGlobals->maxClients > 1 );
 	m_pVoteButton->SetVisible( gpGlobals->maxClients > 1 );
 	C_ASW_Player *pPlayer = C_ASW_Player::GetLocalASWPlayer();
-	m_pPromotionButton->SetVisible( pPlayer && pPlayer->GetExperience() >= ASW_XP_CAP && pPlayer->GetPromotion() < ASW_PROMOTION_CAP );
+	m_pPromotionButton->SetVisible( pPlayer && pPlayer->GetExperience() >= ( ASW_XP_CAP * g_flPromotionXPScale[ pPlayer->GetPromotion() ] ) && pPlayer->GetPromotion() < ASW_PROMOTION_CAP );
 
 	
 	
