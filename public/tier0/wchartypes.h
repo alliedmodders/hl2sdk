@@ -23,7 +23,7 @@
 #if defined _WIN32 && !defined _WCHAR_T_DEFINED
 typedef unsigned short wchar_t;
 #define _WCHAR_T_DEFINED
-#elif defined _LINUX && !defined __WCHAR_TYPE__
+#elif (defined _LINUX || defined __APPLE__) && !defined __WCHAR_TYPE__
 typedef unsigned short wchar_t;
 #define __WCHAR_TYPE__
 #endif

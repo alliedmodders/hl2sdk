@@ -84,7 +84,7 @@ typedef enum
 //} xverbose_e;
 
 typedef unsigned short WORD;
-#ifndef _LINUX
+#if !defined _LINUX && !defined __APPLE__
 typedef unsigned long DWORD;
 typedef void* HANDLE;
 #endif

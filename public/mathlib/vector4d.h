@@ -134,7 +134,7 @@ const Vector4D vec4_invalid( FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX );
 
 #ifdef _WIN32
 class __declspec(align(16)) Vector4DAligned : public Vector4D
-#elif _LINUX
+#elif defined _LINUX || defined __APPLE__
 class __attribute__((aligned(16))) Vector4DAligned : public Vector4D
 #endif
 {

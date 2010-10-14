@@ -13,7 +13,7 @@
 
 #ifdef _WIN32
 #pragma once
-#elif _LINUX
+#elif defined(_LINUX) || defined(__APPLE__)
 #include <ctype.h>
 #include <wchar.h>
 #include <math.h>
@@ -25,7 +25,7 @@
 template< class T, class I > class CUtlMemory;
 template< class T, class A > class CUtlVector;
 
-#ifdef _LINUX
+#if defined(_LINUX) || defined(__APPLE__)
 inline char *strupr( char *start )
 {
       char *str = start;
@@ -167,14 +167,14 @@ typedef char *  va_list;
 
 #endif   // _VA_LIST_DEFINED
 
-#elif _LINUX
+#elif defined(_LINUX) || defined(__APPLE__)
 #include <stdarg.h>
 #endif
 
 #ifdef _WIN32
 #define CORRECT_PATH_SEPARATOR '\\'
 #define INCORRECT_PATH_SEPARATOR '/'
-#elif _LINUX
+#elif defined(_LINUX) || defined(__APPLE__)
 #define CORRECT_PATH_SEPARATOR '/'
 #define INCORRECT_PATH_SEPARATOR '\\'
 #endif
