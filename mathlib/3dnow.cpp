@@ -39,7 +39,7 @@ float _3DNow_Sqrt(float x)
 		movd		root, mm0
 		femms
 	}
-#elif _LINUX
+#elif defined _LINUX || defined __APPLE__
  	__asm __volatile__( "femms" );
  	__asm __volatile__
 	(
@@ -98,7 +98,7 @@ float FASTCALL _3DNow_VectorNormalize (Vector& vec)
 			movd		radius, mm1
 			femms
 		}
-#elif _LINUX	
+#elif defined _LINUX || defined __APPLE__	
 		long long a,c;
     		int b,d;
     		memcpy(&a,&vec[0],sizeof(a));
@@ -164,7 +164,7 @@ float _3DNow_InvRSquared(const float* v)
 		movd		[r2], mm0
 		femms
 	}
-#elif _LINUX
+#elif defined _LINUX || defined __APPLE__
 		long long a,c;
     		int b;
     		memcpy(&a,&v[0],sizeof(a));

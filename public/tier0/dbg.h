@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#ifdef _LINUX
+#if defined _LINUX || defined __APPLE__
 #define __cdecl
 #endif
 

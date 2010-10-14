@@ -8,7 +8,7 @@
 
 #if defined( _WIN32 ) && !defined( _X360 )
 #include <windows.h>		// for WideCharToMultiByte and MultiByteToWideChar
-#elif defined(_LINUX)
+#elif defined( _LINUX ) || defined( __APPLE__ )
 #include <wchar.h> // wcslen()
 #define _alloca alloca
 #endif

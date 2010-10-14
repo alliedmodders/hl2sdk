@@ -296,7 +296,7 @@ int CUtlString::Format( const char *pFormat, ... )
 	va_start( marker, pFormat );
 #ifdef _WIN32
 	int len = _vsnprintf( tmpBuf, sizeof( tmpBuf ) - 1, pFormat, marker );
-#elif _LINUX
+#elif defined _LINUX || defined __APPLE__
 	int len = vsnprintf( tmpBuf, sizeof( tmpBuf ) - 1, pFormat, marker );
 #else
 #error "define vsnprintf type."

@@ -36,7 +36,7 @@ CMemoryStack::CMemoryStack()
 	m_pAllocLimit( NULL ),
 	m_pBase( NULL ),
 	m_maxSize( 0 ),
-#if defined (_LINUX)
+#if defined (_LINUX) || defined (__APPLE__)
 	m_alignment( 16 )
 #elif defined(_WIN32)
 	m_alignment( 16 ),

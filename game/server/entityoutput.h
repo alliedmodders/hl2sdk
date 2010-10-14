@@ -128,7 +128,7 @@ public:
 // Template specializations for type Vector, so we can implement Get, Set, and Init differently.
 //
 template<>
-class CEntityOutputTemplate<class Vector, FIELD_VECTOR> : public CBaseEntityOutput
+class CEntityOutputTemplate<Vector, FIELD_VECTOR> : public CBaseEntityOutput
 {
 public:
 	void Init( const Vector &value )
@@ -150,7 +150,7 @@ public:
 
 
 template<>
-class CEntityOutputTemplate<class Vector, FIELD_POSITION_VECTOR> : public CBaseEntityOutput
+class CEntityOutputTemplate<Vector, FIELD_POSITION_VECTOR> : public CBaseEntityOutput
 {
 public:
 	void Init( const Vector &value )

@@ -6,7 +6,7 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#ifdef _LINUX
+#if defined _LINUX || defined __APPLE__
 
 #include "processor_detect_linux.cpp"
 

@@ -66,7 +66,7 @@ public:
 
 	inline int GetErrorCount(void);
 
-#ifndef _LINUX
+#if !defined _LINUX && !defined __APPLE__
 	inline TokenReader(TokenReader const &)
 	{
 		// prevent vc7 warning. compiler can't generate a copy constructor since descended from
