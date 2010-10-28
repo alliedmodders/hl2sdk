@@ -144,7 +144,7 @@ public:
 extern CGlobalVars *gpGlobals;
 inline int	  ENTINDEX( edict_t *pEdict)			
 { 
-	return (int)(pEdict - gpGlobals->baseEdict);
+	return (int)(pEdict - gpGlobals->pEdicts);
 }
 
 int	  ENTINDEX( CBaseEntity *pEnt );
@@ -153,7 +153,7 @@ inline edict_t* INDEXENT( int iEdictNum )
 { 
 	if (iEdictNum >= 0 && iEdictNum < gpGlobals->maxEntities)
 	{
-		return (edict_t *)(gpGlobals->baseEdict + iEdictNum);
+		return (edict_t *)(gpGlobals->pEdicts + iEdictNum);
 	}
 	return NULL;
 }
