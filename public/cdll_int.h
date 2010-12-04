@@ -65,6 +65,8 @@ class CGamestatsData;
 typedef struct player_info_s
 {
 	DECLARE_BYTESWAP_DATADESC();
+	// network xuid
+	uint64			xuid;
 	// scoreboard information
 	char			name[MAX_PLAYER_NAME_LENGTH];
 	// local server user ID, unique while server is running
