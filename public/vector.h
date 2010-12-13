@@ -30,9 +30,13 @@
 #include <stdlib.h>
 
 // For MMX intrinsics
-#include <emmintrin.h>
 #ifdef _LINUX
+#ifdef __SSE2__ // Recent versions of emmintrin.h error out with SSE2 disabled.
+#include <emmintrin.h>
+#endif
 #include <xmmintrin.h>
+#else
+#include <emmintrin.h>
 #endif
 
 #include "tier0/dbg.h"
