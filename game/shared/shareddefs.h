@@ -10,6 +10,8 @@
 #ifdef _WIN32
 #pragma once
 #endif
+#include "mathlib/vector.h"
+#include "utlvector.h"
 
 #define TICK_INTERVAL			(gpGlobals->interval_per_tick)
 

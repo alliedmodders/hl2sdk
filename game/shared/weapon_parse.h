@@ -38,6 +38,11 @@ typedef enum {
 	SPECIAL2,
 	SPECIAL3,
 	TAUNT,
+	UNKNOWNSOUND1,
+	UNKNOWNSOUND2,
+	UNKNOWNSOUND3,
+	UNKNOWNSOUND4,
+	UNKNOWNSOUND5,
 
 	// Add new shoot sound types here
 
@@ -46,7 +51,7 @@ typedef enum {
 
 int GetWeaponSoundFromString( const char *pszString );
 
-#define MAX_SHOOT_SOUNDS	16			// Maximum number of shoot sounds per shoot type
+#define MAX_SHOOT_SOUNDS	20			// Maximum number of shoot sounds per shoot type
 
 #define MAX_WEAPON_STRING	80
 #define MAX_WEAPON_PREFIX	16
@@ -97,6 +102,7 @@ public:
 	int						iFlags;									// miscellaneous weapon flags
 	char					szAmmo1[MAX_WEAPON_AMMO_NAME];			// "primary" ammo type
 	char					szAmmo2[MAX_WEAPON_AMMO_NAME];			// "secondary" ammo type
+	char					szAIAddOn[MAX_WEAPON_STRING];			// addon that this weapon can become
 
 	// Sound blocks
 	char					aShootSounds[NUM_SHOOT_SOUND_TYPES][MAX_WEAPON_STRING];	
@@ -123,6 +129,8 @@ public:
 	CHudTexture 					*iconZoomedCrosshair;
 	CHudTexture 					*iconZoomedAutoaim;
 	CHudTexture						*iconSmall;
+	CHudTexture						*iconDual;
+	CHudTexture						*iconDualSmall;
 
 // TF2 specific
 	bool					bShowUsageHint;							// if true, then when you receive the weapon, show a hint about it
