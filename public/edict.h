@@ -205,7 +205,9 @@ public:
 
 	// NOTE: this is in the edict instead of being accessed by a virtual because the engine needs fast access to it.
 	int m_NetworkSerialNumber;	// Game DLL sets this when it gets a serial number for its EHANDLE.
-
+	
+	void *m_pUnknown;
+	
 	// NOTE: this is in the edict instead of being accessed by a virtual because the engine needs fast access to it.
 	IServerNetworkable	*m_pNetworkable;
 
