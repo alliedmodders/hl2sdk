@@ -102,6 +102,7 @@ protected:
 	Vector			m_vecDamageForce;
 	Vector			m_vecDamagePosition;
 	Vector			m_vecReportedPosition;	// Position players are told damage is coming from
+	Vector			m_vecUnknown;
 	EHANDLE			m_hInflictor;
 	EHANDLE			m_hAttacker;
 	EHANDLE			m_hWeapon;
