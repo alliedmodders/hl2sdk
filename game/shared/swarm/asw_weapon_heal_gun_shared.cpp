@@ -909,8 +909,15 @@ const char* CASW_Weapon_Heal_Gun::GetPartialReloadSound(int iPart)
 
 void CASW_Weapon_Heal_Gun::UpdateEffects()
 {
-	if ( m_hHealEntity.Get() && m_hHealEntity.Get()->Classify() != CLASS_ASW_MARINE )
+	if ( !m_hHealEntity.Get() || m_hHealEntity.Get()->Classify() != CLASS_ASW_MARINE || !GetMarine() )
+	{
+		if ( m_pDischargeEffect )
+		{
+			m_pDischargeEffect->StopEmission();
+			m_pDischargeEffect = NULL;
+		}
 		return;
+	}
 
 	C_ASW_Marine* pMarine = static_cast<C_ASW_Marine*>( static_cast<C_BaseEntity*>( m_hHealEntity.Get() ) );
 	bool bHealingSelf = pMarine ? (pMarine == GetMarine()) : false;

@@ -62,7 +62,7 @@ CExperienceReport::CExperienceReport( vgui::Panel *parent, const char *name ) : 
 	m_pCheatsUsedLabel->SetVisible( ASWGameRules() && ASWGameRules()->m_bCheated.Get() );
 
 	m_pUnofficialMapLabel = new vgui::Label( this, "UnofficialMapLabel", "#asw_unofficial_map" );
-	m_pUnofficialMapLabel->SetVisible( GetClientModeASW() && !GetClientModeASW()->IsOfficialMap() );
+	m_pUnofficialMapLabel->SetVisible( false ); //GetClientModeASW() && !GetClientModeASW()->IsOfficialMap() );
 
 	m_iPlayerLevel = 0;
 	m_pszWeaponUnlockClass = NULL;
@@ -185,7 +185,7 @@ void CExperienceReport::OnThink()
 		m_pCheatsUsedLabel->SetVisible( bShowCheatsLabel );
 		InvalidateLayout();
 	}
-	bool bShowUnofficialMapLabel = ( GetClientModeASW() && !GetClientModeASW()->IsOfficialMap() );
+	bool bShowUnofficialMapLabel = false; //( GetClientModeASW() && !GetClientModeASW()->IsOfficialMap() );
 	if ( bShowUnofficialMapLabel != m_pUnofficialMapLabel->IsVisible() )
 	{
 		m_pUnofficialMapLabel->SetVisible( bShowUnofficialMapLabel );

@@ -208,8 +208,8 @@ void CASW_Player::CalculateEarnedXP()
 	if ( engine->IsPlayingDemo() )
 		return;
 
-	if ( GetClientModeASW() && !GetClientModeASW()->IsOfficialMap() )
-		return;
+	//if ( GetClientModeASW() && !GetClientModeASW()->IsOfficialMap() )
+		//return;
 #endif
 
 	int iNumObjectives = 0;

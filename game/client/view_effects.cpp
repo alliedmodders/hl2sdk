@@ -706,6 +706,12 @@ void CViewEffects::Shake( const ScreenShake_t &data )
 		pNewShake->duration = data.duration;
 		pNewShake->nextShake = 0;
 		pNewShake->endtime = gpGlobals->curtime + data.duration;
+
+		if ( prediction && prediction->InPrediction() )
+		{
+			pNewShake->endtime = prediction->GetSavedTime() + data.duration;
+		}
+
 		pNewShake->command = data.command;
 		pNewShake->direction = data.direction;
 		pNewShake->nShakeType = data.direction.IsZeroFast() ? screenshake_t::kSHAKE_BASIC : screenshake_t::kSHAKE_DIRECTIONAL;
