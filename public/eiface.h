@@ -380,9 +380,17 @@ public:
 
 	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
 	virtual const CSteamID	*GetClientSteamID( edict_t *pPlayerEdict ) = 0;
+	
+	// Returns the SteamID of the game server
+	virtual const CSteamID	*GetGameServerSteamID() = 0;
+
+	// Send a client command keyvalues
+	// keyvalues are deleted inside the function
+	virtual void ClientCommandKeyValues( edict_t *pEdict, KeyValues *pCommand ) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
+#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_5	"ServerGameDLL005"
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL006"
 
 //-----------------------------------------------------------------------------
@@ -489,6 +497,9 @@ public:
 	// iCookie is the value returned by IServerPluginHelpers::StartQueryCvarValue.
 	// Added with version 2 of the interface.
 	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) = 0;
+	
+	// Called after the steam API has been activated post-level startup
+	virtual void			GameServerSteamAPIActivated( void ) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -587,6 +598,9 @@ public:
 
 	// A user has had their network id setup and validated 
 	virtual void			NetworkIDValidated( const char *pszUserName, const char *pszNetworkID ) = 0;
+	
+	// The client has submitted a keyvalues command
+	virtual void			ClientCommandKeyValues( edict_t *pEntity, KeyValues *pKeyValues ) = 0;
 };
 
 #define INTERFACEVERSION_UPLOADGAMESTATS		"ServerUploadGameStats001"
