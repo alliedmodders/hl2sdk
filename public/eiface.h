@@ -383,7 +383,7 @@ public:
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
-#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
+#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL006"
 
 //-----------------------------------------------------------------------------
 // Purpose: These are the interfaces that the game .dll exposes to the engine
@@ -397,7 +397,9 @@ public:
 										CreateInterfaceFn physicsFactory, 
 										CreateInterfaceFn fileSystemFactory, 
 										CGlobalVars *pGlobals) = 0;
-
+	
+	virtual bool			ReplayInit( CreateInterfaceFn replayFactory ) = 0;
+	
 	// This is called when a new game is started. (restart, map)
 	virtual bool			GameInit( void ) = 0;
 
