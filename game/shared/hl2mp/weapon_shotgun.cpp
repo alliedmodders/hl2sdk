@@ -139,7 +139,7 @@ bool CWeaponShotgun::StartReload( void )
 		return false;
 
 
-	int j = min(1, pOwner->GetAmmoCount(m_iPrimaryAmmoType));
+	int j = MIN(1, pOwner->GetAmmoCount(m_iPrimaryAmmoType));
 
 	if (j <= 0)
 		return false;
@@ -180,7 +180,7 @@ bool CWeaponShotgun::Reload( void )
 	if (m_iClip1 >= GetMaxClip1())
 		return false;
 
-	int j = min(1, pOwner->GetAmmoCount(m_iPrimaryAmmoType));
+	int j = MIN(1, pOwner->GetAmmoCount(m_iPrimaryAmmoType));
 
 	if (j <= 0)
 		return false;
@@ -606,7 +606,7 @@ void CWeaponShotgun::ItemHolsterFrame( void )
 			return;
 
 		// Just load the clip with no animations
-		int ammoFill = min( (GetMaxClip1() - m_iClip1), GetOwner()->GetAmmoCount( GetPrimaryAmmoType() ) );
+		int ammoFill = MIN( (GetMaxClip1() - m_iClip1), GetOwner()->GetAmmoCount( GetPrimaryAmmoType() ) );
 		
 		GetOwner()->RemoveAmmo( ammoFill, GetPrimaryAmmoType() );
 		m_iClip1 += ammoFill;

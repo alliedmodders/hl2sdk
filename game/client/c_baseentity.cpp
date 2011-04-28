@@ -686,8 +686,8 @@ void GetInterpolatedVarTimeRange( CInterpolatedVar<T> *pVar, float &flMin, float
 		if ( !pVar->GetHistoryValue( i, changetime ) )
 			return;
 
-		flMin = min( flMin, changetime );
-		flMax = max( flMax, changetime );
+		flMin = MIN( flMin, changetime );
+		flMax = MAX( flMax, changetime );
 		i = pVar->GetNext( i );
 	}
 }
@@ -5093,7 +5093,7 @@ int C_BaseEntity::GetIntermediateDataSize( void )
 	Assert( size > 0 );	
 
 	// At least 4 bytes to avoid some really bad stuff
-	return max( size, 4 );
+	return MAX( size, 4 );
 #else
 	return 0;
 #endif

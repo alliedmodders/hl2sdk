@@ -119,7 +119,7 @@ Vector VecCheckToss( CBaseEntity *pEntity, ITraceFilter *pFilter, Vector vecSpot
 		// But don't throw so high that it looks silly. Maximize the height of the
 		// throw above the highest of the two endpoints to a ratio of the throw length.
 		float flHeightMax = flHeightMaxRatio * (vecSpot2 - vecSpot1).Length();
-		float flHighestEndZ = max(vecSpot1.z, vecSpot2.z);
+		float flHighestEndZ = MAX(vecSpot1.z, vecSpot2.z);
 		if ((vecMidPoint.z - flHighestEndZ) > flHeightMax)
 		{
 			vecMidPoint.z = flHighestEndZ + flHeightMax;

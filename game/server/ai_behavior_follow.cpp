@@ -505,14 +505,14 @@ bool CAI_FollowBehavior::IsFollowTargetInRange( float rangeMultiplier )
 
 	if( GetNpcState() == NPC_STATE_COMBAT )
 	{
-		if( IsFollowGoalInRange( max( m_FollowNavGoal.coverTolerance, m_FollowNavGoal.enemyLOSTolerance ) * rangeMultiplier, GetGoalZRange(), GetGoalFlags() ) )
+		if( IsFollowGoalInRange( MAX( m_FollowNavGoal.coverTolerance, m_FollowNavGoal.enemyLOSTolerance ) * rangeMultiplier, GetGoalZRange(), GetGoalFlags() ) )
 		{
 			return true;
 		}
 	}
 	else
 	{
-		if( IsFollowGoalInRange( max( m_FollowNavGoal.tolerance, GetGoalRange() ) * rangeMultiplier, GetGoalZRange(), GetGoalFlags() ) )
+		if( IsFollowGoalInRange( MAX( m_FollowNavGoal.tolerance, GetGoalRange() ) * rangeMultiplier, GetGoalZRange(), GetGoalFlags() ) )
 		{
 			if ( m_FollowNavGoal.flags & AIFF_REQUIRE_LOS_OUTSIDE_COMBAT )
 			{
@@ -934,7 +934,7 @@ CAI_Hint *CAI_FollowBehavior::FindFollowPoint()
 	hintCriteria.SetFlag( bits_HINT_NODE_VISIBLE | bits_HINT_NODE_NEAREST );
 
 	// Add the search position
-	hintCriteria.AddIncludePosition( GetGoalPosition(), max( m_FollowNavGoal.followPointTolerance, GetGoalRange() ) );
+	hintCriteria.AddIncludePosition( GetGoalPosition(), MAX( m_FollowNavGoal.followPointTolerance, GetGoalRange() ) );
 	hintCriteria.AddExcludePosition( GetGoalPosition(), (GetFollowTarget()->WorldAlignMins().AsVector2D() - GetFollowTarget()->WorldAlignMaxs().AsVector2D()).Length());
 
 	return CAI_HintManager::FindHint( GetOuter(), hintCriteria );
@@ -946,7 +946,7 @@ bool CAI_FollowBehavior::IsFollowPointInRange()
 {
 	return ( GetHintNode() && 
 			 GetHintNode()->HintType() == HINT_FOLLOW_WAIT_POINT && 
-			 (GetHintNode()->GetAbsOrigin() - GetFollowTarget()->GetAbsOrigin()).LengthSqr() < Square(max(m_FollowNavGoal.followPointTolerance, GetGoalRange())) );
+			 (GetHintNode()->GetAbsOrigin() - GetFollowTarget()->GetAbsOrigin()).LengthSqr() < Square(MAX(m_FollowNavGoal.followPointTolerance, GetGoalRange())) );
 }
 
 
@@ -1518,7 +1518,7 @@ void CAI_FollowBehavior::StartTask( const Task_t *pTask )
 			if ( pLeader )
 			{
 				Vector coverPos = vec3_invalid;
-				float coverRadius = min( GetOuter()->CoverRadius(), m_FollowNavGoal.coverTolerance );
+				float coverRadius = MIN( GetOuter()->CoverRadius(), m_FollowNavGoal.coverTolerance );
 				
 				if ( FindCoverFromEnemyAtFollowTarget( coverRadius, &coverPos ) )
 				{
@@ -1607,7 +1607,7 @@ void CAI_FollowBehavior::RunTask( const Task_t *pTask )
 					{
 						Assert( GetOuter()->m_vInterruptSavePosition == vec3_invalid );
 						Vector coverPos = vec3_invalid;
-						float coverRadius = min( (float)12*12, m_FollowNavGoal.coverTolerance );
+						float coverRadius = MIN( (float)12*12, m_FollowNavGoal.coverTolerance );
 						if ( FindCoverFromEnemyAtFollowTarget( coverRadius, &coverPos ) )
 						{
 							GetOuter()->m_vInterruptSavePosition = coverPos;

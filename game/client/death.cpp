@@ -145,7 +145,7 @@ void CHudDeathNotice::Paint()
 			continue;
 		}
 
-		rgDeathNoticeList[i].flDisplayTime = min( rgDeathNoticeList[i].flDisplayTime, gpGlobals->curtime + DEATHNOTICE_DISPLAY_TIME );
+		rgDeathNoticeList[i].flDisplayTime = MIN( rgDeathNoticeList[i].flDisplayTime, gpGlobals->curtime + DEATHNOTICE_DISPLAY_TIME );
 
 		// Draw the death notice
 		y = DEATHNOTICE_TOP + (20 * i) + 100;  //!!!

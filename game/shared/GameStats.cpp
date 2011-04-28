@@ -141,7 +141,7 @@ public:
 	{
 		T maxsofar = -16000000;
 		for( int i = 0; i < STATS_WINDOW_SIZE; i++ )
-			maxsofar = max( maxsofar, m_StatsBuffer[i].*field );
+			maxsofar = MAX( maxsofar, m_StatsBuffer[i].*field );
 		return maxsofar;
 	}
 
@@ -149,7 +149,7 @@ public:
 	{
 		T minsofar = 16000000;
 		for( int i = 0; i < STATS_WINDOW_SIZE; i++ )
-			minsofar = min( minsofar, m_StatsBuffer[i].*field );
+			minsofar = MIN( minsofar, m_StatsBuffer[i].*field );
 		return minsofar;
 	}
 

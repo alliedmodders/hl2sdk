@@ -286,11 +286,11 @@ void CHUDAutoAim::OnThink()
 			Vector vecGoal( goalx, goaly, 0 );
 			Vector vecDir = vecGoal - m_vecPos;
 			float flDistRemaining = VectorNormalize( vecDir );
-			m_vecPos += vecDir * min(flDistRemaining, (speed * gpGlobals->frametime) );
+			m_vecPos += vecDir * MIN(flDistRemaining, (speed * gpGlobals->frametime) );
 
 			// Lerp and Clamp scale
 			float scaleDelta = fabs( goalscale - m_scale );
-			float scaleMove = min( AUTOAIM_SCALE_SPEED * gpGlobals->frametime, scaleDelta );
+			float scaleMove = MIN( AUTOAIM_SCALE_SPEED * gpGlobals->frametime, scaleDelta );
 			if( m_scale < goalscale )
 			{
 				m_scale += scaleMove;

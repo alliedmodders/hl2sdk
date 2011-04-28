@@ -45,7 +45,7 @@ public:
 			pBitString->ClearAll();
 		}
 		int numIntsInStream = CalcNumIntsForBits( numBits );
-		int readSize = min( pBitString->GetNumDWords(), numIntsInStream );
+		int readSize = MIN( pBitString->GetNumDWords(), numIntsInStream );
 		pRestore->ReadInt( pBitString->Base(), numIntsInStream );
 
 		numIntsInStream -= readSize;

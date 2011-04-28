@@ -1417,7 +1417,7 @@ bool CBaseFlex::ProcessMoveToSceneEvent( CSceneEventInfo *info, CChoreoScene *sc
 
 			float flDist = (info->m_hTarget->EyePosition() - GetAbsOrigin()).Length2D();
 
-			if (flDist > max( max( flDistTolerance, 0.1 ), event->GetDistanceToTarget()))
+			if (flDist > MAX( MAX( flDistTolerance, 0.1 ), event->GetDistanceToTarget()))
 			{
 				// Msg("flDist %.1f\n", flDist );
 				int result = false;
@@ -1842,11 +1842,11 @@ bool CBaseFlex::ProcessGestureSceneEvent( CSceneEventInfo *info, CChoreoScene *s
 		{
 			if (IsMoving())
 			{
-				info->m_flWeight = max( info->m_flWeight - 0.2, 0.0 );
+				info->m_flWeight = MAX( info->m_flWeight - 0.2, 0.0 );
 			}
 			else
 			{
-				info->m_flWeight = min( info->m_flWeight + 0.2, 1.0 );
+				info->m_flWeight = MIN( info->m_flWeight + 0.2, 1.0 );
 			}
 		}
 
@@ -1920,11 +1920,11 @@ bool CBaseFlex::ProcessSequenceSceneEvent( CSceneEventInfo *info, CChoreoScene *
 
 		if (bFadeOut)
 		{
-			info->m_flWeight = max( info->m_flWeight - 0.2, 0.0 );
+			info->m_flWeight = MAX( info->m_flWeight - 0.2, 0.0 );
 		}
 		else
 		{
-			info->m_flWeight = min( info->m_flWeight + 0.2, 1.0 );
+			info->m_flWeight = MIN( info->m_flWeight + 0.2, 1.0 );
 		}
 
 		float spline = 3 * info->m_flWeight * info->m_flWeight - 2 * info->m_flWeight * info->m_flWeight * info->m_flWeight;
@@ -2026,7 +2026,7 @@ bool CBaseFlex::EnterSceneSequence( CChoreoScene *scene, CChoreoEvent *event, bo
 		return false;
 
 	// 2 seconds past current event, or 0.2 seconds past end of scene, whichever is shorter
-	float flDuration = min( 2.0, min( event->GetEndTime() - scene->GetTime() + 2.0, scene->FindStopTime() - scene->GetTime() + 0.2 ) );
+	float flDuration = MIN( 2.0, MIN( event->GetEndTime() - scene->GetTime() + 2.0, scene->FindStopTime() - scene->GetTime() + 0.2 ) );
 
 	if (myNpc->IsCurSchedule( SCHED_SCENE_GENERIC ))
 	{
@@ -2201,11 +2201,11 @@ float CSceneEventInfo::UpdateWeight( CBaseFlex *pActor )
 	// decay if this is a background scene and there's other flex animations playing
 	if (pActor->IsSuppressedFlexAnimation( this ))
 	{
-		m_flWeight = max( m_flWeight - 0.2, 0.0 );
+		m_flWeight = MAX( m_flWeight - 0.2, 0.0 );
 	}
 	else
 	{
-		m_flWeight = min( m_flWeight + 0.1, 1.0 );
+		m_flWeight = MIN( m_flWeight + 0.1, 1.0 );
 	}
 	return m_flWeight;
 }

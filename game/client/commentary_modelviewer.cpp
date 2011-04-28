@@ -180,7 +180,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 		{
 			m_flYawSpeed = 0;
 		}
-		m_flYawSpeed = max(m_flYawSpeed-flAccel, -3.0);
+		m_flYawSpeed = MAX(m_flYawSpeed-flAccel, -3.0);
 	}
 	else if ( bRightDown )
 	{
@@ -188,7 +188,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 		{
 			m_flYawSpeed = 0;
 		}
-		m_flYawSpeed = min(m_flYawSpeed+flAccel, 3.0);
+		m_flYawSpeed = MIN(m_flYawSpeed+flAccel, 3.0);
 	}
 	if ( m_flYawSpeed != 0 )
 	{
@@ -203,7 +203,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 
 		if ( !bLeftDown && !bRightDown )
 		{
-			m_flYawSpeed = ( m_flYawSpeed > 0 ) ? max(0,m_flYawSpeed-0.1) : min(0,m_flYawSpeed+0.1);
+			m_flYawSpeed = ( m_flYawSpeed > 0 ) ? MAX(0,m_flYawSpeed-0.1) : MIN(0,m_flYawSpeed+0.1);
 		}
 	}
 
@@ -214,7 +214,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 		{
 			m_flZoomSpeed = 0;
 		}
-		m_flZoomSpeed = max(m_flZoomSpeed-flAccel, -3.0);
+		m_flZoomSpeed = MAX(m_flZoomSpeed-flAccel, -3.0);
 	}
 	else if ( bBackDown )
 	{
@@ -222,7 +222,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 		{
 			m_flZoomSpeed = 0;
 		}
-		m_flZoomSpeed = min(m_flZoomSpeed+flAccel, 3.0);
+		m_flZoomSpeed = MIN(m_flZoomSpeed+flAccel, 3.0);
 	}
 	if ( m_flZoomSpeed != 0 )
 	{
@@ -239,7 +239,7 @@ void CCommentaryModelViewer::HandleMovementInput( void )
 
 		if ( !bForwardDown && !bBackDown )
 		{
-			m_flZoomSpeed = ( m_flZoomSpeed > 0 ) ? max(0,m_flZoomSpeed-0.1) : min(0,m_flZoomSpeed+0.1);
+			m_flZoomSpeed = ( m_flZoomSpeed > 0 ) ? MAX(0,m_flZoomSpeed-0.1) : MIN(0,m_flZoomSpeed+0.1);
 		}
 	}
 }

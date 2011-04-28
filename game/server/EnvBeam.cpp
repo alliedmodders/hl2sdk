@@ -143,7 +143,7 @@ void CEnvBeam::Spawn( void )
 
 	BaseClass::Spawn();
 
-	m_noiseAmplitude = min(MAX_BEAM_NOISEAMPLITUDE, m_noiseAmplitude);
+	m_noiseAmplitude = MIN(MAX_BEAM_NOISEAMPLITUDE, m_noiseAmplitude);
 
 	// Check for tapering
 	if ( HasSpawnFlags( SF_BEAM_TAPEROUT ) )
@@ -747,8 +747,8 @@ void CEnvBeam::BeamUpdateVars( void )
 
 	RelinkBeam();
 
-	SetWidth( min(MAX_BEAM_WIDTH, m_boltWidth) );
-	SetNoise( min(MAX_BEAM_NOISEAMPLITUDE, m_noiseAmplitude) );
+	SetWidth( MIN(MAX_BEAM_WIDTH, m_boltWidth) );
+	SetNoise( MIN(MAX_BEAM_NOISEAMPLITUDE, m_noiseAmplitude) );
 	SetFrame( m_frameStart );
 	SetScrollRate( m_speed );
 	if ( m_spawnflags & SF_BEAM_SHADEIN )

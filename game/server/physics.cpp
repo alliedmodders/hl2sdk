@@ -1612,7 +1612,7 @@ CON_COMMAND( physics_budget, "Times the cost of each active object" )
 			lastTime = elapsed;
  		}
 
-		totalTime = max( totalTime, 0.001 );
+		totalTime = MAX( totalTime, 0.001 );
 		for ( i = 0; i < ents.Count(); i++ )
 		{
 			float fraction = times[i] / totalTime;
@@ -1822,10 +1822,10 @@ void CCollisionEvent::PreCollision( vcollisionevent_t *pEvent )
 					// so make it fairly small and have a tiny collision instead.
 					pObject->GetVelocity( &velocity, &angVel );
 					float len = VectorNormalize(velocity);
-					len = max( len, 10 );
+					len = MAX( len, 10 );
 					velocity *= len;
 					len = VectorNormalize(angVel);
-					len = max( len, 1 );
+					len = MAX( len, 1 );
 					angVel *= len;
 					pObject->SetVelocity( &velocity, &angVel );
 				}

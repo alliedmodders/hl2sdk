@@ -606,15 +606,15 @@ public:
 	// HACKHACK: Compute the average coverage for this triangle by sampling the AABB of its texture space
 	float ComputeCoverageForTriangle( int shadowTextureIndex, const Vector2D &t0, const Vector2D &t1, const Vector2D &t2 )
 	{
-		float umin = min(t0.x, t1.x);
-		umin = min(umin, t2.x);
-		float umax = max(t0.x, t1.x);
-		umax = max(umax, t2.x);
+		float umin = MIN(t0.x, t1.x);
+		umin = MIN(umin, t2.x);
+		float umax = MAX(t0.x, t1.x);
+		umax = MAX(umax, t2.x);
 
-		float vmin = min(t0.y, t1.y);
-		vmin = min(vmin, t2.y);
-		float vmax = max(t0.y, t1.y);
-		vmax = max(vmax, t2.y);
+		float vmin = MIN(t0.y, t1.y);
+		vmin = MIN(vmin, t2.y);
+		float vmax = MAX(t0.y, t1.y);
+		vmax = MAX(vmax, t2.y);
 
 		// UNDONE: Do something about tiling
 		umin = clamp(umin, 0, 1);

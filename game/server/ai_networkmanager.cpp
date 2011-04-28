@@ -564,11 +564,11 @@ void CAI_NetworkManager::LoadNetworkGraph( void )
 	// ------------------------------------------------------------------------
 	if ( engine->IsInEditMode() )
 	{
-		numNodes = max( numNodes, 1024 );
+		numNodes = MAX( numNodes, 1024 );
 	}
 
-	m_pNetwork->m_pAInode = new CAI_Node*[max( numNodes, 1 )];
-	memset( m_pNetwork->m_pAInode, 0, sizeof( CAI_Node* ) * max( numNodes, 1 ) );
+	m_pNetwork->m_pAInode = new CAI_Node*[MAX( numNodes, 1 )];
+	memset( m_pNetwork->m_pAInode, 0, sizeof( CAI_Node* ) * MAX( numNodes, 1 ) );
 
 	// -------------------------------
 	// Load all the nodes to the file
@@ -619,8 +619,8 @@ void CAI_NetworkManager::LoadNetworkGraph( void )
 	// Load WC lookup table
 	// -------------------------------
 	delete [] GetEditOps()->m_pNodeIndexTable;
-	GetEditOps()->m_pNodeIndexTable	= new int[max( m_pNetwork->m_iNumNodes, 1 )];
-	memset( GetEditOps()->m_pNodeIndexTable, 0, sizeof( int ) *max( m_pNetwork->m_iNumNodes, 1 ) );
+	GetEditOps()->m_pNodeIndexTable	= new int[MAX( m_pNetwork->m_iNumNodes, 1 )];
+	memset( GetEditOps()->m_pNodeIndexTable, 0, sizeof( int ) *MAX( m_pNetwork->m_iNumNodes, 1 ) );
 
 	for (node = 0; node < m_pNetwork->m_iNumNodes; node++)
 	{
@@ -733,7 +733,7 @@ void CAI_NetworkManager::LoadNetworkGraph( void )
 	// ------------------------------------------------------------------------
 	if ( engine->IsInEditMode() )
 	{
-		numNodes = max( numNodes, 1024 );
+		numNodes = MAX( numNodes, 1024 );
 	}
 
 	m_pAInode = new CAI_Node*[numNodes];

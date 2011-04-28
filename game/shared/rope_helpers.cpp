@@ -113,7 +113,7 @@ void CalcRopeStartingConditions(
 	rope.m_flRopeLength = (vEndPos - vStartPos).Length();
 	rope.m_flWantedHangDist = desiredHang;
 	
-	rope.m_flStartZ = min( vStartPos.z, vEndPos.z );	// Calculate hang as the Z distance from the
+	rope.m_flStartZ = MIN( vStartPos.z, vEndPos.z );	// Calculate hang as the Z distance from the
 														// lowest endpoint to the bottom of the rope.
 	
 	rope.SetNumNodes( nNodes );

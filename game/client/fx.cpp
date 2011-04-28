@@ -665,8 +665,8 @@ public:
 			int color[3][2];
 			for( int i = 0; i < 3; ++i )
 			{
-				color[i][0] = max( 0, m_SpurtColor[i] - 64 );
-				color[i][1] = min( 255, m_SpurtColor[i] + 64 );
+				color[i][0] = MAX( 0, m_SpurtColor[i] - 64 );
+				color[i][1] = MIN( 255, m_SpurtColor[i] + 64 );
 			}
 			pParticle->m_uchColor[0] = random->RandomInt( color[0][0], color[0][1] );
 			pParticle->m_uchColor[1] = random->RandomInt( color[1][0], color[1][1] );
@@ -947,8 +947,8 @@ void FX_HunterTracer( Vector& start, Vector& end, int velocity, bool makeWhiz )
 	totalDist = VectorNormalize( shotDir );
 
 	// Make short tracers in close quarters
-	// float flMinLength = min( totalDist, 128.0f );
-	// float flMaxLength = min( totalDist, 128.0f );
+	// float flMinLength = MIN( totalDist, 128.0f );
+	// float flMaxLength = MIN( totalDist, 128.0f );
 
 	float length = 128.0f;//random->RandomFloat( flMinLength, flMaxLength );
 	float life = ( totalDist + length ) / velocity;	// NOTENOTE: We want the tail to finish its run as well
@@ -1095,9 +1095,9 @@ void FX_Tesla( const CTeslaInfo &teslaInfo )
 					pParticle->m_vecVelocity = vec3_origin;
 					Vector color( 1,1,1 );
 					float  colorRamp = RandomFloat( 0.75f, 1.25f );
-					pParticle->m_uchColor[0]	= min( 1.0f, color[0] * colorRamp ) * 255.0f;
-					pParticle->m_uchColor[1]	= min( 1.0f, color[1] * colorRamp ) * 255.0f;
-					pParticle->m_uchColor[2]	= min( 1.0f, color[2] * colorRamp ) * 255.0f;
+					pParticle->m_uchColor[0]	= MIN( 1.0f, color[0] * colorRamp ) * 255.0f;
+					pParticle->m_uchColor[1]	= MIN( 1.0f, color[1] * colorRamp ) * 255.0f;
+					pParticle->m_uchColor[2]	= MIN( 1.0f, color[2] * colorRamp ) * 255.0f;
 					pParticle->m_uchStartSize	= RandomFloat( 6,13 );
 					pParticle->m_uchEndSize		= pParticle->m_uchStartSize - 2;
 					pParticle->m_uchStartAlpha	= 255;

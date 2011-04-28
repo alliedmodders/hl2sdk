@@ -540,7 +540,7 @@ void CGib::BounceGibTouch ( CBaseEntity *pOther )
 			float volume;
 			float zvel = fabs(GetAbsVelocity().z);
 		
-			volume = 0.8f * min(1.0, ((float)zvel) / 450.0f);
+			volume = 0.8f * MIN(1.0, ((float)zvel) / 450.0f);
 
 			CBreakable::MaterialSoundRandom( entindex(), (Materials)m_material, volume );
 		}

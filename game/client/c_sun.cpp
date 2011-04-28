@@ -57,7 +57,7 @@ void C_Sun::OnDataChanged( DataUpdateType_t updateType )
 	// for the sun, which should always be completely opaque at its core.  Here, we renormalize the
 	// components to make sure only hue is altered.
 
-	float maxComponent = max ( m_clrRender->r, max ( m_clrRender->g, m_clrRender->b ) );
+	float maxComponent = MAX ( m_clrRender->r, MAX ( m_clrRender->g, m_clrRender->b ) );
 
 	Vector vOverlayColor;
 	Vector vMainColor;

@@ -463,13 +463,13 @@ void CNPC_MissileDefense::AimGun( void )
 	float flOldY = m_vGunAng.y;
 
 	if (angles.x > m_vGunAng.x)
-		m_vGunAng.x = min( angles.x, m_vGunAng.x + MD_PITCH_SPEED );
+		m_vGunAng.x = MIN( angles.x, m_vGunAng.x + MD_PITCH_SPEED );
 	if (angles.x < m_vGunAng.x)
-		m_vGunAng.x = max( angles.x, m_vGunAng.x - MD_PITCH_SPEED );
+		m_vGunAng.x = MAX( angles.x, m_vGunAng.x - MD_PITCH_SPEED );
 	if (angles.y > m_vGunAng.y)
-		m_vGunAng.y = min( angles.y, m_vGunAng.y + MD_YAW_SPEED );
+		m_vGunAng.y = MIN( angles.y, m_vGunAng.y + MD_YAW_SPEED );
 	if (angles.y < m_vGunAng.y)
-		m_vGunAng.y = max( angles.y, m_vGunAng.y - MD_YAW_SPEED );
+		m_vGunAng.y = MAX( angles.y, m_vGunAng.y - MD_YAW_SPEED );
 
 	m_vGunAng.y = SetBoneController( MD_BC_YAW,		m_vGunAng.y );
 	m_vGunAng.x = SetBoneController( MD_BC_PITCH,	m_vGunAng.x );

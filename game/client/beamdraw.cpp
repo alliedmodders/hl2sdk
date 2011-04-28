@@ -251,7 +251,7 @@ void DrawSegs( int noise_divisions, float *prgNoise, const model_t* spritemodel,
 	}
 	
 	length = VectorLength( delta );
-	float flMaxWidth = max(startWidth, endWidth) * 0.5f;
+	float flMaxWidth = MAX(startWidth, endWidth) * 0.5f;
 	div = 1.0 / (segments-1);
 
 	if ( length*div < flMaxWidth * 1.414 )

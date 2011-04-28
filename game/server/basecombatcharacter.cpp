@@ -619,7 +619,7 @@ CProp_Portal* CBaseCombatCharacter::FInViewConeThroughPortal( const Vector &vecS
 			float flDot = DotProduct( los, facingDir );
 
 			// Use the tougher FOV of either the standard FOV or FOV clipped to the portal hole
-			if ( flDot > max( fFOVThroughPortal, m_flFieldOfView ) )
+			if ( flDot > MAX( fFOVThroughPortal, m_flFieldOfView ) )
 			{
 				float fActualDist = ptEyePosition.DistToSqr( vTranslatedVecSpot );
 				if( fActualDist < fDistToBeat )
@@ -2862,7 +2862,7 @@ int CBaseCombatCharacter::GiveAmmo( int iCount, int iAmmoIndex, bool bSuppressSo
 		return 0;
 
 	int iMax = GetAmmoDef()->MaxCarry(iAmmoIndex);
-	int iAdd = min( iCount, iMax - m_iAmmo[iAmmoIndex] );
+	int iAdd = MIN( iCount, iMax - m_iAmmo[iAmmoIndex] );
 	if ( iAdd < 1 )
 		return 0;
 
@@ -3072,7 +3072,7 @@ void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, float flRa
 	{
 		// Even the tiniest explosion gets attention. Don't let the radius
 		// be less than 128 units.
-		float soundRadius = max( 128.0f, flRadius * 1.5 );
+		float soundRadius = MAX( 128.0f, flRadius * 1.5 );
 
 		CSoundEnt::InsertSound( SOUND_COMBAT | SOUND_CONTEXT_EXPLOSION, vecSrc, (int)soundRadius, 0.25, info.GetInflictor() );
 	}

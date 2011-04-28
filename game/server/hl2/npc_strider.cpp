@@ -1131,7 +1131,7 @@ void CNPC_Strider::GatherConditions()
 				{
 #if 0
 					if ( !HasCondition( COND_STRIDER_SHOULD_CROUCH ) && !HasCondition( COND_STRIDER_SHOULD_CROUCH ) )
-						SetIdealHeight( min( GetMaxHeight(), GetHeight() + 75.0 * 0.1 ) ); // default to rising up
+						SetIdealHeight( MIN( GetMaxHeight(), GetHeight() + 75.0 * 0.1 ) ); // default to rising up
 #endif
 					GatherHeightConditions( GetAdjustedOrigin(), GetEnemy() );
 				}
@@ -4015,8 +4015,8 @@ bool CNPC_Strider::AimCannonAt( CBaseEntity *pEntity, float flInterval )
 	float yawSpeed = fabsf(aimSpeed*flInterval*localEnemyAngles.y);
 	float pitchSpeed = fabsf(aimSpeed*flInterval*localEnemyAngles.x);
 
-	yawSpeed = max(yawSpeed,5);
-	pitchSpeed = max(pitchSpeed,5);
+	yawSpeed = MAX(yawSpeed,5);
+	pitchSpeed = MAX(pitchSpeed,5);
 
 	m_aimYaw = UTIL_Approach( targetYaw, m_aimYaw, yawSpeed );
 	m_aimPitch = UTIL_Approach( targetPitch, m_aimPitch, pitchSpeed );
@@ -4911,10 +4911,10 @@ void CStriderMinigun::AimAtPoint( IStriderMinigunHost *pHost, const Vector &vecP
 	m_pitch.target += 0.5 * pdiff;
 	m_yaw.target -= 0.5 * ydiff;
 
-	m_pitch.target = max( MINIGUN_MIN_PITCH, m_pitch.target );
-	m_pitch.target = min( MINIGUN_MAX_PITCH, m_pitch.target );
-	m_yaw.target = max( MINIGUN_MIN_YAW, m_yaw.target );
-	m_yaw.target = min( MINIGUN_MAX_YAW, m_yaw.target );
+	m_pitch.target = MAX( MINIGUN_MIN_PITCH, m_pitch.target );
+	m_pitch.target = MIN( MINIGUN_MAX_PITCH, m_pitch.target );
+	m_yaw.target = MAX( MINIGUN_MIN_YAW, m_yaw.target );
+	m_yaw.target = MIN( MINIGUN_MAX_YAW, m_yaw.target );
 }
 
 //---------------------------------------------------------
@@ -5325,7 +5325,7 @@ void CStriderMinigun::Think( IStriderMinigunHost *pHost, float dt )
 			// time. This guarantees that the minigun will strike the target a few times.
 			float flFactor = (flRemainingShootTime - pHost->GetMinigunOnTargetTime() ) / m_shootDuration;
 
-			flFactor = max( 0.0f, flFactor );
+			flFactor = MAX( 0.0f, flFactor );
 
 			Vector vecTarget = pTargetEnt->BodyTarget( assert_cast<CNPC_Strider *>(pHost->GetEntity())->GetAdjustedOrigin());
 
@@ -5349,7 +5349,7 @@ void CStriderMinigun::Think( IStriderMinigunHost *pHost, float dt )
 				{
 					m_bWarnedAI = true;
 
-					CSoundEnt::InsertSound( SOUND_DANGER | SOUND_CONTEXT_REACT_TO_SOURCE, pTargetEnt->EarPosition() + Vector( 0, 0, 1 ), 120, max( 1.0, flRemainingShootTime ), pHost->GetEntity() );
+					CSoundEnt::InsertSound( SOUND_DANGER | SOUND_CONTEXT_REACT_TO_SOURCE, pTargetEnt->EarPosition() + Vector( 0, 0, 1 ), 120, MAX( 1.0, flRemainingShootTime ), pHost->GetEntity() );
 				}
 			}
 		}

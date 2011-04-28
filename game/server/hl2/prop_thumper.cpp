@@ -171,11 +171,11 @@ void CPropThumper::HandleState( void )
 {
 	if ( m_bEnabled == false )
 	{
-		 m_flPlaybackRate = max( m_flPlaybackRate - STATE_CHANGE_MODIFIER, 0.0f );
+		 m_flPlaybackRate = MAX( m_flPlaybackRate - STATE_CHANGE_MODIFIER, 0.0f );
 	}
 	else
 	{
- 		 m_flPlaybackRate = min( m_flPlaybackRate + STATE_CHANGE_MODIFIER, 1.0f );
+ 		 m_flPlaybackRate = MIN( m_flPlaybackRate + STATE_CHANGE_MODIFIER, 1.0f );
 	}
 
 	(CSoundEnvelopeController::GetController()).Play( m_sndMotor, 1.0f, m_flPlaybackRate * 100 );
