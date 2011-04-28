@@ -120,8 +120,8 @@ void CHudChatLine::PerformFadeout( void )
 		{
 			wchar_t wText[4096];
 			// draw the first x characters in the player color
-			wcsncpy( wText, wbuf, min( m_iNameLength + 1, MAX_PLAYER_NAME_LENGTH+32) );
-			wText[ min( m_iNameLength, MAX_PLAYER_NAME_LENGTH+31) ] = 0;
+			wcsncpy( wText, wbuf, MIN( m_iNameLength + 1, MAX_PLAYER_NAME_LENGTH+32) );
+			wText[ MIN( m_iNameLength, MAX_PLAYER_NAME_LENGTH+31) ] = 0;
 
 			m_clrNameColor[3] = alpha;
 
@@ -442,8 +442,8 @@ void CHudChat::ChatPrintf( int iPlayerIndex, const char *fmt, ... )
 		line->SetExpireTime();
 	
 		// draw the first x characters in the player color
-		Q_strncpy( buf, pmsg, min( iNameLength + 1, MAX_PLAYER_NAME_LENGTH+32) );
-		buf[ min( iNameLength, MAX_PLAYER_NAME_LENGTH+31) ] = 0;
+		Q_strncpy( buf, pmsg, MIN( iNameLength + 1, MAX_PLAYER_NAME_LENGTH+32) );
+		buf[ MIN( iNameLength, MAX_PLAYER_NAME_LENGTH+31) ] = 0;
 		line->InsertColorChange( Color( flColor[0], flColor[1], flColor[2], 255 ) );
 		line->InsertString( buf );
 		Q_strncpy( buf, pmsg + iNameLength, strlen( pmsg ));

@@ -2042,7 +2042,7 @@ void Physics_RunThinkFunctions( bool simulating )
 	{
 		UTIL_DisableRemoveImmediate();
 		int listMax = SimThink_ListCount();
-		listMax = max(listMax,1);
+		listMax = MAX(listMax,1);
 		CBaseEntity **list = (CBaseEntity **)stackalloc( sizeof(CBaseEntity *) * listMax );
 		// iterate through all entities and have them think or simulate
 		

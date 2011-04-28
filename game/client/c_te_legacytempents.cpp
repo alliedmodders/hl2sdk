@@ -205,8 +205,8 @@ int	C_LocalTempEntity::DrawModel( int flags )
 		float flDot = DotProduct( m_vecNormal, vecDelta );
 		if ( flDot > 0 )
 		{
-			float flAlpha = RemapVal( min(flDot,0.3), 0, 0.3, 0, 1 );
-			flAlpha = max( 1.0, tempent_renderamt - (tempent_renderamt * flAlpha) );
+			float flAlpha = RemapVal( MIN(flDot,0.3), 0, 0.3, 0, 1 );
+			flAlpha = MAX( 1.0, tempent_renderamt - (tempent_renderamt * flAlpha) );
 			SetRenderColorA( flAlpha );
 		}
 	}
@@ -2210,11 +2210,11 @@ void CTempEnts::PlaySound ( C_LocalTempEntity *pTemp, float damp )
 		
 		if ( isshellcasing )
 		{
-			fvol *= min (1.0, ((float)zvel) / 350.0); 
+			fvol *= MIN (1.0, ((float)zvel) / 350.0); 
 		}
 		else
 		{
-			fvol *= min (1.0, ((float)zvel) / 450.0); 
+			fvol *= MIN (1.0, ((float)zvel) / 450.0); 
 		}
 		
 		if ( !random->RandomInt(0,3) && !isshellcasing )

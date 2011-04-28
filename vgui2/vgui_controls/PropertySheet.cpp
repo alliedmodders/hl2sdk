@@ -338,7 +338,7 @@ public:
 			GetSize(wide, tall);
 			GetContentSize(contentWide, contentTall);
 
-			wide = max(m_bMaxTabWidth, contentWide + 10);  // 10 = 5 pixels margin on each side
+			wide = MAX(m_bMaxTabWidth, contentWide + 10);  // 10 = 5 pixels margin on each side
 			wide += m_pContextLabel ? 10 : 0;
 			SetSize(wide, tall);
 		}
@@ -1131,7 +1131,7 @@ void PropertySheet::RemovePage(Panel *panel)
 	{
 		_activePage = NULL;
 		// if this page is currently active, backup to the page before this.
-		ChangeActiveTab( max( location - 1, 0 ) ); 
+		ChangeActiveTab( MAX( location - 1, 0 ) ); 
 	}
 
 	PerformLayout();

@@ -240,7 +240,7 @@ void CSoundscapeSystem::FrameUpdatePostEntityThink()
 
 		// update 2 soundscape entities each tick. (when debugging update 
 		// them all)
-		int count = soundscape_debug.GetBool() ? total : min(2, total);
+		int count = soundscape_debug.GetBool() ? total : MIN(2, total);
 		for ( int i = 0; i < count; i++ )
 		{
 			m_activeIndex++;

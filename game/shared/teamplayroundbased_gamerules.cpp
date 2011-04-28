@@ -1373,7 +1373,7 @@ void CTeamplayRoundBasedRules::State_Think_RND_RUNNING( void )
 //-----------------------------------------------------------------------------
 void CTeamplayRoundBasedRules::State_Enter_TEAM_WIN( void )
 {
-	float flTime = max( 5, mp_bonusroundtime.GetFloat() );
+	float flTime = MAX( 5, mp_bonusroundtime.GetFloat() );
 
 	m_flStateTransitionTime = gpGlobals->curtime + flTime * mp_enableroundwaittime.GetFloat();
 
@@ -2519,7 +2519,7 @@ float CTeamplayRoundBasedRules::GetRespawnWaveMaxLength( int iTeam, bool bScaleW
 	// For long respawn times, scale the time as the number of players drops
 	if ( bScaleWithNumPlayers && flTime > 5 )
 	{
-		flTime = max( 5, flTime * GetRespawnTimeScalar(iTeam) );
+		flTime = MAX( 5, flTime * GetRespawnTimeScalar(iTeam) );
 	}
 
 	return flTime;
@@ -2589,7 +2589,7 @@ bool CTeamplayRoundBasedRules::WouldChangeUnbalanceTeams( int iNewTeam, int iCur
 
 		if ( i == iCurrentTeam )
 		{
-			iNumPlayers = max( 0, iNumPlayers-1 );
+			iNumPlayers = MAX( 0, iNumPlayers-1 );
 		}
 
 		if ( ( iNewTeamPlayers - iNumPlayers ) > mp_teams_unbalance_limit.GetInt() )

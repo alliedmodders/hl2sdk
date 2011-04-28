@@ -303,8 +303,8 @@ float _SSE_InvRSquared(const float* v)
 		shufps		xmm2, xmm2, 1		// x2 = vy * vy, X, X, X
 		addss		xmm1, xmm2			// x1 = (vx * vx) + (vy * vy), X, X, X
 		addss		xmm1, xmm3			// x1 = (vx * vx) + (vy * vy) + (vz * vz), X, X, X
-		maxss		xmm1, xmm5			// x1 = max( 1.0, x1 )
-		rcpss		xmm0, xmm1			// x0 = 1 / max( 1.0, x1 )
+		maxss		xmm1, xmm5			// x1 = MAX( 1.0, x1 )
+		rcpss		xmm0, xmm1			// x0 = 1 / MAX( 1.0, x1 )
 		movss		inv_r2, xmm0		// inv_r2 = x0
 	}
 #elif defined _LINUX || defined __APPLE__

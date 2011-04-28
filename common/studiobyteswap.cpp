@@ -890,8 +890,8 @@ void ByteswapAnimData( mstudioanimdesc_t *pAnimDesc, int section, byte *&pDataSr
 					int iStartFrame = section * sectionFrames;
 					int iEndFrame = (section + 1) * sectionFrames;
 
-					iStartFrame = min( iStartFrame, totalFrames - 1 );
-					iEndFrame = min( iEndFrame, totalFrames - 1 );
+					iStartFrame = MIN( iStartFrame, totalFrames - 1 );
+					iEndFrame = MIN( iEndFrame, totalFrames - 1 );
 
 					totalFrames = iEndFrame - iStartFrame + 1;
 				}

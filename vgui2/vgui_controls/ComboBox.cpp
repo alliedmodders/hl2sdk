@@ -311,7 +311,7 @@ void ComboBox::PerformLayout()
 	HFont buttonFont = m_pButton->GetFont();
 	int fontTall = surface()->GetFontTall( buttonFont );
 
-	int buttonSize = min( tall, fontTall );
+	int buttonSize = MIN( tall, fontTall );
 
 	int buttonY = ( ( tall - 1 ) - buttonSize ) / 2;
 

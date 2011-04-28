@@ -101,7 +101,7 @@ namespace physicssound
 					sound.surfacePropsHit = surfacePropsHit;
 				}
 				sound.volume += volume;
-				sound.impactSpeed = max(impactSpeed,sound.impactSpeed);
+				sound.impactSpeed = MAX(impactSpeed,sound.impactSpeed);
 				return;
 			}
 		}

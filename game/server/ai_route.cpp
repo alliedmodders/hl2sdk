@@ -275,7 +275,7 @@ float CAI_Path::GetGoalSpeed( const Vector &startPos )
 		Vector goalDirection = GetGoalDirection( startPos );
 		Vector targetVelocity = m_goalSpeedTarget->GetSmoothedVelocity();
 		float dot = DotProduct( goalDirection, targetVelocity );
-		dot = max( 0.0f, dot );
+		dot = MAX( 0.0f, dot );
 		// return a relative impact speed of m_goalSpeed
 		if (m_goalSpeed > 0.0)
 		{

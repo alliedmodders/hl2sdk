@@ -92,7 +92,7 @@ int C_CrossbowBolt::DrawModel( int flags )
 		
 		if ( speed > 0 )
 		{
-			float	stepSize = min( ( speed * 0.5f ), 4.0f );
+			float	stepSize = MIN( ( speed * 0.5f ), 4.0f );
 
 			Vector	spawnPos = GetAbsOrigin() + ( vecDir * 24.0f );
 			Vector	spawnStep = -vecDir * stepSize;

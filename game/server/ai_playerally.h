@@ -17,10 +17,6 @@
 #undef max
 #endif
 #include "stdstring.h"
-#ifndef _WIN32
-#undef MINMAX_H
-#include "minmax.h"
-#endif
 
 #if defined( _WIN32 )
 #pragma once

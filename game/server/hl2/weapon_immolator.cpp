@@ -226,7 +226,7 @@ void CWeaponImmolator::Update()
 	}
 
 	// Clamp
-	m_flBurnRadius = min( m_flBurnRadius, MAX_BURN_RADIUS );
+	m_flBurnRadius = MIN( m_flBurnRadius, MAX_BURN_RADIUS );
 
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 

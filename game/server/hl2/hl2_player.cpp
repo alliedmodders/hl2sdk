@@ -267,7 +267,7 @@ void CC_ToggleDuck( void )
 				flForwardSpeed = pCVcl_forwardspeed->GetFloat();
 			}
 
-			flForwardSpeed = max( 1.0f, flForwardSpeed );
+			flForwardSpeed = MAX( 1.0f, flForwardSpeed );
 
 			// Make sure we're not in the blindspot on the crouch detection
 			float flStickDistPerc = ( pPlayer->GetStickDist() / flForwardSpeed ); // Speed is the magnitude

@@ -1087,7 +1087,7 @@ int CBaseHudChat::ComputeBreakChar( int width, const char *text, int textlen )
 			//  this one
 			if ( lastbreak == textlen )
 			{
-				lastbreak = max( 0, i - 1 );
+				lastbreak = MAX( 0, i - 1 );
 			}
 			break;
 		}

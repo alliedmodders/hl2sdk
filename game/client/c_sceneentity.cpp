@@ -625,7 +625,7 @@ void C_SceneEntity::DispatchStartSpeak( CChoreoScene *scene, C_BaseFlex *actor, 
 				float endtime = event->GetLastSlaveEndTime();
 				float durationShort = event->GetDuration();
 				float durationLong = endtime - event->GetStartTime();
-				float duration = max( durationShort, durationLong );
+				float duration = MAX( durationShort, durationLong );
 
 				CHudCloseCaption *hudCloseCaption = GET_HUDELEMENT( CHudCloseCaption );
 				if ( hudCloseCaption )

@@ -1564,7 +1564,7 @@ int CBasePlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 	if ( event )
 	{
 		event->SetInt("userid", GetUserID() );
-		event->SetInt("health", max(0, m_iHealth) );
+		event->SetInt("health", MAX(0, m_iHealth) );
 		event->SetInt("priority", 5 );	// HLTV event priority, not transmitted
 
 		if ( attacker->IsPlayer() )
@@ -3207,7 +3207,7 @@ void CBasePlayer::PhysicsSimulate( void )
 	int commandsToRun = vecAvailCommands.Count();
 	if ( gpGlobals->simTicksThisFrame >= commandLimit && vecAvailCommands.Count() > commandLimit )
 	{
-		int commandsToRollOver = min( vecAvailCommands.Count(), ( gpGlobals->simTicksThisFrame - 1 ) );
+		int commandsToRollOver = MIN( vecAvailCommands.Count(), ( gpGlobals->simTicksThisFrame - 1 ) );
 		commandsToRun = vecAvailCommands.Count() - commandsToRollOver;
 		Assert( commandsToRun >= 0 );
 		// Clear all contexts except the last one
@@ -3857,7 +3857,7 @@ void CBasePlayer::CheckTimeBasedDamage()
 				// after the player has been drowning and finally takes a breath
 				if (m_idrowndmg > m_idrownrestored)
 				{
-					int idif = min(m_idrowndmg - m_idrownrestored, 10);
+					int idif = MIN(m_idrowndmg - m_idrownrestored, 10);
 
 					TakeHealth(idif, DMG_GENERIC);
 					m_idrownrestored += idif;
@@ -3871,7 +3871,7 @@ void CBasePlayer::CheckTimeBasedDamage()
 				// after the player has been poisoned.
 				if (m_nPoisonDmg > m_nPoisonRestored)
 				{
-					int nDif = min(m_nPoisonDmg - m_nPoisonRestored, 10);
+					int nDif = MIN(m_nPoisonDmg - m_nPoisonRestored, 10);
 					TakeHealth(nDif, DMG_GENERIC);
 					m_nPoisonRestored += nDif;
 				}
@@ -6361,7 +6361,7 @@ bool CBasePlayer::ClientCommand( const CCommand &args )
 		int nRecords = -1; // all
 		if ( args.ArgC() >= 3 )
 		{
-			nRecords = max( Q_atoi( args.Arg( 2 ) ), 1 );
+			nRecords = MAX( Q_atoi( args.Arg( 2 ) ), 1 );
 		}
 
 		CBasePlayer *pl = UTIL_PlayerByIndex( nRecip );
@@ -8172,7 +8172,7 @@ int CBasePlayer::GetFOVForNetworking( void )
 
 	if ( gpGlobals->curtime - m_flFOVTime < m_Local.m_flFOVRate )
 	{
-		fFOV = min( fFOV, m_iFOVStart );
+		fFOV = MIN( fFOV, m_iFOVStart );
 	}
 	return fFOV;
 }

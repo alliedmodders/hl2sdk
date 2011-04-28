@@ -12,7 +12,6 @@
 #include "choreoevent.h"
 #include "choreoactor.h"
 #include "choreochannel.h"
-#include "minmax.h"
 #include "mathlib/mathlib.h"
 #include "tier1/strtools.h"
 #include "choreoscene.h"
@@ -748,7 +747,7 @@ float CFlexAnimationTrack::GetFracIntensity( float time, int type )
 	CExpressionSample *esEnd = NULL;
 
 	// do binary search for sample in time period
-	int j = max( rampCount / 2, 1 );
+	int j = MAX( rampCount / 2, 1 );
 	int i = j;
 	while ( i > -2 && i < rampCount + 1 )
 	{
@@ -756,7 +755,7 @@ float CFlexAnimationTrack::GetFracIntensity( float time, int type )
 		esStart = GetBoundedSample( i, dummy, type );
 		esEnd = GetBoundedSample( i + 1, dummy, type );
 
-		j = max( j / 2, 1 );
+		j = MAX( j / 2, 1 );
 		if ( time < esStart->time)
 		{
 			i -= j;
@@ -785,8 +784,8 @@ float CFlexAnimationTrack::GetFracIntensity( float time, int type )
 	int prev = i - 1;
 	int next = i + 2;
 
-	prev = max( -1, prev );
-	next = min( next, rampCount );
+	prev = MAX( -1, prev );
+	next = MIN( next, rampCount );
 
 	bool clamp[ 2 ];
 	CExpressionSample *esPre = GetBoundedSample( prev, clamp[ 0 ], type );
@@ -1621,7 +1620,7 @@ float CCurveData::GetIntensity( ICurveDataAccessor *data, float time )
 	CExpressionSample *esEnd = NULL;
 
 	// do binary search for sample in time period
-	int j = max( rampCount / 2, 1 );
+	int j = MAX( rampCount / 2, 1 );
 	int i = j;
 	while ( i > -2 && i < rampCount + 1 )
 	{
@@ -1629,7 +1628,7 @@ float CCurveData::GetIntensity( ICurveDataAccessor *data, float time )
 		esStart = GetBoundedSample( data, i, dummy );
 		esEnd = GetBoundedSample( data, i + 1, dummy  );
 
-		j = max( j / 2, 1 );
+		j = MAX( j / 2, 1 );
 		if ( time < esStart->time)
 		{
 			i -= j;
@@ -1652,8 +1651,8 @@ float CCurveData::GetIntensity( ICurveDataAccessor *data, float time )
 	int prev = i - 1;
 	int next = i + 2;
 
-	prev = max( -1, prev );
-	next = min( next, rampCount );
+	prev = MAX( -1, prev );
+	next = MIN( next, rampCount );
 
 	bool clamp[ 2 ];
 	CExpressionSample *esPre = GetBoundedSample( data, prev, clamp[ 0 ] );
@@ -1803,7 +1802,7 @@ float CCurveData::GetIntensityArea( ICurveDataAccessor *data, float time )
 	CExpressionSample *esEnd = NULL;
 
 	// do binary search for sample in time period
-	int j = max( rampCount / 2, 1 );
+	int j = MAX( rampCount / 2, 1 );
 	int i = j;
 	while ( i > -2 && i < rampCount + 1 )
 	{
@@ -1811,7 +1810,7 @@ float CCurveData::GetIntensityArea( ICurveDataAccessor *data, float time )
 		esStart = GetBoundedSample( data, i, dummy );
 		esEnd = GetBoundedSample( data, i + 1, dummy  );
 
-		j = max( j / 2, 1 );
+		j = MAX( j / 2, 1 );
 		if ( time < esStart->time)
 		{
 			i -= j;
@@ -1834,8 +1833,8 @@ float CCurveData::GetIntensityArea( ICurveDataAccessor *data, float time )
 	int prev = i - 1;
 	int next = i + 2;
 
-	prev = max( -1, prev );
-	next = min( next, rampCount );
+	prev = MAX( -1, prev );
+	next = MIN( next, rampCount );
 
 	bool clamp[ 2 ];
 	CExpressionSample *esPre = GetBoundedSample( data, prev, clamp[ 0 ] );
@@ -1920,7 +1919,7 @@ void CCurveData::UpdateIntensityArea( ICurveDataAccessor *data )
 	bool dummy;
 	CExpressionSample *esPre = GetBoundedSample( data, i - 1, dummy );
 	CExpressionSample *esStart = GetBoundedSample( data, i, dummy );
-	CExpressionSample *esEnd = GetBoundedSample( data, min( i + 1, rampCount ), dummy );
+	CExpressionSample *esEnd = GetBoundedSample( data, MIN( i + 1, rampCount ), dummy );
 
 	Vector vPre( esPre->time, esPre->value, 0 );
 	Vector vStart( esStart->time, esStart->value, 0 );
@@ -1929,7 +1928,7 @@ void CCurveData::UpdateIntensityArea( ICurveDataAccessor *data )
 	Vector vOut;
 	for (i = -1; i < rampCount; i++)
 	{
-		CExpressionSample *esNext = GetBoundedSample( data, min( i + 2, rampCount ), dummy );
+		CExpressionSample *esNext = GetBoundedSample( data, MIN( i + 2, rampCount ), dummy );
 		Vector vNext( esNext->time, esNext->value, 0 );
 
 		Catmull_Rom_Spline_Integral_Normalize( 
@@ -3167,10 +3166,10 @@ float CChoreoEvent::GetOriginalPercentageFromPlaybackPercentage( float t )
 	int end = i + 1;
 	int next = i + 2;
 
-	prev = max( -2, prev );
-	start = max( -1, start );
-	end = min( end, count );
-	next = min( next, count + 1 );
+	prev = MAX( -2, prev );
+	start = MAX( -1, start );
+	end = MIN( end, count );
+	next = MIN( next, count + 1 );
 
 	CEventAbsoluteTag *pStartTag = NULL;
 	CEventAbsoluteTag *pEndTag = NULL;
@@ -3293,10 +3292,10 @@ float CChoreoEvent::GetPlaybackPercentageFromOriginalPercentage( float t )
 	int end = i + 1;
 	int next = i + 2;
 
-	prev = max( -2, prev );
-	start = max( -1, start );
-	end = min( end, count );
-	next = min( next, count + 1 );
+	prev = MAX( -2, prev );
+	start = MAX( -1, start );
+	end = MIN( end, count );
+	next = MIN( next, count + 1 );
 
 	CEventAbsoluteTag *pStartTag = NULL;
 	CEventAbsoluteTag *pEndTag = NULL;
@@ -3447,7 +3446,7 @@ void CChoreoEvent::SetLoopCount( int numloops )
 {
 	Assert( GetType() == LOOP );
 	// Never below -1
-	m_nNumLoops = max( numloops, -1 );
+	m_nNumLoops = MAX( numloops, -1 );
 }
 
 //-----------------------------------------------------------------------------
@@ -3667,14 +3666,14 @@ bool CChoreoEvent::PreventTagOverlap( void )
 		{
 			tag->SetPercentage( minP );
 
-			minDp = min( 0.01, minP / (i + 1) );
+			minDp = MIN( 0.01, minP / (i + 1) );
 			bHadOverlap = true;
 		}
 		else
 		{
 			minP = tag->GetPercentage();
 		}
-		minP = max( minP - minDp, 0 );
+		minP = MAX( minP - minDp, 0 );
 	}
 
 	return bHadOverlap;

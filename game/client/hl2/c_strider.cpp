@@ -976,7 +976,7 @@ void StriderBlood( const Vector &origin, const Vector &normal, float scale )
 	tint = (tint * 0.25f)+(Vector(0.75f,0.75f,0.75f));
 
 	// Rescale to a character range
-	luminosity = max( 200, luminosity*255 );
+	luminosity = MAX( 200, luminosity*255 );
 
 	CSmartPtr<CSplashParticle> pSimple = CSplashParticle::Create( "splish" );
 	pSimple->SetSortOrigin( origin );

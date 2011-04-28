@@ -685,7 +685,7 @@ int CBaseAnimatingOverlay::AllocateLayer( int iPriority )
 		{
 			if (m_AnimOverlay[i].m_nPriority <= iPriority)
 			{
-				iNewOrder = max( iNewOrder, m_AnimOverlay[i].m_nOrder + 1 );
+				iNewOrder = MAX( iNewOrder, m_AnimOverlay[i].m_nOrder + 1 );
 			}
 		}
 		else if (m_AnimOverlay[ i ].IsDying())
@@ -779,7 +779,7 @@ void CBaseAnimatingOverlay::SetLayerPriority( int iLayer, int iPriority )
 		{
 			if (m_AnimOverlay[i].m_nPriority <= iPriority)
 			{
-				iNewOrder = max( iNewOrder, m_AnimOverlay[i].m_nOrder + 1 );
+				iNewOrder = MAX( iNewOrder, m_AnimOverlay[i].m_nOrder + 1 );
 			}
 		}
 	}

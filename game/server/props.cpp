@@ -1104,7 +1104,7 @@ int CBreakableProp::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 			float flFactor;
 			flFactor = flDist / MAX_BLAST_DIST;
 			const float MAX_BURN_TIME = 5.0f;
-			flBurnTime = max( 0.5, MAX_BURN_TIME * flFactor );
+			flBurnTime = MAX( 0.5, MAX_BURN_TIME * flFactor );
 			flBurnTime += random->RandomFloat( 0, 0.5 );
 		}
 		else
@@ -1114,7 +1114,7 @@ int CBreakableProp::OnTakeDamage( const CTakeDamageInfo &inputInfo )
 		}
 
 		// Change my health so that I burn for flBurnTime seconds.
-		float flIdealHealth = min( m_iHealth, FLAME_DIRECT_DAMAGE_PER_SEC *  flBurnTime );
+		float flIdealHealth = fpmin( m_iHealth, FLAME_DIRECT_DAMAGE_PER_SEC *  flBurnTime );
 		float flIdealDamage = m_iHealth - flIdealHealth;
 
 		// Scale the damage to do ideal damage.
@@ -3301,7 +3301,7 @@ CBaseEntity *BreakModelCreateSingle( CBaseEntity *pOwner, breakmodel_t *pModel, 
 		pEntity->m_iHealth = pModel->health;
 		if ( g_ActiveGibCount >= ACTIVE_GIB_FADE )
 		{
-			pModel->fadeTime = min( 3, pModel->fadeTime );
+			pModel->fadeTime = MIN( 3, pModel->fadeTime );
 		}
 		if ( pModel->fadeTime )
 		{
@@ -4758,14 +4758,14 @@ CPropDoorRotating::~CPropDoorRotating( void )
 void UTIL_ComputeAABBForBounds( const Vector &mins1, const Vector &maxs1, const Vector &mins2, const Vector &maxs2, Vector *destMins, Vector *destMaxs )
 {
 	// Find the minimum extents
-	(*destMins)[0] = min( mins1[0], mins2[0] );
-	(*destMins)[1] = min( mins1[1], mins2[1] );
-	(*destMins)[2] = min( mins1[2], mins2[2] );
+	(*destMins)[0] = MIN( mins1[0], mins2[0] );
+	(*destMins)[1] = MIN( mins1[1], mins2[1] );
+	(*destMins)[2] = MIN( mins1[2], mins2[2] );
 
 	// Find the maximum extents
-	(*destMaxs)[0] = max( maxs1[0], maxs2[0] );
-	(*destMaxs)[1] = max( maxs1[1], maxs2[1] );
-	(*destMaxs)[2] = max( maxs1[2], maxs2[2] );
+	(*destMaxs)[0] = MAX( maxs1[0], maxs2[0] );
+	(*destMaxs)[1] = MAX( maxs1[1], maxs2[1] );
+	(*destMaxs)[2] = MAX( maxs1[2], maxs2[2] );
 }
 
 //-----------------------------------------------------------------------------
@@ -5210,8 +5210,8 @@ void CPropDoorRotating::BeginOpening(CBaseEntity *pOpenAwayFrom)
 	Vector	volumeCenter = ((mins+maxs) * 0.5f) + GetAbsOrigin();
 
 	// Ignoring the Z
-	float volumeRadius = max( fabs(mins.x), maxs.x );
-	volumeRadius = max( volumeRadius, max( fabs(mins.y), maxs.y ) );
+	float volumeRadius = MAX( fabs(mins.x), maxs.x );
+	volumeRadius = MAX( volumeRadius, MAX( fabs(mins.y), maxs.y ) );
 
 	// Debug
 	if ( g_debug_doors.GetBool() )

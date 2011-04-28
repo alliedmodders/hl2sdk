@@ -1777,7 +1777,7 @@ void CFuncCombineBallSpawner::Spawn()
 
 	float flWidth = CollisionProp()->OBBSize().x;
 	float flHeight = CollisionProp()->OBBSize().y;
-	m_flRadius = min( flWidth, flHeight ) * 0.5f;
+	m_flRadius = MIN( flWidth, flHeight ) * 0.5f;
 	if ( m_flRadius <= 0.0f && m_bShooter == false )
 	{
 		Warning("Zero dimension func_combine_ball_spawner! Removing...\n");

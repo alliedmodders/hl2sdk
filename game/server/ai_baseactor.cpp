@@ -254,7 +254,7 @@ bool CAI_BaseActor::StartSceneEvent( CSceneEventInfo *info, CChoreoScene *scene,
 				Blink();
 				// don't blink for duration, or next random blink time
 				float flDuration = (event->GetEndTime() - scene->GetTime());
-				m_flBlinktime = gpGlobals->curtime + max( flDuration, random->RandomFloat( 1.5, 4.5 ) ); 
+				m_flBlinktime = gpGlobals->curtime + MAX( flDuration, random->RandomFloat( 1.5, 4.5 ) ); 
 			}
 			else if (stricmp( event->GetParameters(), "AI_HOLSTER") == 0)
 			{
@@ -422,8 +422,8 @@ bool CAI_BaseActor::ProcessSceneEvent( CSceneEventInfo *info, CChoreoScene *scen
 			{
 				dir = 1;
 			}
-			flSpineYaw = min( diff, 30 );
-			flBodyYaw = min( diff - flSpineYaw, 30 );
+			flSpineYaw = MIN( diff, 30 );
+			flBodyYaw = MIN( diff - flSpineYaw, 30 );
 			m_goalSpineYaw = m_goalSpineYaw * (1.0 - intensity) + intensity * flSpineYaw * dir;
 			m_goalBodyYaw = m_goalBodyYaw * (1.0 - intensity) + intensity * flBodyYaw * dir;
 
@@ -465,15 +465,15 @@ bool CAI_BaseActor::ProcessSceneEvent( CSceneEventInfo *info, CChoreoScene *scen
 			}
 
 			// calc how much to use the spine for turning
-			float spineintensity = (1.0 - max( 0.0, (intensity - 0.5) / 0.5 ));
+			float spineintensity = (1.0 - MAX( 0.0, (intensity - 0.5) / 0.5 ));
 			// force spine to full if not in scene or locked
 			if (!bInScene || event->IsLockBodyFacing() )
 			{
 				spineintensity = 1.0;
 			}
 
-			flSpineYaw = min( diff * spineintensity, 30 );
-			flBodyYaw = min( diff * spineintensity - flSpineYaw, 30 );
+			flSpineYaw = MIN( diff * spineintensity, 30 );
+			flBodyYaw = MIN( diff * spineintensity - flSpineYaw, 30 );
 			info->m_flFacingYaw = info->m_flInitialYaw + (diff - flBodyYaw - flSpineYaw) * dir;
 
 			if (!event->IsLockBodyFacing())
@@ -490,7 +490,7 @@ bool CAI_BaseActor::ProcessSceneEvent( CSceneEventInfo *info, CChoreoScene *scen
 					{
 						// keep eyes not blinking for duration
 						float flDuration = (event->GetEndTime() - scene->GetTime());
-						m_flBlinktime = max( m_flBlinktime, gpGlobals->curtime + flDuration );
+						m_flBlinktime = MAX( m_flBlinktime, gpGlobals->curtime + flDuration );
 					}
 					return true;
 				case SCENE_AI_HOLSTER:
@@ -522,7 +522,7 @@ bool CAI_BaseActor::ProcessSceneEvent( CSceneEventInfo *info, CChoreoScene *scen
 							{
 								float flDuration = (event->GetEndTime() - scene->GetTime());
 								int i = m_syntheticLookQueue.Count() - 1;
-								m_syntheticLookQueue[i].m_flEndTime = min( m_syntheticLookQueue[i].m_flEndTime, gpGlobals->curtime + flDuration );
+								m_syntheticLookQueue[i].m_flEndTime = MIN( m_syntheticLookQueue[i].m_flEndTime, gpGlobals->curtime + flDuration );
 								m_syntheticLookQueue[i].m_flInterest = 0.1;
 							}
 						}
@@ -1603,7 +1603,7 @@ void CAI_BaseActor::MaintainLookTargets( float flInterval )
 		// no target, decay all head control direction
 		m_goalHeadDirection = m_goalHeadDirection * 0.8 + vHead * 0.2;
 
-		m_goalHeadInfluence = max( m_goalHeadInfluence - 0.2, 0 );
+		m_goalHeadInfluence = MAX( m_goalHeadInfluence - 0.2, 0 );
 
 		VectorNormalize( m_goalHeadDirection );
 		UpdateHeadControl( vEyePosition + m_goalHeadDirection * 100, m_goalHeadInfluence );

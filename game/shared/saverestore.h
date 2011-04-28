@@ -293,7 +293,7 @@ private:
 		else
 		{
 			Assert( nBytesAvailable % sizeof(T) == 0 );
-			actual = min( desired, nBytesAvailable );
+			actual = MIN( desired, nBytesAvailable );
 		}
 
 		BufferReadBytes( (char *)pValue, actual );

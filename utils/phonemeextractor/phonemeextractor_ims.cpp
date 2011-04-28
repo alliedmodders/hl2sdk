@@ -663,7 +663,7 @@ bool FuzzyWordMatch( char const *w1, char const *w2 )
 	int len1 = strlen( w1 );
 	int len2 = strlen( w2 );
 
-	int minlen = min( len1, len2 );
+	int minlen = MIN( len1, len2 );
 
 	// Found a match
 	if ( !strnicmp( w1, w2, minlen ) )

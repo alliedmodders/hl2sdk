@@ -481,7 +481,7 @@ void CNPC_Combine_Cannon::PaintTarget( const Vector &vecTarget, float flPaintTim
 	Vector vecStart = GetBulletOrigin();
 
 	// keep painttime from hitting 0 exactly.
-	flPaintTime = max( flPaintTime, 0.000001f );
+	flPaintTime = MAX( flPaintTime, 0.000001f );
 
 	// Find out where we are in the arc of the paint duration
 	float flPaintPerc = GetWaitTimePercentage( flPaintTime, false );
