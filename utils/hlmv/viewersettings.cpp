@@ -518,8 +518,8 @@ bool LoadViewerSettings (const char *filename, StudioModel *pModel )
 	RegReadFloat( hModelKey, "speedscale", &g_viewerSettings.speedScale );
 	if (g_viewerSettings.speedScale > 1.0)
 		g_viewerSettings.speedScale = 1.0;
-	g_viewerSettings.width = max( 200, g_viewerSettings.width );
-	g_viewerSettings.height = max( 150, g_viewerSettings.height );
+	g_viewerSettings.width = MAX( 200, g_viewerSettings.width );
+	g_viewerSettings.height = MAX( 150, g_viewerSettings.height );
 
 	RegReadInt( hModelKey, "viewermode", &g_viewerSettings.application_mode );
 	RegReadInt( hModelKey, "thumbnailsize", &g_viewerSettings.thumbnailsize );

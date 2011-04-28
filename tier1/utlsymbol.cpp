@@ -207,7 +207,7 @@ CUtlSymbol CUtlSymbolTable::AddString( char const* pString )
 	if ( iPool == -1 )
 	{
 		// Add a new pool.
-		int newPoolSize = max( len, MIN_STRING_POOL_SIZE );
+		int newPoolSize = MAX( len, MIN_STRING_POOL_SIZE );
 		StringPool_t *pPool = (StringPool_t*)malloc( sizeof( StringPool_t ) + newPoolSize - 1 );
 		pPool->m_TotalLen = newPoolSize;
 		pPool->m_SpaceUsed = 0;

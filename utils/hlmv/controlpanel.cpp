@@ -1789,7 +1789,7 @@ ControlPanel::handleEvent (mxEvent *event)
 
 	if ( event->event == mxEvent::Size )
 	{
-		tab->setBounds( 0, 0, event->width, max( 0, event->height - 20 ) );
+		tab->setBounds( 0, 0, event->width, MAX( 0, event->height - 20 ) );
 		return 1;
 	}
 	

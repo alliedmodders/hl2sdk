@@ -240,7 +240,7 @@ public:
 			if (face_maps[f].RGBAData)
 			{
 				nfaces++;
-				ret=max(ret,face_maps[f].BrightestColor());
+				ret=MAX(ret,face_maps[f].BrightestColor());
 			}
 			return ret;
 	}

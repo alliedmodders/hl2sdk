@@ -90,8 +90,8 @@ void CNavProgress::Init( const char *title, int numTicks, int startTick )
 {
 	m_pText->SetText( title );
 
-	m_numTicks = max( 1, numTicks ); // non-zero, since we'll divide by this
-	m_currentTick = max( 0, min( m_numTicks, startTick ) );
+	m_numTicks = MAX( 1, numTicks ); // non-zero, since we'll divide by this
+	m_currentTick = MAX( 0, MIN( m_numTicks, startTick ) );
 
 	InvalidateLayout();
 }

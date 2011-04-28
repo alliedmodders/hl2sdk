@@ -550,7 +550,7 @@ void C_FireSmoke::UpdateFlames( void )
 		//NOTENOTE: Sprite renderer assumes a scale of 0.0 means 1.0
 		if ( m_bFadingOut == false )
 		{
-			 m_entFlames[i].SetScale( max(0.000001,newScale) );
+			 m_entFlames[i].SetScale( MAX(0.000001,newScale) );
 		}
 		else
 		{
@@ -585,7 +585,7 @@ void C_FireSmoke::UpdateFlames( void )
 			//NOTENOTE: Sprite renderer assumes a scale of 0.0 means 1.0
 			if ( m_bFadingOut == false )
 			{
-				m_entFlamesFromAbove[i].SetScale( max(0.000001,newScale) );
+				m_entFlamesFromAbove[i].SetScale( MAX(0.000001,newScale) );
 			}
 			else
 			{
@@ -733,9 +733,9 @@ void C_FireSmoke::SpawnSmoke( void )
 
 		scalar = Helper_RandomFloat( 0.5f, 2.0f );
 
-		sParticle->m_uchColor[0]	= min( 255, Helper_RandomFloat( 185.0f, 190.0f ) * scalar );
-		sParticle->m_uchColor[1]	= min( 255, Helper_RandomFloat( 140.0f, 165.0f ) * scalar );
-		sParticle->m_uchColor[2]	= min( 255, 65.0f * scalar );
+		sParticle->m_uchColor[0]	= MIN( 255, Helper_RandomFloat( 185.0f, 190.0f ) * scalar );
+		sParticle->m_uchColor[1]	= MIN( 255, Helper_RandomFloat( 140.0f, 165.0f ) * scalar );
+		sParticle->m_uchColor[2]	= MIN( 255, 65.0f * scalar );
 		sParticle->m_uchStartAlpha	= 255;
 		sParticle->m_uchEndAlpha	= 0;
 		sParticle->m_uchStartSize	= 2;
@@ -1453,9 +1453,9 @@ void C_EntityFlame::UpdateHitBoxFlames( void )
 //			
 //			colorRamp = random->RandomFloat( 0.75f, 1.25f );
 //
-//			pParticle->m_uchColor[0]	= min( 1.0f, color[0] * colorRamp ) * 255.0f;
-//			pParticle->m_uchColor[1]	= min( 1.0f, color[1] * colorRamp ) * 255.0f;
-//			pParticle->m_uchColor[2]	= min( 1.0f, color[2] * colorRamp ) * 255.0f;
+//			pParticle->m_uchColor[0]	= MIN( 1.0f, color[0] * colorRamp ) * 255.0f;
+//			pParticle->m_uchColor[1]	= MIN( 1.0f, color[1] * colorRamp ) * 255.0f;
+//			pParticle->m_uchColor[2]	= MIN( 1.0f, color[2] * colorRamp ) * 255.0f;
 //			
 //			pParticle->m_uchStartSize	= random->RandomFloat( scale * 0.5, scale * 2 );
 //			pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 2;

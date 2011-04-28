@@ -603,7 +603,7 @@ void C_BasePlayer::PostDataUpdate( DataUpdateType_t updateType )
 		int min_fov		= GetMinFOV();
 
 		// Don't let it go too low
-		localFOV = max( min_fov, localFOV );
+		localFOV = MAX( min_fov, localFOV );
 
 		gHUD.m_flFOVSensitivityAdjust = 1.0f;
 #ifndef _XBOX

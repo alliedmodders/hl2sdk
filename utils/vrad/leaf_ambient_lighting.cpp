@@ -182,8 +182,8 @@ bool IsLeafAmbientSurfaceLight( dworldlight_t *wl )
 	if ( wl->style != 0 )
 		return false;
 
-	float intensity = max( wl->intensity[0], wl->intensity[1] );
-	intensity = max( intensity, wl->intensity[2] );
+	float intensity = MAX( wl->intensity[0], wl->intensity[1] );
+	intensity = MAX( intensity, wl->intensity[2] );
 	
 	return (intensity * g_flWorldLightMinEmitSurfaceDistanceRatio) < g_flWorldLightMinEmitSurface;
 }

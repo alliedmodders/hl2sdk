@@ -119,7 +119,7 @@ float3 DiffuseTerm( const bool bHalfLambert, const float3 worldNormal, const flo
 	}
 	else
 	{
-		fResult = max( 0.0f, NDotL );						// Saturate pure Lambertian term
+		fResult = MAX( 0.0f, NDotL );						// Saturate pure Lambertian term
 	}
 
 	if ( bDoDirectionalDiffuse )

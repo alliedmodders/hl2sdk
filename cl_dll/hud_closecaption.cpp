@@ -1035,7 +1035,7 @@ void CHudCloseCaption::Paint( void )
 	float desiredAlpha = visibleitems.Count() >= 1 ? 1.0f : 0.0f;
 
 	// Always return at least one line height for drawing the surrounding box
-	totalheight = max( totalheight, m_nLineHeight ); 
+	totalheight = MAX( totalheight, m_nLineHeight ); 
 
 	// Trigger box growing
 	if ( totalheight != m_nGoalHeight )
@@ -1091,7 +1091,7 @@ void CHudCloseCaption::Paint( void )
  
 	Color bgColor = GetBgColor();
    	bgColor[3] = m_flBackgroundAlpha;
-	DrawBox( rcText.left, max(rcText.top,0), rcText.right - rcText.left, rcText.bottom - max(rcText.top,0), bgColor, m_flCurrentAlpha );
+	DrawBox( rcText.left, MAX(rcText.top,0), rcText.right - rcText.left, rcText.bottom - MAX(rcText.top,0), bgColor, m_flCurrentAlpha );
 
 	if ( !visibleitems.Count() )
 	{
@@ -1129,7 +1129,7 @@ void CHudCloseCaption::Paint( void )
 			{
 				float ttl = si->item->GetTimeToLive();
 				ttl -= si->item->GetAddedTime();
-				ttl = max( 0.0f, ttl );
+				ttl = MAX( 0.0f, ttl );
 				si->item->SetTimeToLive( ttl );
 				si->item->SetAddedTime( 0.0f );
 			}
@@ -1272,7 +1272,7 @@ void CHudCloseCaption::OnTick( void )
 		if ( predisplay > 0.0f )
 		{
 			predisplay -= dt;
-			predisplay = max( 0.0f, predisplay );
+			predisplay = MAX( 0.0f, predisplay );
 			item->SetPreDisplayTime( predisplay );
 		}
 		else
@@ -1280,7 +1280,7 @@ void CHudCloseCaption::OnTick( void )
 			// remove time from actual playback
 			float ttl = item->GetTimeToLive();
 			ttl -= dt;
-			ttl = max( 0.0f, ttl );
+			ttl = MAX( 0.0f, ttl );
 			item->SetTimeToLive( ttl );
 		}
 	}
@@ -1528,7 +1528,7 @@ void CHudCloseCaption::Process( const wchar_t *stream, float duration, char cons
 			addedlife = prevlife - lifespan;
 		}
 
-		lifespan = max( lifespan, prevlife );
+		lifespan = MAX( lifespan, prevlife );
 	}
 	
 	float delay = 0.0f;
@@ -1572,7 +1572,7 @@ void CHudCloseCaption::Process( const wchar_t *stream, float duration, char cons
 				out = phrase;
 
 				// Delay must be positive
-				delay = max( 0.0f, (float)wcstod( args, NULL ) );
+				delay = MAX( 0.0f, (float)wcstod( args, NULL ) );
 
 				continue;
 			}
@@ -1619,7 +1619,7 @@ void CHudCloseCaption::CreateFonts( void )
 	m_hFonts[ CCFONT_ITALIC ]		= pScheme->GetFont( "CloseCaption_Italic" );
 	m_hFonts[ CCFONT_ITALICBOLD ]	= pScheme->GetFont( "CloseCaption_BoldItalic" );
 #endif
-	m_nLineHeight = max( 6, vgui::surface()->GetFontTall( m_hFonts[ CCFONT_NORMAL ] ) );
+	m_nLineHeight = MAX( 6, vgui::surface()->GetFontTall( m_hFonts[ CCFONT_NORMAL ] ) );
 }
 
 struct WorkUnitParams
@@ -1706,8 +1706,8 @@ void CHudCloseCaption::AddWorkUnit( CCloseCaptionItem *item,
 		int curheight = item->GetHeight();
 		int curwidth = item->GetWidth();
 
-		curheight = max( curheight, params.y + wu->GetHeight() );
-		curwidth = max( curwidth, params.x + params.width );
+		curheight = MAX( curheight, params.y + wu->GetHeight() );
+		curwidth = MAX( curwidth, params.x + params.width );
 
 		item->SetHeight( curheight );
 		item->SetWidth( curwidth );
@@ -2771,7 +2771,7 @@ void EmitRandomCaption_f()
 	int count = 1;
 	if ( engine->Cmd_Argc() == 2 )
 	{
-		count = max( 1, atoi( engine->Cmd_Argv( 1 ) ) );
+		count = MAX( 1, atoi( engine->Cmd_Argv( 1 ) ) );
 	}
 	CHudCloseCaption *hudCloseCaption = GET_HUDELEMENT( CHudCloseCaption );
 	if ( hudCloseCaption )

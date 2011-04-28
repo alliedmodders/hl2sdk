@@ -542,7 +542,7 @@ void CGameMovement::CheckParameters( void )
 		maxspeed = mv->m_flClientMaxSpeed;
 		if ( maxspeed != 0.0 )
 		{
-			mv->m_flMaxSpeed = min( maxspeed, mv->m_flMaxSpeed );
+			mv->m_flMaxSpeed = MIN( maxspeed, mv->m_flMaxSpeed );
 		}
 
 		// Slow down by the speed factor
@@ -3134,7 +3134,7 @@ void TracePlayerBBoxForGround( const Vector& start, const Vector& end, const Vec
 
 	// Check the -x, -y quadrant
 	mins = minsSrc;
-	maxs.Init( min( 0, maxsSrc.x ), min( 0, maxsSrc.y ), maxsSrc.z );
+	maxs.Init( MIN( 0, maxsSrc.x ), MIN( 0, maxsSrc.y ), maxsSrc.z );
 	ray.Init( start, end, mins, maxs );
 	UTIL_TraceRay( ray, fMask, player, collisionGroup, &pm );
 	if ( pm.m_pEnt && pm.plane.normal[2] >= 0.7)
@@ -3145,7 +3145,7 @@ void TracePlayerBBoxForGround( const Vector& start, const Vector& end, const Vec
 	}
 
 	// Check the +x, +y quadrant
-	mins.Init( max( 0, minsSrc.x ), max( 0, minsSrc.y ), minsSrc.z );
+	mins.Init( MAX( 0, minsSrc.x ), MAX( 0, minsSrc.y ), minsSrc.z );
 	maxs = maxsSrc;
 	ray.Init( start, end, mins, maxs );
 	UTIL_TraceRay( ray, fMask, player, collisionGroup, &pm );
@@ -3157,8 +3157,8 @@ void TracePlayerBBoxForGround( const Vector& start, const Vector& end, const Vec
 	}
 
 	// Check the -x, +y quadrant
-	mins.Init( minsSrc.x, max( 0, minsSrc.y ), minsSrc.z );
-	maxs.Init( min( 0, maxsSrc.x ), maxsSrc.y, maxsSrc.z );
+	mins.Init( minsSrc.x, MAX( 0, minsSrc.y ), minsSrc.z );
+	maxs.Init( MIN( 0, maxsSrc.x ), maxsSrc.y, maxsSrc.z );
 	ray.Init( start, end, mins, maxs );
 	UTIL_TraceRay( ray, fMask, player, collisionGroup, &pm );
 	if ( pm.m_pEnt && pm.plane.normal[2] >= 0.7)
@@ -3169,8 +3169,8 @@ void TracePlayerBBoxForGround( const Vector& start, const Vector& end, const Vec
 	}
 
 	// Check the +x, -y quadrant
-	mins.Init( max( 0, minsSrc.x ), minsSrc.y, minsSrc.z );
-	maxs.Init( maxsSrc.x, min( 0, maxsSrc.y ), maxsSrc.z );
+	mins.Init( MAX( 0, minsSrc.x ), minsSrc.y, minsSrc.z );
+	maxs.Init( maxsSrc.x, MIN( 0, maxsSrc.y ), maxsSrc.z );
 	ray.Init( start, end, mins, maxs );
 	UTIL_TraceRay( ray, fMask, player, collisionGroup, &pm );
 	if ( pm.m_pEnt && pm.plane.normal[2] >= 0.7)
@@ -3336,7 +3336,7 @@ void CGameMovement::CheckFalling( void )
 			{
 				// Player landed on a descending object. Subtract the velocity of the ground entity.
 				player->m_Local.m_flFallVelocity += player->GetGroundEntity()->GetAbsVelocity().z;
-				player->m_Local.m_flFallVelocity = max( 0.1f, player->m_Local.m_flFallVelocity );
+				player->m_Local.m_flFallVelocity = MAX( 0.1f, player->m_Local.m_flFallVelocity );
 			}
 
 			if ( player->m_Local.m_flFallVelocity > PLAYER_MAX_SAFE_FALL_SPEED )
@@ -3523,7 +3523,7 @@ void CGameMovement::UpdateDuckJumpEyeOffset( void )
 {
 	if ( player->m_Local.m_flDuckJumpTime != 0.0f )
 	{
-		float flDuckMilliseconds = max( 0.0f, GAMEMOVEMENT_DUCK_TIME - ( float )player->m_Local.m_flDuckJumpTime );
+		float flDuckMilliseconds = MAX( 0.0f, GAMEMOVEMENT_DUCK_TIME - ( float )player->m_Local.m_flDuckJumpTime );
 		float flDuckSeconds = flDuckMilliseconds / GAMEMOVEMENT_DUCK_TIME;						
 		if ( flDuckSeconds > TIME_TO_UNDUCK )
 		{
@@ -3757,7 +3757,7 @@ void CGameMovement::Duck( void )
 			// The player is in duck transition and not duck-jumping.
 			if ( player->m_Local.m_bDucking && !bDuckJump && !bDuckJumpTime )
 			{
-				float flDuckMilliseconds = max( 0.0f, GAMEMOVEMENT_DUCK_TIME - ( float )player->m_Local.m_flDucktime );
+				float flDuckMilliseconds = MAX( 0.0f, GAMEMOVEMENT_DUCK_TIME - ( float )player->m_Local.m_flDucktime );
 				float flDuckSeconds = flDuckMilliseconds * 0.001f;
 				
 				// Finish in duck transition when transition time is over, in "duck", in air.
@@ -3855,7 +3855,7 @@ void CGameMovement::Duck( void )
 					// or unducking
 					if ( ( player->m_Local.m_bDucking || player->m_Local.m_bDucked ) )
 					{
-						float flDuckMilliseconds = max( 0.0f, GAMEMOVEMENT_DUCK_TIME - (float)player->m_Local.m_flDucktime );
+						float flDuckMilliseconds = MAX( 0.0f, GAMEMOVEMENT_DUCK_TIME - (float)player->m_Local.m_flDucktime );
 						float flDuckSeconds = flDuckMilliseconds * 0.001f;
 						
 						// Finish ducking immediately if duck time is over or not on ground

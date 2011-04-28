@@ -34,8 +34,6 @@
 #include "ai_navgoaltype.h" //GoalType_t enum
 #include "eventlist.h"
 #include "soundent.h"
-#undef MINMAX_H
-#include "minmax.h"
 
 #define PLAYER_SQUADNAME "player_squad"
 
@@ -1467,7 +1465,7 @@ public:
 	//
 	//-----------------------------------------------------
 
-	void				AddSceneLock( float flDuration ) { m_flSceneTime = max( gpGlobals->curtime + flDuration, m_flSceneTime ); };
+	void				AddSceneLock( float flDuration ) { m_flSceneTime = MAX( gpGlobals->curtime + flDuration, m_flSceneTime ); };
 	bool				IsInLockedScene( void ) { return m_flSceneTime > gpGlobals->curtime; };
 	float				m_flSceneTime;
 	string_t			m_iszSceneCustomMoveSeq;

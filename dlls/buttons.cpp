@@ -1091,7 +1091,7 @@ void CMomentaryRotButton::InputSetPosition( inputdata_t &inputdata )
 	//
 	QAngle vecNewAngles = m_start + m_vecMoveAng * ( m_IdealYaw * m_flMoveDistance );
 	float flAngleDelta = fabs( AxisDelta( m_spawnflags, vecNewAngles, GetLocalAngles() ));
-	m_flTimeDelta = min( flAngleDelta / m_flSpeed, 0.1f );
+	m_flTimeDelta = MIN( flAngleDelta / m_flSpeed, 0.1f );
 
 	SetMoveDoneTime( m_flTimeDelta );
 }

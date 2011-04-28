@@ -28,7 +28,6 @@
 #include <math.h>
 
 #include <stdio.h>
-#include "minmax.h"
 
 // tier 0
 #include "tier0/dbg.h"

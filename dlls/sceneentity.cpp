@@ -1662,7 +1662,7 @@ void CSceneEntity::DispatchStartSpeak( CChoreoScene *scene, CBaseFlex *actor, CC
 					float durationShort = event->GetDuration();
 					float durationLong = endtime - event->GetStartTime();
 
-					float duration = max( durationShort, durationLong );
+					float duration = MAX( durationShort, durationLong );
 
 
 					byte byteflags = CLOSE_CAPTION_WARNIFMISSING; // warnifmissing
@@ -1692,7 +1692,7 @@ void CSceneEntity::DispatchStartSpeak( CChoreoScene *scene, CBaseFlex *actor, CC
 #else
 						WRITE_STRING( lowercase );
 #endif
-						WRITE_SHORT( min( 255, (int)( duration * 10.0f ) ) );
+						WRITE_SHORT( MIN( 255, (int)( duration * 10.0f ) ) );
 						WRITE_BYTE( byteflags ); // warn on missing
 					MessageEnd();
 				}
@@ -4453,7 +4453,7 @@ void CSceneManager::Think()
 	// The manager is always thinking at 20 hz
 	SetNextThink( gpGlobals->curtime + SCENE_THINK_INTERVAL );
 	float frameTime = ( gpGlobals->curtime - GetLastThink() );
-	frameTime = min( 0.1, frameTime );
+	frameTime = MIN( 0.1, frameTime );
 
 	// stop if AI is diabled
 	if (CAI_BaseNPC::m_nDebugBits & bits_debugDisableAI)

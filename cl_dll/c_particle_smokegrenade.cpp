@@ -662,7 +662,7 @@ inline void C_ParticleSmokeGrenade::ApplyDynamicLight( const Vector &vParticlePo
 		}
 	
 		// Rescale the color..
-		float flMax = max( color.x, max( color.y, color.z ) );
+		float flMax = MAX( color.x, MAX( color.y, color.z ) );
 		if ( flMax > 1 )
 		{
 			color /= flMax;

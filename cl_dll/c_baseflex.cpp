@@ -472,7 +472,7 @@ void C_BaseFlex::ComputeBlendedSetting( Emphasized_Phoneme *classes, float empha
 		}
 		else
 		{
-			emphasis_intensity = min( emphasis_intensity, STRONG_CROSSFADE_START );
+			emphasis_intensity = MIN( emphasis_intensity, STRONG_CROSSFADE_START );
 			classes[ PHONEME_CLASS_NORMAL ].amount = 2.0f * emphasis_intensity;
 		}
 	}
@@ -489,7 +489,7 @@ void C_BaseFlex::ComputeBlendedSetting( Emphasized_Phoneme *classes, float empha
 		}
 		else
 		{
-			emphasis_intensity = max( emphasis_intensity, WEAK_CROSSFADE_START );
+			emphasis_intensity = MAX( emphasis_intensity, WEAK_CROSSFADE_START );
 			classes[ PHONEME_CLASS_NORMAL ].amount = 2.0f * emphasis_intensity;
 		}
 	}
@@ -703,7 +703,7 @@ void C_BaseFlex::AddVisemesForSentence( Emphasized_Phoneme *classes, float empha
 				const CBasePhonemeTag *next = sentence->GetRuntimePhoneme( k + 1 );
 				if ( next )
 				{
-					dt = max( dt, min( next->GetEndTime() - t, phoneme->GetEndTime() - phoneme->GetStartTime() ) );
+					dt = MAX( dt, MIN( next->GetEndTime() - t, phoneme->GetEndTime() - phoneme->GetStartTime() ) );
 				}
 			}
 		}
@@ -1725,6 +1725,6 @@ void CSceneEventInfo::InitWeight( C_BaseFlex *pActor )
 
 float CSceneEventInfo::UpdateWeight( C_BaseFlex *pActor )
 {
-	m_flWeight = min( m_flWeight + 0.1, 1.0 );
+	m_flWeight = MIN( m_flWeight + 0.1, 1.0 );
 	return m_flWeight;
 }

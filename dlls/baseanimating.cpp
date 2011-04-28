@@ -1449,7 +1449,7 @@ void CBaseAnimating::CalculateIKLocks( float currentTime )
 					VectorMA( pTarget->est.pos, pTarget->est.height, up, p1 );
 					VectorMA( pTarget->est.pos, -pTarget->est.height, up, p2 );
 
-					float r = max(pTarget->est.radius,1);
+					float r = MAX(pTarget->est.radius,1);
 
 					// don't IK to other characters
 					ray.Init( p1, p2, Vector(-r,-r,0), Vector(r,r,1) );

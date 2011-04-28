@@ -2051,7 +2051,7 @@ static void CheckPushedEntity( CBaseEntity *pEntity, pushblock_t &params )
 
 				float t = expectedDist != 0.0f ? fabsf(deltaAngle / expectedDist) : 1.0f;
 				t = clamp(t,0,1);
-				fraction = max(fraction, t);
+				fraction = MAX(fraction, t);
 			}
 			else
 			{
@@ -6383,7 +6383,7 @@ void CBaseEntity::SUB_PerformFadeOut( void )
 		dt = 0.1f;
 	}
 	m_nRenderMode = kRenderTransTexture;
-	int speed = static_cast<int>(max(1,256*dt)); // fade out over 1 second
+	int speed = static_cast<int>(MAX(1,256*dt)); // fade out over 1 second
 	SetRenderColorA( static_cast<byte>(UTIL_Approach( 0, m_clrRender->a, speed )) );
 }
 

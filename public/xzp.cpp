@@ -736,7 +736,7 @@ bool xZipAddFile( char* filename, bool bPrecacheEntireFile, bool bProcessPrecach
 	else if( bProcessPrecacheHeaderOnly )
 	{
 		customPreloadSize = xZipComputeCustomPreloads( filename );
-		fileSize = min( fileSize, customPreloadSize );
+		fileSize = MIN( fileSize, customPreloadSize );
 	}
 
 	// Does this file have a split header?

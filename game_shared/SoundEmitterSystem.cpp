@@ -733,7 +733,7 @@ public:
 #else
 				WRITE_STRING( lowercase );
 #endif
-				WRITE_SHORT( min( 255, (int)( duration * 10.0f ) ) ),
+				WRITE_SHORT( MIN( 255, (int)( duration * 10.0f ) ) ),
 				WRITE_BYTE( byteflags ),
 			MessageEnd();
 #else

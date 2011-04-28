@@ -2745,10 +2745,10 @@ int ParseSequence( s_sequence_t *pseq, bool isAppend )
 			GetToken( false );
 			pseq->paramend[i] = verify_atof( token );
 
-			g_pose[j].min  = min( g_pose[j].min, pseq->paramstart[i] );
-			g_pose[j].min  = min( g_pose[j].min, pseq->paramend[i] );
-			g_pose[j].max  = max( g_pose[j].max, pseq->paramstart[i] );
-			g_pose[j].max  = max( g_pose[j].max, pseq->paramend[i] );
+			g_pose[j].min  = MIN( g_pose[j].min, pseq->paramstart[i] );
+			g_pose[j].min  = MIN( g_pose[j].min, pseq->paramend[i] );
+			g_pose[j].max  = MAX( g_pose[j].max, pseq->paramstart[i] );
+			g_pose[j].max  = MAX( g_pose[j].max, pseq->paramend[i] );
 		}
 		else if (stricmp("calcblend", token ) == 0)
 		{

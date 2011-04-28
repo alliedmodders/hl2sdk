@@ -1015,10 +1015,10 @@ void MarkConnectedMeshes( int *vertID, s_source_t *pmodel, int *vertMap )
 				globalFace.c = vertMap[globalFace.c];
 
 
-				// find min(faceid, vertID[a], vertID[b], vertID[c]);
-				int newid = min(faceid, vertID[globalFace.a]);
-				newid = min( newid, vertID[globalFace.b]);
-				newid = min( newid, vertID[globalFace.c]);
+				// find MIN(faceid, vertID[a], vertID[b], vertID[c]);
+				int newid = MIN(faceid, vertID[globalFace.a]);
+				newid = MIN( newid, vertID[globalFace.b]);
+				newid = MIN( newid, vertID[globalFace.c]);
 				
 				// mark all verts with the minimum, count the number we had to mark
 				if ( vertID[globalFace.a] != newid )

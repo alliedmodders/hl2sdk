@@ -93,8 +93,8 @@ int CNormalList::FindOrAddNormal( Vector const &vNormal )
 	for( int iDim=0; iDim < 3; iDim++ )
 	{
 		gi[iDim] = (int)( ((vNormal[iDim] + 1.0f) * 0.5f) * NUM_SUBDIVS - 0.000001f );
-		gi[iDim] = min( gi[iDim], NUM_SUBDIVS );
-		gi[iDim] = max( gi[iDim], 0 );
+		gi[iDim] = MIN( gi[iDim], NUM_SUBDIVS );
+		gi[iDim] = MAX( gi[iDim], 0 );
 	}
 
 	// Look for a matching vector in there.
@@ -2356,18 +2356,18 @@ static void ComputeLightmapGradients( SampleInfo_t& info, bool const* pHasProces
 
 			if (sample.t > 0)
 			{
-				if (sample.s > 0)   gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j-1-w] ) );
-				gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j-w] ) );
-				if (sample.s < w-1) gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j+1-w] ) );
+				if (sample.s > 0)   gradient[i] = MAX( gradient[i], fabs( pIntensity[j] - pIntensity[j-1-w] ) );
+				gradient[i] = MAX( gradient[i], fabs( pIntensity[j] - pIntensity[j-w] ) );
+				if (sample.s < w-1) gradient[i] = MAX( gradient[i], fabs( pIntensity[j] - pIntensity[j+1-w] ) );
 			}
 			if (sample.t < h-1)
 			{
-				if (sample.s > 0)   gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j-1+w] ) );
-				gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j+w] ) );
-				if (sample.s < w-1) gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j+1+w] ) );
+				if (sample.s > 0)   gradient[i] = MAX( gradient[i], fabs( pIntensity[j] - pIntensity[j-1+w] ) );
+				gradient[i] = MAX( gradient[i], fabs( pIntensity[j] - pIntensity[j+w] ) );
+				if (sample.s < w-1) gradient[i] = MAX( gradient[i], fabs( pIntensity[j] - pIntensity[j+1+w] ) );
 			}
-			if (sample.s > 0)   gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j-1] ) );
-			if (sample.s < w-1) gradient[i] = max( gradient[i], fabs( pIntensity[j] - pIntensity[j+1] ) );
+			if (sample.s > 0)   gradient[i] = MAX( gradient[i], fabs( pIntensity[j] - pIntensity[j-1] ) );
+			if (sample.s < w-1) gradient[i] = MAX( gradient[i], fabs( pIntensity[j] - pIntensity[j+1] ) );
 		}
 	}
 }
@@ -3015,18 +3015,18 @@ void BuildFacelightsOld(int facenum, int iThread)
 
 			if (fl->sample[i].t > 0)
 			{
-				if (fl->sample[i].s > 0)   gradient[i] = max( gradient[i], fabs( sampled[j] - sampled[j-1-w] ) );
-				gradient[i] = max( gradient[i], fabs( sampled[j] - sampled[j-w] ) );
-				if (fl->sample[i].s < w-1) gradient[i] = max( gradient[i], fabs( sampled[j] - sampled[j+1-w] ) );
+				if (fl->sample[i].s > 0)   gradient[i] = MAX( gradient[i], fabs( sampled[j] - sampled[j-1-w] ) );
+				gradient[i] = MAX( gradient[i], fabs( sampled[j] - sampled[j-w] ) );
+				if (fl->sample[i].s < w-1) gradient[i] = MAX( gradient[i], fabs( sampled[j] - sampled[j+1-w] ) );
 			}
 			if (fl->sample[i].t < h-1)
 			{
-				if (fl->sample[i].s > 0)   gradient[i] = max( gradient[i], fabs( sampled[j] - sampled[j-1+w] ) );
-				gradient[i] = max( gradient[i], fabs( sampled[j] - sampled[j+w] ) );
-				if (fl->sample[i].s < w-1) gradient[i] = max( gradient[i], fabs( sampled[j] - sampled[j+1+w] ) );
+				if (fl->sample[i].s > 0)   gradient[i] = MAX( gradient[i], fabs( sampled[j] - sampled[j-1+w] ) );
+				gradient[i] = MAX( gradient[i], fabs( sampled[j] - sampled[j+w] ) );
+				if (fl->sample[i].s < w-1) gradient[i] = MAX( gradient[i], fabs( sampled[j] - sampled[j+1+w] ) );
 			}
-			if (fl->sample[i].s > 0)   gradient[i] = max( gradient[i], fabs( sampled[j] - sampled[j-1] ) );
-			if (fl->sample[i].s < w-1) gradient[i] = max( gradient[i], fabs( sampled[j] - sampled[j+1] ) );
+			if (fl->sample[i].s > 0)   gradient[i] = MAX( gradient[i], fabs( sampled[j] - sampled[j-1] ) );
+			if (fl->sample[i].s < w-1) gradient[i] = MAX( gradient[i], fabs( sampled[j] - sampled[j+1] ) );
 		}
 
 		do_anotherpass = false;

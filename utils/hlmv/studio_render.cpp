@@ -453,7 +453,7 @@ void StudioModel::SetUpBones( bool mergeBones )
 	{
 		if (m_Layer[i].m_weight > 0)
 		{
-			iMaxPriority = max( m_Layer[i].m_priority, iMaxPriority );
+			iMaxPriority = MAX( m_Layer[i].m_priority, iMaxPriority );
 		}
 	}
 

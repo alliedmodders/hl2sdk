@@ -1428,7 +1428,7 @@ int CBasePlayer::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 	if ( event )
 	{
 		event->SetInt("userid", GetUserID() );
-		event->SetInt("health", max(0, m_iHealth) );
+		event->SetInt("health", MAX(0, m_iHealth) );
 		event->SetInt("priority", 5 );	// HLTV event priority, not transmitted
 
 		if ( attacker->IsPlayer() )
@@ -3518,7 +3518,7 @@ void CBasePlayer::CheckTimeBasedDamage()
 				// after the player has been drowning and finally takes a breath
 				if (m_idrowndmg > m_idrownrestored)
 				{
-					int idif = min(m_idrowndmg - m_idrownrestored, 10);
+					int idif = MIN(m_idrowndmg - m_idrownrestored, 10);
 
 					TakeHealth(idif, DMG_GENERIC);
 					m_idrownrestored += idif;
@@ -3532,7 +3532,7 @@ void CBasePlayer::CheckTimeBasedDamage()
 				// after the player has been poisoned.
 				if (m_nPoisonDmg > m_nPoisonRestored)
 				{
-					int nDif = min(m_nPoisonDmg - m_nPoisonRestored, 10);
+					int nDif = MIN(m_nPoisonDmg - m_nPoisonRestored, 10);
 					TakeHealth(nDif, DMG_GENERIC);
 					m_nPoisonRestored += nDif;
 				}

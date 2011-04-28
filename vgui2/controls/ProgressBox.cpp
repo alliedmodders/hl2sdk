@@ -26,7 +26,7 @@
 using namespace vgui;
 
 #ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#define MAX(a,b)            (((a) > (b)) ? (a) : (b))
 #endif
 
 //-----------------------------------------------------------------------------

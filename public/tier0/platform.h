@@ -10,7 +10,6 @@
 #define PLATFORM_H
 
 #include "wchartypes.h"
-#include "basetypes.h"
 #include "tier0/valve_off.h"
 
 #ifdef _WIN32

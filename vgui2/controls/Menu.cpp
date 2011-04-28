@@ -788,7 +788,7 @@ void Menu::PerformLayout()
 		AddScrollBar();
 
 		// This fills in m_VisibleSortedItems as needed
-		MakeItemsVisibleInScrollRange( m_iNumVisibleLines, min( fullHeightWouldRequire, workTall ) );
+		MakeItemsVisibleInScrollRange( m_iNumVisibleLines, MIN( fullHeightWouldRequire, workTall ) );
 	}
 	else
 	{
@@ -1700,7 +1700,7 @@ void Menu::ApplySchemeSettings(IScheme *pScheme)
 			int wide, tall;
 			m_MenuItems[i]->GetCheckImageSize( wide, tall );
 
-			m_iCheckImageWidth = max ( m_iCheckImageWidth, wide );
+			m_iCheckImageWidth = MAX ( m_iCheckImageWidth, wide );
 		}
 	}
 	_recalculateWidth = true;

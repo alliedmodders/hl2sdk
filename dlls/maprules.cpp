@@ -624,7 +624,7 @@ bool CGamePlayerEquip::KeyValue( const char *szKeyName, const char *szValue )
 
 				m_weaponNames[i] = AllocPooledString(tmp);
 				m_weaponCount[i] = atoi(szValue);
-				m_weaponCount[i] = max(1,m_weaponCount[i]);
+				m_weaponCount[i] = MAX(1,m_weaponCount[i]);
 				return true;
 			}
 		}

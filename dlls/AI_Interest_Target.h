@@ -12,9 +12,6 @@
 #pragma once
 #endif
 
-#undef MINMAX_H
-#include "minmax.h" // max() define
-
 //-----------------------------------------------------------------------------
 // CAI_BaseActor
 //

@@ -743,7 +743,7 @@ void CNPC_Ichthyosaur::SteerArrive(Vector &Steer, const Vector &Target)
 	float fTargetDistance = Offset.Length();
 
 	float fIdealSpeed = m_flGroundSpeed * (fTargetDistance / ICH_WAYPOINT_DISTANCE);
-	float fClippedSpeed = min( fIdealSpeed, m_flGroundSpeed );
+	float fClippedSpeed = MIN( fIdealSpeed, m_flGroundSpeed );
 	
 	Vector DesiredVelocity( 0, 0, 0 );
 
@@ -896,29 +896,29 @@ void CNPC_Ichthyosaur::ClampSteer(Vector &SteerAbs, Vector &SteerRel, Vector &fo
 
 	if (fForwardSteer > 0)
 	{
-		fForwardSteer = min(fForwardSteer, m_vecAccelerationMax.x);
+		fForwardSteer = MIN(fForwardSteer, m_vecAccelerationMax.x);
 	}
 	else
 	{
-		fForwardSteer = max(fForwardSteer, m_vecAccelerationMin.x);
+		fForwardSteer = MAX(fForwardSteer, m_vecAccelerationMin.x);
 	}
 
 	if (fRightSteer > 0)
 	{
-		fRightSteer = min(fRightSteer, m_vecAccelerationMax.y);
+		fRightSteer = MIN(fRightSteer, m_vecAccelerationMax.y);
 	}
 	else
 	{
-		fRightSteer = max(fRightSteer, m_vecAccelerationMin.y);
+		fRightSteer = MAX(fRightSteer, m_vecAccelerationMin.y);
 	}
 
 	if (fUpSteer > 0)
 	{
-		fUpSteer = min(fUpSteer, m_vecAccelerationMax.z);
+		fUpSteer = MIN(fUpSteer, m_vecAccelerationMax.z);
 	}
 	else
 	{
-		fUpSteer = max(fUpSteer, m_vecAccelerationMin.z);
+		fUpSteer = MAX(fUpSteer, m_vecAccelerationMin.z);
 	}
 
 	SteerAbs = (fForwardSteer*forward) + (fRightSteer*right) + (fUpSteer*up);
@@ -1244,7 +1244,7 @@ void CNPC_Ichthyosaur::EnsnareVictim( CBaseEntity *pVictim )
 
 			if ( pPlayer )
 			{
-				m_flHoldTime = max( gpGlobals->curtime+3.0f, pPlayer->PlayerDrownTime() - 2.0f );
+				m_flHoldTime = MAX( gpGlobals->curtime+3.0f, pPlayer->PlayerDrownTime() - 2.0f );
 			}
 		}
 		else

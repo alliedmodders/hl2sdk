@@ -330,7 +330,7 @@ void CGrenadeHomer::Launch( CBaseEntity*		pOwner,
 	{
 		// Figure out how long it'll take for me to reach the target.
 		float flDist = ( pTarget->WorldSpaceCenter() - WorldSpaceCenter() ).Length();
-		float flTime = max( 0.5, flDist / GetAbsVelocity().Length() );
+		float flTime = MAX( 0.5, flDist / GetAbsVelocity().Length() );
 
 		CSoundEnt::InsertSound ( SOUND_DANGER, m_hTarget->GetAbsOrigin(), 300, flTime, pOwner );
 	}
@@ -600,7 +600,7 @@ void CGrenadeHomer::AimThink( void )
 			// Extract speed and direction
 			Vector	vCurDir		= GetAbsVelocity();
 			float flCurSpeed = VectorNormalize(vCurDir);
-			flTargetSpeed = max(flTargetSpeed, flCurSpeed);
+			flTargetSpeed = MAX(flTargetSpeed, flCurSpeed);
 
 			// Add in homing direction
 			Vector vecNewVelocity = GetAbsVelocity();

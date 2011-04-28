@@ -132,7 +132,7 @@ void TE_BubbleTrail( IRecipientFilter& filter, float delay,
 	g_TEBubbleTrail.m_vecMaxs = *maxs;
 	g_TEBubbleTrail.m_flWaterZ = flWaterZ;
 	g_TEBubbleTrail.m_nModelIndex = modelindex;
-	g_TEBubbleTrail.m_nCount = min( count, BUBBLE_TRAIL_MAX_COUNT );
+	g_TEBubbleTrail.m_nCount = MIN( count, BUBBLE_TRAIL_MAX_COUNT );
 	g_TEBubbleTrail.m_fSpeed = speed;
 
 	// Send it over the wire

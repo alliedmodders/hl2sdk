@@ -1985,7 +1985,7 @@ int CWeaponRPG::WeaponRangeAttack1Condition( float flDot, float flDist )
 		flDist = vecToTarget.Length();
 	}
 
-	if ( flDist < min( m_fMinRange1, m_fMinRange2 ) )
+	if ( flDist < MIN( m_fMinRange1, m_fMinRange2 ) )
 		return COND_TOO_CLOSE_TO_ATTACK;
 
 	if ( m_flNextPrimaryAttack > gpGlobals->curtime )

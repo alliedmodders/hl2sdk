@@ -203,7 +203,7 @@ void CSoundscapeSystem::FrameUpdatePostEntityThink()
 		}
 
 		// update 2 soundscape entities each tick
-		int count = min(2, total);
+		int count = MIN(2, total);
 		for ( int i = 0; i < count; i++ )
 		{
 			m_activeIndex++;

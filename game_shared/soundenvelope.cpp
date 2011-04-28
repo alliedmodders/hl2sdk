@@ -75,7 +75,7 @@ void CSoundEnvelope::SetTarget( float target, float deltaTime )
 	if ( deltaValue && deltaTime > 0 )
 	{
 		m_target = target;
-		m_rate = max( 0.1, fabs(deltaValue / deltaTime) );
+		m_rate = MAX( 0.1, fabs(deltaValue / deltaTime) );
 	}
 	else
 	{

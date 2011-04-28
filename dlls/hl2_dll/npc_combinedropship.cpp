@@ -1141,7 +1141,7 @@ void CNPC_CombineDropship::Flight( void )
 		}
 
 		float flCurrentSpeed = GetAbsVelocity().Length();
-		float flDist = min( flCurrentSpeed + accelRate, maxSpeed );
+		float flDist = MIN( flCurrentSpeed + accelRate, maxSpeed );
 
 		Vector deltaPos;
 		if ( GetLandingState() == LANDING_SWOOPING )
@@ -1954,8 +1954,8 @@ void CNPC_CombineDropship::PrescheduleThink( void )
 #define MIN_LAND_VEL	-75.0f
 #define ALTITUDE_CAP	512.0f
 
-			float flFactor = min( 1.0,  flAltitude / ALTITUDE_CAP );
-			float flDescendVelocity = min( -75, MAX_LAND_VEL * flFactor );
+			float flFactor = MIN( 1.0,  flAltitude / ALTITUDE_CAP );
+			float flDescendVelocity = MIN( -75, MAX_LAND_VEL * flFactor );
 
 			vecVelocity.z = flDescendVelocity;
 
@@ -2184,7 +2184,7 @@ void CNPC_CombineDropship::PrescheduleThink( void )
 						float flSpeed = GetAbsVelocity().Length();
 						Vector vecVelocity = vecToTarget;
 						VectorNormalize( vecVelocity );
-						SetAbsVelocity( vecVelocity * min(flSpeed,flDistance) );
+						SetAbsVelocity( vecVelocity * MIN(flSpeed,flDistance) );
 					}
 					else
 					*/

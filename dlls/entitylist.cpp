@@ -93,7 +93,7 @@ public:
 	int ListCount() { return m_targetList.Count(); }
 	int ListCopy( CBaseEntity *pList[], int listMax )
 	{
-		int count = min(listMax, ListCount() );
+		int count = MIN(listMax, ListCount() );
 		memcpy( pList, m_targetList.Base(), sizeof(CBaseEntity *) * count );
 		return count;
 	}
@@ -195,7 +195,7 @@ public:
 
 	int ListCopy( CBaseEntity *pList[], int listMax )
 	{
-		int count = min(listMax, ListCount());
+		int count = MIN(listMax, ListCount());
 		for ( int i = 0; i < count; i++ )
 		{
 			int entinfoIndex = m_simThinkList[i];

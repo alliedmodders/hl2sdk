@@ -12,7 +12,7 @@
 #include "tier0/dbg.h"
 #include <ctype.h>
 #include "vstdlib/strtools.h"
-#include "minmax.h" // max()
+#include "minmax.h" // MAX()
 
 // Should be last include
 #include "tier0/memdbgon.h"
@@ -247,7 +247,7 @@ void *CMemoryPool::Alloc( unsigned int amount )
 		}
 	}
 	m_BlocksAllocated++;
-	m_PeakAlloc = max(m_PeakAlloc, m_BlocksAllocated);
+	m_PeakAlloc = MAX(m_PeakAlloc, m_BlocksAllocated);
 
 	returnBlock = m_pHeadOfFreeList;
 

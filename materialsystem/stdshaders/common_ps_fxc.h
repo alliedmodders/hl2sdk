@@ -182,7 +182,7 @@ float CalcWaterFogAlpha( const float flWaterZ, const float flEyePosZ, const floa
 	// if flDepthFromWater < 0, then set it to 0
 	// This is the equivalent of moving the vert to the water surface if it's above the water surface
 	// We'll do this with the saturate at the end instead.
-//	flDepthFromWater = max( 0.0f, flDepthFromWater );
+//	flDepthFromWater = MAX( 0.0f, flDepthFromWater );
 
 	// Calculate the ratio of water fog to regular fog (ie. how much of the distance from the viewer
 	// to the vert is actually underwater.
@@ -356,7 +356,7 @@ float2 CalcParallaxedTexCoord( float2 inTexCoord, float2 vParallax, float3 vNorm
       float sh4 = (tex2D( sNormalMap, texSampleBase + inXY * 0.22 ).w - sh0 - 0.22 ) * 12 * fShadowSoftening;
       
       // Compute the actual shadow strength:
-      float fShadow = 1 - max( max( max( max( max( max( shA, sh9 ), sh8 ), sh7 ), sh6 ), sh5 ), sh4 );
+      float fShadow = 1 - MAX( MAX( MAX( MAX( MAX( MAX( shA, sh9 ), sh8 ), sh7 ), sh6 ), sh5 ), sh4 );
 
       cResultColor.rgb *= fShadow * 0.6 + 0.4;
    }
@@ -379,8 +379,8 @@ float2 CalcParallaxedTexCoord( float2 inTexCoord, float2 vParallax, float3 vNorm
 float4 RGBtoHSL( float4 inColor )
 {
    float h, s;
-   float flMax = max( inColor.r, max( inColor.g, inColor.b ) );
-   float flMin = min( inColor.r, min( inColor.g, inColor.b ) );
+   float flMax = MAX( inColor.r, MAX( inColor.g, inColor.b ) );
+   float flMin = MIN( inColor.r, MIN( inColor.g, inColor.b ) );
    
    float l = (flMax + flMin) / 2.0f;
    

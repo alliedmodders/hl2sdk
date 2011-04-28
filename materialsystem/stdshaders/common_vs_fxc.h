@@ -185,7 +185,7 @@ float WaterFog( const float3 worldPos, const float3 projPos )
 	// if $tmp.x < 0, then set it to 0
 	// This is the equivalent of moving the vert to the water surface if it's above the water surface
 	
-	tmp.x = max( cZero, tmp.x );
+	tmp.x = MAX( cZero, tmp.x );
 
 	// $tmp.w = $tmp.x / $tmp.y
 	tmp.w = tmp.x / tmp.y;
@@ -392,7 +392,7 @@ float3 SpotLight( const float3 worldPos, const float3 worldNormal, int lightNum,
 	{
 		// compute n dot l
 		nDotL = dot( worldNormal, lightDir );
-		nDotL = max( cZero, nDotL );
+		nDotL = MAX( cZero, nDotL );
 	}
 	else
 	{
@@ -404,9 +404,9 @@ float3 SpotLight( const float3 worldPos, const float3 worldNormal, int lightNum,
 	// compute angular attenuation
 	float flCosTheta = dot( cLightInfo[lightNum].dir, -lightDir );
 	float flAngularAtten = (flCosTheta - cLightInfo[lightNum].spotParams.z) * cLightInfo[lightNum].spotParams.w;
-	flAngularAtten = max( cZero, flAngularAtten );
+	flAngularAtten = MAX( cZero, flAngularAtten );
 	flAngularAtten = pow( flAngularAtten, cLightInfo[lightNum].spotParams.x );
-	flAngularAtten = min( cOne, flAngularAtten );
+	flAngularAtten = MIN( cOne, flAngularAtten );
 
 	return cLightInfo[lightNum].color * flDistanceAttenuation * flAngularAtten * nDotL;
 }
@@ -443,7 +443,7 @@ float3 PointLight( const float3 worldPos, const float3 worldNormal, int lightNum
 	{
 		// compute n dot l
 		NDotL = dot( worldNormal, lightDir );
-		NDotL = max( cZero, NDotL );
+		NDotL = MAX( cZero, NDotL );
 	}
 	else
 	{
@@ -463,7 +463,7 @@ float3 DirectionalLight( const float3 worldNormal, int lightNum, bool bHalfLambe
 	{
 		// compute n dot l
 		NDotL = dot( worldNormal, -cLightInfo[lightNum].dir );
-		NDotL = max( cZero, NDotL );
+		NDotL = MAX( cZero, NDotL );
 	}
 	else
 	{
@@ -670,9 +670,9 @@ float3 Compute_SpotLightVertexColor( const float3 worldPos, const float3 worldNo
 
 	float flCosTheta = dot( cLightInfo[lightNum].dir, -lightDir );
 	float flAngularAtten = (flCosTheta - cLightInfo[lightNum].spotParams.z) * cLightInfo[lightNum].spotParams.w;
-	flAngularAtten = max( 0.0f, flAngularAtten );
+	flAngularAtten = MAX( 0.0f, flAngularAtten );
 	flAngularAtten = pow( flAngularAtten, cLightInfo[lightNum].spotParams.x );
-	flAngularAtten = min( 1.0f, flAngularAtten );
+	flAngularAtten = MIN( 1.0f, flAngularAtten );
 
 	return flDistanceAttenuation * flAngularAtten * cLightInfo[lightNum].color;
 }

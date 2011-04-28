@@ -95,7 +95,7 @@ void CDebugHistory::AddDebugHistoryLine( int iCategory, const char *szLine )
 		int iCharsLeftBeforeLoop = sizeof(m_DebugLines[iCategory]) - (m_DebugLineEnd[iCategory] - m_DebugLines[iCategory]);
 
 		// Write into the buffer
-		int iWrote = min( iCharsToWrite, iCharsLeftBeforeLoop );
+		int iWrote = MIN( iCharsToWrite, iCharsLeftBeforeLoop );
 		memcpy( m_DebugLineEnd[iCategory], pszRemaining, iWrote );	
 		m_DebugLineEnd[iCategory] += iWrote;
 		pszRemaining += iWrote;
@@ -221,7 +221,7 @@ int CDebugHistory::Restore( IRestore &restore )
 	ClearHistories();
 
 	int iMaxCategorys = restore.ReadInt();
-	for ( int iCategory = 0; iCategory < min(iMaxCategorys,MAX_HISTORY_CATEGORIES); iCategory++ )
+	for ( int iCategory = 0; iCategory < MIN(iMaxCategorys,MAX_HISTORY_CATEGORIES); iCategory++ )
 	{
 		int iEnd = restore.ReadInt();
 		m_DebugLineEnd[iCategory] = m_DebugLines[iCategory] + iEnd;
