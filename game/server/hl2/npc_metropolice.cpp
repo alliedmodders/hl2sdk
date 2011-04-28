@@ -1825,7 +1825,7 @@ void CNPC_MetroPolice::AimBurstAtEnemy( float flReactionTime )
 
 	// Compute the distance along the stitch direction to the cop. we don't want to cross that line
 	Vector vecStitchStart, vecStitchEnd;
-	VectorMA( vecShootAt, -min( flStitchLength * flReactionFraction, flMaxStitchDistance ), vecDelta, vecStitchStart );
+	VectorMA( vecShootAt, -MIN( flStitchLength * flReactionFraction, flMaxStitchDistance ), vecDelta, vecStitchStart );
 	VectorMA( vecShootAt, flStitchLength * (1.0f - flReactionFraction), vecDelta, vecStitchEnd );
 	
 	// Trace down a bit to hit the ground if we're above the ground...
@@ -2004,7 +2004,7 @@ void CNPC_MetroPolice::AimBurstAlongSideOfEnemy( float flFollowTime )
 
 	vecShootAtVel.z = 0.0f;
 	float flTargetSpeed = VectorNormalize( vecShootAtVel );
-	float flStitchLength = max( AIM_IN_FRONT_OF_DEFAULT_STITCH_LENGTH, flTargetSpeed * flFollowTime * 0.9 );
+	float flStitchLength = MAX( AIM_IN_FRONT_OF_DEFAULT_STITCH_LENGTH, flTargetSpeed * flFollowTime * 0.9 );
 
 	// This defines the line of death, which, when crossed, results in damage
 	m_vecBurstLineOfDeathOrigin = vecSidePoint;
@@ -4802,8 +4802,8 @@ void CNPC_MetroPolice::RunTask( const Task_t *pTask )
 						float flMinRange = 0;
 						if ( GetActiveWeapon() )
 						{
-							flMaxRange = max( GetActiveWeapon()->m_fMaxRange1, GetActiveWeapon()->m_fMaxRange2 );
-							flMinRange = min( GetActiveWeapon()->m_fMinRange1, GetActiveWeapon()->m_fMinRange2 );
+							flMaxRange = MAX( GetActiveWeapon()->m_fMaxRange1, GetActiveWeapon()->m_fMaxRange2 );
+							flMinRange = MIN( GetActiveWeapon()->m_fMinRange1, GetActiveWeapon()->m_fMinRange2 );
 						}
 
 						// Check against NPC's max range

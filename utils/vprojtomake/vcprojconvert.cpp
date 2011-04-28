@@ -33,13 +33,11 @@
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
-#include "valve_minmax_off.h"
 #if defined(XERCES_NEW_IOSTREAMS)
 #include <iostream>
 #else
 #include <iostream.h>
 #endif
-#include "valve_minmax_on.h"
 
 #define IXMLDOMNode DOMNode
 #define IXMLDOMNodeList DOMNodeList

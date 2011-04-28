@@ -58,8 +58,8 @@ inline Vector32& Vector32::operator=(const Vector &vOther)
 
 	static float expScale[4] = { 4.0f, 16.0f, 32.f, 64.f };
 
-	float fmax = max( fabs( vOther.x ), fabs( vOther.y ) );
-	fmax = max( fmax, fabs( vOther.z ) );
+	float fmax = MAX( fabs( vOther.x ), fabs( vOther.y ) );
+	fmax = fpmax( fmax, fabs( vOther.z ) );
 
 	for (exp = 0; exp < 3; exp++)
 	{

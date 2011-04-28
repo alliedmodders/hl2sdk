@@ -1381,9 +1381,9 @@ int CPrediction::ComputeFirstCommandToExecute( bool received_new_world_update, i
 		// this is where we would normally start
 		int start = incoming_acknowledged + 1;
 		// outgoing_command is where we really want to start
-		skipahead = max( 0, ( outgoing_command - start ) );
+		skipahead = MAX( 0, ( outgoing_command - start ) );
 		// Don't start past the last predicted command, though, or we'll get prediction errors
-		skipahead = min( skipahead, m_nCommandsPredicted  );
+		skipahead = MIN( skipahead, m_nCommandsPredicted  );
 
 		// Always restore since otherwise we might start prediction using an "interpolated" value instead of a purely predicted value
 		RestoreEntityToPredictedFrame( skipahead - 1 );

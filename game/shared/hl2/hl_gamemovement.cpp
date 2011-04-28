@@ -607,7 +607,7 @@ void CHL2GameMovement::FullLadderMove()
 	dist1sqr = ( topPosition - mv->GetAbsOrigin() ).LengthSqr();
 	dist2sqr = ( bottomPosition - mv->GetAbsOrigin() ).LengthSqr();
 
-	float dist = min( dist1sqr, dist2sqr );
+	float dist = MIN( dist1sqr, dist2sqr );
 	bool neardismountnode = ( dist < 16.0f * 16.0f ) ? true : false;
 	float ladderUnitsPerTick = ( MAX_CLIMB_SPEED * gpGlobals->interval_per_tick );
 	bool neardismountnode2 = ( dist < ladderUnitsPerTick * ladderUnitsPerTick ) ? true : false;

@@ -25,12 +25,6 @@
 #pragma once
 #endif
 
-#ifdef _LINUX
-// the include <set> monkey's with the max() define, unbreak it
-#undef MINMAX_H
-#include "minmax.h"
-#endif
-
 #include "ai_playerally.h"
 
 #include "soundflags.h"

@@ -58,7 +58,7 @@ public:
 			m_errorStack[m_errorIndex] = symName;
 		}
 		m_errorIndex++;
-		m_maxErrorIndex = max( m_maxErrorIndex, (m_errorIndex-1) );
+		m_maxErrorIndex = MAX( m_maxErrorIndex, (m_errorIndex-1) );
 		return m_errorIndex-1;
 	}
 

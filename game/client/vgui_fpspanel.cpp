@@ -706,7 +706,7 @@ void  CBlockingFileIOPanel::DrawIOTime( int x, int y, int w, int h, int slot, ch
 	int historyWide = ( int ) ( w * hfrac + 0.5f );
 	int spikeWide = ( int ) ( w * spikefrac + 0.5f );
 
-	int useWide = max( barWide, historyWide );
+	int useWide = MAX( barWide, historyWide );
 
 	vgui::surface()->DrawSetColor( Color( 0, 0, 0, 31 ) );
 	vgui::surface()->DrawFilledRect( x, y, x + w, y + h );

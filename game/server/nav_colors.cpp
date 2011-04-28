@@ -113,7 +113,7 @@ void NavDrawDashedLine( const Vector& from, const Vector& to, NavEditColor navCo
 	{
 		Vector start = from + unit * distance;
 		float endDistance = distance + solidLen;
-		endDistance = min( endDistance, totalDistance );
+		endDistance = MIN( endDistance, totalDistance );
 		Vector end = from + unit * endDistance;
 
 		distance += solidLen + gapLen;

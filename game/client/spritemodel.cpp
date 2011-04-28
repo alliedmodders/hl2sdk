@@ -95,13 +95,13 @@ static int IntersectWRect(const wrect_t *prc1, const wrect_t *prc2, wrect_t *prc
 	if (!prc)
 		prc = &rc;
 
-	prc->left = max(prc1->left, prc2->left);
-	prc->right = min(prc1->right, prc2->right);
+	prc->left = MAX(prc1->left, prc2->left);
+	prc->right = MIN(prc1->right, prc2->right);
 
 	if (prc->left < prc->right)
 	{
-		prc->top = max(prc1->top, prc2->top);
-		prc->bottom = min(prc1->bottom, prc2->bottom);
+		prc->top = MAX(prc1->top, prc2->top);
+		prc->bottom = MIN(prc1->bottom, prc2->bottom);
 
 		if (prc->top < prc->bottom)
 			return 1;

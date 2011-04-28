@@ -377,7 +377,7 @@ void CAI_Spotlight::UpdateSpotlightEndpoint( void )
 	// Adjust end width to keep beam width constant
 	float flNewWidth = SPOTLIGHT_WIDTH * ( flBeamLength / m_flSpotlightMaxLength );
 	
-	flNewWidth = min( 100, flNewWidth );
+	flNewWidth = MIN( 100, flNewWidth );
 
 	m_hSpotlight->SetWidth(flNewWidth);
 	m_hSpotlight->SetEndWidth(flNewWidth);

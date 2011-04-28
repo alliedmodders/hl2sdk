@@ -253,7 +253,7 @@ void *CMemoryPool::Alloc( size_t amount )
 		}
 	}
 	m_BlocksAllocated++;
-	m_PeakAlloc = max(m_PeakAlloc, m_BlocksAllocated);
+	m_PeakAlloc = MAX(m_PeakAlloc, m_BlocksAllocated);
 
 	returnBlock = m_pHeadOfFreeList;
 

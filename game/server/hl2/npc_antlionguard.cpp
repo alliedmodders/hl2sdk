@@ -910,7 +910,7 @@ bool CNPC_AntlionGuard::CanSummon( bool bIgnoreTime )
 		return false;
 
 	// Hit the max number of them allowed? Only summon when we're 2 down.
-	if ( m_iNumLiveAntlions >= max(1, ANTLIONGUARD_SUMMON_COUNT-1) )
+	if ( m_iNumLiveAntlions >= MAX(1, ANTLIONGUARD_SUMMON_COUNT-1) )
 		return false;
 
 	return true;

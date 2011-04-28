@@ -1812,7 +1812,7 @@ void CSceneEntity::DispatchStartSpeak( CChoreoScene *scene, CBaseFlex *actor, CC
 					float durationShort = event->GetDuration();
 					float durationLong = endtime - event->GetStartTime();
 
-					float duration = max( durationShort, durationLong );
+					float duration = MAX( durationShort, durationLong );
 
 
 					byte byteflags = CLOSE_CAPTION_WARNIFMISSING; // warnifmissing
@@ -1838,7 +1838,7 @@ void CSceneEntity::DispatchStartSpeak( CChoreoScene *scene, CBaseFlex *actor, CC
 					// Send caption and duration hint down to client
 					UserMessageBegin( filter, "CloseCaption" );
 						WRITE_STRING( lowercase );
-						WRITE_SHORT( min( 255, (int)( duration * 10.0f ) ) );
+						WRITE_SHORT( MIN( 255, (int)( duration * 10.0f ) ) );
 						WRITE_BYTE( byteflags ); // warn on missing
 					MessageEnd();
 				}
@@ -3652,11 +3652,11 @@ public:
 		if (pActor)
 		{
 			m_vecPos1 = pActor->GetAbsOrigin();
-			m_flMaxSegmentDistance = min( flMaxRadius, (m_vecPos1 - m_vecPos2).Length() + 1.0 );
+			m_flMaxSegmentDistance = MIN( flMaxRadius, (m_vecPos1 - m_vecPos2).Length() + 1.0 );
 			if (m_flMaxSegmentDistance <= 1.0)
 			{
 				// must be closest to self
-				m_flMaxSegmentDistance = min( flMaxRadius, MAX_TRACE_LENGTH );
+				m_flMaxSegmentDistance = MIN( flMaxRadius, MAX_TRACE_LENGTH );
 			}
 		}
 	}
@@ -4660,7 +4660,7 @@ void CInstancedSceneEntity::DoThink( float frametime )
 
 	if ( m_flPreDelay > 0 )
 	{
-		m_flPreDelay = max( 0, m_flPreDelay - frametime );
+		m_flPreDelay = MAX( 0, m_flPreDelay - frametime );
 		StartPlayback();
 		if ( !m_bIsPlayingBack )
 			return;
@@ -4838,7 +4838,7 @@ void CSceneManager::Think()
 	// The manager is always thinking at 20 hz
 	SetNextThink( gpGlobals->curtime + SCENE_THINK_INTERVAL );
 	float frameTime = ( gpGlobals->curtime - GetLastThink() );
-	frameTime = min( 0.1, frameTime );
+	frameTime = MIN( 0.1, frameTime );
 
 	// stop if AI is diabled
 	if (CAI_BaseNPC::m_nDebugBits & bits_debugDisableAI)

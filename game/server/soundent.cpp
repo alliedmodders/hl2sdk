@@ -525,7 +525,7 @@ void CSoundEnt::Initialize ( void )
 	// In MP, have one for each player and 32 extras.
 	int nTotalSoundsInPool = MAX_WORLD_SOUNDS_SP;
 	if ( gpGlobals->maxClients > 1 )
-		nTotalSoundsInPool = min( MAX_WORLD_SOUNDS_MP, gpGlobals->maxClients + 32 );
+		nTotalSoundsInPool = MIN( MAX_WORLD_SOUNDS_MP, gpGlobals->maxClients + 32 );
 
 	if ( gpGlobals->maxClients+16 > nTotalSoundsInPool )
 	{

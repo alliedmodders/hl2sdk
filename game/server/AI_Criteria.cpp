@@ -474,8 +474,8 @@ const char *SplitContext( const char *raw, char *key, int keylen, char *value, i
 	}
 
 	int len = colon1 - raw;
-	Q_strncpy( key, raw, min( len + 1, keylen ) );
-	key[ min( len, keylen - 1 ) ] = 0;
+	Q_strncpy( key, raw, MIN( len + 1, keylen ) );
+	key[ MIN( len, keylen - 1 ) ] = 0;
 
 	bool last = false;
 	char *end = Q_strstr( colon1 + 1, "," );
@@ -492,7 +492,7 @@ const char *SplitContext( const char *raw, char *key, int keylen, char *value, i
 		if ( duration )
 			*duration = atof( colon2 + 1 );
 
-		len = min( colon2 - ( colon1 + 1 ), valuelen - 1 );
+		len = MIN( colon2 - ( colon1 + 1 ), valuelen - 1 );
 		Q_strncpy( value, colon1 + 1, len + 1 );
 		value[ len ] = 0;
 	}
@@ -501,7 +501,7 @@ const char *SplitContext( const char *raw, char *key, int keylen, char *value, i
 		if ( duration )
 			*duration = 0.0;
 
-		len = min( end - ( colon1 + 1 ), valuelen - 1 );
+		len = MIN( end - ( colon1 + 1 ), valuelen - 1 );
 		Q_strncpy( value, colon1 + 1, len + 1 );
 		value[ len ] = 0;
 	}

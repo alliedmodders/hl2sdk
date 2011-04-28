@@ -217,7 +217,7 @@ void CEnvShake::ApplyShake( ShakeCommand_t command )
 					radius = 512;
 				}
 				Vector extents = Vector(radius, radius, radius);
-				extents.z = max(extents.z, 100);
+				extents.z = MAX(extents.z, 100);
 				Vector mins = GetAbsOrigin() - extents;
 				Vector maxs = GetAbsOrigin() + extents;
 				int count = UTIL_EntitiesInBox( list, 1024, mins, maxs, 0 );

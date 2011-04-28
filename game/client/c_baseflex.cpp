@@ -688,7 +688,7 @@ void C_BaseFlex::ComputeBlendedSetting( Emphasized_Phoneme *classes, float empha
 		}
 		else
 		{
-			emphasis_intensity = min( emphasis_intensity, STRONG_CROSSFADE_START );
+			emphasis_intensity = MIN( emphasis_intensity, STRONG_CROSSFADE_START );
 			classes[ PHONEME_CLASS_NORMAL ].amount = 2.0f * emphasis_intensity;
 		}
 	}
@@ -705,7 +705,7 @@ void C_BaseFlex::ComputeBlendedSetting( Emphasized_Phoneme *classes, float empha
 		}
 		else
 		{
-			emphasis_intensity = max( emphasis_intensity, WEAK_CROSSFADE_START );
+			emphasis_intensity = MAX( emphasis_intensity, WEAK_CROSSFADE_START );
 			classes[ PHONEME_CLASS_NORMAL ].amount = 2.0f * emphasis_intensity;
 		}
 	}
@@ -874,7 +874,7 @@ void C_BaseFlex::AddVisemesForSentence( Emphasized_Phoneme *classes, float empha
 					const CBasePhonemeTag *next = sentence->GetRuntimePhoneme( k + 1 );
 					if ( next )
 					{
-						dt = max( dt, min( next->GetEndTime() - t, phoneme->GetEndTime() - phoneme->GetStartTime() ) );
+						dt = MAX( dt, MIN( next->GetEndTime() - t, phoneme->GetEndTime() - phoneme->GetStartTime() ) );
 					}
 				}
 			}
@@ -1879,16 +1879,16 @@ void C_BaseFlex::AddFlexAnimation( CSceneEventInfo *info )
 				Q_strncpy( name, "right_" ,sizeof(name));
 				Q_strncat( name, track->GetFlexControllerName(),sizeof(name), COPY_ALL_CHARACTERS );
 
-				track->SetFlexControllerIndex( max( FindFlexController( name ), LocalFlexController_t(0) ), 0, 0 );
+				track->SetFlexControllerIndex( MAX( FindFlexController( name ), LocalFlexController_t(0) ), 0, 0 );
 
 				Q_strncpy( name, "left_" ,sizeof(name));
 				Q_strncat( name, track->GetFlexControllerName(),sizeof(name), COPY_ALL_CHARACTERS );
 
-				track->SetFlexControllerIndex( max( FindFlexController( name ), LocalFlexController_t(0) ), 0, 1 );
+				track->SetFlexControllerIndex( MAX( FindFlexController( name ), LocalFlexController_t(0) ), 0, 1 );
 			}
 			else
 			{
-				track->SetFlexControllerIndex( max( FindFlexController( (char *)track->GetFlexControllerName() ), LocalFlexController_t(0)), 0 );
+				track->SetFlexControllerIndex( MAX( FindFlexController( (char *)track->GetFlexControllerName() ), LocalFlexController_t(0)), 0 );
 			}
 		}
 
@@ -1963,7 +1963,7 @@ void CSceneEventInfo::InitWeight( C_BaseFlex *pActor )
 
 float CSceneEventInfo::UpdateWeight( C_BaseFlex *pActor )
 {
-	m_flWeight = min( m_flWeight + 0.1, 1.0 );
+	m_flWeight = MIN( m_flWeight + 0.1, 1.0 );
 	return m_flWeight;
 }
 

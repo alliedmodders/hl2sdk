@@ -301,7 +301,7 @@ void CTreeViewListControl::DrawTitleBars()
 		}
 		else
 		{
-			int textRight = min( right, rightEdge );
+			int textRight = MIN( right, rightEdge );
 
 			int midx = (left+textRight)/2;
 			int midy = (top+bottom)/2;

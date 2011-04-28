@@ -6,7 +6,6 @@
 //
 //=============================================================================//
 #include <quantize.h>
-#include <minmax.h>
 
 #define N_EXTRAVALUES 1
 #define N_DIMENSIONS (3+N_EXTRAVALUES)
@@ -46,7 +45,7 @@ void ColorQuantize(uint8 const *Image,
 					val1+=PIXEL(x,y,c)*ExtraValueXForms[i*3+c];
 				val1>>=8;
 				NthSample(s,y*Width+x,N_DIMENSIONS)->Value[c]=(uint8)
-					(min(255,max(0,val1)));
+					(MIN(255,MAX(0,val1)));
 			}
 		}
 	struct QuantizedValue *q=Quantize(s,Width*Height,N_DIMENSIONS,
@@ -76,7 +75,7 @@ void ColorQuantize(uint8 const *Image,
 					tryc+=Error[x][c][ErrorUse];
 					Error[x][c][ErrorUse]=0;
 				}
-				samp[c]=(uint8) min(255,max(0,tryc));
+				samp[c]=(uint8) MIN(255,MAX(0,tryc));
 			}
 			struct QuantizedValue *f=FindMatch(samp,3,Weights,q);
 			out_pixels[Width*y+x]=(uint8) (f->value);

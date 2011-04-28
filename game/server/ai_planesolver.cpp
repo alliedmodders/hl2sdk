@@ -873,7 +873,7 @@ bool CAI_PlaneSolver::Solve( const AILocalMoveGoal_t &goal, float distClear, Vec
 	
 	if ( goal.flags & ( AILMG_TARGET_IS_TRANSITION | AILMG_TARGET_IS_GOAL ) )
 	{
-		probeDist = min( goal.maxDist, probeDist );
+		probeDist = MIN( goal.maxDist, probeDist );
 	}
 
 	if ( GenerateObstacleSuggestions( goal, goal.directTrace, distClear, probeDist, degreesPositiveArc, NUM_PROBES ) != SR_FAIL )

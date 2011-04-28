@@ -90,9 +90,9 @@ void CHL2MPClientScoreBoardDialog::PaintBackground()
 	int y = 0;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		y1 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = MAX( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		y2 = y + coord[NumSegments];
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 
@@ -111,9 +111,9 @@ void CHL2MPClientScoreBoardDialog::PaintBackground()
 	yMult = 1;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		y1 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = MAX( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		y2 = y + coord[NumSegments];
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 		xIndex += xDir;
@@ -131,10 +131,10 @@ void CHL2MPClientScoreBoardDialog::PaintBackground()
 	yMult = -1;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
 		y1 = y - coord[NumSegments];
-		y2 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = MIN( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 		xIndex += xDir;
 		yIndex += yDir;
@@ -151,10 +151,10 @@ void CHL2MPClientScoreBoardDialog::PaintBackground()
 	yMult = -1;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
 		y1 = y - coord[NumSegments];
-		y2 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = MIN( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 		xIndex += xDir;
 		yIndex += yDir;
@@ -207,10 +207,10 @@ void CHL2MPClientScoreBoardDialog::PaintBorder()
 	int y = 0;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		y1 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
-		y2 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = MIN( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = MAX( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 
 		xIndex += xDir;
@@ -228,10 +228,10 @@ void CHL2MPClientScoreBoardDialog::PaintBorder()
 	yMult = 1;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		y1 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
-		y2 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = MIN( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = MAX( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 		xIndex += xDir;
 		yIndex += yDir;
@@ -248,10 +248,10 @@ void CHL2MPClientScoreBoardDialog::PaintBorder()
 	yMult = -1;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		y1 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
-		y2 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = MIN( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = MAX( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 		xIndex += xDir;
 		yIndex += yDir;
@@ -268,10 +268,10 @@ void CHL2MPClientScoreBoardDialog::PaintBorder()
 	yMult = -1;
 	for ( i=0; i<NumSegments; ++i )
 	{
-		x1 = min( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		x2 = max( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
-		y1 = min( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
-		y2 = max( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		x1 = MIN( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		x2 = MAX( x + coord[xIndex]*xMult, x + coord[xIndex+1]*xMult );
+		y1 = MIN( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
+		y2 = MAX( y + coord[yIndex]*yMult, y + coord[yIndex+1]*yMult );
 		surface()->DrawFilledRect( x1, y1, x2, y2 );
 		xIndex += xDir;
 		yIndex += yDir;

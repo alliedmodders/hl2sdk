@@ -401,7 +401,7 @@ bool RagdollCreate( ragdoll_t &ragdoll, const ragdollparams_t &params, IPhysicsE
 	{
 		totalMass += ragdoll.list[i].pObject->GetMass();
 	}
-	totalMass = max(totalMass,1);
+	totalMass = MAX(totalMass,1);
 
 	// apply force to the model
 	Vector nudgeForce = params.forceVector;
