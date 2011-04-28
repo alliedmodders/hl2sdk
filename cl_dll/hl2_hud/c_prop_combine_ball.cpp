@@ -117,7 +117,7 @@ void C_PropCombineBall::DrawMotionBlur( void )
 	
 	speed = clamp( speed, 0, 32 );
 	
-	float	stepSize = min( ( speed * 0.5f ), 4.0f );
+	float	stepSize = MIN( ( speed * 0.5f ), 4.0f );
 
 	Vector	spawnPos = GetAbsOrigin();
 	Vector	spawnStep = -vecDir * stepSize;

@@ -508,7 +508,7 @@ CAI_Hint *CAI_HintManager::FindHint( CAI_BaseNPC *pNPC, const Vector &position, 
 			pNPC ? pNPC->entindex() : -1,
 			position.x, position.y, position.z,
 			timer.GetDuration().GetMillisecondsF(),
-			timer.GetDuration().GetMillisecondsF()/max( (float)visited, 1.0f ) );
+			timer.GetDuration().GetMillisecondsF()/MAX( (float)visited, 1.0f ) );
 	}
 #endif
 	return pBestHint;
@@ -1347,7 +1347,7 @@ int CAI_Hint::DrawDebugTextOverlays(void)
 		Q_snprintf(tempstr,sizeof(tempstr),"%s (%i)", GetHintTypeDescription( HintType() ), HintType());
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
-		Q_snprintf(tempstr,sizeof(tempstr),"delay %f", max( 0.0f, m_flNextUseTime - gpGlobals->curtime ) ) ;
+		Q_snprintf(tempstr,sizeof(tempstr),"delay %f", MAX( 0.0f, m_flNextUseTime - gpGlobals->curtime ) ) ;
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
 

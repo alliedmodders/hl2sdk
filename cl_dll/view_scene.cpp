@@ -1087,7 +1087,7 @@ void CViewRender::DrawOpaqueRenderables( ClientWorldListInfo_t& info, CRenderLis
 	nOpaque = renderList.m_RenderGroupCounts[RENDER_GROUP_OPAQUE_STATIC];
 	if ( nOpaque )
 	{
-		nOpaque = min( nOpaque, 512 );
+		nOpaque = MIN( nOpaque, 512 );
 
 		IClientRenderable *pStatics[512];
 		for( i=0; i < nOpaque; ++i )
@@ -2615,8 +2615,8 @@ static void DrawScreenSpaceRectangleWithSlop(
 	)
 {
 	// add slop
-	int slopwidth=width+FILTER_KERNEL_SLOP; //min(dest_rt->GetActualWidth()-destx,width+FILTER_KERNEL_SLOP);
-	int slopheight=height+FILTER_KERNEL_SLOP; //min(dest_rt->GetActualHeight()-desty,height+FILTER_KERNEL_SLOP);
+	int slopwidth=width+FILTER_KERNEL_SLOP; //MIN(dest_rt->GetActualWidth()-destx,width+FILTER_KERNEL_SLOP);
+	int slopheight=height+FILTER_KERNEL_SLOP; //MIN(dest_rt->GetActualHeight()-desty,height+FILTER_KERNEL_SLOP);
 	// adjust coordinates for slop
 	src_texture_x1=FLerp(src_texture_x0,src_texture_x1,destx,destx+width-1,destx+slopwidth-1);
 	src_texture_y1=FLerp(src_texture_y0,src_texture_y1,desty,desty+height-1,desty+slopheight-1);
@@ -2882,7 +2882,7 @@ public:
 			int width=500*(e.m_max_lum-e.m_min_lum);
 			if (np)
 			{
-				int height=max(1,min(HISTOGRAM_BAR_SIZE,np/6000));
+				int height=MAX(1,MIN(HISTOGRAM_BAR_SIZE,np/6000));
 				materials->Viewport(xp,HISTOGRAM_BAR_SIZE-height,width,height);
 				materials->ClearColor3ub(255,0,0);
 				materials->ClearBuffers(true,true);
@@ -2958,7 +2958,7 @@ static void SetToneMapScale(float newvalue, float minvalue, float maxvalue)
 			avg+=weight*s_MovingAverageToneMapScale[i];
 		}
 		avg*=(1.0/sumweights);
-		avg=min(maxvalue,max(minvalue,avg));
+		avg=MIN(maxvalue,MAX(minvalue,avg));
 		mat_hdr_tonemapscale.SetValue(avg);
 	}
 #endif
@@ -3069,10 +3069,10 @@ static void DoPostProcessingEffects( int x, int y, int w, int h )
 				float avg_lum=g_HDR_HistogramSystem.GetAverageLuminance();
 				float last_scale=materials->GetToneMappingScaleLinear().x;
 				float actual_unscaled_luminance=avg_lum*(1.0/last_scale);
-				actual_unscaled_luminance=max(0.000000001,avg_lum);
+				actual_unscaled_luminance=MAX(0.000000001,avg_lum);
 				float target_scale=0.005/actual_unscaled_luminance;
-				float scalevalue=max(flAutoExposureMin,
-									 min(flAutoExposureMax,target_scale));
+				float scalevalue=MAX(flAutoExposureMin,
+									 MIN(flAutoExposureMax,target_scale));
 				if (mat_debug_autoexposure.GetInt())
 					Warning("avg_lum=%f ra=%f target=%f adj target=%f\n",
 							avg_lum,actual_unscaled_luminance,target_scale,scalevalue);
@@ -3154,9 +3154,9 @@ static void DoPostProcessingEffects( int x, int y, int w, int h )
 //				Warning("avg_lum=%f\n",g_HDR_HistogramSystem.GetAverageLuminance());
 				if (mat_dynamic_tonemapping.GetInt())
 				{
-					float avg_lum=max(0.0001,g_HDR_HistogramSystem.GetAverageLuminance());
-					float scalevalue=max(flAutoExposureMin,
-										 min(flAutoExposureMax,0.18/avg_lum));
+					float avg_lum=MAX(0.0001,g_HDR_HistogramSystem.GetAverageLuminance());
+					float scalevalue=MAX(flAutoExposureMin,
+										 MIN(flAutoExposureMax,0.18/avg_lum));
 					mat_hdr_tonemapscale.SetValue(scalevalue);
 				}
 			}
@@ -3188,9 +3188,9 @@ static void DoPostProcessingEffects( int x, int y, int w, int h )
 				g_HDR_HistogramSystem.DisplayHistogram();
 			if (mat_dynamic_tonemapping.GetInt())
 			{
-				float avg_lum=max(0.0001,g_HDR_HistogramSystem.GetAverageLuminance());
-				float scalevalue=max(flAutoExposureMin,
-					min(flAutoExposureMax,0.023/avg_lum));
+				float avg_lum=MAX(0.0001,g_HDR_HistogramSystem.GetAverageLuminance());
+				float scalevalue=MAX(flAutoExposureMin,
+					MIN(flAutoExposureMax,0.023/avg_lum));
 				SetToneMapScale(scalevalue,flAutoExposureMin,flAutoExposureMax);
 			}
 			materials->SetRenderTarget( NULL );

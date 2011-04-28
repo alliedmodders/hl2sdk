@@ -226,9 +226,9 @@ void FX_BloodSpray( const Vector &origin, const Vector &normal, float scale, uns
 
 					colorRamp = random->RandomFloat( 0.75f, 1.25f );
 
-					pParticle->m_uchColor[0]	= min( 1.0f, color[0] * colorRamp ) * 255.0f;
-					pParticle->m_uchColor[1]	= min( 1.0f, color[1] * colorRamp ) * 255.0f;
-					pParticle->m_uchColor[2]	= min( 1.0f, color[2] * colorRamp ) * 255.0f;
+					pParticle->m_uchColor[0]	= MIN( 1.0f, color[0] * colorRamp ) * 255.0f;
+					pParticle->m_uchColor[1]	= MIN( 1.0f, color[1] * colorRamp ) * 255.0f;
+					pParticle->m_uchColor[2]	= MIN( 1.0f, color[2] * colorRamp ) * 255.0f;
 					
 					pParticle->m_uchStartSize	= random->RandomFloat( scale * 0.25, scale );
 					pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 2;
@@ -271,9 +271,9 @@ void FX_BloodSpray( const Vector &origin, const Vector &normal, float scale, uns
 
 					colorRamp = random->RandomFloat( 0.75f, 1.25f );
 
-					pParticle->m_uchColor[0]	= min( 1.0f, color[0] * colorRamp ) * 255.0f;
-					pParticle->m_uchColor[1]	= min( 1.0f, color[1] * colorRamp ) * 255.0f;
-					pParticle->m_uchColor[2]	= min( 1.0f, color[2] * colorRamp ) * 255.0f;
+					pParticle->m_uchColor[0]	= MIN( 1.0f, color[0] * colorRamp ) * 255.0f;
+					pParticle->m_uchColor[1]	= MIN( 1.0f, color[1] * colorRamp ) * 255.0f;
+					pParticle->m_uchColor[2]	= MIN( 1.0f, color[2] * colorRamp ) * 255.0f;
 					
 					pParticle->m_uchStartSize	= random->RandomFloat( scale * 1.5f, scale * 2.0f );
 					pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 4;
@@ -356,9 +356,9 @@ void FX_BloodBulletImpact( const Vector &origin, const Vector &normal, float sca
 
 		colorRamp = random->RandomFloat( 0.75f, 2.0f );
 
-		pParticle->m_uchColor[0]	= min( 1.0f, color[0] * colorRamp ) * 255.0f;
-		pParticle->m_uchColor[1]	= min( 1.0f, color[1] * colorRamp ) * 255.0f;
-		pParticle->m_uchColor[2]	= min( 1.0f, color[2] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[0]	= MIN( 1.0f, color[0] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[1]	= MIN( 1.0f, color[1] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[2]	= MIN( 1.0f, color[2] * colorRamp ) * 255.0f;
 		
 		pParticle->m_uchStartSize	= random->RandomInt( 2, 4 );
 		pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 8;
@@ -392,9 +392,9 @@ void FX_BloodBulletImpact( const Vector &origin, const Vector &normal, float sca
 
 			colorRamp = random->RandomFloat( 0.75f, 2.0f );
 
-			pParticle->m_uchColor[0]	= min( 1.0f, color[0] * colorRamp ) * 255.0f;
-			pParticle->m_uchColor[1]	= min( 1.0f, color[1] * colorRamp ) * 255.0f;
-			pParticle->m_uchColor[2]	= min( 1.0f, color[2] * colorRamp ) * 255.0f;
+			pParticle->m_uchColor[0]	= MIN( 1.0f, color[0] * colorRamp ) * 255.0f;
+			pParticle->m_uchColor[1]	= MIN( 1.0f, color[1] * colorRamp ) * 255.0f;
+			pParticle->m_uchColor[2]	= MIN( 1.0f, color[2] * colorRamp ) * 255.0f;
 			
 			pParticle->m_uchStartSize	= random->RandomInt( 2, 4 );
 			pParticle->m_uchEndSize		= pParticle->m_uchStartSize * 4;

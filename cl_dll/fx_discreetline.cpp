@@ -76,8 +76,8 @@ void CFXDiscreetLine::Draw( double frametime )
 	float	eDistance = sDistance - m_fLength;
 	
 	//Clip to start
-	sDistance = max( 0.0f, sDistance );
-	eDistance = max( 0.0f, eDistance );
+	sDistance = MAX( 0.0f, sDistance );
+	eDistance = MAX( 0.0f, eDistance );
 
 	if ( ( sDistance == 0.0f ) && ( eDistance == 0.0f ) )
 		return;
@@ -85,8 +85,8 @@ void CFXDiscreetLine::Draw( double frametime )
 	// Clip it
 	if ( m_fClipLength != 0.0f )
 	{
-		sDistance = min( sDistance, m_fClipLength );
-		eDistance = min( eDistance, m_fClipLength );
+		sDistance = MIN( sDistance, m_fClipLength );
+		eDistance = MIN( eDistance, m_fClipLength );
 	}
 
 	// Get our delta to calculate the tc offset

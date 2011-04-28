@@ -25,7 +25,7 @@ void TerrainMod_Add( TerrainModType type, const CTerrainModParams &params )
 	float playerStartHeights[MAX_PLAYERS];
 
 	int i;
-	int nPlayers = min( MAX_PLAYERS, gpGlobals->maxClients );
+	int nPlayers = MIN( MAX_PLAYERS, gpGlobals->maxClients );
 	for( i=0; i < nPlayers; i++ )
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex( i+1 );

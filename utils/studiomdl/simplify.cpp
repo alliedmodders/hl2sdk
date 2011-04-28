@@ -311,7 +311,7 @@ void processAnimations()
 			{
 				for (k = 0; k < g_sequence[i].groupsize[1]; k++)
 				{
-					g_sequence[i].weight[n] = max( g_sequence[i].weight[n], g_sequence[i].panim[j][k]->weight[n] );
+					g_sequence[i].weight[n] = MAX( g_sequence[i].weight[n], g_sequence[i].panim[j][k]->weight[n] );
 				}
 			}
 		}
@@ -1822,13 +1822,13 @@ void matchBlend( s_animation_t *pDestAnim, s_animation_t *pSrcAnimation, int iSr
 
 	if (pDestAnim->flags & STUDIO_LOOPING)
 	{
-		iPre = max( iPre, -pDestAnim->numframes );
-		iPost = min( iPost, pDestAnim->numframes );
+		iPre = MAX( iPre, -pDestAnim->numframes );
+		iPost = MIN( iPost, pDestAnim->numframes );
 	}
 	else
 	{
-		iPre = max( iPre, -iDestFrame );
-		iPost = min( iPost, pDestAnim->numframes - iDestFrame );
+		iPre = MAX( iPre, -iDestFrame );
+		iPost = MIN( iPost, pDestAnim->numframes - iDestFrame );
 	}
 
 	Vector delta_pos[MAXSTUDIOSRCBONES];
@@ -2274,7 +2274,7 @@ void RemapVertexAnimations(void)
 			model_to_vanim_vert_imap[j] = -1;
 		}
 
-		int minLod = min( g_minLod, g_ScriptLODs.Size() - 1 );
+		int minLod = MIN( g_minLod, g_ScriptLODs.Size() - 1 );
 
 		for (j = 0; j < pvsource->numvertices; j++)
 		{
@@ -5568,10 +5568,10 @@ static void CalcPoseParameters( void )
 						MdlError( "calcblend failed in %s\n", pseq->name );
 					}
 
-					g_pose[j0].min = min( g_pose[j0].min, pseq->paramstart[iPose] );
-					g_pose[j0].max = max( g_pose[j0].max, pseq->paramstart[iPose] );
-					g_pose[j0].min = min( g_pose[j0].min, pseq->paramend[iPose] );
-					g_pose[j0].max = max( g_pose[j0].max, pseq->paramend[iPose] );
+					g_pose[j0].min = MIN( g_pose[j0].min, pseq->paramstart[iPose] );
+					g_pose[j0].max = MAX( g_pose[j0].max, pseq->paramstart[iPose] );
+					g_pose[j0].min = MIN( g_pose[j0].min, pseq->paramend[iPose] );
+					g_pose[j0].max = MAX( g_pose[j0].max, pseq->paramend[iPose] );
 				}
 				else
 				{
@@ -6290,7 +6290,7 @@ static void ProcessIKRules( )
 		{
 			for (k = 0; k < g_sequence[i].groupsize[1]; k++)
 			{
-				g_sequence[i].numikrules = max( g_sequence[i].numikrules, g_sequence[i].panim[j][k]->numikrules );
+				g_sequence[i].numikrules = MAX( g_sequence[i].numikrules, g_sequence[i].panim[j][k]->numikrules );
 			}
 		}
 
@@ -6510,8 +6510,8 @@ static void CompressAnimations( )
 							value[n] = ( g_panimation[i]->sanim[n][j].pos[k] - g_bonetable[j].pos[k] ) / g_bonetable[j].posscale[k]; 
 						}
 
-						checkmin[k] = min( value[n] * g_bonetable[j].posscale[k], checkmin[k] );
-						checkmax[k] = max( value[n] * g_bonetable[j].posscale[k], checkmax[k] );
+						checkmin[k] = MIN( value[n] * g_bonetable[j].posscale[k], checkmin[k] );
+						checkmax[k] = MAX( value[n] * g_bonetable[j].posscale[k], checkmax[k] );
 						break;
 					case 3: /* X Rotation */
 					case 4: /* Y Rotation */
@@ -6530,8 +6530,8 @@ static void CompressAnimations( )
 						while (v < -M_PI)
 							v += M_PI * 2;
 
-						checkmin[k] = min( v, checkmin[k] );
-						checkmax[k] = max( v, checkmax[k] );
+						checkmin[k] = MIN( v, checkmin[k] );
+						checkmax[k] = MAX( v, checkmax[k] );
 						value[n] = v / g_bonetable[j].rotscale[k-3]; 
 						break;
 					}

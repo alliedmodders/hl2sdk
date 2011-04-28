@@ -300,8 +300,8 @@ void DefaultRenderBoundsWorldspace( IClientRenderable *pRenderable, Vector &absM
 			// if our origin is actually farther away than that, expand again
 			float radius = pEnt->GetLocalOrigin().Length();
 
-			float flBloatSize = max( vAddMins.Length(), vAddMaxs.Length() );
-			flBloatSize = max(flBloatSize, radius);
+			float flBloatSize = MAX( vAddMins.Length(), vAddMaxs.Length() );
+			flBloatSize = MAX(flBloatSize, radius);
 			absMins -= Vector( flBloatSize, flBloatSize, flBloatSize );
 			absMaxs += Vector( flBloatSize, flBloatSize, flBloatSize );
 			return;
@@ -360,8 +360,8 @@ void CalcRenderableWorldSpaceAABB_Fast( IClientRenderable *pRenderable, Vector &
 		// if our origin is actually farther away than that, expand again
 		float radius = pEnt->GetLocalOrigin().Length();
 
-		float flBloatSize = max( vAddMins.Length(), vAddMaxs.Length() );
-		flBloatSize = max(flBloatSize, radius);
+		float flBloatSize = MAX( vAddMins.Length(), vAddMaxs.Length() );
+		flBloatSize = MAX(flBloatSize, radius);
 		absMin -= Vector( flBloatSize, flBloatSize, flBloatSize );
 		absMax += Vector( flBloatSize, flBloatSize, flBloatSize );
 	}
@@ -895,7 +895,7 @@ void CClientLeafSystem::ProjectShadow( ClientLeafShadowHandle_t handle, const Ve
 	VectorMultiply( dir, maxDist, ray.m_Delta );
 	ray.m_StartOffset.Init( 0, 0, 0 );
 
-	float maxsize = max( size.x, size.y ) * 0.5f;
+	float maxsize = MAX( size.x, size.y ) * 0.5f;
 	ray.m_Extents.Init( maxsize, maxsize, maxsize );
 	ray.m_IsRay = false;
 	ray.m_IsSwept = true;

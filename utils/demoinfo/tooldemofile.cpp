@@ -108,7 +108,7 @@ int CToolDemoFile::ReadNetworkDataTables( CUtlBuffer *buf )
 
 	while( length > 0 )
 	{
-		int chunk = min( length, 1024 );
+		int chunk = MIN( length, 1024 );
 		g_pFileSystem->Read( data, chunk, m_hDemoFile );
 		length -= chunk;
 

@@ -192,7 +192,7 @@ void CTextWindow::ShowFile( const char *filename )
 
 		char buffer[2048];
 			
-		int size = min( vgui::filesystem()->Size( f ), sizeof(buffer)-1 ); // just allow 2KB
+		int size = MIN( vgui::filesystem()->Size( f ), sizeof(buffer)-1 ); // just allow 2KB
 
 		vgui::filesystem()->Read( buffer, size, f );
 		vgui::filesystem()->Close( f );

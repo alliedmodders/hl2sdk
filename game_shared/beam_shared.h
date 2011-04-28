@@ -297,13 +297,13 @@ inline void CBeam::SetHaloScale( int haloScale )
 inline void CBeam::SetWidth( float width )				
 {
 	Assert( width <= MAX_BEAM_WIDTH );
-	m_fWidth = min( MAX_BEAM_WIDTH, width );
+	m_fWidth = MIN( MAX_BEAM_WIDTH, width );
 }
 
 inline void CBeam::SetEndWidth( float endWidth )		
 { 
 	Assert( endWidth <= MAX_BEAM_WIDTH );
-	m_fEndWidth	= min( MAX_BEAM_WIDTH, endWidth );
+	m_fEndWidth	= MIN( MAX_BEAM_WIDTH, endWidth );
 }
 
 inline void CBeam::SetFadeLength( float fadeLength )	

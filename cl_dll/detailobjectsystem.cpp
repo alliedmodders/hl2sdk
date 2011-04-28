@@ -1346,8 +1346,8 @@ void CDetailObjectSystem::LevelInitPostEntity()
 
 	if ( GetDetailController() )
 	{
-		cl_detailfade.SetValue( min( m_flDefaultFadeStart, GetDetailController()->m_flFadeStartDist ) );
-		cl_detaildist.SetValue( min( m_flDefaultFadeEnd, GetDetailController()->m_flFadeEndDist ) );
+		cl_detailfade.SetValue( MIN( m_flDefaultFadeStart, GetDetailController()->m_flFadeStartDist ) );
+		cl_detaildist.SetValue( MIN( m_flDefaultFadeEnd, GetDetailController()->m_flFadeEndDist ) );
 	}
 	else
 	{

@@ -103,7 +103,7 @@ struct MaterialSystem_Config_t
 	int numTextureUnits; // set to zero if there is no limit on the 
 						 // number of texture units to be used.
 						 // otherwise, the effective number of texture units
-						 // will be max( config->numTexturesUnits, hardwareNumTextureUnits )
+						 // will be MAX( config->numTexturesUnits, hardwareNumTextureUnits )
 
 	float m_SlopeScaleDepthBias_Decal;
 	float m_SlopeScaleDepthBias_Normal;

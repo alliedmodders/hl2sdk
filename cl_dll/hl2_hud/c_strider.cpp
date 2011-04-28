@@ -1060,9 +1060,9 @@ void StriderBlood( const Vector &origin, const Vector &normal, float scale )
 
 		int randomColor = random->RandomInt( 0, 2 );
 
-		tParticle->m_color.r = min( 1.0f, color[randomColor].x * colorRamp ) * 255;
-		tParticle->m_color.g = min( 1.0f, color[randomColor].y * colorRamp ) * 255;
-		tParticle->m_color.b = min( 1.0f, color[randomColor].z * colorRamp ) * 255;
+		tParticle->m_color.r = MIN( 1.0f, color[randomColor].x * colorRamp ) * 255;
+		tParticle->m_color.g = MIN( 1.0f, color[randomColor].y * colorRamp ) * 255;
+		tParticle->m_color.b = MIN( 1.0f, color[randomColor].z * colorRamp ) * 255;
 		tParticle->m_color.a = 255;
 	}
 }

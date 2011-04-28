@@ -1063,7 +1063,7 @@ bool CNPC_Crow::BecomeRagdollOnClient( const Vector &force )
 	{
 		float flMass = VPhysicsGetObject()->GetMass();
 		float speed = VectorNormalize( newForce );
-		speed = min( speed, (CROW_RAGDOLL_SPEED_LIMIT * flMass) );
+		speed = MIN( speed, (CROW_RAGDOLL_SPEED_LIMIT * flMass) );
 		newForce *= speed;
 	}
 

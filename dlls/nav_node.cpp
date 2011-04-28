@@ -227,7 +227,7 @@ void CNavNode::CheckCrouch( void )
 				float floorZ;
 				if ( TheNavMesh->GetGroundHeight( m_pos, &floorZ ) )
 				{
-					maxFloorZ = max( maxFloorZ, floorZ + 0.1f );
+					maxFloorZ = MAX( maxFloorZ, floorZ + 0.1f );
 				}
 			}
 		}

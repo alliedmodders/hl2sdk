@@ -684,7 +684,7 @@ bool CBaseFlex::StartMoveToSceneEvent( CSceneEventInfo *info, CChoreoScene *scen
 
 		if (EnterSceneSequence( true ))
 		{
-			myNpc->AddSceneLock( min( 2.0, event->GetEndTime() - scene->GetTime() + 0.2 ) );
+			myNpc->AddSceneLock( MIN( 2.0, event->GetEndTime() - scene->GetTime() + 0.2 ) );
 		}
 
 		// if they're already moving, stop them
@@ -1236,7 +1236,7 @@ bool CBaseFlex::ProcessFacingSceneEvent( CSceneEventInfo *info, CChoreoScene *sc
 		}
 
 		// FIXME: what's a reasonable time to wait?
-		myNpc->AddSceneLock( min( 2.0, scene->FindStopTime() - scene->GetTime() + 0.2 ) );
+		myNpc->AddSceneLock( MIN( 2.0, scene->FindStopTime() - scene->GetTime() + 0.2 ) );
 		return true;
 	}
 	return false;
@@ -1337,7 +1337,7 @@ bool CBaseFlex::ProcessMoveToSceneEvent( CSceneEventInfo *info, CChoreoScene *sc
 
 			float flDist = (info->m_hTarget->EyePosition() - GetAbsOrigin()).Length2D();
 
-			if (flDist > max( max( flDistTolerance, 0.1 ), event->GetDistanceToTarget()))
+			if (flDist > MAX( MAX( flDistTolerance, 0.1 ), event->GetDistanceToTarget()))
 			{
 				// Msg("flDist %.1f\n", flDist );
 				int result = myNpc->GetNavigator()->SetGoal( goal, AIN_CLEAR_TARGET );
@@ -1421,7 +1421,7 @@ bool CBaseFlex::ProcessMoveToSceneEvent( CSceneEventInfo *info, CChoreoScene *sc
 		NDebugOverlay::Box( vTestPoint, myNpc->GetHullMins(), myNpc->GetHullMaxs(), r, g, b, 0, 0.12 );
 	}
 		
-	myNpc->AddSceneLock( min( 2.0, event->GetEndTime() - scene->GetTime() + 0.2 ) );
+	myNpc->AddSceneLock( MIN( 2.0, event->GetEndTime() - scene->GetTime() + 0.2 ) );
 
 	// handled in task
 	return true;
@@ -1814,11 +1814,11 @@ bool CBaseFlex::ProcessGestureSceneEvent( CSceneEventInfo *info, CChoreoScene *s
 		{
 			if (IsMoving())
 			{
-				info->m_flWeight = max( info->m_flWeight - 0.2, 0.0 );
+				info->m_flWeight = MAX( info->m_flWeight - 0.2, 0.0 );
 			}
 			else
 			{
-				info->m_flWeight = min( info->m_flWeight + 0.2, 1.0 );
+				info->m_flWeight = MIN( info->m_flWeight + 0.2, 1.0 );
 			}
 		}
 
@@ -1892,11 +1892,11 @@ bool CBaseFlex::ProcessSequenceSceneEvent( CSceneEventInfo *info, CChoreoScene *
 
 		if (bFadeOut)
 		{
-			info->m_flWeight = max( info->m_flWeight - 0.2, 0.0 );
+			info->m_flWeight = MAX( info->m_flWeight - 0.2, 0.0 );
 		}
 		else
 		{
-			info->m_flWeight = min( info->m_flWeight + 0.2, 1.0 );
+			info->m_flWeight = MIN( info->m_flWeight + 0.2, 1.0 );
 		}
 
 		float spline = 3 * info->m_flWeight * info->m_flWeight - 2 * info->m_flWeight * info->m_flWeight * info->m_flWeight;
@@ -2059,11 +2059,11 @@ float CSceneEventInfo::UpdateWeight( CBaseFlex *pActor )
 	// decay if this is a background scene and there's other flex animations playing
 	if (pActor->IsSuppressedFlexAnimation( this ))
 	{
-		m_flWeight = max( m_flWeight - 0.2, 0.0 );
+		m_flWeight = MAX( m_flWeight - 0.2, 0.0 );
 	}
 	else
 	{
-		m_flWeight = min( m_flWeight + 0.1, 1.0 );
+		m_flWeight = MIN( m_flWeight + 0.1, 1.0 );
 	}
 	return m_flWeight;
 }

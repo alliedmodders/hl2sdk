@@ -623,7 +623,7 @@ inline bool CInterpolatedVarArrayBase<Type>::GetInterpolationInfo(
 		if ( dt > 0.0001f )
 		{
 			pInfo->frac = ( targettime - older_change_time ) / ( newer_change_time - older_change_time );
-			pInfo->frac = min( pInfo->frac, 2.0f );
+			pInfo->frac = MIN( pInfo->frac, 2.0f );
 
 			CVarHistory::IndexType_t oldestindex = varHistory.Next( i );
 														    
@@ -1090,7 +1090,7 @@ inline void CInterpolatedVarArrayBase<Type>::_Extrapolate(
 	}
 	else
 	{
-		float flExtrapolationAmount = min( flDestinationTime - pNew->changetime, flMaxExtrapolationAmount );
+		float flExtrapolationAmount = MIN( flDestinationTime - pNew->changetime, flMaxExtrapolationAmount );
 
 		float divisor = 1.0f / (pNew->changetime - pOld->changetime);
 		for ( int i=0; i < m_nMaxCount; i++ )

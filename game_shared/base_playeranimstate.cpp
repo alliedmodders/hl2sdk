@@ -391,7 +391,7 @@ void CBasePlayerAnimState::OptimizeLayerWeights( int iFirstLayer, int nLayers )
 	if ( pLayer->IsActive() && pLayer->m_flWeight > 0.0f )
 	{
 		pLayer->m_flWeight = 1.0f - totalWeight;
-		pLayer->m_flWeight = max(pLayer->m_flWeight, 0.0f);
+		pLayer->m_flWeight = MAX(pLayer->m_flWeight, 0.0f);
 	}
 
 	// This part is just an optimization. Since we have the walk/run animations weighted on top of 

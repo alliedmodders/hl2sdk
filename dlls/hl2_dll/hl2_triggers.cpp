@@ -542,7 +542,7 @@ void CWateryDeathLeech::LeechThink( void )
 			dt = 0.1f;
 		}
 		m_nRenderMode = kRenderTransTexture;
-		int speed = static_cast<int>(max(1,256*dt)); // fade out over 1 second
+		int speed = static_cast<int>(MAX(1,256*dt)); // fade out over 1 second
 
 		if ( m_iFadeState == -1 )
 			 SetRenderColorA( static_cast<int>(UTIL_Approach( 0, m_clrRender->a, speed )) );
@@ -705,7 +705,7 @@ void CTriggerWateryDeath::Touch( CBaseEntity *pOther )
 		// Kill it
 		if ( pOther->IsPlayer() )
 		{
-			m_flPainValue = min( m_flPainValue + WD_PAINVALUE_STEP, WD_MAX_DAMAGE );
+			m_flPainValue = MIN( m_flPainValue + WD_PAINVALUE_STEP, WD_MAX_DAMAGE );
 		}
 		else
 		{

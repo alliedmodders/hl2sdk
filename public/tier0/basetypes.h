@@ -8,6 +8,7 @@
 #ifndef BASETYPES_H
 #define BASETYPES_H
 
+#include "tier0/platform.h"
 #include "commonmacros.h"
 #include "wchartypes.h"
 
@@ -69,12 +70,15 @@ inline T AlignValue( T val, unsigned alignment )
 #endif
 #define M_PI			3.14159265358979323846
 
-#ifndef min
-	#define min(a,b)  (((a) < (b)) ? (a) : (b))
+// #define COMPILETIME_MAX and COMPILETIME_MIN for max/min in constant expressions
+#define COMPILETIME_MIN( a, b ) ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
+#define COMPILETIME_MAX( a, b ) ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
+#ifndef MIN
+#define MIN( a, b ) ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 
-#ifndef max
-	#define max(a,b)  (((a) > (b)) ? (a) : (b))
+#ifndef MAX
+#define MAX( a, b ) ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 #endif
 
 #ifdef __cplusplus

@@ -1219,7 +1219,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 			m_controls.throttle = 0;
 		}
 
-		float flMaxThrottle = max( 0.1, m_maxThrottle - ( m_maxThrottle * m_flThrottleReduction ) );
+		float flMaxThrottle = MAX( 0.1, m_maxThrottle - ( m_maxThrottle * m_flThrottleReduction ) );
 		m_controls.throttle = Approach( flMaxThrottle * flAnalogThrottle, m_controls.throttle, flFrameTime * m_throttleRate );
 
 		// Apply the brake.
@@ -1247,7 +1247,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 			m_controls.throttle = 0;
 		}
 
-		float flMaxThrottle = min( -0.1, m_flMaxRevThrottle - ( m_flMaxRevThrottle * m_flThrottleReduction ) );
+		float flMaxThrottle = MIN( -0.1, m_flMaxRevThrottle - ( m_flMaxRevThrottle * m_flThrottleReduction ) );
 		m_controls.throttle = Approach( flMaxThrottle * flAnalogBrake, m_controls.throttle, flFrameTime * m_throttleRate );
 
 		// Apply the brake.
@@ -1281,7 +1281,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 			m_controls.throttle = 0;
 		}
 
-		float flMaxThrottle = max( 0.1, m_maxThrottle - ( m_maxThrottle * m_flThrottleReduction ) );
+		float flMaxThrottle = MAX( 0.1, m_maxThrottle - ( m_maxThrottle * m_flThrottleReduction ) );
 		m_controls.throttle = Approach( flMaxThrottle, m_controls.throttle, flFrameTime * m_throttleRate );
 
 		// Apply the brake.
@@ -1305,7 +1305,7 @@ void CFourWheelVehiclePhysics::UpdateDriverControls( CUserCmd *cmd, float flFram
 			m_controls.throttle = 0;
 		}
 
-		float flMaxThrottle = min( -0.1, m_flMaxRevThrottle - ( m_flMaxRevThrottle * m_flThrottleReduction ) );
+		float flMaxThrottle = MIN( -0.1, m_flMaxRevThrottle - ( m_flMaxRevThrottle * m_flThrottleReduction ) );
 		m_controls.throttle = Approach( flMaxThrottle, m_controls.throttle, flFrameTime * m_throttleRate );
 
 		// Apply the brake.
@@ -1408,7 +1408,7 @@ void CFourWheelVehiclePhysics::AddThrottleReduction( float flPercentage )
 //-----------------------------------------------------------------------------
 void CFourWheelVehiclePhysics::RemoveThrottleReduction( float flPercentage )
 {
-	m_flThrottleReduction = max( 0, m_flThrottleReduction - flPercentage );
+	m_flThrottleReduction = MAX( 0, m_flThrottleReduction - flPercentage );
 
 	//Msg("Removed speed reduction. Now %.2f\n", m_flThrottleReduction );
 }

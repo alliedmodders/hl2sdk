@@ -1094,7 +1094,7 @@ void CMapOverview::UpdateSizeAndPosition()
 		if ( y < iTopBarHeight )
 			y = iTopBarHeight;
 
-        SetBounds( x,y,w,min(h,iScreenTall) );
+        SetBounds( x,y,w,MIN(h,iScreenTall) );
 	}
 }
 

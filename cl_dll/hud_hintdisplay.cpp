@@ -288,7 +288,7 @@ bool CHudHintDisplay::SetHintText( const char *text )
 			}
 		}
 	}
-	int tallest = max( tallest1, tallest2 );
+	int tallest = MAX( tallest1, tallest2 );
 
 	// position the labels
 	int col1_x = m_iTextX;

@@ -290,7 +290,7 @@ MatSysWindow::handleEvent (mxEvent *event)
 		oldlry = g_viewerSettings.lightrot[0];
 		g_viewerSettings.pause = false;
 
-		float r = 1.0/3.0 * min( w(), h() );
+		float r = 1.0/3.0 * MIN( w(), h() );
 
 		float d = sqrt( ( float )( (event->x - w()/2) * (event->x - w()/2) + (event->y - h()/2) * (event->y - h()/2) ) );
 

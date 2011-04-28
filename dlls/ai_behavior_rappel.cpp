@@ -148,7 +148,7 @@ void CAI_RappelBehavior::SetDescentSpeed()
 		float factor;
 		factor = flDist / RAPPEL_DECEL_DIST;
 
-		speed = max( RAPPEL_MIN_SPEED, speed * factor );
+		speed = MAX( RAPPEL_MIN_SPEED, speed * factor );
 	}
 
 	Vector vecNewVelocity = vec3_origin;

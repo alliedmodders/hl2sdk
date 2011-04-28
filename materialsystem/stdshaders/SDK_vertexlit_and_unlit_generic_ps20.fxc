@@ -174,7 +174,7 @@ HDR_PS_OUTPUT main( PS_INPUT i ) : COLOR
     // 0.125-1.0 = selfillum*(1+alpha-0.125)*8 (over bright glows)
 	HALF3 selfIllumComponent = g_SelfIllumTint * albedo;
 	half Adj_Alpha=8*envmapMaskTexel.a;
-	diffuseComponent=( max( 0, 1-Adj_Alpha ) * diffuseComponent) + Adj_Alpha * selfIllumComponent;
+	diffuseComponent=( MAX( 0, 1-Adj_Alpha ) * diffuseComponent) + Adj_Alpha * selfIllumComponent;
 #else
 	if( bSelfIllum )
 	{

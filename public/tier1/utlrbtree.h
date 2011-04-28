@@ -10,8 +10,6 @@
 #define UTLRBTREE_H
 
 #include "tier1/utlmemory.h"
-#undef MINMAX_H
-#include "minmax.h"
 
 //-----------------------------------------------------------------------------
 // Tool to generate a default compare function for any type that implements
@@ -1193,7 +1191,7 @@ int CUtlRBTree<T, I, L>::Depth( I node ) const
 	int depthright = Depth( RightChild(node) );
 	int depthleft = Depth( LeftChild(node) );
 
-	return max(depthright, depthleft) + 1;
+	return MAX(depthright, depthleft) + 1;
 }
 
 

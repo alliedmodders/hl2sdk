@@ -3493,7 +3493,7 @@ void TextEntry::GetText(wchar_t *wbuf, int bufLenInBytes)
 	int len = m_TextStream.Count();
 	if (m_TextStream.Count())
 	{
-		int terminator = min(len, (bufLenInBytes / (int)sizeof(wchar_t)) - 1);
+		int terminator = MIN(len, (bufLenInBytes / (int)sizeof(wchar_t)) - 1);
 		wcsncpy(wbuf, m_TextStream.Base(), terminator);
 		wbuf[terminator] = 0;
 	}

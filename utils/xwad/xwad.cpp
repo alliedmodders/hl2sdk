@@ -500,7 +500,7 @@ void RunVTexOnFile( const char *pBaseDir, const char *pFilename )
 	char executableDir[MAX_PATH];
 	GetModuleFileName( NULL, executableDir, sizeof( executableDir ) );
 	
-	char *pLastSlash = max( strrchr( executableDir, '/' ), strrchr( executableDir, '\\' ) );
+	char *pLastSlash = MAX( strrchr( executableDir, '/' ), strrchr( executableDir, '\\' ) );
 	if ( !pLastSlash )
 		Error( "Can't find filename in '%s'.\n", executableDir );
 	

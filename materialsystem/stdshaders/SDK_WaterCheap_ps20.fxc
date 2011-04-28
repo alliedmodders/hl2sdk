@@ -92,7 +92,7 @@ HDR_PS_OUTPUT main( PS_INPUT i ) : COLOR
 	// FIXME: It's unclear that we want to do this for cheap water
 	// but the code did this previously and I didn't want to change it
 	HALF flDotResult = dot( worldSpaceEye, worldSpaceNormal ); 
-	flDotResult = 1.0f - max( 0.0f, flDotResult );
+	flDotResult = 1.0f - MAX( 0.0f, flDotResult );
 
 	HALF flFresnelFactor = flDotResult * flDotResult;
 	flFresnelFactor *= flFresnelFactor;

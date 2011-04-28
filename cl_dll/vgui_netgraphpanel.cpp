@@ -390,15 +390,15 @@ void CNetGraphPanel::DrawTimes( vrect_t vrect, cmdinfo_t *cmdinfo, int x, int w 
 	int ptx, pty;
 
 	// Draw cmd_rate value
-	ptx = max( x + w - 1 - 25, 1 );
-	pty = max( vrect.y + vrect.height - 4 - LERP_HEIGHT + 1, 1 );
+	ptx = MAX( x + w - 1 - 25, 1 );
+	pty = MAX( vrect.y + vrect.height - 4 - LERP_HEIGHT + 1, 1 );
 	
 	extrap_point = LERP_HEIGHT / 3;
 
 	for (a=0 ; a<w ; a++)
 	{
 		i = ( m_OutgoingSequence - a ) & ( TIMINGS - 1 );
-		h = min( ( cmdinfo[i].cmd_lerp / 3.0 ) * LERP_HEIGHT, LERP_HEIGHT );
+		h = MIN( ( cmdinfo[i].cmd_lerp / 3.0 ) * LERP_HEIGHT, LERP_HEIGHT );
 
 		rcFill.x		= x + w -a - 1;
 		rcFill.width	= 1;
@@ -505,7 +505,7 @@ void CNetGraphPanel::GetFrameData( 	INetChannelInfo *netchannel, int *biggest_me
 	}
 
 	// Can't be below zero
-	m_AvgLatency = max( 0.0, m_AvgLatency );
+	m_AvgLatency = MAX( 0.0, m_AvgLatency );
 
 	// Fill in frame data
 	for ( int seqnr =m_IncomingSequence - m_UpdateWindowSize + 1
@@ -755,7 +755,7 @@ void CNetGraphPanel::DrawHatches( int x, int y, int maxmsgbytes )
 	byte color[3];
 
 	ystep = (int)( 10.0 / net_scale.GetFloat() );
-	ystep = max( ystep, 1 );
+	ystep = MAX( ystep, 1 );
 
 	rcHatch.y		= y;
 	rcHatch.height	= 1;
@@ -921,7 +921,7 @@ void CNetGraphPanel::Paint()
 	vrect.height	= sh;
 
 
-	w = min( (int)TIMINGS, m_EstimatedWidth );
+	w = MIN( (int)TIMINGS, m_EstimatedWidth );
 	if ( vrect.width < w + 10 )
 	{
 		w = vrect.width - 10;
@@ -952,7 +952,7 @@ void CNetGraphPanel::Paint()
 		DrawTimes( vrect, m_Cmdinfo, x, w );
 
 		// Draw update rate
-		DrawUpdateRate( max( 1, x + w - 25 ), max( 1, y - net_graphheight.GetFloat() - 1 ) );
+		DrawUpdateRate( MAX( 1, x + w - 25 ), MAX( 1, y - net_graphheight.GetFloat() - 1 ) );
 	}
 
 	DrawTextFields( graphtype, x, y, m_Graph, m_Cmdinfo );
