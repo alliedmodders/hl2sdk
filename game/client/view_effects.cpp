@@ -531,8 +531,8 @@ void CViewEffects::FadeCalculate( void )
 			{
 				iFadeAlpha += pFade->alpha;
 			}
-			iFadeAlpha = min( iFadeAlpha, pFade->alpha );
-			iFadeAlpha = max( 0, iFadeAlpha );
+			iFadeAlpha = MIN( iFadeAlpha, pFade->alpha );
+			iFadeAlpha = MAX( 0, iFadeAlpha );
 		}
 		else
 		{

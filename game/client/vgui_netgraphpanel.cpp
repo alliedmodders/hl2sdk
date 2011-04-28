@@ -344,7 +344,7 @@ void CNetGraphPanel::ComputeNetgraphHeight()
 	{
 		lines = 4;
 	}
-	m_nNetGraphHeight = max( lines * tall, m_nNetGraphHeight );
+	m_nNetGraphHeight = MAX( lines * tall, m_nNetGraphHeight );
 }
 
 //-----------------------------------------------------------------------------
@@ -483,7 +483,7 @@ void CNetGraphPanel::DrawTimes( vrect_t vrect, cmdinfo_t *cmdinfo, int x, int w,
 	for (a=0 ; a<w ; a++)
 	{
 		i = ( m_OutgoingSequence - a ) & ( TIMINGS - 1 );
-		h = min( ( cmdinfo[i].cmd_lerp / 3.0 ) * LERP_HEIGHT, LERP_HEIGHT );
+		h = MIN( ( cmdinfo[i].cmd_lerp / 3.0 ) * LERP_HEIGHT, LERP_HEIGHT );
 
 		rcFill.x		= x + w -a - 1;
 		rcFill.width	= 1;
@@ -593,7 +593,7 @@ void CNetGraphPanel::GetFrameData( 	INetChannelInfo *netchannel, int *biggest_me
 	}
 
 	// Can't be below zero
-	m_AvgLatency = max( 0.0, m_AvgLatency );
+	m_AvgLatency = MAX( 0.0, m_AvgLatency );
 
 	flAdjust *= 1000.0f;
 
@@ -614,7 +614,7 @@ void CNetGraphPanel::GetFrameData( 	INetChannelInfo *netchannel, int *biggest_me
 		if ( lat->latency < 9995 )
 		{
 			lat->latency += flAdjust;
-			lat->latency = max( lat->latency, 0 );
+			lat->latency = MAX( lat->latency, 0 );
 		}		
 
 		for ( int i=0; i<=INetChannelInfo::TOTAL; i++ )
@@ -970,7 +970,7 @@ void CNetGraphPanel::DrawHatches( int x, int y, int maxmsgbytes )
 	byte color[3];
 
 	ystep = (int)( 10.0 / net_scale.GetFloat() );
-	ystep = max( ystep, 1 );
+	ystep = MAX( ystep, 1 );
 
 	rcHatch.y		= y;
 	rcHatch.height	= 1;
@@ -1103,7 +1103,7 @@ void CNetGraphPanel::DrawLargePacketSizes( int x, int w, int graphtype, float wa
 		int nTotalBytes = m_Graph[ i ].msgbytes[ INetChannelInfo::TOTAL ];
 
 		if ( warning_threshold != 0.0f &&
-			nTotalBytes > max( 300, warning_threshold ) )
+			nTotalBytes > MAX( 300, warning_threshold ) )
 		{
 			char sz[ 32 ];
 			Q_snprintf( sz, sizeof( sz ), "%i", nTotalBytes );
@@ -1113,7 +1113,7 @@ void CNetGraphPanel::DrawLargePacketSizes( int x, int w, int graphtype, float wa
 			int textx, texty;
 
 			textx = rcFill.x - len / 2;
-			texty = max( 0, rcFill.y - 11 );
+			texty = MAX( 0, rcFill.y - 11 );
 
 			g_pMatSystemSurface->DrawColoredText( m_hFont, textx, texty, 255, 255, 255, 255, sz );
 		}
@@ -1157,7 +1157,7 @@ void CNetGraphPanel::Paint()
 	vrect.height	= sh;
 
 
-	w = min( (int)TIMINGS, m_EstimatedWidth );
+	w = MIN( (int)TIMINGS, m_EstimatedWidth );
 	if ( vrect.width < w + 10 )
 	{
 		w = vrect.width - 10;

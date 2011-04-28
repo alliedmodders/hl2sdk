@@ -351,8 +351,8 @@ static void DrawScreenSpaceRectangleWithSlop(
 	)
 {
 	// add slop
-	int slopwidth = width + FILTER_KERNEL_SLOP; //min(dest_rt->GetActualWidth()-destx,width+FILTER_KERNEL_SLOP);
-	int slopheight = height + FILTER_KERNEL_SLOP; //min(dest_rt->GetActualHeight()-desty,height+FILTER_KERNEL_SLOP);
+	int slopwidth = width + FILTER_KERNEL_SLOP; //MIN(dest_rt->GetActualWidth()-destx,width+FILTER_KERNEL_SLOP);
+	int slopheight = height + FILTER_KERNEL_SLOP; //MIN(dest_rt->GetActualHeight()-desty,height+FILTER_KERNEL_SLOP);
 
 	// adjust coordinates for slop
 	src_texture_x1 = FLerp( src_texture_x0, src_texture_x1, destx, destx + width - 1, destx + slopwidth - 1 );
@@ -642,7 +642,7 @@ float CLuminanceHistogramSystem::FindLocationOfPercentBrightPixels( float flPerc
 
 				float flPercentOfThesePixelsNeeded = flPixelPercentNeeded / flThisBinPercentOfTotalPixels;
 				float flPercentLocationOfBorder = 1.0f - ( flTotalPercentRangeTested + ( flThisBinLuminanceRange * flPercentOfThesePixelsNeeded ) );
-				flPercentLocationOfBorder = max( CurHistogram[i].m_min_lum, min( CurHistogram[i].m_max_lum, flPercentLocationOfBorder ) ); // Clamp to this bin just in case
+				flPercentLocationOfBorder = MAX( CurHistogram[i].m_min_lum, MIN( CurHistogram[i].m_max_lum, flPercentLocationOfBorder ) ); // Clamp to this bin just in case
 				return flPercentLocationOfBorder;
 			}
 
@@ -674,7 +674,7 @@ float CLuminanceHistogramSystem::GetTargetTonemapScalar( bool bGetIdealTargetFor
 		}
 
 		// Make sure this is > 0.0f
-		flPercentLocationOfTarget = max( 0.0001f, flPercentLocationOfTarget );
+		flPercentLocationOfTarget = MAX( 0.0001f, flPercentLocationOfTarget );
 
 		// Compute target scalar
 		float flTargetScalar = ( mat_tonemap_percent_target.GetFloat() / 100.0f ) / flPercentLocationOfTarget;
@@ -697,7 +697,7 @@ float CLuminanceHistogramSystem::GetTargetTonemapScalar( bool bGetIdealTargetFor
 		float flLastScale = pRenderContext->GetToneMappingScaleLinear().x;
 		flTargetScalar *= flLastScale;
 
-		flTargetScalar = max( 0.001f, flTargetScalar );
+		flTargetScalar = MAX( 0.001f, flTargetScalar );
 		return flTargetScalar;
 	}
 	else // Original tonemapping
@@ -739,7 +739,7 @@ float CLuminanceHistogramSystem::GetTargetTonemapScalar( bool bGetIdealTargetFor
 			average_luminance = 0.5;
 
 		// Make sure this is > 0.0f
-		average_luminance = max( 0.0001f, average_luminance );
+		average_luminance = MAX( 0.0001f, average_luminance );
 
 		// Compute target scalar
 		float flTargetScalar = 0.005 / average_luminance;
@@ -923,7 +923,7 @@ void CLuminanceHistogramSystem::DisplayHistogram( void )
 			}
 		}
 
-		int width = max( 1, 500 * ( e.m_max_lum - e.m_min_lum ) );
+		int width = MAX( 1, 500 * ( e.m_max_lum - e.m_min_lum ) );
 		nTotalGraphPixelsWide += width + 2;
 	}
 
@@ -935,7 +935,7 @@ void CLuminanceHistogramSystem::DisplayHistogram( void )
 		engine->Con_NPrintf( 17, "(All values in linear space)" );
 
 		engine->Con_NPrintf( 21, "AvgLum @ %4.2f%%  mat_tonemap_min_avglum = %4.2f%%  Using %d pixels of %d pixels on screen (%3d%%)", 
-			max( 0.0f, FindLocationOfPercentBrightPixels( 50.0f ) ) * 100.0f, mat_tonemap_min_avglum.GetFloat(),
+			MAX( 0.0f, FindLocationOfPercentBrightPixels( 50.0f ) ) * 100.0f, mat_tonemap_min_avglum.GetFloat(),
 			nTotalValidPixels, ( dest_width * dest_height ), int( float( nTotalValidPixels ) * 100.0f / float( dest_width * dest_height ) ) );
 		engine->Con_NPrintf( 23, "BloomScale = %4.2f  mat_hdr_manual_tonemap_rate = %4.2f  mat_accelerate_adjust_exposure_down = %4.2f", 
 			GetCurrentBloomScale(), mat_hdr_manual_tonemap_rate.GetFloat(), mat_accelerate_adjust_exposure_down.GetFloat() );
@@ -1004,13 +1004,13 @@ void CLuminanceHistogramSystem::DisplayHistogram( void )
 		CHistogram_entry_t &e = CurHistogram[l];
 		if ( e.ContainsValidData() )
 			np += e.m_npixels_in_range;
-		int width = max( 1, 500 * ( e.m_max_lum - e.m_min_lum ) );
+		int width = MAX( 1, 500 * ( e.m_max_lum - e.m_min_lum ) );
 
 		//Warning( "Bucket %d: min/max %f / %f.  m_npixels_in_range=%d   m_npixels=%d\n", l, e.m_min_lum, e.m_max_lum, e.m_npixels_in_range, e.m_npixels );
 
 		if ( np )
 		{
-			int height = max( 1, min( HISTOGRAM_BAR_SIZE, ( (float)np / (float)nMaxValidPixels ) * HISTOGRAM_BAR_SIZE ) );
+			int height = MAX( 1, MIN( HISTOGRAM_BAR_SIZE, ( (float)np / (float)nMaxValidPixels ) * HISTOGRAM_BAR_SIZE ) );
 
 			pRenderContext->ClearColor3ub( 255, 0, 0 );
 			pRenderContext->Viewport( xp, 4 + HISTOGRAM_BAR_SIZE - height, width, height );
@@ -1163,7 +1163,7 @@ static void SetToneMapScale(IMatRenderContext *pRenderContext, float newvalue, f
 			avg += weight * s_MovingAverageToneMapScale[i];
 		}
 		avg *= ( 1.0 / sumweights );
-		avg = min( maxvalue, max( minvalue, avg ));
+		avg = MIN( maxvalue, MAX( minvalue, avg ));
 		pRenderContext->SetGoalToneMappingScale( avg );
 		mat_hdr_tonemapscale.SetValue( avg );
 	}
@@ -1527,8 +1527,8 @@ static void DoPreBloomTonemapping( IMatRenderContext *pRenderContext, int nX, in
 		if ( mat_dynamic_tonemapping.GetInt() || mat_show_histogram.GetInt() )
 		{
 			float flTargetScalar = g_HDR_HistogramSystem.GetTargetTonemapScalar();
-			float flTargetScalarClamped = max( flAutoExposureMin, min( flAutoExposureMax, flTargetScalar ) );
-			flTargetScalarClamped = max( 0.001f, flTargetScalarClamped ); // Don't let this go to 0!
+			float flTargetScalarClamped = MAX( flAutoExposureMin, MIN( flAutoExposureMax, flTargetScalar ) );
+			flTargetScalarClamped = MAX( 0.001f, flTargetScalarClamped ); // Don't let this go to 0!
 			if ( mat_dynamic_tonemapping.GetInt() )
 			{
 				SetToneMapScale( pRenderContext, flTargetScalarClamped, flAutoExposureMin, flAutoExposureMax );
@@ -1849,9 +1849,9 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 				//				Warning("avg_lum=%f\n",g_HDR_HistogramSystem.GetTargetTonemapScalar());
 				if ( mat_dynamic_tonemapping.GetInt() )
 				{
-					float avg_lum = max( 0.0001, g_HDR_HistogramSystem.GetTargetTonemapScalar() );
-					float scalevalue = max( flAutoExposureMin,
-										 min( flAutoExposureMax, 0.18 / avg_lum ));
+					float avg_lum = MAX( 0.0001, g_HDR_HistogramSystem.GetTargetTonemapScalar() );
+					float scalevalue = MAX( flAutoExposureMin,
+										 MIN( flAutoExposureMax, 0.18 / avg_lum ));
 					pRenderContext->SetGoalToneMappingScale( scalevalue );
 					mat_hdr_tonemapscale.SetValue( scalevalue );
 				}
@@ -1875,9 +1875,9 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 				g_HDR_HistogramSystem.DisplayHistogram();
 			if ( mat_dynamic_tonemapping.GetInt() )
 			{
-				float avg_lum = max( 0.0001, g_HDR_HistogramSystem.GetTargetTonemapScalar() );
-				float scalevalue = max( flAutoExposureMin,
-									 min( flAutoExposureMax, 0.023 / avg_lum ));
+				float avg_lum = MAX( 0.0001, g_HDR_HistogramSystem.GetTargetTonemapScalar() );
+				float scalevalue = MAX( flAutoExposureMin,
+									 MIN( flAutoExposureMax, 0.023 / avg_lum ));
 				SetToneMapScale( pRenderContext, scalevalue, flAutoExposureMin, flAutoExposureMax );
 			}
 			pRenderContext->SetRenderTarget( NULL );

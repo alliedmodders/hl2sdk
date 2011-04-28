@@ -3066,7 +3066,7 @@ void CRendering3dView::SetupRenderablesList( int viewID )
 		float fMaxDist = cl_maxrenderable_dist.GetFloat();
 
 		// Shadowing light typically has a smaller farz than cl_maxrenderable_dist
-		setupInfo.m_flRenderDistSq = (viewID == VIEW_SHADOW_DEPTH_TEXTURE) ? min(zFar, fMaxDist) : fMaxDist;
+		setupInfo.m_flRenderDistSq = (viewID == VIEW_SHADOW_DEPTH_TEXTURE) ? MIN(zFar, fMaxDist) : fMaxDist;
 		setupInfo.m_flRenderDistSq *= setupInfo.m_flRenderDistSq;
 
 		ClientLeafSystem()->BuildRenderablesList( setupInfo );
@@ -4744,8 +4744,8 @@ void CFreezeFrameView::Draw( void )
 
 		int iFadeAlpha = FREEZECAM_SNAPSHOT_FADE_SPEED * ( g_flFreezeFlash - gpGlobals->curtime );
 		
-		iFadeAlpha = min( iFadeAlpha, 255 );
-		iFadeAlpha = max( 0, iFadeAlpha );
+		iFadeAlpha = MIN( iFadeAlpha, 255 );
+		iFadeAlpha = MAX( 0, iFadeAlpha );
 		
 		pMaterial->AlphaModulate( iFadeAlpha * ( 1.0f / 255.0f ) );
 		pMaterial->ColorModulate( 1.0f,	1.0f, 1.0f );

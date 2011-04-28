@@ -49,7 +49,7 @@ bool BasicGameStatsRecord_t::ParseFromBuffer( CUtlBuffer &buf, int iBufferStatsV
 
 	m_nSeconds = buf.GetInt();
 	// Note, don't put the buf.GetInt() in the macro since it'll get evaluated twice!!!
-	m_nSeconds = max( m_nSeconds, 0 );
+	m_nSeconds = MAX( m_nSeconds, 0 );
 
 	m_nCommentary = buf.GetInt();
 	if ( m_nCommentary < 0 || m_nCommentary > 100000 )

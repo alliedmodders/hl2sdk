@@ -142,7 +142,7 @@ class CAlignedMemPool
 {
 	enum
 	{
-		BLOCK_SIZE = max( ALIGN_VALUE( ITEM_SIZE, ALIGNMENT ), 8 ),
+		BLOCK_SIZE = COMPILETIME_MAX( ALIGN_VALUE( ITEM_SIZE, ALIGNMENT ), 8 ),
 	};
 
 public:

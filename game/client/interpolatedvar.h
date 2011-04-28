@@ -833,7 +833,7 @@ inline bool CInterpolatedVarArrayBase<Type, IS_ARRAY>::GetInterpolationInfo(
 		if ( dt > 0.0001f )
 		{
 			pInfo->frac = ( targettime - older_change_time ) / ( newer_change_time - older_change_time );
-			pInfo->frac = min( pInfo->frac, 2.0f );
+			pInfo->frac = MIN( pInfo->frac, 2.0f );
 
 			int oldestindex = i+1;
 														    
@@ -1254,7 +1254,7 @@ inline void	CInterpolatedVarArrayBase<Type, IS_ARRAY>::SetMaxCount( int newmax )
 	bool changed = ( newmax != m_nMaxCount ) ? true : false;
 
 	// BUGBUG: Support 0 length properly?
-	newmax = max(1,newmax);
+	newmax = MAX(1,newmax);
 
 	m_nMaxCount = newmax;
 	// Wipe everything any time this changes!!!
@@ -1330,7 +1330,7 @@ inline void CInterpolatedVarArrayBase<Type, IS_ARRAY>::_Extrapolate(
 	}
 	else
 	{
-		float flExtrapolationAmount = min( flDestinationTime - pNew->changetime, flMaxExtrapolationAmount );
+		float flExtrapolationAmount = MIN( flDestinationTime - pNew->changetime, flMaxExtrapolationAmount );
 
 		float divisor = 1.0f / (pNew->changetime - pOld->changetime);
 		for ( int i=0; i < m_nMaxCount; i++ )

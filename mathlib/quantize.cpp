@@ -18,7 +18,6 @@
 #endif
 
 #include <stdlib.h>
-#include <minmax.h>
 
 #include <math.h>
 
@@ -411,8 +410,8 @@ static void Label(struct QuantizedValue *q, int updatecolor)
 		else
 			for(int i=0;i<current_ndims;i++)
 			{
-				q->Mins[i]=min(q->Children[0]->Mins[i],q->Children[1]->Mins[i]);
-				q->Maxs[i]=max(q->Children[0]->Maxs[i],q->Children[1]->Maxs[i]);
+				q->Mins[i]=MIN(q->Children[0]->Mins[i],q->Children[1]->Mins[i]);
+				q->Maxs[i]=MAX(q->Children[0]->Maxs[i],q->Children[1]->Maxs[i]);
 			}
 	}
 }    

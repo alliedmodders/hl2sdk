@@ -469,7 +469,7 @@ void CSlideshowDisplay::BuildSlideShowImagesList( void )
 			return;
 		}
 
-		int iFileSize = min( g_pFullFileSystem->Size( fh ), SLIDESHOW_LIST_BUFFER_MAX );
+		int iFileSize = MIN( g_pFullFileSystem->Size( fh ), SLIDESHOW_LIST_BUFFER_MAX );
 
 		int iBytesRead = g_pFullFileSystem->Read( szFileBuffer, iFileSize, fh );
 		g_pFullFileSystem->Close( fh );

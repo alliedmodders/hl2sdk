@@ -400,7 +400,7 @@ bool CGrenadeFrag::HandleInteraction(int interactionType, void *data, CBaseComba
 	else if ( interactionType == g_interactionBarnacleVictimReleased )
 	{
 		// take the five seconds back off the timer.
-		float timer = max(m_flDetonateTime - gpGlobals->curtime - 5.0f,0.0f);
+		float timer = MAX(m_flDetonateTime - gpGlobals->curtime - 5.0f,0.0f);
 		SetTimer( timer, timer - FRAG_GRENADE_WARN_TIME );
 		return true;
 	}

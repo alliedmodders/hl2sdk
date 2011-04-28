@@ -741,7 +741,7 @@ char *V_strncat(char *pDest, const char *pSrc, size_t destBufferSize, int max_ch
 	}
 	else
 	{
-		charstocopy = (size_t)min( max_chars_to_copy, (int)srclen );
+		charstocopy = (size_t)MIN( max_chars_to_copy, (int)srclen );
 	}
 
 	if ( len + charstocopy >= destBufferSize )
@@ -801,7 +801,7 @@ char *V_pretifymem( float value, int digitsafterdecimal /*= 2*/, bool usebinaryo
 	char val[ 32 ];
 
 	// Clamp to >= 0
-	digitsafterdecimal = max( digitsafterdecimal, 0 );
+	digitsafterdecimal = MAX( digitsafterdecimal, 0 );
 
 	// If it's basically integral, don't do any decimals
 	if ( FloatMakePositive( value - (int)value ) < 0.00001 )
@@ -1010,7 +1010,7 @@ static unsigned char V_nibble( char c )
 void V_hextobinary( char const *in, int numchars, byte *out, int maxoutputbytes )
 {
 	int len = V_strlen( in );
-	numchars = min( len, numchars );
+	numchars = MIN( len, numchars );
 	// Make sure it's even
 	numchars = ( numchars ) & ~0x1;
 
@@ -1118,7 +1118,7 @@ void V_FileBase( const char *in, char *out, int maxlen )
 	// Length of new sting
 	len = end - start + 1;
 
-	int maxcopy = min( len + 1, maxlen );
+	int maxcopy = MIN( len + 1, maxlen );
 
 	// Copy partial string
 	V_strncpy( out, &in[start], maxcopy );
@@ -1162,7 +1162,7 @@ void V_StripExtension( const char *in, char *out, int outSize )
 
 	if (end > 0 && !PATHSEPARATOR( in[end] ) && end < outSize)
 	{
-		int nChars = min( end, outSize-1 );
+		int nChars = MIN( end, outSize-1 );
 		if ( out != in )
 		{
 			memcpy( out, in, nChars );
@@ -1397,7 +1397,7 @@ bool V_ExtractFilePath (const char *path, char *dest, int destSize )
 		src--;
 	}
 
-	int copysize = min( src - path, destSize - 1 );
+	int copysize = MIN( src - path, destSize - 1 );
 	memcpy( dest, path, copysize );
 	dest[copysize] = 0;
 
@@ -1781,7 +1781,7 @@ char* AllocString( const char *pStr, int nMaxChars )
 	if ( nMaxChars == -1 )
 		allocLen = strlen( pStr ) + 1;
 	else
-		allocLen = min( (int)strlen(pStr), nMaxChars ) + 1;
+		allocLen = MIN( (int)strlen(pStr), nMaxChars ) + 1;
 
 	char *pOut = new char[allocLen];
 	V_strncpy( pOut, pStr, allocLen );

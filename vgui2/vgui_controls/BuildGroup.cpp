@@ -312,8 +312,8 @@ bool BuildGroup::CursorMoved(int x, int y, Panel *panel)
 		
 		if (_dragMouseCode == MOUSE_RIGHT)
 		{
-			int newW = max( 1, _dragStartPanelSize[ 0 ] + x - _dragStartCursorPos[0] );
-			int newH = max( 1, _dragStartPanelSize[ 1 ] + y - _dragStartCursorPos[1] );
+			int newW = MAX( 1, _dragStartPanelSize[ 0 ] + x - _dragStartCursorPos[0] );
+			int newH = MAX( 1, _dragStartPanelSize[ 1 ] + y - _dragStartCursorPos[1] );
 
 			bool shift = ( input()->IsKeyDown(KEY_LSHIFT) || input()->IsKeyDown(KEY_RSHIFT) );
 			bool ctrl = ( input()->IsKeyDown(KEY_LCONTROL) || input()->IsKeyDown(KEY_RCONTROL) );

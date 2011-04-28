@@ -1151,9 +1151,9 @@ void FX_Explosion( Vector& origin, Vector& normal, char materialType )
 			pParticle->m_flRollDelta	= random->RandomFloat( 0, 360 );
 
 			float colorRamp = random->RandomFloat( 0.75f, 1.5f );
-			pParticle->m_uchColor[0] = min( 1.0f, r*colorRamp )*255.0f;
-			pParticle->m_uchColor[1] = min( 1.0f, g*colorRamp )*255.0f;
-			pParticle->m_uchColor[2] = min( 1.0f, b*colorRamp )*255.0f;
+			pParticle->m_uchColor[0] = MIN( 1.0f, r*colorRamp )*255.0f;
+			pParticle->m_uchColor[1] = MIN( 1.0f, g*colorRamp )*255.0f;
+			pParticle->m_uchColor[2] = MIN( 1.0f, b*colorRamp )*255.0f;
 		}
 	}
 
@@ -1174,9 +1174,9 @@ void FX_Explosion( Vector& origin, Vector& normal, char materialType )
 		pSphereParticle->m_vecVelocity		= Vector(0,0,0);
 
 		float colorRamp = random->RandomFloat( 0.75f, 1.5f );
-		pSphereParticle->m_uchColor[0] = min( 1.0f, r*colorRamp )*255.0f;
-		pSphereParticle->m_uchColor[1] = min( 1.0f, g*colorRamp )*255.0f;
-		pSphereParticle->m_uchColor[2] = min( 1.0f, b*colorRamp )*255.0f;
+		pSphereParticle->m_uchColor[0] = MIN( 1.0f, r*colorRamp )*255.0f;
+		pSphereParticle->m_uchColor[1] = MIN( 1.0f, g*colorRamp )*255.0f;
+		pSphereParticle->m_uchColor[2] = MIN( 1.0f, b*colorRamp )*255.0f;
 	}
 
 	// Throw some smoke balls out around the normal
@@ -1203,9 +1203,9 @@ void FX_Explosion( Vector& origin, Vector& normal, char materialType )
 			pParticle->m_vecVelocity = (vecRight*x + vecUp*y) * 1024.0;
 
 			float colorRamp = random->RandomFloat( 0.75f, 1.5f );
-			pParticle->m_uchColor[0] = min( 1.0f, r*colorRamp )*255.0f;
-			pParticle->m_uchColor[1] = min( 1.0f, g*colorRamp )*255.0f;
-			pParticle->m_uchColor[2] = min( 1.0f, b*colorRamp )*255.0f;
+			pParticle->m_uchColor[0] = MIN( 1.0f, r*colorRamp )*255.0f;
+			pParticle->m_uchColor[1] = MIN( 1.0f, g*colorRamp )*255.0f;
+			pParticle->m_uchColor[2] = MIN( 1.0f, b*colorRamp )*255.0f;
 		}
 	}
 
@@ -1232,9 +1232,9 @@ void FX_Explosion( Vector& origin, Vector& normal, char materialType )
 		pParticle->m_flRollDelta	= random->RandomFloat( -1, 1 );
 
 		float colorRamp = random->RandomFloat( 0.5f, 1.25f );
-		pParticle->m_uchColor[0] = min( 1.0f, r*colorRamp )*255.0f;
-		pParticle->m_uchColor[1] = min( 1.0f, g*colorRamp )*255.0f;
-		pParticle->m_uchColor[2] = min( 1.0f, b*colorRamp )*255.0f;
+		pParticle->m_uchColor[0] = MIN( 1.0f, r*colorRamp )*255.0f;
+		pParticle->m_uchColor[1] = MIN( 1.0f, g*colorRamp )*255.0f;
+		pParticle->m_uchColor[2] = MIN( 1.0f, b*colorRamp )*255.0f;
 	}
 }
 

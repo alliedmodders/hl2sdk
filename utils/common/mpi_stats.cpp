@@ -750,7 +750,7 @@ void RunJobWatchApp( char *pCmdLine )
 		if ( s1 || s2 )
 		{
 			// Get rid of the last slash.
-			s1 = max( s1, s2 );
+			s1 = MAX( s1, s2 );
 			s1[0] = 0;
 		
 			if ( !CreateProcess( 

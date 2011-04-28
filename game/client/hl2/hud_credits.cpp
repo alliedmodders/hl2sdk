@@ -328,7 +328,7 @@ void CHudCredits::DrawOutroCreditsName( void )
 					}
 				}
 
-				cColor[3] = max( 0, m_Alpha );
+				cColor[3] = MAX( 0, m_Alpha );
 			}
 		}
 		else
@@ -374,7 +374,7 @@ void CHudCredits::DrawLogo( void )
 		{
 			float flDeltaTime = ( m_flFadeTime - gpGlobals->curtime );
 
-			m_Alpha = max( 0, RemapValClamped( flDeltaTime, 5.0f, 0, -128, 255 ) );
+			m_Alpha = MAX( 0, RemapValClamped( flDeltaTime, 5.0f, 0, -128, 255 ) );
 
 			if ( flDeltaTime <= 0.0f )
 			{

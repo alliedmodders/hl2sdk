@@ -235,7 +235,7 @@ void C_Plasma::AddEntity( void )
 	m_flGlowScale = m_flScaleRegister;
 
 	// Note: Sprite renderer assumes scale of 0.0 is 1.0
-	m_entGlow.SetScale( max( 0.0000001f, (m_flScaleRegister*1.5f) + GetFlickerScale() ) );
+	m_entGlow.SetScale( MAX( 0.0000001f, (m_flScaleRegister*1.5f) + GetFlickerScale() ) );
 	m_entGlow.SetLocalOriginDim( Z_INDEX, m_entGlow.GetLocalOriginDim( Z_INDEX ) + ( dScale * 32.0f ) );
 }
 
@@ -407,7 +407,7 @@ void C_Plasma::UpdateFlames( void )
 		offset[2] = m_entFlames[i].GetAbsOrigin()[2];
 
 		// Note: Sprite render assumes 0 scale means 1.0
-		m_entFlames[i].SetScale ( max(0.000001,newScale) );
+		m_entFlames[i].SetScale ( MAX(0.000001,newScale) );
 		
 		if ( i != 0 )
 		{
