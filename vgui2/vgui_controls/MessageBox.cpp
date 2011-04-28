@@ -20,7 +20,7 @@
 using namespace vgui;
 
 #ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#define MAX(a,b)            (((a) > (b)) ? (a) : (b))
 #endif
 
 vgui::Panel *MessageBox_Factory()
@@ -257,8 +257,8 @@ void MessageBox::PerformLayout()
 	
 	int btnWide, btnTall;
 	m_pOkButton->GetContentSize(btnWide, btnTall);
-	btnWide = max(oldWide, btnWide + 10);
-	btnTall = max(oldTall, btnTall + 10);
+	btnWide = MAX(oldWide, btnWide + 10);
+	btnTall = MAX(oldTall, btnTall + 10);
 	m_pOkButton->SetSize(btnWide, btnTall);
 
 	int btnWide2 = 0, btnTall2 = 0;
@@ -267,13 +267,13 @@ void MessageBox::PerformLayout()
 		m_pCancelButton->GetSize(oldWide, oldTall);
 		
 		m_pCancelButton->GetContentSize(btnWide2, btnTall2);
-		btnWide2 = max(oldWide, btnWide2 + 10);
-		btnTall2 = max(oldTall, btnTall2 + 10);
+		btnWide2 = MAX(oldWide, btnWide2 + 10);
+		btnTall2 = MAX(oldTall, btnTall2 + 10);
 		m_pCancelButton->SetSize(btnWide2, btnTall2);
 	}
 
-	boxWidth = max(boxWidth, m_pMessageLabel->GetWide() + 100);
-	boxWidth = max(boxWidth, (btnWide + btnWide2) * 2 + 30);
+	boxWidth = MAX(boxWidth, m_pMessageLabel->GetWide() + 100);
+	boxWidth = MAX(boxWidth, (btnWide + btnWide2) * 2 + 30);
 	SetSize(boxWidth, boxTall);
 
 	GetSize(boxWidth, boxTall);

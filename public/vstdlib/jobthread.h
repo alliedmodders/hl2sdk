@@ -104,7 +104,7 @@ struct ThreadPoolStartParams_t
 		if ( bUseAffinityTable )
 		{
 			// user supplied an optional 1:1 affinity mapping to override normal distribute behavior
-			nThreads = min( TP_MAX_POOL_THREADS, nThreads );
+			nThreads = MIN( TP_MAX_POOL_THREADS, nThreads );
 			for ( int i = 0; i < nThreads; i++ )
 			{
 				iAffinityTable[i] = pAffinities[i];
@@ -693,7 +693,7 @@ private:
 		const int MAX_THREADS = 16; \
 		int nIdle = g_pThreadPool->NumIdleThreads(); \
 		ITERTYPE1 range = to - from; \
-		int nThreads = min( nIdle + 1, range ); \
+		int nThreads = MIN( nIdle + 1, range ); \
 		if ( nThreads > MAX_THREADS ) \
 		{ \
 			nThreads = MAX_THREADS; \
@@ -728,7 +728,7 @@ FUNC_GENERATE_ALL( DEFINE_NON_MEMBER_ITER_RANGE_PARALLEL );
 		const int MAX_THREADS = 16; \
 		int nIdle = g_pThreadPool->NumIdleThreads(); \
 		ITERTYPE1 range = to - from; \
-		int nThreads = min( nIdle + 1, range ); \
+		int nThreads = MIN( nIdle + 1, range ); \
 		if ( nThreads > MAX_THREADS ) \
 		{ \
 			nThreads = MAX_THREADS; \

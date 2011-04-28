@@ -723,7 +723,7 @@ bool CAI_Expresser::CanSpeak()
 	if ( m_flLastTimeAcceptedSpeak == gpGlobals->curtime ) // only one speak accepted per think
 		return false;
 
-	float timeOk = max( m_flStopTalkTime, m_flBlockedTalkTime );
+	float timeOk = MAX( m_flStopTalkTime, m_flBlockedTalkTime );
 	return ( timeOk <= gpGlobals->curtime );
 }
 
@@ -738,7 +738,7 @@ bool CAI_Expresser::CanSpeakAfterMyself()
 	if ( m_flLastTimeAcceptedSpeak == gpGlobals->curtime ) // only one speak accepted per think
 		return false;
 
-	float timeOk = max( m_flStopTalkTimeWithoutDelay, m_flBlockedTalkTime );
+	float timeOk = MAX( m_flStopTalkTimeWithoutDelay, m_flBlockedTalkTime );
 	return ( timeOk <= gpGlobals->curtime );
 }
 

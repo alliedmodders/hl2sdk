@@ -48,7 +48,7 @@ void CSIMDVectorMatrix::CreateFromRGBA_FloatImageData(int srcwidth, int srcheigh
 			{
 				for(int cp=0;cp<4; cp++)
 				{
-					int real_cp=min( cp, ntrailing_pixels_per_source_line-1 );
+					int real_cp=MIN( cp, ntrailing_pixels_per_source_line-1 );
 					data_out[4*c+cp]= data_in[c+4*real_cp];
 				}
 			}

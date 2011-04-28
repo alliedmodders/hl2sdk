@@ -1029,7 +1029,7 @@ bool CMultiplayRules::Init()
 
 		if ( tv_delaymapchange.GetBool() && HLTVDirector()->IsActive() )	
 		{
-			flWaitTime = max ( flWaitTime, HLTVDirector()->GetDelay() );
+			flWaitTime = MAX ( flWaitTime, HLTVDirector()->GetDelay() );
 		}
 				
 		m_flIntermissionEndTime = gpGlobals->curtime + flWaitTime;

@@ -302,7 +302,7 @@ AIMoveResult_t CAI_Motor::MoveClimbExecute( const Vector &climbDest, const Vecto
 	if (m_nDismountSequence != ACT_INVALID)
 	{
 		// catch situations where the climb mount/dismount finished before reaching goal
-		climbSpeed = max( climbSpeed, 30.0 );
+		climbSpeed = MAX( climbSpeed, 30.0 );
 	}
 	else
 	{
@@ -763,7 +763,7 @@ void CAI_Motor::UpdateYaw( int yawSpeed )
 	ideal = UTIL_AngleMod( GetIdealYaw() );
 
 	// FIXME: this needs a proper interval
-	float dt = min( 0.2, gpGlobals->curtime - GetLastThink() );
+	float dt = MIN( 0.2, gpGlobals->curtime - GetLastThink() );
 	
 	newYaw = AI_ClampYaw( yaw * 10.0f, current, ideal, dt );
 		
@@ -933,7 +933,7 @@ float CAI_Motor::MinCheckDist( void )
 {
 	// Take the groundspeed into account
 	float flMoveDist = GetMoveInterval() * GetIdealSpeed();
-	float flMinDist = max( MinStoppingDist(), flMoveDist);
+	float flMinDist = MAX( MinStoppingDist(), flMoveDist);
 	if ( flMinDist < GetHullWidth() )
 		flMinDist = GetHullWidth();
 	return flMinDist;

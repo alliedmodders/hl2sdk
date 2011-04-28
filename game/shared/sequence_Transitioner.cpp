@@ -48,7 +48,7 @@ void CSequenceTransitioner::CheckForSequenceChange(
 		else
 		{
 			mstudioseqdesc_t &prevseqdesc = hdr->pSeqdesc( currentblend->m_nSequence );
-			currentblend->m_flLayerFadeOuttime = min( prevseqdesc.fadeouttime, seqdesc.fadeintime );
+			currentblend->m_flLayerFadeOuttime = MIN( prevseqdesc.fadeouttime, seqdesc.fadeintime );
 			/*
 			// clip blends to time remaining
 			if ( !IsSequenceLooping(hdr, currentblend->m_nSequence) )

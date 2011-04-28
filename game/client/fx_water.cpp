@@ -66,7 +66,7 @@ void UTIL_GetNormalizedColorTintAndLuminosity( const Vector &color, Vector *tint
 		}
 		else
 		{
-			float maxComponent = max( color.x, max( color.y, color.z ) );
+			float maxComponent = MAX( color.x, MAX( color.y, color.z ) );
 			*tint = color / maxComponent;
 		}
 	}
@@ -90,7 +90,7 @@ inline void FX_GetSplashLighting( Vector position, Vector *color, float *luminos
 	// Fake a specular highlight (too dim otherwise)
 	if ( luminosity != NULL )
 	{
-		*luminosity = min( 1.0f, (*luminosity) * 4.0f );
+		*luminosity = MIN( 1.0f, (*luminosity) * 4.0f );
 
 		// Clamp so that we never go completely translucent
 		if ( *luminosity < 0.25f )
@@ -214,9 +214,9 @@ void FX_GunshotSplash( const Vector &origin, const Vector &normal, float scale )
 
 		colorRamp = random->RandomFloat( 0.75f, 1.25f );
 
-		tParticle->m_color.r = min( 1.0f, color[0] * colorRamp ) * 255;
-		tParticle->m_color.g = min( 1.0f, color[1] * colorRamp ) * 255;
-		tParticle->m_color.b = min( 1.0f, color[2] * colorRamp ) * 255;
+		tParticle->m_color.r = MIN( 1.0f, color[0] * colorRamp ) * 255;
+		tParticle->m_color.g = MIN( 1.0f, color[1] * colorRamp ) * 255;
+		tParticle->m_color.b = MIN( 1.0f, color[2] * colorRamp ) * 255;
 		tParticle->m_color.a = luminosity * 255;
 	}
 
@@ -249,12 +249,12 @@ void FX_GunshotSplash( const Vector &origin, const Vector &normal, float scale )
 		
 		colorRamp = random->RandomFloat( 0.75f, 1.25f );
 
-		pParticle->m_uchColor[0]	= min( 1.0f, color[0] * colorRamp ) * 255.0f;
-		pParticle->m_uchColor[1]	= min( 1.0f, color[1] * colorRamp ) * 255.0f;
-		pParticle->m_uchColor[2]	= min( 1.0f, color[2] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[0]	= MIN( 1.0f, color[0] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[1]	= MIN( 1.0f, color[1] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[2]	= MIN( 1.0f, color[2] * colorRamp ) * 255.0f;
 		
 		pParticle->m_uchStartSize	= 24 * flScale * RemapValClamped( i, 7, 0, 1, 0.5f );
-		pParticle->m_uchEndSize		= min( 255, pParticle->m_uchStartSize * 2 );
+		pParticle->m_uchEndSize		= MIN( 255, pParticle->m_uchStartSize * 2 );
 		
 		pParticle->m_uchStartAlpha	= RemapValClamped( i, 7, 0, 255, 32 ) * luminosity;
 		pParticle->m_uchEndAlpha	= 0;
@@ -297,7 +297,7 @@ void FX_GunshotSlimeSplash( const Vector &origin, const Vector &normal, float sc
 #if 0
 
 	float	colorRamp;
-	float	flScale = min( 1.0f, scale / 8.0f );
+	float	flScale = MIN( 1.0f, scale / 8.0f );
 
 	PMaterialHandle	hMaterial = ParticleMgr()->GetPMaterial( "effects/slime1" );
 	PMaterialHandle	hMaterial2 = ParticleMgr()->GetPMaterial( "effects/splash4" );
@@ -352,9 +352,9 @@ void FX_GunshotSlimeSplash( const Vector &origin, const Vector &normal, float sc
 
 		colorRamp = random->RandomFloat( 0.75f, 1.25f );
 
-		tParticle->m_color.r = min( 1.0f, color.x * colorRamp ) * 255;
-		tParticle->m_color.g = min( 1.0f, color.y * colorRamp ) * 255;
-		tParticle->m_color.b = min( 1.0f, color.z * colorRamp ) * 255;
+		tParticle->m_color.r = MIN( 1.0f, color.x * colorRamp ) * 255;
+		tParticle->m_color.g = MIN( 1.0f, color.y * colorRamp ) * 255;
+		tParticle->m_color.b = MIN( 1.0f, color.z * colorRamp ) * 255;
 		tParticle->m_color.a = 255 * luminosity;
 	}
 
@@ -395,12 +395,12 @@ void FX_GunshotSlimeSplash( const Vector &origin, const Vector &normal, float sc
 		
 		colorRamp = random->RandomFloat( 0.75f, 1.25f );
 
-		pParticle->m_uchColor[0]	= min( 1.0f, color[0] * colorRamp ) * 255.0f;
-		pParticle->m_uchColor[1]	= min( 1.0f, color[1] * colorRamp ) * 255.0f;
-		pParticle->m_uchColor[2]	= min( 1.0f, color[2] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[0]	= MIN( 1.0f, color[0] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[1]	= MIN( 1.0f, color[1] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[2]	= MIN( 1.0f, color[2] * colorRamp ) * 255.0f;
 		
 		pParticle->m_uchStartSize	= 24 * flScale * RemapValClamped( i, 7, 0, 1, 0.5f );
-		pParticle->m_uchEndSize		= min( 255, pParticle->m_uchStartSize * 2 );
+		pParticle->m_uchEndSize		= MIN( 255, pParticle->m_uchStartSize * 2 );
 		
 		pParticle->m_uchStartAlpha	= RemapValClamped( i, 7, 0, 255, 32 ) * luminosity;
 		pParticle->m_uchEndAlpha	= 0;

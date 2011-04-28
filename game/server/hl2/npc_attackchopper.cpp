@@ -2196,19 +2196,19 @@ bool CNPC_AttackHelicopter::PoseGunTowardTargetDirection( const Vector &vTargetD
 
 	if (angles.x > m_angGun.x)
 	{
-		m_angGun.x = min( angles.x, m_angGun.x + 12 );
+		m_angGun.x = MIN( angles.x, m_angGun.x + 12 );
 	}
 	if (angles.x < m_angGun.x)
 	{
-		m_angGun.x = max( angles.x, m_angGun.x - 12 );
+		m_angGun.x = MAX( angles.x, m_angGun.x - 12 );
 	}
 	if (angles.y > m_angGun.y)
 	{
-		m_angGun.y = min( angles.y, m_angGun.y + 12 );
+		m_angGun.y = MIN( angles.y, m_angGun.y + 12 );
 	}
 	if (angles.y < m_angGun.y)
 	{
-		m_angGun.y = max( angles.y, m_angGun.y - 12 );
+		m_angGun.y = MAX( angles.y, m_angGun.y - 12 );
 	}
 
 	SetPoseParameter( m_poseWeapon_Pitch, -m_angGun.x );
@@ -4194,7 +4194,7 @@ void CNPC_AttackHelicopter::Flight( void )
 
 	Vector vecTargetPosition;
 	float flCurrentSpeed = GetAbsVelocity().Length();
-	float flDist = min( flCurrentSpeed + accelRate, maxSpeed );
+	float flDist = MIN( flCurrentSpeed + accelRate, maxSpeed );
 	float dt = 1.0f;
 	ComputeActualTargetPosition( flDist, dt, flPerpDist, &vecTargetPosition );
 

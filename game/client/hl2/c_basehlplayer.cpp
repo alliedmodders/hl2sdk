@@ -100,7 +100,7 @@ float C_BaseHLPlayer::GetFOV()
 	int min_fov = ( gpGlobals->maxClients == 1 ) ? 5 : default_fov.GetInt();
 	
 	// Don't let it go too low
-	flFOVOffset = max( min_fov, flFOVOffset );
+	flFOVOffset = MAX( min_fov, flFOVOffset );
 
 	return flFOVOffset;
 }
@@ -267,7 +267,7 @@ void C_BaseHLPlayer::PerformClientSideObstacleAvoidance( float flFrameTime, CUse
 
 	if ( curspeed > 150.0f )
 	{
-		curspeed = min( 2048.0f, curspeed );
+		curspeed = MIN( 2048.0f, curspeed );
 		factor = ( 1.0f + ( curspeed - 150.0f ) / 150.0f );
 
 		//engine->Con_NPrintf( slot++, "scaleup (%f) to radius %f\n", factor, radius * factor );
@@ -519,7 +519,7 @@ void C_BaseHLPlayer::PerformClientSideObstacleAvoidance( float flFrameTime, CUse
 		flSideScale = fabs( cl_sidespeed.GetFloat() ) / fabs( pCmd->sidemove );
 	}
 	
-	float flScale = min( flForwardScale, flSideScale );
+	float flScale = MIN( flForwardScale, flSideScale );
 	pCmd->forwardmove *= flScale;
 	pCmd->sidemove *= flScale;
 

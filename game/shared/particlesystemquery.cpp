@@ -236,7 +236,7 @@ void CParticleSystemQuery::GetRandomPointsOnControllingObjectHitBox(
 						int nHitbox = 0;
 						int nNumIters = nNumTrysToGetAPointInsideTheModel;
 						if (! vecDirectionalBias.IsZero( 0.0001 ) )
-							nNumIters = max( nNumIters, 5 );
+							nNumIters = MAX( nNumIters, 5 );
 
 						for( int i=0 ; i < nNumPtsOut; i++)
 						{
@@ -313,7 +313,7 @@ void CParticleSystemQuery::GetRandomPointsOnControllingObjectHitBox(
 			int nHitbox = 0;
 			int nNumIters = nNumTrysToGetAPointInsideTheModel;
 			if (! vecDirectionalBias.IsZero( 0.0001 ) )
-				nNumIters = max( nNumIters, 5 );
+				nNumIters = MAX( nNumIters, 5 );
 
 			for( int i=0 ; i < nNumPtsOut; i++)
 			{
@@ -421,7 +421,7 @@ int CParticleSystemQuery::GetControllingObjectHitBoxInfo(
 					
 					if ( set )
 					{
-						nRet = min( nBufSize, set->numhitboxes );
+						nRet = MIN( nBufSize, set->numhitboxes );
 						for( int i=0 ; i < nRet; i++ )
 						{
 							mstudiobbox_t *pBox = set->pHitbox( i );
@@ -613,7 +613,7 @@ float CParticleSystemQuery::GetPixelVisibility( int *pQueryHandle, const Vector 
 	pixelvis_queryparams_t params;
 	params.Init( vecOrigin, flScale, 1.0 );
 	float flVisibility = PixelVisibility_FractionVisible( params, pQueryHandle );
-	flVisibility = max( 0.0f, flVisibility );
+	flVisibility = MAX( 0.0f, flVisibility );
 	return flVisibility;
 #else
 	return 0.0f;

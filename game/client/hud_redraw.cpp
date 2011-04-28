@@ -100,8 +100,8 @@ void CHud::Think(void)
 void CHud::DrawProgressBar( int x, int y, int width, int height, float percentage, Color& clr, unsigned char type )
 {
 	//Clamp our percentage
-	percentage = min( 1.0f, percentage );
-	percentage = max( 0.0f, percentage );
+	percentage = MIN( 1.0f, percentage );
+	percentage = MAX( 0.0f, percentage );
 
 	Color lowColor = clr;
 	lowColor[ 0 ] /= 2;
@@ -156,8 +156,8 @@ void CHud::DrawIconProgressBar( int x, int y, CHudTexture *icon, CHudTexture *ic
 		return;
 
 	//Clamp our percentage
-	percentage = min( 1.0f, percentage );
-	percentage = max( 0.0f, percentage );
+	percentage = MIN( 1.0f, percentage );
+	percentage = MAX( 0.0f, percentage );
 
 	int	height = icon->Height();
 	int	width  = icon->Width();

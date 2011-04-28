@@ -8,6 +8,7 @@
 #ifndef BASETYPES_H
 #define BASETYPES_H
 
+#include "tier0/platform.h"
 #include "commonmacros.h"
 #include "wchartypes.h"
 
@@ -35,7 +36,6 @@
 #ifndef NULL
 #define NULL 0
 #endif
-
 
 #if defined _LINUX && !defined __APPLE__
 typedef unsigned int uintptr_t;
@@ -75,11 +75,27 @@ inline T AlignValue( T val, unsigned alignment )
 #endif
 #define M_PI			3.14159265358979323846
 
-#include "valve_minmax_on.h"
+// #define COMPILETIME_MAX and COMPILETIME_MIN for max/min in constant expressions
+#define COMPILETIME_MIN( a, b ) ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
+#define COMPILETIME_MAX( a, b ) ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
+#ifndef MIN
+#define MIN( a, b ) ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
+#endif
+
+#ifndef MAX
+#define MAX( a, b ) ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
+#endif
 
 #if !defined(_X360)
-#define fpmin min
-#define fpmax max
+FORCEINLINE float fpmin( float a, float b )
+{
+	return ( a < b ) ? a : b;
+}
+
+FORCEINLINE float fpmax( float a, float b )
+{
+	return ( a > b ) ? a : b;
+}
 #endif
 
 #ifdef __cplusplus

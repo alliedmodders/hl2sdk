@@ -456,7 +456,7 @@ int CNPC_PoisonZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 	// Calculate what percentage of the creature's max health
 	// this amount of damage represents (clips at 1.0).
 	//
-	float flDamagePercent = min( 1, inputInfo.GetDamage() / m_iMaxHealth );
+	float flDamagePercent = MIN( 1, inputInfo.GetDamage() / m_iMaxHealth );
 
 	//
 	// Throw one crab for every 20% damage we take.

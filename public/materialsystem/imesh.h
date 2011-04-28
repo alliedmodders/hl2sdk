@@ -2695,7 +2695,7 @@ inline void CIndexBuilder::GenerateIndices( MaterialPrimitiveType_t primitiveTyp
 		return;
 
 	int nMaxIndices = m_nMaxIndexCount - m_nCurrentIndex;
-	nIndexCount = min( nMaxIndices, nIndexCount );
+	nIndexCount = MIN( nMaxIndices, nIndexCount );
 	if ( nIndexCount == 0 )
 		return;
 

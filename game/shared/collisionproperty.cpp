@@ -982,15 +982,15 @@ void CCollisionProperty::ComputeRotationExpandedBounds( Vector *pVecWorldMins, V
 	else
 	{
 		float flMaxVal;
-		flMaxVal = max( FloatMakePositive(m_vecMins.Get().x), FloatMakePositive(m_vecMaxs.Get().x) );
+		flMaxVal = MAX( FloatMakePositive(m_vecMins.Get().x), FloatMakePositive(m_vecMaxs.Get().x) );
 		pVecWorldMins->x = -flMaxVal;
 		pVecWorldMaxs->x = flMaxVal;
 
-		flMaxVal = max( FloatMakePositive(m_vecMins.Get().y), FloatMakePositive(m_vecMaxs.Get().y) );
+		flMaxVal = MAX( FloatMakePositive(m_vecMins.Get().y), FloatMakePositive(m_vecMaxs.Get().y) );
 		pVecWorldMins->y = -flMaxVal;
 		pVecWorldMaxs->y = flMaxVal;
 
-		flMaxVal = max( FloatMakePositive(m_vecMins.Get().z), FloatMakePositive(m_vecMaxs.Get().z) );
+		flMaxVal = MAX( FloatMakePositive(m_vecMins.Get().z), FloatMakePositive(m_vecMaxs.Get().z) );
 		pVecWorldMins->z = -flMaxVal;
 		pVecWorldMaxs->z = flMaxVal;
 	}

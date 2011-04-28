@@ -781,8 +781,8 @@ void CModelPanel::CalculateFrameDistanceInternal( const model_t *pModel )
 	{
 		float flDistZ = fabs( aXFormPoints[iPoint].z / flTanFOVy - aXFormPoints[iPoint].x );
 		float flDistY = fabs( aXFormPoints[iPoint].y / flTanFOVx - aXFormPoints[iPoint].x );
-		float flTestDist = max( flDistZ, flDistY );
-		flDist = max( flDist, flTestDist );
+		float flTestDist = MAX( flDistZ, flDistY );
+		flDist = MAX( flDist, flTestDist );
 	}
 
 	// Scale the object down by 10%.
@@ -815,10 +815,10 @@ void CModelPanel::CalculateFrameDistanceInternal( const model_t *pModel )
 	Vector2D vecScreenMin( 99999.0f, 99999.0f ), vecScreenMax( -99999.0f, -99999.0f );
 	for ( int iPoint = 0; iPoint < 8; ++iPoint )
 	{
-		vecScreenMin.x = min( vecScreenMin.x, aScreenPoints[iPoint].x );
-		vecScreenMin.y = min( vecScreenMin.y, aScreenPoints[iPoint].y );
-		vecScreenMax.x = max( vecScreenMax.x, aScreenPoints[iPoint].x );
-		vecScreenMax.y = max( vecScreenMax.y, aScreenPoints[iPoint].y );
+		vecScreenMin.x = MIN( vecScreenMin.x, aScreenPoints[iPoint].x );
+		vecScreenMin.y = MIN( vecScreenMin.y, aScreenPoints[iPoint].y );
+		vecScreenMax.x = MAX( vecScreenMax.x, aScreenPoints[iPoint].x );
+		vecScreenMax.y = MAX( vecScreenMax.y, aScreenPoints[iPoint].y );
 	}
 
 	vecScreenMin.x = clamp( vecScreenMin.x, 0.0f, flW );

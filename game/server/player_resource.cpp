@@ -104,7 +104,7 @@ void CPlayerResource::UpdatePlayerData( void )
 			m_bConnected.Set( i, 1 );
 			m_iTeam.Set( i, pPlayer->GetTeamNumber() );
 			m_bAlive.Set( i, pPlayer->IsAlive()?1:0 );
-			m_iHealth.Set(i, max( 0, pPlayer->GetHealth() ) );
+			m_iHealth.Set(i, MAX( 0, pPlayer->GetHealth() ) );
 
 			// Don't update ping / packetloss everytime
 

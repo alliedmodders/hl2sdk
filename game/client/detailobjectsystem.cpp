@@ -1518,8 +1518,8 @@ void CDetailObjectSystem::LevelInitPostEntity()
 
 	if ( GetDetailController() )
 	{
-		cl_detailfade.SetValue( min( m_flDefaultFadeStart, GetDetailController()->m_flFadeStartDist ) );
-		cl_detaildist.SetValue( min( m_flDefaultFadeEnd, GetDetailController()->m_flFadeEndDist ) );
+		cl_detailfade.SetValue( MIN( m_flDefaultFadeStart, GetDetailController()->m_flFadeStartDist ) );
+		cl_detaildist.SetValue( MIN( m_flDefaultFadeEnd, GetDetailController()->m_flFadeEndDist ) );
 	}
 	else
 	{
@@ -1678,8 +1678,8 @@ void CDetailObjectSystem::ScanForCounts( CUtlBuffer& buf,
 		{
 			// need to pad nfast to next sse boundary
 			nFast += ( 0 - nFast ) & 3;
-			nMaxFast = max( nMaxFast, nNumFastInLeaf );
-			nMaxOld = max( nMaxOld, nNumOldInLeaf );
+			nMaxFast = MAX( nMaxFast, nNumFastInLeaf );
+			nMaxOld = MAX( nMaxOld, nNumOldInLeaf );
 			nNumOldInLeaf = 0;
 			nNumFastInLeaf = 0;
 			detailObjectLeaf = lump.m_Leaf;
@@ -1700,8 +1700,8 @@ void CDetailObjectSystem::ScanForCounts( CUtlBuffer& buf,
 
 	// need to pad nfast to next sse boundary
 	nFast += ( 0 - nFast ) & 3;
-	nMaxFast = max( nMaxFast, nNumFastInLeaf );
-	nMaxOld = max( nMaxOld, nNumOldInLeaf );
+	nMaxFast = MAX( nMaxFast, nNumFastInLeaf );
+	nMaxOld = MAX( nMaxOld, nNumOldInLeaf );
 
 	buf.SeekGet( CUtlBuffer::SEEK_HEAD, oldpos );
 	*pNumFastSpritesToAllocate = nFast;
@@ -1987,7 +1987,7 @@ int CDetailObjectSystem::CountFastSpritesInLeafList( int nLeafCount, LeafIndex_t
 		if ( pData )
 		{
 			nCount += pData->m_nNumSprites;
-			nMax = max( nMax, pData->m_nNumSprites );
+			nMax = MAX( nMax, pData->m_nNumSprites );
 		}
 	}
 	*nMaxFoundInLeaf = ( nMax + 3 ) & ~3;					// round up
@@ -2265,7 +2265,7 @@ void CDetailObjectSystem::RenderFastSprites( const Vector &viewOrigin, const Vec
 		nMaxQuadsToDraw = nMaxVerts / 4;
 	}
 
-	int nQuadsToDraw = min( nQuadCount, nMaxQuadsToDraw );
+	int nQuadsToDraw = MIN( nQuadCount, nMaxQuadsToDraw );
 	int nQuadsRemaining = nQuadsToDraw;
 
 	meshBuilder.Begin( pMesh, MATERIAL_QUADS, nQuadsToDraw );
@@ -2303,7 +2303,7 @@ void CDetailObjectSystem::RenderFastSprites( const Vector &viewOrigin, const Vec
 					nQuadsRemaining = nQuadsToDraw;
 					meshBuilder.Begin( pMesh, MATERIAL_QUADS, nQuadsToDraw );
 				}
-				int nToDraw = min( nCount, nQuadsRemaining );
+				int nToDraw = MIN( nCount, nQuadsRemaining );
 				nCount -= nToDraw;
 				nQuadsRemaining -= nToDraw;
 				while( nToDraw-- )
@@ -2510,7 +2510,7 @@ void CDetailObjectSystem::RenderFastTranslucentDetailObjectsInLeaf( const Vector
 		nMaxQuadsToDraw = nMaxVerts / 4;
 	}
 		
-	int nQuadsToDraw = min( nCount, nMaxQuadsToDraw );
+	int nQuadsToDraw = MIN( nCount, nMaxQuadsToDraw );
 	int nQuadsRemaining = nQuadsToDraw;
 		
 	meshBuilder.Begin( pMesh, MATERIAL_QUADS, nQuadsToDraw );
@@ -2529,7 +2529,7 @@ void CDetailObjectSystem::RenderFastTranslucentDetailObjectsInLeaf( const Vector
 			nQuadsRemaining = nQuadsToDraw;
 			meshBuilder.Begin( pMesh, MATERIAL_QUADS, nQuadsToDraw );
 		}
-		int nToDraw = min( nCount, nQuadsRemaining );
+		int nToDraw = MIN( nCount, nQuadsRemaining );
 		nCount -= nToDraw;
 		nQuadsRemaining -= nToDraw;
 		while( nToDraw-- )
@@ -2783,7 +2783,7 @@ void CDetailObjectSystem::BuildDetailObjectRenderLists( const Vector &vViewOrigi
 	{
 		m_flCurFadeSqDist = 0;
 	}
-	m_flCurFadeSqDist = min( m_flCurFadeSqDist, m_flCurMaxSqDist -1  );
+	m_flCurFadeSqDist = MIN( m_flCurFadeSqDist, m_flCurMaxSqDist -1  );
 	m_flCurFalloffFactor = 255.0f / ( m_flCurMaxSqDist - m_flCurFadeSqDist );
 
 

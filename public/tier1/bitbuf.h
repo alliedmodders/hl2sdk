@@ -1097,7 +1097,7 @@ FORCEINLINE int CBitRead::GetNumBitsRead( void ) const
 		return 0;
 	int nCurOfs = ( 32 - m_nBitsAvail ) + ( 8 * sizeof( m_pData[0] ) * ( m_pDataIn - m_pData -1  ) );
 	int nAdjust = 8 * ( m_nDataBytes & 3 );
-	return min ( nCurOfs + nAdjust, m_nDataBits );
+	return MIN ( nCurOfs + nAdjust, m_nDataBits );
 
 }
 
