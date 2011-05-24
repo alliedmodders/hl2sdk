@@ -127,7 +127,7 @@ void CHudBonusProgress::OnThink()
 	}
 
 	// Never below zero
-	newBonusProgress = max( local->GetBonusProgress(), 0 );
+	newBonusProgress = MAX( local->GetBonusProgress(), 0 );
 	iBonusChallenge = local->GetBonusChallenge();
 
 	// Only update the fade if we've changed bonusProgress

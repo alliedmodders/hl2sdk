@@ -1097,7 +1097,7 @@ FORCEINLINE int CBitRead::GetNumBitsRead( void ) const
 		return 0;
 	int nCurOfs = ( 32 - m_nBitsAvail ) + ( 8 * sizeof( m_pData[0] ) * ( m_pDataIn - m_pData -1  ) );
 	int nAdjust = 8 * ( m_nDataBytes & 3 );
-	return min ( nCurOfs + nAdjust, m_nDataBits );
+	return MIN ( nCurOfs + nAdjust, m_nDataBits );
 
 }
 
@@ -1213,20 +1213,26 @@ FORCEINLINE float CBitRead::ReadFloat( void )
 #endif
 FORCEINLINE unsigned int CBitRead::ReadUBitVar( void )
 {
-	switch( ReadUBitLong( 2 ) )
+	unsigned int ret = ReadUBitLong( 2 );
+	switch( ret )
 	{
 		case 0:
-			return ReadUBitLong( 4 );
+			ret = ReadUBitLong( 4 );
+			break;
 
 		case 1:
-			return ReadUBitLong( 8 );
+			ret = ReadUBitLong( 8 );
+			break;
 
 		case 2:
-			return ReadUBitLong( 12 );
+			ret = ReadUBitLong( 12 );
+			break;
 			
 		case 3:
-			return ReadUBitLong( 32 );
+			ret =  ReadUBitLong( 32 );
+			break;
 	}
+	return ret;
 }
 #ifdef _WIN32
 #pragma warning(pop)

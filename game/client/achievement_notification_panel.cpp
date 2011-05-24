@@ -215,9 +215,9 @@ void CAchievementNotificationPanel::ShowNextNotification()
 	int iHeadingWidth = UTIL_ComputeStringWidth( hFontHeading, notification.szHeading );
 	int iTitleWidth = UTIL_ComputeStringWidth( hFontTitle, notification.szTitle );
 	// use the widest string
-	int iTextWidth = max( iHeadingWidth, iTitleWidth );
+	int iTextWidth = MAX( iHeadingWidth, iTitleWidth );
 	// don't let it be insanely wide
-	iTextWidth = min( iTextWidth, XRES( 300 ) );
+	iTextWidth = MIN( iTextWidth, XRES( 300 ) );
 	int iIconWidth = m_pIcon->GetWide();
 	int iSpacing = XRES( 10 );
 	int iPanelWidth = iSpacing + iIconWidth + iSpacing + iTextWidth + iSpacing;

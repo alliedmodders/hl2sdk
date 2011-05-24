@@ -1596,8 +1596,8 @@ void CClientShadowMgr::SetupRenderToTextureShadow( ClientShadowHandle_t h )
 	// Compute the maximum dimension
 	Vector size;
 	VectorSubtract( maxs, mins, size );
-	float maxSize = max( size.x, size.y );
-	maxSize = max( maxSize, size.z );
+	float maxSize = MAX( size.x, size.y );
+	maxSize = MAX( maxSize, size.z );
 
 	// Figure out the texture size
 	// For now, we're going to assume a fixed number of shadow texels

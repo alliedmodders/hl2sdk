@@ -186,7 +186,7 @@ void C_Func_Dust::ClientThink()
 	// Spawn particles?
 	if( m_DustFlags & DUSTFLAGS_ON )
 	{
-		float flDelta = min( gpGlobals->frametime, 0.1f );
+		float flDelta = MIN( gpGlobals->frametime, 0.1f );
 		while( m_Spawner.NextEvent( flDelta ) )
 		{
 			AttemptSpawnNewParticle();

@@ -647,11 +647,11 @@ void CInput::GetFullscreenMousePos( int *mx, int *my, int *unclampedx /*=NULL*/,
 	}
 
 	// Clamp
-	current_posx = max( 0, current_posx );
-	current_posx = min( ScreenWidth(), current_posx );
+	current_posx = MAX( 0, current_posx );
+	current_posx = MIN( ScreenWidth(), current_posx );
 
-	current_posy = max( 0, current_posy );
-	current_posy = min( ScreenHeight(), current_posy );
+	current_posy = MAX( 0, current_posy );
+	current_posy = MIN( ScreenHeight(), current_posy );
 
 	*mx = current_posx;
 	*my = current_posy;

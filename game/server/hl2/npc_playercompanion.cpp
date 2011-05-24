@@ -1601,7 +1601,7 @@ void CNPC_PlayerCompanion::SubtractReadiness( float flSub, bool bOverrideLock )
 		return;
 
 	// Prevent readiness from going below 0 (below 0 is only for scripted states)
-	SetReadinessValue( max(GetReadinessValue() - flSub, 0) );
+	SetReadinessValue( MAX(GetReadinessValue() - flSub, 0) );
 }
 
 //-----------------------------------------------------------------------------
@@ -1628,8 +1628,8 @@ void CNPC_PlayerCompanion::SetReadinessValue( float flSet )
 
 	int priorReadiness = GetReadinessLevel();
 
-	flSet = min( 1.0f, flSet );
-	flSet = max( READINESS_MIN_VALUE, flSet );
+	flSet = MIN( 1.0f, flSet );
+	flSet = MAX( READINESS_MIN_VALUE, flSet );
 
 	m_flReadiness = flSet;
 

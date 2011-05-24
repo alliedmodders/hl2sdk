@@ -1517,7 +1517,7 @@ public:
 	//
 	//-----------------------------------------------------
 
-	void				AddSceneLock( float flDuration = 0.2f ) { m_flSceneTime = max( gpGlobals->curtime + flDuration, m_flSceneTime ); };
+	void				AddSceneLock( float flDuration = 0.2f ) { m_flSceneTime = MAX( gpGlobals->curtime + flDuration, m_flSceneTime ); };
 	void				ClearSceneLock( float flDuration = 0.2f ) { m_flSceneTime = gpGlobals->curtime + flDuration; };
 	bool				IsInLockedScene( void ) { return m_flSceneTime > gpGlobals->curtime; };
 	float				m_flSceneTime;

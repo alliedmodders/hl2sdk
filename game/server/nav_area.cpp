@@ -919,8 +919,8 @@ bool CNavArea::SpliceEdit( CNavArea *other )
 	if (m_extent.lo.x > other->m_extent.hi.x)
 	{
 		// 'this' is east of 'other'
-		float top = max( m_extent.lo.y, other->m_extent.lo.y );
-		float bottom = min( m_extent.hi.y, other->m_extent.hi.y );
+		float top = MAX( m_extent.lo.y, other->m_extent.lo.y );
+		float bottom = MIN( m_extent.hi.y, other->m_extent.hi.y );
 
 		nw.x = other->m_extent.hi.x;
 		nw.y = top;
@@ -949,8 +949,8 @@ bool CNavArea::SpliceEdit( CNavArea *other )
 	else if (m_extent.hi.x < other->m_extent.lo.x)
 	{
 		// 'this' is west of 'other'
-		float top = max( m_extent.lo.y, other->m_extent.lo.y );
-		float bottom = min( m_extent.hi.y, other->m_extent.hi.y );
+		float top = MAX( m_extent.lo.y, other->m_extent.lo.y );
+		float bottom = MIN( m_extent.hi.y, other->m_extent.hi.y );
 
 		nw.x = m_extent.hi.x;
 		nw.y = top;
@@ -981,8 +981,8 @@ bool CNavArea::SpliceEdit( CNavArea *other )
 		if (m_extent.lo.y > other->m_extent.hi.y)
 		{
 			// 'this' is south of 'other'
-			float left = max( m_extent.lo.x, other->m_extent.lo.x );
-			float right = min( m_extent.hi.x, other->m_extent.hi.x );
+			float left = MAX( m_extent.lo.x, other->m_extent.lo.x );
+			float right = MIN( m_extent.hi.x, other->m_extent.hi.x );
 
 			nw.x = left;
 			nw.y = other->m_extent.hi.y;
@@ -1011,8 +1011,8 @@ bool CNavArea::SpliceEdit( CNavArea *other )
 		else if (m_extent.hi.y < other->m_extent.lo.y)
 		{
 			// 'this' is north of 'other'
-			float left = max( m_extent.lo.x, other->m_extent.lo.x );
-			float right = min( m_extent.hi.x, other->m_extent.hi.x );
+			float left = MAX( m_extent.lo.x, other->m_extent.lo.x );
+			float right = MIN( m_extent.hi.x, other->m_extent.hi.x );
 
 			nw.x = left;
 			nw.y = m_extent.hi.y;
@@ -1565,8 +1565,8 @@ void CNavArea::ComputePortal( const CNavArea *to, NavDirType dir, Vector *center
 		else
 			center->y = m_extent.hi.y;
 
-		float left = max( m_extent.lo.x, to->m_extent.lo.x );
-		float right = min( m_extent.hi.x, to->m_extent.hi.x );
+		float left = MAX( m_extent.lo.x, to->m_extent.lo.x );
+		float right = MIN( m_extent.hi.x, to->m_extent.hi.x );
 
 		// clamp to our extent in case areas are disjoint
 		if (left < m_extent.lo.x)
@@ -1589,8 +1589,8 @@ void CNavArea::ComputePortal( const CNavArea *to, NavDirType dir, Vector *center
 		else
 			center->x = m_extent.hi.x;
 
-		float top = max( m_extent.lo.y, to->m_extent.lo.y );
-		float bottom = min( m_extent.hi.y, to->m_extent.hi.y );
+		float top = MAX( m_extent.lo.y, to->m_extent.lo.y );
+		float bottom = MIN( m_extent.hi.y, to->m_extent.hi.y );
 
 		// clamp to our extent in case areas are disjoint
 		if (top < m_extent.lo.y)
@@ -1623,8 +1623,8 @@ void CNavArea::ComputeClosestPointInPortal( const CNavArea *to, NavDirType dir, 
 		else
 			closePos->y = m_extent.hi.y;
 
-		float left = max( m_extent.lo.x, to->m_extent.lo.x );
-		float right = min( m_extent.hi.x, to->m_extent.hi.x );
+		float left = MAX( m_extent.lo.x, to->m_extent.lo.x );
+		float right = MIN( m_extent.hi.x, to->m_extent.hi.x );
 
 		// clamp to our extent in case areas are disjoint
 		if (left < m_extent.lo.x)
@@ -1657,8 +1657,8 @@ void CNavArea::ComputeClosestPointInPortal( const CNavArea *to, NavDirType dir, 
 		else
 			closePos->x = m_extent.hi.x;
 
-		float top = max( m_extent.lo.y, to->m_extent.lo.y );
-		float bottom = min( m_extent.hi.y, to->m_extent.hi.y );
+		float top = MAX( m_extent.lo.y, to->m_extent.lo.y );
+		float bottom = MIN( m_extent.hi.y, to->m_extent.hi.y );
 
 		// clamp to our extent in case areas are disjoint
 		if (top < m_extent.lo.y)
@@ -1753,8 +1753,8 @@ bool CNavArea::GetCornerHotspot( NavCornerType corner, Vector hotspot[NUM_CORNER
 	Vector se = GetCorner( SOUTH_EAST );
 
 	float size = 9.0f;
-	size = min( size, GetSizeX()/3 );	// make sure the hotspot doesn't extend outside small areas
-	size = min( size, GetSizeY()/3 );
+	size = MIN( size, GetSizeX()/3 );	// make sure the hotspot doesn't extend outside small areas
+	size = MIN( size, GetSizeY()/3 );
 
 	switch ( corner )
 	{
@@ -3396,8 +3396,8 @@ void CNavArea::UpdateBlocked( void )
 	Vector origin = GetCenter();
 	origin.z += HalfHumanHeight;
 
-	const float sizeX = max( 1, min( GetSizeX()/2 - 5, HalfHumanWidth ) );
-	const float sizeY = max( 1, min( GetSizeY()/2 - 5, HalfHumanWidth ) );
+	const float sizeX = MAX( 1, MIN( GetSizeX()/2 - 5, HalfHumanWidth ) );
+	const float sizeY = MAX( 1, MIN( GetSizeY()/2 - 5, HalfHumanWidth ) );
 	Vector mins( -sizeX, -sizeY, 0 );
 	Vector maxs( sizeX, sizeY, VEC_DUCK_HULL_MAX.z );
 

@@ -499,7 +499,7 @@ void CViewRenderBeams::InitBeams( void )
 	int p = CommandLine()->ParmValue("-particles", -1);
 	if ( p >= 0 )
 	{
-		m_nNumBeamTrails = max( p, MIN_PARTICLES );
+		m_nNumBeamTrails = MAX( p, MIN_PARTICLES );
 	}
 	else
 	{
@@ -1558,8 +1558,8 @@ void CViewRenderBeams::UpdateBeam( Beam_t *pbeam, float frametime )
 				{
 					frac = remaining / pbeam->life;
 				}
-				frac = min( 1.0f, frac );
-				frac = max( 0.0f, frac );
+				frac = MIN( 1.0f, frac );
+				frac = MAX( 0.0f, frac );
 
 				frac = 1.0f - frac;
 

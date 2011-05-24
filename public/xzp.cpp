@@ -770,7 +770,7 @@ bool xZipAddFile( const char* filename, CUtlBuffer &fileBuff, bool bPrecacheEnti
 	else if( bProcessPrecacheHeaderOnly )
 	{
 		customPreloadSize = xZipComputeCustomPreloads( filename );
-		fileSize = min( fileSize, customPreloadSize );
+		fileSize = MIN( fileSize, customPreloadSize );
 	}
 
 	unsigned CRC = xZipCRCFilename( filename );

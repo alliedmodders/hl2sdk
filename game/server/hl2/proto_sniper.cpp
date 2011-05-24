@@ -783,7 +783,7 @@ void CProtoSniper::PaintTarget( const Vector &vecTarget, float flPaintTime )
 	float P;
 
 	// keep painttime from hitting 0 exactly.
-	flPaintTime = max( flPaintTime, 0.000001f );
+	flPaintTime = MAX( flPaintTime, 0.000001f );
 
 	P = GetPositionParameter( flPaintTime, false );
 

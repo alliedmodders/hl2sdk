@@ -30,7 +30,7 @@ int ITEM_GiveAmmo( CBasePlayer *pPlayer, float flCount, const char *pszAmmoName,
 	flCount *= g_pGameRules->GetAmmoQuantityScale(iAmmoType);
 
 	// Don't give out less than 1 of anything.
-	flCount = max( 1.0f, flCount );
+	flCount = MAX( 1.0f, flCount );
 
 	return pPlayer->GiveAmmo( (int)flCount, iAmmoType, bSuppressSound );
 }

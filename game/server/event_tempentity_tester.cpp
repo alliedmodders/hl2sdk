@@ -30,8 +30,8 @@ CBaseEntity *CTempEntTester::Create( const Vector &vecOrigin, const QAngle &vecA
 	if ( lifetime && lifetime[0] )
 	{
 		life = atoi( lifetime );
-		life = max( 1.0, life );
-		life = min( 1000.0, life );
+		life = MAX( 1.0, life );
+		life = MIN( 1000.0, life );
 
 		life += gpGlobals->curtime;
 	}

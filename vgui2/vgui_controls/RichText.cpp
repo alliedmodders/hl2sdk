@@ -21,7 +21,7 @@ enum
 using namespace vgui;
 
 #ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#define MAX(a,b)            (((a) > (b)) ? (a) : (b))
 #endif
 
 namespace vgui
@@ -647,7 +647,7 @@ void RichText::FinishingURL(int x, int y)
 		int px, py;
 		clickPanel->GetPos(px, py);
 		int fontTall = surface()->GetFontTall(_font);
-		clickPanel->SetSize( max( x - px, 6 ), y - py + fontTall );
+		clickPanel->SetSize( MAX( x - px, 6 ), y - py + fontTall );
 		clickPanel->SetVisible(true);
 
 		// if we haven't actually advanced any, step back and ignore this one
@@ -830,7 +830,7 @@ void RichText::Paint()
 			if ( m_TextStream[i] == '\t' )
 			{
 				int dxTabWidth = 8 * surface()->GetCharacterWidth(_font, ' ');
-				dxTabWidth = max( 1, dxTabWidth );
+				dxTabWidth = MAX( 1, dxTabWidth );
 
 				renderState.x = ( dxTabWidth * ( 1 + ( renderState.x / dxTabWidth ) ) );
 			}
@@ -2448,12 +2448,12 @@ int RichText::ParseTextStringForUrls( const char *text, int startPos, char *pchU
 			// get the url
 			i += Q_strlen( "<a href=" );
 			const char *pchURLEnd = Q_strstr( text + i, ">" );
-			Q_strncpy( pchURL, text + i, min( pchURLEnd - text - i + 1, cchURL ) ); 
+			Q_strncpy( pchURL, text + i, MIN( pchURLEnd - text - i + 1, cchURL ) ); 
 			i += ( pchURLEnd - text - i + 1 );
             
 			// get the url text
 			pchURLEnd = Q_strstr( text, "</a>" );
-			Q_strncpy( pchURLText, text + i, min( pchURLEnd - text - i + 1, cchURLText ) ); 
+			Q_strncpy( pchURLText, text + i, MIN( pchURLEnd - text - i + 1, cchURLText ) ); 
 			i += ( pchURLEnd - text - i );
 			i += Q_strlen( "</a>" );
 
