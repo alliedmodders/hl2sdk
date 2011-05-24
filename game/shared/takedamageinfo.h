@@ -112,6 +112,7 @@ protected:
 	int				m_iDamageCustom;
 	int				m_iDamageStats;
 	int				m_iAmmoType;			// AmmoType of the weapon used to cause this damage, if any
+	int				m_iUnknown1;
 
 	DECLARE_SIMPLE_DATADESC();
 };
