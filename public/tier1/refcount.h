@@ -302,6 +302,7 @@ public:
 //			referencing problems
 //-----------------------------------------------------------------------------
 
+#if 0
 template <class BASE_REFCOUNTED, int FINAL_REFS = 0, const char *pszName = NULL>
 class CRefDebug : public BASE_REFCOUNTED
 {
@@ -333,6 +334,7 @@ public:
 	}
 #endif
 };
+#endif
 
 //-----------------------------------------------------------------------------
 
