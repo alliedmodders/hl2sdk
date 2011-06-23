@@ -401,7 +401,7 @@ public:
 // Main file system interface
 //-----------------------------------------------------------------------------
 
-#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem017"
+#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem019"
 
 abstract_class IFileSystem : public IAppSystem, public IBaseFileSystem
 {
@@ -549,6 +549,10 @@ public:
 	virtual FSAsyncStatus_t	AsyncFlush() = 0;
 	virtual bool			AsyncSuspend() = 0;
 	virtual bool			AsyncResume() = 0;
+	
+	// Next two functions each take an IAsyncFileFetch ptr.
+	virtual void			AsyncAddFetcher( void *pFetch ) = 0;
+	virtual void			AsyncRemoveFetcher( void *pFetch ) = 0;
 
 	//------------------------------------
 	// Functions to hold a file open if planning on doing mutiple reads. Use is optional,
@@ -720,6 +724,11 @@ public:
 	// with check_crc.   Then it calls CheckCachedFileCRC later when it gets client requests to verify CRCs.
 	virtual void			CacheFileCRCs( const char *pPathname, ECacheCRCType eType, IFileList *pFilter ) = 0;
 	virtual EFileCRCStatus	CheckCachedFileCRC( const char *pPathID, const char *pRelativeFilename, CRC32_t *pCRC ) = 0;
+	
+	virtual void			CacheFileMD5s( const char *pPathname, ECacheCRCType eType, IFileList *pFilter ) = 0;
+
+	// Last param is an MD5Value_t pointer.
+	virtual	EFileCRCStatus	CheckCachedFileMD5( const char *pPathID, const char *pRelativeFilename, void *pMD5 ) = 0;
 
 	// Fills in the list of files that have been loaded off disk and have not been verified.
 	// Returns the number of files filled in (between 0 and nMaxFiles).
@@ -728,6 +737,9 @@ public:
 	// returned from here again.
 	// The client sends batches of these to the server to verify.
 	virtual int				GetUnverifiedCRCFiles( CUnverifiedCRCFile *pFiles, int nMaxFiles ) = 0;
+
+	// First param is a CUnverifiedMD5File pointer.
+	virtual int				GetUnverifiedMD5Files( void *pFiles, int nMaxFiles ) = 0;
 	
 	// Control debug message output.
 	// Pass a combination of WHITELIST_SPEW_ flags.
@@ -736,6 +748,15 @@ public:
 
 	// Installs a callback used to display a dirty disk dialog
 	virtual void			InstallDirtyDiskReportFunc( FSDirtyDiskReportFunc_t func ) = 0;
+	
+	// This looks to return a "CFileCacheObject" object.
+	virtual void			*CreateFileCache( void ) = 0;
+	
+	// Assuming that the first param in each of these is also a CFileCacheObject ptr.
+	virtual void			AddFilesToFileCache( void *pFileCache, const char **, int size, const char * ) = 0;
+	virtual bool			IsFileCacheFileLoaded( void *pFileCache, const char *szFile ) = 0;
+	virtual bool			IsFileCacheLoaded( void *pFileCache ) = 0;
+	virtual void			DestroyFileCache( void *pFileCache ) = 0;
 };
 
 //-----------------------------------------------------------------------------
