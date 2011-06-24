@@ -30,7 +30,7 @@ CLINK = /usr/bin/gcc-4.2
 CPP_LIB = "libstdc++.a libgcc_eh.a"
 
 # put any compiler flags you want passed here
-USER_CFLAGS =
+USER_CFLAGS = -v -isysroot /Developer/SDKs/MacOSX10.5.sdk
 
 # link flags for your mod, make sure to include any special libraries here
 LDFLAGS = "-lm -ldl $(LIB_DIR)/particles_i486.a $(LIB_DIR)/dmxloader_i486.a $(LIB_DIR)/mathlib_i486.a tier0_i486.so vstdlib_i486.so $(LIB_DIR)/tier1_i486.a $(LIB_DIR)/tier2_i486.a $(LIB_DIR)/tier3_i486.a $(LIB_DIR)/choreoobjects_i486.a steam_api_i486.so"
@@ -59,13 +59,13 @@ BUILD_OBJ_DIR = $(BUILD_DIR)/obj
 # the location of the source code
 SRC_DIR = ..
 # the location of the Linux static libraries
-LIB_DIR = $(SRC_DIR)/lib/linux
+LIB_DIR = $(SRC_DIR)/lib/mac
 
 # the CPU target for the build, must be i486 for now
 ARCH = i486
-ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -m32
+ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -arch i386 -m32
 
-DEFINES = -D_LINUX -DLINUX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp \
+DEFINES = -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp \
 	-D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 

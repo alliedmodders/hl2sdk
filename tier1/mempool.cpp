@@ -4,6 +4,7 @@
 //
 //===========================================================================//
 
+#include "tier0/basetypes.h"
 #include "mempool.h"
 #include <stdio.h>
 #ifdef __APPLE__
