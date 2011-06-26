@@ -500,6 +500,8 @@ public:
 	
 	// Called after the steam API has been activated post-level startup
 	virtual void			GameServerSteamAPIActivated( void ) = 0;
+	
+	virtual void			GameServerSteamAPIShutdown( void ) = 0;
 };
 
 //-----------------------------------------------------------------------------
