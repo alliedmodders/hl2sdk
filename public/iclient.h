@@ -98,6 +98,8 @@ public:
 	virtual int		GetNumPlayers() = 0;
 
 	virtual bool	IsHumanPlayer() const = 0;
+
+	virtual int		GetClientPlatform() const = 0;
 };
 
 #endif // ICLIENT_H

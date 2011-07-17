@@ -538,6 +538,12 @@ public:
 		FileFindHandle_t *pHandle
 		) = 0;
 
+	virtual void			FindFileAbsoluteList(
+		CUtlVector<CUtlString, CUtlMemory<CUtlString, int>> &output,
+		const char *pWildCard,
+		const char *pPathID
+		) = 0;
+
 	//--------------------------------------------------------
 	// File name and directory operations
 	//--------------------------------------------------------
