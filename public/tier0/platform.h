@@ -311,6 +311,12 @@ typedef void * HINSTANCE;
 	#define SELECTANY static
 #endif
 
+#ifdef GNUC
+#define FMTFUNCTION( fmtargnumber, firstvarargnumber ) __attribute__ (( format( printf, fmtargnumber, firstvarargnumber )))
+#else
+#define FMTFUNCTION( a, b )
+#endif
+
 #if defined( _WIN32 )
 
 // Used for dll exporting and importing

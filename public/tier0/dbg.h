@@ -15,6 +15,7 @@
 #include "basetypes.h"
 #include "dbgflag.h"
 #include "platform.h"
+#include "logging.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -52,17 +53,9 @@ class Color;
 //-----------------------------------------------------------------------------
 // Usage model for the Dbg library
 //
-// 1. Spew.
-// 
-//   Spew can be used in a static and a dynamic mode. The static
-//   mode allows us to display assertions and other messages either only
-//   in debug builds, or in non-release builds. The dynamic mode allows us to
-//   turn on and off certain spew messages while the application is running.
-// 
-//   Static Spew messages:
+// 1. Assertions.
 //
 //     Assertions are used to detect and warn about invalid states
-//     Spews are used to display a particular status/warning message.
 //
 //     To use an assertion, use
 //
@@ -78,51 +71,6 @@ class Color;
 //     will also cause the function BadFunc to be executed, and the last two
 //	   will report an error if f is not equal to 5 (the last one asserts within
 //	   a particular tolerance).
-//
-//     To use a warning, use
-//      
-//     Warning("Oh I feel so %s all over\n", "yummy");
-//
-//     Warning will do its magic in only Debug builds. To perform spew in *all*
-//     builds, use RelWarning.
-//
-//	   Three other spew types, Msg, Log, and Error, are compiled into all builds.
-//	   These error types do *not* need two sets of parenthesis.
-//
-//	   Msg( "Isn't this exciting %d?", 5 );
-//	   Error( "I'm just thrilled" );
-//
-//   Dynamic Spew messages
-//
-//     It is possible to dynamically turn spew on and off. Dynamic spew is 
-//     identified by a spew group and priority level. To turn spew on for a 
-//     particular spew group, use SpewActivate( "group", level ). This will 
-//     cause all spew in that particular group with priority levels <= the 
-//     level specified in the SpewActivate function to be printed. Use DSpew 
-//     to perform the spew:
-//
-//     DWarning( "group", level, "Oh I feel even yummier!\n" );
-//
-//     Priority level 0 means that the spew will *always* be printed, and group
-//     '*' is the default spew group. If a DWarning is encountered using a group 
-//     whose priority has not been set, it will use the priority of the default 
-//     group. The priority of the default group is initially set to 0.      
-//
-//   Spew output
-//   
-//     The output of the spew system can be redirected to an externally-supplied
-//     function which is responsible for outputting the spew. By default, the 
-//     spew is simply printed using printf.
-//
-//     To redirect spew output, call SpewOutput.
-//
-//     SpewOutputFunc( OutputFunc );
-//
-//     This will cause OutputFunc to be called every time a spew message is
-//     generated. OutputFunc will be passed a spew type and a message to print.
-//     It must return a value indicating whether the debugger should be invoked,
-//     whether the program should continue running, or whether the program 
-//     should abort. 
 //
 // 2. Code activation
 //
@@ -153,55 +101,6 @@ class Color;
 //	 DebuggerBreak();
 //-----------------------------------------------------------------------------
 
-/* Various types of spew messages */
-// I'm sure you're asking yourself why SPEW_ instead of DBG_ ?
-// It's because DBG_ is used all over the place in windows.h
-// For example, DBG_CONTINUE is defined. Feh.
-enum SpewType_t
-{
-	SPEW_MESSAGE = 0,
-	SPEW_WARNING,
-	SPEW_ASSERT,
-	SPEW_ERROR,
-	SPEW_LOG,
-
-	SPEW_TYPE_COUNT
-};
-
-enum SpewRetval_t
-{
-	SPEW_DEBUGGER = 0,
-	SPEW_CONTINUE,
-	SPEW_ABORT
-};
-
-#if 0
-/* type of externally defined function used to display debug spew */
-typedef SpewRetval_t (*SpewOutputFunc_t)( SpewType_t spewType, const tchar *pMsg );
-
-/* Used to redirect spew output */
-DBG_INTERFACE void   SpewOutputFunc( SpewOutputFunc_t func );
-
-/* Used to get the current spew output function */
-DBG_INTERFACE SpewOutputFunc_t GetSpewOutputFunc( void );
-
-/* Should be called only inside a SpewOutputFunc_t, returns groupname, level, color */
-DBG_INTERFACE const tchar* GetSpewOutputGroup( void );
-DBG_INTERFACE int GetSpewOutputLevel( void );
-DBG_INTERFACE const Color& GetSpewOutputColor( void );
-
-/* Used to manage spew groups and subgroups */
-DBG_INTERFACE void   SpewActivate( const tchar* pGroupName, int level );
-DBG_INTERFACE bool   IsSpewActive( const tchar* pGroupName, int level );
-
-/* Used to display messages, should never be called directly. */
-DBG_INTERFACE void   _SpewInfo( SpewType_t type, const tchar* pFile, int line );
-DBG_INTERFACE SpewRetval_t   _SpewMessage( const tchar* pMsg, ... );
-DBG_INTERFACE SpewRetval_t   _DSpewMessage( const tchar *pGroupName, int level, const tchar* pMsg, ... );
-DBG_INTERFACE SpewRetval_t   ColorSpewMessage( SpewType_t type, const Color *pColor, const tchar* pMsg, ... );
-#endif
-
-DBG_INTERFACE int LoggingSystem_LogAssert( const tchar *pMsg, ... );
 DBG_INTERFACE void _ExitOnFatalAssert( const tchar* pFile, int line );
 DBG_INTERFACE bool ShouldUseNewAssertDialog();
 
@@ -216,9 +115,9 @@ DBG_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const tchar 
 	do {																\
 		if (!(_exp)) 													\
 		{ 																\
-			int ret = LoggingSystem_LogAssert("%s", _msg);				\
+			LoggingResponse_t ret = Log_Assert( "%s (%d) : %s\n", __TFILE__, __LINE__, _msg );	\
 			_executeExp; 												\
-			if ( ret )													\
+			if ( ret == LR_DEBUGGER )									\
 			{															\
 				if ( !ShouldUseNewAssertDialog() || DoNewAssertDialog( __TFILE__, __LINE__, _msg ) ) \
 					DebuggerBreak();									\
@@ -234,7 +133,7 @@ DBG_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const tchar 
 		if (!fAsserted )												\
 		{ 																\
 			_AssertMsg( _exp, _msg, (fAsserted = true), _bFatal );		\
-		}														\
+		}																\
 	} while (0)
 
 /* Spew macros... */
@@ -343,21 +242,54 @@ DBG_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const tchar 
 
 #endif // DBGFLAG_ASSERT
 
+#define FILE_LINE_FUNCTION_STRINGIFY(x) #x
+#define FILE_LINE_FUNCTION_TOSTRING(x) FILE_LINE_FUNCTION_STRINGIFY(x)
+#define FILE_LINE_FUNCTION_STRING __FILE__ "(" FILE_LINE_FUNCTION_TOSTRING(__LINE__) "):" __FUNCTION__ ":"
 
-#if !defined( _X360 ) || !defined( _RETAIL )
+#define FILE_LINE_STRINGIFY(x) #x
+#define FILE_LINE_TOSTRING(x) FILE_LINE_STRINGIFY(x)
+#define FILE_LINE_STRING __FILE__ "(" FILE_LINE_TOSTRING(__LINE__) "):"
 
-/* These are always compiled in */
+#define FUNCTION_LINE_STRINGIFY(x) #x
+#define FUNCTION_LINE_TOSTRING(x) FUNCTION_LINE_STRINGIFY(x)
+#define FUNCTION_LINE_STRING __FUNCTION__ "(" FUNCTION_LINE_TOSTRING(__LINE__) "): "
+
+//////////////////////////////////////////////////////////////////////////
+// Legacy Logging System
+//////////////////////////////////////////////////////////////////////////
+
+// Channels which map the legacy logging system to the new system.
+
+// Channel for all default Msg/Warning/Error commands.
+DECLARE_LOGGING_CHANNEL( LOG_GENERAL );
+// Channel for all asserts.
+DECLARE_LOGGING_CHANNEL( LOG_ASSERT );
+// Channel for all ConMsg and ConColorMsg commands.
+DECLARE_LOGGING_CHANNEL( LOG_CONSOLE );
+// Channel for all DevMsg and DevWarning commands with level < 2.
+DECLARE_LOGGING_CHANNEL( LOG_DEVELOPER );
+// Channel for ConDMsg commands.
+DECLARE_LOGGING_CHANNEL( LOG_DEVELOPER_CONSOLE );
+// Channel for all DevMsg and DevWarning commands with level >= 2.
+DECLARE_LOGGING_CHANNEL( LOG_DEVELOPER_VERBOSE );
+
+// Legacy logging functions
+
 DBG_INTERFACE void Msg( const tchar* pMsg, ... );
-DBG_INTERFACE void Warning( const tchar *pMsg, ... );
-DBG_INTERFACE void Error( const tchar *pMsg, ... );
+DBG_INTERFACE void Warning( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+DBG_INTERFACE void Error( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
 
-#else
+// @TODO: these callstack spew functions are currently disabled in the new logging system.  Need to add support for these if desired.
+DBG_INTERFACE void _Warning_AlwaysSpewCallStack_Enable( bool bEnable );
+DBG_INTERFACE void _Warning_AlwaysSpewCallStack_Length( int iMaxCallStackLength );
 
-inline void Msg( ... ) {}
-inline void Warning( const tchar *pMsg, ... ) {}
-inline void Error( ... ) {}
+DBG_INTERFACE void _Error_AlwaysSpewCallStack_Enable( bool bEnable );
+DBG_INTERFACE void _Error_AlwaysSpewCallStack_Length( int iMaxCallStackLength );
 
-#endif
+DBG_INTERFACE void DevMsg( int level, const tchar* pMsg, ... ) FMTFUNCTION( 2, 3 );
+DBG_INTERFACE void DevWarning( int level, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
+
+DBG_INTERFACE void ConDMsg( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
 
 // You can use this macro like a runtime assert macro.
 // If the condition fails, then Error is called with the message. This macro is called
@@ -400,7 +332,7 @@ inline void ConDMsg( ... ) {}
 
 #endif
 
-DBG_INTERFACE void COM_TimestampedLog( char const *fmt, ... );
+DBG_INTERFACE void COM_TimestampedLog( char const *fmt, ... ) FMTFUNCTION( 1, 2 );
 
 /* Code macros, debugger interface */
 
@@ -689,6 +621,77 @@ private:
 
 #endif
 
+//-----------------------------------------------------------------------------
+// Code for programmatically setting/unsetting hardware breakpoints (there's probably a 360 and
+#ifdef IS_WINDOWS_PC
+
+typedef void * HardwareBreakpointHandle_t;
+
+enum EHardwareBreakpointType
+{
+	BREAKPOINT_EXECUTE = 0,
+	BREAKPOINT_WRITE,
+	BREAKPOINT_READWRITE,
+};
+
+enum EHardwareBreakpointSize
+{
+	BREAKPOINT_SIZE_1 = 1,
+	BREAKPOINT_SIZE_2 = 2,
+	BREAKPOINT_SIZE_4 = 4,
+	BREAKPOINT_SIZE_8 = 8,
+};
+
+DBG_INTERFACE HardwareBreakpointHandle_t SetHardwareBreakpoint( EHardwareBreakpointType eType, EHardwareBreakpointSize eSize, const void *pvLocation );
+DBG_INTERFACE bool ClearHardwareBreakpoint( HardwareBreakpointHandle_t handle );
+
+class CHardwareBreakPointScopeGuard
+{
+public:
+	CHardwareBreakPointScopeGuard( const void *pvLocation, size_t nLocationSize, EHardwareBreakpointType eType = BREAKPOINT_WRITE )
+	{
+		EHardwareBreakpointSize eSize = BREAKPOINT_SIZE_4;
+		switch ( nLocationSize )
+		{
+		case 1:
+			eSize = BREAKPOINT_SIZE_1;
+			break;
+		case 2:
+			eSize = BREAKPOINT_SIZE_2;
+			break;
+		case 4:
+			eSize = BREAKPOINT_SIZE_4;
+			break;
+		case 8:
+			eSize = BREAKPOINT_SIZE_8;
+			break;
+		default:
+			Warning( "SetHardwareBreakpoint can only work with 1, 2, 4 or 8 byte data fields." );
+			break;
+		}
+
+		m_hBreakPoint = SetHardwareBreakpoint( eType, eSize, pvLocation );
+		m_bActive = m_hBreakPoint != (HardwareBreakpointHandle_t)0;
+	}
+
+	~CHardwareBreakPointScopeGuard()
+	{
+		Release();
+	}
+
+	void Release()
+	{
+		if ( !m_bActive )
+			return;
+		ClearHardwareBreakpoint( m_hBreakPoint );
+	}
+
+private:
+	bool						m_bActive;
+	HardwareBreakpointHandle_t	m_hBreakPoint;
+};
+
+#endif // IS_WINDOWS_PC
 //-----------------------------------------------------------------------------
 
 #endif /* DBG_H */
