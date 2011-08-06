@@ -549,7 +549,10 @@ abstract_class IServerGameClients
 public:
 	// Get server maxplayers and lower bound for same
 	virtual void			GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers ) const = 0;
-
+	
+	// Oh
+	virtual bool			IsGameModeOneOrSeven() = 0;
+	
 	// Client is connecting to server ( return false to reject the connection )
 	//	You can specify a rejection message by writing it into reject
 	virtual bool			ClientConnect( edict_t *pEntity, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen ) = 0;
