@@ -406,8 +406,6 @@ public:
 										CreateInterfaceFn fileSystemFactory, 
 										CGlobalVars *pGlobals) = 0;
 	
-	virtual bool			ReplayInit( CreateInterfaceFn replayFactory ) = 0;
-	
 	// This is called when a new game is started. (restart, map)
 	virtual bool			GameInit( void ) = 0;
 
