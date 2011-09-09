@@ -28,6 +28,7 @@ BEGIN_SIMPLE_DATADESC( CTakeDamageInfo )
 	DEFINE_FIELD( m_iDamageCustom, FIELD_INTEGER),
 	DEFINE_FIELD( m_iDamageStats, FIELD_INTEGER),
 	DEFINE_FIELD( m_iAmmoType, FIELD_INTEGER),
+	DEFINE_FIELD( m_iDamagedOtherPlayers, FIELD_INTEGER),
 END_DATADESC()
 
 void CTakeDamageInfo::Init( CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBaseEntity *pWeapon, const Vector &damageForce, const Vector &damagePosition, const Vector &reportedPosition, float flDamage, int bitsDamageType, int iCustomDamage )
@@ -56,6 +57,9 @@ void CTakeDamageInfo::Init( CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBa
 	m_vecDamagePosition = damagePosition;
 	m_vecReportedPosition = reportedPosition;
 	m_iAmmoType = -1;
+	
+	m_iDamagedOtherPlayers = 0;
+	m_iPlayerPenetrateCount = 0;
 }
 
 CTakeDamageInfo::CTakeDamageInfo()
