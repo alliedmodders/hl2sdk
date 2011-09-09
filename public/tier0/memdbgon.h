@@ -38,7 +38,7 @@
 #include "memalloc.h"
 
 #if defined(USE_MEM_DEBUG)
-	#if defined(_LINUX)
+	#if defined(_LINUX) || defined(__APPLE__)
 	
 		#define _NORMAL_BLOCK 1
 		
