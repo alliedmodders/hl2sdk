@@ -391,7 +391,8 @@ public:
 
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_5	"ServerGameDLL005"
-#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL006"
+#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_6	"ServerGameDLL006"
+#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL007"
 
 //-----------------------------------------------------------------------------
 // Purpose: These are the interfaces that the game .dll exposes to the engine
@@ -541,7 +542,7 @@ public:
 	virtual void			CheckTransmit( CCheckTransmitInfo *pInfo, const unsigned short *pEdictIndices, int nEdicts ) = 0;
 };
 
-#define INTERFACEVERSION_SERVERGAMECLIENTS		"ServerGameClients003"
+#define INTERFACEVERSION_SERVERGAMECLIENTS		"ServerGameClients004"
 
 //-----------------------------------------------------------------------------
 // Purpose: Player / Client related functions
@@ -603,6 +604,8 @@ public:
 	
 	// The client has submitted a keyvalues command
 	virtual void			ClientCommandKeyValues( edict_t *pEntity, KeyValues *pKeyValues ) = 0;
+	
+	virtual void			ClientSpawned( edict_t *pEntity ) = 0;
 };
 
 #define INTERFACEVERSION_UPLOADGAMESTATS		"ServerUploadGameStats001"
