@@ -12,6 +12,7 @@
 
 #include "appframework/IAppSystem.h"
 #include "tier1/iconvar.h"
+#include "tier0/memalloc.h"
 
 class ConCommandBase;
 class ConCommand;
