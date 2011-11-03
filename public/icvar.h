@@ -1,4 +1,4 @@
-//===== Copyright � 1996-2005, Valve Corporation, All rights reserved. ======//
+﻿//===== Copyright � 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -13,7 +13,7 @@
 #include "appframework/IAppSystem.h"
 #include "tier1/iconvar.h"
 #include "tier1/utlvector.h"
-
+#include "tier0/memalloc.h"
 
 class ConCommandBase;
 class ConCommand;
