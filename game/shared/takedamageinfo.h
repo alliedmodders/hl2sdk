@@ -37,12 +37,6 @@ public:
 	CBaseEntity*	GetInflictor() const;
 	void			SetInflictor( CBaseEntity *pInflictor );
 
-	// Weapon is the weapon that did the attack.
-	// For hitscan weapons, it'll be the same as the inflictor. For projectile weapons, the projectile 
-	// is the inflictor, and this contains the weapon that created the projectile.
-	CBaseEntity*	GetWeapon() const;
-	void			SetWeapon( CBaseEntity *pWeapon );
-
 	// Attacker is the character who originated the attack (like a player or an AI).
 	CBaseEntity*	GetAttacker() const;
 	void			SetAttacker( CBaseEntity *pAttacker );
@@ -104,7 +98,6 @@ protected:
 	Vector			m_vecReportedPosition;	// Position players are told damage is coming from
 	EHANDLE			m_hInflictor;
 	EHANDLE			m_hAttacker;
-	EHANDLE			m_hWeapon;
 	float			m_flDamage;
 	float			m_flMaxDamage;
 	float			m_flBaseDamage;			// The damage amount before skill leve adjustments are made. Used to get uniform damage forces.
@@ -179,17 +172,6 @@ inline CBaseEntity* CTakeDamageInfo::GetAttacker() const
 inline void CTakeDamageInfo::SetAttacker( CBaseEntity *pAttacker )
 {
 	m_hAttacker = pAttacker;
-}
-
-inline CBaseEntity* CTakeDamageInfo::GetWeapon() const
-{
-	return m_hWeapon;
-}
-
-
-inline void CTakeDamageInfo::SetWeapon( CBaseEntity *pWeapon )
-{
-	m_hWeapon = pWeapon;
 }
 
 
