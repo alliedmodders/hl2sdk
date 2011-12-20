@@ -536,7 +536,7 @@ float C_HL2MP_Player::GetFOV( void )
 	int min_fov = GetMinFOV();
 	
 	// Don't let it go too low
-	flFOVOffset = max( min_fov, flFOVOffset );
+	flFOVOffset = MAX( min_fov, flFOVOffset );
 
 	return flFOVOffset;
 }

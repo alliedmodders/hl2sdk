@@ -323,7 +323,7 @@ void C_SmokeTrail::Update( float fTimeDelta )
 		VectorMA( pParticle->m_vecVelocity, flDirectedVel, vecForward, pParticle->m_vecVelocity );
 
 		offsetColor = m_StartColor;
-		float flMaxVal = max( m_StartColor[0], m_StartColor[1] );
+		float flMaxVal = MAX( m_StartColor[0], m_StartColor[1] );
 		if ( flMaxVal < m_StartColor[2] )
 		{
 			flMaxVal = m_StartColor[2];
@@ -1839,7 +1839,7 @@ void C_DustTrail::Update( float fTimeDelta )
 		VectorMA( pParticle->m_vecVelocity, flDirectedVel, vecForward, pParticle->m_vecVelocity );
 
 		offsetColor = m_Color;
-		float flMaxVal = max( m_Color[0], m_Color[1] );
+		float flMaxVal = MAX( m_Color[0], m_Color[1] );
 		if ( flMaxVal < m_Color[2] )
 		{
 			flMaxVal = m_Color[2];

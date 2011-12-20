@@ -390,7 +390,7 @@ void CPropCannon::DriveCannon( int iDriverButtons, int iButtonsPressed )
 		// If we're turning back on ourselves, use decel speed
 		if ( m_flTurn < 0 )
 		{
-			flTurnAdd = max( flTurnAdd, m_flTurnDecel );
+			flTurnAdd = MAX( flTurnAdd, m_flTurnDecel );
 		}
 
 		m_flTurn = UTIL_Approach( m_flMaxTurnSpeed, m_flTurn, flTurnAdd * gpGlobals->frametime );
@@ -404,7 +404,7 @@ void CPropCannon::DriveCannon( int iDriverButtons, int iButtonsPressed )
 		// If we're turning back on ourselves, increase the rate
 		if ( m_flTurn > 0 )
 		{
-			flTurnAdd = max( flTurnAdd, m_flTurnDecel );
+			flTurnAdd = MAX( flTurnAdd, m_flTurnDecel );
 		}
 		m_flTurn = UTIL_Approach( -m_flMaxTurnSpeed, m_flTurn, flTurnAdd * gpGlobals->frametime );
 

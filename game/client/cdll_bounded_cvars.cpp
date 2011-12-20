@@ -110,7 +110,7 @@ public:
 		  static const ConVar *pMin = dynamic_cast< const ConVar* >( g_pCVar->FindCommandBase( "sv_client_min_interp_ratio" ) );
 		  if ( pUpdateRate && pMin && pMin->GetFloat() != -1 )
 		  {
-			  return max( GetBaseFloatValue(), pMin->GetFloat() / pUpdateRate->GetFloat() );
+			  return MAX( GetBaseFloatValue(), pMin->GetFloat() / pUpdateRate->GetFloat() );
 		  }
 		  else
 		  {
@@ -128,7 +128,7 @@ float GetClientInterpAmount()
 	if ( pUpdateRate )
 	{
 		// #define FIXME_INTERP_RATIO
-		return max( cl_interp->GetFloat(), cl_interp_ratio->GetFloat() / pUpdateRate->GetFloat() );
+		return MAX( cl_interp->GetFloat(), cl_interp_ratio->GetFloat() / pUpdateRate->GetFloat() );
 	}
 	else
 	{

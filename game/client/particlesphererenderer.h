@@ -110,7 +110,7 @@ inline void CParticleSphereRenderer::AddLightColor(
 
 inline void CParticleSphereRenderer::ClampColor( Vector &vColor )
 {
-	float flMax = max( vColor.x, max( vColor.y, vColor.z ) );
+	float flMax = MAX( vColor.x, MAX( vColor.y, vColor.z ) );
 	if( flMax > 1 )
 	{
 		vColor *= 255.0f / flMax;

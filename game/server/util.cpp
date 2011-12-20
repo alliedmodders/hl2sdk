@@ -712,7 +712,7 @@ void UTIL_GetPlayerConnectionInfo( int playerIndex, int& ping, int &packetloss )
 		// then updaterate, what is the case for default settings
 		const char * szCmdRate = engine->GetClientConVarValue( playerIndex, "cl_cmdrate" );
 		
-		int nCmdRate = max( 1, Q_atoi( szCmdRate ) );
+		int nCmdRate = MAX( 1, Q_atoi( szCmdRate ) );
 		latency -= (0.5f/nCmdRate) + TICKS_TO_TIME( 1.0f ); // correct latency
 
 		// in GoldSrc we had a different, not fixed tickrate. so we have to adjust
@@ -1365,7 +1365,7 @@ void UTIL_BloodStream( const Vector &origin, const Vector &direction, int color,
 		color = 0;
 
 	CPVSFilter filter( origin );
-	te->BloodStream( filter, 0.0, &origin, &direction, 247, 63, 14, 255, min( amount, 255 ) );
+	te->BloodStream( filter, 0.0, &origin, &direction, 247, 63, 14, 255, MIN( amount, 255 ) );
 }				
 
 

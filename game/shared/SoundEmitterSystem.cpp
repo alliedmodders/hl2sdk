@@ -656,7 +656,7 @@ public:
 			// Send caption and duration hint down to client
 			UserMessageBegin( filterCopy, "CloseCaption" );
 				WRITE_STRING( lowercase );
-				WRITE_SHORT( min( 255, (int)( duration * 10.0f ) ) ),
+				WRITE_SHORT( MIN( 255, (int)( duration * 10.0f ) ) ),
 				WRITE_BYTE( byteflags ),
 			MessageEnd();
 #else

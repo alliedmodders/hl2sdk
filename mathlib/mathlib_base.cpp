@@ -1667,7 +1667,7 @@ void QuaternionScale( const Quaternion &p, float t, Quaternion &q )
 	// FIXME: nick, this isn't overly sensitive to accuracy, and it may be faster to 
 	// use the cos part (w) of the quaternion (sin(omega)*N,cos(omega)) to figure the new scale.
 	float sinom = sqrt( DotProduct( &p.x, &p.x ) );
-	sinom = min( sinom, 1.f );
+	sinom = MIN( sinom, 1.f );
 
 	float sinsom = sin( asin( sinom ) * t );
 
@@ -3938,10 +3938,10 @@ void CalcTriangleTangentSpace( const Vector &p0, const Vector &p1, const Vector 
 //-----------------------------------------------------------------------------
 void RGBtoHSV( const Vector &rgb, Vector &hsv )
 {
-	float flMax = max( rgb.x, rgb.y );
-	flMax = max( flMax, rgb.z );
-	float flMin = min( rgb.x, rgb.y );
-	flMin = min( flMin, rgb.z );
+	float flMax = MAX( rgb.x, rgb.y );
+	flMax = MAX( flMax, rgb.z );
+	float flMin = MIN( rgb.x, rgb.y );
+	flMin = MIN( flMin, rgb.z );
 
 	// hsv.z is the value
 	hsv.z = flMax;

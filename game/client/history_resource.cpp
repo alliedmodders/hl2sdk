@@ -298,7 +298,7 @@ void CHudHistoryResource::Paint( void )
 	{
 		if ( m_PickupHistory[i].type )
 		{
-			m_PickupHistory[i].DisplayTime = min( m_PickupHistory[i].DisplayTime, gpGlobals->curtime + hud_drawhistory_time.GetFloat() );
+			m_PickupHistory[i].DisplayTime = MIN( m_PickupHistory[i].DisplayTime, gpGlobals->curtime + hud_drawhistory_time.GetFloat() );
 			if ( m_PickupHistory[i].DisplayTime <= gpGlobals->curtime )
 			{  
 				// pic drawing time has expired
@@ -310,7 +310,7 @@ void CHudHistoryResource::Paint( void )
 			float elapsed = m_PickupHistory[i].DisplayTime - gpGlobals->curtime;
 			float scale = elapsed * 80;
 			Color clr = gHUD.m_clrNormal;
-			clr[3] = min( scale, 255 );
+			clr[3] = MIN( scale, 255 );
 
 			bool bUseAmmoFullMsg = false;
 
@@ -350,7 +350,7 @@ void CHudHistoryResource::Paint( void )
 					bUseAmmoFullMsg = true;
 					// display as red
 					clr = gHUD.m_clrCaution;	
-					clr[3] = min( scale, 255 );
+					clr[3] = MIN( scale, 255 );
 				}
 				break;
 
@@ -364,7 +364,7 @@ void CHudHistoryResource::Paint( void )
 					{
 						// if the weapon doesn't have ammo, display it as red
 						clr = gHUD.m_clrCaution;	
-						clr[3] = min( scale, 255 );
+						clr[3] = MIN( scale, 255 );
 					}
 
 					itemIcon = pWeapon->GetSpriteInactive();

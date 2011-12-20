@@ -273,8 +273,8 @@ bool CWeaponSniperRifle::Reload( void )
 		
 	if (pOwner->GetAmmoCount(m_iPrimaryAmmoType) > 0)
 	{
-		int primary		= min(GetMaxClip1() - m_iClip1, pOwner->GetAmmoCount(m_iPrimaryAmmoType));
-		int secondary	= min(GetMaxClip2() - m_iClip2, pOwner->GetAmmoCount(m_iSecondaryAmmoType));
+		int primary		= MIN(GetMaxClip1() - m_iClip1, pOwner->GetAmmoCount(m_iPrimaryAmmoType));
+		int secondary	= MIN(GetMaxClip2() - m_iClip2, pOwner->GetAmmoCount(m_iSecondaryAmmoType));
 
 		if (primary > 0 || secondary > 0)
 		{

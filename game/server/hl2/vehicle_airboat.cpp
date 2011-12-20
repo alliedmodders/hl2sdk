@@ -805,7 +805,7 @@ Vector CPropAirboat::GetSmoothedVelocity( void )
 
 	Vector vecForward;
 	GetVectors( &vecForward, NULL, NULL );
-	vecForward *= max( flSpeed, 1.0f );
+	vecForward *= MAX( flSpeed, 1.0f );
 	if ( flSpeed <= SMOOTHED_MIN_VELOCITY )
 		return vecForward;
 

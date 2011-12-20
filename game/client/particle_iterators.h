@@ -167,8 +167,8 @@ inline const Particle* CParticleRenderIterator::GetNext( float sortKey )
 	// Update the incremental sort.
 	if( m_bBucketSort )
 	{
-		m_MinZ = min( sortKey, m_MinZ );
-		m_MaxZ = max( sortKey, m_MaxZ );
+		m_MinZ = MIN( sortKey, m_MinZ );
+		m_MaxZ = MAX( sortKey, m_MaxZ );
 		
 		m_zCoords[m_nZCoords] = sortKey;
 		++m_nZCoords;

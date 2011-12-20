@@ -194,7 +194,7 @@ void CHudZoom::Paint( void )
 	{
 		surface()->DrawFilledRect(xpos, ypos, xpos + 1, ypos + m_flDashHeight);
 		surface()->DrawFilledRect(wide - xpos, ypos, wide - xpos + 1, ypos + m_flDashHeight);
-		xpos = (int)((wide / 2) + (m_flDashGap * ++dashCount * max(scale,0.1f)));
+		xpos = (int)((wide / 2) + (m_flDashGap * ++dashCount * MAX(scale,0.1f)));
 	}
 
 	// draw the darkened edges, with a rotated texture in the four corners

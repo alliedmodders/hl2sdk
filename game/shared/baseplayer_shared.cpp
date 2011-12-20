@@ -1217,10 +1217,10 @@ void CBasePlayer::PlayerUse ( void )
 				vPushAway.z = 0;
 
 				float flDist = VectorNormalize( vPushAway );
-				flDist = max( flDist, 1 );
+				flDist = MAX( flDist, 1 );
 
 				float flForce = sv_pushaway_force.GetFloat() / flDist;
-				flForce = min( flForce, sv_pushaway_max_force.GetFloat() );
+				flForce = MIN( flForce, sv_pushaway_max_force.GetFloat() );
 
 				pObj->ApplyForceOffset( vPushAway * flForce, WorldSpaceCenter() );
 			}

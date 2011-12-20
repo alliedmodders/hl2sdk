@@ -132,7 +132,7 @@ protected:
 			const int MAX_GROW = 128;
 			if ( m_nGrowSize * sizeof(T) > MAX_GROW )
 			{
-				m_nGrowSize = max( 1, MAX_GROW / sizeof(T) );
+				m_nGrowSize = MAX( 1, MAX_GROW / sizeof(T) );
 			}
 		}
 #endif

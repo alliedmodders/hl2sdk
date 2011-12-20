@@ -271,7 +271,7 @@ public:
 				
 				if ( pItem )
 				{
-					int nObjects = min( header.nObjects, pItem->header.nObjects );
+					int nObjects = MIN( header.nObjects, pItem->header.nObjects );
 					if ( pItem->header.type == PIID_IPHYSICSOBJECT && nObjects == 1 )
 					{
 						RestorePhysicsObjectAndModel( pRestore, header, pItem, nObjects );

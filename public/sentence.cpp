@@ -1096,7 +1096,7 @@ void CSentence::ResetToBase( void )
 void CSentence::MarkNewPhraseBase( void )
 {
 #if PHONEME_EDITOR
-	m_nResetWordBase = max( m_Words.Size(), 0 );
+	m_nResetWordBase = MAX( m_Words.Size(), 0 );
 #endif
 }
 
@@ -1491,10 +1491,10 @@ float CSentence::GetIntensity( float time, float endtime )
 	int end = i + 1;
 	int next = i + 2;
 
-	prev = max( -1, prev );
-	start = max( -1, start );
-	end = min( end, GetNumSamples() );
-	next = min( next, GetNumSamples() );
+	prev = MAX( -1, prev );
+	start = MAX( -1, start );
+	end = MIN( end, GetNumSamples() );
+	next = MIN( next, GetNumSamples() );
 
 	CEmphasisSample *esPre = GetBoundedSample( prev, endtime );
 	CEmphasisSample *esStart = GetBoundedSample( start, endtime );

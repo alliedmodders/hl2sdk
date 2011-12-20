@@ -643,5 +643,5 @@ void MenuItem::GetContentSize( int& cw, int &ch )
 	m_pCurrentKeyBinding->GetSize( iw, ih );
 
 	cw += iw + KEYBINDING_INSET;
-	ch = max( ch, ih );
+	ch = MAX( ch, ih );
 }

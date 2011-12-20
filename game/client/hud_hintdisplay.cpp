@@ -176,7 +176,7 @@ void CHudHintDisplay::PerformLayout()
 	int iDesiredLabelWide = 0;
 	for ( i=0; i < m_Labels.Count(); ++i )
 	{
-		iDesiredLabelWide = max( iDesiredLabelWide, m_Labels[i]->GetWide() );
+		iDesiredLabelWide = MAX( iDesiredLabelWide, m_Labels[i]->GetWide() );
 	}
 
 	// find the total height
@@ -216,10 +216,10 @@ void CHudHintDisplay::PerformLayout()
 		y = (tall - labelTall) / 2;
 	}
 
-	x = max(x,0);
-	y = max(y,0);
+	x = MAX(x,0);
+	y = MAX(y,0);
 
-	iDesiredLabelWide = min(iDesiredLabelWide,wide);
+	iDesiredLabelWide = MIN(iDesiredLabelWide,wide);
 	m_pLabel->SetBounds( x, y, iDesiredLabelWide, labelTall );
 
 	// now lay out the sub-labels
@@ -670,7 +670,7 @@ bool CHudHintKeyDisplay::SetHintText( const char *text )
 			}
 		}
 	}
-	int tallest = max( tallest1, tallest2 );
+	int tallest = MAX( tallest1, tallest2 );
 
 	// position the labels
 	int col1_x = m_iTextX;

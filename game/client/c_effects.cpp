@@ -761,7 +761,7 @@ bool CClient_Precipitation::ComputeEmissionArea( Vector& origin, Vector2D& size 
 		return false;
 
 	// Determine how much time it'll take a falling particle to hit the player
-	float emissionHeight = min( vMaxs[2], pPlayer->GetAbsOrigin()[2] + 512 );
+	float emissionHeight = MIN( vMaxs[2], pPlayer->GetAbsOrigin()[2] + 512 );
 	float distToFall = emissionHeight - pPlayer->GetAbsOrigin()[2];
 	float fallTime = distToFall / GetSpeed();
 	
@@ -781,12 +781,12 @@ bool CClient_Precipitation::ComputeEmissionArea( Vector& origin, Vector2D& size 
 		 ( vMins[0] > hibound[0] ) || ( vMins[1] > hibound[1] ) )
 		return false;
 
-	origin[0] = max( vMins[0], lobound[0] );
-	origin[1] = max( vMins[1], lobound[1] );
+	origin[0] = MAX( vMins[0], lobound[0] );
+	origin[1] = MAX( vMins[1], lobound[1] );
 	origin[2] = emissionHeight;
 
-	hibound[0] = min( vMaxs[0], hibound[0] );
-	hibound[1] = min( vMaxs[1], hibound[1] );
+	hibound[0] = MIN( vMaxs[0], hibound[0] );
+	hibound[1] = MIN( vMaxs[1], hibound[1] );
 
 	size[0] = hibound[0] - origin[0];
 	size[1] = hibound[1] - origin[1];

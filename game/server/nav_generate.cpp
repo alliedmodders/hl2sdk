@@ -481,7 +481,7 @@ void CNavLadder::ConnectGeneratedLadder( void )
 	center = m_top + Vector( 0, 0, GenerationStepSize );
 	AddDirectionVector( &center, m_dir, HalfHumanWidth );
 
-	float beneathLimit = min( 120.0f, m_top.z - m_bottom.z + HalfHumanWidth );
+	float beneathLimit = MIN( 120.0f, m_top.z - m_bottom.z + HalfHumanWidth );
 
 	// find "ahead" area
 	m_topForwardArea = findFirstAreaInDirection( &center, OppositeDirection( m_dir ), nearLadderRange, beneathLimit, NULL );

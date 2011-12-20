@@ -209,7 +209,7 @@ void FX_PlayerAR2Tracer( const Vector &start, const Vector &end )
 
 	//Randomly place the tracer along this line, with a random length
 	VectorMA( start, random->RandomFloat( 0.0f, 8.0f ), shotDir, dStart );
-	VectorMA( dStart, min( length, random->RandomFloat( 256.0f, 1024.0f ) ), shotDir, dEnd );
+	VectorMA( dStart, MIN( length, random->RandomFloat( 256.0f, 1024.0f ) ), shotDir, dEnd );
 
 	//Create the line
 	CFXStaticLine *tracerLine = new CFXStaticLine( "Tracer", dStart, dEnd, random->RandomFloat( 6.0f, 12.0f ), 0.01f, "effects/gunshiptracer", 0 );

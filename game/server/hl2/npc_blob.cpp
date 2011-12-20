@@ -322,7 +322,7 @@ void CBlobElement::MoveTowardsTargetLocation( float speed )
 		SetActiveMovementRule( BLOB_MOVE_DONT_MOVE );
 	}
 
-	speed = min( dist, speed );
+	speed = MIN( dist, speed );
 
 	SetElementVelocity( vecDir * speed, true );
 }
@@ -588,7 +588,7 @@ void CNPC_Blob::RunAI()
 		if( delta < 0 )
 		{
 			delta = -delta;
-			delta = min(delta, 5 );
+			delta = MIN(delta, 5 );
 			RemoveExcessElements( delta );
 			
 			if( m_iReconfigureElement > m_iNumElements )
@@ -599,7 +599,7 @@ void CNPC_Blob::RunAI()
 		}
 		else
 		{
-			delta = min(delta, 5 );
+			delta = MIN(delta, 5 );
 			AddNewElements( delta );
 		}
 	
@@ -1253,7 +1253,7 @@ int CNPC_Blob::GetBatchStart()
 int CNPC_Blob::GetBatchEnd()
 {
 	int batchDone = m_iBatchStart + ComputeBatchSize();
-	batchDone = min( batchDone, m_Elements.Count() );
+	batchDone = MIN( batchDone, m_Elements.Count() );
 
 	return batchDone;
 }

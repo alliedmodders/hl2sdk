@@ -519,7 +519,7 @@ public:
 	FORCEINLINE void RecordExecutionTime( float flETime )
 	{
 		m_flUncomittedTime += flETime;
-		m_flMaxExecutionTime = max( m_flMaxExecutionTime, flETime );
+		m_flMaxExecutionTime = MAX( m_flMaxExecutionTime, flETime );
 	}
 
 	FORCEINLINE float TotalRecordedExecutionTime( void ) const
@@ -931,8 +931,8 @@ struct CPathParameters
 
 	void ClampControlPointIndices( void )
 	{
-		m_nStartControlPointNumber = max(0, min( MAX_PARTICLE_CONTROL_POINTS-1, m_nStartControlPointNumber ) );
-		m_nEndControlPointNumber = max(0, min( MAX_PARTICLE_CONTROL_POINTS-1, m_nEndControlPointNumber ) );
+		m_nStartControlPointNumber = MAX(0, MIN( MAX_PARTICLE_CONTROL_POINTS-1, m_nStartControlPointNumber ) );
+		m_nEndControlPointNumber = MAX(0, MIN( MAX_PARTICLE_CONTROL_POINTS-1, m_nEndControlPointNumber ) );
 	}
 };
 
@@ -1479,7 +1479,7 @@ inline void CParticleCollection::SetAttributeToConstant( int nAttribute, float f
 inline void CParticleCollection::SetControlPoint( int nWhichPoint, const Vector &v )
 {
 	Assert( ( nWhichPoint >= 0) && ( nWhichPoint < MAX_PARTICLE_CONTROL_POINTS ) );
-	m_nHighestCP = max( m_nHighestCP, nWhichPoint );
+	m_nHighestCP = MAX( m_nHighestCP, nWhichPoint );
 	m_ControlPoints[ nWhichPoint ].m_Position = v;
 	for( CParticleCollection *i = m_Children.m_pHead; i; i=i->m_pNext )
 	{

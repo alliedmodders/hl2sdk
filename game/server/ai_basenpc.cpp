@@ -3608,7 +3608,7 @@ void CAI_BaseNPC::RebalanceThinks()
 
 			int iMaxThinkersPerTick = (int)ceil( (float)((rebalanceCandidates.Count() + 1) / iTicksPer10Hz) ); // +1 to account for "this"
 
-			int iCurTickDistributing = min( gpGlobals->tickcount, rebalanceCandidates[0].iNextThinkTick );
+			int iCurTickDistributing = MIN( gpGlobals->tickcount, rebalanceCandidates[0].iNextThinkTick );
 			int iRemainingThinksToDistribute = iMaxThinkersPerTick - 1; // Start with one fewer first time because "this" is 
 			// always gets a slot in the current tick to avoid complications
 			// in the calculation of "last think"
@@ -5674,7 +5674,7 @@ void CAI_BaseNPC::GatherEnemyConditions( CBaseEntity *pEnemy )
 	float tooFar = m_flDistTooFar;
 	if ( GetActiveWeapon() && HasCondition(COND_SEE_ENEMY) )
 	{
-		tooFar = max( m_flDistTooFar, GetActiveWeapon()->m_fMaxRange1 );
+		tooFar = MAX( m_flDistTooFar, GetActiveWeapon()->m_fMaxRange1 );
 	}
 
 	if ( flDistToEnemy >= tooFar )

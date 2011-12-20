@@ -678,9 +678,9 @@ void C_BaseExplosionEffect::CreateDebris( void )
 		pParticle->m_flRollDelta	= random->RandomFloat( 0, 360 );
 
 		float colorRamp = random->RandomFloat( 0.5f, 1.5f );
-		pParticle->m_uchColor[0] = min( 1.0f, 0.25f*colorRamp )*255.0f;
-		pParticle->m_uchColor[1] = min( 1.0f, 0.25f*colorRamp )*255.0f;
-		pParticle->m_uchColor[2] = min( 1.0f, 0.25f*colorRamp )*255.0f;
+		pParticle->m_uchColor[0] = MIN( 1.0f, 0.25f*colorRamp )*255.0f;
+		pParticle->m_uchColor[1] = MIN( 1.0f, 0.25f*colorRamp )*255.0f;
+		pParticle->m_uchColor[2] = MIN( 1.0f, 0.25f*colorRamp )*255.0f;
 	}
 #endif // !_XBOX
 }
@@ -1208,7 +1208,7 @@ void C_WaterExplosionEffect::CreateMisc( void )
 
 		colorRamp = random->RandomFloat( 1.5f, 2.0f );
 
-		FloatToColor32( tParticle->m_color, min( 1.0f, m_vecColor[0] * colorRamp ), min( 1.0f, m_vecColor[1] * colorRamp ), min( 1.0f, m_vecColor[2] * colorRamp ), m_flLuminosity );
+		FloatToColor32( tParticle->m_color, MIN( 1.0f, m_vecColor[0] * colorRamp ), MIN( 1.0f, m_vecColor[1] * colorRamp ), MIN( 1.0f, m_vecColor[2] * colorRamp ), m_flLuminosity );
 	}
 
 	//Dump out drops
@@ -1236,7 +1236,7 @@ void C_WaterExplosionEffect::CreateMisc( void )
 
 		colorRamp = random->RandomFloat( 1.5f, 2.0f );
 
-		FloatToColor32( tParticle->m_color, min( 1.0f, m_vecColor[0] * colorRamp ), min( 1.0f, m_vecColor[1] * colorRamp ), min( 1.0f, m_vecColor[2] * colorRamp ), m_flLuminosity );
+		FloatToColor32( tParticle->m_color, MIN( 1.0f, m_vecColor[0] * colorRamp ), MIN( 1.0f, m_vecColor[1] * colorRamp ), MIN( 1.0f, m_vecColor[2] * colorRamp ), m_flLuminosity );
 	}
 
 #endif
@@ -1267,12 +1267,12 @@ void C_WaterExplosionEffect::CreateMisc( void )
 		
 		colorRamp = random->RandomFloat( 0.75f, 1.25f );
 
-		pParticle->m_uchColor[0]	= min( 1.0f, m_vecColor[0] * colorRamp ) * 255.0f;
-		pParticle->m_uchColor[1]	= min( 1.0f, m_vecColor[1] * colorRamp ) * 255.0f;
-		pParticle->m_uchColor[2]	= min( 1.0f, m_vecColor[2] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[0]	= MIN( 1.0f, m_vecColor[0] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[1]	= MIN( 1.0f, m_vecColor[1] * colorRamp ) * 255.0f;
+		pParticle->m_uchColor[2]	= MIN( 1.0f, m_vecColor[2] * colorRamp ) * 255.0f;
 		
 		pParticle->m_uchStartSize	= 24 * flScale * RemapValClamped( i, 7, 0, 1, 0.5f );
-		pParticle->m_uchEndSize		= min( 255, pParticle->m_uchStartSize * 2 );
+		pParticle->m_uchEndSize		= MIN( 255, pParticle->m_uchStartSize * 2 );
 		
 		pParticle->m_uchStartAlpha	= RemapValClamped( i, 7, 0, 255, 32 ) * m_flLuminosity;
 		pParticle->m_uchEndAlpha	= 0;

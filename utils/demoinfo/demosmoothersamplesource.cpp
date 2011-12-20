@@ -636,7 +636,7 @@ void CDemoSmootherPanel::OnPreview( bool original )
 	m_bPreviewing = true;
 	m_bPreviewPaused = false;
 	m_bPreviewOriginal = original;
-	SetLastFrame( false, max( 0, m_nSelection[0] - 10 ) );
+	SetLastFrame( false, MAX( 0, m_nSelection[0] - 10 ) );
 	m_iPreviewStartTick = GetTickForFrame( m_nPreviewLastFrame );
 	m_fPreviewCurrentTime = TICKS_TO_TIME( m_iPreviewStartTick );
 }
@@ -875,14 +875,14 @@ void CDemoSmootherPanel::DrawDebuggingInfo(  int frame, float elapsed )
 	bool showall = m_pShowAllSamples->IsSelected();
 	if ( !showall )
 	{
-		start = max( frame - 200, 0 );
-		end = min( frame + 200, c - 1 );
+		start = MAX( frame - 200, 0 );
+		end = MIN( frame + 200, c - 1 );
 	}
 
 	if ( m_bHasSelection && !showall )
 	{
-		start = max( m_nSelection[ 0 ] - 10, 0 );
-		end = min( m_nSelection[ 1 ] + 10, c - 1 );
+		start = MAX( m_nSelection[ 0 ] - 10, 0 );
+		end = MIN( m_nSelection[ 1 ] + 10, c - 1 );
 	}
 
 	bool draworiginal = !m_pHideOriginal->IsSelected();
@@ -1111,7 +1111,7 @@ bool CDemoSmootherPanel::GetInterpolatedOriginAndAngles( bool readonly, Vector& 
 		demosmoothing_t	*startsample = &m_Smoothing.smooth[ startframe ];
 		demosmoothing_t	*endsample = &m_Smoothing.smooth[ nextframe ];
 
-		if ( nextframe >= min( m_nSelection[1] + 10, c - 1 ) )
+		if ( nextframe >= MIN( m_nSelection[1] + 10, c - 1 ) )
 		{
 			if ( !readonly )
 			{
@@ -1219,7 +1219,7 @@ void CDemoSmootherPanel::OnStep( bool forward )
 	int c = m_Smoothing.smooth.Count();
 
 	SetLastFrame( false, m_nPreviewLastFrame + ( forward ? 1 : -1 ) );
-	SetLastFrame( false, clamp( m_nPreviewLastFrame, max( m_nSelection[ 0 ] - 10, 0 ), min( m_nSelection[ 1 ] + 10, c - 1 ) ) );
+	SetLastFrame( false, clamp( m_nPreviewLastFrame, MAX( m_nSelection[ 0 ] - 10, 0 ), MIN( m_nSelection[ 1 ] + 10, c - 1 ) ) );
 	m_fPreviewCurrentTime = TICKS_TO_TIME( GetTickForFrame( m_nPreviewLastFrame ) );
 }
 

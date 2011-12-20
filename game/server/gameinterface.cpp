@@ -2434,7 +2434,7 @@ void CServerGameClients::ClientSettingsChanged( edict_t *pEdict )
 				flLerpRatio = 1.0f;
 		}
 		// #define FIXME_INTERP_RATIO
-		player->m_fLerpTime = max( flLerpAmount, flLerpRatio / player->m_nUpdateRate );
+		player->m_fLerpTime = MAX( flLerpAmount, flLerpRatio / player->m_nUpdateRate );
 	}
 	else
 	{

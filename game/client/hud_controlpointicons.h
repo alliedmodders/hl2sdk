@@ -175,7 +175,7 @@ public:
 	{
 		if ( m_flFinishCapAnimStart && gpGlobals->curtime > m_flFinishCapAnimStart )
 		{
-			float flElapsedTime = max( 0, (gpGlobals->curtime - m_flFinishCapAnimStart) );
+			float flElapsedTime = MAX( 0, (gpGlobals->curtime - m_flFinishCapAnimStart) );
 			if (GetImage())
 			{
 				surface()->DrawSetColor(255, 255, 255, 255);

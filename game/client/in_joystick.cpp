@@ -385,7 +385,7 @@ static float ResponseCurveLookAccelerated( float x, int axis, float otherAxis, f
 		// this axis is pressed farther than the acceleration filter
 		// Take the lowmap value, or the input, whichever is higher, since 
 		// we don't necesarily know whether this is the axis which is pegged
-		x = max( joy_lowmap.GetFloat(), x );
+		x = MAX( joy_lowmap.GetFloat(), x );
 		bDoAcceleration = true;
 	}
 	else
@@ -654,7 +654,7 @@ void CInput::JoyStickMove( float frametime, CUserCmd *cmd )
 
 	if ( m_flRemainingJoystickSampleTime <= 0 )
 		return;
-	frametime = min(m_flRemainingJoystickSampleTime, frametime);
+	frametime = MIN(m_flRemainingJoystickSampleTime, frametime);
 	m_flRemainingJoystickSampleTime -= frametime;
 
 	QAngle viewangles;
