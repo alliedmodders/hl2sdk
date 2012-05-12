@@ -19,13 +19,22 @@ class INetMessage;
 struct NetMessageCvar_t;
 struct USERID_t;
 
+enum CrossPlayPlatform_t
+{
+	CROSSPLAYPLATFORM_UNKNOWN,
+	CROSSPLAYPLATFORM_PC,
+	CROSSPLAYPLATFORM_X360,
+	CROSSPLAYPLATFORM_PS3,
+	CROSSPLAYPLATFORM_LAST,
+}
+
 abstract_class IClient : public INetChannelHandler
 {
 public:
 	virtual	~IClient() {}
 
 	// connect client
-	virtual void	Connect( const char * szName, int nUserID, INetChannel *pNetChannel, bool bFakePlayer, CUtlVector< NetMessageCvar_t > *pVecCvars = NULL ) = 0;
+	virtual void	Connect( const char * szName, int nUserID, INetChannel *pNetChannel, bool bFakePlayer, CrossPlayPlatform_t platform, CUtlVector< NetMessageCvar_t > *pVecCvars = NULL ) = 0;
 
 	// set the client in a pending state waiting for a new game
 	virtual void	Inactivate( void ) = 0;
@@ -76,8 +85,6 @@ public:
 	virtual bool	IsFakeClient( void ) const = 0;
 	// returns true, if client is a HLTV proxy
 	virtual bool	IsHLTV( void ) const = 0;
-	// returns true, if client is a Replay proxy
-	virtual bool	IsReplay( void ) const = 0;
 	// returns true, if client hears this player
 	virtual bool	IsHearingClient(int index) const = 0;
 	// returns true, if client hears this player by proximity
@@ -99,7 +106,7 @@ public:
 
 	virtual bool	IsHumanPlayer() const = 0;
 
-	virtual int		GetClientPlatform() const = 0;
+	virtual CrossPlayPlatform_t		GetClientPlatform() const = 0;
 };
 
 #endif // ICLIENT_H

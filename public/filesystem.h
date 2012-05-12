@@ -95,6 +95,8 @@ enum PathTypeFilter_t
 	FILTER_NONE        = 0,	// no filtering, all search path types match
 	FILTER_CULLPACK    = 1,	// pack based search paths are culled (maps and zips)
 	FILTER_CULLNONPACK = 2,	// non-pack based search paths are culled
+	FILTER_CULLLOCALIZED,
+	FILTER_CULLLOCALIZED_ANY,
 };
 
 // search path querying (bit flags)

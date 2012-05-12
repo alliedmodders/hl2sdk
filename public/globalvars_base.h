@@ -24,6 +24,8 @@ public:
 	
 	// This can be used to filter debug output or to catch the client or server in the act.
 	bool IsClient() const;
+	
+	bool IsRemoteClient() const;
 
 	// for encoding m_flSimulationTime, m_flAnimTime
 	int GetNetworkBase( int nTick, int nEntity );
@@ -79,6 +81,10 @@ private:
 	// Set to true in client code.
 	bool			m_bClient;
 
+public:
+	bool			m_bRemoteClient;
+	
+private:
 	// 100 (i.e., tickcount is rounded down to this base and then the "delta" from this base is networked
 	int				nTimestampNetworkingBase;   
 	// 32 (entindex() % nTimestampRandomizeWindow ) is subtracted from gpGlobals->tickcount to set the networking basis, prevents
@@ -104,6 +110,11 @@ inline CGlobalVarsBase::CGlobalVarsBase( bool bIsClient ) :
 inline bool CGlobalVarsBase::IsClient() const
 {
 	return m_bClient;
+}
+
+inline bool CGlobalVarsBase::IsRemoteClient() const
+{
+	return m_bRemoteClient;
 }
 
 #endif // GLOBALVARS_BASE_H

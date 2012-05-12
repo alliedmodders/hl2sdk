@@ -49,6 +49,7 @@ public:
 	
 	// Current map
 	string_t		mapname;
+	string_t		mapGroupName;
 	int				mapversion;
 	string_t		startspot;
 	MapLoadType_t	eLoadType;		// How the current map was loaded

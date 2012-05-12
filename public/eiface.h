@@ -72,7 +72,7 @@ typedef struct player_info_s player_info_t;
 #define DLLEXPORT /* */
 #endif
 
-#define INTERFACEVERSION_VENGINESERVER	"VEngineServer022"
+#define INTERFACEVERSION_VENGINESERVER	"VEngineServer023"
 
 struct bbox_t
 {
@@ -352,6 +352,9 @@ public:
 
 	// Cleans up the cluster list
 	virtual void CleanUpEntityClusterList( PVSInfo_t *pPVSInfo ) = 0;
+	
+	virtual void SetAchievementMgr( IAchievementMgr * ) = 0;
+	virtual IAchievementMgr* GetAchievementMgr() = 0;
 
 	virtual int	GetAppID() = 0;
 	
@@ -404,6 +407,7 @@ public:
 	virtual bool IsCreatingReslist() = 0;
 	virtual bool IsCreatingXboxReslist() = 0;
 	virtual bool IsDedicatedServerForXbox() = 0;
+	virtual bool IsDedicatedServerForPS3() = 0;
 
 	virtual void Pause( bool bPause, bool bForce = false ) = 0;
 
@@ -431,7 +435,7 @@ public:
 	// Calls ShootPaintSphere
 	virtual bool SpherePaintSurface( const model_t *pModel, const Vector &, unsigned char, float, float ) = 0;
 
-	virtual void SphereTracePaintSurface( const model_t *pModel, const Vector &, const Vector &, float, CUtlVector<unsigned char, CUtlMemory<unsigned char, int>> & ) = 0;
+	virtual void SphereTracePaintSurface( const model_t *pModel, const Vector &, const Vector &, float, CUtlVector<unsigned char> & ) = 0;
 	
 	virtual void RemoveAllPaint() = 0;
 	
@@ -448,8 +452,8 @@ public:
 	
 	virtual void SetNoClipEnabled( bool bEnabled ) = 0;
 	
-	virtual void GetPaintmapDataRLE( CUtlVector<unsigned int, CUtlMemory<unsigned int, int>> &mapdata ) = 0;
-	virtual void LoadPaintmapDataRLE( CUtlVector<unsigned int, CUtlMemory<unsigned int, int>> &mapdata ) = 0;
+	virtual void GetPaintmapDataRLE( CUtlVector<unsigned int> &mapdata ) = 0;
+	virtual void LoadPaintmapDataRLE( CUtlVector<unsigned int> &mapdata ) = 0;
 	virtual void SendPaintmapDataToClient( edict_t *pEdict ) = 0;
 	
 	virtual float GetLatencyForChoreoSounds() = 0;
@@ -578,6 +582,10 @@ public:
 	virtual void			ServerHibernationUpdate( bool bHibernating ) = 0;
 
 	virtual bool			ShouldPreferSteamAuth() = 0;
+	
+	virtual bool			ShouldAllowDirectConnect() = 0;
+	virtual bool			FriendsReqdForDirectConnect() = 0;
+
 };
 
 //-----------------------------------------------------------------------------
