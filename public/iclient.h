@@ -26,7 +26,7 @@ enum CrossPlayPlatform_t
 	CROSSPLAYPLATFORM_X360,
 	CROSSPLAYPLATFORM_PS3,
 	CROSSPLAYPLATFORM_LAST,
-}
+};
 
 abstract_class IClient : public INetChannelHandler
 {
