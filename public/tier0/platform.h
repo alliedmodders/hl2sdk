@@ -32,7 +32,11 @@
 
 #include "wchartypes.h"
 #include "tier0/valve_off.h"
+#ifdef OSX
+#include <malloc/malloc.h>
+#else
 #include <malloc.h>
+#endif
 #include <limits.h>
 #include <float.h>
 #include <stdlib.h>
@@ -334,13 +338,6 @@ typedef unsigned int		uint;
 #define  FLOAT32_MIN		FLT_MIN
 #define  FLOAT64_MIN		DBL_MIN
 
-	// On OSX, SIGTRAP doesn't really stop the thread cold when debugging.
-	// So if being debugged, use INT3 which is precise.
-#ifdef OSX
-#define DebuggerBreak()  if ( Plat_IsInDebugSession() ) __asm { int 3 } else { raise(SIGTRAP); }
-#else
-#endif
-
 //-----------------------------------------------------------------------------
 // Long is evil because it's treated differently by different compilers
 // Preventing its use is nasty however. This #define, which should be
@@ -631,7 +628,7 @@ typedef unsigned int		uint;
 	#define DebuggerBreak()		__asm { int 3 }
 #elif COMPILER_MSVCX360
 	#define DebuggerBreak()		DebugBreak()
-#elif COMPILER_GCC
+#elif COMPILER_GCC 
 	#if defined( PLATFORM_CYGWIN ) || defined( PLATFORM_POSIX )
 		#define DebuggerBreak()		__asm__( "int $0x3;")
 	#else
