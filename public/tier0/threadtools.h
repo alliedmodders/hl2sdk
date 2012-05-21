@@ -336,9 +336,10 @@ public:
 		void   Set(void *);
 
 private:
-		uint32 m_index;
 #if defined(POSIX)
 		pthread_key_t m_index;
+#else
+		uint32 m_index;
 #endif
 	};
 
@@ -890,7 +891,7 @@ template <> struct CAutoLockTypeDeducer<sizeof(CAlignedThreadFastMutex)> {	typed
 	CAutoLockT< type > UNIQUE_ID( static_cast<const type &>( mutex ) )
 
 #define AUTO_LOCK( mutex ) \
-	AUTO_LOCK_( CAutoLockTypeDeducer<sizeof(mutex)>::Type_t, mutex )
+	AUTO_LOCK_( typeof(CAutoLockTypeDeducer<sizeof(mutex)>::Type_t), mutex )
 
 
 #define AUTO_LOCK_FM( mutex ) \
