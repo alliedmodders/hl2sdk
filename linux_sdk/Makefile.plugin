@@ -1,0 +1,57 @@
+#
+# Sample server plugin for SRC engine
+#
+# October 2004, alfred@valvesoftware.com
+#
+
+override NAME = serverplugin_empty
+
+PLUGIN_SRC_DIR = $(SRC_DIR)/utils/serverplugin_sample
+PUBLIC_SRC_DIR = $(SRC_DIR)/public
+TIER0_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier0
+TIER1_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier1
+
+PLUGIN_OBJ_DIR = $(BUILD_OBJ_DIR)/serverplugin_empty_$(ARCH)
+TIER0_OBJ_DIR = $(PLUGIN_OBJ_DIR)/tier0
+
+INCLUDEDIRS = -I$(PUBLIC_SRC_DIR) -I$(TIER0_PUBLIC_SRC_DIR) -I$(TIER1_PUBLIC_SRC_DIR)
+LDFLAGS_PLG = -lm -ldl tier0_i486.so vstdlib_i486.so $(LIB_DIR)/mathlib_i486.a $(LIB_DIR)/tier1_i486.a $(LIB_DIR)/tier2_i486.a
+
+DO_CC = $(CPLUS) $(INCLUDEDIRS) -DARCH=$(ARCH)
+
+ifeq "$(DEBUG)" "true"
+	DO_CC += $(DBG_DEFINES) $(DBG_CFLAGS)
+else
+	DO_CC += -DNDEBUG $(CFLAGS)
+endif
+
+DO_CC += -o $@ -c $<
+
+#####################################################################
+
+PLUGIN_OBJS = \
+	$(PLUGIN_OBJ_DIR)/serverplugin_bot.o \
+	$(PLUGIN_OBJ_DIR)/serverplugin_empty.o \
+
+TIER0_OBJS = \
+	$(TIER0_OBJ_DIR)/memoverride.o \
+
+all: dirs $(NAME)_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir -p $(BUILD_OBJ_DIR)
+	-mkdir -p $(PLUGIN_OBJ_DIR)
+	-mkdir -p $(TIER0_OBJ_DIR)
+
+$(NAME)_$(ARCH).$(SHLIBEXT): $(PLUGIN_OBJS) $(TIER0_OBJS)
+	$(CLINK) -o $(BUILD_DIR)/$@ -m32 $(SHLIBLDFLAGS) $(PLUGIN_OBJS) $(TIER0_OBJS) $(PUBLIC_OBJS) $(CPP_LIB) $(LDFLAGS_PLG) $(CPP_LIB)
+
+$(PLUGIN_OBJ_DIR)/%.o: $(PLUGIN_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+$(TIER0_OBJ_DIR)/%.o: $(TIER0_PUBLIC_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(PLUGIN_OBJ_DIR)
+	-rm -f $(NAME)_$(ARCH).$(SHLIBEXT)
