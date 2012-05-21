@@ -3,6 +3,8 @@
 #
 #
 
+OS := $(shell uname -s)
+
 #############################################################################
 # Developer configurable items
 #############################################################################
@@ -24,9 +26,15 @@ SRCDS_DIR = ~/srcds/orangebox
 GAME_DIR = $(SRCDS_DIR)/scratchmod
 
 # compiler options (gcc 3.4.1 or above is required - 4.1.2+ recommended)
+ifeq "$(OS)" "Darwin"
+CC = /usr/bin/clang
+CPLUS = /usr/bin/clang++
+CLINK = /usr/bin/clang
+else
 CC = /usr/bin/gcc
 CPLUS = /usr/bin/g++
 CLINK = /usr/bin/gcc
+endif
 CPP_LIB = "libstdc++.a libgcc_eh.a"
 
 # put any compiler flags you want passed here
@@ -48,6 +56,7 @@ DEBUG = false
 #############################################################################
 # Things below here shouldn't need to be altered
 #############################################################################
+OS := $(shell uname -s)
 MAKE = make
 AR = "ar rvs"
 
@@ -58,18 +67,29 @@ BUILD_OBJ_DIR = $(BUILD_DIR)/obj
 
 # the location of the source code
 SRC_DIR = ..
-# the location of the Linux static libraries
+
+# the location of the static libraries
+ifeq "$(OS)" "Darwin"
+LIB_DIR = $(SRC_DIR)/lib/mac
+else
 LIB_DIR = $(SRC_DIR)/lib/linux
+endif
 
 # the CPU target for the build, must be i486 for now
 ARCH = i486
-ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -msse -m32
+ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -msse -msse2 -m32
 
-DEFINES = -D_LINUX -DLINUX -DCOMPILER_GCC -DPOSIX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp \
-	  -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
+ifeq "$(OS)" "Darwin"
+DEFINES = -D_OSX -DOSX
+else
+DEFINES = -D_LINUX -DLINUX
+endif
+
+DEFINES += -DCOMPILER_GCC -DPOSIX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp \
+	-D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
-BASE_CFLAGS = -fno-strict-aliasing -Wall -Werror -Wno-conversion -Wno-non-virtual-dtor -Wno-invalid-offsetof
+BASE_CFLAGS = -fno-strict-aliasing -Wall -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof
 SHLIBEXT = so
 SHLIBCFLAGS = -fPIC
 SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt -Wl
