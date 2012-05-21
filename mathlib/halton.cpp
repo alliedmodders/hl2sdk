@@ -5,6 +5,7 @@
 //=====================================================================================//
 
 #include <halton.h>
+#include "mathlib/mathlib.h"
 
 HaltonSequenceGenerator_t::HaltonSequenceGenerator_t(int b)
 {

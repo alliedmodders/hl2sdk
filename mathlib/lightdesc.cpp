@@ -27,12 +27,12 @@ void LightDesc_t::RecalculateDerivedValues(void)
 		{
 			// note - this quantity is very sensitive to round off error. the sse
 			// reciprocal approximation won't cut it here.
-			OneOver_ThetaDot_Minus_PhiDot=1.0/spread;
+			m_OneOverThetaDotMinusPhiDot=1.0/spread;
 		}
 		else
 		{
 			// hard falloff instead of divide by zero
-			OneOver_ThetaDot_Minus_PhiDot=1.0;
+			m_OneOverThetaDotMinusPhiDot=1.0;
 		}				
 	}	
 	if (m_Type==MATERIAL_LIGHT_DIRECTIONAL)
@@ -140,7 +140,7 @@ void LightDesc_t::ComputeLightAtPoints( const FourVectors &pos, const FourVector
 			fltx4 dot2=SubSIMD(Four_Zeros,delta*m_Direction); // dot position with spot light dir for cone falloff
 
 
-			fltx4 cone_falloff_scale=MulSIMD(ReplicateX4(OneOver_ThetaDot_Minus_PhiDot),
+			fltx4 cone_falloff_scale=MulSIMD(ReplicateX4(m_OneOverThetaDotMinusPhiDot),
 												 SubSIMD(dot2,ReplicateX4(m_PhiDot)));
 			cone_falloff_scale=MinSIMD(cone_falloff_scale,Four_Ones);
 			
@@ -236,7 +236,7 @@ void LightDesc_t::ComputeNonincidenceLightAtPoints( const FourVectors &pos, Four
 			fltx4 dot2=SubSIMD(Four_Zeros,delta*m_Direction); // dot position with spot light dir for cone falloff
 
 
-			fltx4 cone_falloff_scale=MulSIMD(ReplicateX4(OneOver_ThetaDot_Minus_PhiDot),
+			fltx4 cone_falloff_scale=MulSIMD(ReplicateX4(m_OneOverThetaDotMinusPhiDot),
 												 SubSIMD(dot2,ReplicateX4(m_PhiDot)));
 			cone_falloff_scale=MinSIMD(cone_falloff_scale,Four_Ones);
 			

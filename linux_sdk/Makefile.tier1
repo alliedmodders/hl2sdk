@@ -50,7 +50,6 @@ LIB_OBJS= \
 	$(LIB_OBJ_DIR)/stringpool.o \
 	$(LIB_OBJ_DIR)/strtools.o \
 	$(LIB_OBJ_DIR)/tier1.o \
-	$(LIB_OBJ_DIR)/tokenreader.o \
 	$(LIB_OBJ_DIR)/undiff.o \
 	$(LIB_OBJ_DIR)/uniqueid.o \
 	$(LIB_OBJ_DIR)/utlbuffer.o \

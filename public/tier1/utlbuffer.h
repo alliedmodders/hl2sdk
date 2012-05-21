@@ -41,7 +41,7 @@ public:
 	struct ConversionArray_t
 	{
 		char m_nActualChar;
-		char *m_pReplacementString;
+		const char *m_pReplacementString;
 	};
 
 	CUtlCharConversion( char nEscapeChar, const char *pDelimiter, int nCount, ConversionArray_t *pArray );
@@ -60,7 +60,7 @@ protected:
 	struct ConversionInfo_t
 	{
 		int m_nLength;
-		char *m_pReplacementString;
+		const char *m_pReplacementString;
 	};
 
 	char m_nEscapeChar;
@@ -110,13 +110,13 @@ typedef unsigned short ushort;
 template < class A >
 static const char *GetFmtStr( int nRadix = 10, bool bPrint = true ) { Assert( 0 ); return ""; }
 
-template <> static const char *GetFmtStr< short >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%hd"; }
-template <> static const char *GetFmtStr< ushort >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%hu"; }
-template <> static const char *GetFmtStr< int >		( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%d"; }
-template <> static const char *GetFmtStr< uint >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 || nRadix == 16 ); return nRadix == 16 ? "%x" : "%u"; }
-template <> static const char *GetFmtStr< int64 >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%I64d"; }
-template <> static const char *GetFmtStr< float >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%f"; }
-template <> static const char *GetFmtStr< double >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return bPrint ? "%.15lf" : "%lf"; } // force Printf to print DBL_DIG=15 digits of precision for doubles - defaults to FLT_DIG=6
+template <> inline const char *GetFmtStr< short >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%hd"; }
+template <> inline const char *GetFmtStr< ushort >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%hu"; }
+template <> inline const char *GetFmtStr< int >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%d"; }
+template <> inline const char *GetFmtStr< uint >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 || nRadix == 16 ); return nRadix == 16 ? "%x" : "%u"; }
+template <> inline const char *GetFmtStr< int64 >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%lld"; }
+template <> inline const char *GetFmtStr< float >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%f"; }
+template <> inline const char *GetFmtStr< double >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return bPrint ? "%.15lf" : "%lf"; } // force Printf to print DBL_DIG=15 digits of precision for doubles - defaults to FLT_DIG=6
 
 
 //-----------------------------------------------------------------------------
@@ -784,14 +784,14 @@ inline int64 StringToNumber( char *pString, char **ppEnd, int nRadix )
 template <>
 inline float StringToNumber( char *pString, char **ppEnd, int nRadix )
 {
-	/*UNUSED*/( nRadix );
+	// /*UNUSED*/( nRadix );
 	return ( float )strtod( pString, ppEnd );
 }
 
 template <>
 inline double StringToNumber( char *pString, char **ppEnd, int nRadix )
 {
-	/*UNUSED*/( nRadix );
+	// /*UNUSED*/( nRadix );
 	return ( double )strtod( pString, ppEnd );
 }
 
@@ -1349,7 +1349,7 @@ inline void CUtlBuffer::Spew( )
 	while( IsValid() && GetBytesRemaining() )
 	{
 		V_memset( pTmpLine, 0, sizeof(pTmpLine) );
-		Get( pTmpLine, MIN( GetBytesRemaining(), sizeof(pTmpLine-1) ) );
+		Get( pTmpLine, MIN( (unsigned int)GetBytesRemaining(), sizeof(pTmpLine-1) ) );
 		Msg( _T( "%s" ), pTmpLine );
 	}
 }

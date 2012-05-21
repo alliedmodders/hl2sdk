@@ -101,7 +101,9 @@ typedef void * HINSTANCE;
 	#define IsPlatformOSX()		false
 	#define IsPlatformPS3()		false
 	#define IsPlatformWindows() true
+	#ifndef PLATFORM_WINDOWS
 	#define PLATFORM_WINDOWS	1
+	#endif
 
 	#ifndef _X360
 		#define IsPlatformX360() false
@@ -136,16 +138,22 @@ typedef void * HINSTANCE;
 	#define IsPlatformWindowsPC64()	false
 	#define IsPlatformWindowsPC32()	false
 	#define IsPlatformPosix()		true
+	#ifndef PLATFORM_POSIX
 	#define PLATFORM_POSIX 1
+	#endif
 
 	#if defined( LINUX )
 		#define IsPlatformLinux() true
 		#define IsPlatformOSX() false
+		#ifndef PLATFORM_LINUX
 		#define PLATFORM_LINUX 1
+		#endif
 	#elif defined ( OSX )
 		#define IsPlatformLinux() false
 		#define IsPlatformOSX() true
+		#ifndef PLATFORM_OSX
 		#define PLATFORM_OSX 1
+		#endif
 	#else
 		#define IsPlatformLinux() false
 		#define IsPlatformOSX() false
@@ -701,6 +709,7 @@ PLATFORM_INTERFACE void Plat_MessageBox( const char *pTitle, const tchar *pMessa
 #define _putenv putenv
 #define _chdir chdir
 #define _access access
+#define _strtoi64 strtoll
 
 #if !defined( _snprintf )	// some vpc's define this on the command line
 #define _snprintf snprintf
@@ -1596,9 +1605,15 @@ int	V_strncasecmp (const char *s1, const char *s2, int n);
 //   returns <0 if strings do not match even in a case-insensitive way
 int	_V_stricmp_NegativeForUnequal	  ( const char *s1, const char *s2 );
 
+#ifndef stricmp
 #define stricmp(s1,s2) _V_stricmp(s1, s2)
+#endif
+#ifndef strcmpi
 #define strcmpi(s1,s2) _V_stricmp(s1, s2)
-#define strnicmp V_strncasecmp 
+#endif
+#ifndef strnicmp
+#define strnicmp V_strncasecmp
+#endif
 #endif
 
 #endif /* PLATFORM_H */

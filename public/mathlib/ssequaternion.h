@@ -811,7 +811,7 @@ FORCEINLINE FourQuaternions FourQuaternions::ScaleAngle( const fltx4 &scale ) co
 {
 	FourQuaternions ret;
 	static const fltx4 OneMinusEpsilon = {1.0f -  0.000001f, 1.0f -  0.000001f, 1.0f -  0.000001f, 1.0f -  0.000001f };
-	static const fltx4 tiny = { 0.00001f, 0.00001f, 0.00001f, 0.00001f };
+	//static const fltx4 tiny = { 0.00001f, 0.00001f, 0.00001f, 0.00001f };
 	const fltx4 Zero = Four_Zeros;
 	fltx4 signMask = LoadAlignedSIMD( (float *) g_SIMD_signmask ); 
 	// work out if there are any tiny scales or angles, which are unstable

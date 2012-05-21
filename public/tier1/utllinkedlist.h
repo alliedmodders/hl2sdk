@@ -198,7 +198,7 @@ public:
 			return false;
 
 #ifdef _DEBUG // it's safe to skip this here, since the only way to get indices after m_LastAlloc is to use MaxElementIndex
-		if ( Memory().IsIdxAfter( i, this->m_LastAlloc ) )
+		if ( this->Memory().IsIdxAfter( i, this->m_LastAlloc ) )
 		{
 			Assert( 0 );
 			return false; // don't read values that have been allocated, but not constructed
@@ -339,8 +339,10 @@ inline I  CUtlLinkedList<T,S,ML,I,M>::Next( I i ) const
 // Are nodes in the list or valid?
 //-----------------------------------------------------------------------------
 
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning( disable: 4310 ) // Allows "(I)(S)M::INVALID_INDEX" below
+#endif
 template <class T, class S, bool ML, class I, class M>
 inline bool CUtlLinkedList<T,S,ML,I,M>::IndexInRange( I index ) // Static method
 {
@@ -359,7 +361,9 @@ inline bool CUtlLinkedList<T,S,ML,I,M>::IndexInRange( I index ) // Static method
 
 	return ( ( (S)index == index ) && ( (S)index != InvalidIndex() ) );
 }
+#ifdef _MSC_VER
 #pragma warning(pop)
+#endif
 
 template <class T, class S, bool ML, class I, class M>
 inline bool CUtlLinkedList<T,S,ML,I,M>::IsValidIndex( I i ) const  
