@@ -4058,7 +4058,7 @@ public:
 
 	FORCEINLINE void Init( void )
 	{
-		for( int i = 0; i < (int)ARRAYSIZE( m_Mins ); i++ )
+		for( int i = 0; i < (int)Q_ARRAYSIZE( m_Mins ); i++ )
 		{
 			m_Mins[i] = Four_FLT_MAX;
 			m_Maxes[i] = Four_Negative_FLT_MAX;
