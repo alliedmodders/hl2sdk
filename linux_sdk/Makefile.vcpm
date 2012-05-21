@@ -1,0 +1,50 @@
+#
+# VCProject file to Makefile converter
+#
+# November 2004, alfred@valvesoftware.com
+#
+
+VCPM_SRC_DIR = $(SRC_DIR)/utils/vprojtomake
+PUBLIC_SRC_DIR = $(SRC_DIR)/public
+TIER0_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier0
+TIER1_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier1
+UTIL_COMMON_SRC_DIR = $(SRC_DIR)/utils/common
+
+VCPM_OBJ_DIR = $(BUILD_OBJ_DIR)/vcpm
+
+INCLUDEDIRS = -I$(PUBLIC_SRC_DIR) -I$(XERCES_INC_DIR) -I$(TIER0_PUBLIC_SRC_DIR) -I$(TIER1_PUBLIC_SRC_DIR) -I$(UTIL_COMMON_SRC_DIR)
+LDFLAGS_VC = -lm -ldl -L$(XERCES_LIB_DIR) -lxerces-c tier0_i486.so vstdlib_i486.so $(LIB_DIR)/tier1_i486.a
+
+DO_CC = $(CPLUS) $(INCLUDEDIRS) -DARCH=$(ARCH)
+
+ifeq "$(DEBUG)" "true"
+	DO_CC += $(DBG_DEFINES) $(DBG_CFLAGS)
+else
+	DO_CC += -DNDEBUG $(CFLAGS)
+endif
+
+DO_CC += -o $@ -c $<
+
+#####################################################################
+
+VCPM_OBJS = \
+	$(VCPM_OBJ_DIR)/makefilecreator.o \
+	$(VCPM_OBJ_DIR)/vprojtomake.o \
+	$(VCPM_OBJ_DIR)/vcprojconvert.o \
+
+all: dirs vcpm
+
+dirs:
+	-mkdir -p $(BUILD_OBJ_DIR)
+	-mkdir -p $(VCPM_OBJ_DIR)
+
+vcpm: $(VCPM_OBJS)
+	$(CLINK) -m32 -o $(BUILD_DIR)/$@ $(VCPM_OBJS) $(CPP_LIB) $(LDFLAGS_VC)
+
+$(VCPM_OBJ_DIR)/%.o: $(VCPM_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+clean:
+	-rm -rf $(VCPM_OBJ_DIR)
+	-rm -f vcpm
+
