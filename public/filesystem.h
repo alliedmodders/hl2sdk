@@ -20,7 +20,7 @@
 #include "tier1/interface.h"
 #include "tier1/utlsymbol.h"
 #include "tier1/utlstring.h"
-#include "tier1/functors.h" 
+//#include "tier1/functors.h" 
 #include "tier1/checksum_crc.h"
 #include "tier1/utlqueue.h"
 #include "appframework/IAppSystem.h"
@@ -541,7 +541,7 @@ public:
 		) = 0;
 
 	virtual void			FindFileAbsoluteList(
-		CUtlVector<CUtlString, CUtlMemory<CUtlString, int>> &output,
+		CUtlVector<CUtlString> &output,
 		const char *pWildCard,
 		const char *pPathID
 		) = 0;

@@ -14,7 +14,7 @@
 #pragma once
 #endif
 
-#include "color.h"
+#include "Color.h"
 #include "icommandline.h"
 #include <stdio.h>
 
@@ -133,7 +133,7 @@ typedef int LoggingChannelID_t;
 //-----------------------------------------------------------------------------
 // A sentinel value indicating an invalid logging channel ID.
 //-----------------------------------------------------------------------------
-static LoggingChannelID_t INVALID_LOGGING_CHANNEL_ID = -1;
+static const LoggingChannelID_t INVALID_LOGGING_CHANNEL_ID = -1;
 
 //-----------------------------------------------------------------------------
 // The severity of a logging operation.
@@ -337,7 +337,7 @@ public:
 // A logging listener with Win32 console API color support which which prints 
 // to stdout and the debug channel.
 //-----------------------------------------------------------------------------
-#ifndef _X360
+#if !defined _X360 && defined COMPILER_MSVC
 class CColorizedLoggingListener : public CSimpleLoggingListener
 {
 public:

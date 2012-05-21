@@ -21,7 +21,7 @@
 #endif
 
 #include "utlvector.h"
-#include "color.h"
+#include "Color.h"
 #include "exprevaluator.h"
 
 class IBaseFileSystem;

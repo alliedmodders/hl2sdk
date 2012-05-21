@@ -166,7 +166,7 @@ public:
 		FileFindHandle_t *pHandle
 		)																										{ return m_pFileSystemPassThru->FindFirstEx( pWildCard, pPathID, pHandle ); }
 	virtual void			FindFileAbsoluteList(
-		CUtlVector<CUtlString, CUtlMemory<CUtlString, int>> &output,
+		CUtlVector<CUtlString> &output,
 		const char *pWildCard,
 		const char *pPathID
 		)																										{ m_pFileSystemPassThru->FindFileAbsoluteList( output, pWildCard, pPathID ); }

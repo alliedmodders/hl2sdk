@@ -275,7 +275,9 @@ KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue,
 //-----------------------------------------------------------------------------
 void KeyValues::Init()
 {
-	m_iKeyName = INVALID_KEY_SYMBOL;
+	m_iKeyName = 0;
+	m_iKeyNameCaseSensitive1 = 0;
+	m_iKeyNameCaseSensitive2 = 0;
 	m_iDataType = TYPE_NONE;
 
 	m_pSub = NULL;
@@ -287,9 +289,6 @@ void KeyValues::Init()
 	m_pValue = NULL;
 	
 	m_bHasEscapeSequences = false;
-
-	// for future proof
-	memset( unused, 0, sizeof(unused) );
 }
 
 //-----------------------------------------------------------------------------
@@ -472,7 +471,7 @@ void KeyValues::UsesEscapeSequences(bool state)
 //-----------------------------------------------------------------------------
 // Purpose: Load keyValues from disk
 //-----------------------------------------------------------------------------
-bool KeyValues::LoadFromFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID )
+bool KeyValues::LoadFromFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID, GetSymbolProc_t pfnEvaluateSymbolProc )
 {
 	Assert(filesystem);
 #ifndef _LINUX
@@ -500,7 +499,7 @@ bool KeyValues::LoadFromFile( IBaseFileSystem *filesystem, const char *resourceN
 	if ( bRetOK )
 	{
 		buffer[fileSize] = 0; // null terminate file as EOF
-		bRetOK = LoadFromBuffer( resourceName, buffer, filesystem );
+		bRetOK = LoadFromBuffer( resourceName, buffer, filesystem, pathID, pfnEvaluateSymbolProc);
 	}
 
 	((IFileSystem *)filesystem)->FreeOptimalReadBuffer( buffer );
@@ -676,7 +675,7 @@ void KeyValues::RecursiveSaveToFile( IBaseFileSystem *filesystem, FileHandle_t f
 
 					char buf[32];
 					// write "0x" + 16 char 0-padded hex encoded 64 bit value
-					Q_snprintf( buf, sizeof( buf ), "0x%016I64X", *( (uint64 *)dat->m_sValue ) );
+					Q_snprintf( buf, sizeof( buf ), "0x%016llX", *( (uint64 *)dat->m_sValue ) );
 
 					INTERNALWRITE(buf, Q_strlen(buf));
 					INTERNALWRITE("\"\n", 2);
@@ -1136,7 +1135,7 @@ const char *KeyValues::GetString( const char *keyName, const char *defaultValue 
 			SetString( keyName, buf );
 			break;
 		case TYPE_UINT64:
-			Q_snprintf( buf, sizeof( buf ), "%I64i", *((uint64 *)(dat->m_sValue)) );
+			Q_snprintf( buf, sizeof( buf ), "%llu", *((uint64 *)(dat->m_sValue)) );
 			SetString( keyName, buf );
 			break;
 
@@ -1225,9 +1224,9 @@ const wchar_t *KeyValues::GetWString( const char *keyName, const wchar_t *defaul
 //-----------------------------------------------------------------------------
 // Purpose: Gets a color
 //-----------------------------------------------------------------------------
-Color KeyValues::GetColor( const char *keyName )
+Color KeyValues::GetColor( const char *keyName, const Color &defaultColor )
 {
-	Color color(0, 0, 0, 0);
+	Color color = defaultColor;
 	KeyValues *dat = FindKey( keyName, false );
 	if ( dat )
 	{
@@ -1701,7 +1700,8 @@ void KeyValues::AppendIncludedKeys( CUtlVector< KeyValues * >& includedKeys )
 }
 
 void KeyValues::ParseIncludedKeys( char const *resourceName, const char *filetoinclude, 
-		IBaseFileSystem* pFileSystem, const char *pPathID, CUtlVector< KeyValues * >& includedKeys )
+		IBaseFileSystem* pFileSystem, const char *pPathID, CUtlVector< KeyValues * >& includedKeys,
+	       	GetSymbolProc_t pfnEvaluateSymbolProc )
 {
 	Assert( resourceName );
 	Assert( filetoinclude );
@@ -1747,7 +1747,7 @@ void KeyValues::ParseIncludedKeys( char const *resourceName, const char *filetoi
 
 	newKV->UsesEscapeSequences( m_bHasEscapeSequences != 0 );	// use same format as parent
 
-	if ( newKV->LoadFromFile( pFileSystem, fullpath, pPathID ) )
+	if ( newKV->LoadFromFile( pFileSystem, fullpath, pPathID, pfnEvaluateSymbolProc ) )
 	{
 		includedKeys.AddToTail( newKV );
 	}
@@ -1818,7 +1818,7 @@ void KeyValues::RecursiveMergeKeyValues( KeyValues *baseKV )
 // Returns whether a keyvalues conditional evaluates to true or false
 // Needs more flexibility with conditionals, checking convars would be nice.
 //-----------------------------------------------------------------------------
-bool EvaluateConditional( const char *str )
+bool KeyValues::EvaluateConditional( const char *str, GetSymbolProc_t pfnEvaluateSymbolProc )
 {
 	bool bResult = false;
 	bool bXboxUI = IsX360();
@@ -1839,7 +1839,7 @@ bool EvaluateConditional( const char *str )
 //-----------------------------------------------------------------------------
 // Read from a buffer...
 //-----------------------------------------------------------------------------
-bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBaseFileSystem* pFileSystem, const char *pPathID )
+bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBaseFileSystem* pFileSystem, const char *pPathID, GetSymbolProc_t pfnEvaluateSymbolProc  )
 {
 	KeyValues *pPreviousKey = NULL;
 	KeyValues *pCurrentKey = this;
@@ -1868,7 +1868,7 @@ bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBase
 			}
 			else
 			{
-				ParseIncludedKeys( resourceName, s, pFileSystem, pPathID, includedKeys );
+				ParseIncludedKeys( resourceName, s, pFileSystem, pPathID, includedKeys, pfnEvaluateSymbolProc );
 			}
 
 			continue;
@@ -1884,7 +1884,7 @@ bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBase
 			}
 			else
 			{
-				ParseIncludedKeys( resourceName, s, pFileSystem, pPathID, baseKeys );
+				ParseIncludedKeys( resourceName, s, pFileSystem, pPathID, baseKeys, pfnEvaluateSymbolProc );
 			}
 
 			continue;
@@ -1912,7 +1912,7 @@ bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBase
 
 		if ( wasConditional )
 		{
-			bAccepted = EvaluateConditional( s );
+			bAccepted = EvaluateConditional( s, pfnEvaluateSymbolProc );
 
 			// Now get the '{'
 			s = ReadToken( buf, wasQuoted, wasConditional );
@@ -1921,7 +1921,7 @@ bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBase
 		if ( s && *s == '{' && !wasQuoted )
 		{
 			// header is valid so load the file
-			pCurrentKey->RecursiveLoadFromBuffer( resourceName, buf );
+			pCurrentKey->RecursiveLoadFromBuffer( resourceName, buf, pfnEvaluateSymbolProc );
 		}
 		else
 		{
@@ -1965,7 +1965,7 @@ bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBase
 		}
 	}
 
-	g_KeyValuesErrorStack.SetFilename( "" );	
+	g_KeyValuesErrorStack.SetFilename( "" );
 
 	return true;
 }
@@ -1974,20 +1974,20 @@ bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBase
 //-----------------------------------------------------------------------------
 // Read from a buffer...
 //-----------------------------------------------------------------------------
-bool KeyValues::LoadFromBuffer( char const *resourceName, const char *pBuffer, IBaseFileSystem* pFileSystem, const char *pPathID )
+bool KeyValues::LoadFromBuffer( char const *resourceName, const char *pBuffer, IBaseFileSystem* pFileSystem, const char *pPathID, GetSymbolProc_t pfnEvaluateSymbolProc  )
 {
 	if ( !pBuffer )
 		return true;
 
 	int nLen = Q_strlen( pBuffer );
 	CUtlBuffer buf( pBuffer, nLen, CUtlBuffer::READ_ONLY | CUtlBuffer::TEXT_BUFFER );
-	return LoadFromBuffer( resourceName, buf, pFileSystem, pPathID );
+	return LoadFromBuffer( resourceName, buf, pFileSystem, pPathID, pfnEvaluateSymbolProc );
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &buf )
+void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &buf, GetSymbolProc_t pfnEvaluateSymbolProc )
 {
 	CKeyErrorContext errorReport(this);
 	bool wasQuoted;
@@ -2027,7 +2027,7 @@ void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &b
 
 		if ( wasConditional && value )
 		{
-			bAccepted = EvaluateConditional( value );
+			bAccepted = EvaluateConditional( value, pfnEvaluateSymbolProc );
 
 			// get the real value
 			value = ReadToken( buf, wasQuoted, wasConditional );
@@ -2050,7 +2050,7 @@ void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &b
 			// this isn't a key, it's a section
 			errorKey.Reset( INVALID_KEY_SYMBOL );
 			// sub value list
-			dat->RecursiveLoadFromBuffer( resourceName, buf );
+			dat->RecursiveLoadFromBuffer( resourceName, buf, pfnEvaluateSymbolProc );
 		}
 		else 
 		{
@@ -2125,7 +2125,7 @@ void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &b
 			const char *peek = ReadToken( buf, wasQuoted, wasConditional );
 			if ( wasConditional )
 			{
-				bAccepted = EvaluateConditional( peek );
+				bAccepted = EvaluateConditional( peek, pfnEvaluateSymbolProc );
 			}
 			else
 			{
