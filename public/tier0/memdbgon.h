@@ -31,7 +31,11 @@
 		#include <wchar.h>
 	#endif
 	#include <string.h>
+	#ifdef OSX
+	#include <malloc/malloc.h>
+	#else
 	#include <malloc.h>
+	#endif
 #include "tier0/valve_on.h"
 
 #include "commonmacros.h"
