@@ -179,11 +179,11 @@ void CBitWrite::WriteBitCoord (const float f)
 	}
 }
 
-void CBitWrite::WriteBitCoordMP (const float f, bool bIntegral, bool bLowPrecision )
+void CBitWrite::WriteBitCoordMP (const float f, EBitCoordType coordType )
 {
-	int		signbit = (f <= -( bLowPrecision ? COORD_RESOLUTION_LOWPRECISION : COORD_RESOLUTION ));
+	int		signbit = (f <= -( coordType == kCW_LowPrecision ? COORD_RESOLUTION_LOWPRECISION : COORD_RESOLUTION ));
 	int		intval = (int)fabs(f);
-	int		fractval = bLowPrecision ? 
+	int		fractval = coordType == kCW_LowPrecision ? 
 		( abs((int)(f*COORD_DENOMINATOR_LOWPRECISION)) & (COORD_DENOMINATOR_LOWPRECISION-1) ) :
 		( abs((int)(f*COORD_DENOMINATOR)) & (COORD_DENOMINATOR-1) );
 
@@ -191,7 +191,7 @@ void CBitWrite::WriteBitCoordMP (const float f, bool bIntegral, bool bLowPrecisi
 
 	WriteOneBit( bInBounds );
 
-	if ( bIntegral )
+	if ( coordType == kCW_Integral )
 	{
 		// Send the sign bit
 		WriteOneBit( intval );
@@ -232,7 +232,7 @@ void CBitWrite::WriteBitCoordMP (const float f, bool bIntegral, bool bLowPrecisi
 				WriteUBitLong( (unsigned int)intval, COORD_INTEGER_BITS );
 			}
 		}
-		WriteUBitLong( (unsigned int)fractval, bLowPrecision ? COORD_FRACTIONAL_BITS_MP_LOWPRECISION : COORD_FRACTIONAL_BITS );
+		WriteUBitLong( (unsigned int)fractval, coordType == kCW_LowPrecision ? COORD_FRACTIONAL_BITS_MP_LOWPRECISION : COORD_FRACTIONAL_BITS );
 	}
 }
 
@@ -575,14 +575,14 @@ float CBitRead::ReadBitCoord (void)
 	return value;
 }
 
-float CBitRead::ReadBitCoordMP( bool bIntegral, bool bLowPrecision )
+float CBitRead::ReadBitCoordMP( EBitCoordType coordType )
 {
 	int		intval=0,fractval=0,signbit=0;
 	float	value = 0.0;
 
 	bool bInBounds = ReadOneBit() ? true : false;
 
-	if ( bIntegral )
+	if ( coordType == kCW_Integral )
 	{
 		// Read the required integer and fraction flags
 		intval = ReadOneBit();
@@ -626,10 +626,10 @@ float CBitRead::ReadBitCoordMP( bool bIntegral, bool bLowPrecision )
 		}
 
 		// If there's a fraction, read it in
-		fractval = ReadUBitLong( bLowPrecision ? COORD_FRACTIONAL_BITS_MP_LOWPRECISION : COORD_FRACTIONAL_BITS );
+		fractval = ReadUBitLong( coordType == kCW_LowPrecision ? COORD_FRACTIONAL_BITS_MP_LOWPRECISION : COORD_FRACTIONAL_BITS );
 
 		// Calculate the correct floating point value
-		value = intval + ((float)fractval * ( bLowPrecision ? COORD_RESOLUTION_LOWPRECISION : COORD_RESOLUTION ) );
+		value = intval + ((float)fractval * ( coordType == kCW_LowPrecision ? COORD_RESOLUTION_LOWPRECISION : COORD_RESOLUTION ) );
 	}
 
 	// Fixup the sign if negative.

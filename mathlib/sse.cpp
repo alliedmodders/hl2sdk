@@ -172,7 +172,7 @@ float _SSE_RSqrtFast(float x)
 {
 	Assert( s_bMathlibInitialized );
 
-	float rroot;
+	float rroot = 0.0f;
 #ifdef _WIN32
 	_asm
 	{

@@ -30,7 +30,6 @@ DO_CC += -o $@ -c $<
 #####################################################################
 
 LIB_OBJS= \
-	$(LIB_OBJ_DIR)/3dnow.o \
 	$(LIB_OBJ_DIR)/anorms.o \
 	$(LIB_OBJ_DIR)/bumpvects.o \
 	$(LIB_OBJ_DIR)/color_conversion.o \

@@ -441,13 +441,13 @@ class CSOAAttributeReference;
 
 // define binary op class to allow this construct without temps:
 // dest( FBM_ATTR_RED ) = src( FBM_ATTR_BLUE ) + src( FBM_ATTR_GREEN )
-template<BINARYSIMDFUNCTION fn> class CSOAAttributeReferenceBinaryOp
+template<BINARYSIMDFUNCTION fn, class Ref> class CSOAAttributeReferenceBinaryOp
 {
 public:
-	CSOAAttributeReference m_opA;
-	CSOAAttributeReference m_opB;
+	Ref m_opA;
+	Ref m_opB;
 
-	CSOAAttributeReferenceBinaryOp( CSOAAttributeReference const &a, CSOAAttributeReference const & b )
+	CSOAAttributeReferenceBinaryOp( Ref const &a, Ref const & b )
 	{
 		a.CopyTo( m_opA );
 		b.CopyTo( m_opB );
@@ -456,9 +456,9 @@ public:
 };
 
 #define DEFINE_OP( opname, fnname )										\
-FORCEINLINE CSOAAttributeReferenceBinaryOp<fnname> operator opname( CSOAAttributeReference const &other ) const \
+FORCEINLINE CSOAAttributeReferenceBinaryOp<fnname, CSOAAttributeReference> operator opname( CSOAAttributeReference const &other ) const \
 {																		\
-	return CSOAAttributeReferenceBinaryOp<fnname>( *this, other );		\
+	return CSOAAttributeReferenceBinaryOp<fnname, CSOAAttributeReference>( *this, other );		\
 }
 
 class CSOAAttributeReference
@@ -498,18 +498,18 @@ public:
 	DEFINE_OP( -, SubSIMD );
 	DEFINE_OP( /, DivSIMD );
 
-	template<BINARYSIMDFUNCTION fn> FORCEINLINE void operator =( CSOAAttributeReferenceBinaryOp<fn> const &op );
+	template<BINARYSIMDFUNCTION fn> FORCEINLINE void operator =( CSOAAttributeReferenceBinaryOp<fn, CSOAAttributeReference> const &op );
 
 	FORCEINLINE void CopyTo( CSOAAttributeReference &other ) const; // since operator= is over-ridden
 };
 
 
-template<BINARYSIMDFUNCTION fn> FORCEINLINE void CSOAAttributeReference::operator =( CSOAAttributeReferenceBinaryOp<fn> const &op )
+template<BINARYSIMDFUNCTION fn> FORCEINLINE void CSOAAttributeReference::operator =( CSOAAttributeReferenceBinaryOp<fn, CSOAAttributeReference> const &op )
 {
 	m_pContainer->AssertDataType( m_nAttributeID, ATTRDATATYPE_FLOAT );
 	fltx4 *pOut = m_pContainer->RowPtr<fltx4>( m_nAttributeID, 0 );
-	fltx4 *pInA = op.m_opA.m_pContainer->RowPtr<fltx4>( op.m_opA.m_nAttributeID, 0 );
-	fltx4 *pInB = op.m_opB.m_pContainer->RowPtr<fltx4>( op.m_opB.m_nAttributeID, 0 );
+	fltx4 *pInA = op.m_opA.m_pContainer->template RowPtr<fltx4>( op.m_opA.m_nAttributeID, 0 );
+	fltx4 *pInB = op.m_opB.m_pContainer->template RowPtr<fltx4>( op.m_opB.m_nAttributeID, 0 );
 	size_t nRowToRowStride = m_pContainer->RowToRowStep( m_nAttributeID ) / sizeof( fltx4 );
 	int nRowCtr = m_pContainer->NumRows() * m_pContainer->NumSlices();
 	do
@@ -576,7 +576,8 @@ template<BINARYSIMDFUNCTION fn1, BINARYSIMDFUNCTION fn2> void CSOAContainer::App
 			int nColCtr = NumQuadsPerRow();
 			do
 			{
-				*( pOut++ ) = fn1( fn2( *pOut, fl4FnArg2 ), fl4FnArg1 );
+				*( pOut ) = fn1( fn2( *pOut, fl4FnArg2 ), fl4FnArg1 );
+				pOut++;
 			} while ( --nColCtr );
 			pOut += nRowToRowStride;
 		} while ( --nRowCtr );
@@ -613,7 +614,8 @@ template<BINARYSIMDFUNCTION fn> void CSOAContainer::ApplyBinaryFunctionToAttr( i
 			int nColCtr = NumQuadsPerRow();
 			do
 			{
-				*(pOut++) = fn( *pOut, fl4FnArg1 );
+				*(pOut) = fn( *pOut, fl4FnArg1 );
+				pOut++;
 			} while ( --nColCtr );
 			pOut += nRowToRowStride;
 		} while ( --nRowCtr );

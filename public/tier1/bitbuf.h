@@ -778,7 +778,7 @@ public:
 			}
 			else
 			{
-				StoreLittleDWord( m_pDataOut, 0, LoadLittleDWord(m_pDataOut,0) & ~s_nMaskTable[ 32 - m_nOutBitsAvail ] | m_nOutBufWord );
+				StoreLittleDWord( m_pDataOut, 0, (LoadLittleDWord(m_pDataOut,0) & ~s_nMaskTable[ 32 - m_nOutBitsAvail ]) | m_nOutBufWord );
 			}
 		}
 		m_bFlushed = true;

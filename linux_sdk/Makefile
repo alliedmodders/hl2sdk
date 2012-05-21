@@ -63,13 +63,13 @@ LIB_DIR = $(SRC_DIR)/lib/linux
 
 # the CPU target for the build, must be i486 for now
 ARCH = i486
-ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -m32
+ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -msse -m32
 
-DEFINES = -D_LINUX -DLINUX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp \
-	-D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
+DEFINES = -D_LINUX -DLINUX -DCOMPILER_GCC -DPOSIX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp \
+	  -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
-BASE_CFLAGS = -fno-strict-aliasing -Wall -Werror -Wconversion -Wno-non-virtual-dtor -Wno-invalid-offsetof
+BASE_CFLAGS = -fno-strict-aliasing -Wall -Werror -Wno-conversion -Wno-non-virtual-dtor -Wno-invalid-offsetof
 SHLIBEXT = so
 SHLIBCFLAGS = -fPIC
 SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt -Wl
@@ -100,6 +100,7 @@ MAKE_VCPM = Makefile.vcpm
 MAKE_PLUGIN = Makefile.plugin
 MAKE_TIER1 = Makefile.tier1
 MAKE_MATH = Makefile.mathlib
+MAKE_IFACE = Makefile.interfaces
 MAKE_CHOREO = Makefile.choreo
 
 all: check vcpm mod
@@ -131,6 +132,9 @@ tier1:
 mathlib:
 	$(MAKE) -f $(MAKE_MATH) $(BASE_DEFINES)
 
+interfaces:
+	$(MAKE) -f $(MAKE_IFACE) $(BASE_DEFINES)
+
 choreo:
 	$(MAKE) -f $(MAKE_CHOREO) $(BASE_DEFINES)
 
@@ -147,4 +151,5 @@ clean:
 	$(MAKE) -f $(MAKE_SERVER) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_TIER1) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_MATH) $(BASE_DEFINES) clean
+	$(MAKE) -f $(MAKE_IFACE) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_CHOREO) $(BASE_DEFINES) clean

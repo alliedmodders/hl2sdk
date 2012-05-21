@@ -18,16 +18,22 @@
 // Purpose: Comparison function for string sorted associative data structures
 //-----------------------------------------------------------------------------
 
-bool StrLess( const char * const &pszLeft, const char * const &pszRight )
+bool StrLessSensitive( const char * const &pszLeft, const char * const &pszRight )
 {
-	return ( Q_stricmp( pszLeft, pszRight) < 0 );
+	return ( Q_strcmp( pszLeft, pszRight) < 0 );
 }
 
+bool StrLessInsensitive( const char * const &pszLeft, const char * const &pszRight )
+{
+        return ( Q_stricmp( pszLeft, pszRight) < 0 );
+}
+
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-CStringPool::CStringPool()
-  : m_Strings( 32, 256, StrLess )
+CStringPool::CStringPool( StringPoolCase_t caseSensitivity )
+  : m_Strings( 32, 256, caseSensitivity == StringPoolCaseInsensitive ? StrLessInsensitive : StrLessSensitive )
 {
 }
 
@@ -94,7 +100,7 @@ void CStringPool::FreeAll()
 //-----------------------------------------------------------------------------
 
 
-CCountedStringPool::CCountedStringPool()
+CCountedStringPool::CCountedStringPool( StringPoolCase_t caseSensitivity )
 {
 	MEM_ALLOC_CREDIT();
 	m_HashTable.EnsureCount(HASH_TABLE_SIZE);
@@ -109,6 +115,8 @@ CCountedStringPool::CCountedStringPool()
 	m_Elements[0].pString = NULL;
 	m_Elements[0].nReferenceCount = 0;
 	m_Elements[0].nNextElement = INVALID_ELEMENT;
+
+	m_caseSensitivity = caseSensitivity;
 }
 
 CCountedStringPool::~CCountedStringPool()
@@ -154,7 +162,7 @@ unsigned short CCountedStringPool::FindStringHandle( const char* pIntrinsic )
 	if( pIntrinsic == NULL )
 		return INVALID_ELEMENT;
 
-	unsigned short nHashBucketIndex = (HashStringCaseless(pIntrinsic ) %HASH_TABLE_SIZE);
+	unsigned short nHashBucketIndex = (m_caseSensitivity ? HashString( pIntrinsic ) : HashStringCaseless( pIntrinsic ) %HASH_TABLE_SIZE);
 	unsigned short nCurrentBucket = m_HashTable[ nHashBucketIndex ];
 
 	// Does the bucket already exist?
@@ -187,7 +195,7 @@ unsigned short CCountedStringPool::ReferenceStringHandle( const char* pIntrinsic
 	if( pIntrinsic == NULL )
 		return INVALID_ELEMENT;
 
-	unsigned short nHashBucketIndex = (HashStringCaseless( pIntrinsic ) % HASH_TABLE_SIZE);
+	unsigned short nHashBucketIndex = (m_caseSensitivity ? HashString( pIntrinsic ) : HashStringCaseless( pIntrinsic ) % HASH_TABLE_SIZE);
 	unsigned short nCurrentBucket =  m_HashTable[ nHashBucketIndex ];
 
 	// Does the bucket already exist?
@@ -244,7 +252,7 @@ void CCountedStringPool::DereferenceString( const char* pIntrinsic )
 	if (!pIntrinsic)
 		return;
 
-	unsigned short nHashBucketIndex = (HashStringCaseless( pIntrinsic ) % m_HashTable.Count());
+	unsigned short nHashBucketIndex = (m_caseSensitivity ? HashString( pIntrinsic ) : HashStringCaseless( pIntrinsic ) % m_HashTable.Count());
 	unsigned short nCurrentBucket =  m_HashTable[ nHashBucketIndex ];
 
 	// If there isn't anything in the bucket, just return.
@@ -290,6 +298,14 @@ void CCountedStringPool::DereferenceString( const char* pIntrinsic )
 char* CCountedStringPool::HandleToString( unsigned short handle )
 {
 	return m_Elements[handle].pString;
+}
+
+unsigned CCountedStringPool::Hash( const char *pszKey )
+{
+	if (m_caseSensitivity == StringPoolCaseSensitive)
+		return HashString( pszKey );
+
+	return HashStringCaseless( pszKey );
 }
 
 void CCountedStringPool::SpewStrings()

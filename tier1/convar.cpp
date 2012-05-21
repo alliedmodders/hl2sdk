@@ -683,10 +683,10 @@ ConVar::ConVar( const char *pName, const char *pDefaultValue, int flags, const c
 //-----------------------------------------------------------------------------
 ConVar::~ConVar( void )
 {
-	if ( m_pszString )
+	if ( m_Value.m_pszString )
 	{
-		delete[] m_pszString;
-		m_pszString = NULL;
+		delete[] m_Value.m_pszString;
+		m_Value.m_pszString = NULL;
 	}
 }
 
@@ -694,15 +694,24 @@ ConVar::~ConVar( void )
 //-----------------------------------------------------------------------------
 // Install a change callback (there shouldn't already be one....)
 //-----------------------------------------------------------------------------
-void ConVar::InstallChangeCallback( FnChangeCallback_t callback )
+void ConVar::InstallChangeCallback( FnChangeCallback_t callback, bool bInvoke )
 {
-	Assert( !m_pParent->m_fnChangeCallback || !callback );
-	m_pParent->m_fnChangeCallback = callback;
-
-	if ( m_pParent->m_fnChangeCallback )
+	if (callback)
 	{
-		// Call it immediately to set the initial value...
-		m_pParent->m_fnChangeCallback( this, m_pszString, m_fValue );
+		if (m_fnChangeCallbacks.Find(callback) != -1)
+		{
+			m_fnChangeCallbacks.AddToTail(callback);
+			if (bInvoke)
+				callback(this, m_Value.m_pszString, m_Value.m_fValue);
+		}
+		else
+		{
+			Warning("InstallChangeCallback ignoring duplicate change callback!!!\n");
+		}
+	}
+	else
+	{
+		Warning("InstallChangeCallback called with NULL callback, ignoring!!!\n");
 	}
 }
 
@@ -780,7 +789,7 @@ void ConVar::InternalSetValue( const char *value )
 
 	Assert(m_pParent == this); // Only valid for root convars.
 
-	float flOldValue = m_fValue;
+	float flOldValue = m_Value.m_fValue;
 
 	val = (char *)value;
 	fNewValue = ( float )atof( value );
@@ -792,8 +801,8 @@ void ConVar::InternalSetValue( const char *value )
 	}
 	
 	// Redetermine value
-	m_fValue		= fNewValue;
-	m_nValue		= ( int )( m_fValue );
+	m_Value.m_fValue		= fNewValue;
+	m_Value.m_nValue		= ( int )( fNewValue );
 
 	if ( !( m_nFlags & FCVAR_NEVER_AS_STRING ) )
 	{
@@ -809,33 +818,32 @@ void ConVar::ChangeStringValue( const char *tempVal, float flOldValue )
 {
 	Assert( !( m_nFlags & FCVAR_NEVER_AS_STRING ) );
 
- 	char* pszOldValue = (char*)stackalloc( m_StringLength );
-	memcpy( pszOldValue, m_pszString, m_StringLength );
+ 	char* pszOldValue = (char*)stackalloc( m_Value.m_StringLength );
+	memcpy( pszOldValue, m_Value.m_pszString, m_Value.m_StringLength );
 	
 	int len = Q_strlen(tempVal) + 1;
 
-	if ( len > m_StringLength)
+	if ( len > m_Value.m_StringLength)
 	{
-		if (m_pszString)
+		if (m_Value.m_pszString)
 		{
-			delete[] m_pszString;
+			delete[] m_Value.m_pszString;
 		}
 
-		m_pszString	= new char[len];
-		m_StringLength = len;
+		m_Value.m_pszString	= new char[len];
+		m_Value.m_StringLength = len;
 	}
 
-	memcpy( m_pszString, tempVal, len );
+	memcpy( m_Value.m_pszString, tempVal, len );
 
 	// Invoke any necessary callback function
-	if ( m_fnChangeCallback )
+	for (int i = 0; i < m_fnChangeCallbacks.Count(); i++)
 	{
-		m_fnChangeCallback( this, pszOldValue, flOldValue );
+		m_fnChangeCallbacks[i]( this, pszOldValue, flOldValue );
 	}
 
-	g_pCVar->CallGlobalChangeCallbacks( this, pszOldValue, flOldValue );
-
-	stackfree( pszOldValue );
+	if (g_pCVar)
+		g_pCVar->CallGlobalChangeCallbacks( this, pszOldValue, flOldValue );
 }
 
 //-----------------------------------------------------------------------------
@@ -866,7 +874,7 @@ bool ConVar::ClampValue( float& value )
 //-----------------------------------------------------------------------------
 void ConVar::InternalSetFloatValue( float fNewValue )
 {
-	if ( fNewValue == m_fValue )
+	if ( fNewValue == m_Value.m_fValue )
 		return;
 
 	Assert( m_pParent == this ); // Only valid for root convars.
@@ -875,19 +883,19 @@ void ConVar::InternalSetFloatValue( float fNewValue )
 	ClampValue( fNewValue );
 
 	// Redetermine value
-	float flOldValue = m_fValue;
-	m_fValue		= fNewValue;
-	m_nValue		= ( int )m_fValue;
+	float flOldValue = m_Value.m_fValue;
+	m_Value.m_fValue		= fNewValue;
+	m_Value.m_nValue		= ( int )fNewValue;
 
 	if ( !( m_nFlags & FCVAR_NEVER_AS_STRING ) )
 	{
 		char tempVal[ 32 ];
-		Q_snprintf( tempVal, sizeof( tempVal), "%f", m_fValue );
+		Q_snprintf( tempVal, sizeof( tempVal), "%f", m_Value.m_fValue );
 		ChangeStringValue( tempVal, flOldValue );
 	}
 	else
 	{
-		Assert( !m_fnChangeCallback );
+		Assert( m_fnChangeCallbacks.Count() == 0 );
 	}
 }
 
@@ -897,7 +905,7 @@ void ConVar::InternalSetFloatValue( float fNewValue )
 //-----------------------------------------------------------------------------
 void ConVar::InternalSetIntValue( int nValue )
 {
-	if ( nValue == m_nValue )
+	if ( nValue == m_Value.m_nValue )
 		return;
 
 	Assert( m_pParent == this ); // Only valid for root convars.
@@ -909,19 +917,19 @@ void ConVar::InternalSetIntValue( int nValue )
 	}
 
 	// Redetermine value
-	float flOldValue = m_fValue;
-	m_fValue		= fValue;
-	m_nValue		= nValue;
+	float flOldValue = m_Value.m_fValue;
+	m_Value.m_fValue		= fValue;
+	m_Value.m_nValue		= nValue;
 
 	if ( !( m_nFlags & FCVAR_NEVER_AS_STRING ) )
 	{
 		char tempVal[ 32 ];
-		Q_snprintf( tempVal, sizeof( tempVal ), "%d", m_nValue );
+		Q_snprintf( tempVal, sizeof( tempVal ), "%d", m_Value.m_nValue );
 		ChangeStringValue( tempVal, flOldValue );
 	}
 	else
 	{
-		Assert( !m_fnChangeCallback );
+		Assert( m_fnChangeCallbacks.Count() == 0 );
 	}
 }
 
@@ -950,31 +958,32 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 	m_pszDefaultValue = pDefaultValue ? pDefaultValue : empty_string;
 	Assert( m_pszDefaultValue );
 
-	m_StringLength = strlen( m_pszDefaultValue ) + 1;
-	m_pszString = new char[m_StringLength];
-	memcpy( m_pszString, m_pszDefaultValue, m_StringLength );
+	m_Value.m_StringLength = strlen( m_pszDefaultValue ) + 1;
+	m_Value.m_pszString = new char[m_Value.m_StringLength];
+	memcpy( m_Value.m_pszString, m_pszDefaultValue, m_Value.m_StringLength );
 	
 	m_bHasMin = bMin;
 	m_fMinVal = fMin;
 	m_bHasMax = bMax;
 	m_fMaxVal = fMax;
 	
-	m_fnChangeCallback = callback;
+	if (callback)
+		m_fnChangeCallbacks.AddToTail(callback);
 
-	m_fValue = ( float )atof( m_pszString );
+	m_Value.m_fValue = ( float )atof( m_Value.m_pszString );
 
 	// Bounds Check, should never happen, if it does, no big deal
-	if ( m_bHasMin && ( m_fValue < m_fMinVal ) )
+	if ( m_bHasMin && ( m_Value.m_fValue < m_fMinVal ) )
 	{
 		Assert( 0 );
 	}
 
-	if ( m_bHasMax && ( m_fValue > m_fMaxVal ) )
+	if ( m_bHasMax && ( m_Value.m_fValue > m_fMaxVal ) )
 	{
 		Assert( 0 );
 	}
 
-	m_nValue = ( int )m_fValue;
+	m_Value.m_nValue = ( int )m_Value.m_fValue;
 
 	BaseClass::Create( pName, pHelpString, flags );
 }
@@ -1205,7 +1214,7 @@ void ConVar_PrintDescription( const ConCommandBase *pVar )
 	float fMin, fMax;
 	const char *pStr;
 
-	assert( pVar );
+	Assert( pVar );
 
 	Color clr;
 	clr.SetColor( 255, 100, 100, 255 );

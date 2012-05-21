@@ -138,7 +138,7 @@ public:
 		switch ( m_Type )
 		{
 			case DPT_Int : 
-				Q_snprintf( text, sizeof(text), "%i", m_Int );
+				Q_snprintf( text, sizeof(text), "%i", (int)m_Int );
 				break;
 			case DPT_Float :
 				Q_snprintf( text, sizeof(text), "%.3f", m_Float );
@@ -170,7 +170,7 @@ public:
 				Q_snprintf( text, sizeof(text), "DataTable" ); 
 				break;
 			case DPT_Int64:
-				Q_snprintf( text, sizeof(text), "%I64d", m_Int64 );
+				Q_snprintf( text, sizeof(text), "%lld", m_Int64 );
 				break;
 			default :
 				Q_snprintf( text, sizeof(text), "DVariant type %i unknown", m_Type ); 

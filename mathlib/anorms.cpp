@@ -6,6 +6,7 @@
 #if !defined(_STATIC_LINKED) || defined(_SHARED_LIB)
 
 
+#include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
 #include "mathlib/anorms.h"
 
