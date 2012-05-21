@@ -1681,8 +1681,8 @@ FORCEINLINE bool CThreadSpinRWLock::TryLockForWrite( const uint32 threadId )
 		return false;
 	}
 
-	static const LockInfo_t oldValue = { 0, 0 };
-	LockInfo_t newValue = { threadId, 0 };
+	static const LockInfo_t oldValue = {{ 0, 0 }};
+	LockInfo_t newValue = {{ threadId, 0 }};
 	if ( AssignIf( newValue, oldValue ) )
 	{
 		ThreadMemoryBarrier();

@@ -33,7 +33,9 @@ typedef enum DXGI_FORMAT;
 //-----------------------------------------------------------------------------
 
 // don't bitch that inline functions aren't used!!!!
+#ifdef _MSC_VER
 #pragma warning(disable : 4514)
+#endif
 
 enum ImageFormat 
 {
@@ -170,24 +172,31 @@ typedef enum _D3DFORMAT
 //-----------------------------------------------------------------------------
 // Color structures
 //-----------------------------------------------------------------------------
+#ifdef _MSC_VER
 #pragma warning ( disable : 4293 )
+#endif
 template< int nBitCount > FORCEINLINE int ConvertTo10Bit( int x )
 {
 	switch ( nBitCount )
 	{
-	case 1:
-		return ( x & 0x1 ) ? 0x3FF : 0;
-	case 2:
-		return ( x << 8 ) | ( x << 6 ) | ( x << 4 ) | ( x << 2 ) | x;
-	case 3:
-		return ( x << 7 ) | ( x << 4 ) | ( x << 1 ) | ( x >> 2 );
-	case 4:
-		return ( x << 6 ) | ( x << 2 ) | ( x >> 2 );
-	default:
-		return ( x << ( 10 - nBitCount ) ) | ( x >> ( nBitCount - ( 10 - nBitCount ) ) );
+		case 1:
+			return ( x & 0x1 ) ? 0x3FF : 0;
+		case 2:
+			return ( x << 8 ) | ( x << 6 ) | ( x << 4 ) | ( x << 2 ) | x;
+		case 3:
+			return ( x << 7 ) | ( x << 4 ) | ( x << 1 ) | ( x >> 2 );
+		case 4:
+			return ( x << 6 ) | ( x << 2 ) | ( x >> 2 );
+		default:
+		{
+			int rshift = ( nBitCount - ( 10 - nBitCount ) );
+			return ( x << ( 10 - nBitCount ) ) | ( x >> rshift );
+		}
 	}
 }
+#ifdef _MSC_VER
 #pragma warning ( default : 4293 )
+#endif
 
 template< int nBitCount > FORCEINLINE int ConvertFrom10Bit( int x )
 {
@@ -622,7 +631,7 @@ namespace ImageLoader
 	struct ResampleInfo_t
 	{
 
-		ResampleInfo_t() : m_nFlags(0), m_flAlphaThreshhold(0.4f), m_flAlphaHiFreqThreshhold(0.4f), m_nSrcDepth(1), m_nDestDepth(1)
+		ResampleInfo_t() : m_nSrcDepth(1), m_nDestDepth(1), m_flAlphaThreshhold(0.4f), m_flAlphaHiFreqThreshhold(0.4f), m_nFlags(0)
 		{
 			m_flColorScale[0] = 1.0f, m_flColorScale[1] = 1.0f, m_flColorScale[2] = 1.0f, m_flColorScale[3] = 1.0f;
 			m_flColorGoal[0] = 0.0f, m_flColorGoal[1] = 0.0f, m_flColorGoal[2] = 0.0f, m_flColorGoal[3] = 0.0f;

@@ -24,13 +24,12 @@
 #include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
 #if !defined( _X360 )
-#include "mathlib/amd3dx.h"
-#include "3dnow.h"
 #include "sse.h"
 #endif
 
 #include "mathlib/ssemath.h"
 #include "mathlib/ssequaternion.h"
+#include "mathlib/vplane.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -42,7 +41,6 @@ bool s_bMathlibInitialized = false;
 void Sys_Error (char *error, ...);
 #endif
 
-const Vector vec3_origin(0,0,0);
 const QAngle vec3_angle(0,0,0);
 const Vector vec3_invalid( FLT_MAX, FLT_MAX, FLT_MAX );
 const int nanmask = 255<<23;
@@ -63,10 +61,10 @@ float _rsqrtf(float x)
 	return 1.f / _sqrtf( x );
 }
 
-float FASTCALL _VectorNormalize (Vector& vec)
+float VectorNormalize (Vector& vec)
 {
 #ifdef _VPROF_MATHLIB
-	VPROF_BUDGET( "_VectorNormalize", "Mathlib" );
+	VPROF_BUDGET( "VectorNormalize", "Mathlib" );
 #endif
 	Assert( s_bMathlibInitialized );
 	float radius = sqrtf(vec.x*vec.x + vec.y*vec.y + vec.z*vec.z);
@@ -80,6 +78,8 @@ float FASTCALL _VectorNormalize (Vector& vec)
 	
 	return radius;
 }
+
+
 
 // TODO: Add fast C VectorNormalizeFast.
 // Perhaps use approximate rsqrt trick, if the accuracy isn't too bad.
@@ -109,7 +109,6 @@ float _InvRSquared(const float* v)
 float (*pfSqrt)(float x)  = _sqrtf;
 float (*pfRSqrt)(float x) = _rsqrtf;
 float (*pfRSqrtFast)(float x) = _rsqrtf;
-float (FASTCALL *pfVectorNormalize)(Vector& v) = _VectorNormalize;
 void  (FASTCALL *pfVectorNormalizeFast)(Vector& v) = _VectorNormalizeFast;
 float (*pfInvRSquared)(const float* v) = _InvRSquared;
 void  (*pfFastSinCos)(float x, float* s, float* c) = SinCos;
@@ -382,9 +381,9 @@ void MatrixInvert( const matrix3x4_t& in, matrix3x4_t& out )
 	Assert( s_bMathlibInitialized );
 	if ( &in == &out )
 	{
-		swap(out[0][1],out[1][0]);
-		swap(out[0][2],out[2][0]);
-		swap(out[1][2],out[2][1]);
+		V_swap(out[0][1],out[1][0]);
+		V_swap(out[0][2],out[2][0]);
+		V_swap(out[1][2],out[2][1]);
 	}
 	else
 	{
@@ -1266,18 +1265,18 @@ bool SolveInverseQuadraticMonotonic( float x1, float y1, float x2, float y2, flo
 	// first, sort parameters
 	if (x1>x2)
 	{
-		swap(x1,x2);
-		swap(y1,y2);
+		V_swap(x1,x2);
+		V_swap(y1,y2);
 	}
 	if (x2>x3)
 	{
-		swap(x2,x3);
-		swap(y2,y3);
+		V_swap(x2,x3);
+		V_swap(y2,y3);
 	}
 	if (x1>x2)
 	{
-		swap(x1,x2);
-		swap(y1,y2);
+		V_swap(x1,x2);
+		V_swap(y1,y2);
 	}
 	// this code is not fast. what it does is when the curve would be non-monotonic, slowly shifts
 	// the center point closer to the linear line between the endpoints. Should anyone need htis
@@ -3198,7 +3197,6 @@ bool CalcLineToLineIntersectionSegment(
 #pragma optimize( "", on )
 #endif
 
-static bool s_b3DNowEnabled = false;
 static bool s_bMMXEnabled = false;
 static bool s_bSSEEnabled = false;
 static bool s_bSSE2Enabled = false;
@@ -3218,7 +3216,6 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 	pfSqrt = _sqrtf;
 	pfRSqrt = _rsqrtf;
 	pfRSqrtFast = _rsqrtf;
-	pfVectorNormalize = _VectorNormalize;
 	pfVectorNormalizeFast = _VectorNormalizeFast;
 	pfInvRSquared = _InvRSquared;
 	pfFastSinCos = SinCos;
@@ -3235,31 +3232,11 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 		s_bMMXEnabled = false;
 	}
 
-	// SSE Generally performs better than 3DNow when present, so this is placed 
-	// first to allow SSE to override these settings.
-	if ( bAllow3DNow && pi.m_b3DNow )
-	{
-		s_b3DNowEnabled = true;
-
-		// Select the 3DNow specific routines if available;
-		pfVectorNormalize = _3DNow_VectorNormalize;
-		pfVectorNormalizeFast = _3DNow_VectorNormalizeFast;
-		pfInvRSquared = _3DNow_InvRSquared;
-		pfSqrt = _3DNow_Sqrt;
-		pfRSqrt = _3DNow_RSqrt;
-		pfRSqrtFast = _3DNow_RSqrt;
-	}
-	else
-	{
-		s_b3DNowEnabled = false;
-	}
-
 	if ( bAllowSSE && pi.m_bSSE )
 	{
 		s_bSSEEnabled = true;
 
 		// Select the SSE specific routines if available
-		pfVectorNormalize = _VectorNormalize;
 		pfVectorNormalizeFast = _SSE_VectorNormalizeFast;
 		pfInvRSquared = _SSE_InvRSquared;
 		pfSqrt = _SSE_Sqrt;
@@ -3295,12 +3272,6 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 	BuildGammaTable( gamma, texGamma, brightness, overbright );
 }
 
-bool MathLib_3DNowEnabled( void )
-{
-	Assert( s_bMathlibInitialized );
-	return s_b3DNowEnabled;
-}
-
 bool MathLib_MMXEnabled( void )
 {
 	Assert( s_bMathlibInitialized );
@@ -3317,20 +3288,6 @@ bool MathLib_SSE2Enabled( void )
 {
 	Assert( s_bMathlibInitialized );
 	return s_bSSE2Enabled;
-}
-
-float Approach( float target, float value, float speed )
-{
-	float delta = target - value;
-
-	if ( delta > speed )
-		value += speed;
-	else if ( delta < -speed )
-		value -= speed;
-	else 
-		value = target;
-
-	return value;
 }
 
 // BUGBUG: Why doesn't this call angle diff?!?!?
@@ -3816,8 +3773,8 @@ void GeneratePerspectiveFrustum( const Vector& origin, const Vector &forward,
 	float flIntercept = DotProduct( origin, forward );
 
 	// Setup the near and far planes.
-	frustum.SetPlane( FRUSTUM_FARZ, PLANE_ANYZ, -forward, -flZFar - flIntercept );
-	frustum.SetPlane( FRUSTUM_NEARZ, PLANE_ANYZ, forward, flZNear + flIntercept );
+	frustum.SetPlane( FRUSTUM_FARZ,  -forward, -flZFar - flIntercept );
+	frustum.SetPlane( FRUSTUM_NEARZ, forward, flZNear + flIntercept );
 
 	flFovX *= 0.5f;
 	flFovY *= 0.5f;
@@ -3834,8 +3791,8 @@ void GeneratePerspectiveFrustum( const Vector& origin, const Vector &forward,
 	VectorNormalize( normalPos );
 	VectorNormalize( normalNeg );
 
-	frustum.SetPlane( FRUSTUM_LEFT, PLANE_ANYZ, normalPos, normalPos.Dot( origin ) );
-	frustum.SetPlane( FRUSTUM_RIGHT, PLANE_ANYZ, normalNeg, normalNeg.Dot( origin ) );
+	frustum.SetPlane( FRUSTUM_LEFT, normalPos, normalPos.Dot( origin ) );
+	frustum.SetPlane( FRUSTUM_RIGHT,normalNeg, normalNeg.Dot( origin ) );
 
 	VectorMA( up, flTanY, forward, normalPos );
 	VectorMA( normalPos, -2.0f, up, normalNeg );
@@ -3843,8 +3800,8 @@ void GeneratePerspectiveFrustum( const Vector& origin, const Vector &forward,
 	VectorNormalize( normalPos );
 	VectorNormalize( normalNeg );
 
-	frustum.SetPlane( FRUSTUM_BOTTOM, PLANE_ANYZ, normalPos, normalPos.Dot( origin ) );
-	frustum.SetPlane( FRUSTUM_TOP, PLANE_ANYZ, normalNeg, normalNeg.Dot( origin ) );
+	frustum.SetPlane( FRUSTUM_BOTTOM, normalPos, normalPos.Dot( origin ) );
+	frustum.SetPlane( FRUSTUM_TOP,  normalNeg, normalNeg.Dot( origin ) );
 }
 
 
@@ -3859,23 +3816,40 @@ void GeneratePerspectiveFrustum( const Vector& origin, const QAngle &angles, flo
 	GeneratePerspectiveFrustum( origin, vecForward, vecRight, vecUp, flZNear, flZFar, flFovX, flFovY, frustum );
 }
 
+inline cplane_t *ToPlane(cplane_t *out, const Frustum_t &frustum, int type)
+{
+        Vector vecNormal;
+        float dist;
+
+	frustum.GetPlane(type, &vecNormal, &dist);
+			
+	out->normal = vecNormal;
+	out->dist = dist;
+	out->type = PLANE_ANYZ;
+	out->signbits = SignbitsForPlane(out);
+
+	return out;
+}
+
 bool R_CullBox( const Vector& mins, const Vector& maxs, const Frustum_t &frustum )
 {
-	return (( BoxOnPlaneSide( mins, maxs, frustum.GetPlane(FRUSTUM_RIGHT) ) == 2 ) || 
-			( BoxOnPlaneSide( mins, maxs, frustum.GetPlane(FRUSTUM_LEFT) ) == 2 ) ||
-			( BoxOnPlaneSide( mins, maxs, frustum.GetPlane(FRUSTUM_TOP) ) == 2 ) ||
-			( BoxOnPlaneSide( mins, maxs, frustum.GetPlane(FRUSTUM_BOTTOM) ) == 2 ) ||
-			( BoxOnPlaneSide( mins, maxs, frustum.GetPlane(FRUSTUM_NEARZ) ) == 2 ) ||
-			( BoxOnPlaneSide( mins, maxs, frustum.GetPlane(FRUSTUM_FARZ) ) == 2 ) );
+	cplane_t p;
+	return (( BoxOnPlaneSide( mins, maxs, ToPlane(&p, frustum, FRUSTUM_RIGHT) ) == 2 ) || 
+			( BoxOnPlaneSide( mins, maxs, ToPlane(&p, frustum, FRUSTUM_LEFT) ) == 2 ) ||
+			( BoxOnPlaneSide( mins, maxs, ToPlane(&p, frustum, FRUSTUM_TOP) ) == 2 ) ||
+			( BoxOnPlaneSide( mins, maxs, ToPlane(&p, frustum, FRUSTUM_BOTTOM) ) == 2 ) ||
+			( BoxOnPlaneSide( mins, maxs, ToPlane(&p, frustum, FRUSTUM_NEARZ) ) == 2 ) ||
+			( BoxOnPlaneSide( mins, maxs, ToPlane(&p, frustum, FRUSTUM_FARZ) ) == 2 ) );
 }
 
 bool R_CullBoxSkipNear( const Vector& mins, const Vector& maxs, const Frustum_t &frustum )
 {
-	return (( BoxOnPlaneSide( mins, maxs, frustum.GetPlane(FRUSTUM_RIGHT) ) == 2 ) || 
-			( BoxOnPlaneSide( mins, maxs, frustum.GetPlane(FRUSTUM_LEFT) ) == 2 ) ||
-			( BoxOnPlaneSide( mins, maxs, frustum.GetPlane(FRUSTUM_TOP) ) == 2 ) ||
-			( BoxOnPlaneSide( mins, maxs, frustum.GetPlane(FRUSTUM_BOTTOM) ) == 2 ) ||
-			( BoxOnPlaneSide( mins, maxs, frustum.GetPlane(FRUSTUM_FARZ) ) == 2 ) );
+	cplane_t p;
+	return (( BoxOnPlaneSide( mins, maxs, ToPlane(&p, frustum, FRUSTUM_RIGHT) ) == 2 ) || 
+			( BoxOnPlaneSide( mins, maxs, ToPlane(&p, frustum, FRUSTUM_LEFT) ) == 2 ) ||
+			( BoxOnPlaneSide( mins, maxs, ToPlane(&p, frustum, FRUSTUM_TOP) ) == 2 ) ||
+			( BoxOnPlaneSide( mins, maxs, ToPlane(&p, frustum, FRUSTUM_BOTTOM) ) == 2 ) ||
+			( BoxOnPlaneSide( mins, maxs, ToPlane(&p, frustum, FRUSTUM_FARZ) ) == 2 ) );
 }
 
 
@@ -4088,3 +4062,208 @@ void GetInterpolationData( float const *pKnotPositions,
 	*pInterpolationValue = FLerp( 0, 1, 0, flSizeOfGap, flOffsetFromStartOfGap );
 	return;
 }
+
+/* Reverse engineered code ahead */
+
+void fourplanes_t::ComputeSignbits()
+{
+	xSign = CmpLtSIMD(nX, Four_Zeros);
+	ySign = CmpLtSIMD(nY, Four_Zeros);
+	zSign = CmpLtSIMD(nZ, Four_Zeros);
+	nXAbs = fabs(nX);
+	nYAbs = fabs(nY);
+	nZAbs = fabs(nZ);
+}
+
+void fourplanes_t::Set4Planes( const VPlane *pPlanes )
+{
+	nX = *(fltx4 *)pPlanes;
+	nY = *(fltx4 *)++pPlanes;
+	nZ = *(fltx4 *)++pPlanes;
+	dist = *(fltx4 *)++pPlanes;
+	TransposeSIMD(nX, nY, nZ, dist);
+
+	ComputeSignbits();
+}
+
+void fourplanes_t::Set2Planes( const VPlane *pPlanes )
+{
+	nX = *(fltx4 *)pPlanes;
+	nY = *(fltx4 *)++pPlanes;
+	nZ = Four_Zeros;
+	dist = Four_Zeros;
+	TransposeSIMD(nX, nY, nZ, dist);
+
+	ComputeSignbits();	
+}
+
+void fourplanes_t::Get4Planes( VPlane *pPlanesOut )
+{
+	fltx4 tempX = nX;
+	fltx4 tempY = nY;
+	fltx4 tempZ = nZ;
+	fltx4 tempDist = dist;
+
+        TransposeSIMD(tempX, tempY, tempZ, tempDist);
+
+	*(fltx4 *)pPlanesOut = tempX;
+	*(fltx4 *)++pPlanesOut = tempY;
+	*(fltx4 *)++pPlanesOut = tempZ;
+	*(fltx4 *)++pPlanesOut = tempDist;
+}
+
+void fourplanes_t::Get2Planes( VPlane *pPlanesOut )
+{
+	fltx4 tempX = nX;
+	fltx4 tempY = nY;
+	fltx4 tempZ = nZ;
+	fltx4 tempDist = dist;
+
+	TransposeSIMD(tempX, tempY, tempZ, tempDist);
+
+	*(fltx4 *)pPlanesOut = tempX;
+	*(fltx4 *)++pPlanesOut = tempY;
+}
+
+void fourplanes_t::GetPlane( int index, Vector *pNormal, float *pDist ) const
+{
+	pNormal->x = SubFloat(nX, index);
+	pNormal->y = SubFloat(nY, index);
+	pNormal->z = SubFloat(nZ, index);
+	*pDist = SubFloat(dist, index);
+}
+
+void fourplanes_t::SetPlane( int index, const Vector &vecNormal, float planeDist )
+{
+	SubFloat(nX, index) = vecNormal.x;
+	SubFloat(nY, index) = vecNormal.y;
+	SubFloat(nZ, index) = vecNormal.z;
+	SubFloat(dist, index) = planeDist;
+	ComputeSignbits();
+}
+
+Frustum_t::Frustum_t()
+{
+	memset(planes, 0, sizeof(planes));
+}
+
+void Frustum_t::SetPlane( int i, const Vector &vecNormal, float dist )
+{
+	if (i < 4)
+		planes[0].SetPlane(i, vecNormal, dist);
+	else
+		planes[1].SetPlane(i - 4, vecNormal, dist);
+}
+
+void Frustum_t::GetPlane( int i, Vector *pNormalOut, float *pDistOut) const
+{
+	if (i < 4)
+		planes[0].GetPlane(i, pNormalOut, pDistOut);
+	else
+		planes[1].GetPlane(i - 4, pNormalOut, pDistOut);
+}
+
+void Frustum_t::SetPlanes( const VPlane *pPlanes )
+{
+	planes[0].Set4Planes(pPlanes);
+	planes[1].Set2Planes(pPlanes + 4);
+}
+
+void Frustum_t::GetPlanes( VPlane *pPlanesOut )
+{
+	planes[0].Get4Planes(pPlanesOut);
+	planes[1].Get2Planes(pPlanesOut + 4);
+}
+
+bool Frustum_t::CullBox( const Vector &mins, const Vector &maxs ) const
+{
+	fltx4 mins4 = LoadUnalignedSIMD(&mins);
+	fltx4 maxs4 = LoadUnalignedSIMD(&maxs);
+	fltx4 minX = SplatXSIMD(mins4);
+	fltx4 minY = SplatYSIMD(mins4);
+	fltx4 minZ = SplatZSIMD(mins4);
+	fltx4 maxX = SplatXSIMD(maxs4);
+	fltx4 maxY = SplatYSIMD(maxs4);
+	fltx4 maxZ = SplatZSIMD(maxs4);
+
+	for (int i = 0; i < 2; i++)
+	{
+		fltx4 xTotalBack = MulSIMD(planes[i].nX, MaskedAssign(planes[i].xSign, minX, maxX));
+		fltx4 yTotalBack = MulSIMD(planes[i].nY, MaskedAssign(planes[i].ySign, minY, maxY));
+		fltx4 zTotalBack = MulSIMD(planes[i].nZ, MaskedAssign(planes[i].zSign, minZ, maxZ));
+		fltx4 dotBack = AddSIMD(xTotalBack, AddSIMD(yTotalBack, zTotalBack));
+
+		if (IsAnyNegative(CmpLtSIMD(dotBack, planes[i].dist)))
+			return true;
+	}
+	return false;
+}
+
+bool Frustum_t::CullBoxCenterExtents( const Vector &center, const Vector &extents ) const
+{
+	fltx4 center4 = LoadUnalignedSIMD(&center);
+	fltx4 extents4 = LoadUnalignedSIMD(&extents);
+        fltx4 centerX = SplatXSIMD(center4);
+        fltx4 centerY = SplatYSIMD(center4);
+        fltx4 centerZ = SplatZSIMD(center4);
+        fltx4 extentsX = SplatXSIMD(extents4);
+        fltx4 extentsY = SplatYSIMD(extents4);
+        fltx4 extentsZ = SplatZSIMD(extents4);
+
+        for (int i = 0; i < 2; i++)
+        {
+                fltx4 xTotalBack = AddSIMD(MulSIMD(planes[i].nX, centerX), MulSIMD(planes[i].nXAbs, extentsX));
+                fltx4 yTotalBack = AddSIMD(MulSIMD(planes[i].nY, centerY), MulSIMD(planes[i].nYAbs, extentsY));
+                fltx4 zTotalBack = AddSIMD(MulSIMD(planes[i].nZ, centerZ), MulSIMD(planes[i].nZAbs, extentsZ));
+                fltx4 dotBack = AddSIMD(xTotalBack, AddSIMD(yTotalBack, zTotalBack));
+
+                if (IsAnyNegative(CmpLtSIMD(dotBack, planes[i].dist)))
+                        return true;
+        }
+        return false;
+}
+
+bool Frustum_t::CullBox( const fltx4 &fl4Mins, const fltx4 &fl4Maxs ) const
+{
+        fltx4 minX = SplatXSIMD(fl4Mins);
+        fltx4 minY = SplatYSIMD(fl4Mins);
+        fltx4 minZ = SplatZSIMD(fl4Mins);
+        fltx4 maxX = SplatXSIMD(fl4Maxs);
+        fltx4 maxY = SplatYSIMD(fl4Maxs);
+        fltx4 maxZ = SplatZSIMD(fl4Maxs);
+
+        for (int i = 0; i < 2; i++)
+        {
+                fltx4 xTotalBack = MulSIMD(planes[i].nX, MaskedAssign(planes[i].xSign, minX, maxX));
+                fltx4 yTotalBack = MulSIMD(planes[i].nY, MaskedAssign(planes[i].ySign, minY, maxY));
+                fltx4 zTotalBack = MulSIMD(planes[i].nZ, MaskedAssign(planes[i].zSign, minZ, maxZ));
+                fltx4 dotBack = AddSIMD(xTotalBack, AddSIMD(yTotalBack, zTotalBack));
+
+                if (IsAnyNegative(CmpLtSIMD(dotBack, planes[i].dist)))
+                        return true;
+        }
+        return false;
+}
+
+bool Frustum_t::CullBoxCenterExtents( const fltx4 &fl4Center, const fltx4 &fl4Extents ) const
+{
+        fltx4 centerX = SplatXSIMD(fl4Center);
+        fltx4 centerY = SplatYSIMD(fl4Center);
+        fltx4 centerZ = SplatZSIMD(fl4Center);
+        fltx4 extentsX = SplatXSIMD(fl4Extents);
+        fltx4 extentsY = SplatYSIMD(fl4Extents);
+        fltx4 extentsZ = SplatZSIMD(fl4Extents);
+
+        for (int i = 0; i < 2; i++)
+        {
+                fltx4 xTotalBack = AddSIMD(MulSIMD(planes[i].nX, centerX), MulSIMD(planes[i].nXAbs, extentsX));
+                fltx4 yTotalBack = AddSIMD(MulSIMD(planes[i].nY, centerY), MulSIMD(planes[i].nYAbs, extentsY));
+                fltx4 zTotalBack = AddSIMD(MulSIMD(planes[i].nZ, centerZ), MulSIMD(planes[i].nZAbs, extentsZ));
+                fltx4 dotBack = AddSIMD(xTotalBack, AddSIMD(yTotalBack, zTotalBack));
+
+                if (IsAnyNegative(CmpLtSIMD(dotBack, planes[i].dist)))
+                        return true;
+        }
+        return false;	
+}
+

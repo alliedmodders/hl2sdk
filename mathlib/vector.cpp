@@ -6,7 +6,8 @@
 //
 //=============================================================================//
 
+#include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
 
-Vector vec3_origin(0,0,0);
+const Vector vec3_origin(0,0,0);
 

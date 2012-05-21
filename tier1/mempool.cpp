@@ -19,13 +19,13 @@
 // Should be last include
 #include "tier0/memdbgon.h"
 
-MemoryPoolReportFunc_t CMemoryPool::g_ReportFunc = 0;
+MemoryPoolReportFunc_t CUtlMemoryPool::g_ReportFunc = 0;
 
 //-----------------------------------------------------------------------------
 // Error reporting...  (debug only)
 //-----------------------------------------------------------------------------
 
-void CMemoryPool::SetErrorReportFunc( MemoryPoolReportFunc_t func )
+void CUtlMemoryPool::SetErrorReportFunc( MemoryPoolReportFunc_t func )
 {
 	g_ReportFunc = func;
 }
@@ -33,7 +33,7 @@ void CMemoryPool::SetErrorReportFunc( MemoryPoolReportFunc_t func )
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-CMemoryPool::CMemoryPool( int blockSize, int numElements, int growMode, const char *pszAllocOwner, int nAlignment )
+CUtlMemoryPool::CUtlMemoryPool( int blockSize, int numElements, int growMode, const char *pszAllocOwner, int nAlignment )
 {
 #ifdef _X360
 	if( numElements > 0 && growMode != GROW_NONE )
@@ -63,7 +63,7 @@ CMemoryPool::CMemoryPool( int blockSize, int numElements, int growMode, const ch
 //			any further use.
 // Input  : *memPool - the mempool to shutdown
 //-----------------------------------------------------------------------------
-CMemoryPool::~CMemoryPool()
+CUtlMemoryPool::~CUtlMemoryPool()
 {
 	if (m_BlocksAllocated > 0)
 	{
@@ -76,7 +76,7 @@ CMemoryPool::~CMemoryPool()
 //-----------------------------------------------------------------------------
 // Resets the pool
 //-----------------------------------------------------------------------------
-void CMemoryPool::Init()
+void CUtlMemoryPool::Init()
 {
 	m_NumBlobs = 0;
 	m_BlocksAllocated = 0;
@@ -88,7 +88,7 @@ void CMemoryPool::Init()
 //-----------------------------------------------------------------------------
 // Frees everything
 //-----------------------------------------------------------------------------
-void CMemoryPool::Clear()
+void CUtlMemoryPool::Clear()
 {
 	// Free everything..
 	CBlob *pNext;
@@ -104,7 +104,7 @@ void CMemoryPool::Clear()
 // Purpose: Reports memory leaks 
 //-----------------------------------------------------------------------------
 
-void CMemoryPool::ReportLeaks()
+void CUtlMemoryPool::ReportLeaks()
 {
 	if (!g_ReportFunc)
 		return;
@@ -155,7 +155,7 @@ void CMemoryPool::ReportLeaks()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CMemoryPool::AddNewBlob()
+void CUtlMemoryPool::AddNewBlob()
 {
 	MEM_ALLOC_CREDIT_(m_pszAllocOwner);
 
@@ -172,7 +172,7 @@ void CMemoryPool::AddNewBlob()
 			// Can only have one allocation when we're in this mode
 			if( m_NumBlobs != 0 )
 			{
-				Assert( !"CMemoryPool::AddNewBlob: mode == GROW_NONE" );
+				Assert( !"CUtlMemoryPool::AddNewBlob: mode == GROW_NONE" );
 				return;
 			}
 		}
@@ -210,13 +210,13 @@ void CMemoryPool::AddNewBlob()
 }
 
 
-void* CMemoryPool::Alloc()
+void* CUtlMemoryPool::Alloc()
 {
 	return Alloc( m_BlockSize );
 }
 
 
-void* CMemoryPool::AllocZero()
+void* CUtlMemoryPool::AllocZero()
 {
 	return AllocZero( m_BlockSize );
 }
@@ -226,7 +226,7 @@ void* CMemoryPool::AllocZero()
 // Purpose: Allocs a single block of memory from the pool.  
 // Input  : amount - 
 //-----------------------------------------------------------------------------
-void *CMemoryPool::Alloc( size_t amount )
+void *CUtlMemoryPool::Alloc( size_t amount )
 {
 	void *returnBlock;
 
@@ -238,7 +238,7 @@ void *CMemoryPool::Alloc( size_t amount )
 		// returning NULL is fine in GROW_NONE
 		if( m_GrowMode == GROW_NONE )
 		{
-			//Assert( !"CMemoryPool::Alloc: tried to make new blob with GROW_NONE" );
+			//Assert( !"CUtlMemoryPool::Alloc: tried to make new blob with GROW_NONE" );
 			return NULL;
 		}
 
@@ -248,7 +248,7 @@ void *CMemoryPool::Alloc( size_t amount )
 		// still failure, error out
 		if( !m_pHeadOfFreeList )
 		{
-			Assert( !"CMemoryPool::Alloc: ran out of memory" );
+			Assert( !"CUtlMemoryPool::Alloc: ran out of memory" );
 			return NULL;
 		}
 	}
@@ -267,7 +267,7 @@ void *CMemoryPool::Alloc( size_t amount )
 // Purpose: Allocs a single block of memory from the pool, zeroes the memory before returning
 // Input  : amount - 
 //-----------------------------------------------------------------------------
-void *CMemoryPool::AllocZero( size_t amount )
+void *CUtlMemoryPool::AllocZero( size_t amount )
 {
 	void *mem = Alloc( amount );
 	if ( mem )
@@ -281,7 +281,7 @@ void *CMemoryPool::AllocZero( size_t amount )
 // Purpose: Frees a block of memory
 // Input  : *memBlock - the memory to free
 //-----------------------------------------------------------------------------
-void CMemoryPool::Free( void *memBlock )
+void CUtlMemoryPool::Free( void *memBlock )
 {
 	if ( !memBlock )
 		return;  // trying to delete NULL pointer, ignore

@@ -14,7 +14,7 @@
 #pragma once
 #endif
 
-#include "color.h"
+#include "Color.h"
 #include "icommandline.h"
 #include <stdio.h>
 
@@ -337,7 +337,7 @@ public:
 // A logging listener with Win32 console API color support which which prints 
 // to stdout and the debug channel.
 //-----------------------------------------------------------------------------
-#ifndef _X360
+#if !defined _X360 && defined COMPILER_MSVC
 class CColorizedLoggingListener : public CSimpleLoggingListener
 {
 public:

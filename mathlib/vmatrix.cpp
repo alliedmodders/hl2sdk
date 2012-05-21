@@ -11,6 +11,7 @@
 #include "basetypes.h"
 #include "mathlib/vmatrix.h"
 #include "mathlib/mathlib.h"
+#include "mathlib/ssemath.h"
 #include <string.h>
 #include "mathlib/vector4d.h"
 #include "tier0/dbg.h"
@@ -1177,27 +1178,27 @@ void FrustumPlanesFromMatrix( const VMatrix &clipToWorld, Frustum_t &frustum )
 
 	FrustumPlanesFromMatrixHelper( clipToWorld, 
 		Vector( 0.0f, 0.0f, 0.0f ), Vector( 1.0f, 0.0f, 0.0f ), Vector( 0.0f, 1.0f, 0.0f ), normal, dist );
-	frustum.SetPlane( FRUSTUM_NEARZ, PLANE_ANYZ, normal, dist );
+	frustum.SetPlane( FRUSTUM_NEARZ, normal, dist );
 
 	FrustumPlanesFromMatrixHelper( clipToWorld, 
 		Vector( 0.0f, 0.0f, 1.0f ), Vector( 0.0f, 1.0f, 1.0f ), Vector( 1.0f, 0.0f, 1.0f ), normal, dist );
-	frustum.SetPlane( FRUSTUM_FARZ, PLANE_ANYZ, normal, dist );
+	frustum.SetPlane( FRUSTUM_FARZ, normal, dist );
 
 	FrustumPlanesFromMatrixHelper( clipToWorld, 
 		Vector( 1.0f, 0.0f, 0.0f ), Vector( 1.0f, 1.0f, 1.0f ), Vector( 1.0f, 1.0f, 0.0f ), normal, dist );
-	frustum.SetPlane( FRUSTUM_RIGHT, PLANE_ANYZ, normal, dist );
+	frustum.SetPlane( FRUSTUM_RIGHT, normal, dist );
 
 	FrustumPlanesFromMatrixHelper( clipToWorld, 
 		Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 1.0f, 1.0f ), Vector( 0.0f, 0.0f, 1.0f ), normal, dist );
-	frustum.SetPlane( FRUSTUM_LEFT, PLANE_ANYZ, normal, dist );
+	frustum.SetPlane( FRUSTUM_LEFT, normal, dist );
 
 	FrustumPlanesFromMatrixHelper( clipToWorld, 
 		Vector( 1.0f, 1.0f, 0.0f ), Vector( 1.0f, 1.0f, 1.0f ), Vector( 0.0f, 1.0f, 1.0f ), normal, dist );
-	frustum.SetPlane( FRUSTUM_TOP, PLANE_ANYZ, normal, dist );
+	frustum.SetPlane( FRUSTUM_TOP, normal, dist );
 
 	FrustumPlanesFromMatrixHelper( clipToWorld, 
 		Vector( 1.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 1.0f ), Vector( 1.0f, 0.0f, 1.0f ), normal, dist );
-	frustum.SetPlane( FRUSTUM_BOTTOM, PLANE_ANYZ, normal, dist );
+	frustum.SetPlane( FRUSTUM_BOTTOM, normal, dist );
 }
 
 void MatrixBuildOrtho( VMatrix& dst, double left, double top, double right, double bottom, double zNear, double zFar )

@@ -37,10 +37,14 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#if !defined COMPILER_MSVC && !defined HMODULE
+#define HMODULE void *
+#endif
+
 // ------------------------------------------------------------------------------------ //
 // InterfaceReg.
 // ------------------------------------------------------------------------------------ //
-InterfaceReg *InterfaceReg::s_pInterfaceRegs = NULL;
+InterfaceReg *s_pInterfaceRegs = NULL;
 
 InterfaceReg::InterfaceReg( InstantiateInterfaceFn fn, const char *pName ) :
 	m_pName(pName)
@@ -59,7 +63,7 @@ void* CreateInterface( const char *pName, int *pReturnCode )
 {
 	InterfaceReg *pCur;
 	
-	for (pCur=InterfaceReg::s_pInterfaceRegs; pCur; pCur=pCur->m_pNext)
+	for (pCur=s_pInterfaceRegs; pCur; pCur=pCur->m_pNext)
 	{
 		if (strcmp(pCur->m_pName, pName) == 0)
 		{
@@ -201,7 +205,7 @@ HMODULE Sys_LoadLibrary( const char *pLibraryName )
 #endif
 
 	unsigned int nTimeout = 0;
-	while( ThreadWaitForObject( h, true, nTimeout ) == TW_TIMEOUT )
+	while( WaitForSingleObject(h, nTimeout) == WAIT_TIMEOUT )
 	{
 		nTimeout = threadFunc();
 	}

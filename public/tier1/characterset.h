@@ -37,7 +37,7 @@ extern void CharacterSetBuild( characterset_t *pSetBuffer, const char *pSetStrin
 //			character - character to lookup
 // Output : int - 1 if the character was in the set
 //-----------------------------------------------------------------------------
-#define IN_CHARACTERSET( SetBuffer, character )		((SetBuffer).set[(character)])
+#define IN_CHARACTERSET( SetBuffer, character )		((SetBuffer).set[static_cast<size_t>(character)])
 
 
 #endif // CHARACTERSET_H

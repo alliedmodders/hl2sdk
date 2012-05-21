@@ -19,7 +19,7 @@
 #include "tier0/dbg.h"
 #include "tier0/platform.h"
 #include "tier1/strtools.h"
-#include "color.h"
+#include "Color.h"
 
 
 //-----------------------------------------------------------------------------

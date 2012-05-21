@@ -96,8 +96,14 @@ typedef enum
 //	XVRB_ALL,
 //} xverbose_e;
 
+#ifdef POSIX
+#ifndef WORD
 typedef unsigned short WORD;
-typedef unsigned long DWORD;
+#endif
+#ifndef DWORD
+typedef unsigned int DWORD;
+#endif
+#endif
 
 #ifndef POSIX
 typedef void* HANDLE;
@@ -115,7 +121,7 @@ typedef int32 COLORREF;
 /*
 * Internet address (old style... should be updated)
 */
-#ifdef _POSIX
+#ifdef POSIX
 struct ip4_addr {
 	union {
 		struct { unsigned char s_b1,s_b2,s_b3,s_b4; } S_un_b;
@@ -321,7 +327,7 @@ enum XUSER_SIGNIN_STATE
 	eXUserSigninState_SignedInToLive,
 };
 
-#if (defined(_POSIX))
+#if (defined(POSIX))
 typedef size_t ULONG_PTR;
 #else
 typedef _W64 unsigned long ULONG_PTR;
@@ -332,7 +338,7 @@ typedef ULONG_PTR DWORD_PTR, *PDWORD_PTR;
 typedef void * PXOVERLAPPED_COMPLETION_ROUTINE;
 
 
-#ifndef _POSIX
+#ifndef POSIX
 typedef struct _XOVERLAPPED {
     ULONG_PTR                           InternalLow;
     ULONG_PTR                           InternalHigh;
