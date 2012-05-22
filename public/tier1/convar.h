@@ -371,8 +371,8 @@ public:
 	FnChangeCallback_t GetChangeCallback( int slot ) const { return m_pParent->m_fnChangeCallbacks[ slot ]; }
 
 	// Retrieve value
-	FORCEINLINE_CVAR float			GetFloat( void ) const;
-	FORCEINLINE_CVAR int			GetInt( void ) const;
+	virtual float				GetFloat( void ) const;
+	virtual int				GetInt( void ) const;
 	FORCEINLINE_CVAR Color			GetColor( void ) const;
 	FORCEINLINE_CVAR bool			GetBool() const {  return !!GetInt(); }
 	FORCEINLINE_CVAR char const	   *GetString( void ) const;
