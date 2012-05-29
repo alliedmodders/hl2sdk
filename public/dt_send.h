@@ -277,7 +277,7 @@ private:
 
 inline int SendProp::GetOffset() const
 {
-	return m_Offset; 
+	return m_Offset & 0xFFFFF;
 }
 
 inline void SendProp::SetOffset( int i )
