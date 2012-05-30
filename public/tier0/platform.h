@@ -1127,7 +1127,18 @@ struct CPUInformation
 	CPUInformation(): m_Size(0){}
 };
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
+#endif
+
 PLATFORM_INTERFACE const CPUInformation& GetCPUInformation();
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 
 PLATFORM_INTERFACE void GetCurrentDate( int *pDay, int *pMonth, int *pYear );
 PLATFORM_INTERFACE void GetCurrentDayOfTheWeek( int *pDay );  // 0 = Sunday
