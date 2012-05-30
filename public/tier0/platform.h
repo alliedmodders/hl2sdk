@@ -830,7 +830,16 @@ struct CPUInformation
 	tchar* m_szProcessorID;				// Processor vendor Identification.
 };
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
+#endif
+
 PLATFORM_INTERFACE const CPUInformation& GetCPUInformation();
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 PLATFORM_INTERFACE void GetCurrentDate( int *pDay, int *pMonth, int *pYear );
 
