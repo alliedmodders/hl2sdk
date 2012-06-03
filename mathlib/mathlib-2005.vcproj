@@ -16,15 +16,14 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine=""
-				ExcludedFromBuild="false"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -40,10 +39,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				UseUnicodeResponseFiles="false"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\public;..\public\tier0;..\public\tier1;..\public\mathlib"
-				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;COMPILER_MSVC;COMPILER_MSVC32"
 				StringPooling="true"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -51,24 +49,8 @@
 				RuntimeLibrary="1"
 				BufferSecurityCheck="false"
 				FloatingPointModel="2"
-				TreatWChar_tAsBuiltInType="true"
-				ForceConformanceInForLoopScope="true"
-				RuntimeTypeInfo="true"
-				OpenMP="false"
-				UsePrecompiledHeader="0"
-				ExpandAttributedSource="false"
-				AssemblerOutput="0"
-				AssemblerListingLocation="$(IntDir)/"
-				ObjectFile="$(IntDir)/"
-				ProgramDataBaseFileName="$(IntDir)/"
-				GenerateXMLDocumentationFiles="false"
-				BrowseInformation="0"
-				BrowseInformationFile="$(IntDir)/"
-				WarningLevel="4"
-				Detect64BitPortabilityProblems="true"
+				WarningLevel="3"
 				DebugInformationFormat="4"
-				CompileAs="2"
-				ErrorReporting="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -79,45 +61,37 @@
 			<Tool
 				Name="VCPreLinkEventTool"
 				CommandLine=""
-				ExcludedFromBuild="false"
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				UseUnicodeResponseFiles="false"
 				OutputFile="..\lib\public\mathlib.lib"
-				SuppressStartupBanner="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
-				SuppressStartupBanner="true"
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
-				OutputFile="$(OutDir)/mathlib.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				ExcludedFromBuild="false"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine=""
-				ExcludedFromBuild="false"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -133,37 +107,19 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				UseUnicodeResponseFiles="false"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\public;..\public\tier0;..\public\tier1;..\public\mathlib"
-				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;COMPILER_MSVC;COMPILER_MSVC32"
 				StringPooling="true"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				FloatingPointModel="2"
-				TreatWChar_tAsBuiltInType="true"
-				ForceConformanceInForLoopScope="true"
-				RuntimeTypeInfo="true"
-				OpenMP="false"
-				UsePrecompiledHeader="0"
-				ExpandAttributedSource="false"
-				AssemblerOutput="0"
-				AssemblerListingLocation="$(IntDir)/"
-				ObjectFile="$(IntDir)/"
-				ProgramDataBaseFileName="$(IntDir)/"
-				GenerateXMLDocumentationFiles="false"
-				BrowseInformation="0"
-				BrowseInformationFile="$(IntDir)/"
-				WarningLevel="4"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="1"
-				CompileAs="2"
-				ErrorReporting="1"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -174,32 +130,25 @@
 			<Tool
 				Name="VCPreLinkEventTool"
 				CommandLine=""
-				ExcludedFromBuild="false"
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				UseUnicodeResponseFiles="false"
 				OutputFile="..\lib\public\mathlib.lib"
-				SuppressStartupBanner="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
-				SuppressStartupBanner="true"
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
-				OutputFile="$(OutDir)/mathlib.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				ExcludedFromBuild="false"
 			/>
 		</Configuration>
 	</Configurations>
@@ -210,10 +159,6 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
-			<File
-				RelativePath=".\3dnow.cpp"
-				>
-			</File>
 			<File
 				RelativePath=".\anorms.cpp"
 				>
