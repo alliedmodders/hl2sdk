@@ -179,6 +179,9 @@ public:
 	
 	// Player instantaneous view angles.
 	QAngle	viewangles;     
+	
+	Vector	aimdirection;
+	
 	// Intended velocities
 	//	forward velocity.
 	float	forwardmove;   
