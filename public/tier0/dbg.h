@@ -178,6 +178,12 @@ enum SpewRetval_t
 /* type of externally defined function used to display debug spew */
 typedef SpewRetval_t (*SpewOutputFunc_t)( SpewType_t spewType, const tchar *pMsg );
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
+#endif
+
 /* Used to redirect spew output */
 DBG_INTERFACE void   SpewOutputFunc( SpewOutputFunc_t func );
 
@@ -205,6 +211,10 @@ DBG_INTERFACE bool SetupWin32ConsoleIO();
 
 // Returns true if they want to break in the debugger.
 DBG_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const tchar *pExpression );
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 /* Used to define macros, never use these directly. */
 
