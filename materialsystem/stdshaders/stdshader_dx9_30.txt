@@ -1,0 +1,63 @@
+//
+// vs 3.0   ps 3.0   shaders collection
+//
+//  These shaders are forced to compile as shader model 3.0
+//  using the new compiler.
+//	    _ps30.vcs
+//	    _vs30.vcs
+//
+
+cloak_vs20.fxc
+cloak_ps2x.fxc
+cloak_blended_pass_vs20.fxc
+cloak_blended_pass_ps2x.fxc
+debugmorphaccumulator_vs30.fxc
+debugmorphaccumulator_ps30.fxc
+decalmodulate_ps2x.fxc
+decalmodulate_vs20.fxc
+depthwrite_ps2x.fxc
+depthwrite_vs20.fxc
+emissive_scroll_blended_pass_vs20.fxc
+emissive_scroll_blended_pass_ps2x.fxc
+eye_refract_vs20.fxc
+eye_refract_ps2x.fxc
+eyes_vs20.fxc
+eyes_ps2x.fxc
+eyes_flashlight_vs20.fxc
+eyes_flashlight_ps2x.fxc
+flashlight_ps2x.fxc
+flesh_vs30.fxc
+flesh_ps30.fxc
+lightmappedgeneric_vs20.fxc
+lightmappedgeneric_flashlight_vs20.fxc
+lightshafts_vs30.fxc
+lightshafts_ps30.fxc
+modulate_ps2x.fxc
+morphaccumulate_vs30.fxc
+morphaccumulate_ps30.fxc
+morphweight_vs30.fxc
+morphweight_ps30.fxc
+multiblend_vs20.fxc
+multiblend_ps2x.fxc
+parallaxtest_vs30.fxc
+parallaxtest_ps30.fxc
+projected_vs20.fxc
+projected_ps2x.fxc
+shadowbuildtexture_ps2x.fxc
+phong_vs20.fxc
+phong_ps20b.fxc
+teeth_vs20.fxc
+teeth_ps2x.fxc
+teeth_bump_vs20.fxc
+teeth_bump_ps2x.fxc
+teeth_flashlight_vs20.fxc
+teeth_flashlight_ps2x.fxc
+unlitgeneric_vs20.fxc
+unlitgeneric_ps2x.fxc
+vertexlit_and_unlit_generic_vs20.fxc
+vertexlit_and_unlit_generic_ps2x.fxc
+vertexlit_and_unlit_generic_bump_vs20.fxc
+vertexlit_and_unlit_generic_bump_ps2x.fxc
+vortwarp_vs20.fxc
+vortwarp_ps2x.fxc
+worldtwotextureblend_ps2x.fxc

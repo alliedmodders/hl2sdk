@@ -1,0 +1,357 @@
+// STATIC: "BUMPMAP"					"0..2"
+// STATIC: "CUBEMAP"					"0..2"
+// STATIC: "SEAMLESS"					"0..1"
+// STATIC: "FLASHLIGHT"					"0..1"
+// STATIC: "SHADER_SRGB_READ"			"0..1"	[XBOX]
+// STATIC: "SHADER_SRGB_READ"			"0..0"	[PC]
+
+// DYNAMIC: "FASTPATHENVMAPCONTRAST"	"0..1"
+// DYNAMIC: "FASTPATH"					"0..1"
+// DYNAMIC: "FLASHLIGHTSHADOWS"			"0..1"	[ps20b]
+
+//  SKIP: ( $FLASHLIGHT == 0 ) && ( $FLASHLIGHTSHADOWS == 1 )
+//	SKIP: ( $CUBEMAP == 0 )
+//	SKIP: ( $BUMPMAP == 0 )
+
+#include "common_fog_ps_supportsvertexfog_fxc.h"
+
+#include "common_ps_fxc.h"
+#include "common_flashlight_fxc.h"
+#define PIXELSHADER
+#include "common_lightmappedgeneric_fxc.h"
+
+#if SEAMLESS
+#define USE_FAST_PATH 1
+#else
+#define USE_FAST_PATH FASTPATH
+#endif
+
+const float4 g_EnvmapTint : register( c0 );
+
+#if USE_FAST_PATH == 1
+
+#	if FASTPATHENVMAPCONTRAST == 0
+static const float3 g_EnvmapContrast = { 0.0f, 0.0f, 0.0f };
+#	else
+static const float3 g_EnvmapContrast = { 1.0f, 1.0f, 1.0f };
+#	endif
+static const float3 g_EnvmapSaturation = { 1.0f, 1.0f, 1.0f };
+static const float g_FresnelReflection = 1.0f;
+static const float g_OneMinusFresnelReflection = 0.0f;
+static const float4 g_SelfIllumTint = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+
+#else
+
+const float3 g_EnvmapContrast				: register( c2 );
+const float3 g_EnvmapSaturation				: register( c3 );
+const float4 g_FresnelReflectionReg			: register( c4 );
+#define g_FresnelReflection g_FresnelReflectionReg.a
+#define g_OneMinusFresnelReflection g_FresnelReflectionReg.b
+const float4 g_SelfIllumTint					: register( c7 );
+#endif
+
+
+const float3 g_EyePos						: register( c10 );
+const float4 g_FogParams						: register( c11 );
+const float4 g_TintValuesTimesLightmapScale	: register( c12 );
+
+#define g_flAlpha2 g_TintValuesTimesLightmapScale.w
+
+const float4 g_FlashlightAttenuationFactors	: register( c13 );
+const float3 g_FlashlightPos				: register( c14 );
+const float4x4 g_FlashlightWorldToTexture	: register( c15 ); // through c18
+const float4 g_ShadowTweaks					: register( c19 );
+
+#if !defined( SHADER_MODEL_PS_2_0 ) && ( FLASHLIGHT == 0 )
+#define g_cAmbientColor cFlashlightScreenScale.rgb
+//const float3 g_cAmbientColor				: register( c31 );
+#endif
+
+#if PARALLAX_MAPPING || (CUBEMAP == 2)
+const float4 g_ParallaxMappingControl : register( c20 );
+#endif
+
+#if (CUBEMAP == 2)
+#define g_DiffuseCubemapScale g_ParallaxMappingControl.y
+#endif
+
+const float3 g_TintValuesWithoutLightmapScale	: register( c21 );
+
+
+
+
+sampler LightmapSampler			: register( s1 );
+sampler EnvmapSampler			: register( s2 );
+sampler NoiseSampler_2D			: register( s6 );
+sampler SplatNormalSampler		: register( s7 );
+
+sampler PaintSampler			: register( s9 );
+
+#if defined( _X360 ) && FLASHLIGHT
+sampler FlashlightSampler		: register( s13 );
+sampler ShadowDepthSampler		: register( s14 );
+sampler RandRotSampler			: register( s15 );
+#endif
+
+#define DummySampler SplatNormalSampler
+
+float4 main( PS_INPUT i ) : COLOR
+{
+	bool bCubemap = CUBEMAP ? true : false;
+	
+	float4 vNormal = float4(0, 0, 1, 1);
+	float3 coords = float3(0,0,0);
+	float3 worldPos = i.worldPos_projPosZ.xyz;
+	float3x3 tangenttranspose = i.tangentSpaceTranspose;
+	float3x3 worldToTangentSpace = transpose( tangenttranspose ); //yay, math both forwards and backwards, for kicks!
+	
+	float3 worldVertToEyeVector = g_EyePos - worldPos;
+	
+	
+#if SEAMLESS
+	coords = i.SeamlessTexCoord_fogFactorW.xyz;
+#else
+	coords.xy = i.BASETEXCOORD.xy;
+#endif
+		
+	float4 vDummy = 0.0f;
+	
+	GetBaseTextureAndNormal( DummySampler, DummySampler, DummySampler,
+							 false, false, 
+							 coords, vDummy, 
+							 i.vertexColor.rgb, vDummy, vDummy, vNormal );
+							 
+#if BUMPMAP == 1	// not ssbump
+	vNormal.xyz = vNormal.xyz * 2.0f - 1.0f;					// make signed if we're not ssbump
+#endif
+
+	float3 lightmapColor1 = float3( 1.0f, 1.0f, 1.0f );
+	float3 lightmapColor2 = float3( 1.0f, 1.0f, 1.0f );
+	float3 lightmapColor3 = float3( 1.0f, 1.0f, 1.0f );
+	float4 paintColor;
+	
+	{
+		float2 bumpCoord1;
+		float2 bumpCoord2;
+		float2 bumpCoord3;
+		ComputeBumpedLightmapCoordinates( i.lightmapTexCoord1And2, i.lightmapTexCoord3.xy,
+			bumpCoord1, bumpCoord2, bumpCoord3 );
+		
+		lightmapColor1 = LightMapSample( LightmapSampler, bumpCoord1 );
+		lightmapColor2 = LightMapSample( LightmapSampler, bumpCoord2 );
+		lightmapColor3 = LightMapSample( LightmapSampler, bumpCoord3 );
+		
+		float2 paintCoord;
+		paintCoord.y = bumpCoord1.y;
+		paintCoord.x = bumpCoord1.x - ( bumpCoord2.x - bumpCoord1.x );
+		paintColor = tex2D( PaintSampler, paintCoord );
+	}
+	
+#if defined( SHADER_MODEL_PS_2_0 )
+	return paintColor;
+#endif
+
+	//float noiseSample = tex2D( NoiseSampler_2D, i.lightmapTexCoord1And2.xy * 1000.0f ).r;
+	//paintColor.a -= noiseSample * 0.2f;
+	
+	float alpha = paintColor.a;	
+	clip( alpha - 0.01f );
+	
+	//paint splat guts
+	
+		float3 fvViewDirection = mul( normalize( worldVertToEyeVector ), worldToTangentSpace );
+		float4 fvSplats = tex2D( SplatNormalSampler, coords );
+		float4 fvSplatsPushed = tex2D( SplatNormalSampler, coords + fvViewDirection * fvSplats.a * paintColor.a * 0.05 );
+		
+		float3 fvNormal = normalize( ( fvSplatsPushed.xyz * 2.0f ) - 1.0f );
+		fvNormal.xy *= 20.0f;
+		
+		float3 fvLightDirection = float3( 0.0f, 0.0f, 1.0f ); //mul( normalize( vLightPos - worldPos ), worldToTangentSpace );
+		float2 shadowTex = coords + ( fvLightDirection.xy * 0.005 );
+		float4 fvSplatShadow = tex2D( SplatNormalSampler, shadowTex );
+		float4 fvLMShadow = tex2D( PaintSampler, shadowTex ).a;
+		float3 shadowColor = ( fvLMShadow.r + fvSplatShadow.a );
+		
+		alpha = (paintColor.a + max( fvSplats.a, fvSplatsPushed.a ) );
+		float shadow = ( shadowColor.r > 0.68f ) * ( alpha < 0.755f );
+		
+		float lerpRange = smoothstep( 1.0f, 0.2f, alpha * 0.5f );
+		lerpRange = pow( lerpRange, 6.0f );
+		
+		
+		fvNormal.xyz = lerp( float4(0, 0, 1, 1), fvNormal, lerpRange ); //use existing vNormal to incorporate any bumpmap on the surface
+		fvNormal.xyz = normalize( fvNormal.xyz );
+		vNormal.xyz = fvNormal;
+		
+		
+		//dark paint color to white'ish paint color
+		//float4 fvBaseColor      = tex2D( grad, smoothstep( 0.3f, 1.4f, fvSplatsPushed.a + fvLM.r ) * 0.2f );
+		float3 fvBaseColor = saturate( lerp( paintColor.rgb * 0.32f, float3( 1.0f, 1.0f, 1.0f ), smoothstep( 0.3f, 1.4f, fvSplatsPushed.a + paintColor.a ) * 0.2f ));
+		
+	
+	
+	
+	// Save this off for single-pass flashlight, since we'll still need the SSBump vector, not a real normal
+	float3 vSSBumpVector = vNormal.xyz;
+	
+	
+	float3 diffuseLighting;
+	{
+// ssbump
+#if ( BUMPMAP == 2 )
+		diffuseLighting = vNormal.x * lightmapColor1 +
+						  vNormal.y * lightmapColor2 +
+						  vNormal.z * lightmapColor3;
+						  
+		diffuseLighting *= g_TintValuesTimesLightmapScale.rgb;
+		// now, calculate vNormal for reflection purposes. if vNormal isn't needed, hopefully
+		// the compiler will eliminate these calculations
+		vNormal.xyz = normalize( bumpBasis[0]*vNormal.x + bumpBasis[1]*vNormal.y + bumpBasis[2]*vNormal.z);
+#else
+		float3 dp;
+		dp.x = saturate( dot( vNormal, bumpBasis[0] ) );
+		dp.y = saturate( dot( vNormal, bumpBasis[1] ) );
+		dp.z = saturate( dot( vNormal, bumpBasis[2] ) );
+		dp *= dp;
+		
+		diffuseLighting = dp.x * lightmapColor1 +
+						  dp.y * lightmapColor2 +
+						  dp.z * lightmapColor3;
+		float sum = dot( dp, float3( 1.0f, 1.0f, 1.0f ) );
+		diffuseLighting *= g_TintValuesTimesLightmapScale.rgb / sum;
+#endif
+	}
+	
+	
+	
+	float3 specularLight;
+	{
+		float3 vBouncedView = CalcReflectionVectorUnnormalized( fvNormal, fvViewDirection );
+		specularLight = vBouncedView.x * lightmapColor1 +
+						  vBouncedView.y * lightmapColor2 +
+						  vBouncedView.z * lightmapColor3;
+						  
+		specularLight *= g_TintValuesTimesLightmapScale.rgb;// / g_TintValuesWithoutLightmapScale.rgb;
+		
+		
+		specularLight = max( 0.0f, specularLight );
+		//return float4( specularLight, 1.0f );
+		specularLight = pow( specularLight, 3.0f );
+		//specularLight = saturate( specularLight );
+	}
+	
+	//return float4( diffuseLighting, 1.0f );
+	
+	float3 worldSpaceNormal = mul( vNormal, tangenttranspose );
+#if !defined( SHADER_MODEL_PS_2_0 ) && ( FLASHLIGHT == 0 )
+	diffuseLighting += g_cAmbientColor;
+#endif
+
+
+	float3 diffuseComponent = paintColor.rgb * diffuseLighting;
+
+#if defined( _X360 ) && FLASHLIGHT
+
+	// ssbump doesn't pass a normal to the flashlight...it computes shadowing a different way
+#if ( BUMPMAP == 2 )
+	bool bHasNormal = false;
+
+	float3 worldPosToLightVector = g_FlashlightPos - worldPos;
+
+	float3 tangentPosToLightVector;
+	tangentPosToLightVector.x = dot( worldPosToLightVector, tangenttranspose[0] );
+	tangentPosToLightVector.y = dot( worldPosToLightVector, tangenttranspose[1] );
+	tangentPosToLightVector.z = dot( worldPosToLightVector, tangenttranspose[2] );
+
+	tangentPosToLightVector = normalize( tangentPosToLightVector );
+	float nDotL = saturate( vSSBumpVector.x*dot( tangentPosToLightVector, bumpBasis[0]) +
+							vSSBumpVector.y*dot( tangentPosToLightVector, bumpBasis[1]) +
+							vSSBumpVector.z*dot( tangentPosToLightVector, bumpBasis[2]) );
+#else
+	bool bHasNormal = true;
+	float nDotL = 1.0f;
+#endif
+
+	bool bShadows = FLASHLIGHTSHADOWS ? true : false;
+	float3 flashlightColor = DoFlashlight( g_FlashlightPos, worldPos, i.flashlightSpacePos,
+		worldSpaceNormal, g_FlashlightAttenuationFactors.xyz, 
+		g_FlashlightAttenuationFactors.w, FlashlightSampler, ShadowDepthSampler,
+		RandRotSampler, 0, bShadows, false, i.vProjPos.xy / i.vProjPos.w, false, g_ShadowTweaks, bHasNormal );
+
+	diffuseComponent = paintColor.rgb * ( diffuseLighting + ( flashlightColor * nDotL * g_TintValuesWithoutLightmapScale.rgb ) );
+#endif
+
+	float3 specularFactor = 1.0f;
+
+	float3 specularLighting = float3( 0.0f, 0.0f, 0.0f );
+#if CUBEMAP
+	if( bCubemap )
+	{
+		float3 reflectVect = CalcReflectionVectorUnnormalized( worldSpaceNormal, worldVertToEyeVector );
+
+		// Calc Fresnel factor
+		half3 eyeVect = normalize(worldVertToEyeVector);
+		float fresnel = 1.0 - dot( worldSpaceNormal, eyeVect );
+		fresnel = pow( fresnel, 5.0 );
+		fresnel = fresnel * g_OneMinusFresnelReflection + g_FresnelReflection;
+		
+		specularLighting = ENV_MAP_SCALE * texCUBE( EnvmapSampler, reflectVect );
+#if (CUBEMAP == 2) //cubemap darkened by lightmap mode
+		specularLighting = lerp( specularLighting, specularLighting * saturate( diffuseLighting ), g_DiffuseCubemapScale ); //reduce the cubemap contribution when the pixel is in shadow
+#endif
+		specularLighting *= specularFactor;
+								   
+		specularLighting *= g_EnvmapTint;
+		specularLighting *= fresnel;
+		
+		specularLight *= fresnel;
+	}
+#endif
+
+
+	float3 result;// = diffuseComponent;
+	
+
+	//paint guts part 2
+	{
+		
+		float4 fvSpecular = float4( 0.211765f, 0.209893f, 0.209893f, 1.0f );
+		float4 fvAmbient = float4( 0.333f, 0.333f, 0.333f, 1.0f );
+		float4 fvDiffuse = float4( 0.888f, 0.888f, 0.888f, 1.0f );
+		//float4 fBuffer = tex2D( framebuffer, Input.Screencoord );
+
+		float3 fvTotalAmbient   = fvAmbient * fvBaseColor; 
+		float3 fvTotalDiffuse   = diffuseComponent * 0.5f; //fvBaseColor; //fvDiffuse * fNDotL * fvBaseColor; 
+		//float3 fvTotalSpecular  = specularLighting * 0.1f * paintColor.rgb;
+		//float3 fvTotalSpecular  = fvSpecular * pow( fRDotV, fSpecularPower );
+		float3 fvTotalSpecular = specularLight * 0.2f;// * paintColor.rgb;
+
+		alpha = alpha > 0.75f;
+		result = saturate( fvTotalAmbient + fvTotalDiffuse + fvTotalSpecular ).rgb;	
+	}
+
+
+
+
+	
+
+	float flVertexFogFactor = 0.0f;
+	#if !HARDWAREFOGBLEND && !DOPIXELFOG
+	{
+		#if ( SEAMLESS )
+		{
+			flVertexFogFactor = i.SeamlessTexCoord_fogFactorW.w;
+		}
+		#else
+		{
+			flVertexFogFactor = i.baseTexCoord_fogFactorZ.z;
+		}
+		#endif
+	}
+	#endif
+	float fogFactor = CalcPixelFogFactorSupportsVertexFog( PIXELFOGTYPE, g_FogParams, g_EyePos.xyz, worldPos, i.worldPos_projPosZ.w, flVertexFogFactor );
+
+	return FinalOutput( float4( result.rgb, alpha ), fogFactor, PIXELFOGTYPE, TONEMAP_SCALE_LINEAR, false, i.worldPos_projPosZ.w );
+}
+ 

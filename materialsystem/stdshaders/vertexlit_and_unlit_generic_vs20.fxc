@@ -1,0 +1,408 @@
+//========== Copyright (c) Valve Corporation, All rights reserved. ==========//
+
+// STATIC: "VERTEXCOLOR"			"0..1"
+// STATIC: "CUBEMAP"				"0..1"
+// STATIC: "HALFLAMBERT"			"0..1"
+// STATIC: "FLASHLIGHT"				"0..1"
+// STATIC: "SEAMLESS_BASE"			"0..1"
+// STATIC: "SEAMLESS_DETAIL"		"0..1"
+// STATIC: "SEPARATE_DETAIL_UVS"	"0..1"
+// STATIC: "DECAL"					"0..1" [vs30]
+// STATIC: "STATICLIGHT3"			"0..0" // MAINTOL4DMERGEFIXME
+// STATIC: "LIGHTING_PREVIEW"		"0..3" [PC]
+// STATIC: "LIGHTING_PREVIEW"		"0..0" [XBOX]
+// STATIC: "FOW"					"0..1"
+// STATIC: "TREESWAY"               "0..2"
+
+// DYNAMIC: "COMPRESSED_VERTS"		"0..1"
+// DYNAMIC: "DYNAMIC_LIGHT"			"0..1"
+// DYNAMIC: "SKINNING"				"0..1"
+
+// DYNAMIC: "MORPHING"				"0..1" [vs30] [ = pShaderAPI->IsHWMorphingEnabled() ]
+// DYNAMIC: "TESSELLATION"			"0..2" [vs30] [PC]
+// DYNAMIC: "TESSELLATION"			"0..0" [XBOX]
+// DYNAMIC: "TESSELLATION"			"0..0" [vs20] [PC]
+
+//	SKIP: ($SEPARATE_DETAIL_UVS) && ($SEAMLESS_DETAIL)
+//	SKIP: ( $FOW ) && ( $SEAMLESS_DETAIL )
+//	SKIP: ( $FOW ) && ( $SEAMLESS_BASE )
+//	SKIP: ( $FOW ) && ( $TESSELLATION )
+//	SKIP: ($TREESWAY) && ($MORPHING)
+//	SKIP: ($TREESWAY) && ($TESSELLATION)
+//	SKIP: ($TREESWAY) && ($FOW)
+//	SKIP: ( $TREESWAY ) && ( $SEAMLESS_DETAIL || $SEAMLESS_BASE )
+
+#include "common_fog_vs_supportsvertexfog_fxc.h"
+
+// When tessellating, we don't have room in the super-prim vertices for more colors, tex coords or objects space positions
+// SKIP: ( $STATICLIGHT3 || $VERTEXCOLOR || $SEAMLESS_BASE || $SEAMLESS_DETAIL || $SEPARATE_DETAIL_UVS || $MORPHING || $SKINNING || $COMPRESSED_VERTS ) && $TESSELLATION
+#include "common_vs_fxc.h"
+#include "fow_vs_fxc.h"
+
+static const bool g_bSkinning		= SKINNING ? true : false;
+static const int  g_FogType			= DOWATERFOG;
+static const bool g_bVertexColor	= VERTEXCOLOR ? true : false;
+static const bool g_bCubemap		= CUBEMAP ? true : false;
+static const bool g_bFlashlight		= FLASHLIGHT ? true : false;
+static const bool g_bHalfLambert	= HALFLAMBERT ? true : false;
+#if (defined( SHADER_MODEL_VS_3_0 ) && MORPHING && DECAL)
+static const bool g_bDecalOffset	= true;
+#else
+static const bool g_bDecalOffset	= false;
+#endif
+
+const float4 cBaseTexCoordTransform[2]		: register( SHADER_SPECIFIC_CONST_0 ); // 0 & 1
+
+#if ( LIGHTING_PREVIEW == 3 )
+const float4 g_vEyeVector					: register( SHADER_SPECIFIC_CONST_2 );
+#define g_flStaticLightEnabled 0
+#else
+	const float g_flStaticLightEnabled		: register( SHADER_SPECIFIC_CONST_2 );
+#endif
+
+const float4 g_vMiscParams1				: register( SHADER_SPECIFIC_CONST_3 );
+
+#if ( SEAMLESS_DETAIL || SEAMLESS_BASE )
+	#define SEAMLESS_SCALE g_vMiscParams1.x
+#elif TESSELLATION
+	#define g_SubDControls g_vMiscParams1
+#elif FOW
+	#define g_vFoWWorldSize g_vMiscParams1
+#endif
+
+const float4 cDetailTexCoordTransform[2]	: register( SHADER_SPECIFIC_CONST_4 );	// 4 & 5
+const float4x4 g_FlashlightWorldToTexture	: register( SHADER_SPECIFIC_CONST_6 ); // 6, 7, 8, 9
+
+const float4 g_vMiscParams2					: register( SHADER_SPECIFIC_CONST_12 );
+#define cSinglePassFlashlight g_vMiscParams2.x
+
+const float4 g_vMiscParams3					: register( SHADER_SPECIFIC_CONST_10 );
+const float4 g_vMiscParams4					: register( SHADER_SPECIFIC_CONST_11 );
+
+#if ( TREESWAY )
+	#define g_flTime g_vMiscParams2.y
+	#define g_vWindDir g_vMiscParams2.zw
+
+	#define g_flFastSwaySpeedScale g_vMiscParams1.x
+	#define g_flScrumbleFalloffCurve g_vMiscParams1.y
+	#define g_flSwayFalloffCurve g_vMiscParams1.z
+	#define g_flScrumbleSpeed g_vMiscParams1.w
+
+	#define g_flHeight g_vMiscParams3.x
+	#define g_flStartHeight g_vMiscParams3.y
+	#define g_flRadius g_vMiscParams3.z
+	#define g_flStartRadius g_vMiscParams3.w
+
+	#define g_flSwaySpeed g_vMiscParams4.x
+	#define g_flSwayIntensity g_vMiscParams4.y
+	#define g_flScrumbleWaveCount g_vMiscParams4.z
+	#define g_flScrumbleIntensity g_vMiscParams4.w
+
+	#define g_flWindSpeedLerpStart cDetailTexCoordTransform[0].x
+	#define g_flWindSpeedLerpEnd cDetailTexCoordTransform[0].y
+#endif
+
+#if defined( SHADER_MODEL_VS_3_0 )
+	// NOTE: cMorphTargetTextureDim.xy = target dimensions,
+	//		 cMorphTargetTextureDim.z = 4tuples/morph
+	#define cMorphTargetTextureDim g_vMiscParams3
+	#define cMorphSubrect g_vMiscParams4
+	sampler2D morphSampler						: register( D3DVERTEXTEXTURESAMPLER0, s0 );
+#endif
+
+#if TESSELLATION
+
+#include "tessellation_vs_fxc.h"
+sampler2D BezierSampler						: register( s1 );
+sampler2D DispSampler						: register( s2 );
+// VS_INPUT defined in header
+
+#else // no TESSELLATION
+
+struct VS_INPUT
+{
+	float4 vPos				: POSITION;
+	float4 vBoneWeights		: BLENDWEIGHT;
+	float4 vBoneIndices		: BLENDINDICES;
+	float4 vNormal			: NORMAL;
+	#if VERTEXCOLOR
+		float4 vColor			: COLOR0;
+	#else
+		float3 vStaticLight		: COLOR1;
+		#if STATICLIGHT3
+			float3 vStaticLight2		: COLOR2;
+			float3 vStaticLight3		: COLOR3;
+		#endif
+	#endif
+	// make these float2's and stick the [n n 0 1] in the dot math.
+	float4 vTexCoord0		: TEXCOORD0;
+	float4 vTexCoord1		: TEXCOORD1;
+	float4 vTexCoord2		: TEXCOORD2;
+	float4 vTexCoord3		: TEXCOORD3;
+
+	// Position and normal/tangent deltas
+	float3 vPosFlex			: POSITION1;
+	float3 vNormalFlex		: NORMAL1;
+	#ifdef SHADER_MODEL_VS_3_0
+		float vVertexID			: POSITION2;
+	#endif
+};
+
+#endif // TESSELLATION
+
+struct VS_OUTPUT
+{
+    float4 projPos					: POSITION;			// Projection-space position	
+#if !defined( _X360 ) && !defined( SHADER_MODEL_VS_3_0 )
+	float  fog						: FOG;
+#endif
+
+#if SEAMLESS_BASE
+	float3 SeamlessTexCoord			: TEXCOORD0;		// Base texture x/y/z (indexed by swizzle)
+#else
+	float2 baseTexCoord				: TEXCOORD0;		// Base texture coordinate
+#endif
+#if SEAMLESS_DETAIL
+	float3 SeamlessDetailTexCoord	: TEXCOORD1;		// Detail texture coordinate
+#else
+	float2 detailTexCoord			: TEXCOORD1;		// Detail texture coordinate
+#endif
+#if CUBEMAP || _X360 || ( !HARDWAREFOGBLEND && !DOPIXELFOG )
+	float4 worldVertToEyeVector_fogFactorW : TEXCOORD3;	// Necessary for cubemaps
+#else
+	#if CUBEMAP || _X360 
+		float3 worldVertToEyeVector_fogFactorW : TEXCOORD3;		// Necessary for cubemaps
+	#endif
+#endif
+
+	float3 worldNormal				: TEXCOORD4;		// Necessary for cubemaps and flashlight
+
+#if FLASHLIGHT
+	float4 flashlightSpacePos		: TEXCOORD5;
+	float4 vProjPos					: TEXCOORD6;
+#endif
+
+	float4 worldPos_ProjPosZ		: TEXCOORD7;
+	
+#if SEAMLESS_DETAIL || SEAMLESS_BASE
+	float3 SeamlessWeights          : COLOR0;			// x y z projection weights
+#endif
+
+#if FLASHLIGHT
+	float4 color					: COLOR1;			// Vertex color (from lighting or unlit)
+#else
+	float4 color					: TEXCOORD6;		// use high-precision interpolator if possible
+#endif
+
+#if ( FOW == 1 )
+	float2 vFowCoord				: TEXCOORD2;
+#endif
+};
+
+#include "tree_sway.h"
+
+VS_OUTPUT main( const VS_INPUT v )
+{
+	VS_OUTPUT o = ( VS_OUTPUT )0;
+
+	bool bDynamicLight = DYNAMIC_LIGHT ? true : false;
+	bool bStaticLight = g_flStaticLightEnabled ? true : false;
+	bool bDoLighting = !g_bVertexColor && (bDynamicLight || bStaticLight);
+
+	float3 worldPos;
+
+	#if ( TESSELLATION )
+	{
+		EvaluateSubdivisionSurface( v, g_SubDControls.x, g_SubDControls.y, g_SubDControls.z,
+									BezierSampler, DispSampler,
+								    o.worldNormal, worldPos,
+									o.baseTexCoord, o.detailTexCoord );
+
+		float3 vDummySpecular = float3(0,0,0);
+		o.color.xyz = DoLighting( worldPos, o.worldNormal, vDummySpecular, bStaticLight, bDynamicLight, g_bHalfLambert );
+	}
+	#else // no TESSELLATION
+	{
+		float4 vPosition = v.vPos;
+		float3 vNormal = 0;
+
+		if ( bDoLighting || SEAMLESS_BASE || SEAMLESS_DETAIL || LIGHTING_PREVIEW || g_bDecalOffset || CUBEMAP )
+		{
+			// The vertex only contains valid normals if they are actually needed (fetching them when absent makes D3D complain)
+			DecompressVertex_Normal( v.vNormal, vNormal );
+		}
+		else
+		{
+			if ( SEAMLESS_BASE || SEAMLESS_DETAIL || g_bDecalOffset || g_bFlashlight )
+			{
+				// The vertex only contains valid normals if they are actually needed (fetching them when absent makes D3D complain)
+				DecompressVertex_Normal( v.vNormal, vNormal );
+			}
+		}
+	
+		#if ( SEAMLESS_BASE || SEAMLESS_DETAIL )
+		{
+			// compute blend weights in rgb
+			float3 NNormal = normalize( vNormal );
+			o.SeamlessWeights.xyz = NNormal * NNormal;				// sums to 1.
+		}
+		#endif
+	
+		#if ( !defined( SHADER_MODEL_VS_3_0 ) || !MORPHING )
+		{
+			ApplyMorph( v.vPosFlex, v.vNormalFlex, vPosition.xyz, vNormal );
+		}
+		#else
+		{
+			ApplyMorph( morphSampler, cMorphTargetTextureDim, cMorphSubrect, v.vVertexID, v.vTexCoord2, vPosition.xyz, vNormal );
+		}
+		#endif
+	  
+		#if ( TREESWAY )
+		{
+			vPosition.xyz = ComputeTreeSway( vPosition.xyz, g_flTime );
+		}
+		#endif
+
+		SkinPositionAndNormal( g_bSkinning, vPosition, vNormal, v.vBoneWeights, v.vBoneIndices, worldPos, o.worldNormal );
+
+		if ( !g_bVertexColor )
+		{
+			o.worldNormal = normalize( o.worldNormal );
+		}
+
+		#if ( defined( SHADER_MODEL_VS_3_0 ) && MORPHING && DECAL )
+		{
+			// Avoid z precision errors
+			worldPos += o.worldNormal * 0.05f * v.vTexCoord2.z;
+		}
+		#endif
+
+		o.color = float4( 0.0f, 0.0f, 0.0f, 0.0f );
+
+		#if ( VERTEXCOLOR )
+		{
+			// Assume that this is unlitgeneric if you are using vertex color.
+			o.color.rgb = GammaToLinear( v.vColor.rgb );
+			o.color.a = v.vColor.a;
+		}
+		#else
+		{
+			// Compute vertex lighting
+			#if STATICLIGHT3
+			{
+				float3 vStaticLightAvg = ( v.vStaticLight + v.vStaticLight2 + v.vStaticLight3 ) / 3.0f;
+				o.color.xyz = DoLighting( worldPos, o.worldNormal, vStaticLightAvg, bStaticLight, bDynamicLight, g_bHalfLambert );
+			}
+			#else
+			{
+				o.color.xyz = DoLighting( worldPos, o.worldNormal, v.vStaticLight, bStaticLight, bDynamicLight, g_bHalfLambert );
+			}
+			#endif
+		}
+		#endif
+		
+		#if ( SEAMLESS_BASE )
+		{
+			o.SeamlessTexCoord.xyz = SEAMLESS_SCALE * v.vPos.xyz;
+		}
+		#else
+		{
+			// Base texture coordinates
+			o.baseTexCoord.x = dot( v.vTexCoord0, cBaseTexCoordTransform[0] );
+			o.baseTexCoord.y = dot( v.vTexCoord0, cBaseTexCoordTransform[1] );
+		}
+		#endif
+
+		#if ( SEAMLESS_DETAIL )
+		{
+			// FIXME: detail texcoord as a 2d xform doesn't make much sense here, so I just do enough so
+			// that scale works. More smartness could allow 3d xform.
+			o.SeamlessDetailTexCoord.xyz = (SEAMLESS_SCALE*cDetailTexCoordTransform[0].x) * v.vPos.xyz;
+		}
+		#else
+		{
+			#if ( TREE_SWAY )
+			{
+				o.detailTexCoord.xy = v.vTexCoord0;
+			}
+			#else
+			{
+				// Detail texture coordinates
+				// FIXME: This shouldn't have to be computed all the time.
+				o.detailTexCoord.x = dot( v.vTexCoord0, cDetailTexCoordTransform[0] );
+				o.detailTexCoord.y = dot( v.vTexCoord0, cDetailTexCoordTransform[1] );
+			}
+			#endif
+		}
+		#endif
+
+		#if ( SEPARATE_DETAIL_UVS )
+		{
+			o.detailTexCoord.xy = v.vTexCoord1.xy;
+		}
+		#endif
+	}
+	#endif // TESSELLATION
+
+
+	// Needed for cubemaps 
+	#if ( CUBEMAP )
+	{
+		o.worldVertToEyeVector_fogFactorW.xyz = VSHADER_VECT_SCALE * ( cEyePos - worldPos );
+	}
+	#endif
+
+	#if ( !defined (_X360) && FLASHLIGHT )
+	{
+		//zero out the vertex color in additive two-pass flashlight mode
+		o.color.rgb *= cSinglePassFlashlight.x;
+	}
+	#endif
+			
+	// Transform into projection space
+	o.projPos = mul( float4( worldPos, 1 ), cViewProj );
+	#if ( FLASHLIGHT )
+	{
+		o.vProjPos = o.projPos;
+	}
+	#endif
+
+	o.worldPos_ProjPosZ = float4( worldPos, o.projPos.z );
+
+#if ( FOW == 1 )
+	o.vFowCoord = CalcFoWCoord( g_vFoWWorldSize, worldPos.xy );
+#endif
+
+	#if ( LIGHTING_PREVIEW == 3 )
+	{
+		o.worldPos_ProjPosZ.w = dot( g_vEyeVector, worldPos.xyz - cEyePos.xyz );	// Linear depth
+	}
+	#endif
+
+	#if ( LIGHTING_PREVIEW )
+	{
+		float dot = 0.5 + 0.5 * o.worldNormal * float3( 0.7071, 0.7071, 0 );
+		o.color.xyz = float3( dot, dot, dot );
+	}
+	#endif
+
+	#if ( FLASHLIGHT )
+	{
+		o.flashlightSpacePos = mul( float4( worldPos, 1.0f ), g_FlashlightWorldToTexture );
+	}
+	#endif
+
+	#if ( HARDWAREFOGBLEND )
+	{
+		o.fog = CalcFixedFunctionFog( worldPos, g_FogType );
+	}
+	#endif
+	#if ( !DOPIXELFOG && !HARDWAREFOGBLEND )
+	{
+		o.worldVertToEyeVector_fogFactorW.w = CalcNonFixedFunctionFog( worldPos, g_FogType );
+	}
+	#endif
+
+	return o;
+}

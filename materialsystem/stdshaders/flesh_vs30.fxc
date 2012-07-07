@@ -1,0 +1,102 @@
+//========== Copyright (c) Valve Corporation, All rights reserved. ==========//
+
+#include "common_fog_vs_fxc.h"
+// DYNAMIC: "COMPRESSED_VERTS"			"0..1"
+// DYNAMIC: "SKINNING"					"0..1"
+
+// Includes
+#include "common_vs_fxc.h"
+
+// Globals
+const float  g_flUVScale					: register( SHADER_SPECIFIC_CONST_0 );
+const float  g_flDetailUVScale				: register( SHADER_SPECIFIC_CONST_1 );
+const float4 cDetailTexCoordTransform[2]	: register( SHADER_SPECIFIC_CONST_2 );	// 2 & 3
+
+// Structs
+struct VS_INPUT
+{
+	float4 vPos					: POSITION;		// Position
+	float4 vNormal				: NORMAL;		// Normal
+	float4 vUserData			: TANGENT;		// Tangent
+	float4 vBoneWeights			: BLENDWEIGHT;	// Skin weights
+	float4 vBoneIndices			: BLENDINDICES;	// Skin indices
+	float4 vTexCoord			: TEXCOORD0;	
+	float4 vColor				: COLOR0;	
+
+	// Position and normal/tangent deltas
+	float4 vPosFlex					: POSITION1;
+	float4 vNormalFlex				: NORMAL1;
+};
+
+struct VS_OUTPUT
+{
+    float4 vProjPosition		: POSITION;		// Projection-space position
+	float4 vWorldNormal			: TEXCOORD0;	// w is proj. z coord (for depth stuff)
+	float4 vColor				: TEXCOORD1;
+	float4 vWorldPos			: TEXCOORD2;	// w is proj. w coord
+	float4 vUV0					: TEXCOORD3;
+	float2 vUV1					: TEXCOORD4;
+	float4 vLightAtten			: TEXCOORD5;
+	float3 vAmbient				: TEXCOORD6;
+	float3 vWorldTangent		: TEXCOORD7;
+	float3 vWorldBinormal		: TEXCOORD8;
+};
+
+// Main
+VS_OUTPUT main( const VS_INPUT i )
+{
+	VS_OUTPUT o;
+
+	float4 vObjPosition = i.vPos;
+	float4 vObjTangent;
+	float3 vObjNormal;
+	DecompressVertex_NormalTangent( i.vNormal, i.vUserData, vObjNormal, vObjTangent );
+
+	float flWrinkleWeight;
+	ApplyMorph( i.vPosFlex, i.vNormalFlex, vObjPosition.xyz, vObjNormal.xyz, vObjTangent.xyz, flWrinkleWeight ); // not keeping wrinkle weight
+
+	// Transform the position and normal
+	float3 vWorldPosition = { 0.0f, 0.0f, 0.0f };
+	float3 vWorldNormal   = { 0.0f, 0.0f, 0.0f };
+	float3 vWorldTangent  = { 0.0f, 0.0f, 0.0f };
+	float3 vWorldBinormal = { 0.0f, 0.0f, 0.0f };
+	SkinPositionNormalAndTangentSpace(	SKINNING ? true : false,
+										vObjPosition, vObjNormal.xyz, vObjTangent.xyzw,
+										i.vBoneWeights, i.vBoneIndices, 
+										vWorldPosition, vWorldNormal, vWorldTangent, vWorldBinormal );
+	vWorldNormal.xyz   = normalize( vWorldNormal.xyz );
+
+	o.vWorldNormal.xyz = vWorldNormal.xyz;
+	o.vWorldTangent = normalize( vWorldTangent.xyz );
+	o.vWorldBinormal = normalize( vWorldBinormal.xyz );
+	o.vWorldPos.xyz    = vWorldPosition.xyz;
+
+	// Transform into projection space
+	float4 vProjPosition = mul( float4( vWorldPosition, 1.0f ), cViewProj );
+	o.vProjPosition  = vProjPosition;
+	o.vWorldNormal.w = vProjPosition.z;
+	o.vWorldPos.w    = vProjPosition.w;
+	o.vUV0.xy = g_flUVScale * i.vTexCoord.xy;
+	// Detail texture coords:
+	o.vUV1.xy = i.vTexCoord.xy;//g_flDetailUVScale * i.vTexCoord.xy;
+	o.vUV1.x = dot( i.vTexCoord, cDetailTexCoordTransform[0] );
+	o.vUV1.y = dot( i.vTexCoord, cDetailTexCoordTransform[1] );
+
+	// Screen-space texcoord
+	float2 vScreenPos = float2( 0.5, -0.5 ) * vProjPosition.xy + 0.5 * vProjPosition.w;
+	o.vUV0.wz = vScreenPos;
+
+	// Dynamic light attenuation factors
+	o.vLightAtten.x = GetVertexAttenForLight( vWorldPosition, 0 );
+	o.vLightAtten.y = GetVertexAttenForLight( vWorldPosition, 1 );
+	o.vLightAtten.z = GetVertexAttenForLight( vWorldPosition, 2 );
+	o.vLightAtten.w = GetVertexAttenForLight( vWorldPosition, 3 );
+
+	// Ambient light
+	o.vAmbient = AmbientLight( vWorldNormal );
+
+	// Vertex colour for self-illumination glow
+	o.vColor.rgba = i.vColor.rgba * 2.0f;
+
+	return o;
+}
