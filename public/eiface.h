@@ -233,6 +233,9 @@ public:
 	virtual void		ResetPVS( byte *pvs, int pvssize ) = 0;
 	// Merge the pvs bits into the current accumulated pvs based on the specified origin ( not that each pvs origin has an 8 world unit fudge factor )
 	virtual void		AddOriginToPVS( const Vector &origin ) = 0;
+
+	virtual int			UnknownFunc1() = 0;
+	virtual float		GetGameVersion() = 0;
 	
 	// Mark a specified area portal as open/closed.
 	// Use SetAreaPortalStates if you want to set a bunch of them at a time.
