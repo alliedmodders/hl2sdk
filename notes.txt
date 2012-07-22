@@ -33,3 +33,4 @@ on 64-bit Linux systems with the addition of the -m32 option.
 
 3: The caption compiler which is located in utils/captioncompiler will
    not link due to a missing static library (appframework.lib).
+
