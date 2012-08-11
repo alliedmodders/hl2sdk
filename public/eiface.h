@@ -459,6 +459,8 @@ public:
 	virtual float GetLatencyForChoreoSounds() = 0;
 	
 	virtual int GetClientCrossPlayPlatform( int client_index ) = 0;
+	
+	virtual void EnsureInstanceBaseline(int) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
@@ -585,7 +587,9 @@ public:
 	
 	virtual bool			ShouldAllowDirectConnect() = 0;
 	virtual bool			FriendsReqdForDirectConnect() = 0;
-
+	virtual bool			IsLoadTestServer() = 0;
+	virtual bool			IsValveDS() = 0;
+	virtual KeyValues		*GetExtendedServerInfoForNewClient() = 0;
 };
 
 //-----------------------------------------------------------------------------
