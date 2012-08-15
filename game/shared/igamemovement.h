@@ -119,9 +119,9 @@ public:
 	virtual void	DiffPrint( char const *fmt, ... ) = 0;
 
 	// Allows other parts of the engine to find out the normal and ducked player bbox sizes
-	virtual Vector const&	GetPlayerMins( bool ducked ) const = 0;
-	virtual Vector const&	GetPlayerMaxs( bool ducked ) const = 0;
-	virtual Vector const&   GetPlayerViewOffset( bool ducked ) const = 0;
+	virtual Vector	GetPlayerMins( bool ducked ) const = 0;
+	virtual Vector	GetPlayerMaxs( bool ducked ) const = 0;
+	virtual Vector  GetPlayerViewOffset( bool ducked ) const = 0;
 
 };
 
