@@ -170,6 +170,8 @@ public:
 	// Get the dimensions of the back buffer.
 	virtual void GetBackBufferDimensions( int& width, int& height ) const = 0;
 
+	virtual const AspectRatioInfo_t &GetAspectRatioInfo ( void ) const = 0;
+
 	// Get the dimensions of the current render target
 	virtual void GetCurrentRenderTargetDimensions( int& nWidth, int& nHeight ) const = 0;
 
@@ -186,16 +188,16 @@ public:
 	virtual const FlashlightState_t &GetFlashlightState( VMatrix &worldToTexture ) const = 0;
 	virtual bool InEditorMode() const = 0;
 
+	virtual bool IsCascadedShadowMapping( void ) const = 0;
+	virtual const CascadedShadowMappingState_t& GetCascadedShadowMappingState(ITexture **pDepthTextureAtlas) const = 0;
+
 	// Binds a standard texture
-	virtual void BindStandardTexture( Sampler_t sampler, StandardTextureId_t id ) = 0;
+	virtual void BindStandardTexture( Sampler_t stage, TextureBindFlags_t nBindFlags, StandardTextureId_t id ) = 0;
 
 	virtual ITexture *GetRenderTargetEx( int nRenderTargetID ) const = 0;
 
 	virtual void SetToneMappingScaleLinear( const Vector &scale ) = 0;
 	virtual const Vector &GetToneMappingScaleLinear( void ) const = 0;
-
-	// Sets the ambient light color
-	virtual void SetAmbientLightColor( float r, float g, float b ) = 0;
 
 	virtual void SetFloatRenderingParameter(int parm_number, float value) = 0;
 	virtual void SetIntRenderingParameter(int parm_number, int value) = 0 ;
@@ -263,6 +265,8 @@ public:
 
 	virtual bool SinglePassFlashlightModeEnabled( void ) = 0;
 
+	virtual void GetActualProjectionMatrix( float *m ) = 0;
+
 	virtual void SetDepthFeatheringPixelShaderConstant( int iConstant, float fDepthBlendScale ) = 0;
 
 	virtual void GetFlashlightShaderInfo( bool *pShadowsEnabled, bool *pUberLight ) const = 0;
@@ -283,6 +287,9 @@ public:
 	virtual void EnablePredication( bool bZPass, bool bRenderPass ) = 0;
 	virtual void DisablePredication() = 0;
 #endif // _X360
+
+	virtual bool IsRenderingPaint() const = 0;
+	virtual bool IsStereoActiveThisFrame() const = 0;
 };
 
 // end class IShaderDynamicAPI

@@ -38,7 +38,9 @@ public:
 	//    Width  - Width of the texture
 	//    Height - Height of the texture
 	// It is required to enable debug texture list to get this.
-	virtual KeyValues* GetDebugTextureList() = 0;
+	virtual KeyValues* LockDebugTextureList() = 0;
+
+	virtual void UnlockDebugTextureList() = 0;
 
 	// Texture memory usage
 	enum TextureMemoryType

@@ -245,6 +245,21 @@ struct ShaderStencilState_t
 	}
 };
 
+struct ShaderComboInformation_t
+{
+	const char *m_pComboName;
+	int m_nComboMin;
+	int m_nComboMax;
+};
+
+struct ShaderComboSemantics_t
+{
+	const char *pShaderName;
+	const ShaderComboInformation_t *pDynamicShaderComboArray;
+	int nDynamicShaderComboArrayCount;
+	const ShaderComboInformation_t *pStaticShaderComboArray;
+	int nStaticShaderComboArrayCount;
+};
 
 //-----------------------------------------------------------------------------
 // Used for occlusion queries
@@ -272,7 +287,7 @@ public:
 	//
 
 	// Viewport methods
-	virtual void SetViewports( int nCount, const ShaderViewport_t* pViewports ) = 0;
+	virtual void SetViewports( int nCount, const ShaderViewport_t* pViewports, bool setImmediately ) = 0;
 	virtual int GetViewports( ShaderViewport_t* pViewports, int nMax ) const = 0;
 
 	// Buffer clearing
@@ -308,9 +323,6 @@ public:
 
 	// Binds a particular material to render with
 	virtual void Bind( IMaterial* pMaterial ) = 0;
-
-	// Flushes any primitives that are buffered
-	virtual void FlushBufferedPrimitives() = 0;
 
 	// Gets the dynamic mesh; note that you've got to render the mesh
 	// before calling this function a second time. Clients should *not*
@@ -362,7 +374,7 @@ public:
 	virtual void ForceDepthFuncEquals( bool bEnable ) = 0;
 
 	// Forces Z buffering to be on or off
-	virtual void OverrideDepthEnable( bool bEnable, bool bDepthEnable ) = 0;
+	virtual void OverrideDepthEnable( bool bEnable, bool bDepthEnable, bool bDepthTestEnable ) = 0;
 
 	virtual void SetHeightClipZ( float z ) = 0; 
 	virtual void SetHeightClipMode( enum MaterialHeightClipMode_t heightClipMode ) = 0; 
@@ -371,7 +383,7 @@ public:
 	virtual void EnableClipPlane( int index, bool bEnable ) = 0;
 	
 	// Returns the nearest supported format
-	virtual ImageFormat GetNearestSupportedFormat( ImageFormat fmt ) const = 0;
+	virtual ImageFormat GetNearestSupportedFormat( ImageFormat fmt, bool bFilteringRequired ) const = 0;
 	virtual ImageFormat GetNearestRenderTargetFormat( ImageFormat fmt ) const = 0;
 
 	// When AA is enabled, render targets are not AA and require a separate
@@ -398,7 +410,8 @@ public:
 		int width, 
 		int height, 
 		const char *pDebugName,
-		bool bTexture ) = 0;
+		bool bTexture,
+		bool bAliasDepthTextureOverSceneDepthX360 ) = 0;
 
 	virtual bool IsTexture( ShaderAPITextureHandle_t textureHandle ) = 0;
 	virtual bool IsTextureResident( ShaderAPITextureHandle_t textureHandle ) = 0;
@@ -449,7 +462,7 @@ public:
 	virtual void TexSetPriority( int priority ) = 0;
 
 	// Sets the texture state
-	virtual void BindTexture( Sampler_t sampler, ShaderAPITextureHandle_t textureHandle ) = 0;
+	virtual void BindTexture( Sampler_t stage, TextureBindFlags_t nBindFlags, ShaderAPITextureHandle_t textureHandle ) = 0;
 
 	// Set the render target to a texID.
 	// Set to SHADER_RENDERTARGET_BACKBUFFER if you want to use the regular framebuffer.
@@ -501,6 +514,8 @@ public:
 
 	virtual void EvictManagedResources() = 0;
 
+	virtual void GetGPUMemoryStats(GPUMemoryStats &) = 0;
+
 	// Level of anisotropic filtering
 	virtual void SetAnisotropicLevel( int nAnisotropyLevel ) = 0;
 
@@ -535,6 +550,10 @@ public:
 	virtual int OcclusionQuery_GetNumPixelsRendered( ShaderAPIOcclusionQuery_t hQuery, bool bFlush = false ) = 0;
 
 	virtual void SetFlashlightState( const FlashlightState_t &state, const VMatrix &worldToTexture ) = 0;
+	
+	virtual bool IsCascadedShadowMapping() const = 0;
+	virtual void SetCascadedShadowMappingState( const CascadedShadowMappingState_t &state, ITexture *pDepthTextureAtlas ) = 0;
+	virtual const CascadedShadowMappingState_t& GetCascadedShadowMappingState(ITexture **pDepthTextureAtlas) const = 0;
 
 	virtual void ClearVertexAndPixelShaderRefCounts() = 0;
 	virtual void PurgeUnusedVertexAndPixelShaders() = 0;
@@ -570,9 +589,6 @@ public:
 
 	// Lets the shader know about the full-screen texture so it can 
 	virtual void SetFullScreenTextureHandle( ShaderAPITextureHandle_t h ) = 0;
-
-	// Sets the ambient light color
-	virtual void SetAmbientLightColor( float r, float g, float b ) = 0;
 
 	// Rendering parameters control special drawing modes withing the material system, shader
 	// system, shaders, and engine. renderparm.h has their definitions.
@@ -612,6 +628,8 @@ public:
 	virtual void SetFlashlightStateEx( const FlashlightState_t &state, const VMatrix &worldToTexture, ITexture *pFlashlightDepthTexture ) = 0;
 
 	virtual bool SupportsMSAAMode( int nMSAAMode ) = 0;
+
+	virtual void AntiAliasingHint( int a1 ) = 0;
 
 #if defined( _X360 )
 	virtual HXUIFONT OpenTrueTypeFont( const char *pFontname, int tall, int style ) = 0;
@@ -656,6 +674,7 @@ public:
 
 	// Computes the vertex buffer pointers 
 	virtual void ComputeVertexDescription( unsigned char* pBuffer, VertexFormat_t vertexFormat, MeshDesc_t& desc ) const = 0;
+	virtual int VertexFormatSize( VertexFormat_t vertexFormat ) const = 0;
 
 	virtual void SetDisallowAccess( bool ) = 0;
 	virtual void EnableShaderShaderMutex( bool ) = 0;
@@ -674,7 +693,7 @@ public:
 	// Apply stencil operations to every pixel on the screen without disturbing depth or color buffers
 	virtual void PerformFullScreenStencilOperation( void ) = 0;
 
-	virtual void SetScissorRect( const int nLeft, const int nTop, const int nRight, const int nBottom, const bool bEnableScissor ) = 0;
+	virtual void SetScissorRect( int nLeft, int nTop, int nRight, int nBottom, bool bEnableScissor ) = 0;
 
 	// nVidia CSAA modes, different from SupportsMSAAMode()
 	virtual bool SupportsCSAAMode( int nNumSamples, int nQualityLevel ) = 0;
@@ -698,6 +717,8 @@ public:
 	virtual void SetFlexWeights( int nFirstWeight, int nCount, const MorphWeight_t* pWeights ) = 0;
 
 	virtual void FogMaxDensity( float flMaxDensity ) = 0;
+
+	virtual void *GetD3DTexturePtr( ShaderAPITextureHandle_t hTexture ) = 0;
 
 	// Create a multi-frame texture (equivalent to calling "CreateTexture" multiple times, but more efficient)
 	virtual void CreateTextures( 
@@ -761,6 +782,21 @@ public:
 	virtual void OnPresent( void ) = 0;
 
 	virtual void UpdateGameTime( float flTime ) = 0;
+
+	virtual bool IsStereoSupported( void ) const = 0;
+	virtual void UpdateStereoTexture( ShaderAPITextureHandle_t texHandle, bool *pStereoActiveThisFrame ) = 0;
+
+	virtual void SetSRGBWrite( bool bState ) = 0;
+
+	virtual void PrintfVA( char *fmt, va_list vargs ) = 0;
+    virtual void Printf( char *fmt, ... ) = 0;
+
+	virtual float Knob( char *knobname, float *setvalue ) = 0;
+
+	virtual void AddShaderComboInformation( const ShaderComboSemantics_t *pSemantics ) = 0;
+	virtual float GetLightMapScaleFactor( void ) const = 0;
+	virtual ShaderAPITextureHandle_t FindTexture( const char * pDebugName ) = 0;
+	virtual void GetTextureDimensions(ShaderAPITextureHandle_t hTexture, int &nWidth, int &nHeight, int &nDepth) = 0;
 };
 
 
