@@ -19,7 +19,7 @@ MOD_CONFIG = Server\(SDK\)_ReleaseWin32
 
 # the directory the base binaries (tier0_i486.so, etc) are located
 # this should point to your orange box subfolder of where you have srcds installed.
-SRCDS_DIR = ~/srcds/orangebox
+SRCDS_DIR = ~/srcds/csgo
 
 # the path to your mods directory
 # set this so that 'make install' or 'make installrelease' will copy your binary over automatically.
@@ -30,12 +30,13 @@ ifeq "$(OS)" "Darwin"
 CC = /usr/bin/clang
 CPLUS = /usr/bin/clang++
 CLINK = /usr/bin/clang
+CPP_LIB =
 else
 CC = /usr/bin/gcc
 CPLUS = /usr/bin/g++
 CLINK = /usr/bin/gcc
+CPP_LIB = "$(SRCDS_DIR)/bin/libstdc++.so.6 $(SRCDS_DIR)/bin/libgcc_s.so.1"
 endif
-CPP_LIB = "libstdc++.a libgcc_eh.a"
 
 # put any compiler flags you want passed here
 USER_CFLAGS =
@@ -81,8 +82,12 @@ ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -msse -msse2 -m32
 
 ifeq "$(OS)" "Darwin"
 DEFINES = -D_OSX -DOSX
+SHLIBEXT = dylib
+SHLIBLDFLAGS = -dynamiclib -mmacosx-version-min=10.5
 else
 DEFINES = -D_LINUX -DLINUX
+SHLIBEXT = so
+SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt -Wl
 endif
 
 DEFINES += -DCOMPILER_GCC -DPOSIX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp \
@@ -90,9 +95,7 @@ DEFINES += -DCOMPILER_GCC -DPOSIX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstri
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
 BASE_CFLAGS = -fno-strict-aliasing -Wall -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof
-SHLIBEXT = so
 SHLIBCFLAGS = -fPIC
-SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt -Wl
 
 # Flags passed to the c compiler
 CFLAGS = $(DEFINES) $(ARCH_CFLAGS) -O3 $(BASE_CFLAGS)
@@ -108,7 +111,7 @@ DBG_CFLAGS = "$(DEFINES) $(ARCH_CFLAGS) -g -ggdb $(BASE_CFLAGS) $(UNDEF)"
 # define list passed to make for the sub makefile
 BASE_DEFINES = CC=$(CC) AR=$(AR) CPLUS=$(CPLUS) CPP_LIB=$(CPP_LIB) DEBUG=$(DEBUG) \
 	BUILD_DIR=$(BUILD_DIR) BUILD_OBJ_DIR=$(BUILD_OBJ_DIR) SRC_DIR=$(SRC_DIR) \
-	LIB_DIR=$(LIB_DIR) SHLIBLDFLAGS=$(SHLIBLDFLAGS) SHLIBEXT=$(SHLIBEXT) \
+	LIB_DIR=$(LIB_DIR) SHLIBLDFLAGS="$(SHLIBLDFLAGS)" SHLIBEXT=$(SHLIBEXT) \
 	CLINK=$(CLINK) CFLAGS="$(CFLAGS)" DBG_CFLAGS=$(DBG_CFLAGS) LDFLAGS=$(LDFLAGS) \
 	DEFINES="$(DEFINES)" DBG_DEFINES=$(DBG_DEFINES) \
 	ARCH=$(ARCH) SRCDS_DIR=$(SRCDS_DIR) MOD_CONFIG=$(MOD_CONFIG) NAME=$(NAME) \
@@ -118,6 +121,7 @@ BASE_DEFINES = CC=$(CC) AR=$(AR) CPLUS=$(CPLUS) CPP_LIB=$(CPP_LIB) DEBUG=$(DEBUG
 MAKE_SERVER = Makefile.server
 MAKE_VCPM = Makefile.vcpm
 MAKE_PLUGIN = Makefile.plugin
+MAKE_SHADERAPIEMPTY = Makefile.shaderapiempty
 MAKE_TIER1 = Makefile.tier1
 MAKE_MATH = Makefile.mathlib
 MAKE_IFACE = Makefile.interfaces
@@ -131,10 +135,8 @@ check:
 	cd $(BUILD_DIR)
 	if [ ! -e "$(LIB_DIR)/tier1_i486.a" ]; then $(MAKE) tier1;fi
 	if [ ! -e "$(LIB_DIR)/mathlib_i486.a" ]; then $(MAKE) mathlib;fi
-	if [ ! -e "$(LIB_DIR)/choreoobjects_i486.a" ]; then $(MAKE) choreo;fi
-	if [ ! -f "tier0_i486.so" ]; then ln -s $(SRCDS_DIR)/bin/tier0_i486.so .; fi
-	if [ ! -f "vstdlib_i486.so" ]; then ln -s $(SRCDS_DIR)/bin/vstdlib_i486.so .; fi
-	if [ ! -f "steam_api_i486.so" ]; then ln -s $(SRCDS_DIR)/bin/steam_api_i486.so .; fi
+	if [ ! -f "libtier0.$(SHLIBEXT)" ]; then ln -s $(LIB_DIR)/libtier0.$(SHLIBEXT) .; fi
+	if [ ! -f "libvstdlib.$(SHLIBEXT)" ]; then ln -s $(LIB_DIR)/libvstdlib.$(SHLIBEXT) .; fi
 
 vcpm: check
 	if [ ! -e "vcpm" ]; then $(MAKE) -f $(MAKE_VCPM) $(BASE_DEFINES);fi
@@ -145,6 +147,9 @@ mod: check vcpm
 
 plugin: check
 	$(MAKE) -f $(MAKE_PLUGIN) $(BASE_DEFINES)
+
+shaderapiempty: check
+	$(MAKE) -f $(MAKE_SHADERAPIEMPTY) $(BASE_DEFINES)
 	
 tier1:
 	$(MAKE) -f $(MAKE_TIER1) $(BASE_DEFINES)
@@ -169,6 +174,7 @@ clean:
 	$(MAKE) -f $(MAKE_VCPM) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_PLUGIN) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_SERVER) $(BASE_DEFINES) clean
+	$(MAKE) -f $(MAKE_SHADERAPIEMPTY) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_TIER1) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_MATH) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_IFACE) $(BASE_DEFINES) clean

@@ -1,0 +1,55 @@
+#
+# Empty Shader API Library Makefile
+#
+
+override NAME = shaderapiempty
+
+SHADER_SRC_DIR = $(SRC_DIR)/materialsystem/$(NAME)
+MAT_SRC_DIR = $(SRC_DIR)/materialsystem
+PUBLIC_SRC_DIR = $(SRC_DIR)/public
+MAT_PUBLIC_SRC_DIR = $(SRC_DIR)/public/materialsystem
+SHADERAPI_PUBLIC_SRC_DIR = $(SRC_DIR)/public/shaderapi
+TIER0_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier0
+TIER1_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier1
+
+SHADER_OBJ_DIR = $(BUILD_OBJ_DIR)/materialsystem/$(NAME)
+
+INCLUDEDIRS = -I$(PUBLIC_SRC_DIR) -I$(MAT_SRC_DIR) -I$(MAT_PUBLIC_SRC_DIR) \
+	-I $(SHADERAPI_PUBLIC_SRC_DIR) -I$(TIER0_PUBLIC_SRC_DIR) -I$(TIER1_PUBLIC_SRC_DIR)
+LDFLAGS_SHADER = -m32 -lm -ldl libtier0.$(SHLIBEXT) libvstdlib.$(SHLIBEXT) \
+	$(LIB_DIR)/tier1_i486.a $(LIB_DIR)/interfaces_i486.a
+
+DO_CC = $(CPLUS) $(INCLUDEDIRS) -DARCH=$(ARCH)
+
+ifeq "$(DEBUG)" "true"
+	DO_CC += $(DBG_DEFINES) $(DBG_CFLAGS)
+else
+	DO_CC += -DNDEBUG $(CFLAGS)
+endif
+
+DO_CC += -o $@ -c $<
+
+#####################################################################
+
+SHADER_OBJS= \
+	$(SHADER_OBJ_DIR)/shaderapiempty.o \
+
+all: dirs $(NAME).$(SHLIBEXT)
+
+dirs:
+	-mkdir -p $(BUILD_OBJ_DIR)
+	-mkdir -p $(SHADER_OBJ_DIR)
+
+$(NAME).$(SHLIBEXT): $(SHADER_OBJS)
+	$(CPLUS) $(SHLIBLDFLAGS) -o $(BUILD_DIR)/$@ $(SHADER_OBJS) $(LDFLAGS_SHADER) $(CPP_LIB)
+
+$(SHADER_OBJ_DIR)/%.o: $(SHADER_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+install:
+	cp -f $(NAME).$(SHLIBEXT) $(LIB_DIR)/$(NAME).$(SHLIBEXT)
+
+clean:
+	-rm -rf $(SHADER_OBJ_DIR)
+	-rm -rf $(NAME).$(SHLIBEXT)
+

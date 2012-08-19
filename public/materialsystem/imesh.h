@@ -1000,7 +1000,7 @@ inline void CVertexBuilder::Reset()
 
 	m_pCurrPosition = m_pPosition;
 	m_pCurrNormal = m_pNormal;
-	for ( int i = 0; i < NELEMS( m_pCurrTexCoord ); i++ )
+	for ( size_t i = 0; i < NELEMS( m_pCurrTexCoord ); i++ )
 	{
 		m_pCurrTexCoord[i] = m_pTexCoord[i];
 	}
@@ -2373,8 +2373,8 @@ private:
 //-----------------------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------------------
-inline CIndexBuilder::CIndexBuilder() : m_pIndexBuffer(0), m_nIndexCount(0), 
-	m_nCurrentIndex(0),	m_nMaxIndexCount(0)
+inline CIndexBuilder::CIndexBuilder() : m_pIndexBuffer(0), m_nMaxIndexCount(0), 
+	m_nIndexCount(0), m_nCurrentIndex(0)
 {
 	m_nTotalIndexCount = 0;
 	m_nBufferOffset = INVALID_BUFFER_OFFSET;
