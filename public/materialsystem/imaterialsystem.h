@@ -64,7 +64,8 @@ class CPaintMaterial;
 class IPaintMapDataManager;
 class IPaintMapTextureManager;
 class GPUMemoryStats;
-
+struct AspectRatioInfo_t;
+struct CascadedShadowMappingState_t;
 
 //-----------------------------------------------------------------------------
 // The vertex format type
