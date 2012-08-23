@@ -72,6 +72,8 @@ typedef struct player_info_s player_info_t;
 
 #define INTERFACEVERSION_VENGINESERVER	"VEngineServer021"
 
+struct bbox_t;
+
 //-----------------------------------------------------------------------------
 // Purpose: Interface the engine exposes to the game DLL
 //-----------------------------------------------------------------------------
@@ -390,7 +392,7 @@ public:
 	
 	virtual const CSteamID *GetClientSteamIDByPlayerIndex( int index ) = 0;
 	virtual int GetClusterCount() = 0;
-	virtual int GetAllClusterBounds( bbox_t *pBoxes, int maxboxes ) = ;
+	virtual int GetAllClusterBounds( bbox_t *pBoxes, int maxboxes ) = 0;
 	virtual edict_t *CreateFakeClientEx( const char *netname, bool bUnknown ) = 0;
 	virtual int GetServerVersion() const = 0;
 	virtual void *GetReplay() = 0;
