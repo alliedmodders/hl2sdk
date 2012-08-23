@@ -387,6 +387,13 @@ public:
 	// Send a client command keyvalues
 	// keyvalues are deleted inside the function
 	virtual void ClientCommandKeyValues( edict_t *pEdict, KeyValues *pCommand ) = 0;
+	
+	virtual const CSteamID *GetClientSteamIDByPlayerIndex( int index ) = 0;
+	virtual int GetClusterCount() = 0;
+	virtual int GetAllClusterBounds( bbox_t *pBoxes, int maxboxes ) = ;
+	virtual edict_t *CreateFakeClientEx( const char *netname, bool bUnknown ) = 0;
+	virtual int GetServerVersion() const = 0;
+	virtual void *GetReplay() = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
