@@ -132,6 +132,10 @@ void WriteUsercmd( bf_write *buf, const CUserCmd *to, const CUserCmd *from )
 	WriteUserCmdDeltaFloat( buf, "viewangles[0]", from->viewangles[0], to->viewangles[0] );
 	WriteUserCmdDeltaFloat( buf, "viewangles[1]", from->viewangles[1], to->viewangles[1] );
 	WriteUserCmdDeltaFloat( buf, "viewangles[2]", from->viewangles[2], to->viewangles[2] );
+	
+	WriteUserCmdDeltaFloat( buf, "aimdirection[0]", from->aimdirection[0], to->aimdirection[0] );
+	WriteUserCmdDeltaFloat( buf, "aimdirection[1]", from->aimdirection[1], to->aimdirection[1] );
+	WriteUserCmdDeltaFloat( buf, "aimdirection[2]", from->aimdirection[2], to->aimdirection[2] );
 
 	WriteUserCmdDeltaFloat( buf, "forwardmove", from->forwardmove, to->forwardmove );
 	WriteUserCmdDeltaFloat( buf, "sidemove", from->sidemove, to->sidemove );
@@ -317,6 +321,22 @@ void ReadUsercmd( bf_read *buf, CUserCmd *move, CUserCmd *from )
 	if ( buf->ReadOneBit() )
 	{
 		move->viewangles[2] = buf->ReadFloat();
+	}
+	
+	// Read aim direction
+	if ( buf->ReadOneBit() )
+	{
+		move->aimdirection[0] = buf->ReadFloat();
+	}
+
+	if ( buf->ReadOneBit() )
+	{
+		move->aimdirection[1] = buf->ReadFloat();
+	}
+
+	if ( buf->ReadOneBit() )
+	{
+		move->aimdirection[2] = buf->ReadFloat();
 	}
 
 	// Read movement
