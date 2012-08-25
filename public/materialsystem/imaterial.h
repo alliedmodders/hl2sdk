@@ -585,7 +585,7 @@ public:
 	// the material can't be found.
 	virtual bool			IsErrorMaterial() const = 0;
 
-	virtual void			SetUseFixedFunctionBakedLighting( bool bEnable ) = 0;
+	virtual void			Unused() = 0;
 
 	// Gets the current alpha modulation
 	virtual float			GetAlphaModulation() = 0;
@@ -610,6 +610,10 @@ public:
 	virtual void			RefreshPreservingMaterialVars() = 0;
 
 	virtual bool			WasReloadedFromWhitelist() = 0;
+
+	virtual bool			SetTempExcluded( bool bSet , int nExcludedDimensionLimit ) = 0;
+
+	virtual int				GetReferenceCount() const = 0;
 };
 
 

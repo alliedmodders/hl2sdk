@@ -221,6 +221,10 @@ struct MeshInstanceData_t
 	Vector4D				m_DiffuseModulation;
 };
 
+struct MeshBuffersAllocationSettings_t
+{
+	uint32 m_uiIbUsageFlags;
+};
 
 //-----------------------------------------------------------------------------
 // Utility methods for buffer builders
@@ -335,6 +339,11 @@ public:
 	virtual IMesh* GetMesh() = 0;
 };
 
+abstract_class ICachedPerFrameMeshData
+{
+public:
+	virtual void Free() = 0;
+};
 
 //-----------------------------------------------------------------------------
 // Interface to the mesh - needs to contain an IVertexBuffer and an IIndexBuffer to emulate old mesh behavior
@@ -348,7 +357,7 @@ public:
 	virtual void SetPrimitiveType( MaterialPrimitiveType_t type ) = 0;
 
 	// Draws the mesh
-	virtual void Draw( int nFirstIndex = -1, int nIndexCount = 0 ) = 0;
+	virtual void Draw( int firstIndex = -1, int numIndices = 0 ) = 0;
 
 	virtual void SetColorMesh( IMesh *pColorMesh, int nVertexOffset ) = 0;
 
@@ -368,20 +377,20 @@ public:
 		CMeshBuilder &builder ) = 0;
 
 	// Spews the mesh data
-	virtual void Spew( int nVertexCount, int nIndexCount, const MeshDesc_t &desc ) = 0;
+	virtual void Spew( int numVerts, int numIndices, const MeshDesc_t &desc ) = 0;
 
 	// Call this in debug mode to make sure our data is good.
-	virtual void ValidateData( int nVertexCount, int nIndexCount, const MeshDesc_t &desc ) = 0;
+	virtual void ValidateData( int numVerts, int numIndices, const MeshDesc_t &desc ) = 0;
 
 	// New version
-	// Locks/unlocks the mesh, providing space for nVertexCount and nIndexCount.
-	// nIndexCount of -1 means don't lock the index buffer...
-	virtual void LockMesh( int nVertexCount, int nIndexCount, MeshDesc_t &desc ) = 0;
-	virtual void ModifyBegin( int nFirstVertex, int nVertexCount, int nFirstIndex, int nIndexCount, MeshDesc_t& desc ) = 0;
+	// Locks/unlocks the mesh, providing space for numVerts and numIndices.
+	// numIndices of -1 means don't lock the index buffer...
+	virtual void LockMesh( int numVerts, int numIndices, MeshDesc_t &desc, MeshBuffersAllocationSettings_t *pSettings ) = 0;
+	virtual void ModifyBegin( int firstVertex, int numVerts, int firstIndex, int numIndices, MeshDesc_t& desc ) = 0;
 	virtual void ModifyEnd( MeshDesc_t& desc ) = 0;
-	virtual void UnlockMesh( int nVertexCount, int nIndexCount, MeshDesc_t &desc ) = 0;
+	virtual void UnlockMesh( int numVerts, int numIndices, MeshDesc_t &desc ) = 0;
 
-	virtual void ModifyBeginEx( bool bReadOnly, int nFirstVertex, int nVertexCount, int nFirstIndex, int nIndexCount, MeshDesc_t &desc ) = 0;
+	virtual void ModifyBeginEx( bool bReadOnly, int firstVertex, int numVerts, int firstIndex, int numIndices, MeshDesc_t &desc ) = 0;
 
 	virtual void SetFlexMesh( IMesh *pMesh, int nVertexOffset ) = 0;
 
@@ -392,11 +401,14 @@ public:
 	// NOTE: I chose to create this method strictly because it's 2 days to code lock
 	// and I could use the DrawInstances technique without a larger code change
 	// Draws the mesh w/ modulation.
-	virtual void DrawModulated( const Vector4D &diffuseModulation, int nFirstIndex = -1, int nIndexCount = 0 ) = 0;
+	virtual void DrawModulated( const Vector4D &vecDiffuseModulation, int firstIndex = -1, int numIndices = 0 ) = 0;
 
-#if defined( _X360 )
-	virtual unsigned ComputeMemoryUsed() = 0;
-#endif
+	virtual unsigned int ComputeMemoryUsed() = 0;
+
+	virtual void *AccessRawHardwareDataStream( uint8 nRawStreamIndex, uint32 numBytes, uint32 uiFlags, void *pvContext ) = 0;
+
+	virtual ICachedPerFrameMeshData *GetCachedPerFrameMeshData() = 0;
+	virtual void ReconstructFromCachedPerFrameMeshData( ICachedPerFrameMeshData *pData ) = 0;
 };
 
 
@@ -988,7 +1000,7 @@ inline void CVertexBuilder::Reset()
 
 	m_pCurrPosition = m_pPosition;
 	m_pCurrNormal = m_pNormal;
-	for ( int i = 0; i < NELEMS( m_pCurrTexCoord ); i++ )
+	for ( size_t i = 0; i < NELEMS( m_pCurrTexCoord ); i++ )
 	{
 		m_pCurrTexCoord[i] = m_pTexCoord[i];
 	}
@@ -2274,8 +2286,8 @@ public:
 
 	// Locks the index buffer to modify existing data
 	// Passing nVertexCount == -1 says to lock all the vertices for modification.
-	// Pass 0 for nIndexCount to not lock the index buffer.
-	void BeginModify( IIndexBuffer *pIndexBuffer, int nFirstIndex = 0, int nIndexCount = 0, int nIndexOffset = 0 );
+	// Pass 0 for numIndices to not lock the index buffer.
+	void BeginModify( IIndexBuffer *pIndexBuffer, int firstIndex = 0, int numIndices = 0, int nIndexOffset = 0 );
 	void EndModify( bool bSpewData = false );
 
 	// returns the number of indices
@@ -2292,7 +2304,7 @@ public:
 
 	// Advances the current index by one
 	void AdvanceIndex();
-	void AdvanceIndices( int nIndexCount );
+	void AdvanceIndices( int numIndices );
 
 	int GetCurrentIndex();
 	int GetFirstIndex() const;
@@ -2310,12 +2322,12 @@ public:
 	void FastIndex2( unsigned short nIndex1, unsigned short nIndex2 );
 
 	// Generates indices for a particular primitive type
-	void GenerateIndices( MaterialPrimitiveType_t primitiveType, int nIndexCount );
+	void GenerateIndices( MaterialPrimitiveType_t primitiveType, int numIndices );
 
 	// FIXME: Remove! Backward compat so we can use this from a CMeshBuilder.
 	void AttachBegin( IMesh* pMesh, int nMaxIndexCount, const MeshDesc_t &desc );
 	void AttachEnd();
-	void AttachBeginModify( IMesh* pMesh, int nFirstIndex, int nIndexCount, const MeshDesc_t &desc );
+	void AttachBeginModify( IMesh* pMesh, int firstIndex, int numIndices, const MeshDesc_t &desc );
 	void AttachEndModify();
 
 	void FastTriangle( int startVert );
@@ -2361,8 +2373,8 @@ private:
 //-----------------------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------------------
-inline CIndexBuilder::CIndexBuilder() : m_pIndexBuffer(0), m_nIndexCount(0), 
-	m_nCurrentIndex(0),	m_nMaxIndexCount(0)
+inline CIndexBuilder::CIndexBuilder() : m_pIndexBuffer(0), m_nMaxIndexCount(0), 
+	m_nIndexCount(0), m_nCurrentIndex(0)
 {
 	m_nTotalIndexCount = 0;
 	m_nBufferOffset = INVALID_BUFFER_OFFSET;
@@ -3295,7 +3307,7 @@ inline void CMeshBuilder::Begin( IMesh *pMesh, MaterialPrimitiveType_t type, int
 	}
 
 	// Lock the mesh
-	m_pMesh->LockMesh( nMaxVertexCount, nMaxIndexCount, *this );
+	m_pMesh->LockMesh( nMaxVertexCount, nMaxIndexCount, *this, NULL );
 
 	m_IndexBuilder.AttachBegin( pMesh, nMaxIndexCount, *this );
 	m_VertexBuilder.AttachBegin( pMesh, nMaxVertexCount, *this );
@@ -3332,7 +3344,7 @@ inline void CMeshBuilder::Begin( IMesh* pMesh, MaterialPrimitiveType_t type, int
 	m_pMesh->SetPrimitiveType( type );
 
 	// Lock the vertex and index buffer
-	m_pMesh->LockMesh( nVertexCount, nIndexCount, *this );
+	m_pMesh->LockMesh( nVertexCount, nIndexCount, *this, NULL );
 
 	m_IndexBuilder.AttachBegin( pMesh, nIndexCount, *this );
 	m_VertexBuilder.AttachBegin( pMesh, nVertexCount, *this );

@@ -61,7 +61,7 @@ public:
 	virtual const ImageFormatInfo_t& ImageFormatInfo( ImageFormat fmt ) const = 0;
 
     // Bind standard textures
-	virtual void BindStandardTexture( Sampler_t sampler, StandardTextureId_t id ) = 0;
+	virtual void BindStandardTexture( Sampler_t sampler, TextureBindFlags_t nBindFlags, StandardTextureId_t id ) = 0;
 
 	// What are the lightmap dimensions?
 	virtual void GetLightmapDimensions( int *w, int *h ) = 0;
@@ -73,6 +73,8 @@ public:
 	// Used to prevent meshes from drawing.
 	virtual bool IsInStubMode() = 0;
 	virtual bool InFlashlightMode() const = 0;
+
+	virtual bool IsCascadedShadowMapping() const = 0;
 
 	// For the shader API to shove the current version of aniso level into the
 	// "definitive" place (g_config) when the shader API decides to change it.
@@ -100,8 +102,6 @@ public:
 	virtual bool OnSetFlexMesh( IMesh *pStaticMesh, IMesh *pMesh, int nVertexOffsetInBytes ) = 0;
 	virtual bool OnSetColorMesh( IMesh *pStaticMesh, IMesh *pMesh, int nVertexOffsetInBytes ) = 0;
 	virtual bool OnSetPrimitiveType( IMesh *pMesh, MaterialPrimitiveType_t type ) = 0;
-	virtual bool OnFlushBufferedPrimitives() = 0;
-
 
 	virtual void SyncMatrices() = 0;
 	virtual void SyncMatrix( MaterialMatrixMode_t ) = 0;
@@ -131,6 +131,12 @@ public:
 	virtual void UncacheUnusedMaterials( bool bRecomputeStateSnapshots = false ) = 0;
 
 	virtual bool IsInFrame( ) const = 0;
+
+	virtual ShaderAPITextureHandle_t GetLightmapTexture( int a1 ) = 0;
+
+	virtual bool IsRenderingPaint() const = 0;
+
+	virtual ShaderAPITextureHandle_t GetPaintmapTexture( int a1 ) = 0;
 };
 
 #endif // ISHADERUTIL_H

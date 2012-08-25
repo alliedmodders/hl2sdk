@@ -27,7 +27,7 @@
 struct MaterialAdapterInfo_t;
 class IMesh;
 class KeyValues;
-
+class IShaderDeviceDependentObject;
 
 //-----------------------------------------------------------------------------
 // Describes how to set the mode
@@ -179,6 +179,9 @@ public:
 	virtual void RemoveModeChangeCallback( ShaderModeChangeCallbackFunc_t func ) = 0;
 
 	virtual bool GetRecommendedVideoConfig( int nAdapter, KeyValues *pConfiguration ) = 0;
+
+	virtual void AddDeviceDependentObject( IShaderDeviceDependentObject *pObject ) = 0;
+	virtual void RemoveDeviceDependentObject( IShaderDeviceDependentObject *pObject ) = 0;
 };
 
 
@@ -196,6 +199,8 @@ public:
 	// returns the backbuffer format and dimensions
 	virtual ImageFormat GetBackBufferFormat() const = 0;
 	virtual void GetBackBufferDimensions( int& width, int& height ) const = 0;
+
+	virtual const AspectRatioInfo_t& GetAspectRatioInfo() const = 0;
 
 	// Returns the current adapter in use
 	virtual int GetCurrentAdapter() const = 0;
@@ -269,6 +274,12 @@ public:
 	virtual void EnableNonInteractiveMode( MaterialNonInteractiveMode_t mode, ShaderNonInteractiveInfo_t *pInfo = NULL ) = 0;
 	virtual void RefreshFrontBufferNonInteractive( ) = 0;
 	virtual void HandleThreadEvent( uint32 threadEvent ) = 0;
+
+#ifdef PLATFORM_POSIX
+	virtual void DoStartupShaderPreloading() = 0;
+#endif
+
+	virtual void OnDebugEvent( const char *pEvent ) {};
 };
 
 

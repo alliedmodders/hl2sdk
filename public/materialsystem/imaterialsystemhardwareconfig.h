@@ -53,6 +53,35 @@ enum VertexCompressionType_t
 	VERTEX_COMPRESSION_ON = 1
 };
 
+enum CSMQualityMode_t
+{
+	CSMQUALITY_VERY_LOW,
+	CSMQUALITY_LOW,
+	CSMQUALITY_MEDIUM,
+	CSMQUALITY_HIGH,
+	CSMQUALITY_TOTAL_MODES
+};
+
+enum CSMShaderMode_t
+{
+	CSMSHADERMODE_LOW_OR_VERY_LOW,
+	CSMSHADERMODE_MEDIUM,
+	CSMSHADERMODE_HIGH,
+	CSMSHADERMODE_ATIFETCH4,
+	CSMSHADERMODE_TOTAL_MODES
+};
+
+enum ShadowFilterMode_t
+{
+	SHADOWFILTERMODE_DEFAULT,
+	NVIDIA_PCF = 0,
+	ATI_NO_PCF_FETCH4,
+	NVIDIA_PCF_CHEAP,
+	ATI_NOPCF,
+	GAMECONSOLE_NINE_TAP_PCF = 0,
+	GAMECONSOLE_SINGLE_TAP_PCF,
+	SHADOWFILTERMODE_FIRST_CHEAP_MODE
+};
 
 // use DEFCONFIGMETHOD to define time-critical methods that we want to make just return constants
 // on the 360, so that the checks will happen at compile time. Not all methods are defined this way
@@ -81,6 +110,7 @@ public:
 	virtual int	 GetFrameBufferColorDepth() const = 0;
 	virtual int  GetSamplerCount() const = 0;
 	virtual bool HasSetDeviceGammaRamp() const = 0;
+	virtual bool SupportsStaticControlFlow() const = 0;
 	virtual VertexCompressionType_t SupportsCompressedVertices() const = 0;
 	virtual int  MaximumAnisotropicLevel() const = 0;	// 0 means no anisotropic filtering
 	virtual int  MaxTextureWidth() const = 0;
@@ -120,6 +150,12 @@ public:
 	// Does the card support sRGB reads/writes?
 	DEFCONFIGMETHOD( bool, SupportsSRGB(), true );
 
+	virtual bool FakeSRGBWrite() const = 0;
+
+	virtual bool CanDoSRGBReadFromRTs() const = 0;
+
+	virtual bool SupportsGLMixedSizeTargets() const = 0;
+
 	virtual bool IsAAEnabled() const = 0;	// Is antialiasing being used?
 
 	// NOTE: Anything after this was added after shipping HL2.
@@ -138,7 +174,7 @@ public:
 
 	virtual void OverrideStreamOffsetSupport( bool bOverrideEnabled, bool bEnableSupport ) = 0;
 
-	virtual int GetShadowFilterMode() const = 0;
+	virtual ShadowFilterMode_t GetShadowFilterMode( bool bForceLowQualityShadows, bool bPS30 ) const = 0;
 
 	virtual int NeedsShaderSRGBConversion() const = 0;
 
@@ -167,6 +203,7 @@ public:
 
 	virtual bool SupportsShadowDepthTextures( void ) const = 0;
 	virtual ImageFormat GetShadowDepthTextureFormat( void ) const = 0;
+	virtual ImageFormat GetHighPrecisionShadowDepthTextureFormat( void ) const = 0;
 	virtual ImageFormat GetNullTextureFormat( void ) const = 0;
 	virtual int	GetMinDXSupportLevel() const = 0;
 	virtual bool IsUnsupported() const = 0;
@@ -175,6 +212,12 @@ public:
 #if defined ( STDSHADER_DBG_DLL_EXPORT ) || defined( STDSHADER_DX9_DLL_EXPORT )
 	inline bool SupportsPixelShaders_2_b() const { return GetDXSupportLevel() >= 92; }
 #endif
+
+	virtual float GetLightMapScaleFactor() const = 0;
+	virtual bool SupportsCascadedShadowMapping() const = 0;
+	virtual CSMQualityMode_t GetCSMQuality() const = 0;
+	virtual bool SupportsBilinearPCFSampling() const = 0;
+	virtual CSMShaderMode_t GetCSMShaderMode( CSMQualityMode_t nQualityLevel ) const = 0;
 };
 
 #endif // IMATERIALSYSTEMHARDWARECONFIG_H
