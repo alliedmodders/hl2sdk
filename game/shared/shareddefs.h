@@ -149,8 +149,9 @@ inline float FractionUnDucked( int msecs )
 #define	HIDEHUD_VEHICLE_CROSSHAIR	( 1<<9 )	// Hide vehicle crosshair
 #define HIDEHUD_INVEHICLE			( 1<<10 )
 #define HIDEHUD_BONUS_PROGRESS		( 1<<11 )	// Hide bonus progress display (for bonus map challenges)
+#define HIDEHUD_RADAR				( 1<<12 )	// Hide the radar
 
-#define HIDEHUD_BITCOUNT			12
+#define HIDEHUD_BITCOUNT			13
 
 //===================================================================================================================
 // suit usage bits
