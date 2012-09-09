@@ -33,7 +33,7 @@ enum CalcMode
 	TEAM_VS_TEAM,
 	FREE_FOR_ALL,
 	COUNT
-} ELOCalcMode_t;
+};
 }
 typedef ELOCalcMode::CalcMode ELOCalcMode_t;
 
