@@ -349,6 +349,7 @@ struct MemAllocFileLine_t
 #define MEM_ALLOC_CREDIT()	MEM_ALLOC_CREDIT_(__FILE__)
 #define MEM_ALLOC_CREDIT_CLASS()
 #define MEM_ALLOC_CLASSNAME(type) NULL
+#define MEM_ALLOC_CREDIT_FUNCTION()
 
 #endif // !STEAM && NO_MALLOC_OVERRIDE
 

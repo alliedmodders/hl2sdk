@@ -2348,9 +2348,13 @@ void *KeyValues::operator new( size_t iAllocSize )
 
 void *KeyValues::operator new( size_t iAllocSize, int nBlockUse, const char *pFileName, int nLine )
 {
+#ifndef NO_MALLOC_OVERRIDE
 	MemAlloc_PushAllocDbgInfo( pFileName, nLine );
+#endif
 	void *p = KeyValuesSystem()->AllocKeyValuesMemory(iAllocSize);
+#ifndef NO_MALLOC_OVERRIDE
 	MemAlloc_PopAllocDbgInfo();
+#endif
 	return p;
 }
 
