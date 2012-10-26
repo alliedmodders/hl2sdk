@@ -14,6 +14,10 @@
 #pragma once
 #endif
 
+#if defined(_LINUX)
+#define NO_MALLOC_OVERRIDE
+#endif
+
 // Define this in release to get memory tracking even in release builds
 //#define USE_MEM_DEBUG 1
 

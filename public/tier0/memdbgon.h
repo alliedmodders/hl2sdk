@@ -11,6 +11,10 @@
 // to include this potentially multiple times (since we can deactivate debugging
 // by including memdbgoff.h)
 
+#if defined(_LINUX)
+#define NO_MALLOC_OVERRIDE
+#endif
+
 #if !defined(STEAM) && !defined(NO_MALLOC_OVERRIDE)
 
 // SPECIAL NOTE #2: This must be the final include in a .cpp or .h file!!!
