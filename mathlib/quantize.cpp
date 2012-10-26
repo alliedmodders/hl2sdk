@@ -21,6 +21,8 @@
 
 #include <math.h>
 
+#include <tier0/basetypes.h>
+
 static int current_ndims;
 static struct QuantizedValue *current_root;
 static int current_ssize;
