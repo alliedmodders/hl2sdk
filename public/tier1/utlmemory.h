@@ -38,11 +38,12 @@
 #endif
 
 #if defined(_LINUX) || defined(__APPLE__)
-#define ALIGNED_MALLOC( size, alignment ) \
-	memalign( alignment, size )
-#else
-#define ALIGNED_MALLOC( size, alignment ) \
-	_aligned_malloc( size, alignment )
+inline void *_aligned_malloc( size_t size, size_t alignment )
+{
+	void *pTemp;
+	posix_memalign( &pTemp, alignment, size );
+	return pTemp;
+}
 #endif
 
 
@@ -776,7 +777,7 @@ CUtlMemoryAligned<T, nAlignment>::CUtlMemoryAligned( int nGrowSize, int nInitAll
 	{
 		UTLMEMORY_TRACK_ALLOC();
 		MEM_ALLOC_CREDIT_CLASS();
-		CUtlMemory<T>::m_pMemory = (T*)ALIGNED_MALLOC( nInitAllocationCount * sizeof(T), nAlignment );
+		CUtlMemory<T>::m_pMemory = (T*)_aligned_malloc( nInitAllocationCount * sizeof(T), nAlignment );
 	}		
 }
 
@@ -871,7 +872,7 @@ void CUtlMemoryAligned<T, nAlignment>::Grow( int num )
 	else
 	{
 		MEM_ALLOC_CREDIT_CLASS();
-		CUtlMemory<T>::m_pMemory = (T*)ALIGNED_MALLOC( CUtlMemory<T>::m_nAllocationCount * sizeof(T), nAlignment );
+		CUtlMemory<T>::m_pMemory = (T*)_aligned_malloc( CUtlMemory<T>::m_nAllocationCount * sizeof(T), nAlignment );
 		Assert( CUtlMemory<T>::m_pMemory );
 	}
 }
@@ -907,7 +908,7 @@ inline void CUtlMemoryAligned<T, nAlignment>::EnsureCapacity( int num )
 	else
 	{
 		MEM_ALLOC_CREDIT_CLASS();
-		CUtlMemory<T>::m_pMemory = (T*)ALIGNED_MALLOC( CUtlMemory<T>::m_nAllocationCount * sizeof(T), nAlignment );
+		CUtlMemory<T>::m_pMemory = (T*)_aligned_malloc( CUtlMemory<T>::m_nAllocationCount * sizeof(T), nAlignment );
 	}
 }
 
