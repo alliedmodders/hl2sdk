@@ -11,7 +11,7 @@
 // to include this potentially multiple times (since we can deactivate debugging
 // by including memdbgoff.h)
 
-#if defined(_LINUX)
+#if defined(_LINUX) || defined(__APPLE__)
 #define NO_MALLOC_OVERRIDE
 #endif
 
