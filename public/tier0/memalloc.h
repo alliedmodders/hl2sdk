@@ -14,7 +14,7 @@
 #pragma once
 #endif
 
-#if defined(_LINUX)
+#if defined(_LINUX) || defined(__APPLE__)
 #define NO_MALLOC_OVERRIDE
 #endif
 
