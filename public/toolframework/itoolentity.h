@@ -213,7 +213,8 @@ public:
 
 	virtual void ClearMultiDamage( void ) = 0;
 	virtual void ApplyMultiDamage( void ) = 0;
-	virtual void AddMultiDamage( const CTakeDamageInfo *pTakeDamageInfo, CBaseEntity *pEntity ) = 0;
+	virtual void AddMultiDamage( const CTakeDamageInfo &pTakeDamageInfo, CBaseEntity *pEntity ) = 0;
+	virtual void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore ) = 0;
 
 	virtual ITempEntsSystem *GetTempEntsSystem( void ) = 0;
 };
