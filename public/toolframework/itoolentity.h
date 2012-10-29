@@ -27,6 +27,11 @@ class IToolSystem;
 class IClientRenderable;
 class Vector;
 class QAngle;
+class CBaseEntity;
+class CBaseAnimating;
+class CTakeDamageInfo;
+class ITempEntsSystem;
+class IEntityFactoryDictionary;
 
 
 //-----------------------------------------------------------------------------
@@ -173,19 +178,19 @@ public:
 	virtual bool IsInNoClipMode( IClientEntity *pClientPlayer = NULL ) = 0;
 
 	// entity searching
-	virtual void *FirstEntity( void ) = 0;
-	virtual void *NextEntity( void *pEntity ) = 0;
-	virtual void *FindEntityByHammerID( int iHammerID ) = 0;
+	virtual CBaseEntity *FirstEntity( void ) = 0;
+	virtual CBaseEntity *NextEntity( CBaseEntity *pEntity ) = 0;
+	virtual CBaseEntity *FindEntityByHammerID( int iHammerID ) = 0;
 
 	// entity query
-	virtual bool GetKeyValue( void *pEntity, const char *szField, char *szValue, int iMaxLen ) = 0;
-	virtual bool SetKeyValue( void *pEntity, const char *szField, const char *szValue ) = 0;
-	virtual bool SetKeyValue( void *pEntity, const char *szField, float flValue ) = 0;
-	virtual bool SetKeyValue( void *pEntity, const char *szField, const Vector &vecValue ) = 0;
+	virtual bool GetKeyValue( CBaseEntity *pEntity, const char *szField, char *szValue, int iMaxLen ) = 0;
+	virtual bool SetKeyValue( CBaseEntity *pEntity, const char *szField, const char *szValue ) = 0;
+	virtual bool SetKeyValue( CBaseEntity *pEntity, const char *szField, float flValue ) = 0;
+	virtual bool SetKeyValue( CBaseEntity *pEntity, const char *szField, const Vector &vecValue ) = 0;
 
 	// entity spawning
-	virtual void *CreateEntityByName( const char *szClassName ) = 0;
-	virtual void DispatchSpawn( void *pEntity ) = 0;
+	virtual CBaseEntity *CreateEntityByName( const char *szClassName ) = 0;
+	virtual void DispatchSpawn( CBaseEntity *pEntity ) = 0;
 
 	// This reloads a portion or all of a particle definition file.
 	// It's up to the server to decide if it cares about this file
@@ -193,9 +198,31 @@ public:
 	virtual void ReloadParticleDefintions( const char *pFileName, const void *pBufData, int nLen ) = 0;
 
 	virtual void AddOriginToPVS( const Vector &org ) = 0;
+	virtual void MoveEngineViewTo( const Vector &vPos, const QAngle &vAngles ) = 0;
+
+	virtual bool DestroyEntityByHammerId( int iHammerID ) = 0;
+	virtual CBaseEntity *GetBaseEntityByEntIndex( int iEntIndex ) = 0;
+	virtual void RemoveEntity( CBaseEntity *pEntity ) = 0;
+	virtual void RemoveEntityImmediate( CBaseEntity *pEntity ) = 0;
+	virtual IEntityFactoryDictionary *GetEntityFactoryDictionary( void ) = 0;
+
+	virtual void SetMoveType( CBaseEntity *pEntity, int val ) = 0;
+	virtual void SetMoveType( CBaseEntity *pEntity, int val, int moveCollide ) = 0;
+	virtual void ResetSequence( CBaseAnimating *pEntity, int nSequence ) = 0;
+	virtual void ResetSequenceInfo( CBaseAnimating *pEntity ) = 0;
+
+	virtual void ClearMultiDamage( void ) = 0;
+	virtual void ApplyMultiDamage( void ) = 0;
+	virtual void AddMultiDamage( const CTakeDamageInfo *pTakeDamageInfo, CBaseEntity *pEntity ) = 0;
+
+	virtual ITempEntsSystem *GetTempEntsSystem( void ) = 0;
 };
 
-#define VSERVERTOOLS_INTERFACE_VERSION "VSERVERTOOLS001"
+typedef IServerTools IServerTools001;
+
+#define VSERVERTOOLS_INTERFACE_VERSION_1	"VSERVERTOOLS001"
+#define VSERVERTOOLS_INTERFACE_VERSION		"VSERVERTOOLS002"
+#define VSERVERTOOLS_INTERFACE_VERSION_INT	2
 
 //-----------------------------------------------------------------------------
 // Purpose: Client side tool interace (right now just handles IClientRenderables).
