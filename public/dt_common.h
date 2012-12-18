@@ -74,6 +74,8 @@
 #define SPROP_COORD_MP					(1<<13) // Like SPROP_COORD, but special handling for multiplayer games
 #define SPROP_COORD_MP_LOWPRECISION 	(1<<14) // Like SPROP_COORD, but special handling for multiplayer games where the fractional component only gets a 3 bits instead of 5
 #define SPROP_COORD_MP_INTEGRAL			(1<<15) // SPROP_COORD_MP, but coordinates are rounded to integral boundaries
+#define SPROP_VARINT					SPROP_NORMAL
+
 #define SPROP_NUMFLAGBITS_NETWORKED		16
 
 // This is server side only, it's used to mark properties whose SendProxy_* functions encode against gpGlobals->tickcount (the only ones that currently do this are
