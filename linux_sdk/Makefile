@@ -111,9 +111,9 @@ check:
 	if [ ! -e "$(LIB_DIR)/tier1_i486.a" ]; then $(MAKE) tier1;fi
 	if [ ! -e "$(LIB_DIR)/mathlib_i486.a" ]; then $(MAKE) mathlib;fi
 	if [ ! -e "$(LIB_DIR)/choreoobjects_i486.a" ]; then $(MAKE) choreo;fi
-	if [ ! -f "tier0_i486.so" ]; then ln -s $(SRCDS_DIR)/bin/tier0_i486.so .; fi
-	if [ ! -f "vstdlib_i486.so" ]; then ln -s $(SRCDS_DIR)/bin/vstdlib_i486.so .; fi
-	if [ ! -f "steam_api_i486.so" ]; then ln -s $(SRCDS_DIR)/bin/steam_api_i486.so .; fi
+	if [ ! -f "libtier0_srv.so" ]; then ln -s $(SRCDS_DIR)/bin/libtier0_srv.so .; fi
+	if [ ! -f "libvstdlib_srv.so" ]; then ln -s $(SRCDS_DIR)/bin/libvstdlib_srv.so .; fi
+	if [ ! -f "libsteam_api.so" ]; then ln -s $(SRCDS_DIR)/bin/libsteam_api.so .; fi
 
 vcpm: check
 	if [ ! -e "vcpm" ]; then $(MAKE) -f $(MAKE_VCPM) $(BASE_DEFINES);fi
