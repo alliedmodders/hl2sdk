@@ -300,7 +300,8 @@ enum FSAsyncFlags_t
 enum EFileCRCStatus
 {
 	k_eFileCRCStatus_CantOpenFile,		// We don't have this file. 
-	k_eFileCRCStatus_GotCRC
+	k_eFileCRCStatus_GotCRC,
+	k_eFileCRCStatus_FileInVPK
 };
 
 // Used in CacheFileCRCs.
@@ -401,7 +402,7 @@ public:
 // Main file system interface
 //-----------------------------------------------------------------------------
 
-#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem019"
+#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem020"
 
 abstract_class IFileSystem : public IAppSystem, public IBaseFileSystem
 {
@@ -692,7 +693,7 @@ public:
 
 	// This should be called ONCE at startup. Multiplayer games (gameinfo.txt does not contain singleplayer_only)
 	// want to enable this so sv_pure works.
-	virtual void			EnableWhitelistFileTracking( bool bEnable ) = 0;
+	virtual void			EnableWhitelistFileTracking( bool bEnable, bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) = 0;
 
 	// This is called when the client connects to a server using a pure_server_whitelist.txt file.
 	//
@@ -757,6 +758,13 @@ public:
 	virtual bool			IsFileCacheFileLoaded( void *pFileCache, const char *szFile ) = 0;
 	virtual bool			IsFileCacheLoaded( void *pFileCache ) = 0;
 	virtual void			DestroyFileCache( void *pFileCache ) = 0;
+
+	virtual bool RegisterMemoryFile( void *pFile, void **ppExistingFileWithRef ) = 0;
+	virtual void UnregisterMemoryFile( void *pFile ) = 0;
+
+	virtual void AddVPKFile( const char *pBasename, SearchPathAdd_t addType ) = 0;
+	virtual void RemoveVPKFile( const char *pBasename ) = 0;
+	virtual void GetVPKFileNames( CUtlVector<CUtlString> &destVector ) = 0;
 };
 
 //-----------------------------------------------------------------------------

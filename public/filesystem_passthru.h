@@ -215,8 +215,8 @@ public:
 
 	virtual DVDMode_t		GetDVDMode() { return m_pFileSystemPassThru->GetDVDMode(); }
 
-	virtual void EnableWhitelistFileTracking( bool bEnable )
-		{ m_pFileSystemPassThru->EnableWhitelistFileTracking( bEnable ); }
+	virtual void EnableWhitelistFileTracking( bool bEnable, bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes )
+		{ m_pFileSystemPassThru->EnableWhitelistFileTracking( bEnable, bCacheAllVPKHashes, bRecalculateAndCheckHashes ); }
 	virtual void RegisterFileWhitelist( IFileList *pForceMatchList, IFileList *pAllowFromDiskList, IFileList **pFilesToReload )
 		{ m_pFileSystemPassThru->RegisterFileWhitelist( pForceMatchList, pAllowFromDiskList, pFilesToReload ); }
 	virtual void MarkAllCRCsUnverified()
@@ -252,6 +252,18 @@ public:
 		{ return m_pFileSystemPassThru->IsFileCacheLoaded( pFileCache ); }
 	virtual void			DestroyFileCache( void *pFileCache )
 		{ m_pFileSystemPassThru->DestroyFileCache( pFileCache ); }
+
+	virtual bool RegisterMemoryFile( void *pFile, void **ppExistingFileWithRef )
+		{ return m_pFileSystemPassThru->RegisterMemoryFile( pFile, ppExistingFileWithRef ); }
+	virtual void UnregisterMemoryFile( void *pFile )
+		{ m_pFileSystemPassThru->UnregisterMemoryFile( pFile ); }
+
+	virtual void AddVPKFile( const char *pBasename, SearchPathAdd_t addType )
+		{ m_pFileSystemPassThru->AddVPKFile( pBasename, addType ); }
+	virtual void RemoveVPKFile( const char *pBasename )
+		{ m_pFileSystemPassThru->RemoveVPKFile( pBasename ); }
+	virtual void GetVPKFileNames( CUtlVector<CUtlString> &destVector )
+		{ m_pFileSystemPassThru->GetVPKFileNames( destVector ); }
 
 protected:
 	IFileSystem *m_pFileSystemPassThru;
