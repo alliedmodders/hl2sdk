@@ -683,8 +683,8 @@ inline uint32 CBitVecT<BASE_OPS>::Get( uint32 offset, uint32 mask )
 template <class BASE_OPS>
 inline void CBitVecT<BASE_OPS>::And(const CBitVecT &addStr, CBitVecT *out) const
 {
-	ValidateOperand( addStr );
-	ValidateOperand( *out );
+	this->ValidateOperand( addStr );
+	this->ValidateOperand( *out );
 	
 	uint32 *	   pDest		= out->Base();
 	const uint32 *pOperand1	= this->Base();
@@ -704,8 +704,8 @@ inline void CBitVecT<BASE_OPS>::And(const CBitVecT &addStr, CBitVecT *out) const
 template <class BASE_OPS>
 inline void CBitVecT<BASE_OPS>::Or(const CBitVecT &orStr, CBitVecT *out) const
 {
-	ValidateOperand( orStr );
-	ValidateOperand( *out );
+	this->ValidateOperand( orStr );
+	this->ValidateOperand( *out );
 
 	uint32 *	   pDest		= out->Base();
 	const uint32 *pOperand1	= this->Base();
@@ -743,7 +743,7 @@ inline void CBitVecT<BASE_OPS>::Xor(const CBitVecT &xorStr, CBitVecT *out) const
 template <class BASE_OPS>
 inline void CBitVecT<BASE_OPS>::Not(CBitVecT *out) const
 {
-	ValidateOperand( *out );
+	this->ValidateOperand( *out );
 
 	uint32 *	   pDest	= out->Base();
 	const uint32 *pOperand	= this->Base();
@@ -764,7 +764,7 @@ inline void CBitVecT<BASE_OPS>::CopyTo(CBitVecT *out) const
 {
 	out->Resize( this->GetNumBits() );
 
-	ValidateOperand( *out );
+	this->ValidateOperand( *out );
 	Assert( out != this );
 	
 	memcpy( out->Base(), this->Base(), this->GetNumDWords() * sizeof( int ) );
@@ -851,7 +851,7 @@ inline void CBitVecT<BASE_OPS>::Copy( const CBitVecT<BASE_OPS> &other, int nBits
 
 	this->Resize( nBits );
 
-	ValidateOperand( other );
+	this->ValidateOperand( other );
 	Assert( &other != this );
 
 	memcpy( this->Base(), other.Base(), this->GetNumDWords() * sizeof( uint32 ) );
