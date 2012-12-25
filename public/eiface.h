@@ -550,9 +550,6 @@ public:
 	// Build the list of maps adjacent to the current map
 	virtual void			BuildAdjacentMapList( void ) = 0;
 
-	// Retrieve info needed for parsing the specified user message
-	virtual bool			GetUserMessageInfo( int msg_type, char *name, int maxnamelength, int& size ) = 0;
-
 	// Hand over the StandardSendProxies in the game DLL's module.
 	virtual CStandardSendProxies*	GetStandardSendProxies() = 0;
 
