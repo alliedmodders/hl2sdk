@@ -60,6 +60,14 @@ class CSteamID;
 class ISPSharedMemory;
 class CGamestatsData;
 
+namespace google
+{
+	namespace protobuf
+	{
+		class Message;
+	}
+}
+
 typedef struct player_info_s player_info_t;
 
 //-----------------------------------------------------------------------------
@@ -191,10 +199,11 @@ public:
 
 	// Begin a message from a server side entity to its client side counterpart (func_breakable glass, e.g.)
 	virtual bf_write	*EntityMessageBegin( int ent_index, ServerClass * ent_class, bool reliable ) = 0;
-	// Begin a usermessage from the server to the client .dll
-	virtual bf_write	*UserMessageBegin( IRecipientFilter *filter, int msg_type, char const *pchMsgName ) = 0;
-	// Finish the Entity or UserMessage and dispatch to network layer
+	
+	// Finish the EntityMessage and dispatch to network layer
 	virtual void		MessageEnd( void ) = 0;
+	
+	virtual void		SendUserMessage( IRecipientFilter &filter, int message, const google::protobuf::Message &msg );
 
 	// Print szMsg to the client console.
 	virtual void		ClientPrintf( edict_t *pEdict, const char *szMsg ) = 0;
@@ -460,7 +469,9 @@ public:
 	
 	virtual int GetClientCrossPlayPlatform( int client_index ) = 0;
 	
-	virtual void EnsureInstanceBaseline(int) = 0;
+	virtual void EnsureInstanceBaseline( int ) = 0;
+	
+	virtual bool ReserveServerForQueuedGame( const char * ) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
@@ -539,9 +550,6 @@ public:
 	// Build the list of maps adjacent to the current map
 	virtual void			BuildAdjacentMapList( void ) = 0;
 
-	// Retrieve info needed for parsing the specified user message
-	virtual bool			GetUserMessageInfo( int msg_type, char *name, int maxnamelength, int& size ) = 0;
-
 	// Hand over the StandardSendProxies in the game DLL's module.
 	virtual CStandardSendProxies*	GetStandardSendProxies() = 0;
 
@@ -590,6 +598,8 @@ public:
 	virtual bool			IsLoadTestServer() = 0;
 	virtual bool			IsValveDS() = 0;
 	virtual KeyValues		*GetExtendedServerInfoForNewClient() = 0;
+	virtual void 			UpdateGCInformation() = 0;
+	virtual void 			ReportGCQueuedMatchStart( int, unsigned int *, int ) = 0;
 };
 
 //-----------------------------------------------------------------------------
