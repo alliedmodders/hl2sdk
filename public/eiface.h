@@ -191,11 +191,10 @@ public:
 
 	// Begin a message from a server side entity to its client side counterpart (func_breakable glass, e.g.)
 	virtual bf_write	*EntityMessageBegin( int ent_index, ServerClass * ent_class, bool reliable ) = 0;
-	
-	// Finish the EntityMessage and dispatch to network layer
+	// Begin a usermessage from the server to the client .dll
+	virtual bf_write	*UserMessageBegin( IRecipientFilter *filter, int msg_type, char const *pchMsgName ) = 0;
+	// Finish the Entity or UserMessage and dispatch to network layer
 	virtual void		MessageEnd( void ) = 0;
-	
-	virtual void		SendUserMessage( IRecipientFilter &filter, int message, const google::protobuf::Message &msg );
 
 	// Print szMsg to the client console.
 	virtual void		ClientPrintf( edict_t *pEdict, const char *szMsg ) = 0;
@@ -461,9 +460,7 @@ public:
 	
 	virtual int GetClientCrossPlayPlatform( int client_index ) = 0;
 	
-	virtual void EnsureInstanceBaseline( int ) = 0;
-	
-	virtual bool ReserveServerForQueuedGame( const char * ) = 0;
+	virtual void EnsureInstanceBaseline(int) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
@@ -593,8 +590,6 @@ public:
 	virtual bool			IsLoadTestServer() = 0;
 	virtual bool			IsValveDS() = 0;
 	virtual KeyValues		*GetExtendedServerInfoForNewClient() = 0;
-	virtual void 			UpdateGCInformation() = 0;
-	virtual void 			ReportGCQueuedMatchStart( int, unsigned int *, int ) = 0;
 };
 
 //-----------------------------------------------------------------------------
