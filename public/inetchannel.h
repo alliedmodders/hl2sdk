@@ -44,8 +44,7 @@ public:
 	virtual	~INetChannel( void ) {};
 
 	virtual void	SetDataRate(float rate) = 0;
-	virtual bool	RegisterMessage(INetMessageBinder *msg) = 0;
-	virtual bool	UnregisterMessage(INetMessageBinder *msg) = 0;
+	virtual bool	RegisterMessage(INetMessage *msg) = 0;
 	virtual bool	StartStreaming( unsigned int challengeNr ) = 0;
 	virtual void	ResetStreaming( void ) = 0;
 	virtual void	SetTimeout(float seconds, bool bForceExact = false) = 0;
@@ -108,8 +107,6 @@ public:
 	virtual void	DetachSplitPlayer( int nSplitPlayerSlot ) = 0;
 
 	virtual bool	IsRemoteDisconnected() const = 0;
-	
-	virtual bool	WasLastMessageReliable() const = 0;
 };
 
 

@@ -18,7 +18,6 @@ class IServer;
 class INetMessage;
 struct NetMessageCvar_t;
 struct USERID_t;
-class CMsg_CVars;
 
 enum CrossPlayPlatform_t
 {
@@ -35,7 +34,7 @@ public:
 	virtual	~IClient() {}
 
 	// connect client
-	virtual void	Connect( const char * szName, int nUserID, INetChannel *pNetChannel, bool bFakePlayer, CrossPlayPlatform_t platform, CMsg_CVars *pCvars = NULL ) = 0;
+	virtual void	Connect( const char * szName, int nUserID, INetChannel *pNetChannel, bool bFakePlayer, CrossPlayPlatform_t platform, CUtlVector< NetMessageCvar_t > *pVecCvars = NULL ) = 0;
 
 	// set the client in a pending state waiting for a new game
 	virtual void	Inactivate( void ) = 0;
@@ -45,8 +44,6 @@ public:
 
 	// disconnects a client with a given reason
 	virtual void	Disconnect( const char *reason, ... ) = 0;
-	
-	virtual bool	ChangeSplitscreenUser( int ) = 0;
 
 	virtual int				GetPlayerSlot() const = 0; // returns client slot (usually entity number-1)
 	virtual int				GetUserID() const = 0; // unique ID on this server 
