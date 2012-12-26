@@ -19,6 +19,7 @@ class	IDemoRecorder;
 class	INetMessage;
 class	INetChannelHandler;
 class	INetChannelInfo;
+class	INetMessageBinder;
 typedef struct netpacket_s netpacket_t;
 
 #ifndef NET_PACKET_ST_DEFINED
