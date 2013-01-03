@@ -124,7 +124,7 @@ const int MAX_LOGGING_LISTENER_COUNT = 16;
 // An invalid color set on a channel to imply that it should use
 // a device-dependent default color where applicable.
 //-----------------------------------------------------------------------------
-static Color UNSPECIFIED_LOGGING_COLOR( 0, 0, 0, 0 );
+const Color UNSPECIFIED_LOGGING_COLOR( 0, 0, 0, 0 );
 
 //-----------------------------------------------------------------------------
 // An ID returned by the logging system to refer to a logging channel.
@@ -134,7 +134,7 @@ typedef int LoggingChannelID_t;
 //-----------------------------------------------------------------------------
 // A sentinel value indicating an invalid logging channel ID.
 //-----------------------------------------------------------------------------
-static LoggingChannelID_t INVALID_LOGGING_CHANNEL_ID = -1;
+const LoggingChannelID_t INVALID_LOGGING_CHANNEL_ID = -1;
 
 //-----------------------------------------------------------------------------
 // The severity of a logging operation.
