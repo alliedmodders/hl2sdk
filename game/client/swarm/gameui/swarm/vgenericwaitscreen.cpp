@@ -252,7 +252,11 @@ void GenericWaitScreen::CheckIfNeedsToClose()
 	{
 		if ( m_MsgStartDisplayTime + m_MsgMaxDisplayTime < time )
 		{
-			NavigateBack();
+			if ( !NavigateBack() )
+			{
+				Close();
+				CBaseModPanel::GetSingleton().OpenFrontScreen();
+			}
 			
 			if ( m_pfnMaxTimeOut )
 				m_pfnMaxTimeOut();

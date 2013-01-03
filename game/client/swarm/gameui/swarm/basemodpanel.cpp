@@ -1642,7 +1642,7 @@ void CBaseModPanel::OnEvent( KeyValues *pEvent )
 					}
 				}
 
-				CUIGameData::Get()->OpenWaitScreen( szWaitScreenText, flMinDisplayTime, pSettings );
+				CUIGameData::Get()->OpenWaitScreen( szWaitScreenText, flMinDisplayTime, pSettings, 7.0f );
 			}
 			else if ( !Q_stricmp( "searchresult", szProgress ) )
 			{

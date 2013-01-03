@@ -615,7 +615,7 @@ bool CUIGameData::IsXUIOpen()
 	return m_bXUIOpen;
 }
 
-void CUIGameData::OpenWaitScreen( const char * messageText, float minDisplayTime, KeyValues *pSettings )
+void CUIGameData::OpenWaitScreen( const char * messageText, float minDisplayTime, KeyValues *pSettings, float maxDisplayTime )
 {
 	if ( UI_IsDebug() )
 	{
@@ -642,6 +642,7 @@ void CUIGameData::OpenWaitScreen( const char * messageText, float minDisplayTime
 		waitScreen->SetNavBack( backFrame );
 		waitScreen->ClearData();
 		waitScreen->AddMessageText( messageText, minDisplayTime );
+		waitScreen->SetMaxDisplayTime( maxDisplayTime );
 	}
 }
 

@@ -1,0 +1,196 @@
+//========== Copyright (c) Valve Corporation, All rights reserved. ==========//
+
+// STATIC: "DECAL"					"0..1" [vs30]
+// STATIC: "WORLD_NORMAL"			"0..0" [vs20] [PC]
+// STATIC: "WORLD_NORMAL"			"0..1" [vs30] [PC]
+// STATIC: "WORLD_NORMAL"			"0..0" [XBOX]
+
+// DYNAMIC: "COMPRESSED_VERTS"		"0..1"
+// DYNAMIC: "SKINNING"				"0..1"
+
+// DYNAMIC: "MORPHING"				"0..1" [vs30] [ = pShaderAPI->IsHWMorphingEnabled() ]
+// DYNAMIC: "TESSELLATION"			"0..2" [vs30] [PC]
+// DYNAMIC: "TESSELLATION"			"0..0" [vs20] [PC]
+// DYNAMIC: "TESSELLATION"			"0..0" [XBOX]
+
+// SKIP: ( $MORPHING || $SKINNING || $COMPRESSED_VERTS ) && $TESSELLATION
+
+#include "common_fog_vs_supportsvertexfog_fxc.h"
+#include "common_vs_fxc.h"
+
+static const bool g_bSkinning		= SKINNING ? true : false;
+static const int g_FogType			= DOWATERFOG;
+
+const float4 cBaseTexCoordTransform[2]		: register( SHADER_SPECIFIC_CONST_0 );
+const float4 cDetailTexCoordTransform[2]	: register( SHADER_SPECIFIC_CONST_4 );
+
+#ifdef SHADER_MODEL_VS_3_0
+// NOTE: cMorphTargetTextureDim.xy = target dimensions,
+//		 cMorphTargetTextureDim.z = 4tuples/morph
+const float3 cMorphTargetTextureDim			: register( SHADER_SPECIFIC_CONST_6 );
+const float4 cMorphSubrect					: register( SHADER_SPECIFIC_CONST_7 );
+
+sampler2D morphSampler						: register( D3DVERTEXTEXTURESAMPLER0, s0 );
+#endif
+
+const float4 g_vEyeVector					: register( SHADER_SPECIFIC_CONST_8 );
+
+
+#if TESSELLATION
+
+#include "tessellation_vs_fxc.h"
+
+const float4 g_SubDControls					: register( SHADER_SPECIFIC_CONST_9 );
+sampler2D BezierSampler						: register( s1 );
+sampler2D DispSampler						: register( s2 );
+// VS_INPUT defined in header
+
+#else // no TESSELLATION
+
+struct VS_INPUT
+{
+	// This is all of the stuff that we ever use.
+	float4 vPos						: POSITION;
+	float4 vBoneWeights				: BLENDWEIGHT;
+	float4 vBoneIndices				: BLENDINDICES;
+	float4 vNormal					: NORMAL;
+	float4 vColor					: COLOR0;
+	float3 vSpecular				: COLOR1;
+	// make these float2's and stick the [n n 0 1] in the dot math.
+	float4 vTexCoord0				: TEXCOORD0;
+	float4 vTexCoord1				: TEXCOORD1;
+	float4 vTexCoord2				: TEXCOORD2;
+	float4 vTexCoord3				: TEXCOORD3;
+	float3 vTangentS				: TANGENT;
+	float3 vTangentT				: BINORMAL;
+	float4 vUserData				: TANGENT;
+
+	// Position and normal/tangent deltas
+	float4 vPosFlex					: POSITION1;
+	float4 vNormalFlex				: NORMAL1;
+
+#ifdef SHADER_MODEL_VS_3_0
+	float vVertexID					: POSITION2;
+#endif
+};
+
+#endif // TESSELLATION
+
+struct VS_OUTPUT
+{
+	// Stuff that isn't seen by the pixel shader
+	float4 projPos					: POSITION;	
+	// Stuff that is seen by the pixel shader
+	float4 baseTexCoordDetailTexCoord	: TEXCOORD0;			// includes detail tex coord
+	float4 lightAtten				: TEXCOORD1;
+	float3x3 tangentSpaceTranspose	: TEXCOORD2;
+	//	     second row				: TEXCOORD3;
+	//	     third row				: TEXCOORD4;
+	float4 projPos_fWrinkleWeight	: TEXCOORD5;
+	#if DOPIXELFOG
+		float3 worldPos_vertexFogFactor	: TEXCOORD6; //it's important that this declaration stay down here. Moving it seems to trigger a BS compile error on 360 saying we've run out of temp registers.
+	#else
+		float4 worldPos_vertexFogFactor	: TEXCOORD6; //it's important that this declaration stay down here. Moving it seems to trigger a BS compile error on 360 saying we've run out of temp registers.
+	#endif
+};
+
+//-----------------------------------------------------------------------------
+// Main shader entry point
+//-----------------------------------------------------------------------------
+VS_OUTPUT main( const VS_INPUT v )
+{
+	VS_OUTPUT o = ( VS_OUTPUT )0;
+
+	float4 vPosition, vTangent, vTexCoords;
+	float3 vNormal, worldPos, worldNormal, worldTangentS, worldTangentT;
+
+	#if TESSELLATION
+	{
+		float flBiTangentSign;
+		EvaluateSubdivisionSurface( v, g_SubDControls.x, g_SubDControls.y, g_SubDControls.z, BezierSampler, DispSampler,
+								    worldNormal, worldPos, worldTangentS, worldTangentT, flBiTangentSign,
+									o.projPos_fWrinkleWeight.w, o.baseTexCoordDetailTexCoord.xy, o.baseTexCoordDetailTexCoord.zw );
+	}
+	#else // not tessellating
+	{
+		vPosition = v.vPos;
+
+		DecompressVertex_NormalTangent( v.vNormal, v.vUserData, vNormal, vTangent );
+
+		#if ( !defined( SHADER_MODEL_VS_3_0 ) || !MORPHING )
+		{
+			ApplyMorph( v.vPosFlex, v.vNormalFlex, vPosition.xyz, vNormal, vTangent.xyz, o.projPos_fWrinkleWeight.w );
+		}
+		#else
+		{
+			ApplyMorph( morphSampler, cMorphTargetTextureDim, cMorphSubrect, v.vVertexID, v.vTexCoord2,
+						vPosition.xyz, vNormal, vTangent.xyz, o.projPos_fWrinkleWeight.w );
+		}
+		#endif
+
+		// Perform skinning
+		SkinPositionNormalAndTangentSpace( g_bSkinning, vPosition, vNormal, vTangent,
+											v.vBoneWeights, v.vBoneIndices, worldPos,
+											worldNormal, worldTangentS, worldTangentT );
+
+		// Always normalize since flex path can denormalize
+		worldNormal   = normalize( worldNormal );
+		worldTangentS = normalize( worldTangentS );
+		worldTangentT = normalize( worldTangentT );
+
+		#if defined( SHADER_MODEL_VS_3_0 ) && MORPHING && DECAL && ( !WORLD_NORMAL )
+		{
+			// Avoid z precision errors
+			worldPos += worldNormal * 0.05f * v.vTexCoord2.z;
+		}
+		#endif
+
+		vTexCoords = v.vTexCoord0;
+
+		// Texture coordinate transforms
+		o.baseTexCoordDetailTexCoord.x = dot( vTexCoords, cBaseTexCoordTransform[0] );
+		o.baseTexCoordDetailTexCoord.y = dot( vTexCoords, cBaseTexCoordTransform[1] );
+		o.baseTexCoordDetailTexCoord.z = dot( vTexCoords, cDetailTexCoordTransform[0] );
+		o.baseTexCoordDetailTexCoord.w = dot( vTexCoords, cDetailTexCoordTransform[1] );
+	}
+	#endif
+	
+	#if ( !DOPIXELFOG )
+	{
+		o.worldPos_vertexFogFactor.w = CalcNonFixedFunctionFog( worldPos, g_FogType );
+	}
+	#endif
+
+	// Needed for water fog alpha and diffuse lighting 
+	// FIXME: we shouldn't have to compute this all the time.
+	o.worldPos_vertexFogFactor.xyz = worldPos;
+
+	// Compute lighting attenuations
+	o.lightAtten.x = GetVertexAttenForLight( worldPos, 0 );
+	o.lightAtten.y = GetVertexAttenForLight( worldPos, 1 );
+	o.lightAtten.z = GetVertexAttenForLight( worldPos, 2 );
+	o.lightAtten.w = GetVertexAttenForLight( worldPos, 3 );
+
+	// Tangent space transform
+	o.tangentSpaceTranspose[0].xyz = float3( worldTangentS.x, worldTangentT.x, worldNormal.x );
+	o.tangentSpaceTranspose[1].xyz = float3( worldTangentS.y, worldTangentT.y, worldNormal.y );
+	o.tangentSpaceTranspose[2].xyz = float3( worldTangentS.z, worldTangentT.z, worldNormal.z );
+	// Transform into projection space
+	o.projPos = mul( float4( worldPos, 1 ), cViewProj );
+	o.projPos_fWrinkleWeight.xyz = o.projPos.xyz;
+
+	#if ( WORLD_NORMAL )
+	{
+		o.projPos_fWrinkleWeight.z = dot( g_vEyeVector, worldPos.xyz - cEyePos.xyz );	// Linear depth
+	}
+	#endif
+
+	// Don't have to worry about hardware blend here since we never do that with phong.
+	#if ( !DOPIXELFOG )
+	{
+		o.worldPos_vertexFogFactor.w = CalcNonFixedFunctionFog( worldPos, g_FogType );
+	}
+	#endif
+
+	return o;
+}

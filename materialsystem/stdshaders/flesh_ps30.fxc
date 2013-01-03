@@ -1,0 +1,742 @@
+//========== Copyright (c) Valve Corporation, All rights reserved. ==========//
+
+#include "common_fog_ps_fxc.h"
+// STATIC:	"ALPHABLEND"				"0..1"
+// STATIC:	"TRANSMAT"					"0..1"
+// STATIC:	"FRESNEL_WARP"				"0..1"
+// STATIC:	"EFFECTS"					"0..1"
+// STATIC:	"TINTING"					"0..1"
+// STATIC:	"IRIDESCENCE"				"0..1"
+// STATIC:	"BACK_SCATTER"				"0..1"
+// STATIC:	"FORWARD_SCATTER"			"0..1"
+// STATIC:	"HIGH_PRECISION_DEPTH"		"0..1"
+// STATIC:	"INTERIOR_LAYER"			"0..1"
+// STATIC:	"OPACITY_TEXTURE"			"0..1"
+// STATIC:  "NORMAL2SOFT"				"0..1"
+// STATIC:  "DETAIL"					"0..1"
+// STATIC:	"FLASHLIGHTDEPTHFILTERMODE"	"0..2"	[ps20b] [PC]
+// STATIC:	"FLASHLIGHTDEPTHFILTERMODE"	"0..2"	[ps30]  [PC]
+// STATIC:	"FLASHLIGHTDEPTHFILTERMODE"	"0..0"	[ps20b] [XBOX]
+// DYNAMIC: "NUM_LIGHTS"				"0..4"	[ps20b]
+// DYNAMIC: "NUM_LIGHTS"				"0..4"	[ps30]
+// DYNAMIC: "FLASHLIGHT"				"0..1"
+// DYNAMIC: "FLASHLIGHTSHADOWS"			"0..1"
+
+#include "common_ps_fxc.h"
+#include "common_vertexlitgeneric_dx9.h"
+#include "common_flashlight_fxc.h"
+#include "shader_constant_register_map.h"
+
+// SAMPLERS
+sampler g_tBase				: register( s0 );
+sampler g_tBump				: register( s1 );
+sampler g_tScreen			: register( s2 );
+sampler g_tTransMatMasks	: register( s3 );   // Effect masks for material changes: fresnel hue-shift, jellyfish, forward scatter and back scatter 
+sampler g_tColorWarp		: register( s4 );   // Color warp 3D texture
+sampler g_tFresnelColorWarp	: register( s5 );   // Fresnel color warp 3D texture
+sampler g_tOpacity			: register( s6 );
+sampler g_tShadowDepth		: register( s7 );	// Flashlight shadow depth map sampler
+sampler g_tNormalizeRandRot	: register( s8 );	// Normalization / RandomRotation samplers
+sampler g_tFlashlightCookie	: register( s9 );	// Flashlight cookie
+sampler g_tEffectMasks		: register( s10 );  // Special effect masks for self-illum, color warping, iridescence and clearcoat
+sampler g_tIridescentWarp	: register( s11 );  // 2D gradient for iridescent color
+sampler g_tDetail			: register( s12 );  // Detail texture
+
+// SHADER CONSTANTS
+
+#define flOverBright				2.0f  //overbright lights consistent with vertexlitgeneric
+
+const float4 g_vMisc								: register( c0 );
+#define g_flBumpStrength			g_vMisc.x
+#define g_flDepthScale				g_vMisc.y
+#define g_flInnerFogStrength		g_vMisc.z
+#define g_flRefractStrength			g_vMisc.w
+
+const float4 g_vTranslucentFresnelParams_InteriorBoost : register( c1 );
+#define g_vTranslucentFresnelParams	g_vTranslucentFresnelParams_InteriorBoost.xyz
+#define g_flInteriorBoost			g_vTranslucentFresnelParams_InteriorBoost.w
+
+const float4 g_vMisc2								: register( c3 );
+#define g_flRimLightExp				g_vMisc2.x
+#define g_flRimLightScale			g_vMisc2.y
+#define g_flSpecScale				g_vMisc2.z
+#define g_flSpecExp2				g_vMisc2.w
+
+const float4 g_vMisc3								: register( c10 );
+#define g_flSpecScale2				g_vMisc3.x
+#define g_flFresnelBumpStrength		g_vMisc3.y
+#define g_flDiffuseSoftNormal		g_vMisc3.z
+#define g_flInteriorAmbientScale	g_vMisc3.w
+
+const float4 g_vEyePos								: register( PSREG_EYEPOS_SPEC_EXPONENT );
+#define g_vEyePos					g_vEyePos.xyz
+//#define UNUSED					g_vEyePos.w
+
+const float4 g_vPhongFresnel_ShaderControls			: register( c12 );
+#define g_vPhongFresnel				g_vPhongFresnel_ShaderControls.xyz
+#define g_fWriteDepthToAlpha		g_vPhongFresnel_ShaderControls.w
+
+const float4 g_vPhongTint_InteriorBackLightScale	: register( c19 );
+#define g_cPhongTint				g_vPhongTint_InteriorBackLightScale.rgb
+#define g_flInteriorBackLightScale	g_vPhongTint_InteriorBackLightScale.w
+
+// TODO: pass in FOV so that we can account for it properly
+#define g_flHalfWindowWidth 1 /* tan(fov/2) */
+
+const float4 g_vFresnelFx							: register( c26 );
+#define g_flIridBoost				g_vFresnelFx.x
+#define g_flIridExp					g_vFresnelFx.y
+#define g_flFresnelWarpScale		g_vFresnelFx.z
+#define g_flFresnelWarpExp			g_vFresnelFx.w
+
+const float4 g_vSelfIllumTint_DiffuseBias			: register( c27 );
+#define g_cSelfIllumTint			g_vSelfIllumTint_DiffuseBias.rgb
+#define g_flDiffuseBias				g_vSelfIllumTint_DiffuseBias.w
+
+const float4 g_vInteriorColor_RefractBlur			: register( c32 );
+#define g_cInteriorColor			g_vInteriorColor_RefractBlur.rgb
+#define g_flRefractBlur				g_vInteriorColor_RefractBlur.w
+
+const float3 cAmbientCube[6]						: register( PSREG_AMBIENT_CUBE );
+
+const PixelShaderLightInfo g_sLightInfo[3]			: register( PSREG_LIGHT_INFO_ARRAY ); // 2 registers each - 6 registers total
+
+const float4 g_vFlashlightAttenuationFactors_FarZ	: register( PSREG_FLASHLIGHT_ATTENUATION );
+#define g_vFlashlightAttenuationFactors		g_vFlashlightAttenuationFactors_FarZ.xyz
+#define g_flFlashlightFarZ					g_vFlashlightAttenuationFactors_FarZ.w
+
+const float4 g_vFlashlightPos						: register( PSREG_FLASHLIGHT_POSITION_RIM_BOOST );
+
+const float4x4 g_mFlashlightWorldToTexture			: register( PSREG_FLASHLIGHT_TO_WORLD_TEXTURE );
+
+const float4 g_vShadowTweaks						: register( PSREG_ENVMAP_TINT__SHADOW_TWEAKS );
+
+const float3x3 g_mView								: register( c33 );
+
+const float4 g_FogParams							: register( c36 );
+
+const float4 g_vPhongFresnel2_Phong2Softness		: register( c42 );
+#define g_vPhongFresnel2			g_vPhongFresnel2_Phong2Softness.xyz
+#define g_vPhong2Softness			g_vPhongFresnel2_Phong2Softness.w
+
+const float4 g_vFleshLightingParams					: register( c43 );
+#define g_flDiffuseExponent			g_vFleshLightingParams.x
+#define g_flNormal2Softness			g_vFleshLightingParams.y
+#define g_flAmbientBoost			g_vFleshLightingParams.z
+#define g_flMaskMode				g_vFleshLightingParams.w
+
+const float4 g_vFleshSSParams						: register( c44 );
+#define g_flForwardScatter			g_vFleshSSParams.x
+#define g_flBackScatter				g_vFleshSSParams.y
+#define g_flSSDepth					g_vFleshSSParams.z
+#define g_flBentNormalScale			g_vFleshSSParams.w
+
+const float4 g_vFleshSSColor_TintByAlbedo			: register( c45 );
+#define g_cSSColor					g_vFleshSSColor_TintByAlbedo.xyz
+#define g_flSSTintByAlbedo			g_vFleshSSColor_TintByAlbedo.w
+
+const float4 g_vDetailBlendInfo_SpecExp				: register( c46 );
+#define g_flDetailMode				g_vDetailBlendInfo_SpecExp.x
+#define g_flDetailBlendAmt			g_vDetailBlendInfo_SpecExp.y
+//#define UNUSED					g_vDetailBlendInfo_SpecExp.z
+#define g_flSpecExp					g_vDetailBlendInfo_SpecExp.w
+
+// For now, use vertex UVs rather than position-derived UVs
+#define USE_AUTHORED_UVS 1
+
+// COMBO-DERIVED CONSTANTS
+static const bool bAlphaBlend		= ALPHABLEND ? true : false;
+static const bool bFlashLight		= FLASHLIGHT ? true : false;
+static const bool bInterior			= INTERIOR_LAYER ? true : false;
+static const bool bOpacityTexture	= OPACITY_TEXTURE ? true : false;
+
+// INPUT STRUCT
+struct PS_INPUT
+{
+	float4 vWorldNormal			: TEXCOORD0;	// w is proj. z coord (for depth stuff)
+	float4 vVertexColor			: TEXCOORD1;
+	float4 vWorldPos			: TEXCOORD2;	// w is proj. w coord
+	float4 vUV0					: TEXCOORD3;
+	float2 vUV1					: TEXCOORD4;
+	float4 vLightAtten			: TEXCOORD5;
+	float3 vLightCube			: TEXCOORD6;
+	float3 vWorldTangent		: TEXCOORD7;
+	float3 vWorldBinormal		: TEXCOORD8;
+};
+
+
+//==============================================================================================================================================================
+float Luminance( const float3 colour )
+{
+	return dot( colour, float3( 0.3, 0.59, 0.11 ) );
+}
+
+//==============================================================================================================================================================
+float3 BumpedToWorldNormal( float3 vBumpedNormal, float3 vWorldNormal, float3 vWorldTangent, float3 vWorldBinormal )
+{
+	float3x3 mTanToWorld;
+	mTanToWorld[2] = vWorldNormal;
+	mTanToWorld[0] = vWorldTangent;
+	mTanToWorld[1] = vWorldBinormal;
+	return normalize( mul( vBumpedNormal, mTanToWorld ) );
+}
+
+void ApplyDetail( float4 cDetail, float flMode, float flAmt, inout float3 cBase, inout float flSelfIllum, inout float3 flSelfIllumColor )
+{
+	if ( flMode == 1 )
+	{
+		cBase.rgb *= lerp( 1.0f, cDetail.rgb * 2.0f, flAmt );
+		cBase.rgb = saturate( cBase.rgb );
+		return;
+	}
+	if ( flMode == 2 )
+	{
+		cBase.rgb += lerp( 0.0f, cDetail.rgb * flAmt, saturate( flAmt ) );
+		cBase.rgb = saturate( cBase.rgb );
+		return;
+	}
+	if ( flMode == 3 )
+	{
+		cBase.rgb = lerp( cBase.rgb, cDetail.rgb, saturate( flAmt * cDetail.a ) );
+		return;
+	}
+	if( flMode == 4 )
+	{
+		cBase.rgb = lerp( cBase.rgb, cDetail.rgb, saturate( flAmt ) );
+		return;
+	}
+	if( flMode == 5 )
+	{
+		cBase.rgb += lerp( 0.0f, cDetail.rgb * ( 1.0 + flAmt ), saturate( flAmt ) );
+		float flAddSelfIllum = saturate( Luminance( cBase.rgb ) - 1.0f );
+		flSelfIllum += flAddSelfIllum;
+		flSelfIllumColor.rgb = lerp( flSelfIllumColor.rgb, cBase.rgb, flAddSelfIllum );
+		cBase.rgb = saturate( cBase.rgb );
+		return;
+	}
+	if( flMode == 6 )
+	{
+		cBase.rgb *= ( 1.0f, cDetail.rgb, flAmt );
+		return;
+	}
+}
+
+
+//==============================================================================================================================================================
+void ComputeOpacityAndFresnel(	float2 vUV0, float3 vEyeDir, float3 vWorldNormal,
+								// Function outputs:
+								out float flSkinOpacity, inout float flFresnel )
+{
+	flSkinOpacity = 1;
+	if ( ( bOpacityTexture ) && ( bInterior || bAlphaBlend ) )
+	{
+		flSkinOpacity = tex2D( g_tOpacity, vUV0.xy );
+	}
+
+	float fTranslucentFresnel;
+	fTranslucentFresnel = lerp( g_vTranslucentFresnelParams.x, g_vTranslucentFresnelParams.y, pow( flFresnel, g_vTranslucentFresnelParams.z ) );
+
+	#if ( INTERIOR_LAYER )
+	{
+		flSkinOpacity = flSkinOpacity*fTranslucentFresnel;
+	}
+	#endif
+}
+
+//==============================================================================================================================================================
+float3 BlobAmbientLight( float3 vVertexAmbient, float3 vEyeDir, float3 vWorldNormal, float flFresnel )
+{
+	// Ambient lighting now comes from VS
+	float3 cAmbient = vVertexAmbient;
+
+	// TODO: Replace lambert diffuse with pixelshader-ambient term of full lighting env.
+	//float3 cAmbient = PixelShaderAmbientLight( vBumpedWorldNormal, cAmbientCube );
+
+	//float3 cAmbientSheen = PixelShaderAmbientLight( reflect( -vEyeDir, vBumpedWorldNormal ), cAmbientCube );
+	//cAmbient = lerp( cAmbient, cAmbientSheen, flFresnel );
+
+	return cAmbient;
+}
+
+//==============================================================================================================================================================
+float BlobPhongFresnel( float flFresnel, float3 vPhongFresnelParams )
+{
+	float flFresnelTerm = lerp( vPhongFresnelParams.y, vPhongFresnelParams.x, saturate( flFresnel ) );
+	flFresnelTerm = lerp( flFresnelTerm, vPhongFresnelParams.z, saturate( -flFresnel ) );
+	return flFresnelTerm;
+}
+
+//==============================================================================================================================================================
+void BlobLight( float3 vWorldPos, float3 vEyeDir, float3 vBumpedWorldNormal, float3 vBumpedWorldNormal2,
+				  float flCurvature, float flForwardSSMask, float flBackSSMask, float3 cLightColor, float3 cLightColorScattered, 
+				  float3 vLightDirection, float flIridMask,
+				  // Outputs:
+				  inout float3 cDiffuse, inout float3 cSpec, inout float3 cSpec2, inout float3 cShadowTerminator, inout float3 cRim, inout float3 cIrid )
+{
+	float NdotL = dot( vBumpedWorldNormal, vLightDirection );
+	float NdotLSoft = NdotL;
+	float flInvNdotLSoft = 0.0f;
+	float HNdotL = NdotL * 0.5f + 0.5f;
+	float HNdotLSoft = NdotL;
+	#if( NORMAL2SOFT )
+	{
+		NdotLSoft = dot( vBumpedWorldNormal2, vLightDirection );
+	}
+	#endif
+	#if FORWARD_SCATTER || BACK_SCATTER
+	{
+		flInvNdotLSoft = saturate( 1.0f - NdotLSoft );
+	}
+	#endif
+	NdotL = saturate( NdotL );
+
+	float SSNdotL = 0.0f;
+	float flInvSSCurvature = 1.0f;
+	#if FORWARD_SCATTER || BACK_SCATTER
+	{
+		flInvSSCurvature = 1.0f / ( flCurvature * g_flSSDepth );
+		float  flLocalizedBentNormalScale = g_flBentNormalScale * ( flCurvature ); // less view-dependance on highly curved areas
+		float3 vSSNormal = lerp( vBumpedWorldNormal2.rgb, vEyeDir.rgb, flLocalizedBentNormalScale ); // partially view-dependent normal for ss lighting calc
+		vSSNormal = normalize( vSSNormal );
+		SSNdotL = 1.0f - abs( dot( vSSNormal, vLightDirection ) );
+		SSNdotL = pow( SSNdotL, flInvSSCurvature );
+		float  cSSMask = 1.0f;
+	}
+	#endif
+
+	#if( NORMAL2SOFT )
+	{
+		HNdotLSoft = NdotLSoft * 0.5f + 0.5f;
+		NdotLSoft = saturate( NdotLSoft );
+	}
+	#else
+	{
+		NdotLSoft = NdotL;
+	}
+	#endif
+
+	float3 vHalf = normalize( vEyeDir.xyz + vLightDirection.xyz );
+	float NdotH = saturate( dot( vHalf.xyz, vBumpedWorldNormal.xyz ) );	
+	float NdotHSoft = NdotH;
+
+	float VdotN = dot( vEyeDir, vBumpedWorldNormal );
+	VdotN = saturate( VdotN );
+
+	float flSSMask = 0.0f;
+	#if( FORWARD_SCATTER )
+	{
+		flSSMask += flInvNdotLSoft * SSNdotL * flForwardSSMask * cLightColorScattered.rgb; // back half of terminator
+	}
+	#endif
+	#if( BACK_SCATTER )
+	{
+		flSSMask += SSNdotL * NdotLSoft * flBackSSMask * cLightColor.rgb;
+	}
+	#endif
+	
+	#if FORWARD_SCATTER || BACK_SCATTER
+	{
+		cShadowTerminator.rgb += flSSMask;
+	}
+	#endif
+
+	#if( NORMAL2SOFT )
+	{
+		float3 vHalfSoft = normalize( vEyeDir.xyz + vLightDirection.xyz );
+		NdotHSoft = saturate( dot( vHalfSoft.xyz, vBumpedWorldNormal2.xyz ) );
+	}
+	#endif
+
+	//dual spec
+	float flFresnel = saturate( VdotN ) * 2.0f - 1.0f;
+	cSpec	+= pow( NdotH, g_flSpecExp ) * NdotL * cLightColor * BlobPhongFresnel( flFresnel, g_vPhongFresnel );
+	float flSpec2Soft = lerp( NdotH, NdotHSoft, g_vPhong2Softness );
+	float flSpec2Limit = lerp( NdotL, NdotLSoft, g_vPhong2Softness );
+	cSpec2	+= pow( flSpec2Soft, g_flSpecExp2 ) * flSpec2Limit * cLightColor * BlobPhongFresnel( flFresnel, g_vPhongFresnel2 );
+	
+	#if( IRIDESCENCE )
+	{
+		float flIridCoord = dot( vHalf, vLightDirection ) * flIridMask;
+		cIrid = tex2Dlod( g_tIridescentWarp, float4( flIridCoord, 0.5f, 0.0f, 0.0f ) ).rgb;
+		cIrid *= smoothstep( 0.1, 0.2, flIridMask ); // one channel describes thin film variation and masking, with values below 0.1 meaning "off"
+        cIrid *= pow( VdotN, g_flIridExp ) * g_flIridBoost;
+		cIrid *= cLightColor;
+		cIrid *= HNdotL;
+	}
+	#endif
+
+	//diffuse
+	//float flDiffuseLevel = lerp( NdotL, NdotLSoft, g_flDiffuseSoftNormal );
+	float flDiffuseLevel = lerp( HNdotL, HNdotLSoft, g_flDiffuseSoftNormal );
+	flDiffuseLevel -= g_flDiffuseBias;
+	flDiffuseLevel = saturate( flDiffuseLevel );
+	flDiffuseLevel = pow( flDiffuseLevel, g_flDiffuseExponent );
+	cDiffuse.rgb += flDiffuseLevel * cLightColor.rgb;
+
+	//rim
+	float flRim = saturate( 1.0f - VdotN );
+	flRim = pow( flRim, g_flRimLightExp );
+	flRim *= NdotL;
+	cRim += flRim * cLightColor.rgb;
+}
+
+//==============================================================================================================================================================
+float4 BlobBlurFlashlight( sampler tFlashlightCookie, float2 flProjUv )
+{
+	// TODO: get framebuffer res from constants
+	float2 vScreenRes = float2( 1600, 1200 );
+	float2 g_vInvScreenRes = 1.0 / vScreenRes;
+
+	static const float2 vPoissonOffset[8] = {	float2(  0.3475f,  0.0042f ), float2(  0.8806f,  0.3430f ),
+												float2( -0.0041f, -0.6197f ), float2(  0.0472f,  0.4964f ),
+												float2( -0.3730f,  0.0874f ), float2( -0.9217f, -0.3177f ),
+												float2( -0.6289f,  0.7388f ), float2(  0.5744f, -0.7741f ) };
+
+	float4 cOut = 0;
+	float blurFactor = g_flSSDepth * 50; 
+	for( int i = 0; i < 8; i++ )
+	{
+		cOut += 1.0/8.0 * tex2D( tFlashlightCookie, flProjUv + blurFactor * g_vInvScreenRes.xy * vPoissonOffset[i] );
+	}
+	return cOut;
+}
+
+//==============================================================================================================================================================
+float4 SampleBackgroundBlurred( float2 vBumpedTSNormal, float3 vWorldNormal, float2 vScreenPos, float flBlurDepth )
+{
+	static const float2 vPoissonOffset[8] = {	float2(  0.3475f,  0.0042f ), float2(  0.8806f,  0.3430f ),
+												float2( -0.0041f, -0.6197f ), float2(  0.0472f,  0.4964f ),
+												float2( -0.3730f,  0.0874f ), float2( -0.9217f, -0.3177f ),
+												float2( -0.6289f,  0.7388f ), float2(  0.5744f, -0.7741f ) };
+	// TODO: get framebuffer res from constants
+	float2 vScreenRes = float2( 1600, 1200 );
+	float2 g_vInvScreenRes = 1.0 / vScreenRes;
+
+	// Project world-space blur radius into screen space.
+	float flBlurRadius = g_flRefractBlur * flBlurDepth * ( vScreenRes.x / g_flHalfWindowWidth );
+
+	// Bumped refract
+	float  flRefractStrength = g_flRefractStrength * flBlurDepth / g_flHalfWindowWidth;
+	float2 vBackgroundUV	 = flRefractStrength * vBumpedTSNormal + vScreenPos.xy;
+
+	float4 cOut = 0;
+	for( int i = 0; i < 8; i++ )
+	{
+		cOut += 1.0/8.0 * tex2D( g_tScreen, vBackgroundUV + flBlurRadius * g_vInvScreenRes.xy * vPoissonOffset[i] );
+	}
+	return cOut;
+}
+
+//==============================================================================================================================================================
+float3 CubeAverage( void )
+{
+	// TODO: Pass this average light color in as a const
+	float3 cAvgLight = 0.0;
+	for( int j = 0; j < 6; j++ )
+	{
+		cAvgLight += cAmbientCube[j] / 6.0;
+	}
+	return cAvgLight;
+}
+
+//==============================================================================================================================================================
+float3 BlobInterior( float3 vWorldNormal, float2 vBumpedTSNormal, float3 vEyeDir,
+					 float2 vScreenPos, float flPixelDepth, float flCamDist )
+{
+	float3 cInterior = float3( 0.0f, 0.0f, 0.0f );
+
+	// Sample the background (and inner blob brain/tentacles)
+	// Boost bright background pixels
+	float4 cBackground = tex2D( g_tScreen, vScreenPos.xy );
+	float flLuminance = Luminance( cBackground.rgb );
+	cBackground.rgb *= 1.0 + g_flInteriorBoost * flLuminance * flLuminance;
+
+	// Fake refract-like vector without any total internal reflection crappiness
+	float3 vRefract = normalize( -( vEyeDir + vWorldNormal ) );
+
+	// Interior lighting through ambient cube
+	float3 cAvgLight  = CubeAverage();
+	float3 cBackLight = g_flInteriorAmbientScale * cAvgLight.rgb;
+	cBackLight *= g_cInteriorColor.rgb;
+
+	//float flFogAtten = BlobInteriorFog( cBackground.a, flPixelDepth );
+
+	float flFogAtten = 1.0f - saturate( flLuminance );
+	float VdotN = dot( vEyeDir, vWorldNormal );
+	flFogAtten *= VdotN;
+	cBackground = SampleBackgroundBlurred( vBumpedTSNormal, vWorldNormal, vScreenPos, flFogAtten );
+	flLuminance = Luminance( cBackground );
+
+	flFogAtten = 1.0f - saturate( flLuminance );
+	flFogAtten *= ( VdotN + g_flInnerFogStrength );
+	flFogAtten = saturate( flFogAtten );
+
+	cInterior = lerp( cBackground, cBackLight, flFogAtten );
+
+	return cInterior;
+}
+
+//==============================================================================================================================================================
+float4 main( PS_INPUT i ) : COLOR
+{
+	float4 cOut = { 0, 0, 0, 1 };
+
+	// Set up misc camera variables
+	float flPixelDepth	= i.vWorldNormal.w;
+	float2 vScreenPos	= i.vUV0.wz / i.vWorldPos.w;
+	float3 vEyeDir		= g_vEyePos.xyz - i.vWorldPos.xyz;
+	float  flCamDist	= length( vEyeDir );
+	vEyeDir /= flCamDist;
+	float3 vWorldNormal  = normalize( i.vWorldNormal.xyz );
+	float3 vWorldTangent = normalize( i.vWorldTangent.xyz );
+	float3 vWorldBinormal = normalize( i.vWorldBinormal.xyz );
+
+	// Base (albedo) map
+	float4 vBase		 = tex2D( g_tBase, i.vUV0.xy );
+	float3 cBase		 = vBase.rgb;
+	float  flSpecMask	 = vBase.a;
+
+	// Normal mapping
+	float4 vNormal		  = tex2D( g_tBump, i.vUV0.xy );
+	float3 vBumpedTangentNormal = normalize( ( vNormal.xyz * 2.0f - 1.0f ) * float3( g_flBumpStrength, g_flBumpStrength, 1.0f ) );
+	float3 vBumpedWorldNormal = BumpedToWorldNormal( vBumpedTangentNormal, vWorldNormal, vWorldTangent, vWorldBinormal );
+	float  flCurvature    = 1.0f - vNormal.a + 0.01;	// invert mask (makes more sense visually when white is high curvature) and
+														// make sure it is never zero (else divide by zero errors later)
+
+	// Initialize masks for fx
+	float flSelfIllum	= 0;
+	float3 cSelfIllum	= g_cSelfIllumTint;
+	float flTinting		= 1;
+	float flIridMask	= vBase.a;
+	float flSpec2Mask	= 1;
+	float4 vEffectMasks = tex2D( g_tEffectMasks, i.vUV0.xy );
+	#if( EFFECTS )
+	{
+		flSelfIllum			= vEffectMasks.r;
+		flTinting			= vEffectMasks.g;
+		flIridMask			= vEffectMasks.b;
+		flSpec2Mask			= vEffectMasks.a;
+	}
+	#endif
+
+	// Initialize masks and color for subsurface effects
+	float flFresnelWarpMask = 1.0f;
+	float flSkinOpacityMask = 1.0f;
+	float flForwardSSMask	= g_flForwardScatter;
+	float flBackSSMask		= g_flBackScatter;
+	float flInteriorFogMask	= 0.0f;
+	float3 cSSColor = lerp( 1.0f, cBase.rgb, g_flSSTintByAlbedo ) * g_cSSColor.rgb;
+	#if ( TRANSMAT )
+	{
+		float4 vTransmatMasks	= tex2D( g_tTransMatMasks, i.vUV0.xy );
+		flForwardSSMask		= vTransmatMasks.r * g_flForwardScatter;
+		flInteriorFogMask	= vTransmatMasks.r;
+		flSkinOpacityMask	= vTransmatMasks.g;
+		flFresnelWarpMask	= vTransmatMasks.b;
+		flBackSSMask		= vTransmatMasks.a  * g_flBackScatter;
+	}
+	#endif
+
+	// Apply detail texture
+	#if( DETAIL )
+	{
+		float4 cDetail = tex2D( g_tDetail, i.vUV1.xy );
+		ApplyDetail( cDetail, g_flDetailMode, g_flDetailBlendAmt, cBase, flSelfIllum, cSelfIllum );
+	}
+	#endif
+
+	// Ambient boost factor
+	float flAmbientBoost = g_flAmbientBoost;
+	if ( g_flMaskMode == 1 )
+	{
+		flAmbientBoost *= flTinting;
+	}
+	if ( g_flMaskMode == 2 )
+	{
+		flAmbientBoost *= flSkinOpacityMask;
+	}
+	if ( g_flMaskMode == 3 )
+	{
+		flAmbientBoost *= flIridMask;
+	}
+	if ( g_flMaskMode == 4 )
+	{
+		flAmbientBoost *= flSpec2Mask;
+	}
+	if ( g_flMaskMode == 5 )
+	{
+		flAmbientBoost *= flFresnelWarpMask;
+	}
+	flAmbientBoost += 1.0f; // boost, not scale!
+
+	// Soft normals
+	float3 vBumpedTangentNormal2 = vBumpedTangentNormal;
+	float3 vBumpedWorldNormal2 = vBumpedWorldNormal;
+	#if( NORMAL2SOFT )
+	{
+		float4 vNormal2		  = tex2Dbias( g_tBump, float4( i.vUV0.xy, 0, g_flNormal2Softness ) );
+		vBumpedTangentNormal2 = normalize( ( vNormal2.xyz * 2.0f - 1.0f ) * float3( g_flBumpStrength, g_flBumpStrength, 1.0f ) );
+		vBumpedWorldNormal2 = BumpedToWorldNormal( vBumpedTangentNormal2, vWorldNormal, vWorldTangent, vWorldBinormal  );
+	}
+	#endif
+
+	float flSkinOpacity = 1.0f;
+	// Opacity and fresnel
+	float flFresnel = saturate( 1.0 - dot( vEyeDir.xyz, vWorldNormal.xyz ) );
+	float flEdgeFresnel = flFresnel;
+	ComputeOpacityAndFresnel(	i.vUV0.xy, vEyeDir, vBumpedWorldNormal,
+								flSkinOpacity, flFresnel );
+	flSkinOpacity *= ( 1.0f - flSkinOpacityMask );
+
+	// Initialize lighting params
+	float3 cInterior = float3( 0.0f, 0.0f, 0.0f );
+	float3 cAmbient = float3( 0.0f, 0.0f, 0.0f );
+	float3 cDiffuse = float3( 0.0f, 0.0f, 0.0f );
+	float3 cSpec = float3( 0.0f, 0.0f, 0.0f ); 
+	float3 cSpec2 = float3( 0.0f, 0.0f, 0.0f );
+	float3 cShadowTerminator = float3( 0.0f, 0.0f, 0.0f );
+	float3 cRim = float3( 0.0f, 0.0f, 0.0f );
+	float3 cIrid = float3( 0.0f, 0.0f, 0.0f );
+
+	if ( FLASHLIGHT )
+	{
+		float4 vFlashlightSpacePosition = mul( float4( i.vWorldPos.xyz, 1.0f ), g_mFlashlightWorldToTexture ); // TODO: Move to vertex shader
+		float3 vProjCoords = vFlashlightSpacePosition.xyz / vFlashlightSpacePosition.w;
+
+		float3 cFlashlightColor = tex2D( g_tFlashlightCookie, vProjCoords.xyz ) * flOverBright;
+		float3 cFlashlightColorBlurred = float3( 1.0f, 1.0f, 1.0f ) * flOverBright;
+
+		float3 delta = g_vFlashlightPos.xyz - i.vWorldPos.xyz;
+		float3 vLightDirection = normalize( delta );
+		float flDistSquared = dot( delta, delta );
+		float flDist = sqrt( flDistSquared );
+
+		float endFalloffFactor = RemapValClamped( flDist, g_flFlashlightFarZ, 0.6f * g_flFlashlightFarZ, 0.0f, 1.0f );
+
+		// Attenuation for light and to fade out shadow over distance
+		float fAtten = saturate( dot( g_vFlashlightAttenuationFactors.xyz, float3( 1.0f, 1.0f/flDist, 1.0f/flDistSquared ) ) );
+		cFlashlightColor *= fAtten;
+
+		#if FORWARD_SCATTER || INTERIOR_LAYER
+		{
+			cFlashlightColorBlurred = BlobBlurFlashlight( g_tFlashlightCookie, vProjCoords.xy );
+			cFlashlightColorBlurred * fAtten;
+			flForwardSSMask *= fAtten; // forward scatter color will attenuate faster by thickness
+		}
+		#endif
+
+		if ( FLASHLIGHTSHADOWS )
+		{
+			float flShadow = DoFlashlightShadow( g_tShadowDepth, g_tNormalizeRandRot, vProjCoords, vScreenPos, FLASHLIGHTDEPTHFILTERMODE, g_vShadowTweaks, true, true );
+			float flAttenuated = lerp( flShadow, 1.0f, g_vShadowTweaks.y );	// Blend between fully attenuated and not attenuated
+			flShadow = saturate( lerp( flAttenuated, flShadow, fAtten ) );	// Blend between shadow and above, according to light attenuation
+			cFlashlightColor *= flShadow;									// Shadow term
+			#if FORWARD_SCATTER || BACK_SCATTER
+			{
+				float3 flScatterPos = vProjCoords;
+				flScatterPos.z -= flForwardSSMask * ( g_flSSDepth / 100 );
+				float flScatterShadow = DoFlashlightShadow( g_tShadowDepth, g_tNormalizeRandRot, flScatterPos, vScreenPos, FLASHLIGHTDEPTHFILTERMODE, g_vShadowTweaks, true, true );
+				cFlashlightColorBlurred *= flScatterShadow;
+			}
+			#else
+			{
+				cFlashlightColorBlurred *= flShadow;
+			}
+			#endif
+		}
+
+		BlobLight( i.vWorldPos.xyz, vEyeDir.xyz, vBumpedWorldNormal.xyz, vBumpedWorldNormal2.xyz,
+				   flCurvature, flForwardSSMask, flBackSSMask, cFlashlightColor.rgb, cFlashlightColorBlurred.rgb, 
+				   vLightDirection.xyz, flIridMask,
+				   cDiffuse, cSpec, cSpec2, cShadowTerminator, cRim, cIrid );
+
+		#if ( INTERIOR_LAYER )
+		{
+			cInterior = cFlashlightColorBlurred;
+			cInterior *= flInteriorFogMask; // forward scatter mask without modulation
+			cInterior *= g_cInteriorColor;
+			cInterior *= cFlashlightColorBlurred;
+			cInterior *= g_flInteriorBackLightScale;
+		}
+		#endif
+
+		cDiffuse.rgb = lerp( cDiffuse.rgb, float3( 0.0f, 0.0f, 0.0f ), flSelfIllum ); // don't over-brighten self-illuminated areas in flashlight passes
+		cOut.a = 0.0f; // don't contribute extra opacity info in flashlight passes
+	}
+	else
+	{
+
+		// Ambient light
+		cAmbient = BlobAmbientLight( i.vLightCube, vEyeDir, vBumpedWorldNormal, flFresnel );
+
+		// Dynamic lights
+		for ( int l = 0; l < NUM_LIGHTS; l++ )
+		{
+			float3 cLightColor = PixelShaderGetLightColor( g_sLightInfo, l ).rgb * i.vLightAtten[l] * flOverBright;
+			float3 vLightDirection = PixelShaderGetLightVector( i.vWorldPos.xyz, g_sLightInfo, l ).xyz;
+			BlobLight( i.vWorldPos.xyz, vEyeDir.xyz, vBumpedWorldNormal.xyz, vBumpedWorldNormal2.xyz,
+					   flCurvature, flForwardSSMask, flBackSSMask, cLightColor.rgb, cLightColor.rgb, vLightDirection.xyz,
+					   flIridMask,
+					   cDiffuse, cSpec, cSpec2, cShadowTerminator, cRim, cIrid );
+		}
+
+		// Blob interior colour (blurred refract buffer, plus fog and glow)
+		#if ( INTERIOR_LAYER )
+		{
+			cInterior = BlobInterior(	vWorldNormal, vBumpedTangentNormal, vEyeDir,
+										vScreenPos, flPixelDepth, flCamDist );
+		}
+		#endif
+
+		cDiffuse.rgb = lerp( cDiffuse.rgb, cSelfIllum.rgb, flSelfIllum );
+		cOut.a = bAlphaBlend ? flSkinOpacity : 1;
+	}
+
+	float4 hueShiftCoords = float4( 0, 0, 0, 0.0f );
+	hueShiftCoords.r = cBase.r;
+	hueShiftCoords.g = cBase.g;
+	hueShiftCoords.b = cBase.b;
+	hueShiftCoords = pow( hueShiftCoords, 0.4545 ); //degamma the rgb for texture lookup
+
+	#if( TINTING )
+	{
+		float3 cTintedBase = ( tex3Dlod( g_tColorWarp, hueShiftCoords.xyzw ) ).rgb;
+		cBase = lerp( cBase, cTintedBase, flTinting );
+	}
+	#endif
+
+	// Fresnel-based Hue shift
+	#if( FRESNEL_WARP )
+	{
+		float3 cHueShiftedBase = ( tex3Dlod( g_tFresnelColorWarp, hueShiftCoords.xyzw ) ).rgb;
+		flFresnelWarpMask *= pow( flEdgeFresnel, g_flFresnelWarpExp );
+		flFresnelWarpMask *= g_flFresnelWarpScale;
+		cBase = lerp( cBase, cHueShiftedBase, flFresnelWarpMask );
+	}
+	#endif
+
+	cSpec.rgb	*= g_flSpecScale * g_cPhongTint.rgb;
+	cSpec2.rgb	*= g_flSpecScale2;
+	cSpec2.rgb	*= flSpec2Mask;
+	cSpec.rgb	+= cSpec2.rgb;
+	cIrid.rgb	*= ( cAmbient.rgb + cDiffuse.rgb );
+	cSpec.rgb	*= flSpecMask;
+	cRim.rgb	*= g_flRimLightScale;
+	cInterior.rgb += cRim.rgb;
+	cAmbient.rgb *= flAmbientBoost;
+	cShadowTerminator *= cSSColor;
+	// Outer diffuse lighting blended over interior/background colours, with spec added on top
+	float3 cOuterSkin = cBase.rgb * ( cAmbient.rgb + cDiffuse.rgb + cRim.rgb ) + cShadowTerminator.rgb;
+	#if( INTERIOR_LAYER )
+	{
+		cOut.rgb = lerp( cInterior.rgb, cOuterSkin.rgb, flSkinOpacity );
+	}
+	#else
+	{
+		cOut.rgb = cOuterSkin.rgb;
+	}
+	#endif
+	cOut.rgb += cSpec.rgb + cIrid.rgb;
+	float fogFactor = CalcPixelFogFactor( PIXELFOGTYPE, g_FogParams, g_vEyePos.xyz, i.vWorldPos.xyz, flPixelDepth );
+	return FinalOutput( cOut, fogFactor, PIXELFOGTYPE, TONEMAP_SCALE_LINEAR, g_fWriteDepthToAlpha, flPixelDepth );
+}

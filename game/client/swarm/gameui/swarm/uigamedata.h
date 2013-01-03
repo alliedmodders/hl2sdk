@@ -172,7 +172,7 @@ public:
 
 	bool IsXUIOpen();
 
-	void OpenWaitScreen( const char * messageText, float minDisplayTime = 3.0f, KeyValues *pSettings = NULL );
+	void OpenWaitScreen( const char * messageText, float minDisplayTime = 3.0f, KeyValues *pSettings = NULL, float maxDisplayTime = 0.0f );
 	void UpdateWaitPanel( const char * messageText, float minDisplayTime = 3.0f );
 	void UpdateWaitPanel( const wchar_t * messageText, float minDisplayTime = 3.0f );
 	void CloseWaitScreen( vgui::Panel * callbackPanel, const char * messageName );
