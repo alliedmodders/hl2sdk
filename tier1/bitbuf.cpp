@@ -236,6 +236,27 @@ void bf_write::WriteSBitLong( int data, int numbits )
 	}
 }
 
+void bf_write::WriteVarInt32( uint32 data )
+{
+	while ( data > 0x7F ) 
+	{
+		WriteUBitLong( (data & 0x7F) | 0x80, 8 );
+		data >>= 7;
+	}
+	WriteUBitLong( data & 0x7F, 8 );
+}
+
+int	bf_write::ByteSizeVarInt32( uint32 data )
+{
+	int size = 1;
+	while ( data > 0x7F )
+	{
+		size++;
+		data >>= 7;
+	}
+	return size;
+}
+
 #if _WIN32
 inline unsigned int BitCountNeededToEncode(unsigned int data)
 {
