@@ -143,6 +143,9 @@ public:
 	// writes an unsigned integer with variable bit length
 	void			WriteUBitVar( unsigned int data );
 
+	void			WriteVarInt32( uint32 data );
+	int				ByteSizeVarInt32( uint32 data );
+
 	// Copy the bits straight out of pIn. This seeks pIn forward by nBits.
 	// Returns an error if this buffer or the read buffer overflows.
 	bool			WriteBitsFromBuffer( class bf_read *pIn, int nBits );
