@@ -11,8 +11,8 @@ CCstrike15UsermessageHelpers g_Cstrike15UsermessageHelpers;
 CCstrike15UsermessageHelpers::CCstrike15UsermessageHelpers()
 {
 	// Clear all so that any unused are inited.
-	memset( m_Prototypes, NULL, sizeof(m_Prototypes) );
-	memset( m_IndexNameMap, NULL, sizeof(m_IndexNameMap) );
+	memset( m_Prototypes, 0, sizeof(m_Prototypes) );
+	memset( m_IndexNameMap, 0, sizeof(m_IndexNameMap) );
 
 	SETUP_MESSAGE( VGUIMenu );
 	SETUP_MESSAGE( Geiger );
