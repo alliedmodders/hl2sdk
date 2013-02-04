@@ -87,6 +87,7 @@ class CSVCMsg_Sounds;
 class CSVCMsg_Sounds_sounddata_t;
 class CSVCMsg_EntityMsg;
 class CSVCMsg_CmdKeyValues;
+class CSVCMsg_EncryptedData;
 
 enum NET_Messages {
   net_NOP = 0,
@@ -188,11 +189,12 @@ enum SVC_Messages {
   svc_GameEventList = 30,
   svc_GetCvarValue = 31,
   svc_PaintmapData = 33,
-  svc_CmdKeyValues = 34
+  svc_CmdKeyValues = 34,
+  svc_EncryptedData = 35
 };
 bool SVC_Messages_IsValid(int value);
 const SVC_Messages SVC_Messages_MIN = svc_ServerInfo;
-const SVC_Messages SVC_Messages_MAX = svc_CmdKeyValues;
+const SVC_Messages SVC_Messages_MAX = svc_EncryptedData;
 const int SVC_Messages_ARRAYSIZE = SVC_Messages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* SVC_Messages_descriptor();
@@ -6544,6 +6546,107 @@ class CSVCMsg_CmdKeyValues : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static CSVCMsg_CmdKeyValues* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class CSVCMsg_EncryptedData : public ::google::protobuf::Message {
+ public:
+  CSVCMsg_EncryptedData();
+  virtual ~CSVCMsg_EncryptedData();
+  
+  CSVCMsg_EncryptedData(const CSVCMsg_EncryptedData& from);
+  
+  inline CSVCMsg_EncryptedData& operator=(const CSVCMsg_EncryptedData& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CSVCMsg_EncryptedData& default_instance();
+  
+  void Swap(CSVCMsg_EncryptedData* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CSVCMsg_EncryptedData* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CSVCMsg_EncryptedData& from);
+  void MergeFrom(const CSVCMsg_EncryptedData& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional bytes encrypted = 1;
+  inline bool has_encrypted() const;
+  inline void clear_encrypted();
+  static const int kEncryptedFieldNumber = 1;
+  inline const ::std::string& encrypted() const;
+  inline void set_encrypted(const ::std::string& value);
+  inline void set_encrypted(const char* value);
+  inline void set_encrypted(const void* value, size_t size);
+  inline ::std::string* mutable_encrypted();
+  
+  // optional int32 key_type = 2;
+  inline bool has_key_type() const;
+  inline void clear_key_type();
+  static const int kKeyTypeFieldNumber = 2;
+  inline ::google::protobuf::int32 key_type() const;
+  inline void set_key_type(::google::protobuf::int32 value);
+  
+  // @@protoc_insertion_point(class_scope:CSVCMsg_EncryptedData)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::std::string* encrypted_;
+  static const ::std::string _default_encrypted_;
+  ::google::protobuf::int32 key_type_;
+  friend void  protobuf_AddDesc_netmessages_2eproto();
+  friend void protobuf_AssignDesc_netmessages_2eproto();
+  friend void protobuf_ShutdownFile_netmessages_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static CSVCMsg_EncryptedData* default_instance_;
+};
 // ===================================================================
 
 
@@ -11148,6 +11251,68 @@ inline ::std::string* CSVCMsg_CmdKeyValues::mutable_keyvalues() {
     keyvalues_ = new ::std::string;
   }
   return keyvalues_;
+}
+
+// -------------------------------------------------------------------
+
+// CSVCMsg_EncryptedData
+
+// optional bytes encrypted = 1;
+inline bool CSVCMsg_EncryptedData::has_encrypted() const {
+  return _has_bit(0);
+}
+inline void CSVCMsg_EncryptedData::clear_encrypted() {
+  if (encrypted_ != &_default_encrypted_) {
+    encrypted_->clear();
+  }
+  _clear_bit(0);
+}
+inline const ::std::string& CSVCMsg_EncryptedData::encrypted() const {
+  return *encrypted_;
+}
+inline void CSVCMsg_EncryptedData::set_encrypted(const ::std::string& value) {
+  _set_bit(0);
+  if (encrypted_ == &_default_encrypted_) {
+    encrypted_ = new ::std::string;
+  }
+  encrypted_->assign(value);
+}
+inline void CSVCMsg_EncryptedData::set_encrypted(const char* value) {
+  _set_bit(0);
+  if (encrypted_ == &_default_encrypted_) {
+    encrypted_ = new ::std::string;
+  }
+  encrypted_->assign(value);
+}
+inline void CSVCMsg_EncryptedData::set_encrypted(const void* value, size_t size) {
+  _set_bit(0);
+  if (encrypted_ == &_default_encrypted_) {
+    encrypted_ = new ::std::string;
+  }
+  encrypted_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CSVCMsg_EncryptedData::mutable_encrypted() {
+  _set_bit(0);
+  if (encrypted_ == &_default_encrypted_) {
+    encrypted_ = new ::std::string;
+  }
+  return encrypted_;
+}
+
+// optional int32 key_type = 2;
+inline bool CSVCMsg_EncryptedData::has_key_type() const {
+  return _has_bit(1);
+}
+inline void CSVCMsg_EncryptedData::clear_key_type() {
+  key_type_ = 0;
+  _clear_bit(1);
+}
+inline ::google::protobuf::int32 CSVCMsg_EncryptedData::key_type() const {
+  return key_type_;
+}
+inline void CSVCMsg_EncryptedData::set_key_type(::google::protobuf::int32 value) {
+  _set_bit(1);
+  key_type_ = value;
 }
 
 

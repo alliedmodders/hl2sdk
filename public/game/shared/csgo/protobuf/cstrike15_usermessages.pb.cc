@@ -288,10 +288,11 @@ void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CCSUsrMsg_HudText));
   CCSUsrMsg_SayText_descriptor_ = file->message_type(4);
-  static const int CCSUsrMsg_SayText_offsets_[3] = {
+  static const int CCSUsrMsg_SayText_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCSUsrMsg_SayText, ent_idx_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCSUsrMsg_SayText, text_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCSUsrMsg_SayText, chat_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCSUsrMsg_SayText, textallchat_),
   };
   CCSUsrMsg_SayText_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -305,11 +306,12 @@ void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CCSUsrMsg_SayText));
   CCSUsrMsg_SayText2_descriptor_ = file->message_type(5);
-  static const int CCSUsrMsg_SayText2_offsets_[4] = {
+  static const int CCSUsrMsg_SayText2_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCSUsrMsg_SayText2, ent_idx_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCSUsrMsg_SayText2, chat_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCSUsrMsg_SayText2, msg_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCSUsrMsg_SayText2, params_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCSUsrMsg_SayText2, textallchat_),
   };
   CCSUsrMsg_SayText2_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -1514,151 +1516,152 @@ void protobuf_AddDesc_cstrike15_5fusermessages_2eproto() {
     "\001(\t\022\013\n\003str\030\002 \001(\t\"!\n\020CCSUsrMsg_Geiger\022\r\n\005"
     "range\030\001 \001(\005\" \n\017CCSUsrMsg_Train\022\r\n\005train\030"
     "\001 \001(\005\"!\n\021CCSUsrMsg_HudText\022\014\n\004text\030\001 \001(\t"
-    "\"@\n\021CCSUsrMsg_SayText\022\017\n\007ent_idx\030\001 \001(\005\022\014"
-    "\n\004text\030\002 \001(\t\022\014\n\004chat\030\003 \001(\010\"U\n\022CCSUsrMsg_"
-    "SayText2\022\017\n\007ent_idx\030\001 \001(\005\022\014\n\004chat\030\002 \001(\010\022"
-    "\020\n\010msg_name\030\003 \001(\t\022\016\n\006params\030\004 \003(\t\"4\n\021CCS"
-    "UsrMsg_TextMsg\022\017\n\007msg_dst\030\001 \001(\005\022\016\n\006param"
-    "s\030\003 \003(\t\"\340\001\n\020CCSUsrMsg_HudMsg\022\017\n\007channel\030"
-    "\001 \001(\005\022\032\n\003pos\030\002 \001(\0132\r.CMsgVector2D\022\027\n\004clr"
-    "1\030\003 \001(\0132\t.CMsgRGBA\022\027\n\004clr2\030\004 \001(\0132\t.CMsgR"
-    "GBA\022\016\n\006effect\030\005 \001(\005\022\024\n\014fade_in_time\030\006 \001("
-    "\002\022\025\n\rfade_out_time\030\007 \001(\002\022\021\n\thold_time\030\t "
-    "\001(\002\022\017\n\007fx_time\030\n \001(\002\022\014\n\004text\030\013 \001(\t\"`\n\017CC"
-    "SUsrMsg_Shake\022\017\n\007command\030\001 \001(\005\022\027\n\017local_"
-    "amplitude\030\002 \001(\002\022\021\n\tfrequency\030\003 \001(\002\022\020\n\010du"
-    "ration\030\004 \001(\002\"\\\n\016CCSUsrMsg_Fade\022\020\n\010durati"
-    "on\030\001 \001(\005\022\021\n\thold_time\030\002 \001(\005\022\r\n\005flags\030\003 \001"
-    "(\005\022\026\n\003clr\030\004 \001(\0132\t.CMsgRGBA\">\n\020CCSUsrMsg_"
-    "Rumble\022\r\n\005index\030\001 \001(\005\022\014\n\004data\030\002 \001(\005\022\r\n\005f"
-    "lags\030\003 \001(\005\"M\n\026CCSUsrMsg_CloseCaption\022\014\n\004"
-    "hash\030\001 \001(\r\022\020\n\010duration\030\002 \001(\005\022\023\n\013from_pla"
-    "yer\030\003 \001(\010\"S\n\034CCSUsrMsg_CloseCaptionDirec"
-    "t\022\014\n\004hash\030\001 \001(\r\022\020\n\010duration\030\002 \001(\005\022\023\n\013fro"
-    "m_player\030\003 \001(\010\"*\n\023CCSUsrMsg_SendAudio\022\023\n"
-    "\013radio_sound\030\001 \001(\t\"]\n\022CCSUsrMsg_RawAudio"
-    "\022\r\n\005pitch\030\001 \001(\005\022\016\n\006entidx\030\002 \001(\005\022\020\n\010durat"
-    "ion\030\003 \001(\002\022\026\n\016voice_filename\030\004 \001(\t\"\241\001\n\023CC"
-    "SUsrMsg_VoiceMask\0225\n\014player_masks\030\001 \003(\0132"
-    "\037.CCSUsrMsg_VoiceMask.PlayerMask\022\031\n\021play"
-    "er_mod_enable\030\002 \001(\010\0328\n\nPlayerMask\022\027\n\017gam"
-    "e_rules_mask\030\001 \001(\005\022\021\n\tban_masks\030\002 \001(\005\"L\n"
-    "\020CCSUsrMsg_Damage\022\016\n\006amount\030\001 \001(\005\022(\n\023inf"
-    "lictor_world_pos\030\002 \001(\0132\013.CMsgVector\"X\n\023C"
-    "CSUsrMsg_RadioText\022\017\n\007msg_dst\030\001 \001(\005\022\016\n\006c"
-    "lient\030\002 \001(\005\022\020\n\010msg_name\030\003 \001(\t\022\016\n\006params\030"
-    "\004 \003(\t\"\"\n\022CCSUsrMsg_HintText\022\014\n\004text\030\001 \001("
-    "\t\"&\n\025CCSUsrMsg_KeyHintText\022\r\n\005hints\030\001 \003("
-    "\t\"\326\002\n$CCSUsrMsg_ProcessSpottedEntityUpda"
-    "te\022\022\n\nnew_update\030\001 \001(\010\022Q\n\016entity_updates"
-    "\030\002 \003(\01329.CCSUsrMsg_ProcessSpottedEntityU"
-    "pdate.SpottedEntityUpdate\032\306\001\n\023SpottedEnt"
-    "ityUpdate\022\022\n\nentity_idx\030\001 \001(\005\022\020\n\010class_i"
-    "d\030\002 \001(\005\022\020\n\010origin_x\030\003 \001(\005\022\020\n\010origin_y\030\004 "
-    "\001(\005\022\020\n\010origin_z\030\005 \001(\005\022\017\n\007angle_y\030\006 \001(\005\022\017"
-    "\n\007defuser\030\007 \001(\010\022\032\n\022player_has_defuser\030\010 "
-    "\001(\010\022\025\n\rplayer_has_c4\030\t \001(\010\"(\n\026CCSUsrMsg_"
-    "ReloadEffect\022\016\n\006entidx\030\001 \001(\005\"\'\n\025CCSUsrMs"
-    "g_AdjustMoney\022\016\n\006amount\030\001 \001(\005\"R\n\021CCSUsrM"
-    "sg_KillCam\022\020\n\010obs_mode\030\001 \001(\005\022\024\n\014first_ta"
-    "rget\030\002 \001(\005\022\025\n\rsecond_target\030\003 \001(\005\"\213\001\n\032CC"
-    "SUsrMsg_DesiredTimescale\022\031\n\021desired_time"
-    "scale\030\001 \001(\002\022\035\n\025duration_realtime_sec\030\002 \001"
-    "(\002\022\031\n\021interpolator_type\030\003 \001(\005\022\030\n\020start_b"
-    "lend_time\030\004 \001(\002\"3\n\032CCSUsrMsg_CurrentTime"
-    "scale\022\025\n\rcur_timescale\030\001 \001(\002\"Q\n\032CCSUsrMs"
-    "g_AchievementEvent\022\023\n\013achievement\030\001 \001(\005\022"
-    "\r\n\005count\030\002 \001(\005\022\017\n\007user_id\030\003 \001(\005\"r\n\034CCSUs"
-    "rMsg_MatchEndConditions\022\021\n\tfraglimit\030\001 \001"
-    "(\005\022\024\n\014mp_maxrounds\030\002 \001(\005\022\023\n\013mp_winlimit\030"
-    "\003 \001(\005\022\024\n\014mp_timelimit\030\004 \001(\005\"\273\001\n\033CCSUsrMs"
-    "g_PlayerStatsUpdate\022\017\n\007version\030\001 \001(\005\022\027\n\017"
-    "official_server\030\002 \001(\005\0220\n\005stats\030\004 \003(\0132!.C"
-    "CSUsrMsg_PlayerStatsUpdate.Stat\022\017\n\007user_"
-    "id\030\005 \001(\005\022\013\n\003crc\030\006 \001(\005\032\"\n\004Stat\022\013\n\003idx\030\001 \001"
-    "(\005\022\r\n\005delta\030\002 \001(\005\"-\n\032CCSUsrMsg_DisplayIn"
-    "ventory\022\017\n\007display\030\001 \001(\010\":\n\022CCSUsrMsg_XR"
-    "ankGet\022\020\n\010mode_idx\030\001 \001(\005\022\022\n\ncontroller\030\002"
-    " \001(\005\"K\n\022CCSUsrMsg_XRankUpd\022\020\n\010mode_idx\030\001"
-    " \001(\005\022\022\n\ncontroller\030\002 \001(\005\022\017\n\007ranking\030\003 \001("
-    "\005\"7\n$CCSUsrMsg_SetPlayerEloDisplayBracke"
-    "t\022\017\n\007bracket\030\001 \001(\005\"2\n\037CCSUsrMsg_RequestE"
-    "loBracketInfo\022\017\n\007bracket\030\001 \001(\005\"}\n\033CCSUsr"
-    "Msg_SetEloBracketInfo\022\021\n\tgame_mode\030\001 \001(\005"
-    "\022\027\n\017display_bracket\030\002 \001(\005\022\024\n\014prev_bracke"
-    "t\030\003 \001(\005\022\034\n\024num_games_in_bracket\030\004 \001(\005\"8\n"
-    "\030CCSUsrMsg_CallVoteFailed\022\016\n\006reason\030\001 \001("
-    "\005\022\014\n\004time\030\002 \001(\005\"\236\001\n\023CCSUsrMsg_VoteStart\022"
-    "\014\n\004team\030\001 \001(\005\022\017\n\007ent_idx\030\002 \001(\005\022\021\n\tvote_t"
-    "ype\030\003 \001(\005\022\020\n\010disp_str\030\004 \001(\t\022\023\n\013details_s"
-    "tr\030\005 \001(\t\022\026\n\016other_team_str\030\006 \001(\t\022\026\n\016is_y"
-    "es_no_vote\030\007 \001(\010\"\\\n\022CCSUsrMsg_VotePass\022\014"
-    "\n\004team\030\001 \001(\005\022\021\n\tvote_type\030\002 \001(\005\022\020\n\010disp_"
-    "str\030\003 \001(\t\022\023\n\013details_str\030\004 \001(\t\"4\n\024CCSUsr"
-    "Msg_VoteFailed\022\014\n\004team\030\001 \001(\005\022\016\n\006reason\030\002"
-    " \001(\005\"/\n\023CCSUsrMsg_VoteSetup\022\030\n\020potential"
-    "_issues\030\001 \003(\t\"\204\001\n&CCSUsrMsg_SendLastKill"
-    "erDamageToClient\022\026\n\016num_hits_given\030\001 \001(\005"
-    "\022\024\n\014damage_given\030\002 \001(\005\022\026\n\016num_hits_taken"
-    "\030\003 \001(\005\022\024\n\014damage_taken\030\004 \001(\005\"\306\001\n\032CCSUsrM"
-    "sg_ServerRankUpdate\022;\n\013rank_update\030\001 \003(\013"
-    "2&.CCSUsrMsg_ServerRankUpdate.RankUpdate"
-    "\032k\n\nRankUpdate\022\022\n\naccount_id\030\001 \001(\005\022\020\n\010ra"
-    "nk_old\030\002 \001(\005\022\020\n\010rank_new\030\003 \001(\005\022\020\n\010num_wi"
-    "ns\030\004 \001(\005\022\023\n\013rank_change\030\005 \001(\002\"$\n\024CCSUsrM"
-    "sg_ItemPickup\022\014\n\004item\030\001 \001(\t\"Y\n\022CCSUsrMsg"
-    "_ShowMenu\022\030\n\020bits_valid_slots\030\001 \001(\005\022\024\n\014d"
-    "isplay_time\030\002 \001(\005\022\023\n\013menu_string\030\003 \001(\t\"!"
-    "\n\021CCSUsrMsg_BarTime\022\014\n\004time\030\001 \001(\t\"\'\n\024CCS"
-    "UsrMsg_AmmoDenied\022\017\n\007ammoIdx\030\001 \001(\005\"0\n\031CC"
-    "SUsrMsg_MarkAchievement\022\023\n\013achievement\030\001"
-    " \001(\t\",\n\032CCSUsrMsg_MatchStatsUpdate\022\016\n\006up"
-    "date\030\001 \001(\t\"3\n\022CCSUsrMsg_ItemDrop\022\016\n\006item"
-    "id\030\001 \001(\003\022\r\n\005death\030\002 \001(\010\"#\n\022CCSUsrMsg_Res"
-    "etHud\022\r\n\005reset\030\001 \001(\010\"$\n\023CCSUsrMsg_GameTi"
-    "tle\022\r\n\005dummy\030\001 \001(\005\"\'\n\026CCSUsrMsg_RequestS"
-    "tate\022\r\n\005dummy\030\001 \001(\005\",\n\033CCSUsrMsg_StopSpe"
-    "ctatorMode\022\r\n\005dummy\030\001 \001(\005\",\n\033CCSUsrMsg_D"
-    "isconnectToLobby\022\r\n\005dummy\030\001 \001(\005\")\n\030CCSUs"
-    "rMsg_WarmupHasEnded\022\r\n\005dummy\030\001 \001(\005\"%\n\024CC"
-    "SUsrMsg_ClientInfo\022\r\n\005dummy\030\001 \001(\005\".\n\035CCS"
-    "UsrMsg_ServerRankRevealAll\022\r\n\005dummy\030\001 \001("
-    "\005*\373\n\n\026ECstrike15UserMessages\022\022\n\016CS_UM_VG"
-    "UIMenu\020\001\022\020\n\014CS_UM_Geiger\020\002\022\017\n\013CS_UM_Trai"
-    "n\020\003\022\021\n\rCS_UM_HudText\020\004\022\021\n\rCS_UM_SayText\020"
-    "\005\022\022\n\016CS_UM_SayText2\020\006\022\021\n\rCS_UM_TextMsg\020\007"
-    "\022\020\n\014CS_UM_HudMsg\020\010\022\022\n\016CS_UM_ResetHud\020\t\022\023"
-    "\n\017CS_UM_GameTitle\020\n\022\017\n\013CS_UM_Shake\020\014\022\016\n\n"
-    "CS_UM_Fade\020\r\022\020\n\014CS_UM_Rumble\020\016\022\026\n\022CS_UM_"
-    "CloseCaption\020\017\022\034\n\030CS_UM_CloseCaptionDire"
-    "ct\020\020\022\023\n\017CS_UM_SendAudio\020\021\022\022\n\016CS_UM_RawAu"
-    "dio\020\022\022\023\n\017CS_UM_VoiceMask\020\023\022\026\n\022CS_UM_Requ"
-    "estState\020\024\022\020\n\014CS_UM_Damage\020\025\022\023\n\017CS_UM_Ra"
-    "dioText\020\026\022\022\n\016CS_UM_HintText\020\027\022\025\n\021CS_UM_K"
-    "eyHintText\020\030\022$\n CS_UM_ProcessSpottedEnti"
-    "tyUpdate\020\031\022\026\n\022CS_UM_ReloadEffect\020\032\022\025\n\021CS"
-    "_UM_AdjustMoney\020\033\022\031\n\025CS_UM_UpdateTeamMon"
-    "ey\020\034\022\033\n\027CS_UM_StopSpectatorMode\020\035\022\021\n\rCS_"
-    "UM_KillCam\020\036\022\032\n\026CS_UM_DesiredTimescale\020\037"
-    "\022\032\n\026CS_UM_CurrentTimescale\020 \022\032\n\026CS_UM_Ac"
-    "hievementEvent\020!\022\034\n\030CS_UM_MatchEndCondit"
-    "ions\020\"\022\033\n\027CS_UM_DisconnectToLobby\020#\022\033\n\027C"
-    "S_UM_PlayerStatsUpdate\020$\022\032\n\026CS_UM_Displa"
-    "yInventory\020%\022\030\n\024CS_UM_WarmupHasEnded\020&\022\024"
-    "\n\020CS_UM_ClientInfo\020\'\022\022\n\016CS_UM_XRankGet\020("
-    "\022\022\n\016CS_UM_XRankUpd\020)\022$\n CS_UM_SetPlayerE"
-    "loDisplayBracket\020*\022\037\n\033CS_UM_RequestEloBr"
-    "acketInfo\020+\022\033\n\027CS_UM_SetEloBracketInfo\020,"
-    "\022\030\n\024CS_UM_CallVoteFailed\020-\022\023\n\017CS_UM_Vote"
-    "Start\020.\022\022\n\016CS_UM_VotePass\020/\022\024\n\020CS_UM_Vot"
-    "eFailed\0200\022\023\n\017CS_UM_VoteSetup\0201\022\035\n\031CS_UM_"
-    "ServerRankRevealAll\0202\022&\n\"CS_UM_SendLastK"
-    "illerDamageToClient\0203\022\032\n\026CS_UM_ServerRan"
-    "kUpdate\0204\022\024\n\020CS_UM_ItemPickup\0205\022\022\n\016CS_UM"
-    "_ShowMenu\0206\022\021\n\rCS_UM_BarTime\0207\022\024\n\020CS_UM_"
-    "AmmoDenied\0208\022\031\n\025CS_UM_MarkAchievement\0209\022"
-    "\032\n\026CS_UM_MatchStatsUpdate\020:\022\022\n\016CS_UM_Ite"
-    "mDrop\020;B\005H\001\200\001\000", 6094);
+    "\"U\n\021CCSUsrMsg_SayText\022\017\n\007ent_idx\030\001 \001(\005\022\014"
+    "\n\004text\030\002 \001(\t\022\014\n\004chat\030\003 \001(\010\022\023\n\013textallcha"
+    "t\030\004 \001(\010\"j\n\022CCSUsrMsg_SayText2\022\017\n\007ent_idx"
+    "\030\001 \001(\005\022\014\n\004chat\030\002 \001(\010\022\020\n\010msg_name\030\003 \001(\t\022\016"
+    "\n\006params\030\004 \003(\t\022\023\n\013textallchat\030\005 \001(\010\"4\n\021C"
+    "CSUsrMsg_TextMsg\022\017\n\007msg_dst\030\001 \001(\005\022\016\n\006par"
+    "ams\030\003 \003(\t\"\340\001\n\020CCSUsrMsg_HudMsg\022\017\n\007channe"
+    "l\030\001 \001(\005\022\032\n\003pos\030\002 \001(\0132\r.CMsgVector2D\022\027\n\004c"
+    "lr1\030\003 \001(\0132\t.CMsgRGBA\022\027\n\004clr2\030\004 \001(\0132\t.CMs"
+    "gRGBA\022\016\n\006effect\030\005 \001(\005\022\024\n\014fade_in_time\030\006 "
+    "\001(\002\022\025\n\rfade_out_time\030\007 \001(\002\022\021\n\thold_time\030"
+    "\t \001(\002\022\017\n\007fx_time\030\n \001(\002\022\014\n\004text\030\013 \001(\t\"`\n\017"
+    "CCSUsrMsg_Shake\022\017\n\007command\030\001 \001(\005\022\027\n\017loca"
+    "l_amplitude\030\002 \001(\002\022\021\n\tfrequency\030\003 \001(\002\022\020\n\010"
+    "duration\030\004 \001(\002\"\\\n\016CCSUsrMsg_Fade\022\020\n\010dura"
+    "tion\030\001 \001(\005\022\021\n\thold_time\030\002 \001(\005\022\r\n\005flags\030\003"
+    " \001(\005\022\026\n\003clr\030\004 \001(\0132\t.CMsgRGBA\">\n\020CCSUsrMs"
+    "g_Rumble\022\r\n\005index\030\001 \001(\005\022\014\n\004data\030\002 \001(\005\022\r\n"
+    "\005flags\030\003 \001(\005\"M\n\026CCSUsrMsg_CloseCaption\022\014"
+    "\n\004hash\030\001 \001(\r\022\020\n\010duration\030\002 \001(\005\022\023\n\013from_p"
+    "layer\030\003 \001(\010\"S\n\034CCSUsrMsg_CloseCaptionDir"
+    "ect\022\014\n\004hash\030\001 \001(\r\022\020\n\010duration\030\002 \001(\005\022\023\n\013f"
+    "rom_player\030\003 \001(\010\"*\n\023CCSUsrMsg_SendAudio\022"
+    "\023\n\013radio_sound\030\001 \001(\t\"]\n\022CCSUsrMsg_RawAud"
+    "io\022\r\n\005pitch\030\001 \001(\005\022\016\n\006entidx\030\002 \001(\005\022\020\n\010dur"
+    "ation\030\003 \001(\002\022\026\n\016voice_filename\030\004 \001(\t\"\241\001\n\023"
+    "CCSUsrMsg_VoiceMask\0225\n\014player_masks\030\001 \003("
+    "\0132\037.CCSUsrMsg_VoiceMask.PlayerMask\022\031\n\021pl"
+    "ayer_mod_enable\030\002 \001(\010\0328\n\nPlayerMask\022\027\n\017g"
+    "ame_rules_mask\030\001 \001(\005\022\021\n\tban_masks\030\002 \001(\005\""
+    "L\n\020CCSUsrMsg_Damage\022\016\n\006amount\030\001 \001(\005\022(\n\023i"
+    "nflictor_world_pos\030\002 \001(\0132\013.CMsgVector\"X\n"
+    "\023CCSUsrMsg_RadioText\022\017\n\007msg_dst\030\001 \001(\005\022\016\n"
+    "\006client\030\002 \001(\005\022\020\n\010msg_name\030\003 \001(\t\022\016\n\006param"
+    "s\030\004 \003(\t\"\"\n\022CCSUsrMsg_HintText\022\014\n\004text\030\001 "
+    "\001(\t\"&\n\025CCSUsrMsg_KeyHintText\022\r\n\005hints\030\001 "
+    "\003(\t\"\326\002\n$CCSUsrMsg_ProcessSpottedEntityUp"
+    "date\022\022\n\nnew_update\030\001 \001(\010\022Q\n\016entity_updat"
+    "es\030\002 \003(\01329.CCSUsrMsg_ProcessSpottedEntit"
+    "yUpdate.SpottedEntityUpdate\032\306\001\n\023SpottedE"
+    "ntityUpdate\022\022\n\nentity_idx\030\001 \001(\005\022\020\n\010class"
+    "_id\030\002 \001(\005\022\020\n\010origin_x\030\003 \001(\005\022\020\n\010origin_y\030"
+    "\004 \001(\005\022\020\n\010origin_z\030\005 \001(\005\022\017\n\007angle_y\030\006 \001(\005"
+    "\022\017\n\007defuser\030\007 \001(\010\022\032\n\022player_has_defuser\030"
+    "\010 \001(\010\022\025\n\rplayer_has_c4\030\t \001(\010\"(\n\026CCSUsrMs"
+    "g_ReloadEffect\022\016\n\006entidx\030\001 \001(\005\"\'\n\025CCSUsr"
+    "Msg_AdjustMoney\022\016\n\006amount\030\001 \001(\005\"R\n\021CCSUs"
+    "rMsg_KillCam\022\020\n\010obs_mode\030\001 \001(\005\022\024\n\014first_"
+    "target\030\002 \001(\005\022\025\n\rsecond_target\030\003 \001(\005\"\213\001\n\032"
+    "CCSUsrMsg_DesiredTimescale\022\031\n\021desired_ti"
+    "mescale\030\001 \001(\002\022\035\n\025duration_realtime_sec\030\002"
+    " \001(\002\022\031\n\021interpolator_type\030\003 \001(\005\022\030\n\020start"
+    "_blend_time\030\004 \001(\002\"3\n\032CCSUsrMsg_CurrentTi"
+    "mescale\022\025\n\rcur_timescale\030\001 \001(\002\"Q\n\032CCSUsr"
+    "Msg_AchievementEvent\022\023\n\013achievement\030\001 \001("
+    "\005\022\r\n\005count\030\002 \001(\005\022\017\n\007user_id\030\003 \001(\005\"r\n\034CCS"
+    "UsrMsg_MatchEndConditions\022\021\n\tfraglimit\030\001"
+    " \001(\005\022\024\n\014mp_maxrounds\030\002 \001(\005\022\023\n\013mp_winlimi"
+    "t\030\003 \001(\005\022\024\n\014mp_timelimit\030\004 \001(\005\"\273\001\n\033CCSUsr"
+    "Msg_PlayerStatsUpdate\022\017\n\007version\030\001 \001(\005\022\027"
+    "\n\017official_server\030\002 \001(\005\0220\n\005stats\030\004 \003(\0132!"
+    ".CCSUsrMsg_PlayerStatsUpdate.Stat\022\017\n\007use"
+    "r_id\030\005 \001(\005\022\013\n\003crc\030\006 \001(\005\032\"\n\004Stat\022\013\n\003idx\030\001"
+    " \001(\005\022\r\n\005delta\030\002 \001(\005\"-\n\032CCSUsrMsg_Display"
+    "Inventory\022\017\n\007display\030\001 \001(\010\":\n\022CCSUsrMsg_"
+    "XRankGet\022\020\n\010mode_idx\030\001 \001(\005\022\022\n\ncontroller"
+    "\030\002 \001(\005\"K\n\022CCSUsrMsg_XRankUpd\022\020\n\010mode_idx"
+    "\030\001 \001(\005\022\022\n\ncontroller\030\002 \001(\005\022\017\n\007ranking\030\003 "
+    "\001(\005\"7\n$CCSUsrMsg_SetPlayerEloDisplayBrac"
+    "ket\022\017\n\007bracket\030\001 \001(\005\"2\n\037CCSUsrMsg_Reques"
+    "tEloBracketInfo\022\017\n\007bracket\030\001 \001(\005\"}\n\033CCSU"
+    "srMsg_SetEloBracketInfo\022\021\n\tgame_mode\030\001 \001"
+    "(\005\022\027\n\017display_bracket\030\002 \001(\005\022\024\n\014prev_brac"
+    "ket\030\003 \001(\005\022\034\n\024num_games_in_bracket\030\004 \001(\005\""
+    "8\n\030CCSUsrMsg_CallVoteFailed\022\016\n\006reason\030\001 "
+    "\001(\005\022\014\n\004time\030\002 \001(\005\"\236\001\n\023CCSUsrMsg_VoteStar"
+    "t\022\014\n\004team\030\001 \001(\005\022\017\n\007ent_idx\030\002 \001(\005\022\021\n\tvote"
+    "_type\030\003 \001(\005\022\020\n\010disp_str\030\004 \001(\t\022\023\n\013details"
+    "_str\030\005 \001(\t\022\026\n\016other_team_str\030\006 \001(\t\022\026\n\016is"
+    "_yes_no_vote\030\007 \001(\010\"\\\n\022CCSUsrMsg_VotePass"
+    "\022\014\n\004team\030\001 \001(\005\022\021\n\tvote_type\030\002 \001(\005\022\020\n\010dis"
+    "p_str\030\003 \001(\t\022\023\n\013details_str\030\004 \001(\t\"4\n\024CCSU"
+    "srMsg_VoteFailed\022\014\n\004team\030\001 \001(\005\022\016\n\006reason"
+    "\030\002 \001(\005\"/\n\023CCSUsrMsg_VoteSetup\022\030\n\020potenti"
+    "al_issues\030\001 \003(\t\"\204\001\n&CCSUsrMsg_SendLastKi"
+    "llerDamageToClient\022\026\n\016num_hits_given\030\001 \001"
+    "(\005\022\024\n\014damage_given\030\002 \001(\005\022\026\n\016num_hits_tak"
+    "en\030\003 \001(\005\022\024\n\014damage_taken\030\004 \001(\005\"\306\001\n\032CCSUs"
+    "rMsg_ServerRankUpdate\022;\n\013rank_update\030\001 \003"
+    "(\0132&.CCSUsrMsg_ServerRankUpdate.RankUpda"
+    "te\032k\n\nRankUpdate\022\022\n\naccount_id\030\001 \001(\005\022\020\n\010"
+    "rank_old\030\002 \001(\005\022\020\n\010rank_new\030\003 \001(\005\022\020\n\010num_"
+    "wins\030\004 \001(\005\022\023\n\013rank_change\030\005 \001(\002\"$\n\024CCSUs"
+    "rMsg_ItemPickup\022\014\n\004item\030\001 \001(\t\"Y\n\022CCSUsrM"
+    "sg_ShowMenu\022\030\n\020bits_valid_slots\030\001 \001(\005\022\024\n"
+    "\014display_time\030\002 \001(\005\022\023\n\013menu_string\030\003 \001(\t"
+    "\"!\n\021CCSUsrMsg_BarTime\022\014\n\004time\030\001 \001(\t\"\'\n\024C"
+    "CSUsrMsg_AmmoDenied\022\017\n\007ammoIdx\030\001 \001(\005\"0\n\031"
+    "CCSUsrMsg_MarkAchievement\022\023\n\013achievement"
+    "\030\001 \001(\t\",\n\032CCSUsrMsg_MatchStatsUpdate\022\016\n\006"
+    "update\030\001 \001(\t\"3\n\022CCSUsrMsg_ItemDrop\022\016\n\006it"
+    "emid\030\001 \001(\003\022\r\n\005death\030\002 \001(\010\"#\n\022CCSUsrMsg_R"
+    "esetHud\022\r\n\005reset\030\001 \001(\010\"$\n\023CCSUsrMsg_Game"
+    "Title\022\r\n\005dummy\030\001 \001(\005\"\'\n\026CCSUsrMsg_Reques"
+    "tState\022\r\n\005dummy\030\001 \001(\005\",\n\033CCSUsrMsg_StopS"
+    "pectatorMode\022\r\n\005dummy\030\001 \001(\005\",\n\033CCSUsrMsg"
+    "_DisconnectToLobby\022\r\n\005dummy\030\001 \001(\005\")\n\030CCS"
+    "UsrMsg_WarmupHasEnded\022\r\n\005dummy\030\001 \001(\005\"%\n\024"
+    "CCSUsrMsg_ClientInfo\022\r\n\005dummy\030\001 \001(\005\".\n\035C"
+    "CSUsrMsg_ServerRankRevealAll\022\r\n\005dummy\030\001 "
+    "\001(\005*\373\n\n\026ECstrike15UserMessages\022\022\n\016CS_UM_"
+    "VGUIMenu\020\001\022\020\n\014CS_UM_Geiger\020\002\022\017\n\013CS_UM_Tr"
+    "ain\020\003\022\021\n\rCS_UM_HudText\020\004\022\021\n\rCS_UM_SayTex"
+    "t\020\005\022\022\n\016CS_UM_SayText2\020\006\022\021\n\rCS_UM_TextMsg"
+    "\020\007\022\020\n\014CS_UM_HudMsg\020\010\022\022\n\016CS_UM_ResetHud\020\t"
+    "\022\023\n\017CS_UM_GameTitle\020\n\022\017\n\013CS_UM_Shake\020\014\022\016"
+    "\n\nCS_UM_Fade\020\r\022\020\n\014CS_UM_Rumble\020\016\022\026\n\022CS_U"
+    "M_CloseCaption\020\017\022\034\n\030CS_UM_CloseCaptionDi"
+    "rect\020\020\022\023\n\017CS_UM_SendAudio\020\021\022\022\n\016CS_UM_Raw"
+    "Audio\020\022\022\023\n\017CS_UM_VoiceMask\020\023\022\026\n\022CS_UM_Re"
+    "questState\020\024\022\020\n\014CS_UM_Damage\020\025\022\023\n\017CS_UM_"
+    "RadioText\020\026\022\022\n\016CS_UM_HintText\020\027\022\025\n\021CS_UM"
+    "_KeyHintText\020\030\022$\n CS_UM_ProcessSpottedEn"
+    "tityUpdate\020\031\022\026\n\022CS_UM_ReloadEffect\020\032\022\025\n\021"
+    "CS_UM_AdjustMoney\020\033\022\031\n\025CS_UM_UpdateTeamM"
+    "oney\020\034\022\033\n\027CS_UM_StopSpectatorMode\020\035\022\021\n\rC"
+    "S_UM_KillCam\020\036\022\032\n\026CS_UM_DesiredTimescale"
+    "\020\037\022\032\n\026CS_UM_CurrentTimescale\020 \022\032\n\026CS_UM_"
+    "AchievementEvent\020!\022\034\n\030CS_UM_MatchEndCond"
+    "itions\020\"\022\033\n\027CS_UM_DisconnectToLobby\020#\022\033\n"
+    "\027CS_UM_PlayerStatsUpdate\020$\022\032\n\026CS_UM_Disp"
+    "layInventory\020%\022\030\n\024CS_UM_WarmupHasEnded\020&"
+    "\022\024\n\020CS_UM_ClientInfo\020\'\022\022\n\016CS_UM_XRankGet"
+    "\020(\022\022\n\016CS_UM_XRankUpd\020)\022$\n CS_UM_SetPlaye"
+    "rEloDisplayBracket\020*\022\037\n\033CS_UM_RequestElo"
+    "BracketInfo\020+\022\033\n\027CS_UM_SetEloBracketInfo"
+    "\020,\022\030\n\024CS_UM_CallVoteFailed\020-\022\023\n\017CS_UM_Vo"
+    "teStart\020.\022\022\n\016CS_UM_VotePass\020/\022\024\n\020CS_UM_V"
+    "oteFailed\0200\022\023\n\017CS_UM_VoteSetup\0201\022\035\n\031CS_U"
+    "M_ServerRankRevealAll\0202\022&\n\"CS_UM_SendLas"
+    "tKillerDamageToClient\0203\022\032\n\026CS_UM_ServerR"
+    "ankUpdate\0204\022\024\n\020CS_UM_ItemPickup\0205\022\022\n\016CS_"
+    "UM_ShowMenu\0206\022\021\n\rCS_UM_BarTime\0207\022\024\n\020CS_U"
+    "M_AmmoDenied\0208\022\031\n\025CS_UM_MarkAchievement\020"
+    "9\022\032\n\026CS_UM_MatchStatsUpdate\020:\022\022\n\016CS_UM_I"
+    "temDrop\020;B\005H\001\200\001\000", 6136);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "cstrike15_usermessages.proto", &protobuf_RegisterTypes);
   CCSUsrMsg_VGUIMenu::default_instance_ = new CCSUsrMsg_VGUIMenu();
@@ -3098,6 +3101,7 @@ const ::std::string CCSUsrMsg_SayText::_default_text_;
 const int CCSUsrMsg_SayText::kEntIdxFieldNumber;
 const int CCSUsrMsg_SayText::kTextFieldNumber;
 const int CCSUsrMsg_SayText::kChatFieldNumber;
+const int CCSUsrMsg_SayText::kTextallchatFieldNumber;
 #endif  // !_MSC_VER
 
 CCSUsrMsg_SayText::CCSUsrMsg_SayText()
@@ -3119,6 +3123,7 @@ void CCSUsrMsg_SayText::SharedCtor() {
   ent_idx_ = 0;
   text_ = const_cast< ::std::string*>(&_default_text_);
   chat_ = false;
+  textallchat_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -3163,6 +3168,7 @@ void CCSUsrMsg_SayText::Clear() {
       }
     }
     chat_ = false;
+    textallchat_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -3218,6 +3224,22 @@ bool CCSUsrMsg_SayText::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(32)) goto parse_textallchat;
+        break;
+      }
+      
+      // optional bool textallchat = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_textallchat:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &textallchat_)));
+          _set_bit(3);
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -3259,6 +3281,11 @@ void CCSUsrMsg_SayText::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->chat(), output);
   }
   
+  // optional bool textallchat = 4;
+  if (_has_bit(3)) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->textallchat(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -3285,6 +3312,11 @@ void CCSUsrMsg_SayText::SerializeWithCachedSizes(
   // optional bool chat = 3;
   if (_has_bit(2)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->chat(), target);
+  }
+  
+  // optional bool textallchat = 4;
+  if (_has_bit(3)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->textallchat(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -3314,6 +3346,11 @@ int CCSUsrMsg_SayText::ByteSize() const {
     
     // optional bool chat = 3;
     if (has_chat()) {
+      total_size += 1 + 1;
+    }
+    
+    // optional bool textallchat = 4;
+    if (has_textallchat()) {
       total_size += 1 + 1;
     }
     
@@ -3353,6 +3390,9 @@ void CCSUsrMsg_SayText::MergeFrom(const CCSUsrMsg_SayText& from) {
     if (from._has_bit(2)) {
       set_chat(from.chat());
     }
+    if (from._has_bit(3)) {
+      set_textallchat(from.textallchat());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -3379,6 +3419,7 @@ void CCSUsrMsg_SayText::Swap(CCSUsrMsg_SayText* other) {
     std::swap(ent_idx_, other->ent_idx_);
     std::swap(text_, other->text_);
     std::swap(chat_, other->chat_);
+    std::swap(textallchat_, other->textallchat_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -3402,6 +3443,7 @@ const int CCSUsrMsg_SayText2::kEntIdxFieldNumber;
 const int CCSUsrMsg_SayText2::kChatFieldNumber;
 const int CCSUsrMsg_SayText2::kMsgNameFieldNumber;
 const int CCSUsrMsg_SayText2::kParamsFieldNumber;
+const int CCSUsrMsg_SayText2::kTextallchatFieldNumber;
 #endif  // !_MSC_VER
 
 CCSUsrMsg_SayText2::CCSUsrMsg_SayText2()
@@ -3423,6 +3465,7 @@ void CCSUsrMsg_SayText2::SharedCtor() {
   ent_idx_ = 0;
   chat_ = false;
   msg_name_ = const_cast< ::std::string*>(&_default_msg_name_);
+  textallchat_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -3467,6 +3510,7 @@ void CCSUsrMsg_SayText2::Clear() {
         msg_name_->clear();
       }
     }
+    textallchat_ = false;
   }
   params_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -3541,6 +3585,22 @@ bool CCSUsrMsg_SayText2::MergePartialFromCodedStream(
           goto handle_uninterpreted;
         }
         if (input->ExpectTag(34)) goto parse_params;
+        if (input->ExpectTag(40)) goto parse_textallchat;
+        break;
+      }
+      
+      // optional bool textallchat = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_textallchat:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &textallchat_)));
+          _set_bit(4);
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -3591,6 +3651,11 @@ void CCSUsrMsg_SayText2::SerializeWithCachedSizes(
       4, this->params(i), output);
   }
   
+  // optional bool textallchat = 5;
+  if (_has_bit(4)) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->textallchat(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -3628,6 +3693,11 @@ void CCSUsrMsg_SayText2::SerializeWithCachedSizes(
       WriteStringToArray(4, this->params(i), target);
   }
   
+  // optional bool textallchat = 5;
+  if (_has_bit(4)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->textallchat(), target);
+  }
+  
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -3656,6 +3726,11 @@ int CCSUsrMsg_SayText2::ByteSize() const {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->msg_name());
+    }
+    
+    // optional bool textallchat = 5;
+    if (has_textallchat()) {
+      total_size += 1 + 1;
     }
     
   }
@@ -3702,6 +3777,9 @@ void CCSUsrMsg_SayText2::MergeFrom(const CCSUsrMsg_SayText2& from) {
     if (from._has_bit(2)) {
       set_msg_name(from.msg_name());
     }
+    if (from._has_bit(4)) {
+      set_textallchat(from.textallchat());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -3729,6 +3807,7 @@ void CCSUsrMsg_SayText2::Swap(CCSUsrMsg_SayText2* other) {
     std::swap(chat_, other->chat_);
     std::swap(msg_name_, other->msg_name_);
     params_.Swap(&other->params_);
+    std::swap(textallchat_, other->textallchat_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

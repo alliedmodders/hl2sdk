@@ -742,6 +742,13 @@ class CCSUsrMsg_SayText : public ::google::protobuf::Message {
   inline bool chat() const;
   inline void set_chat(bool value);
   
+  // optional bool textallchat = 4;
+  inline bool has_textallchat() const;
+  inline void clear_textallchat();
+  static const int kTextallchatFieldNumber = 4;
+  inline bool textallchat() const;
+  inline void set_textallchat(bool value);
+  
   // @@protoc_insertion_point(class_scope:CCSUsrMsg_SayText)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
@@ -751,11 +758,12 @@ class CCSUsrMsg_SayText : public ::google::protobuf::Message {
   ::std::string* text_;
   static const ::std::string _default_text_;
   bool chat_;
+  bool textallchat_;
   friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -867,6 +875,13 @@ class CCSUsrMsg_SayText2 : public ::google::protobuf::Message {
   inline const ::google::protobuf::RepeatedPtrField< ::std::string>& params() const;
   inline ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_params();
   
+  // optional bool textallchat = 5;
+  inline bool has_textallchat() const;
+  inline void clear_textallchat();
+  static const int kTextallchatFieldNumber = 5;
+  inline bool textallchat() const;
+  inline void set_textallchat(bool value);
+  
   // @@protoc_insertion_point(class_scope:CCSUsrMsg_SayText2)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
@@ -877,11 +892,12 @@ class CCSUsrMsg_SayText2 : public ::google::protobuf::Message {
   ::std::string* msg_name_;
   static const ::std::string _default_msg_name_;
   ::google::protobuf::RepeatedPtrField< ::std::string> params_;
+  bool textallchat_;
   friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -6914,6 +6930,22 @@ inline void CCSUsrMsg_SayText::set_chat(bool value) {
   chat_ = value;
 }
 
+// optional bool textallchat = 4;
+inline bool CCSUsrMsg_SayText::has_textallchat() const {
+  return _has_bit(3);
+}
+inline void CCSUsrMsg_SayText::clear_textallchat() {
+  textallchat_ = false;
+  _clear_bit(3);
+}
+inline bool CCSUsrMsg_SayText::textallchat() const {
+  return textallchat_;
+}
+inline void CCSUsrMsg_SayText::set_textallchat(bool value) {
+  _set_bit(3);
+  textallchat_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // CCSUsrMsg_SayText2
@@ -7034,6 +7066,22 @@ CCSUsrMsg_SayText2::params() const {
 inline ::google::protobuf::RepeatedPtrField< ::std::string>*
 CCSUsrMsg_SayText2::mutable_params() {
   return &params_;
+}
+
+// optional bool textallchat = 5;
+inline bool CCSUsrMsg_SayText2::has_textallchat() const {
+  return _has_bit(4);
+}
+inline void CCSUsrMsg_SayText2::clear_textallchat() {
+  textallchat_ = false;
+  _clear_bit(4);
+}
+inline bool CCSUsrMsg_SayText2::textallchat() const {
+  return textallchat_;
+}
+inline void CCSUsrMsg_SayText2::set_textallchat(bool value) {
+  _set_bit(4);
+  textallchat_ = value;
 }
 
 // -------------------------------------------------------------------

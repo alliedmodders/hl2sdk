@@ -324,6 +324,7 @@ enum SVC_Messages
 	svc_GetCvarValue 		= 31;		// Server wants to know the value of a cvar on the client	
 	svc_PaintmapData		= 33;
 	svc_CmdKeyValues		= 34;		// Server submits KeyValues command for the client
+	svc_EncryptedData		= 35;
 }
 
 message CSVCMsg_ServerInfo
@@ -583,4 +584,10 @@ message CSVCMsg_EntityMsg
 message CSVCMsg_CmdKeyValues
 {
 	optional bytes keyvalues = 1;
+}
+
+message CSVCMsg_EncryptedData
+{
+	optional bytes encrypted = 1;
+	optional int32 key_type = 2;
 }
