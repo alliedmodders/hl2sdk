@@ -690,7 +690,7 @@ public:
 	DECLARE_EMBEDDED_NETWORKVAR();
 
 	CountdownTimer( void ) : 
-		m_timestamp( -1.0f), m_duration( 0.0f )
+		m_duration( 0.0f ), m_timestamp( -1.0f)
 	{
 	}
 
