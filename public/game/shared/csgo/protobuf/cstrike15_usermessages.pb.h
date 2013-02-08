@@ -86,6 +86,7 @@ class CCSUsrMsg_AmmoDenied;
 class CCSUsrMsg_MarkAchievement;
 class CCSUsrMsg_MatchStatsUpdate;
 class CCSUsrMsg_ItemDrop;
+class CCSUsrMsg_GlowPropTurnOff;
 class CCSUsrMsg_ResetHud;
 class CCSUsrMsg_GameTitle;
 class CCSUsrMsg_RequestState;
@@ -153,11 +154,12 @@ enum ECstrike15UserMessages {
   CS_UM_AmmoDenied = 56,
   CS_UM_MarkAchievement = 57,
   CS_UM_MatchStatsUpdate = 58,
-  CS_UM_ItemDrop = 59
+  CS_UM_ItemDrop = 59,
+  CS_UM_GlowPropTurnOff = 60
 };
 bool ECstrike15UserMessages_IsValid(int value);
 const ECstrike15UserMessages ECstrike15UserMessages_MIN = CS_UM_VGUIMenu;
-const ECstrike15UserMessages ECstrike15UserMessages_MAX = CS_UM_ItemDrop;
+const ECstrike15UserMessages ECstrike15UserMessages_MAX = CS_UM_GlowPropTurnOff;
 const int ECstrike15UserMessages_ARRAYSIZE = ECstrike15UserMessages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ECstrike15UserMessages_descriptor();
@@ -5878,6 +5880,95 @@ class CCSUsrMsg_ItemDrop : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class CCSUsrMsg_GlowPropTurnOff : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_GlowPropTurnOff();
+  virtual ~CCSUsrMsg_GlowPropTurnOff();
+  
+  CCSUsrMsg_GlowPropTurnOff(const CCSUsrMsg_GlowPropTurnOff& from);
+  
+  inline CCSUsrMsg_GlowPropTurnOff& operator=(const CCSUsrMsg_GlowPropTurnOff& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_GlowPropTurnOff& default_instance();
+  
+  void Swap(CCSUsrMsg_GlowPropTurnOff* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CCSUsrMsg_GlowPropTurnOff* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_GlowPropTurnOff& from);
+  void MergeFrom(const CCSUsrMsg_GlowPropTurnOff& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional int32 entidx = 1;
+  inline bool has_entidx() const;
+  inline void clear_entidx();
+  static const int kEntidxFieldNumber = 1;
+  inline ::google::protobuf::int32 entidx() const;
+  inline void set_entidx(::google::protobuf::int32 value);
+  
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_GlowPropTurnOff)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::google::protobuf::int32 entidx_;
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_GlowPropTurnOff* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class CCSUsrMsg_ResetHud : public ::google::protobuf::Message {
  public:
   CCSUsrMsg_ResetHud();
@@ -9877,6 +9968,26 @@ inline bool CCSUsrMsg_ItemDrop::death() const {
 inline void CCSUsrMsg_ItemDrop::set_death(bool value) {
   _set_bit(1);
   death_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_GlowPropTurnOff
+
+// optional int32 entidx = 1;
+inline bool CCSUsrMsg_GlowPropTurnOff::has_entidx() const {
+  return _has_bit(0);
+}
+inline void CCSUsrMsg_GlowPropTurnOff::clear_entidx() {
+  entidx_ = 0;
+  _clear_bit(0);
+}
+inline ::google::protobuf::int32 CCSUsrMsg_GlowPropTurnOff::entidx() const {
+  return entidx_;
+}
+inline void CCSUsrMsg_GlowPropTurnOff::set_entidx(::google::protobuf::int32 value) {
+  _set_bit(0);
+  entidx_ = value;
 }
 
 // -------------------------------------------------------------------
