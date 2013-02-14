@@ -154,9 +154,9 @@ public:
 //  and have a good answer for a bunch of perf question related to player simulation, thinking logic, tracelines, networking overhead, etc.
 // But if you are brave or are doing something interesting, go for it...   ywb 9/22/03
 #if defined( CSTRIKE_DLL )
-	#define MAX_PLAYERS				64  // Absolute max players supported
+	#define MAX_PLAYERS				65  // Absolute max players supported
 #else
-	#define MAX_PLAYERS				32  // Absolute max players supported
+	#define MAX_PLAYERS				33  // Absolute max players supported
 #endif
 
 #define MAX_PLACE_NAME_LENGTH		18
