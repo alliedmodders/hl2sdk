@@ -3800,17 +3800,25 @@ class CCSUsrMsg_DisplayInventory : public ::google::protobuf::Message {
   inline bool display() const;
   inline void set_display(bool value);
   
+  // optional int32 user_id = 2;
+  inline bool has_user_id() const;
+  inline void clear_user_id();
+  static const int kUserIdFieldNumber = 2;
+  inline ::google::protobuf::int32 user_id() const;
+  inline void set_user_id(::google::protobuf::int32 value);
+  
   // @@protoc_insertion_point(class_scope:CCSUsrMsg_DisplayInventory)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
   bool display_;
+  ::google::protobuf::int32 user_id_;
   friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -8839,6 +8847,22 @@ inline bool CCSUsrMsg_DisplayInventory::display() const {
 inline void CCSUsrMsg_DisplayInventory::set_display(bool value) {
   _set_bit(0);
   display_ = value;
+}
+
+// optional int32 user_id = 2;
+inline bool CCSUsrMsg_DisplayInventory::has_user_id() const {
+  return _has_bit(1);
+}
+inline void CCSUsrMsg_DisplayInventory::clear_user_id() {
+  user_id_ = 0;
+  _clear_bit(1);
+}
+inline ::google::protobuf::int32 CCSUsrMsg_DisplayInventory::user_id() const {
+  return user_id_;
+}
+inline void CCSUsrMsg_DisplayInventory::set_user_id(::google::protobuf::int32 value) {
+  _set_bit(1);
+  user_id_ = value;
 }
 
 // -------------------------------------------------------------------

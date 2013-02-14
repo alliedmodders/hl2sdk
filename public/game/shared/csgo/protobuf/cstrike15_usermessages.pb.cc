@@ -773,8 +773,9 @@ void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CCSUsrMsg_PlayerStatsUpdate_Stat));
   CCSUsrMsg_DisplayInventory_descriptor_ = file->message_type(29);
-  static const int CCSUsrMsg_DisplayInventory_offsets_[1] = {
+  static const int CCSUsrMsg_DisplayInventory_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCSUsrMsg_DisplayInventory, display_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCSUsrMsg_DisplayInventory, user_id_),
   };
   CCSUsrMsg_DisplayInventory_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -1601,91 +1602,91 @@ void protobuf_AddDesc_cstrike15_5fusermessages_2eproto() {
     "\n\017official_server\030\002 \001(\005\0220\n\005stats\030\004 \003(\0132!"
     ".CCSUsrMsg_PlayerStatsUpdate.Stat\022\017\n\007use"
     "r_id\030\005 \001(\005\022\013\n\003crc\030\006 \001(\005\032\"\n\004Stat\022\013\n\003idx\030\001"
-    " \001(\005\022\r\n\005delta\030\002 \001(\005\"-\n\032CCSUsrMsg_Display"
-    "Inventory\022\017\n\007display\030\001 \001(\010\":\n\022CCSUsrMsg_"
-    "XRankGet\022\020\n\010mode_idx\030\001 \001(\005\022\022\n\ncontroller"
-    "\030\002 \001(\005\"K\n\022CCSUsrMsg_XRankUpd\022\020\n\010mode_idx"
-    "\030\001 \001(\005\022\022\n\ncontroller\030\002 \001(\005\022\017\n\007ranking\030\003 "
-    "\001(\005\"7\n$CCSUsrMsg_SetPlayerEloDisplayBrac"
-    "ket\022\017\n\007bracket\030\001 \001(\005\"2\n\037CCSUsrMsg_Reques"
-    "tEloBracketInfo\022\017\n\007bracket\030\001 \001(\005\"}\n\033CCSU"
-    "srMsg_SetEloBracketInfo\022\021\n\tgame_mode\030\001 \001"
-    "(\005\022\027\n\017display_bracket\030\002 \001(\005\022\024\n\014prev_brac"
-    "ket\030\003 \001(\005\022\034\n\024num_games_in_bracket\030\004 \001(\005\""
-    "8\n\030CCSUsrMsg_CallVoteFailed\022\016\n\006reason\030\001 "
-    "\001(\005\022\014\n\004time\030\002 \001(\005\"\236\001\n\023CCSUsrMsg_VoteStar"
-    "t\022\014\n\004team\030\001 \001(\005\022\017\n\007ent_idx\030\002 \001(\005\022\021\n\tvote"
-    "_type\030\003 \001(\005\022\020\n\010disp_str\030\004 \001(\t\022\023\n\013details"
-    "_str\030\005 \001(\t\022\026\n\016other_team_str\030\006 \001(\t\022\026\n\016is"
-    "_yes_no_vote\030\007 \001(\010\"\\\n\022CCSUsrMsg_VotePass"
-    "\022\014\n\004team\030\001 \001(\005\022\021\n\tvote_type\030\002 \001(\005\022\020\n\010dis"
-    "p_str\030\003 \001(\t\022\023\n\013details_str\030\004 \001(\t\"4\n\024CCSU"
-    "srMsg_VoteFailed\022\014\n\004team\030\001 \001(\005\022\016\n\006reason"
-    "\030\002 \001(\005\"/\n\023CCSUsrMsg_VoteSetup\022\030\n\020potenti"
-    "al_issues\030\001 \003(\t\"\204\001\n&CCSUsrMsg_SendLastKi"
-    "llerDamageToClient\022\026\n\016num_hits_given\030\001 \001"
-    "(\005\022\024\n\014damage_given\030\002 \001(\005\022\026\n\016num_hits_tak"
-    "en\030\003 \001(\005\022\024\n\014damage_taken\030\004 \001(\005\"\306\001\n\032CCSUs"
-    "rMsg_ServerRankUpdate\022;\n\013rank_update\030\001 \003"
-    "(\0132&.CCSUsrMsg_ServerRankUpdate.RankUpda"
-    "te\032k\n\nRankUpdate\022\022\n\naccount_id\030\001 \001(\005\022\020\n\010"
-    "rank_old\030\002 \001(\005\022\020\n\010rank_new\030\003 \001(\005\022\020\n\010num_"
-    "wins\030\004 \001(\005\022\023\n\013rank_change\030\005 \001(\002\"$\n\024CCSUs"
-    "rMsg_ItemPickup\022\014\n\004item\030\001 \001(\t\"Y\n\022CCSUsrM"
-    "sg_ShowMenu\022\030\n\020bits_valid_slots\030\001 \001(\005\022\024\n"
-    "\014display_time\030\002 \001(\005\022\023\n\013menu_string\030\003 \001(\t"
-    "\"!\n\021CCSUsrMsg_BarTime\022\014\n\004time\030\001 \001(\t\"\'\n\024C"
-    "CSUsrMsg_AmmoDenied\022\017\n\007ammoIdx\030\001 \001(\005\"0\n\031"
-    "CCSUsrMsg_MarkAchievement\022\023\n\013achievement"
-    "\030\001 \001(\t\",\n\032CCSUsrMsg_MatchStatsUpdate\022\016\n\006"
-    "update\030\001 \001(\t\"3\n\022CCSUsrMsg_ItemDrop\022\016\n\006it"
-    "emid\030\001 \001(\003\022\r\n\005death\030\002 \001(\010\"+\n\031CCSUsrMsg_G"
-    "lowPropTurnOff\022\016\n\006entidx\030\001 \001(\005\"#\n\022CCSUsr"
-    "Msg_ResetHud\022\r\n\005reset\030\001 \001(\010\"$\n\023CCSUsrMsg"
-    "_GameTitle\022\r\n\005dummy\030\001 \001(\005\"\'\n\026CCSUsrMsg_R"
-    "equestState\022\r\n\005dummy\030\001 \001(\005\",\n\033CCSUsrMsg_"
-    "StopSpectatorMode\022\r\n\005dummy\030\001 \001(\005\",\n\033CCSU"
-    "srMsg_DisconnectToLobby\022\r\n\005dummy\030\001 \001(\005\")"
-    "\n\030CCSUsrMsg_WarmupHasEnded\022\r\n\005dummy\030\001 \001("
-    "\005\"%\n\024CCSUsrMsg_ClientInfo\022\r\n\005dummy\030\001 \001(\005"
-    "\".\n\035CCSUsrMsg_ServerRankRevealAll\022\r\n\005dum"
-    "my\030\001 \001(\005*\226\013\n\026ECstrike15UserMessages\022\022\n\016C"
-    "S_UM_VGUIMenu\020\001\022\020\n\014CS_UM_Geiger\020\002\022\017\n\013CS_"
-    "UM_Train\020\003\022\021\n\rCS_UM_HudText\020\004\022\021\n\rCS_UM_S"
-    "ayText\020\005\022\022\n\016CS_UM_SayText2\020\006\022\021\n\rCS_UM_Te"
-    "xtMsg\020\007\022\020\n\014CS_UM_HudMsg\020\010\022\022\n\016CS_UM_Reset"
-    "Hud\020\t\022\023\n\017CS_UM_GameTitle\020\n\022\017\n\013CS_UM_Shak"
-    "e\020\014\022\016\n\nCS_UM_Fade\020\r\022\020\n\014CS_UM_Rumble\020\016\022\026\n"
-    "\022CS_UM_CloseCaption\020\017\022\034\n\030CS_UM_CloseCapt"
-    "ionDirect\020\020\022\023\n\017CS_UM_SendAudio\020\021\022\022\n\016CS_U"
-    "M_RawAudio\020\022\022\023\n\017CS_UM_VoiceMask\020\023\022\026\n\022CS_"
-    "UM_RequestState\020\024\022\020\n\014CS_UM_Damage\020\025\022\023\n\017C"
-    "S_UM_RadioText\020\026\022\022\n\016CS_UM_HintText\020\027\022\025\n\021"
-    "CS_UM_KeyHintText\020\030\022$\n CS_UM_ProcessSpot"
-    "tedEntityUpdate\020\031\022\026\n\022CS_UM_ReloadEffect\020"
-    "\032\022\025\n\021CS_UM_AdjustMoney\020\033\022\031\n\025CS_UM_Update"
-    "TeamMoney\020\034\022\033\n\027CS_UM_StopSpectatorMode\020\035"
-    "\022\021\n\rCS_UM_KillCam\020\036\022\032\n\026CS_UM_DesiredTime"
-    "scale\020\037\022\032\n\026CS_UM_CurrentTimescale\020 \022\032\n\026C"
-    "S_UM_AchievementEvent\020!\022\034\n\030CS_UM_MatchEn"
-    "dConditions\020\"\022\033\n\027CS_UM_DisconnectToLobby"
-    "\020#\022\033\n\027CS_UM_PlayerStatsUpdate\020$\022\032\n\026CS_UM"
-    "_DisplayInventory\020%\022\030\n\024CS_UM_WarmupHasEn"
-    "ded\020&\022\024\n\020CS_UM_ClientInfo\020\'\022\022\n\016CS_UM_XRa"
-    "nkGet\020(\022\022\n\016CS_UM_XRankUpd\020)\022$\n CS_UM_Set"
-    "PlayerEloDisplayBracket\020*\022\037\n\033CS_UM_Reque"
-    "stEloBracketInfo\020+\022\033\n\027CS_UM_SetEloBracke"
-    "tInfo\020,\022\030\n\024CS_UM_CallVoteFailed\020-\022\023\n\017CS_"
-    "UM_VoteStart\020.\022\022\n\016CS_UM_VotePass\020/\022\024\n\020CS"
-    "_UM_VoteFailed\0200\022\023\n\017CS_UM_VoteSetup\0201\022\035\n"
-    "\031CS_UM_ServerRankRevealAll\0202\022&\n\"CS_UM_Se"
-    "ndLastKillerDamageToClient\0203\022\032\n\026CS_UM_Se"
-    "rverRankUpdate\0204\022\024\n\020CS_UM_ItemPickup\0205\022\022"
-    "\n\016CS_UM_ShowMenu\0206\022\021\n\rCS_UM_BarTime\0207\022\024\n"
-    "\020CS_UM_AmmoDenied\0208\022\031\n\025CS_UM_MarkAchieve"
-    "ment\0209\022\032\n\026CS_UM_MatchStatsUpdate\020:\022\022\n\016CS"
-    "_UM_ItemDrop\020;\022\031\n\025CS_UM_GlowPropTurnOff\020"
-    "<B\005H\001\200\001\000", 6208);
+    " \001(\005\022\r\n\005delta\030\002 \001(\005\">\n\032CCSUsrMsg_Display"
+    "Inventory\022\017\n\007display\030\001 \001(\010\022\017\n\007user_id\030\002 "
+    "\001(\005\":\n\022CCSUsrMsg_XRankGet\022\020\n\010mode_idx\030\001 "
+    "\001(\005\022\022\n\ncontroller\030\002 \001(\005\"K\n\022CCSUsrMsg_XRa"
+    "nkUpd\022\020\n\010mode_idx\030\001 \001(\005\022\022\n\ncontroller\030\002 "
+    "\001(\005\022\017\n\007ranking\030\003 \001(\005\"7\n$CCSUsrMsg_SetPla"
+    "yerEloDisplayBracket\022\017\n\007bracket\030\001 \001(\005\"2\n"
+    "\037CCSUsrMsg_RequestEloBracketInfo\022\017\n\007brac"
+    "ket\030\001 \001(\005\"}\n\033CCSUsrMsg_SetEloBracketInfo"
+    "\022\021\n\tgame_mode\030\001 \001(\005\022\027\n\017display_bracket\030\002"
+    " \001(\005\022\024\n\014prev_bracket\030\003 \001(\005\022\034\n\024num_games_"
+    "in_bracket\030\004 \001(\005\"8\n\030CCSUsrMsg_CallVoteFa"
+    "iled\022\016\n\006reason\030\001 \001(\005\022\014\n\004time\030\002 \001(\005\"\236\001\n\023C"
+    "CSUsrMsg_VoteStart\022\014\n\004team\030\001 \001(\005\022\017\n\007ent_"
+    "idx\030\002 \001(\005\022\021\n\tvote_type\030\003 \001(\005\022\020\n\010disp_str"
+    "\030\004 \001(\t\022\023\n\013details_str\030\005 \001(\t\022\026\n\016other_tea"
+    "m_str\030\006 \001(\t\022\026\n\016is_yes_no_vote\030\007 \001(\010\"\\\n\022C"
+    "CSUsrMsg_VotePass\022\014\n\004team\030\001 \001(\005\022\021\n\tvote_"
+    "type\030\002 \001(\005\022\020\n\010disp_str\030\003 \001(\t\022\023\n\013details_"
+    "str\030\004 \001(\t\"4\n\024CCSUsrMsg_VoteFailed\022\014\n\004tea"
+    "m\030\001 \001(\005\022\016\n\006reason\030\002 \001(\005\"/\n\023CCSUsrMsg_Vot"
+    "eSetup\022\030\n\020potential_issues\030\001 \003(\t\"\204\001\n&CCS"
+    "UsrMsg_SendLastKillerDamageToClient\022\026\n\016n"
+    "um_hits_given\030\001 \001(\005\022\024\n\014damage_given\030\002 \001("
+    "\005\022\026\n\016num_hits_taken\030\003 \001(\005\022\024\n\014damage_take"
+    "n\030\004 \001(\005\"\306\001\n\032CCSUsrMsg_ServerRankUpdate\022;"
+    "\n\013rank_update\030\001 \003(\0132&.CCSUsrMsg_ServerRa"
+    "nkUpdate.RankUpdate\032k\n\nRankUpdate\022\022\n\nacc"
+    "ount_id\030\001 \001(\005\022\020\n\010rank_old\030\002 \001(\005\022\020\n\010rank_"
+    "new\030\003 \001(\005\022\020\n\010num_wins\030\004 \001(\005\022\023\n\013rank_chan"
+    "ge\030\005 \001(\002\"$\n\024CCSUsrMsg_ItemPickup\022\014\n\004item"
+    "\030\001 \001(\t\"Y\n\022CCSUsrMsg_ShowMenu\022\030\n\020bits_val"
+    "id_slots\030\001 \001(\005\022\024\n\014display_time\030\002 \001(\005\022\023\n\013"
+    "menu_string\030\003 \001(\t\"!\n\021CCSUsrMsg_BarTime\022\014"
+    "\n\004time\030\001 \001(\t\"\'\n\024CCSUsrMsg_AmmoDenied\022\017\n\007"
+    "ammoIdx\030\001 \001(\005\"0\n\031CCSUsrMsg_MarkAchieveme"
+    "nt\022\023\n\013achievement\030\001 \001(\t\",\n\032CCSUsrMsg_Mat"
+    "chStatsUpdate\022\016\n\006update\030\001 \001(\t\"3\n\022CCSUsrM"
+    "sg_ItemDrop\022\016\n\006itemid\030\001 \001(\003\022\r\n\005death\030\002 \001"
+    "(\010\"+\n\031CCSUsrMsg_GlowPropTurnOff\022\016\n\006entid"
+    "x\030\001 \001(\005\"#\n\022CCSUsrMsg_ResetHud\022\r\n\005reset\030\001"
+    " \001(\010\"$\n\023CCSUsrMsg_GameTitle\022\r\n\005dummy\030\001 \001"
+    "(\005\"\'\n\026CCSUsrMsg_RequestState\022\r\n\005dummy\030\001 "
+    "\001(\005\",\n\033CCSUsrMsg_StopSpectatorMode\022\r\n\005du"
+    "mmy\030\001 \001(\005\",\n\033CCSUsrMsg_DisconnectToLobby"
+    "\022\r\n\005dummy\030\001 \001(\005\")\n\030CCSUsrMsg_WarmupHasEn"
+    "ded\022\r\n\005dummy\030\001 \001(\005\"%\n\024CCSUsrMsg_ClientIn"
+    "fo\022\r\n\005dummy\030\001 \001(\005\".\n\035CCSUsrMsg_ServerRan"
+    "kRevealAll\022\r\n\005dummy\030\001 \001(\005*\226\013\n\026ECstrike15"
+    "UserMessages\022\022\n\016CS_UM_VGUIMenu\020\001\022\020\n\014CS_U"
+    "M_Geiger\020\002\022\017\n\013CS_UM_Train\020\003\022\021\n\rCS_UM_Hud"
+    "Text\020\004\022\021\n\rCS_UM_SayText\020\005\022\022\n\016CS_UM_SayTe"
+    "xt2\020\006\022\021\n\rCS_UM_TextMsg\020\007\022\020\n\014CS_UM_HudMsg"
+    "\020\010\022\022\n\016CS_UM_ResetHud\020\t\022\023\n\017CS_UM_GameTitl"
+    "e\020\n\022\017\n\013CS_UM_Shake\020\014\022\016\n\nCS_UM_Fade\020\r\022\020\n\014"
+    "CS_UM_Rumble\020\016\022\026\n\022CS_UM_CloseCaption\020\017\022\034"
+    "\n\030CS_UM_CloseCaptionDirect\020\020\022\023\n\017CS_UM_Se"
+    "ndAudio\020\021\022\022\n\016CS_UM_RawAudio\020\022\022\023\n\017CS_UM_V"
+    "oiceMask\020\023\022\026\n\022CS_UM_RequestState\020\024\022\020\n\014CS"
+    "_UM_Damage\020\025\022\023\n\017CS_UM_RadioText\020\026\022\022\n\016CS_"
+    "UM_HintText\020\027\022\025\n\021CS_UM_KeyHintText\020\030\022$\n "
+    "CS_UM_ProcessSpottedEntityUpdate\020\031\022\026\n\022CS"
+    "_UM_ReloadEffect\020\032\022\025\n\021CS_UM_AdjustMoney\020"
+    "\033\022\031\n\025CS_UM_UpdateTeamMoney\020\034\022\033\n\027CS_UM_St"
+    "opSpectatorMode\020\035\022\021\n\rCS_UM_KillCam\020\036\022\032\n\026"
+    "CS_UM_DesiredTimescale\020\037\022\032\n\026CS_UM_Curren"
+    "tTimescale\020 \022\032\n\026CS_UM_AchievementEvent\020!"
+    "\022\034\n\030CS_UM_MatchEndConditions\020\"\022\033\n\027CS_UM_"
+    "DisconnectToLobby\020#\022\033\n\027CS_UM_PlayerStats"
+    "Update\020$\022\032\n\026CS_UM_DisplayInventory\020%\022\030\n\024"
+    "CS_UM_WarmupHasEnded\020&\022\024\n\020CS_UM_ClientIn"
+    "fo\020\'\022\022\n\016CS_UM_XRankGet\020(\022\022\n\016CS_UM_XRankU"
+    "pd\020)\022$\n CS_UM_SetPlayerEloDisplayBracket"
+    "\020*\022\037\n\033CS_UM_RequestEloBracketInfo\020+\022\033\n\027C"
+    "S_UM_SetEloBracketInfo\020,\022\030\n\024CS_UM_CallVo"
+    "teFailed\020-\022\023\n\017CS_UM_VoteStart\020.\022\022\n\016CS_UM"
+    "_VotePass\020/\022\024\n\020CS_UM_VoteFailed\0200\022\023\n\017CS_"
+    "UM_VoteSetup\0201\022\035\n\031CS_UM_ServerRankReveal"
+    "All\0202\022&\n\"CS_UM_SendLastKillerDamageToCli"
+    "ent\0203\022\032\n\026CS_UM_ServerRankUpdate\0204\022\024\n\020CS_"
+    "UM_ItemPickup\0205\022\022\n\016CS_UM_ShowMenu\0206\022\021\n\rC"
+    "S_UM_BarTime\0207\022\024\n\020CS_UM_AmmoDenied\0208\022\031\n\025"
+    "CS_UM_MarkAchievement\0209\022\032\n\026CS_UM_MatchSt"
+    "atsUpdate\020:\022\022\n\016CS_UM_ItemDrop\020;\022\031\n\025CS_UM"
+    "_GlowPropTurnOff\020<B\005H\001\200\001\000", 6225);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "cstrike15_usermessages.proto", &protobuf_RegisterTypes);
   CCSUsrMsg_VGUIMenu::default_instance_ = new CCSUsrMsg_VGUIMenu();
@@ -11542,6 +11543,7 @@ void CCSUsrMsg_PlayerStatsUpdate::Swap(CCSUsrMsg_PlayerStatsUpdate* other) {
 
 #ifndef _MSC_VER
 const int CCSUsrMsg_DisplayInventory::kDisplayFieldNumber;
+const int CCSUsrMsg_DisplayInventory::kUserIdFieldNumber;
 #endif  // !_MSC_VER
 
 CCSUsrMsg_DisplayInventory::CCSUsrMsg_DisplayInventory()
@@ -11561,6 +11563,7 @@ CCSUsrMsg_DisplayInventory::CCSUsrMsg_DisplayInventory(const CCSUsrMsg_DisplayIn
 void CCSUsrMsg_DisplayInventory::SharedCtor() {
   _cached_size_ = 0;
   display_ = false;
+  user_id_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -11596,6 +11599,7 @@ CCSUsrMsg_DisplayInventory* CCSUsrMsg_DisplayInventory::New() const {
 void CCSUsrMsg_DisplayInventory::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     display_ = false;
+    user_id_ = 0;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -11615,6 +11619,22 @@ bool CCSUsrMsg_DisplayInventory::MergePartialFromCodedStream(
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &display_)));
           _set_bit(0);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(16)) goto parse_user_id;
+        break;
+      }
+      
+      // optional int32 user_id = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_user_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &user_id_)));
+          _set_bit(1);
         } else {
           goto handle_uninterpreted;
         }
@@ -11645,6 +11665,11 @@ void CCSUsrMsg_DisplayInventory::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(1, this->display(), output);
   }
   
+  // optional int32 user_id = 2;
+  if (_has_bit(1)) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->user_id(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -11656,6 +11681,11 @@ void CCSUsrMsg_DisplayInventory::SerializeWithCachedSizes(
   // optional bool display = 1;
   if (_has_bit(0)) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(1, this->display(), target);
+  }
+  
+  // optional int32 user_id = 2;
+  if (_has_bit(1)) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->user_id(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -11672,6 +11702,13 @@ int CCSUsrMsg_DisplayInventory::ByteSize() const {
     // optional bool display = 1;
     if (has_display()) {
       total_size += 1 + 1;
+    }
+    
+    // optional int32 user_id = 2;
+    if (has_user_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->user_id());
     }
     
   }
@@ -11704,6 +11741,9 @@ void CCSUsrMsg_DisplayInventory::MergeFrom(const CCSUsrMsg_DisplayInventory& fro
     if (from._has_bit(0)) {
       set_display(from.display());
     }
+    if (from._has_bit(1)) {
+      set_user_id(from.user_id());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -11728,6 +11768,7 @@ bool CCSUsrMsg_DisplayInventory::IsInitialized() const {
 void CCSUsrMsg_DisplayInventory::Swap(CCSUsrMsg_DisplayInventory* other) {
   if (other != this) {
     std::swap(display_, other->display_);
+    std::swap(user_id_, other->user_id_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
