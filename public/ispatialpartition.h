@@ -110,6 +110,8 @@ enum
 abstract_class ISpatialPartition
 {
 public:
+	virtual ~ISpatialPartition() {}
+
 	// Create/destroy a handle for this dude in our system. Destroy
 	// will also remove it from all lists it happens to be in
 	virtual SpatialPartitionHandle_t CreateHandle( IHandleEntity *pHandleEntity ) = 0;
