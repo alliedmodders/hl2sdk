@@ -12,6 +12,9 @@
 
 #include "isteamclient.h"
 
+
+typedef uint64 PublishedFileId_t;
+
 //-----------------------------------------------------------------------------
 // Purpose: Functions for accessing, reading and writing files stored remotely 
 //			and cached locally
