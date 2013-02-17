@@ -61,6 +61,7 @@ class CSteamID;
 class ISPSharedMemory;
 class CGamestatsData;
 class CEngineHltvInfo_t;
+class INetMessage;
 
 namespace google
 {
