@@ -262,6 +262,9 @@ public:
 		m_nUserID = 0;
 #endif
 	}
+
+	virtual ~CFunctor() {}
+
 	virtual void operator()() = 0;
 
 	unsigned m_nUserID; // For debugging
