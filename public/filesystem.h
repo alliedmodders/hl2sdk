@@ -340,6 +340,29 @@ struct FileAsyncRequest_t
 	FSAllocFunc_t			pfnAlloc;			// custom allocator. can be null. not compatible with FSASYNC_FLAGS_FREEDATAPTR
 };
 
+struct MD5Value_t
+{
+	unsigned char bits[16];
+};
+
+struct FileHash_t
+{
+	int m_eFileHashType;
+	CRC32_t m_crcIOSequence;
+	MD5Value_t m_md5contents;
+	int m_cbFileLen;
+	int m_PackFileID;
+	int m_nPackFileNumber;
+};
+
+class CUnverifiedFileHash
+{
+public:
+	char m_PathID[MAX_PATH];
+	char m_Filename[MAX_PATH];
+	int m_nFileFraction;
+	FileHash_t m_FileHash;
+};
 
 class CUnverifiedCRCFile
 {
@@ -348,7 +371,6 @@ public:
 	char m_Filename[MAX_PATH];
 	CRC32_t m_CRC;
 };
-
 
 // Spew flags for SetWhitelistSpewFlags (set with the fs_whitelist_spew_flags cvar).
 // Update the comment for the fs_whitelist_spew_flags cvar if you change these.
@@ -403,7 +425,7 @@ public:
 // Main file system interface
 //-----------------------------------------------------------------------------
 
-#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem020"
+#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem022"
 
 abstract_class IFileSystem : public IAppSystem, public IBaseFileSystem
 {
@@ -725,24 +747,16 @@ public:
 	// As the server loads whitelists when it transitions maps, it calls this to calculate CRCs for any files marked
 	// with check_crc.   Then it calls CheckCachedFileCRC later when it gets client requests to verify CRCs.
 	virtual void			CacheFileCRCs( const char *pPathname, ECacheCRCType eType, IFileList *pFilter ) = 0;
-	virtual EFileCRCStatus	CheckCachedFileCRC( const char *pPathID, const char *pRelativeFilename, CRC32_t *pCRC ) = 0;
+	virtual EFileCRCStatus	CheckCachedFileHash( const char *pPathID, const char *pRelativeFilename, FileHash_t *pFileHash ) = 0;
 	
-	virtual void			CacheFileMD5s( const char *pPathname, ECacheCRCType eType, IFileList *pFilter ) = 0;
-
-	// Last param is an MD5Value_t pointer.
-	virtual	EFileCRCStatus	CheckCachedFileMD5( const char *pPathID, const char *pRelativeFilename, void *pMD5 ) = 0;
-
 	// Fills in the list of files that have been loaded off disk and have not been verified.
 	// Returns the number of files filled in (between 0 and nMaxFiles).
 	//
 	// This also removes any files it's returning from the unverified CRC list, so they won't be
 	// returned from here again.
 	// The client sends batches of these to the server to verify.
-	virtual int				GetUnverifiedCRCFiles( CUnverifiedCRCFile *pFiles, int nMaxFiles ) = 0;
+	virtual int				GetUnverifiedFileHashes( CUnverifiedFileHash *pFiles, int nMaxFiles ) = 0;
 
-	// First param is a CUnverifiedMD5File pointer.
-	virtual int				GetUnverifiedMD5Files( void *pFiles, int nMaxFiles ) = 0;
-	
 	// Control debug message output.
 	// Pass a combination of WHITELIST_SPEW_ flags.
 	virtual int				GetWhitelistSpewFlags() = 0;
@@ -763,9 +777,8 @@ public:
 	virtual bool RegisterMemoryFile( void *pFile, void **ppExistingFileWithRef ) = 0;
 	virtual void UnregisterMemoryFile( void *pFile ) = 0;
 
-	virtual void AddVPKFile( const char *pBasename, SearchPathAdd_t addType ) = 0;
-	virtual void RemoveVPKFile( const char *pBasename ) = 0;
-	virtual void GetVPKFileNames( CUtlVector<CUtlString> &destVector ) = 0;
+	virtual void CacheAllVPKFileHashes(bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes) = 0;
+	virtual bool CheckVPKFileHash(int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t &md5Value) = 0;
 };
 
 //-----------------------------------------------------------------------------
