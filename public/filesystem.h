@@ -309,7 +309,8 @@ enum FSAsyncFlags_t
 enum EFileCRCStatus
 {
 	k_eFileCRCStatus_CantOpenFile,		// We don't have this file. 
-	k_eFileCRCStatus_GotCRC
+	k_eFileCRCStatus_GotCRC,
+	k_eFileCRCStatus_FileInVPK
 };
 
 // Used in CacheFileCRCs.
@@ -354,6 +355,29 @@ struct FileAsyncRequest_t
 	FSAllocFunc_t			pfnAlloc;			// custom allocator. can be null. not compatible with FSASYNC_FLAGS_FREEDATAPTR
 };
 
+struct MD5Value_t
+{
+	unsigned char bits[16];
+};
+
+struct FileHash_t
+{
+	int m_eFileHashType;
+	CRC32_t m_crcIOSequence;
+	MD5Value_t m_md5contents;
+	int m_cbFileLen;
+	int m_PackFileID;
+	int m_nPackFileNumber;
+};
+
+class CUnverifiedFileHash
+{
+public:
+	char m_PathID[MAX_PATH];
+	char m_Filename[MAX_PATH];
+	int m_nFileFraction;
+	FileHash_t m_FileHash;
+};
 
 class CUnverifiedCRCFile
 {
@@ -361,6 +385,21 @@ public:
 	char m_PathID[MAX_PATH];
 	char m_Filename[MAX_PATH];
 	CRC32_t m_CRC;
+};
+
+class IIoStats
+{
+public:
+	virtual void	OnFileSeek( int nTimeInMs ) = 0;
+	virtual void	OnFileRead( int nTimeInMs, int nBytesRead ) = 0;
+	virtual void	OnFileOpen( const char *pFileName ) = 0;
+	virtual int		GetNumberOfFileSeeks() = 0;
+	virtual int		GetTimeInFileSeek() = 0;
+	virtual int		GetNumberOfFileReads() = 0;
+	virtual int		GetTimeInFileReads() = 0;
+	virtual int		GetFileReadTotalSize() = 0;
+	virtual int		GetNumberOfFileOpens() = 0;
+	virtual void	Reset() = 0;
 };
 
 
@@ -722,7 +761,7 @@ public:
 
 	// This should be called ONCE at startup. Multiplayer games (gameinfo.txt does not contain singleplayer_only)
 	// want to enable this so sv_pure works.
-	virtual void			EnableWhitelistFileTracking( bool bEnable ) = 0;
+	virtual void			EnableWhitelistFileTracking( bool bEnable, bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) = 0;
 
 	// This is called when the client connects to a server using a pure_server_whitelist.txt file.
 	//
@@ -753,7 +792,7 @@ public:
 	// As the server loads whitelists when it transitions maps, it calls this to calculate CRCs for any files marked
 	// with check_crc.   Then it calls CheckCachedFileCRC later when it gets client requests to verify CRCs.
 	virtual void			CacheFileCRCs( const char *pPathname, ECacheCRCType eType, IFileList *pFilter ) = 0;
-	virtual EFileCRCStatus	CheckCachedFileCRC( const char *pPathID, const char *pRelativeFilename, CRC32_t *pCRC ) = 0;
+	virtual EFileCRCStatus	CheckCachedFileHash( const char *pPathID, const char *pRelativeFilename, int nFileFraction, FileHash_t *pFileHash ) = 0;
 
 	// Fills in the list of files that have been loaded off disk and have not been verified.
 	// Returns the number of files filled in (between 0 and nMaxFiles).
@@ -761,7 +800,7 @@ public:
 	// This also removes any files it's returning from the unverified CRC list, so they won't be
 	// returned from here again.
 	// The client sends batches of these to the server to verify.
-	virtual int				GetUnverifiedCRCFiles( CUnverifiedCRCFile *pFiles, int nMaxFiles ) = 0;
+	virtual int				GetUnverifiedCRCFiles( CUnverifiedFileHash *pFiles, int nMaxFiles ) = 0;
 	
 	// Control debug message output.
 	// Pass a combination of WHITELIST_SPEW_ flags.
@@ -801,7 +840,14 @@ public:
 	// will be issued whenever the indicated # of seconds go by without an i/o request.  Passing
 	// 0.0 will turn off the functionality.
 	virtual void            SetIODelayAlarm( float flThreshhold ) = 0;
-
+	
+	virtual bool			AddXLSPUpdateSearchPath( const void *pData, int nSize ) = 0;
+	
+	virtual IIoStats		*GetIoStats() = 0;
+	
+	virtual void			CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) = 0;
+	virtual bool			CheckVPKFileHash( int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t &md5Value ) = 0;
+	virtual void			GetVPKFileStatisticsKV( KeyValues *pKV ) = 0;
 };
 
 //-----------------------------------------------------------------------------
