@@ -223,8 +223,8 @@ public:
 		{ m_pFileSystemPassThru->MarkAllCRCsUnverified(); }
 	virtual void CacheFileCRCs( const char *pPathname, ECacheCRCType eType, IFileList *pFilter )
 		{ return m_pFileSystemPassThru->CacheFileCRCs( pPathname, eType, pFilter ); }
-	virtual EFileCRCStatus CheckCachedFileHash( const char *pPathID, const char *pRelativeFilename, FileHash_t *pFileHash )
-		{ return m_pFileSystemPassThru->CheckCachedFileHash( pPathID, pRelativeFilename, pFileHash ); }
+	virtual EFileCRCStatus CheckCachedFileHash( const char *pPathID, const char *pRelativeFilename, int nFileFraction, FileHash_t *pFileHash )
+		{ return m_pFileSystemPassThru->CheckCachedFileHash( pPathID, pRelativeFilename, nFileFraction, pFileHash ); }
 	virtual int GetUnverifiedFileHashes( CUnverifiedFileHash *pFiles, int nMaxFiles )
 		{ return m_pFileSystemPassThru->GetUnverifiedFileHashes( pFiles, nMaxFiles ); }
 	virtual int GetWhitelistSpewFlags()
