@@ -46,7 +46,7 @@ public:
 	// disconnects a client with a given reason
 	virtual void	Disconnect( const char *reason, ... ) = 0;
 	
-	virtual bool	ChangeSplitscreenUser( int ) = 0;
+	virtual bool	ChangeSplitscreenUser( int nSplitScreenUserSlot ) = 0;
 
 	virtual int				GetPlayerSlot() const = 0; // returns client slot (usually entity number-1)
 	virtual int				GetUserID() const = 0; // unique ID on this server 

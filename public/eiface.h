@@ -24,6 +24,7 @@
 #include "engine/iserverplugin.h"
 #include "tier1/bitbuf.h"
 #include "steam/isteamremotestorage.h"
+#include "iclient.h"
 
 //-----------------------------------------------------------------------------
 // forward declarations
@@ -470,11 +471,11 @@ public:
 	
 	virtual float GetLatencyForChoreoSounds() = 0;
 	
-	virtual int GetClientCrossPlayPlatform( int client_index ) = 0;
+	virtual CrossPlayPlatform_t GetClientCrossPlayPlatform( int ent_num ) = 0;
 	
-	virtual void EnsureInstanceBaseline( int ) = 0;
+	virtual void EnsureInstanceBaseline( int ent_num ) = 0;
 	
-	virtual bool ReserveServerForQueuedGame( const char * ) = 0;
+	virtual bool ReserveServerForQueuedGame( const char *szReservationPayload ) = 0;
 	
 	virtual bool GetEngineHltvInfo( CEngineHltvInfo_t &out ) = 0;
 };
@@ -604,7 +605,7 @@ public:
 	virtual bool			IsValveDS() = 0;
 	virtual KeyValues		*GetExtendedServerInfoForNewClient() = 0;
 	virtual void 			UpdateGCInformation() = 0;
-	virtual void 			ReportGCQueuedMatchStart( int, unsigned int *, int ) = 0;
+	virtual void 			ReportGCQueuedMatchStart( int32 iReservationStage, uint32 *puiConfirmedAccounts, int numConfirmedAccounts ) = 0;
 	
 	virtual PublishedFileId_t	GetUGCMapFileID( const char *mapName ) = 0;
 	virtual void			GetMatchmakingGameData( char *buf, size_t bufSize ) = 0;
