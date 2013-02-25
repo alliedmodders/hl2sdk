@@ -40,6 +40,7 @@ public:
 	// entities are created / spawned / precached here
 	virtual void LevelInitPostEntity() = 0;
 
+	virtual void LevelShutdownPreClearSteamAPIContext() {};
 	virtual void LevelShutdownPreEntity() = 0;
 	// Entities are deleted / released here...
 	virtual void LevelShutdownPostEntity() = 0;
@@ -75,6 +76,7 @@ public:
 	static void ShutdownAllSystems();
 	static void LevelInitPreEntityAllSystems( char const* pMapName );
 	static void LevelInitPostEntityAllSystems();
+	static void LevelShutdownPreClearSteamAPIContextAllSystems();
 	static void LevelShutdownPreEntityAllSystems();
 	static void LevelShutdownPostEntityAllSystems();
 
@@ -139,6 +141,7 @@ public:
 	// Level init, shutdown
 	virtual void LevelInitPreEntity() {}
 	virtual void LevelInitPostEntity() {}
+	virtual void LevelShutdownPreClearSteamAPIContext() {}
 	virtual void LevelShutdownPreEntity() {}
 	virtual void LevelShutdownPostEntity() {}
 
@@ -185,6 +188,7 @@ public:
 	// Level init, shutdown
 	virtual void LevelInitPreEntity() {}
 	virtual void LevelInitPostEntity() {}
+	virtual void LevelShutdownPreClearSteamAPIContext() {}
 	virtual void LevelShutdownPreEntity() {}
 	virtual void LevelShutdownPostEntity() {}
 
