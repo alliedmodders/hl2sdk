@@ -401,7 +401,9 @@ public:
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_5	"ServerGameDLL005"
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_6	"ServerGameDLL006"
-#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL007"
+#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_7	"ServerGameDLL007"
+#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_8	"ServerGameDLL008"
+#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL009"
 
 //-----------------------------------------------------------------------------
 // Purpose: These are the interfaces that the game .dll exposes to the engine
@@ -512,6 +514,13 @@ public:
 	virtual void			GameServerSteamAPIActivated( void ) = 0;
 	
 	virtual void			GameServerSteamAPIShutdown( void ) = 0;
+
+	virtual void			SetServerHibernation( bool bHibernating ) = 0;
+
+	virtual void			*GetServerGCLobby() = 0;
+
+	virtual const char		*GetServerBrowserMapOverride() = 0;
+	virtual const char		*GetServerBrowserGameData() = 0;
 };
 
 //-----------------------------------------------------------------------------
