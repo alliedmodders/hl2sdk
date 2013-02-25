@@ -265,14 +265,14 @@ public:
 	virtual void            SetIODelayAlarm( float flThreshhold ) { m_pFileSystemPassThru->SetIODelayAlarm( flThreshhold ); }
 
 	virtual bool			AddXLSPUpdateSearchPath( const void *pData, int nSize )
-		{ m_pFileSystemPassThru->AddXLSPUpdateSearchPath( pData, nSize ); }
+		{ return m_pFileSystemPassThru->AddXLSPUpdateSearchPath( pData, nSize ); }
 	
-	virtual IIoStats		*GetIoStats() { m_pFileSystemPassThru->GetIoStats(); }
+	virtual IIoStats		*GetIoStats() { return m_pFileSystemPassThru->GetIoStats(); }
 	
 	virtual void			CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes )
 		{ m_pFileSystemPassThru->CacheAllVPKFileHashes( bCacheAllVPKHashes, bRecalculateAndCheckHashes ); }
 	virtual bool			CheckVPKFileHash( int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t &md5Value )
-		{ m_pFileSystemPassThru->CheckVPKFileHash( PackFileID, nPackFileNumber, nFileFraction, md5Value ); }
+		{ return m_pFileSystemPassThru->CheckVPKFileHash( PackFileID, nPackFileNumber, nFileFraction, md5Value ); }
 	virtual void			GetVPKFileStatisticsKV( KeyValues *pKV )
 		{ m_pFileSystemPassThru->GetVPKFileStatisticsKV( pKV ); }
 
