@@ -352,7 +352,7 @@ PLATFORM_INTERFACE void _AssertValidReadPtr( void* ptr, int count = 1 );
 PLATFORM_INTERFACE void _AssertValidWritePtr( void* ptr, int count = 1 );
 PLATFORM_INTERFACE void _AssertValidReadWritePtr( void* ptr, int count = 1 );
 
-PLATFORM_INTERFACE  void _AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFFF );
+PLATFORM_INTERFACE  void AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFFF );
 template<class T> inline void AssertValidReadPtr( T* ptr, int count = 1 )		     { _AssertValidReadPtr( (void*)ptr, count ); }
 template<class T> inline void AssertValidWritePtr( T* ptr, int count = 1 )		     { _AssertValidWritePtr( (void*)ptr, count ); }
 template<class T> inline void AssertValidReadWritePtr( T* ptr, int count = 1 )	     { _AssertValidReadWritePtr( (void*)ptr, count ); }

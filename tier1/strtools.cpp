@@ -112,14 +112,14 @@ int _V_memcmp (const void *m1, const void *m2, int count)
 
 int	_V_strlen(const char *str)
 {
-	_AssertValidStringPtr(str);
+	AssertValidStringPtr(str);
 	return strlen( str );
 }
 
 void _V_strcpy (char *dest, const char *src)
 {
 	AssertValidWritePtr(dest);
-	_AssertValidStringPtr(src);
+	AssertValidStringPtr(src);
 
 	strcpy( dest, src );
 }
@@ -131,7 +131,7 @@ int	_V_wcslen(const wchar_t *pwch)
 
 char *_V_strrchr(const char *s, char c)
 {
-	_AssertValidStringPtr( s );
+	AssertValidStringPtr( s );
     int len = V_strlen(s);
     s += len;
     while (len--)
@@ -141,8 +141,8 @@ char *_V_strrchr(const char *s, char c)
 
 int _V_strcmp (const char *s1, const char *s2)
 {
-	_AssertValidStringPtr( s1 );
-	_AssertValidStringPtr( s2 );
+	AssertValidStringPtr( s1 );
+	AssertValidStringPtr( s2 );
 
 	return strcmp( s1, s2 );
 }
@@ -168,8 +168,8 @@ int _V_wcscmp (const wchar_t *s1, const wchar_t *s2)
 
 int	_V_stricmp( const char *s1, const char *s2 )
 {
-	_AssertValidStringPtr( s1 );
-	_AssertValidStringPtr( s2 );
+	AssertValidStringPtr( s1 );
+	AssertValidStringPtr( s2 );
 
 	return stricmp( s1, s2 );
 }
@@ -177,8 +177,8 @@ int	_V_stricmp( const char *s1, const char *s2 )
 
 char *_V_strstr( const char *s1, const char *search )
 {
-	_AssertValidStringPtr( s1 );
-	_AssertValidStringPtr( search );
+	AssertValidStringPtr( s1 );
+	AssertValidStringPtr( search );
 
 #if defined( _X360 )
 	return (char *)strstr( (char *)s1, search );
@@ -189,22 +189,22 @@ char *_V_strstr( const char *s1, const char *search )
 
 char *_V_strupr (char *start)
 {
-	_AssertValidStringPtr( start );
+	AssertValidStringPtr( start );
 	return strupr( start );
 }
 
 
 char *_V_strlower (char *start)
 {
-	_AssertValidStringPtr( start );
+	AssertValidStringPtr( start );
 	return strlwr(start);
 }
 
 int V_strncmp (const char *s1, const char *s2, int count)
 {
 	Assert( count >= 0 );
-	_AssertValidStringPtr( s1, count );
-	_AssertValidStringPtr( s2, count );
+	AssertValidStringPtr( s1, count );
+	AssertValidStringPtr( s2, count );
 
 	while ( count-- > 0 )
 	{
@@ -222,7 +222,7 @@ int V_strncmp (const char *s1, const char *s2, int count)
 char *V_strnlwr(char *s, size_t count)
 {
 	Assert( count >= 0 );
-	_AssertValidStringPtr( s, count );
+	AssertValidStringPtr( s, count );
 
 	char* pRet = s;
 	if ( !s )
@@ -249,8 +249,8 @@ char *V_strnlwr(char *s, size_t count)
 int V_strncasecmp (const char *s1, const char *s2, int n)
 {
 	Assert( n >= 0 );
-	_AssertValidStringPtr( s1 );
-	_AssertValidStringPtr( s2 );
+	AssertValidStringPtr( s1 );
+	AssertValidStringPtr( s2 );
 	
 	while ( n-- > 0 )
 	{
@@ -275,8 +275,8 @@ int V_strncasecmp (const char *s1, const char *s2, int n)
 
 int V_strcasecmp( const char *s1, const char *s2 )
 {
-	_AssertValidStringPtr( s1 );
-	_AssertValidStringPtr( s2 );
+	AssertValidStringPtr( s1 );
+	AssertValidStringPtr( s2 );
 
 	return stricmp( s1, s2 );
 }
@@ -284,8 +284,8 @@ int V_strcasecmp( const char *s1, const char *s2 )
 int V_strnicmp (const char *s1, const char *s2, int n)
 {
 	Assert( n >= 0 );
-	_AssertValidStringPtr(s1);
-	_AssertValidStringPtr(s2);
+	AssertValidStringPtr(s1);
+	AssertValidStringPtr(s2);
 
 	return V_strncasecmp( s1, s2, n );
 }
@@ -293,8 +293,8 @@ int V_strnicmp (const char *s1, const char *s2, int n)
 
 const char *StringAfterPrefix( const char *str, const char *prefix )
 {
-	_AssertValidStringPtr( str );
-	_AssertValidStringPtr( prefix );
+	AssertValidStringPtr( str );
+	AssertValidStringPtr( prefix );
 	do
 	{
 		if ( !*prefix )
@@ -306,8 +306,8 @@ const char *StringAfterPrefix( const char *str, const char *prefix )
 
 const char *StringAfterPrefixCaseSensitive( const char *str, const char *prefix )
 {
-	_AssertValidStringPtr( str );
-	_AssertValidStringPtr( prefix );
+	AssertValidStringPtr( str );
+	AssertValidStringPtr( prefix );
 	do
 	{
 		if ( !*prefix )
@@ -320,7 +320,7 @@ const char *StringAfterPrefixCaseSensitive( const char *str, const char *prefix 
 
 int V_atoi (const char *str)
 {
-	_AssertValidStringPtr( str );
+	AssertValidStringPtr( str );
 
 	int             val;
 	int             sign;
@@ -382,7 +382,7 @@ int V_atoi (const char *str)
 
 float V_atof (const char *str)
 {
-	_AssertValidStringPtr( str );
+	AssertValidStringPtr( str );
 	double			val;
 	int             sign;
 	int             c;
@@ -491,8 +491,8 @@ void V_normalizeFloatString( char* pFloat )
 //-----------------------------------------------------------------------------
 char const* V_stristr( char const* pStr, char const* pSearch )
 {
-	_AssertValidStringPtr(pStr);
-	_AssertValidStringPtr(pSearch);
+	AssertValidStringPtr(pStr);
+	AssertValidStringPtr(pSearch);
 
 	if (!pStr || !pSearch) 
 		return 0;
@@ -534,8 +534,8 @@ char const* V_stristr( char const* pStr, char const* pSearch )
 
 char* V_stristr( char* pStr, char const* pSearch )
 {
-	_AssertValidStringPtr( pStr );
-	_AssertValidStringPtr( pSearch );
+	AssertValidStringPtr( pStr );
+	AssertValidStringPtr( pSearch );
 
 	return (char*)V_stristr( (char const*)pStr, pSearch );
 }
@@ -545,8 +545,8 @@ char* V_stristr( char* pStr, char const* pSearch )
 //-----------------------------------------------------------------------------
 char const* V_strnistr( char const* pStr, char const* pSearch, int n )
 {
-	_AssertValidStringPtr(pStr);
-	_AssertValidStringPtr(pSearch);
+	AssertValidStringPtr(pStr);
+	AssertValidStringPtr(pSearch);
 
 	if (!pStr || !pSearch) 
 		return 0;
@@ -615,7 +615,7 @@ void V_strncpy( char *pDest, char const *pSrc, int maxLen )
 {
 	Assert( maxLen >= 0 );
 	AssertValidWritePtr( pDest, maxLen );
-	_AssertValidStringPtr( pSrc );
+	AssertValidStringPtr( pSrc );
 
 	strncpy( pDest, pSrc, maxLen );
 	if ( maxLen > 0 )
@@ -674,7 +674,7 @@ int V_snprintf( char *pDest, int maxLen, char const *pFormat, ... )
 {
 	Assert( maxLen >= 0 );
 	AssertValidWritePtr( pDest, maxLen );
-	_AssertValidStringPtr( pFormat );
+	AssertValidStringPtr( pFormat );
 
 	va_list marker;
 
@@ -703,7 +703,7 @@ int V_vsnprintf( char *pDest, int maxLen, char const *pFormat, va_list params )
 {
 	Assert( maxLen > 0 );
 	AssertValidWritePtr( pDest, maxLen );
-	_AssertValidStringPtr( pFormat );
+	AssertValidStringPtr( pFormat );
 
 	int len = _vsnprintf( pDest, maxLen, pFormat, params );
 
@@ -732,8 +732,8 @@ char *V_strncat(char *pDest, const char *pSrc, size_t destBufferSize, int max_ch
 	size_t charstocopy = (size_t)0;
 
 	Assert( destBufferSize >= 0 );
-	_AssertValidStringPtr( pDest);
-	_AssertValidStringPtr( pSrc );
+	AssertValidStringPtr( pDest);
+	AssertValidStringPtr( pSrc );
 	
 	size_t len = strlen(pDest);
 	size_t srclen = strlen( pSrc );
@@ -943,7 +943,7 @@ char *V_pretifynum( int64 value )
 //-----------------------------------------------------------------------------
 int V_UTF8ToUnicode( const char *pUTF8, wchar_t *pwchDest, int cubDestSizeInBytes )
 {
-	_AssertValidStringPtr(pUTF8);
+	AssertValidStringPtr(pUTF8);
 	AssertValidWritePtr(pwchDest);
 
 	pwchDest[0] = 0;
@@ -961,7 +961,7 @@ int V_UTF8ToUnicode( const char *pUTF8, wchar_t *pwchDest, int cubDestSizeInByte
 //-----------------------------------------------------------------------------
 int V_UnicodeToUTF8( const wchar_t *pUnicode, char *pUTF8, int cubDestSizeInBytes )
 {
-	_AssertValidStringPtr(pUTF8, cubDestSizeInBytes);
+	AssertValidStringPtr(pUTF8, cubDestSizeInBytes);
 	AssertValidReadPtr(pUnicode);
 
 	pUTF8[0] = 0;
