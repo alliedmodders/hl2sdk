@@ -59,6 +59,15 @@ class CGamestatsData;
 class CSteamID;
 class ISPSharedMemory;
 class CGamestatsData;
+class CEngineHltvInfo_t;
+
+namespace google
+{
+	namespace protobuf
+	{
+		class Message;
+	}
+}
 
 typedef struct player_info_s player_info_t;
 
@@ -72,7 +81,7 @@ typedef struct player_info_s player_info_t;
 #define DLLEXPORT /* */
 #endif
 
-#define INTERFACEVERSION_VENGINESERVER	"VEngineServer022"
+#define INTERFACEVERSION_VENGINESERVER	"VEngineServer023"
 
 struct bbox_t
 {
@@ -139,6 +148,9 @@ public:
 	// Return the current number of used edict slots
 	virtual int			GetEntityCount( void ) = 0;
 	
+	// Return the maximum number of used edict slots
+	virtual int			GetMaxEntityCount( void ) = 0;
+	
 	// Get stats info interface for a client netchannel
 	virtual INetChannelInfo* GetPlayerNetInfo( int playerIndex ) = 0;
 	
@@ -189,12 +201,7 @@ public:
 	// Given the current PVS(or PAS) and origin, determine which players should hear/receive the message
 	virtual void		Message_DetermineMulticastRecipients( bool usepas, const Vector& origin, CPlayerBitVec& playerbits ) = 0;
 
-	// Begin a message from a server side entity to its client side counterpart (func_breakable glass, e.g.)
-	virtual bf_write	*EntityMessageBegin( int ent_index, ServerClass * ent_class, bool reliable ) = 0;
-	// Begin a usermessage from the server to the client .dll
-	virtual bf_write	*UserMessageBegin( IRecipientFilter *filter, int msg_type, char const *pchMsgName ) = 0;
-	// Finish the Entity or UserMessage and dispatch to network layer
-	virtual void		MessageEnd( void ) = 0;
+	virtual void		SendUserMessage( IRecipientFilter &filter, int message, const google::protobuf::Message &msg ) = 0;
 
 	// Print szMsg to the client console.
 	virtual void		ClientPrintf( edict_t *pEdict, const char *szMsg ) = 0;
@@ -331,10 +338,6 @@ public:
 	// Called when relevant edict state flags change.
 	virtual void		NotifyEdictFlagsChange( int iEdict ) = 0;
 	
-	// Only valid during CheckTransmit. Also, only the PVS, networked areas, and
-	// m_pTransmitInfo are valid in the returned strucutre.
-	virtual const CCheckTransmitInfo* GetPrevCheckTransmitInfo( edict_t *pPlayerEdict ) = 0;
-	
 	virtual CSharedEdictChangeInfo* GetSharedEdictChangeInfo() = 0;
 
 	// Tells the engine we can immdiately re-use all edict indices
@@ -421,9 +424,6 @@ public:
 
 	// Returns the SteamID of the game server
 	virtual const CSteamID	*GetGameServerSteamID() = 0;
-	
-	// Validate session
-	virtual void HostValidateSession() = 0;
 
 	// Update the 360 pacifier/spinner
 	virtual void RefreshScreenIfNecessary() = 0;
@@ -434,16 +434,20 @@ public:
 	virtual void TracePaintSurface( const model_t *model, const Vector& position, float radius, CUtlVector<Color>& surfColor ) = 0;
 	virtual void RemoveAllPaint() = 0;
 
-	// Send a client command keyvalues
-	// keyvalues are deleted inside the function
-	virtual void ClientCommandKeyValues( edict_t *pEdict, KeyValues *pCommand ) = 0;
-
 	// Returns the XUID of the specified player. It'll be NULL if the player hasn't connected yet.
 	virtual uint64 GetClientXUID( edict_t *pPlayerEdict ) = 0;
 	virtual bool IsActiveApp() = 0;
+	
+	virtual void DisconnectClients( bool bExceptHLTV ) = 0;
+	
+	virtual int GetServerVersion( void ) = 0;
+	
+	virtual bool GetEngineHltvInfo( CEngineHltvInfo_t &out ) = 0;
+	
+	virtual bool _UnknownFunc1( bool bSomethingToDoWithHLTV ) = 0;
 };
 
-#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
+#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL006"
 
 //-----------------------------------------------------------------------------
 // Purpose: These are the interfaces that the game .dll exposes to the engine
@@ -519,9 +523,6 @@ public:
 	// Build the list of maps adjacent to the current map
 	virtual void			BuildAdjacentMapList( void ) = 0;
 
-	// Retrieve info needed for parsing the specified user message
-	virtual bool			GetUserMessageInfo( int msg_type, char *name, int maxnamelength, int& size ) = 0;
-
 	// Hand over the StandardSendProxies in the game DLL's module.
 	virtual CStandardSendProxies*	GetStandardSendProxies() = 0;
 
@@ -554,9 +555,6 @@ public:
 
 	// Called after the steam API has been activated post-level startup
 	virtual void			GameServerSteamAPIActivated( void ) = 0;
-	
-	// Called to apply lobby settings to a dedicated server
-	virtual void			ApplyGameSettings( KeyValues *pKV ) = 0;
 
 	// 
 	virtual void			GetMatchmakingTags( char *buf, size_t bufSize ) = 0;
@@ -572,6 +570,9 @@ public:
 
 	// return true to disconnect client due to timeout (used to do stricter timeouts when the game is sure the client isn't loading a map)
 	virtual bool			ShouldTimeoutClient( int nUserID, float flTimeSinceLastReceived ) = 0;
+	
+	virtual void			*GetServerGCLobby() = 0;
+	virtual void			GameServerSteamAPIShutdown( void ) = 0;
 };
 
 //-----------------------------------------------------------------------------
