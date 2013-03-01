@@ -173,7 +173,7 @@ class SendProp
 {
 public:
 						SendProp();
-	virtual				~SendProp();
+	/*virtual*/				~SendProp();
 
 	void				Clear();
 
