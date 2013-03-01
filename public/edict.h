@@ -51,7 +51,8 @@ public:
 	string_t		mapname;
 	int				mapversion;
 	string_t		startspot;
-	MapLoadType_t	eLoadType;		// How the current map was loaded
+	int				maxEntities;
+	//MapLoadType_t	eLoadType;		// How the current map was loaded
 	bool			bMapLoadFailed;	// Map has failed to load, we need to kick back to the main menu
 
 	// game specific flags
@@ -59,10 +60,9 @@ public:
 	bool			coop;
 	bool			teamplay;
 	// current maxentities
-	int				maxEntities;
+	edict_t			*pEdicts;
 
 	int				serverCount;
-	edict_t			*pEdicts;
 };
 
 inline CGlobalVars::CGlobalVars( bool bIsClient ) : 
