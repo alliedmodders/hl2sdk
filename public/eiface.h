@@ -23,7 +23,6 @@
 #include "bitvec.h"
 #include "engine/iserverplugin.h"
 #include "tier1/bitbuf.h"
-#include "steam/isteamremotestorage.h"
 #include "iclient.h"
 
 //-----------------------------------------------------------------------------
@@ -73,6 +72,8 @@ namespace google
 }
 
 typedef struct player_info_s player_info_t;
+
+typedef uint64 PublishedFileId_t;
 
 //-----------------------------------------------------------------------------
 // defines
