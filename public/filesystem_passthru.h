@@ -165,6 +165,11 @@ public:
 		const char *pPathID,
 		FileFindHandle_t *pHandle
 		)																										{ return m_pFileSystemPassThru->FindFirstEx( pWildCard, pPathID, pHandle ); }
+	virtual void			FindFileAbsoluteList(
+		CUtlVector<CUtlString> &output,
+		const char *pWildCard,
+		const char *pPathID
+		)																										{ m_pFileSystemPassThru->FindFileAbsoluteList( output, pWildCard, pPathID ); }
 	virtual void			MarkPathIDByRequestOnly( const char *pPathID, bool bRequestOnly )					{ m_pFileSystemPassThru->MarkPathIDByRequestOnly( pPathID, bRequestOnly ); }
 	virtual bool			AddPackFile( const char *fullpath, const char *pathID )								{ return m_pFileSystemPassThru->AddPackFile( fullpath, pathID ); }
 	virtual FSAsyncStatus_t	AsyncAppend(const char *pFileName, const void *pSrc, int nSrcBytes, bool bFreeMemory, FSAsyncControl_t *pControl ) { return m_pFileSystemPassThru->AsyncAppend( pFileName, pSrc, nSrcBytes, bFreeMemory, pControl); }
