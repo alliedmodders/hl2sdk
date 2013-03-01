@@ -438,7 +438,7 @@ public:
 	virtual uint64 GetClientXUID( edict_t *pPlayerEdict ) = 0;
 	virtual bool IsActiveApp() = 0;
 	
-	virtual void DisconnectClients( bool bExceptHLTV ) = 0;
+	virtual void DisconnectAllClients( const char * szReason, bool skipHLTV ) = 0;
 	
 	virtual int GetServerVersion( void ) = 0;
 	
@@ -654,9 +654,6 @@ public:
 	// A block of CUserCmds has arrived from the user, decode them and buffer for execution during player simulation
 	virtual float			ProcessUsercmds( edict_t *player, bf_read *buf, int numcmds, int totalcmds,
 								int dropped_packets, bool ignore, bool paused ) = 0;
-	
-	// Let the game .dll do stuff after messages have been sent to all of the clients once the server frame is complete
-	virtual void			PostClientMessagesSent( void ) = 0;
 
 	// For players, looks up the CPlayerState structure corresponding to the player
 	virtual CPlayerState	*GetPlayerState( edict_t *player ) = 0;
