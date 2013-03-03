@@ -447,6 +447,15 @@ public:
 	virtual bool _UnknownFunc1( bool bSomethingToDoWithHLTV ) = 0;
 };
 
+abstract_class IServerGCLobby
+{
+public:
+	virtual bool HasLobby() const = 0;
+	virtual bool SteamIDAllowedToConnect( const CSteamID &steamId ) const = 0;
+	virtual void UpdateServerDetails( void ) = 0;
+	virtual bool ShouldHibernate() = 0;
+};
+
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL006"
 
 //-----------------------------------------------------------------------------
@@ -571,7 +580,7 @@ public:
 	// return true to disconnect client due to timeout (used to do stricter timeouts when the game is sure the client isn't loading a map)
 	virtual bool			ShouldTimeoutClient( int nUserID, float flTimeSinceLastReceived ) = 0;
 	
-	virtual void			*GetServerGCLobby() = 0;
+	virtual IServerGCLobby	*GetServerGCLobby() = 0;
 	virtual void			GameServerSteamAPIShutdown( void ) = 0;
 };
 
