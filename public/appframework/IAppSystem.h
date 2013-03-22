@@ -76,6 +76,9 @@ public:
 
 	// Reconnect to a particular interface
 	virtual void Reconnect( CreateInterfaceFn factory, const char *pInterfaceName ) = 0;
+
+	// New in Dota. Seems to do nothing but return true in most or all cases.
+	virtual bool UnknownFunc1() = 0;
 };
 
 

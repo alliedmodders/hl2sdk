@@ -95,6 +95,7 @@ public:
 	virtual const AppSystemInfo_t* GetDependencies()															{ return m_pFileSystemPassThru->GetDependencies(); }
 	virtual AppSystemTier_t GetTier()																			{ return m_pFileSystemPassThru->GetTier(); }
 	virtual void Reconnect( CreateInterfaceFn factory, const char *pInterfaceName )								{ m_pFileSystemPassThru->Reconnect( factory, pInterfaceName ); }
+	virtual bool UnknownFunc1()																					{ return m_pFileSystemPassThru->UnknownFunc1(); }
 
 	virtual void			RemoveAllSearchPaths( void )														{ m_pFileSystemPassThru->RemoveAllSearchPaths(); }
 	virtual void			AddSearchPath( const char *pPath, const char *pathID, SearchPathAdd_t addType )		{ m_pFileSystemPassThru->AddSearchPath( pPath, pathID, addType ); }
