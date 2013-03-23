@@ -694,7 +694,7 @@ public:
 	
 	virtual void			UnknownFunc1() = 0;
 	
-	virtual bool			DispatchClientMessage( edict_t *pEntity, int msg_type, int size, uint8_t *pData ) = 0;
+	virtual bool			DispatchClientMessage( edict_t *pEntity, int msg_type, int size, uint8 *pData ) = 0;
 };
 
 #define INTERFACEVERSION_UPLOADGAMESTATS		"ServerUploadGameStats001"
