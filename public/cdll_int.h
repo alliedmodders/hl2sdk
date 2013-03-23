@@ -82,6 +82,7 @@ namespace vgui
 typedef struct player_info_s
 {
 	DECLARE_BYTESWAP_DATADESC();
+	uint64			unknown;
 	// network xuid
 	uint64			xuid;
 	// scoreboard information
