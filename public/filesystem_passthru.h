@@ -217,8 +217,8 @@ public:
 
 	virtual void EnableWhitelistFileTracking( bool bEnable, bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes )
 		{ m_pFileSystemPassThru->EnableWhitelistFileTracking( bEnable, bCacheAllVPKHashes, bRecalculateAndCheckHashes ); }
-	virtual void RegisterFileWhitelist( IFileList *pForceMatchList, IFileList *pAllowFromDiskList, IFileList **pFilesToReload )
-		{ m_pFileSystemPassThru->RegisterFileWhitelist( pForceMatchList, pAllowFromDiskList, pFilesToReload ); }
+	virtual void RegisterFileWhitelist( IPureServerWhitelist *pPureList, IFileList **pFilesToReload )
+		{ m_pFileSystemPassThru->RegisterFileWhitelist( pPureList, pFilesToReload ); }
 	virtual void MarkAllCRCsUnverified()
 		{ m_pFileSystemPassThru->MarkAllCRCsUnverified(); }
 	virtual void CacheFileCRCs( const char *pPathname, ECacheCRCType eType, IFileList *pFilter )
@@ -252,10 +252,13 @@ public:
 	virtual void UnregisterMemoryFile( void *pFile )
 		{ m_pFileSystemPassThru->UnregisterMemoryFile( pFile ); }
 
-	virtual void CacheAllVPKFileHashes(bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes)
-		{ m_pFileSystemPassThru->CacheAllVPKFileHashes(bCacheAllVPKHashes, bRecalculateAndCheckHashes); }
-	virtual bool CheckVPKFileHash(int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t &md5Value)
-		{ m_pFileSystemPassThru->CheckVPKFileHash(PackFileID, nPackFileNumber, nFileFraction, md5Value); }
+	virtual void CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes )
+		{ m_pFileSystemPassThru->CacheAllVPKFileHashes( bCacheAllVPKHashes, bRecalculateAndCheckHashes ); }
+	virtual bool CheckVPKFileHash( int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t &md5Value )
+		{ return m_pFileSystemPassThru->CheckVPKFileHash( PackFileID, nPackFileNumber, nFileFraction, md5Value ); }
+
+	virtual void NotifyFileUnloaded( const char *pFileName, const char *pPathId )
+		{ m_pFileSystemPassThru->NotifyFileUnloaded( pFileName, pPathId ); }
 
 protected:
 	IFileSystem *m_pFileSystemPassThru;

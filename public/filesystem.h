@@ -378,6 +378,16 @@ public:
 #define WHITELIST_SPEW_RELOAD_FILES			0x0002	// show files the filesystem is telling the engine to reload
 #define WHITELIST_SPEW_DONT_RELOAD_FILES	0x0004	// show files the filesystem is NOT telling the engine to reload
 
+abstract_class IPureServerWhitelist
+{
+public:
+	virtual void		AddRef() = 0;
+	virtual void		Release() = 0;
+	virtual const char	*GetFileClass( const char * ) = 0;
+	virtual int			GetTrustedKeyCount() const = 0;
+	virtual void		GetTrustedKey( int keyIndex, int *pBuffer ) = 0;
+};
+
 
 //-----------------------------------------------------------------------------
 // Base file system interface
@@ -738,7 +748,7 @@ public:
 	// and the engine should reload it so it can come from Steam.
 	//
 	// Be sure to call Release() on pFilesToReload.
-	virtual void			RegisterFileWhitelist( IFileList *pWantCRCList, IFileList *pAllowFromDiskList, IFileList **pFilesToReload ) = 0;
+	virtual void			RegisterFileWhitelist( IPureServerWhitelist *pPureList, IFileList **pFilesToReload ) = 0;
 
 	// Called when the client logs onto a server. Any files that came off disk should be marked as 
 	// unverified because this server may have a different set of files it wants to guarantee.
@@ -774,11 +784,13 @@ public:
 	virtual bool			IsFileCacheLoaded( void *pFileCache ) = 0;
 	virtual void			DestroyFileCache( void *pFileCache ) = 0;
 
-	virtual bool RegisterMemoryFile( void *pFile, void **ppExistingFileWithRef ) = 0;
-	virtual void UnregisterMemoryFile( void *pFile ) = 0;
+	virtual bool			RegisterMemoryFile( void *pFile, void **ppExistingFileWithRef ) = 0;
+	virtual void			UnregisterMemoryFile( void *pFile ) = 0;
 
-	virtual void CacheAllVPKFileHashes(bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes) = 0;
-	virtual bool CheckVPKFileHash(int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t &md5Value) = 0;
+	virtual void			CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) = 0;
+	virtual bool			CheckVPKFileHash( int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t &md5Value ) = 0;
+
+	virtual void			NotifyFileUnloaded( const char *pFileName, const char *pPathId ) = 0;
 };
 
 //-----------------------------------------------------------------------------
