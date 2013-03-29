@@ -2343,13 +2343,13 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 void *KeyValues::operator new( size_t iAllocSize )
 {
 	MEM_ALLOC_CREDIT();
-	return KeyValuesSystem()->AllocKeyValuesMemory(iAllocSize);
+	return KeyValuesSystem()->AllocKeyValuesMemory();
 }
 
 void *KeyValues::operator new( size_t iAllocSize, int nBlockUse, const char *pFileName, int nLine )
 {
 	MemAlloc_PushAllocDbgInfo( pFileName, nLine );
-	void *p = KeyValuesSystem()->AllocKeyValuesMemory(iAllocSize);
+	void *p = KeyValuesSystem()->AllocKeyValuesMemory();
 	MemAlloc_PopAllocDbgInfo();
 	return p;
 }

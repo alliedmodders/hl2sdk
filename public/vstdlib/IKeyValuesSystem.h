@@ -29,7 +29,7 @@ public:
 	virtual void RegisterSizeofKeyValues(int size) = 0;
 
 	// allocates/frees a KeyValues object from the shared mempool
-	virtual void *AllocKeyValuesMemory(int size) = 0;
+	virtual void *AllocKeyValuesMemory() = 0;
 	virtual void FreeKeyValuesMemory(void *pMem) = 0;
 
 	// symbol table access (used for key names)
