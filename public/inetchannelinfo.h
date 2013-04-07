@@ -52,7 +52,6 @@ public:
 	
 	virtual bool		IsLoopback( void ) const = 0;	// true if loopback channel
 	virtual bool		IsTimingOut( void ) const = 0;	// true if timing out
-	virtual bool		IsPlayback( void ) const = 0;	// true if demo playback
 
 	virtual float		GetLatency( int flow ) const = 0;	 // current latency (RTT), more accurate but jittering
 	virtual float		GetAvgLatency( int flow ) const = 0; // average packet latency in seconds

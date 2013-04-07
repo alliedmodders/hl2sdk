@@ -41,6 +41,8 @@ public:
 	virtual void FileDenied(const char *fileName, unsigned int transferID, bool isReplayDemoFile) = 0;	// a file request was denied by other side
 
 	virtual void FileSent(const char *fileName, unsigned int transferID, bool isReplayDemoFile) = 0;	// we sent a file
+	
+	virtual bool ChangeSplitscreenUser(int nSplitScreenUserSlot) = 0;
 };
 
 #define PROCESS_NET_MESSAGE( name )	\

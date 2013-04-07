@@ -76,8 +76,6 @@ public:
 	virtual bool	IsFakeClient( void ) const = 0;
 	// returns true, if client is a HLTV proxy
 	virtual bool	IsHLTV( void ) const = 0;
-	// returns true, if client is a Replay proxy
-	virtual bool	IsReplay( void ) const = 0;
 	// returns true, if client hears this player
 	virtual bool	IsHearingClient(int index) const = 0;
 	// returns true, if client hears this player by proximity
