@@ -398,6 +398,15 @@ public:
 	virtual void *GetReplay() = 0;
 };
 
+abstract_class IServerGCLobby
+{
+public:
+	virtual bool HasLobby() const = 0;
+	virtual bool SteamIDAllowedToConnect( const CSteamID &steamId ) const = 0;
+	virtual void UpdateServerDetails( void ) = 0;
+	virtual bool ShouldHibernate() = 0;
+};
+
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_5	"ServerGameDLL005"
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_6	"ServerGameDLL006"
@@ -517,7 +526,7 @@ public:
 
 	virtual void			SetServerHibernation( bool bHibernating ) = 0;
 
-	virtual void			*GetServerGCLobby() = 0;
+	virtual IServerGCLobby	*GetServerGCLobby() = 0;
 
 	virtual const char		*GetServerBrowserMapOverride() = 0;
 	virtual const char		*GetServerBrowserGameData() = 0;
