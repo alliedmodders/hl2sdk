@@ -521,6 +521,7 @@ ConCommand::ConCommand( const char *pName, FnCommandCallbackV1_t callback, const
 	m_fnCommandCallbackV1 = callback;
 	m_bUsingNewCommandCallback = false;
 	m_bUsingCommandCallbackInterface = false;
+	m_bUsingCommandCallbackInterface2 = false;
 	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
 	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
 
@@ -536,6 +537,7 @@ ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const c
 	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
 	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
 	m_bUsingCommandCallbackInterface = false;
+	m_bUsingCommandCallbackInterface2 = false;
 
 	// Setup the rest
 	BaseClass::Create( pName, pHelpString, flags );
@@ -549,6 +551,21 @@ ConCommand::ConCommand( const char *pName, ICommandCallback *pCallback, const ch
 	m_pCommandCompletionCallback = pCompletionCallback;
 	m_bHasCompletionCallback = ( pCompletionCallback != 0 );
 	m_bUsingCommandCallbackInterface = true;
+	m_bUsingCommandCallbackInterface2 = false;
+
+	// Setup the rest
+	BaseClass::Create( pName, pHelpString, flags );
+}
+
+ConCommand::ConCommand( const char *pName, ICommandCallback2 *pCallback, const char *pHelpString /*= 0*/, int flags /*= 0*/, ICommandCompletionCallback *pCompletionCallback /*= 0*/ )
+{
+	// Set the callback
+	m_pCommandCallback2 = pCallback;
+	m_bUsingNewCommandCallback = false;
+	m_pCommandCompletionCallback = pCompletionCallback;
+	m_bHasCompletionCallback = ( pCompletionCallback != 0 );
+	m_bUsingCommandCallbackInterface = false;
+	m_bUsingCommandCallbackInterface2 = true;
 
 	// Setup the rest
 	BaseClass::Create( pName, pHelpString, flags );
@@ -574,13 +591,13 @@ bool ConCommand::IsCommand( void ) const
 //-----------------------------------------------------------------------------
 // Purpose: Invoke the function if there is one
 //-----------------------------------------------------------------------------
-void ConCommand::Dispatch( const CCommand &command )
+void ConCommand::Dispatch( void *pUnknown, const CCommand &command )
 {
 	if ( m_bUsingNewCommandCallback )
 	{
 		if ( m_fnCommandCallback )
 		{
-			( *m_fnCommandCallback )( command );
+			( *m_fnCommandCallback )( pUnknown, command );
 			return;
 		}
 	}
@@ -589,6 +606,14 @@ void ConCommand::Dispatch( const CCommand &command )
 		if ( m_pCommandCallback )
 		{
 			m_pCommandCallback->CommandCallback( command );
+			return;
+		}
+	}
+	else if (m_bUsingCommandCallbackInterface2 )
+	{
+		if ( m_pCommandCallback2 )
+		{
+			m_pCommandCallback2->CommandCallback( pUnknown, command );
 			return;
 		}
 	}

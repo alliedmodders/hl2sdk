@@ -479,9 +479,6 @@ public:
 	// Returns the search path, each path is separated by ;s. Returns the length of the string returned
 	virtual int				GetSearchPath( const char *pathID, bool bGetPackFiles, char *pPath, int nMaxLen ) = 0;
 
-	// interface for custom pack files > 4Gb
-	virtual bool			AddPackFile( const char *fullpath, const char *pathID ) = 0;
-
 	//--------------------------------------------------------
 	// File manipulation operations
 	//--------------------------------------------------------

@@ -76,7 +76,7 @@ void ConVar_PublishToVXConsole();
 // Called when a ConCommand needs to execute
 //-----------------------------------------------------------------------------
 typedef void ( *FnCommandCallbackV1_t )( void );
-typedef void ( *FnCommandCallback_t )( const CCommand &command );
+typedef void ( *FnCommandCallback_t )( void *pUnknown, const CCommand &command );
 
 #define COMMAND_COMPLETION_MAXITEMS		64
 #define COMMAND_COMPLETION_ITEM_LENGTH	64
@@ -94,6 +94,12 @@ class ICommandCallback
 {
 public:
 	virtual void CommandCallback( const CCommand &command ) = 0;
+};
+
+class ICommandCallback2
+{
+public:
+	virtual void CommandCallback( void *pUnknown, const CCommand &command ) = 0;
 };
 
 class ICommandCompletionCallback
@@ -284,6 +290,8 @@ public:
 		const char *pHelpString = 0, int flags = 0, FnCommandCompletionCallback completionFunc = 0 );
 	ConCommand( const char *pName, ICommandCallback *pCallback, 
 		const char *pHelpString = 0, int flags = 0, ICommandCompletionCallback *pCommandCompletionCallback = 0 );
+	ConCommand( const char *pName, ICommandCallback2 *pCallback, 
+		const char *pHelpString = 0, int flags = 0, ICommandCompletionCallback *pCommandCompletionCallback = 0 );
 
 	virtual ~ConCommand( void );
 
@@ -294,7 +302,7 @@ public:
 	virtual bool CanAutoComplete( void );
 
 	// Invoke the function
-	virtual void Dispatch( const CCommand &command );
+	virtual void Dispatch( void *pUnknown, const CCommand &command );
 
 private:
 	// NOTE: To maintain backward compat, we have to be very careful:
@@ -311,6 +319,7 @@ private:
 		FnCommandCallbackV1_t m_fnCommandCallbackV1;
 		FnCommandCallback_t m_fnCommandCallback;
 		ICommandCallback *m_pCommandCallback; 
+		ICommandCallback2 *m_pCommandCallback2; 
 	};
 
 	union
@@ -322,6 +331,7 @@ private:
 	bool m_bHasCompletionCallback : 1;
 	bool m_bUsingNewCommandCallback : 1;
 	bool m_bUsingCommandCallbackInterface : 1;
+	bool m_bUsingCommandCallbackInterface2 : 1;
 };
 
 
@@ -931,71 +941,71 @@ private:
 // Purpose: Utility macros to quicky generate a simple console command
 //-----------------------------------------------------------------------------
 #define CON_COMMAND( name, description ) \
-   static void name( const CCommand &args ); \
+   static void name( void *pUnknown, const CCommand &args ); \
    static ConCommand name##_command( #name, name, description ); \
-   static void name( const CCommand &args )
+   static void name( void *pUnknown, const CCommand &args )
 
 #ifdef CLIENT_DLL
 	#define CON_COMMAND_SHARED( name, description ) \
-		static void name( const CCommand &args ); \
+		static void name( void *pUnknown, const CCommand &args ); \
 		static ConCommand name##_command_client( #name "_client", name, description ); \
-		static void name( const CCommand &args )
+		static void name( void *pUnknown, const CCommand &args )
 #else
 	#define CON_COMMAND_SHARED( name, description ) \
-		static void name( const CCommand &args ); \
+		static void name( void *pUnknown, const CCommand &args ); \
 		static ConCommand name##_command( #name, name, description ); \
-		static void name( const CCommand &args )
+		static void name( void *pUnknown, const CCommand &args )
 #endif
 
 
 #define CON_COMMAND_F( name, description, flags ) \
-	static void name( const CCommand &args ); \
+	static void name( void *pUnknown, const CCommand &args ); \
 	static ConCommand name##_command( #name, name, description, flags ); \
-	static void name( const CCommand &args )
+	static void name( void *pUnknown, const CCommand &args )
 
 #ifdef CLIENT_DLL
 	#define CON_COMMAND_F_SHARED( name, description, flags ) \
-		static void name( const CCommand &args ); \
+		static void name( void *pUnknown, const CCommand &args ); \
 		static ConCommand name##_command_client( #name "_client", name, description, flags ); \
-		static void name( const CCommand &args )
+		static void name( void *pUnknown, const CCommand &args )
 #else
 	#define CON_COMMAND_F_SHARED( name, description, flags ) \
-		static void name( const CCommand &args ); \
+		static void name( void *pUnknown, const CCommand &args ); \
 		static ConCommand name##_command( #name, name, description, flags ); \
-		static void name( const CCommand &args )
+		static void name( void *pUnknown, const CCommand &args )
 #endif
 
 
 #define CON_COMMAND_F_COMPLETION( name, description, flags, completion ) \
-	static void name( const CCommand &args ); \
+	static void name( void *pUnknown, const CCommand &args ); \
 	static ConCommand name##_command( #name, name, description, flags, completion ); \
-	static void name( const CCommand &args )
+	static void name( void *pUnknown, const CCommand &args )
 
 #ifdef CLIENT_DLL
 	#define CON_COMMAND_F_COMPLETION_SHARED( name, description, flags, completion ) \
-		static void name( const CCommand &args ); \
+		static void name( void *pUnknown, const CCommand &args ); \
 		static ConCommand name##_command_client( #name "_client", name, description, flags, completion ); \
-		static void name( const CCommand &args )
+		static void name( void *pUnknown, const CCommand &args )
 #else
 	#define CON_COMMAND_F_COMPLETION_SHARED( name, description, flags, completion ) \
-		static void name( const CCommand &args ); \
+		static void name( void *pUnknown, const CCommand &args ); \
 		static ConCommand name##_command( #name, name, description, flags, completion ); \
-		static void name( const CCommand &args )
+		static void name( void *pUnknown, const CCommand &args )
 #endif
 
 
 #define CON_COMMAND_EXTERN( name, _funcname, description ) \
-	void _funcname( const CCommand &args ); \
+	void _funcname( void *pUnknown, const CCommand &args ); \
 	static ConCommand name##_command( #name, _funcname, description ); \
-	void _funcname( const CCommand &args )
+	void _funcname( void *pUnknown, const CCommand &args )
 
 #define CON_COMMAND_EXTERN_F( name, _funcname, description, flags ) \
-	void _funcname( const CCommand &args ); \
+	void _funcname( void *pUnknown, const CCommand &args ); \
 	static ConCommand name##_command( #name, _funcname, description, flags ); \
-	void _funcname( const CCommand &args )
+	void _funcname( void *pUnknown, const CCommand &args )
 
 #define CON_COMMAND_MEMBER_F( _thisclass, name, _funcname, description, flags ) \
-	void _funcname( const CCommand &args );						\
+	void _funcname( void *pUnknown, const CCommand &args );						\
 	friend class CCommandMemberInitializer_##_funcname;			\
 	class CCommandMemberInitializer_##_funcname					\
 	{															\

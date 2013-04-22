@@ -23,11 +23,6 @@ typedef int HKeySymbol;
 class IKeyValuesSystem
 {
 public:
-	// registers the size of the KeyValues in the specified instance
-	// so it can build a properly sized memory pool for the KeyValues objects
-	// the sizes will usually never differ but this is for versioning safety
-	virtual void RegisterSizeofKeyValues(int size) = 0;
-
 	// allocates/frees a KeyValues object from the shared mempool
 	virtual void *AllocKeyValuesMemory() = 0;
 	virtual void FreeKeyValuesMemory(void *pMem) = 0;
