@@ -24,8 +24,6 @@
 #include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
 #if !defined( _X360 )
-#include "mathlib/amd3dx.h"
-#include "3dnow.h"
 #include "sse.h"
 #endif
 
@@ -3198,7 +3196,6 @@ bool CalcLineToLineIntersectionSegment(
 #pragma optimize( "", on )
 #endif
 
-static bool s_b3DNowEnabled = false;
 static bool s_bMMXEnabled = false;
 static bool s_bSSEEnabled = false;
 static bool s_bSSE2Enabled = false;
@@ -3233,25 +3230,6 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 	else
 	{
 		s_bMMXEnabled = false;
-	}
-
-	// SSE Generally performs better than 3DNow when present, so this is placed 
-	// first to allow SSE to override these settings.
-	if ( bAllow3DNow && pi.m_b3DNow )
-	{
-		s_b3DNowEnabled = true;
-
-		// Select the 3DNow specific routines if available;
-		pfVectorNormalize = _3DNow_VectorNormalize;
-		pfVectorNormalizeFast = _3DNow_VectorNormalizeFast;
-		pfInvRSquared = _3DNow_InvRSquared;
-		pfSqrt = _3DNow_Sqrt;
-		pfRSqrt = _3DNow_RSqrt;
-		pfRSqrtFast = _3DNow_RSqrt;
-	}
-	else
-	{
-		s_b3DNowEnabled = false;
 	}
 
 	if ( bAllowSSE && pi.m_bSSE )
@@ -3293,12 +3271,6 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 
 	InitSinCosTable();
 	BuildGammaTable( gamma, texGamma, brightness, overbright );
-}
-
-bool MathLib_3DNowEnabled( void )
-{
-	Assert( s_bMathlibInitialized );
-	return s_b3DNowEnabled;
 }
 
 bool MathLib_MMXEnabled( void )

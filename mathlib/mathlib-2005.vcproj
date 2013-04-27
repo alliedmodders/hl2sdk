@@ -211,10 +211,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath=".\3dnow.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\anorms.cpp"
 				>
 			</File>
@@ -388,10 +384,6 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
-			<File
-				RelativePath=".\3dnow.h"
-				>
-			</File>
 			<File
 				RelativePath=".\noisedata.h"
 				>
