@@ -1708,7 +1708,6 @@ float CalcDistanceSqrToLineSegment2D( Vector2D const &P, Vector2D const &vLineA,
 
 // Init the mathlib
 void MathLib_Init( float gamma = 2.2f, float texGamma = 2.2f, float brightness = 0.0f, int overbright = 2.0f, bool bAllow3DNow = true, bool bAllowSSE = true, bool bAllowSSE2 = true, bool bAllowMMX = true );
-bool MathLib_3DNowEnabled( void );
 bool MathLib_MMXEnabled( void );
 bool MathLib_SSEEnabled( void );
 bool MathLib_SSE2Enabled( void );
