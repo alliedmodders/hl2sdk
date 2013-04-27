@@ -226,7 +226,7 @@ char *V_strnlwr(char *s, size_t count)
 	if ( !s )
 		return s;
 
-	while ( --count >= 0 )
+	while ( count-- )
 	{
 		if ( !*s )
 			break;
