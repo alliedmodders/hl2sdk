@@ -88,7 +88,7 @@ else
 DEFINES = -D_LINUX -DLINUX
 SHLIBEXT = so
 SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt -Wl
-SHLIBSUFFX = _srv
+SHLIBSUFFIX = _srv
 endif
 
 DEFINES +=-DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp \
@@ -136,8 +136,8 @@ check:
 	if [ ! -e "$(LIB_DIR)/tier1_i486.a" ]; then $(MAKE) tier1;fi
 	if [ ! -e "$(LIB_DIR)/mathlib_i486.a" ]; then $(MAKE) mathlib;fi
 	if [ ! -e "$(LIB_DIR)/choreoobjects_i486.a" ]; then $(MAKE) choreo;fi
-	if [ ! -f "libtier0$(SHLIBSUFFX).$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libtier0$(SHLIBSUFFX).$(SHLIBEXT) .; fi
-	if [ ! -f "libvstdlib_$(SHLIBSUFFX).$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libvstdlib$(SHLIBSUFFX).$(SHLIBEXT) .; fi
+	if [ ! -f "libtier0$(SHLIBSUFFIX).$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libtier0$(SHLIBSUFFIX).$(SHLIBEXT) .; fi
+	if [ ! -f "libvstdlib$(SHLIBSUFFIX).$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libvstdlib$(SHLIBSUFFIX).$(SHLIBEXT) .; fi
 	if [ ! -f "libsteam_api.$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libsteam_api.$(SHLIBEXT) .; fi
 
 vcpm: check
