@@ -154,7 +154,6 @@
     <ClInclude Include="..\public\mathlib\vector4d.h" />
     <ClInclude Include="..\public\mathlib\vmatrix.h" />
     <ClInclude Include="..\public\mathlib\vplane.h" />
-    <ClInclude Include="3dnow.h" />
     <ClInclude Include="noisedata.h" />
     <ClInclude Include="sse.h" />
   </ItemGroup>

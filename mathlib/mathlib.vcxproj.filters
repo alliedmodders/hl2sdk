@@ -140,9 +140,6 @@
     <ClInclude Include="..\public\mathlib\vplane.h">
       <Filter>Public Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="3dnow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="noisedata.h">
       <Filter>Header Files</Filter>
     </ClInclude>

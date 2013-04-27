@@ -334,10 +334,6 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath=".\3dnow.h"
-				>
-			</File>
-			<File
 				RelativePath=".\noisedata.h"
 				>
 			</File>
