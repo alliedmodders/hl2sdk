@@ -233,8 +233,8 @@ private:
 	unsigned	m_nIters;
 	CCycleCount m_Total;
 	CCycleCount	m_Peak;
-	bool		m_fReport;
-	const tchar *m_pszName;
+//	bool		m_fReport;
+//	const tchar *m_pszName;
 };
 
 // -------------------------------------------------------------------------- // 

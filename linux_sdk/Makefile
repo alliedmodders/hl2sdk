@@ -3,6 +3,8 @@
 #
 #
 
+OS := $(shell uname -s)
+
 #############################################################################
 # Developer configurable items
 #############################################################################
@@ -24,10 +26,17 @@ SRCDS_DIR = ~/srcds/orangebox
 GAME_DIR = $(SRCDS_DIR)/scratchmod
 
 # compiler options (gcc 3.4.1 or above is required - 4.1.2+ recommended)
-CC = /usr/bin/gcc-4.2
-CPLUS = /usr/bin/g++-4.2
-CLINK = /usr/bin/gcc-4.2
-CPP_LIB = "libstdc++.a libgcc_eh.a"
+ifeq "$(OS)" "Darwin"
+CC = /usr/bin/clang
+CPLUS = /usr/bin/clang++
+CLINK = /usr/bin/clang
+CPP_LIB =
+else
+CC = /usr/bin/gcc
+CPLUS = /usr/bin/g++
+CLINK = /usr/bin/gcc
+CPP_LIB = $(SRCDS_DIR)/bin/libstdc++.so.6 $(SRCDS_DIR)/bin/libgcc_s.so.1
+endif
 
 # put any compiler flags you want passed here
 USER_CFLAGS =
@@ -58,21 +67,37 @@ BUILD_OBJ_DIR = $(BUILD_DIR)/obj
 
 # the location of the source code
 SRC_DIR = ..
-# the location of the Linux static libraries
+
+# the location of the static libraries
+ifeq "$(OS)" "Darwin"
+LIB_DIR = $(SRC_DIR)/lib/mac
+else
 LIB_DIR = $(SRC_DIR)/lib/linux
+endif
 
 # the CPU target for the build, must be i486 for now
 ARCH = i486
 ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -m32
 
-DEFINES = -D_LINUX -DLINUX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp \
-	-D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
+ifeq "$(OS)" "Darwin"
+DEFINES = -D_OSX -DOSX
+SHLIBEXT = dylib
+SHLIBLDFLAGS = -dynamiclib -mmacosx-version-min=10.5
+SHLIBSUFFIX = 
+else
+DEFINES = -D_LINUX -DLINUX
+SHLIBEXT = so
+SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt -Wl
+SHLIBSUFFX = _srv
+endif
+
+DEFINES +=-DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp \
+	-Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
-BASE_CFLAGS = -fno-strict-aliasing -Wall -Werror -Wconversion -Wno-non-virtual-dtor -Wno-invalid-offsetof
-SHLIBEXT = so
+BASE_CFLAGS = -fno-strict-aliasing -Wall -Wsign-compare -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
+	      -Wno-delete-non-virtual-dtor
 SHLIBCFLAGS = -fPIC
-SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt -Wl
 
 # Flags passed to the c compiler
 CFLAGS = $(DEFINES) $(ARCH_CFLAGS) -O3 $(BASE_CFLAGS)
@@ -88,7 +113,7 @@ DBG_CFLAGS = "$(DEFINES) $(ARCH_CFLAGS) -g -ggdb $(BASE_CFLAGS) $(UNDEF)"
 # define list passed to make for the sub makefile
 BASE_DEFINES = CC=$(CC) AR=$(AR) CPLUS=$(CPLUS) CPP_LIB=$(CPP_LIB) DEBUG=$(DEBUG) \
 	BUILD_DIR=$(BUILD_DIR) BUILD_OBJ_DIR=$(BUILD_OBJ_DIR) SRC_DIR=$(SRC_DIR) \
-	LIB_DIR=$(LIB_DIR) SHLIBLDFLAGS=$(SHLIBLDFLAGS) SHLIBEXT=$(SHLIBEXT) \
+	LIB_DIR=$(LIB_DIR) SHLIBLDFLAGS="$(SHLIBLDFLAGS)" SHLIBEXT=$(SHLIBEXT) SHLIBSUFFIX=$(SHLIBSUFFIX) \
 	CLINK=$(CLINK) CFLAGS="$(CFLAGS)" DBG_CFLAGS=$(DBG_CFLAGS) LDFLAGS=$(LDFLAGS) \
 	DEFINES="$(DEFINES)" DBG_DEFINES=$(DBG_DEFINES) \
 	ARCH=$(ARCH) SRCDS_DIR=$(SRCDS_DIR) MOD_CONFIG=$(MOD_CONFIG) NAME=$(NAME) \
@@ -111,9 +136,9 @@ check:
 	if [ ! -e "$(LIB_DIR)/tier1_i486.a" ]; then $(MAKE) tier1;fi
 	if [ ! -e "$(LIB_DIR)/mathlib_i486.a" ]; then $(MAKE) mathlib;fi
 	if [ ! -e "$(LIB_DIR)/choreoobjects_i486.a" ]; then $(MAKE) choreo;fi
-	if [ ! -f "libtier0_srv.so" ]; then ln -s $(SRCDS_DIR)/bin/libtier0_srv.so .; fi
-	if [ ! -f "libvstdlib_srv.so" ]; then ln -s $(SRCDS_DIR)/bin/libvstdlib_srv.so .; fi
-	if [ ! -f "libsteam_api.so" ]; then ln -s $(SRCDS_DIR)/bin/libsteam_api.so .; fi
+	if [ ! -f "libtier0$(SHLIBSUFFX).$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libtier0$(SHLIBSUFFX).$(SHLIBEXT) .; fi
+	if [ ! -f "libvstdlib_$(SHLIBSUFFX).$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libvstdlib$(SHLIBSUFFX).$(SHLIBEXT) .; fi
+	if [ ! -f "libsteam_api.$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libsteam_api.$(SHLIBEXT) .; fi
 
 vcpm: check
 	if [ ! -e "vcpm" ]; then $(MAKE) -f $(MAKE_VCPM) $(BASE_DEFINES);fi
