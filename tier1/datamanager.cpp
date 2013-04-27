@@ -122,8 +122,6 @@ unsigned int CDataManagerBase::FlushAll()
 unsigned int CDataManagerBase::Purge( unsigned int nBytesToPurge )
 {
 	unsigned int nTargetSize = MemUsed_Inline() - nBytesToPurge;
-	if ( nTargetSize < 0 )
-		nTargetSize = 0;
 	unsigned int nImpliedCapacity = MemTotal_Inline() - nTargetSize;
 	return EnsureCapacity( nImpliedCapacity );
 }
