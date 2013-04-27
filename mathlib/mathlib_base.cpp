@@ -24,8 +24,6 @@
 #include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
 #if !defined( _X360 )
-#include "mathlib/amd3dx.h"
-#include "3dnow.h"
 #include "sse.h"
 #endif
 
@@ -3235,24 +3233,7 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 		s_bMMXEnabled = false;
 	}
 
-	// SSE Generally performs better than 3DNow when present, so this is placed 
-	// first to allow SSE to override these settings.
-	if ( bAllow3DNow && pi.m_b3DNow )
-	{
-		s_b3DNowEnabled = true;
-
-		// Select the 3DNow specific routines if available;
-		pfVectorNormalize = _3DNow_VectorNormalize;
-		pfVectorNormalizeFast = _3DNow_VectorNormalizeFast;
-		pfInvRSquared = _3DNow_InvRSquared;
-		pfSqrt = _3DNow_Sqrt;
-		pfRSqrt = _3DNow_RSqrt;
-		pfRSqrtFast = _3DNow_RSqrt;
-	}
-	else
-	{
-		s_b3DNowEnabled = false;
-	}
+	s_b3DNowEnabled = false;
 
 	if ( bAllowSSE && pi.m_bSSE )
 	{
