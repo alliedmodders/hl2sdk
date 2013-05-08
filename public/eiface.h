@@ -480,7 +480,7 @@ public:
 									char const *pLandmarkName, bool loadGame, bool background ) = 0;
 
 	// The server is about to activate
-	virtual void			ServerActivate( edict_t *pEdictList, int edictCount, int clientMax ) = 0;
+	virtual void			ServerActivate( void ) = 0;
 
 	// The server should run physics/think on all edicts
 	virtual void			GameFrame( bool simulating ) = 0;
