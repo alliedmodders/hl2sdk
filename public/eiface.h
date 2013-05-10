@@ -544,8 +544,6 @@ public:
 	virtual void			GetTitleName( const char *pMapName, char* pTitleBuff, int titleBuffSize ) = 0;
 #endif
 
-	virtual void			PreSaveGameLoaded( char const *pSaveName, bool bCurrentlyInGame ) = 0;
-
 	// Returns true if the game DLL wants the server not to be made public.
 	// Used by commentary system to hide multiplayer commentary servers from the master.
 	virtual bool			ShouldHideServer( void ) = 0;
@@ -571,11 +569,6 @@ public:
 	virtual void			ServerHibernationUpdate( bool bHibernating ) = 0;
 
 	virtual void			GetMatchmakingGameData( char *buf, size_t bufSize ) = 0;
-
-	virtual bool			ShouldPreferSteamAuth() = 0;
-
-	// does this game support randomly generated maps?
-	virtual bool			SupportsRandomMaps() = 0;
 
 	// return true to disconnect client due to timeout (used to do stricter timeouts when the game is sure the client isn't loading a map)
 	virtual bool			ShouldTimeoutClient( int nUserID, float flTimeSinceLastReceived ) = 0;
