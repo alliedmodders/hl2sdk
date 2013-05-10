@@ -544,9 +544,7 @@ public:
 	virtual void			GetTitleName( const char *pMapName, char* pTitleBuff, int titleBuffSize ) = 0;
 #endif
 
-	// Returns true if the game DLL wants the server not to be made public.
-	// Used by commentary system to hide multiplayer commentary servers from the master.
-	virtual bool			ShouldHideServer( void ) = 0;
+	virtual void			PreSaveGameLoaded( char const *pSaveName, bool bCurrentlyInGame ) = 0;
 
 	virtual void			InvalidateMdlCache() = 0;
 
@@ -577,6 +575,10 @@ public:
 	virtual void			GameServerSteamAPIShutdown( void ) = 0;
 
 	virtual void			GetGameStatus( void (*inputFunc) (const char *fmt, ...) ) = 0;
+
+	// Returns true if the game DLL wants the server not to be made public.
+	// Used by commentary system to hide multiplayer commentary servers from the master.
+	virtual bool			ShouldHideServer( void ) = 0;
 };
 
 //-----------------------------------------------------------------------------
