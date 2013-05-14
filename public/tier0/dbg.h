@@ -83,12 +83,10 @@ class Color;
 //-----------------------------------------------------------------------------
 
 PLATFORM_INTERFACE void _ExitOnFatalAssert( const tchar* pFile, int line );
-PLATFORM_INTERFACE bool ShouldUseNewAssertDialog();
 
 PLATFORM_INTERFACE bool SetupWin32ConsoleIO();
 
 // Returns true if they want to break in the debugger.
-PLATFORM_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const tchar *pExpression );
 
 /* Used to define macros, never use these directly. */
 
@@ -100,8 +98,6 @@ PLATFORM_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const t
 			_executeExp; 												\
 			if ( ret == LR_DEBUGGER )									\
 			{															\
-				if ( !ShouldUseNewAssertDialog() || DoNewAssertDialog( __TFILE__, __LINE__, _msg ) ) \
-					DebuggerBreak();									\
 				if ( _bFatal )											\
 					_ExitOnFatalAssert( __TFILE__, __LINE__ );			\
 			}															\
