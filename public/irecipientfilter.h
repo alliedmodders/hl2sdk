@@ -23,7 +23,9 @@ public:
 	virtual bool	IsInitMessage( void ) const = 0;
 
 	virtual int		GetRecipientCount( void ) const = 0;
-	virtual int		GetRecipientIndex( int slot ) const = 0;
+
+	// Client index will be -1 for invalid slot
+	virtual void	GetRecipientIndex( int &clientIndex, int slot ) const = 0;
 };
 
 #endif // IRECIPIENTFILTER_H
