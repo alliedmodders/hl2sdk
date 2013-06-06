@@ -3,7 +3,17 @@
 
 #include "game/shared/protobuf/usermessages.pb.h"
 #include "game/shared/dota/protobuf/dota_usermessages.pb.h"
+
+#ifdef _DEBUG
+#define KILL_DEBUG
+#undef _DEBUG
 #include <tier1/utlhashdict.h>
+#endif
+
+#ifdef KILL_DEBUG
+#define _DEBUG
+#undef KILL_DEBUG
+#endif
 
 class CDotaUsermessageHelpers
 {
