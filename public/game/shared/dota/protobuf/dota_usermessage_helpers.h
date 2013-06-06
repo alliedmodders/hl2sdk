@@ -7,8 +7,9 @@
 #ifdef _DEBUG
 #define KILL_DEBUG
 #undef _DEBUG
-#include <tier1/utlhashdict.h>
 #endif
+
+#include <tier1/utlhashdict.h>
 
 #ifdef KILL_DEBUG
 #define _DEBUG
