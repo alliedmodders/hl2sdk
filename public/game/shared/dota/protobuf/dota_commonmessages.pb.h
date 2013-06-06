@@ -36,6 +36,7 @@ class CDOTAMsg_LocationPing;
 class CDOTAMsg_ItemAlert;
 class CDOTAMsg_MapLine;
 class CDOTAMsg_WorldLine;
+class CDOTAMsg_SendStatPopup;
 
 enum EDOTAChatWheelMessage {
   k_EDOTA_CW_Ok = 0,
@@ -65,6 +66,26 @@ inline bool EDOTAChatWheelMessage_Parse(
     const ::std::string& name, EDOTAChatWheelMessage* value) {
   return ::google::protobuf::internal::ParseNamedEnum<EDOTAChatWheelMessage>(
     EDOTAChatWheelMessage_descriptor(), name, value);
+}
+enum EDOTAStatPopupTypes {
+  k_EDOTA_SPT_Textline = 0,
+  k_EDOTA_SPT_Basic = 1,
+  k_EDOTA_SPT_Poll = 2
+};
+bool EDOTAStatPopupTypes_IsValid(int value);
+const EDOTAStatPopupTypes EDOTAStatPopupTypes_MIN = k_EDOTA_SPT_Textline;
+const EDOTAStatPopupTypes EDOTAStatPopupTypes_MAX = k_EDOTA_SPT_Poll;
+const int EDOTAStatPopupTypes_ARRAYSIZE = EDOTAStatPopupTypes_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* EDOTAStatPopupTypes_descriptor();
+inline const ::std::string& EDOTAStatPopupTypes_Name(EDOTAStatPopupTypes value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    EDOTAStatPopupTypes_descriptor(), value);
+}
+inline bool EDOTAStatPopupTypes_Parse(
+    const ::std::string& name, EDOTAStatPopupTypes* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<EDOTAStatPopupTypes>(
+    EDOTAStatPopupTypes_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -504,6 +525,118 @@ class CDOTAMsg_WorldLine : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static CDOTAMsg_WorldLine* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class CDOTAMsg_SendStatPopup : public ::google::protobuf::Message {
+ public:
+  CDOTAMsg_SendStatPopup();
+  virtual ~CDOTAMsg_SendStatPopup();
+  
+  CDOTAMsg_SendStatPopup(const CDOTAMsg_SendStatPopup& from);
+  
+  inline CDOTAMsg_SendStatPopup& operator=(const CDOTAMsg_SendStatPopup& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAMsg_SendStatPopup& default_instance();
+  
+  void Swap(CDOTAMsg_SendStatPopup* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAMsg_SendStatPopup* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAMsg_SendStatPopup& from);
+  void MergeFrom(const CDOTAMsg_SendStatPopup& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional .EDOTAStatPopupTypes style = 1 [default = k_EDOTA_SPT_Textline];
+  inline bool has_style() const;
+  inline void clear_style();
+  static const int kStyleFieldNumber = 1;
+  inline EDOTAStatPopupTypes style() const;
+  inline void set_style(EDOTAStatPopupTypes value);
+  
+  // repeated string stat_strings = 2;
+  inline int stat_strings_size() const;
+  inline void clear_stat_strings();
+  static const int kStatStringsFieldNumber = 2;
+  inline const ::std::string& stat_strings(int index) const;
+  inline ::std::string* mutable_stat_strings(int index);
+  inline void set_stat_strings(int index, const ::std::string& value);
+  inline void set_stat_strings(int index, const char* value);
+  inline void set_stat_strings(int index, const char* value, size_t size);
+  inline ::std::string* add_stat_strings();
+  inline void add_stat_strings(const ::std::string& value);
+  inline void add_stat_strings(const char* value);
+  inline void add_stat_strings(const char* value, size_t size);
+  inline const ::google::protobuf::RepeatedPtrField< ::std::string>& stat_strings() const;
+  inline ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_stat_strings();
+  
+  // repeated int32 stat_images = 3;
+  inline int stat_images_size() const;
+  inline void clear_stat_images();
+  static const int kStatImagesFieldNumber = 3;
+  inline ::google::protobuf::int32 stat_images(int index) const;
+  inline void set_stat_images(int index, ::google::protobuf::int32 value);
+  inline void add_stat_images(::google::protobuf::int32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      stat_images() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_stat_images();
+  
+  // @@protoc_insertion_point(class_scope:CDOTAMsg_SendStatPopup)
+ private:
+  inline void set_has_style();
+  inline void clear_has_style();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedPtrField< ::std::string> stat_strings_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > stat_images_;
+  int style_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fcommonmessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fcommonmessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fcommonmessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAMsg_SendStatPopup* default_instance_;
+};
 // ===================================================================
 
 
@@ -853,6 +986,102 @@ inline void CDOTAMsg_WorldLine::set_end(bool value) {
   end_ = value;
 }
 
+// -------------------------------------------------------------------
+
+// CDOTAMsg_SendStatPopup
+
+// optional .EDOTAStatPopupTypes style = 1 [default = k_EDOTA_SPT_Textline];
+inline bool CDOTAMsg_SendStatPopup::has_style() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAMsg_SendStatPopup::set_has_style() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAMsg_SendStatPopup::clear_has_style() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAMsg_SendStatPopup::clear_style() {
+  style_ = 0;
+  clear_has_style();
+}
+inline EDOTAStatPopupTypes CDOTAMsg_SendStatPopup::style() const {
+  return static_cast< EDOTAStatPopupTypes >(style_);
+}
+inline void CDOTAMsg_SendStatPopup::set_style(EDOTAStatPopupTypes value) {
+  GOOGLE_DCHECK(EDOTAStatPopupTypes_IsValid(value));
+  set_has_style();
+  style_ = value;
+}
+
+// repeated string stat_strings = 2;
+inline int CDOTAMsg_SendStatPopup::stat_strings_size() const {
+  return stat_strings_.size();
+}
+inline void CDOTAMsg_SendStatPopup::clear_stat_strings() {
+  stat_strings_.Clear();
+}
+inline const ::std::string& CDOTAMsg_SendStatPopup::stat_strings(int index) const {
+  return stat_strings_.Get(index);
+}
+inline ::std::string* CDOTAMsg_SendStatPopup::mutable_stat_strings(int index) {
+  return stat_strings_.Mutable(index);
+}
+inline void CDOTAMsg_SendStatPopup::set_stat_strings(int index, const ::std::string& value) {
+  stat_strings_.Mutable(index)->assign(value);
+}
+inline void CDOTAMsg_SendStatPopup::set_stat_strings(int index, const char* value) {
+  stat_strings_.Mutable(index)->assign(value);
+}
+inline void CDOTAMsg_SendStatPopup::set_stat_strings(int index, const char* value, size_t size) {
+  stat_strings_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAMsg_SendStatPopup::add_stat_strings() {
+  return stat_strings_.Add();
+}
+inline void CDOTAMsg_SendStatPopup::add_stat_strings(const ::std::string& value) {
+  stat_strings_.Add()->assign(value);
+}
+inline void CDOTAMsg_SendStatPopup::add_stat_strings(const char* value) {
+  stat_strings_.Add()->assign(value);
+}
+inline void CDOTAMsg_SendStatPopup::add_stat_strings(const char* value, size_t size) {
+  stat_strings_.Add()->assign(reinterpret_cast<const char*>(value), size);
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+CDOTAMsg_SendStatPopup::stat_strings() const {
+  return stat_strings_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+CDOTAMsg_SendStatPopup::mutable_stat_strings() {
+  return &stat_strings_;
+}
+
+// repeated int32 stat_images = 3;
+inline int CDOTAMsg_SendStatPopup::stat_images_size() const {
+  return stat_images_.size();
+}
+inline void CDOTAMsg_SendStatPopup::clear_stat_images() {
+  stat_images_.Clear();
+}
+inline ::google::protobuf::int32 CDOTAMsg_SendStatPopup::stat_images(int index) const {
+  return stat_images_.Get(index);
+}
+inline void CDOTAMsg_SendStatPopup::set_stat_images(int index, ::google::protobuf::int32 value) {
+  stat_images_.Set(index, value);
+}
+inline void CDOTAMsg_SendStatPopup::add_stat_images(::google::protobuf::int32 value) {
+  stat_images_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+CDOTAMsg_SendStatPopup::stat_images() const {
+  return stat_images_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+CDOTAMsg_SendStatPopup::mutable_stat_images() {
+  return &stat_images_;
+}
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -863,6 +1092,10 @@ namespace protobuf {
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< EDOTAChatWheelMessage>() {
   return EDOTAChatWheelMessage_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< EDOTAStatPopupTypes>() {
+  return EDOTAStatPopupTypes_descriptor();
 }
 
 }  // namespace google

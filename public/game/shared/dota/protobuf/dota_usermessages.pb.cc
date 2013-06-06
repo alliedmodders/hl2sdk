@@ -181,6 +181,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* CDOTAUserMsg_TutorialTipInfo_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   CDOTAUserMsg_TutorialTipInfo_reflection_ = NULL;
+const ::google::protobuf::Descriptor* CDOTAUserMsg_TutorialFinish_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  CDOTAUserMsg_TutorialFinish_reflection_ = NULL;
 const ::google::protobuf::Descriptor* CDOTAUserMsg_WorldLine_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   CDOTAUserMsg_WorldLine_reflection_ = NULL;
@@ -211,6 +214,12 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* CDOTA_UM_GamerulesStateChanged_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   CDOTA_UM_GamerulesStateChanged_reflection_ = NULL;
+const ::google::protobuf::Descriptor* CDOTAUserMsg_AddQuestLogEntry_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  CDOTAUserMsg_AddQuestLogEntry_reflection_ = NULL;
+const ::google::protobuf::Descriptor* CDOTAUserMsg_SendStatPopup_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  CDOTAUserMsg_SendStatPopup_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* EDotaUserMessages_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* DOTA_CHAT_MESSAGE_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* DOTA_NO_BATTLE_POINTS_REASONS_descriptor_ = NULL;
@@ -1163,7 +1172,24 @@ void protobuf_AssignDesc_dota_5fusermessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CDOTAUserMsg_TutorialTipInfo));
-  CDOTAUserMsg_WorldLine_descriptor_ = file->message_type(34);
+  CDOTAUserMsg_TutorialFinish_descriptor_ = file->message_type(34);
+  static const int CDOTAUserMsg_TutorialFinish_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_TutorialFinish, heading_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_TutorialFinish, emblem_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_TutorialFinish, body_),
+  };
+  CDOTAUserMsg_TutorialFinish_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      CDOTAUserMsg_TutorialFinish_descriptor_,
+      CDOTAUserMsg_TutorialFinish::default_instance_,
+      CDOTAUserMsg_TutorialFinish_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_TutorialFinish, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_TutorialFinish, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(CDOTAUserMsg_TutorialFinish));
+  CDOTAUserMsg_WorldLine_descriptor_ = file->message_type(35);
   static const int CDOTAUserMsg_WorldLine_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_WorldLine, player_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_WorldLine, worldline_),
@@ -1179,7 +1205,7 @@ void protobuf_AssignDesc_dota_5fusermessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CDOTAUserMsg_WorldLine));
-  CDOTAUserMsg_TournamentDrop_descriptor_ = file->message_type(35);
+  CDOTAUserMsg_TournamentDrop_descriptor_ = file->message_type(36);
   static const int CDOTAUserMsg_TournamentDrop_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_TournamentDrop, winner_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_TournamentDrop, event_type_),
@@ -1195,7 +1221,7 @@ void protobuf_AssignDesc_dota_5fusermessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CDOTAUserMsg_TournamentDrop));
-  CDOTAUserMsg_ChatWheel_descriptor_ = file->message_type(36);
+  CDOTAUserMsg_ChatWheel_descriptor_ = file->message_type(37);
   static const int CDOTAUserMsg_ChatWheel_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_ChatWheel, chat_message_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_ChatWheel, player_id_),
@@ -1212,7 +1238,7 @@ void protobuf_AssignDesc_dota_5fusermessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CDOTAUserMsg_ChatWheel));
-  CDOTAUserMsg_ReceivedXmasGift_descriptor_ = file->message_type(37);
+  CDOTAUserMsg_ReceivedXmasGift_descriptor_ = file->message_type(38);
   static const int CDOTAUserMsg_ReceivedXmasGift_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_ReceivedXmasGift, player_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_ReceivedXmasGift, item_name_),
@@ -1229,7 +1255,7 @@ void protobuf_AssignDesc_dota_5fusermessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CDOTAUserMsg_ReceivedXmasGift));
-  CDOTAUserMsg_ShowSurvey_descriptor_ = file->message_type(38);
+  CDOTAUserMsg_ShowSurvey_descriptor_ = file->message_type(39);
   static const int CDOTAUserMsg_ShowSurvey_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_ShowSurvey, survey_id_),
   };
@@ -1244,7 +1270,7 @@ void protobuf_AssignDesc_dota_5fusermessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CDOTAUserMsg_ShowSurvey));
-  CDOTAUserMsg_UpdateSharedContent_descriptor_ = file->message_type(39);
+  CDOTAUserMsg_UpdateSharedContent_descriptor_ = file->message_type(40);
   static const int CDOTAUserMsg_UpdateSharedContent_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_UpdateSharedContent, slot_type_),
   };
@@ -1259,7 +1285,7 @@ void protobuf_AssignDesc_dota_5fusermessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CDOTAUserMsg_UpdateSharedContent));
-  CDOTAUserMsg_TutorialRequestExp_descriptor_ = file->message_type(40);
+  CDOTAUserMsg_TutorialRequestExp_descriptor_ = file->message_type(41);
   static const int CDOTAUserMsg_TutorialRequestExp_offsets_[1] = {
   };
   CDOTAUserMsg_TutorialRequestExp_reflection_ =
@@ -1273,7 +1299,7 @@ void protobuf_AssignDesc_dota_5fusermessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CDOTAUserMsg_TutorialRequestExp));
-  CDOTAUserMsg_TutorialFade_descriptor_ = file->message_type(41);
+  CDOTAUserMsg_TutorialFade_descriptor_ = file->message_type(42);
   static const int CDOTAUserMsg_TutorialFade_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_TutorialFade, tgt_alpha_),
   };
@@ -1288,7 +1314,7 @@ void protobuf_AssignDesc_dota_5fusermessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CDOTAUserMsg_TutorialFade));
-  CDOTAUserMsg_TutorialPingMinimap_descriptor_ = file->message_type(42);
+  CDOTAUserMsg_TutorialPingMinimap_descriptor_ = file->message_type(43);
   static const int CDOTAUserMsg_TutorialPingMinimap_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_TutorialPingMinimap, player_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_TutorialPingMinimap, pos_x_),
@@ -1307,7 +1333,7 @@ void protobuf_AssignDesc_dota_5fusermessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CDOTAUserMsg_TutorialPingMinimap));
-  CDOTA_UM_GamerulesStateChanged_descriptor_ = file->message_type(43);
+  CDOTA_UM_GamerulesStateChanged_descriptor_ = file->message_type(44);
   static const int CDOTA_UM_GamerulesStateChanged_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTA_UM_GamerulesStateChanged, state_),
   };
@@ -1322,6 +1348,40 @@ void protobuf_AssignDesc_dota_5fusermessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CDOTA_UM_GamerulesStateChanged));
+  CDOTAUserMsg_AddQuestLogEntry_descriptor_ = file->message_type(45);
+  static const int CDOTAUserMsg_AddQuestLogEntry_offsets_[4] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_AddQuestLogEntry, npc_name_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_AddQuestLogEntry, npc_dialog_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_AddQuestLogEntry, quest_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_AddQuestLogEntry, quest_type_),
+  };
+  CDOTAUserMsg_AddQuestLogEntry_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      CDOTAUserMsg_AddQuestLogEntry_descriptor_,
+      CDOTAUserMsg_AddQuestLogEntry::default_instance_,
+      CDOTAUserMsg_AddQuestLogEntry_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_AddQuestLogEntry, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_AddQuestLogEntry, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(CDOTAUserMsg_AddQuestLogEntry));
+  CDOTAUserMsg_SendStatPopup_descriptor_ = file->message_type(46);
+  static const int CDOTAUserMsg_SendStatPopup_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_SendStatPopup, player_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_SendStatPopup, statpopup_),
+  };
+  CDOTAUserMsg_SendStatPopup_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      CDOTAUserMsg_SendStatPopup_descriptor_,
+      CDOTAUserMsg_SendStatPopup::default_instance_,
+      CDOTAUserMsg_SendStatPopup_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_SendStatPopup, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAUserMsg_SendStatPopup, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(CDOTAUserMsg_SendStatPopup));
   EDotaUserMessages_descriptor_ = file->enum_type(0);
   DOTA_CHAT_MESSAGE_descriptor_ = file->enum_type(1);
   DOTA_NO_BATTLE_POINTS_REASONS_descriptor_ = file->enum_type(2);
@@ -1453,6 +1513,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     CDOTAUserMsg_TutorialTipInfo_descriptor_, &CDOTAUserMsg_TutorialTipInfo::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    CDOTAUserMsg_TutorialFinish_descriptor_, &CDOTAUserMsg_TutorialFinish::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     CDOTAUserMsg_WorldLine_descriptor_, &CDOTAUserMsg_WorldLine::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     CDOTAUserMsg_TournamentDrop_descriptor_, &CDOTAUserMsg_TournamentDrop::default_instance());
@@ -1472,6 +1534,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
     CDOTAUserMsg_TutorialPingMinimap_descriptor_, &CDOTAUserMsg_TutorialPingMinimap::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     CDOTA_UM_GamerulesStateChanged_descriptor_, &CDOTA_UM_GamerulesStateChanged::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    CDOTAUserMsg_AddQuestLogEntry_descriptor_, &CDOTAUserMsg_AddQuestLogEntry::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    CDOTAUserMsg_SendStatPopup_descriptor_, &CDOTAUserMsg_SendStatPopup::default_instance());
 }
 
 }  // namespace
@@ -1587,6 +1653,8 @@ void protobuf_ShutdownFile_dota_5fusermessages_2eproto() {
   delete CDOTAUserMsg_OverheadEvent_reflection_;
   delete CDOTAUserMsg_TutorialTipInfo::default_instance_;
   delete CDOTAUserMsg_TutorialTipInfo_reflection_;
+  delete CDOTAUserMsg_TutorialFinish::default_instance_;
+  delete CDOTAUserMsg_TutorialFinish_reflection_;
   delete CDOTAUserMsg_WorldLine::default_instance_;
   delete CDOTAUserMsg_WorldLine_reflection_;
   delete CDOTAUserMsg_TournamentDrop::default_instance_;
@@ -1607,6 +1675,10 @@ void protobuf_ShutdownFile_dota_5fusermessages_2eproto() {
   delete CDOTAUserMsg_TutorialPingMinimap_reflection_;
   delete CDOTA_UM_GamerulesStateChanged::default_instance_;
   delete CDOTA_UM_GamerulesStateChanged_reflection_;
+  delete CDOTAUserMsg_AddQuestLogEntry::default_instance_;
+  delete CDOTAUserMsg_AddQuestLogEntry_reflection_;
+  delete CDOTAUserMsg_SendStatPopup::default_instance_;
+  delete CDOTAUserMsg_SendStatPopup_reflection_;
 }
 
 void protobuf_AddDesc_dota_5fusermessages_2eproto() {
@@ -1783,144 +1855,153 @@ void protobuf_AddDesc_dota_5fusermessages_2eproto() {
     "\030\003 \001(\005\022\027\n\017target_entindex\030\004 \001(\005\022\036\n\026sourc"
     "e_player_entindex\030\005 \001(\005\">\n\034CDOTAUserMsg_"
     "TutorialTipInfo\022\014\n\004name\030\001 \001(\t\022\020\n\010progres"
-    "s\030\002 \001(\005\"S\n\026CDOTAUserMsg_WorldLine\022\021\n\tpla"
-    "yer_id\030\001 \001(\005\022&\n\tworldline\030\002 \001(\0132\023.CDOTAM"
-    "sg_WorldLine\"F\n\033CDOTAUserMsg_TournamentD"
-    "rop\022\023\n\013winner_name\030\001 \001(\t\022\022\n\nevent_type\030\002"
-    " \001(\005\"|\n\026CDOTAUserMsg_ChatWheel\022;\n\014chat_m"
-    "essage\030\001 \001(\0162\026.EDOTAChatWheelMessage:\rk_"
-    "EDOTA_CW_Ok\022\021\n\tplayer_id\030\002 \001(\r\022\022\n\naccoun"
-    "t_id\030\003 \001(\r\"]\n\035CDOTAUserMsg_ReceivedXmasG"
-    "ift\022\021\n\tplayer_id\030\001 \001(\005\022\021\n\titem_name\030\002 \001("
-    "\t\022\026\n\016inventory_slot\030\003 \001(\005\",\n\027CDOTAUserMs"
-    "g_ShowSurvey\022\021\n\tsurvey_id\030\001 \001(\005\"5\n CDOTA"
-    "UserMsg_UpdateSharedContent\022\021\n\tslot_type"
-    "\030\001 \001(\005\"!\n\037CDOTAUserMsg_TutorialRequestEx"
-    "p\".\n\031CDOTAUserMsg_TutorialFade\022\021\n\ttgt_al"
-    "pha\030\001 \001(\005\"x\n CDOTAUserMsg_TutorialPingMi"
-    "nimap\022\021\n\tplayer_id\030\001 \001(\r\022\r\n\005pos_x\030\002 \001(\002\022"
-    "\r\n\005pos_y\030\003 \001(\002\022\r\n\005pos_z\030\004 \001(\002\022\024\n\014entity_"
-    "index\030\005 \001(\005\"/\n\036CDOTA_UM_GamerulesStateCh"
-    "anged\022\r\n\005state\030\001 \001(\r*\363\t\n\021EDotaUserMessag"
-    "es\022\036\n\032DOTA_UM_AddUnitToSelection\020@\022\027\n\023DO"
-    "TA_UM_AIDebugLine\020A\022\025\n\021DOTA_UM_ChatEvent"
-    "\020B\022\037\n\033DOTA_UM_CombatHeroPositions\020C\022\031\n\025D"
-    "OTA_UM_CombatLogData\020D\022\036\n\032DOTA_UM_Combat"
-    "LogShowDeath\020F\022\"\n\036DOTA_UM_CreateLinearPr"
-    "ojectile\020G\022#\n\037DOTA_UM_DestroyLinearProje"
-    "ctile\020H\022$\n DOTA_UM_DodgeTrackingProjecti"
-    "les\020I\022\034\n\030DOTA_UM_GlobalLightColor\020J\022 \n\034D"
-    "OTA_UM_GlobalLightDirection\020K\022\032\n\026DOTA_UM"
-    "_InvalidCommand\020L\022\030\n\024DOTA_UM_LocationPin"
-    "g\020M\022\023\n\017DOTA_UM_MapLine\020N\022\033\n\027DOTA_UM_Mini"
-    "KillCamInfo\020O\022\035\n\031DOTA_UM_MinimapDebugPoi"
-    "nt\020P\022\030\n\024DOTA_UM_MinimapEvent\020Q\022\034\n\030DOTA_U"
-    "M_NevermoreRequiem\020R\022\031\n\025DOTA_UM_Overhead"
-    "Event\020S\022\036\n\032DOTA_UM_SetNextAutobuyItem\020T\022"
-    "\032\n\026DOTA_UM_SharedCooldown\020U\022 \n\034DOTA_UM_S"
-    "pectatorPlayerClick\020V\022\033\n\027DOTA_UM_Tutoria"
-    "lTipInfo\020W\022\025\n\021DOTA_UM_UnitEvent\020X\022\033\n\027DOT"
-    "A_UM_ParticleManager\020Y\022\023\n\017DOTA_UM_BotCha"
-    "t\020Z\022\024\n\020DOTA_UM_HudError\020[\022\031\n\025DOTA_UM_Ite"
-    "mPurchased\020\\\022\020\n\014DOTA_UM_Ping\020]\022\025\n\021DOTA_U"
-    "M_ItemFound\020^\022!\n\035DOTA_UM_CharacterSpeakC"
-    "oncept\020_\022\026\n\022DOTA_UM_SwapVerify\020`\022\025\n\021DOTA"
-    "_UM_WorldLine\020a\022\032\n\026DOTA_UM_TournamentDro"
-    "p\020b\022\025\n\021DOTA_UM_ItemAlert\020c\022\032\n\026DOTA_UM_Ha"
-    "lloweenDrops\020d\022\025\n\021DOTA_UM_ChatWheel\020e\022\034\n"
-    "\030DOTA_UM_ReceivedXmasGift\020f\022\037\n\033DOTA_UM_U"
-    "pdateSharedContent\020g\022\036\n\032DOTA_UM_Tutorial"
-    "RequestExp\020h\022\037\n\033DOTA_UM_TutorialPingMini"
-    "map\020i\022!\n\035DOTA_UM_GamerulesStateChanged\020j"
-    "\022\026\n\022DOTA_UM_ShowSurvey\020k\022\030\n\024DOTA_UM_Tuto"
-    "rialFade\020l*\343\016\n\021DOTA_CHAT_MESSAGE\022!\n\024CHAT"
-    "_MESSAGE_INVALID\020\377\377\377\377\377\377\377\377\377\001\022\032\n\026CHAT_MESS"
-    "AGE_HERO_KILL\020\000\022\032\n\026CHAT_MESSAGE_HERO_DEN"
-    "Y\020\001\022\036\n\032CHAT_MESSAGE_BARRACKS_KILL\020\002\022\033\n\027C"
-    "HAT_MESSAGE_TOWER_KILL\020\003\022\033\n\027CHAT_MESSAGE"
-    "_TOWER_DENY\020\004\022\033\n\027CHAT_MESSAGE_FIRSTBLOOD"
-    "\020\005\022\034\n\030CHAT_MESSAGE_STREAK_KILL\020\006\022\030\n\024CHAT"
-    "_MESSAGE_BUYBACK\020\007\022\026\n\022CHAT_MESSAGE_AEGIS"
-    "\020\010\022\034\n\030CHAT_MESSAGE_ROSHAN_KILL\020\t\022\035\n\031CHAT"
-    "_MESSAGE_COURIER_LOST\020\n\022\"\n\036CHAT_MESSAGE_"
-    "COURIER_RESPAWNED\020\013\022\033\n\027CHAT_MESSAGE_GLYP"
-    "H_USED\020\014\022\036\n\032CHAT_MESSAGE_ITEM_PURCHASE\020\r"
-    "\022\030\n\024CHAT_MESSAGE_CONNECT\020\016\022\033\n\027CHAT_MESSA"
-    "GE_DISCONNECT\020\017\022.\n*CHAT_MESSAGE_DISCONNE"
-    "CT_WAIT_FOR_RECONNECT\020\020\022*\n&CHAT_MESSAGE_"
-    "DISCONNECT_TIME_REMAINING\020\021\0221\n-CHAT_MESS"
-    "AGE_DISCONNECT_TIME_REMAINING_PLURAL\020\022\022\032"
-    "\n\026CHAT_MESSAGE_RECONNECT\020\023\022\030\n\024CHAT_MESSA"
-    "GE_ABANDON\020\024\022\036\n\032CHAT_MESSAGE_SAFE_TO_LEA"
-    "VE\020\025\022\034\n\030CHAT_MESSAGE_RUNE_PICKUP\020\026\022\034\n\030CH"
-    "AT_MESSAGE_RUNE_BOTTLE\020\027\022\031\n\025CHAT_MESSAGE"
-    "_INTHEBAG\020\030\022\033\n\027CHAT_MESSAGE_SECRETSHOP\020\031"
-    "\022#\n\037CHAT_MESSAGE_ITEM_AUTOPURCHASED\020\032\022\037\n"
-    "\033CHAT_MESSAGE_ITEMS_COMBINED\020\033\022\035\n\031CHAT_M"
-    "ESSAGE_SUPER_CREEPS\020\034\022%\n!CHAT_MESSAGE_CA"
-    "NT_USE_ACTION_ITEM\020\035\022\"\n\036CHAT_MESSAGE_CHA"
-    "RGES_EXHAUSTED\020\036\022\032\n\026CHAT_MESSAGE_CANTPAU"
-    "SE\020\037\022\035\n\031CHAT_MESSAGE_NOPAUSESLEFT\020 \022\035\n\031C"
-    "HAT_MESSAGE_CANTPAUSEYET\020!\022\027\n\023CHAT_MESSA"
-    "GE_PAUSED\020\"\022\"\n\036CHAT_MESSAGE_UNPAUSE_COUN"
-    "TDOWN\020#\022\031\n\025CHAT_MESSAGE_UNPAUSED\020$\022\036\n\032CH"
-    "AT_MESSAGE_AUTO_UNPAUSED\020%\022\032\n\026CHAT_MESSA"
-    "GE_YOUPAUSED\020&\022 \n\034CHAT_MESSAGE_CANTUNPAU"
-    "SETEAM\020\'\022(\n$CHAT_MESSAGE_SAFE_TO_LEAVE_A"
-    "BANDONER\020(\022\"\n\036CHAT_MESSAGE_VOICE_TEXT_BA"
-    "NNED\020)\022.\n*CHAT_MESSAGE_SPECTATORS_WATCHI"
-    "NG_THIS_GAME\020*\022 \n\034CHAT_MESSAGE_REPORT_RE"
-    "MINDER\020+\022\032\n\026CHAT_MESSAGE_ECON_ITEM\020,\022\026\n\022"
-    "CHAT_MESSAGE_TAUNT\020-\022\027\n\023CHAT_MESSAGE_RAN"
-    "DOM\020.\022\030\n\024CHAT_MESSAGE_RD_TURN\020/\022.\n*CHAT_"
-    "MESSAGE_SAFE_TO_LEAVE_ABANDONER_EARLY\0200\022"
-    " \n\034CHAT_MESSAGE_DROP_RATE_BONUS\0201\022!\n\035CHA"
-    "T_MESSAGE_NO_BATTLE_POINTS\0202\022\035\n\031CHAT_MES"
-    "SAGE_DENIED_AEGIS\0203\022\036\n\032CHAT_MESSAGE_INFO"
-    "RMATIONAL\0204\022\035\n\031CHAT_MESSAGE_AEGIS_STOLEN"
-    "\0205\022\035\n\031CHAT_MESSAGE_ROSHAN_CANDY\0206\022\034\n\030CHA"
-    "T_MESSAGE_ITEM_GIFTED\0207\022\'\n#CHAT_MESSAGE_"
-    "HERO_KILL_WITH_GREEVIL\0208*\262\001\n\035DOTA_NO_BAT"
-    "TLE_POINTS_REASONS\022%\n!NO_BATTLE_POINTS_W"
-    "RONG_LOBBY_TYPE\020\001\022\"\n\036NO_BATTLE_POINTS_PR"
-    "ACTICE_BOTS\020\002\022#\n\037NO_BATTLE_POINTS_CHEATS"
-    "_ENABLED\020\003\022!\n\035NO_BATTLE_POINTS_LOW_PRIOR"
-    "ITY\020\004*7\n\027DOTA_CHAT_INFORMATIONAL\022\034\n\030COOP"
-    "_BATTLE_POINTS_RULES\020\001*\251\001\n\024DOTA_COMBATLO"
-    "G_TYPES\022\031\n\025DOTA_COMBATLOG_DAMAGE\020\000\022\027\n\023DO"
-    "TA_COMBATLOG_HEAL\020\001\022\037\n\033DOTA_COMBATLOG_MO"
-    "DIFIER_ADD\020\002\022\"\n\036DOTA_COMBATLOG_MODIFIER_"
-    "REMOVE\020\003\022\030\n\024DOTA_COMBATLOG_DEATH\020\004*\345\001\n\023E"
-    "DotaEntityMessages\022\024\n\020DOTA_UNIT_SPEECH\020\000"
-    "\022\031\n\025DOTA_UNIT_SPEECH_MUTE\020\001\022\031\n\025DOTA_UNIT"
-    "_ADD_GESTURE\020\002\022\034\n\030DOTA_UNIT_REMOVE_GESTU"
-    "RE\020\003\022!\n\035DOTA_UNIT_REMOVE_ALL_GESTURES\020\004\022"
-    "\032\n\026DOTA_UNIT_FADE_GESTURE\020\006\022%\n!DOTA_UNIT"
-    "_SPEECH_CLIENTSIDE_RULES\020\007*\262\004\n\025DOTA_PART"
-    "ICLE_MESSAGE\022&\n\"DOTA_PARTICLE_MANAGER_EV"
-    "ENT_CREATE\020\000\022&\n\"DOTA_PARTICLE_MANAGER_EV"
-    "ENT_UPDATE\020\001\022.\n*DOTA_PARTICLE_MANAGER_EV"
-    "ENT_UPDATE_FORWARD\020\002\0222\n.DOTA_PARTICLE_MA"
-    "NAGER_EVENT_UPDATE_ORIENTATION\020\003\022/\n+DOTA"
-    "_PARTICLE_MANAGER_EVENT_UPDATE_FALLBACK\020"
-    "\004\022*\n&DOTA_PARTICLE_MANAGER_EVENT_UPDATE_"
-    "ENT\020\005\022-\n)DOTA_PARTICLE_MANAGER_EVENT_UPD"
-    "ATE_OFFSET\020\006\022\'\n#DOTA_PARTICLE_MANAGER_EV"
-    "ENT_DESTROY\020\007\0221\n-DOTA_PARTICLE_MANAGER_E"
-    "VENT_DESTROY_INVOLVING\020\010\022\'\n#DOTA_PARTICL"
-    "E_MANAGER_EVENT_RELEASE\020\t\022\'\n#DOTA_PARTIC"
-    "LE_MANAGER_EVENT_LATENCY\020\n\022+\n\'DOTA_PARTI"
-    "CLE_MANAGER_EVENT_SHOULD_DRAW\020\013*\206\003\n\023DOTA"
-    "_OVERHEAD_ALERT\022\027\n\023OVERHEAD_ALERT_GOLD\020\000"
-    "\022\027\n\023OVERHEAD_ALERT_DENY\020\001\022\033\n\027OVERHEAD_AL"
-    "ERT_CRITICAL\020\002\022\025\n\021OVERHEAD_ALERT_XP\020\003\022%\n"
-    "!OVERHEAD_ALERT_BONUS_SPELL_DAMAGE\020\004\022\027\n\023"
-    "OVERHEAD_ALERT_MISS\020\005\022\031\n\025OVERHEAD_ALERT_"
-    "DAMAGE\020\006\022\030\n\024OVERHEAD_ALERT_EVADE\020\007\022\030\n\024OV"
-    "ERHEAD_ALERT_BLOCK\020\010\022&\n\"OVERHEAD_ALERT_B"
-    "ONUS_POISON_DAMAGE\020\t\022\027\n\023OVERHEAD_ALERT_H"
-    "EAL\020\n\022\033\n\027OVERHEAD_ALERT_MANA_ADD\020\013\022\034\n\030OV"
-    "ERHEAD_ALERT_MANA_LOSS\020\014B\005H\001\200\001\000", 12031);
+    "s\030\002 \001(\005\"L\n\033CDOTAUserMsg_TutorialFinish\022\017"
+    "\n\007heading\030\001 \001(\t\022\016\n\006emblem\030\002 \001(\t\022\014\n\004body\030"
+    "\003 \001(\t\"S\n\026CDOTAUserMsg_WorldLine\022\021\n\tplaye"
+    "r_id\030\001 \001(\005\022&\n\tworldline\030\002 \001(\0132\023.CDOTAMsg"
+    "_WorldLine\"F\n\033CDOTAUserMsg_TournamentDro"
+    "p\022\023\n\013winner_name\030\001 \001(\t\022\022\n\nevent_type\030\002 \001"
+    "(\005\"|\n\026CDOTAUserMsg_ChatWheel\022;\n\014chat_mes"
+    "sage\030\001 \001(\0162\026.EDOTAChatWheelMessage:\rk_ED"
+    "OTA_CW_Ok\022\021\n\tplayer_id\030\002 \001(\r\022\022\n\naccount_"
+    "id\030\003 \001(\r\"]\n\035CDOTAUserMsg_ReceivedXmasGif"
+    "t\022\021\n\tplayer_id\030\001 \001(\005\022\021\n\titem_name\030\002 \001(\t\022"
+    "\026\n\016inventory_slot\030\003 \001(\005\",\n\027CDOTAUserMsg_"
+    "ShowSurvey\022\021\n\tsurvey_id\030\001 \001(\005\"5\n CDOTAUs"
+    "erMsg_UpdateSharedContent\022\021\n\tslot_type\030\001"
+    " \001(\005\"!\n\037CDOTAUserMsg_TutorialRequestExp\""
+    ".\n\031CDOTAUserMsg_TutorialFade\022\021\n\ttgt_alph"
+    "a\030\001 \001(\005\"x\n CDOTAUserMsg_TutorialPingMini"
+    "map\022\021\n\tplayer_id\030\001 \001(\r\022\r\n\005pos_x\030\002 \001(\002\022\r\n"
+    "\005pos_y\030\003 \001(\002\022\r\n\005pos_z\030\004 \001(\002\022\024\n\014entity_in"
+    "dex\030\005 \001(\005\"/\n\036CDOTA_UM_GamerulesStateChan"
+    "ged\022\r\n\005state\030\001 \001(\r\"h\n\035CDOTAUserMsg_AddQu"
+    "estLogEntry\022\020\n\010npc_name\030\001 \001(\t\022\022\n\nnpc_dia"
+    "log\030\002 \001(\t\022\r\n\005quest\030\003 \001(\010\022\022\n\nquest_type\030\004"
+    " \001(\005\"[\n\032CDOTAUserMsg_SendStatPopup\022\021\n\tpl"
+    "ayer_id\030\001 \001(\005\022*\n\tstatpopup\030\002 \001(\0132\027.CDOTA"
+    "Msg_SendStatPopup*\310\n\n\021EDotaUserMessages\022"
+    "\036\n\032DOTA_UM_AddUnitToSelection\020@\022\027\n\023DOTA_"
+    "UM_AIDebugLine\020A\022\025\n\021DOTA_UM_ChatEvent\020B\022"
+    "\037\n\033DOTA_UM_CombatHeroPositions\020C\022\031\n\025DOTA"
+    "_UM_CombatLogData\020D\022\036\n\032DOTA_UM_CombatLog"
+    "ShowDeath\020F\022\"\n\036DOTA_UM_CreateLinearProje"
+    "ctile\020G\022#\n\037DOTA_UM_DestroyLinearProjecti"
+    "le\020H\022$\n DOTA_UM_DodgeTrackingProjectiles"
+    "\020I\022\034\n\030DOTA_UM_GlobalLightColor\020J\022 \n\034DOTA"
+    "_UM_GlobalLightDirection\020K\022\032\n\026DOTA_UM_In"
+    "validCommand\020L\022\030\n\024DOTA_UM_LocationPing\020M"
+    "\022\023\n\017DOTA_UM_MapLine\020N\022\033\n\027DOTA_UM_MiniKil"
+    "lCamInfo\020O\022\035\n\031DOTA_UM_MinimapDebugPoint\020"
+    "P\022\030\n\024DOTA_UM_MinimapEvent\020Q\022\034\n\030DOTA_UM_N"
+    "evermoreRequiem\020R\022\031\n\025DOTA_UM_OverheadEve"
+    "nt\020S\022\036\n\032DOTA_UM_SetNextAutobuyItem\020T\022\032\n\026"
+    "DOTA_UM_SharedCooldown\020U\022 \n\034DOTA_UM_Spec"
+    "tatorPlayerClick\020V\022\033\n\027DOTA_UM_TutorialTi"
+    "pInfo\020W\022\025\n\021DOTA_UM_UnitEvent\020X\022\033\n\027DOTA_U"
+    "M_ParticleManager\020Y\022\023\n\017DOTA_UM_BotChat\020Z"
+    "\022\024\n\020DOTA_UM_HudError\020[\022\031\n\025DOTA_UM_ItemPu"
+    "rchased\020\\\022\020\n\014DOTA_UM_Ping\020]\022\025\n\021DOTA_UM_I"
+    "temFound\020^\022!\n\035DOTA_UM_CharacterSpeakConc"
+    "ept\020_\022\026\n\022DOTA_UM_SwapVerify\020`\022\025\n\021DOTA_UM"
+    "_WorldLine\020a\022\032\n\026DOTA_UM_TournamentDrop\020b"
+    "\022\025\n\021DOTA_UM_ItemAlert\020c\022\032\n\026DOTA_UM_Hallo"
+    "weenDrops\020d\022\025\n\021DOTA_UM_ChatWheel\020e\022\034\n\030DO"
+    "TA_UM_ReceivedXmasGift\020f\022\037\n\033DOTA_UM_Upda"
+    "teSharedContent\020g\022\036\n\032DOTA_UM_TutorialReq"
+    "uestExp\020h\022\037\n\033DOTA_UM_TutorialPingMinimap"
+    "\020i\022!\n\035DOTA_UM_GamerulesStateChanged\020j\022\026\n"
+    "\022DOTA_UM_ShowSurvey\020k\022\030\n\024DOTA_UM_Tutoria"
+    "lFade\020l\022\034\n\030DOTA_UM_AddQuestLogEntry\020m\022\031\n"
+    "\025DOTA_UM_SendStatPopup\020n\022\032\n\026DOTA_UM_Tuto"
+    "rialFinish\020o*\343\016\n\021DOTA_CHAT_MESSAGE\022!\n\024CH"
+    "AT_MESSAGE_INVALID\020\377\377\377\377\377\377\377\377\377\001\022\032\n\026CHAT_ME"
+    "SSAGE_HERO_KILL\020\000\022\032\n\026CHAT_MESSAGE_HERO_D"
+    "ENY\020\001\022\036\n\032CHAT_MESSAGE_BARRACKS_KILL\020\002\022\033\n"
+    "\027CHAT_MESSAGE_TOWER_KILL\020\003\022\033\n\027CHAT_MESSA"
+    "GE_TOWER_DENY\020\004\022\033\n\027CHAT_MESSAGE_FIRSTBLO"
+    "OD\020\005\022\034\n\030CHAT_MESSAGE_STREAK_KILL\020\006\022\030\n\024CH"
+    "AT_MESSAGE_BUYBACK\020\007\022\026\n\022CHAT_MESSAGE_AEG"
+    "IS\020\010\022\034\n\030CHAT_MESSAGE_ROSHAN_KILL\020\t\022\035\n\031CH"
+    "AT_MESSAGE_COURIER_LOST\020\n\022\"\n\036CHAT_MESSAG"
+    "E_COURIER_RESPAWNED\020\013\022\033\n\027CHAT_MESSAGE_GL"
+    "YPH_USED\020\014\022\036\n\032CHAT_MESSAGE_ITEM_PURCHASE"
+    "\020\r\022\030\n\024CHAT_MESSAGE_CONNECT\020\016\022\033\n\027CHAT_MES"
+    "SAGE_DISCONNECT\020\017\022.\n*CHAT_MESSAGE_DISCON"
+    "NECT_WAIT_FOR_RECONNECT\020\020\022*\n&CHAT_MESSAG"
+    "E_DISCONNECT_TIME_REMAINING\020\021\0221\n-CHAT_ME"
+    "SSAGE_DISCONNECT_TIME_REMAINING_PLURAL\020\022"
+    "\022\032\n\026CHAT_MESSAGE_RECONNECT\020\023\022\030\n\024CHAT_MES"
+    "SAGE_ABANDON\020\024\022\036\n\032CHAT_MESSAGE_SAFE_TO_L"
+    "EAVE\020\025\022\034\n\030CHAT_MESSAGE_RUNE_PICKUP\020\026\022\034\n\030"
+    "CHAT_MESSAGE_RUNE_BOTTLE\020\027\022\031\n\025CHAT_MESSA"
+    "GE_INTHEBAG\020\030\022\033\n\027CHAT_MESSAGE_SECRETSHOP"
+    "\020\031\022#\n\037CHAT_MESSAGE_ITEM_AUTOPURCHASED\020\032\022"
+    "\037\n\033CHAT_MESSAGE_ITEMS_COMBINED\020\033\022\035\n\031CHAT"
+    "_MESSAGE_SUPER_CREEPS\020\034\022%\n!CHAT_MESSAGE_"
+    "CANT_USE_ACTION_ITEM\020\035\022\"\n\036CHAT_MESSAGE_C"
+    "HARGES_EXHAUSTED\020\036\022\032\n\026CHAT_MESSAGE_CANTP"
+    "AUSE\020\037\022\035\n\031CHAT_MESSAGE_NOPAUSESLEFT\020 \022\035\n"
+    "\031CHAT_MESSAGE_CANTPAUSEYET\020!\022\027\n\023CHAT_MES"
+    "SAGE_PAUSED\020\"\022\"\n\036CHAT_MESSAGE_UNPAUSE_CO"
+    "UNTDOWN\020#\022\031\n\025CHAT_MESSAGE_UNPAUSED\020$\022\036\n\032"
+    "CHAT_MESSAGE_AUTO_UNPAUSED\020%\022\032\n\026CHAT_MES"
+    "SAGE_YOUPAUSED\020&\022 \n\034CHAT_MESSAGE_CANTUNP"
+    "AUSETEAM\020\'\022(\n$CHAT_MESSAGE_SAFE_TO_LEAVE"
+    "_ABANDONER\020(\022\"\n\036CHAT_MESSAGE_VOICE_TEXT_"
+    "BANNED\020)\022.\n*CHAT_MESSAGE_SPECTATORS_WATC"
+    "HING_THIS_GAME\020*\022 \n\034CHAT_MESSAGE_REPORT_"
+    "REMINDER\020+\022\032\n\026CHAT_MESSAGE_ECON_ITEM\020,\022\026"
+    "\n\022CHAT_MESSAGE_TAUNT\020-\022\027\n\023CHAT_MESSAGE_R"
+    "ANDOM\020.\022\030\n\024CHAT_MESSAGE_RD_TURN\020/\022.\n*CHA"
+    "T_MESSAGE_SAFE_TO_LEAVE_ABANDONER_EARLY\020"
+    "0\022 \n\034CHAT_MESSAGE_DROP_RATE_BONUS\0201\022!\n\035C"
+    "HAT_MESSAGE_NO_BATTLE_POINTS\0202\022\035\n\031CHAT_M"
+    "ESSAGE_DENIED_AEGIS\0203\022\036\n\032CHAT_MESSAGE_IN"
+    "FORMATIONAL\0204\022\035\n\031CHAT_MESSAGE_AEGIS_STOL"
+    "EN\0205\022\035\n\031CHAT_MESSAGE_ROSHAN_CANDY\0206\022\034\n\030C"
+    "HAT_MESSAGE_ITEM_GIFTED\0207\022\'\n#CHAT_MESSAG"
+    "E_HERO_KILL_WITH_GREEVIL\0208*\262\001\n\035DOTA_NO_B"
+    "ATTLE_POINTS_REASONS\022%\n!NO_BATTLE_POINTS"
+    "_WRONG_LOBBY_TYPE\020\001\022\"\n\036NO_BATTLE_POINTS_"
+    "PRACTICE_BOTS\020\002\022#\n\037NO_BATTLE_POINTS_CHEA"
+    "TS_ENABLED\020\003\022!\n\035NO_BATTLE_POINTS_LOW_PRI"
+    "ORITY\020\004*7\n\027DOTA_CHAT_INFORMATIONAL\022\034\n\030CO"
+    "OP_BATTLE_POINTS_RULES\020\001*\251\001\n\024DOTA_COMBAT"
+    "LOG_TYPES\022\031\n\025DOTA_COMBATLOG_DAMAGE\020\000\022\027\n\023"
+    "DOTA_COMBATLOG_HEAL\020\001\022\037\n\033DOTA_COMBATLOG_"
+    "MODIFIER_ADD\020\002\022\"\n\036DOTA_COMBATLOG_MODIFIE"
+    "R_REMOVE\020\003\022\030\n\024DOTA_COMBATLOG_DEATH\020\004*\345\001\n"
+    "\023EDotaEntityMessages\022\024\n\020DOTA_UNIT_SPEECH"
+    "\020\000\022\031\n\025DOTA_UNIT_SPEECH_MUTE\020\001\022\031\n\025DOTA_UN"
+    "IT_ADD_GESTURE\020\002\022\034\n\030DOTA_UNIT_REMOVE_GES"
+    "TURE\020\003\022!\n\035DOTA_UNIT_REMOVE_ALL_GESTURES\020"
+    "\004\022\032\n\026DOTA_UNIT_FADE_GESTURE\020\006\022%\n!DOTA_UN"
+    "IT_SPEECH_CLIENTSIDE_RULES\020\007*\262\004\n\025DOTA_PA"
+    "RTICLE_MESSAGE\022&\n\"DOTA_PARTICLE_MANAGER_"
+    "EVENT_CREATE\020\000\022&\n\"DOTA_PARTICLE_MANAGER_"
+    "EVENT_UPDATE\020\001\022.\n*DOTA_PARTICLE_MANAGER_"
+    "EVENT_UPDATE_FORWARD\020\002\0222\n.DOTA_PARTICLE_"
+    "MANAGER_EVENT_UPDATE_ORIENTATION\020\003\022/\n+DO"
+    "TA_PARTICLE_MANAGER_EVENT_UPDATE_FALLBAC"
+    "K\020\004\022*\n&DOTA_PARTICLE_MANAGER_EVENT_UPDAT"
+    "E_ENT\020\005\022-\n)DOTA_PARTICLE_MANAGER_EVENT_U"
+    "PDATE_OFFSET\020\006\022\'\n#DOTA_PARTICLE_MANAGER_"
+    "EVENT_DESTROY\020\007\0221\n-DOTA_PARTICLE_MANAGER"
+    "_EVENT_DESTROY_INVOLVING\020\010\022\'\n#DOTA_PARTI"
+    "CLE_MANAGER_EVENT_RELEASE\020\t\022\'\n#DOTA_PART"
+    "ICLE_MANAGER_EVENT_LATENCY\020\n\022+\n\'DOTA_PAR"
+    "TICLE_MANAGER_EVENT_SHOULD_DRAW\020\013*\206\003\n\023DO"
+    "TA_OVERHEAD_ALERT\022\027\n\023OVERHEAD_ALERT_GOLD"
+    "\020\000\022\027\n\023OVERHEAD_ALERT_DENY\020\001\022\033\n\027OVERHEAD_"
+    "ALERT_CRITICAL\020\002\022\025\n\021OVERHEAD_ALERT_XP\020\003\022"
+    "%\n!OVERHEAD_ALERT_BONUS_SPELL_DAMAGE\020\004\022\027"
+    "\n\023OVERHEAD_ALERT_MISS\020\005\022\031\n\025OVERHEAD_ALER"
+    "T_DAMAGE\020\006\022\030\n\024OVERHEAD_ALERT_EVADE\020\007\022\030\n\024"
+    "OVERHEAD_ALERT_BLOCK\020\010\022&\n\"OVERHEAD_ALERT"
+    "_BONUS_POISON_DAMAGE\020\t\022\027\n\023OVERHEAD_ALERT"
+    "_HEAL\020\n\022\033\n\027OVERHEAD_ALERT_MANA_ADD\020\013\022\034\n\030"
+    "OVERHEAD_ALERT_MANA_LOSS\020\014B\005H\001\200\001\000", 12393);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "dota_usermessages.proto", &protobuf_RegisterTypes);
   CDOTAUserMsg_AIDebugLine::default_instance_ = new CDOTAUserMsg_AIDebugLine();
@@ -1978,6 +2059,7 @@ void protobuf_AddDesc_dota_5fusermessages_2eproto() {
   CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw::default_instance_ = new CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw();
   CDOTAUserMsg_OverheadEvent::default_instance_ = new CDOTAUserMsg_OverheadEvent();
   CDOTAUserMsg_TutorialTipInfo::default_instance_ = new CDOTAUserMsg_TutorialTipInfo();
+  CDOTAUserMsg_TutorialFinish::default_instance_ = new CDOTAUserMsg_TutorialFinish();
   CDOTAUserMsg_WorldLine::default_instance_ = new CDOTAUserMsg_WorldLine();
   CDOTAUserMsg_TournamentDrop::default_instance_ = new CDOTAUserMsg_TournamentDrop();
   CDOTAUserMsg_ChatWheel::default_instance_ = new CDOTAUserMsg_ChatWheel();
@@ -1988,6 +2070,8 @@ void protobuf_AddDesc_dota_5fusermessages_2eproto() {
   CDOTAUserMsg_TutorialFade::default_instance_ = new CDOTAUserMsg_TutorialFade();
   CDOTAUserMsg_TutorialPingMinimap::default_instance_ = new CDOTAUserMsg_TutorialPingMinimap();
   CDOTA_UM_GamerulesStateChanged::default_instance_ = new CDOTA_UM_GamerulesStateChanged();
+  CDOTAUserMsg_AddQuestLogEntry::default_instance_ = new CDOTAUserMsg_AddQuestLogEntry();
+  CDOTAUserMsg_SendStatPopup::default_instance_ = new CDOTAUserMsg_SendStatPopup();
   CDOTAUserMsg_AIDebugLine::default_instance_->InitAsDefaultInstance();
   CDOTAUserMsg_Ping::default_instance_->InitAsDefaultInstance();
   CDOTAUserMsg_SwapVerify::default_instance_->InitAsDefaultInstance();
@@ -2043,6 +2127,7 @@ void protobuf_AddDesc_dota_5fusermessages_2eproto() {
   CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw::default_instance_->InitAsDefaultInstance();
   CDOTAUserMsg_OverheadEvent::default_instance_->InitAsDefaultInstance();
   CDOTAUserMsg_TutorialTipInfo::default_instance_->InitAsDefaultInstance();
+  CDOTAUserMsg_TutorialFinish::default_instance_->InitAsDefaultInstance();
   CDOTAUserMsg_WorldLine::default_instance_->InitAsDefaultInstance();
   CDOTAUserMsg_TournamentDrop::default_instance_->InitAsDefaultInstance();
   CDOTAUserMsg_ChatWheel::default_instance_->InitAsDefaultInstance();
@@ -2053,6 +2138,8 @@ void protobuf_AddDesc_dota_5fusermessages_2eproto() {
   CDOTAUserMsg_TutorialFade::default_instance_->InitAsDefaultInstance();
   CDOTAUserMsg_TutorialPingMinimap::default_instance_->InitAsDefaultInstance();
   CDOTA_UM_GamerulesStateChanged::default_instance_->InitAsDefaultInstance();
+  CDOTAUserMsg_AddQuestLogEntry::default_instance_->InitAsDefaultInstance();
+  CDOTAUserMsg_SendStatPopup::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_dota_5fusermessages_2eproto);
 }
 
@@ -2113,6 +2200,9 @@ bool EDotaUserMessages_IsValid(int value) {
     case 106:
     case 107:
     case 108:
+    case 109:
+    case 110:
+    case 111:
       return true;
     default:
       return false;
@@ -18444,6 +18534,344 @@ void CDOTAUserMsg_TutorialTipInfo::Swap(CDOTAUserMsg_TutorialTipInfo* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
+const int CDOTAUserMsg_TutorialFinish::kHeadingFieldNumber;
+const int CDOTAUserMsg_TutorialFinish::kEmblemFieldNumber;
+const int CDOTAUserMsg_TutorialFinish::kBodyFieldNumber;
+#endif  // !_MSC_VER
+
+CDOTAUserMsg_TutorialFinish::CDOTAUserMsg_TutorialFinish()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void CDOTAUserMsg_TutorialFinish::InitAsDefaultInstance() {
+}
+
+CDOTAUserMsg_TutorialFinish::CDOTAUserMsg_TutorialFinish(const CDOTAUserMsg_TutorialFinish& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void CDOTAUserMsg_TutorialFinish::SharedCtor() {
+  _cached_size_ = 0;
+  heading_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  emblem_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+CDOTAUserMsg_TutorialFinish::~CDOTAUserMsg_TutorialFinish() {
+  SharedDtor();
+}
+
+void CDOTAUserMsg_TutorialFinish::SharedDtor() {
+  if (heading_ != &::google::protobuf::internal::kEmptyString) {
+    delete heading_;
+  }
+  if (emblem_ != &::google::protobuf::internal::kEmptyString) {
+    delete emblem_;
+  }
+  if (body_ != &::google::protobuf::internal::kEmptyString) {
+    delete body_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void CDOTAUserMsg_TutorialFinish::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* CDOTAUserMsg_TutorialFinish::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return CDOTAUserMsg_TutorialFinish_descriptor_;
+}
+
+const CDOTAUserMsg_TutorialFinish& CDOTAUserMsg_TutorialFinish::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_dota_5fusermessages_2eproto();  return *default_instance_;
+}
+
+CDOTAUserMsg_TutorialFinish* CDOTAUserMsg_TutorialFinish::default_instance_ = NULL;
+
+CDOTAUserMsg_TutorialFinish* CDOTAUserMsg_TutorialFinish::New() const {
+  return new CDOTAUserMsg_TutorialFinish;
+}
+
+void CDOTAUserMsg_TutorialFinish::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_heading()) {
+      if (heading_ != &::google::protobuf::internal::kEmptyString) {
+        heading_->clear();
+      }
+    }
+    if (has_emblem()) {
+      if (emblem_ != &::google::protobuf::internal::kEmptyString) {
+        emblem_->clear();
+      }
+    }
+    if (has_body()) {
+      if (body_ != &::google::protobuf::internal::kEmptyString) {
+        body_->clear();
+      }
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool CDOTAUserMsg_TutorialFinish::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional string heading = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_heading()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->heading().data(), this->heading().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_emblem;
+        break;
+      }
+      
+      // optional string emblem = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_emblem:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_emblem()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->emblem().data(), this->emblem().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_body;
+        break;
+      }
+      
+      // optional string body = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_body:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_body()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->body().data(), this->body().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void CDOTAUserMsg_TutorialFinish::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // optional string heading = 1;
+  if (has_heading()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->heading().data(), this->heading().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->heading(), output);
+  }
+  
+  // optional string emblem = 2;
+  if (has_emblem()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->emblem().data(), this->emblem().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->emblem(), output);
+  }
+  
+  // optional string body = 3;
+  if (has_body()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->body().data(), this->body().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      3, this->body(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* CDOTAUserMsg_TutorialFinish::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // optional string heading = 1;
+  if (has_heading()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->heading().data(), this->heading().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->heading(), target);
+  }
+  
+  // optional string emblem = 2;
+  if (has_emblem()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->emblem().data(), this->emblem().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->emblem(), target);
+  }
+  
+  // optional string body = 3;
+  if (has_body()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->body().data(), this->body().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->body(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int CDOTAUserMsg_TutorialFinish::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // optional string heading = 1;
+    if (has_heading()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->heading());
+    }
+    
+    // optional string emblem = 2;
+    if (has_emblem()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->emblem());
+    }
+    
+    // optional string body = 3;
+    if (has_body()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->body());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void CDOTAUserMsg_TutorialFinish::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const CDOTAUserMsg_TutorialFinish* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const CDOTAUserMsg_TutorialFinish*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void CDOTAUserMsg_TutorialFinish::MergeFrom(const CDOTAUserMsg_TutorialFinish& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_heading()) {
+      set_heading(from.heading());
+    }
+    if (from.has_emblem()) {
+      set_emblem(from.emblem());
+    }
+    if (from.has_body()) {
+      set_body(from.body());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void CDOTAUserMsg_TutorialFinish::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CDOTAUserMsg_TutorialFinish::CopyFrom(const CDOTAUserMsg_TutorialFinish& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CDOTAUserMsg_TutorialFinish::IsInitialized() const {
+  
+  return true;
+}
+
+void CDOTAUserMsg_TutorialFinish::Swap(CDOTAUserMsg_TutorialFinish* other) {
+  if (other != this) {
+    std::swap(heading_, other->heading_);
+    std::swap(emblem_, other->emblem_);
+    std::swap(body_, other->body_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata CDOTAUserMsg_TutorialFinish::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = CDOTAUserMsg_TutorialFinish_descriptor_;
+  metadata.reflection = CDOTAUserMsg_TutorialFinish_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
 const int CDOTAUserMsg_WorldLine::kPlayerIdFieldNumber;
 const int CDOTAUserMsg_WorldLine::kWorldlineFieldNumber;
 #endif  // !_MSC_VER
@@ -20894,6 +21322,617 @@ void CDOTA_UM_GamerulesStateChanged::Swap(CDOTA_UM_GamerulesStateChanged* other)
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = CDOTA_UM_GamerulesStateChanged_descriptor_;
   metadata.reflection = CDOTA_UM_GamerulesStateChanged_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int CDOTAUserMsg_AddQuestLogEntry::kNpcNameFieldNumber;
+const int CDOTAUserMsg_AddQuestLogEntry::kNpcDialogFieldNumber;
+const int CDOTAUserMsg_AddQuestLogEntry::kQuestFieldNumber;
+const int CDOTAUserMsg_AddQuestLogEntry::kQuestTypeFieldNumber;
+#endif  // !_MSC_VER
+
+CDOTAUserMsg_AddQuestLogEntry::CDOTAUserMsg_AddQuestLogEntry()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void CDOTAUserMsg_AddQuestLogEntry::InitAsDefaultInstance() {
+}
+
+CDOTAUserMsg_AddQuestLogEntry::CDOTAUserMsg_AddQuestLogEntry(const CDOTAUserMsg_AddQuestLogEntry& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void CDOTAUserMsg_AddQuestLogEntry::SharedCtor() {
+  _cached_size_ = 0;
+  npc_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  npc_dialog_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  quest_ = false;
+  quest_type_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+CDOTAUserMsg_AddQuestLogEntry::~CDOTAUserMsg_AddQuestLogEntry() {
+  SharedDtor();
+}
+
+void CDOTAUserMsg_AddQuestLogEntry::SharedDtor() {
+  if (npc_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete npc_name_;
+  }
+  if (npc_dialog_ != &::google::protobuf::internal::kEmptyString) {
+    delete npc_dialog_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void CDOTAUserMsg_AddQuestLogEntry::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* CDOTAUserMsg_AddQuestLogEntry::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return CDOTAUserMsg_AddQuestLogEntry_descriptor_;
+}
+
+const CDOTAUserMsg_AddQuestLogEntry& CDOTAUserMsg_AddQuestLogEntry::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_dota_5fusermessages_2eproto();  return *default_instance_;
+}
+
+CDOTAUserMsg_AddQuestLogEntry* CDOTAUserMsg_AddQuestLogEntry::default_instance_ = NULL;
+
+CDOTAUserMsg_AddQuestLogEntry* CDOTAUserMsg_AddQuestLogEntry::New() const {
+  return new CDOTAUserMsg_AddQuestLogEntry;
+}
+
+void CDOTAUserMsg_AddQuestLogEntry::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_npc_name()) {
+      if (npc_name_ != &::google::protobuf::internal::kEmptyString) {
+        npc_name_->clear();
+      }
+    }
+    if (has_npc_dialog()) {
+      if (npc_dialog_ != &::google::protobuf::internal::kEmptyString) {
+        npc_dialog_->clear();
+      }
+    }
+    quest_ = false;
+    quest_type_ = 0;
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool CDOTAUserMsg_AddQuestLogEntry::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional string npc_name = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_npc_name()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->npc_name().data(), this->npc_name().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_npc_dialog;
+        break;
+      }
+      
+      // optional string npc_dialog = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_npc_dialog:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_npc_dialog()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->npc_dialog().data(), this->npc_dialog().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(24)) goto parse_quest;
+        break;
+      }
+      
+      // optional bool quest = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_quest:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &quest_)));
+          set_has_quest();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(32)) goto parse_quest_type;
+        break;
+      }
+      
+      // optional int32 quest_type = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_quest_type:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &quest_type_)));
+          set_has_quest_type();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void CDOTAUserMsg_AddQuestLogEntry::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // optional string npc_name = 1;
+  if (has_npc_name()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->npc_name().data(), this->npc_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->npc_name(), output);
+  }
+  
+  // optional string npc_dialog = 2;
+  if (has_npc_dialog()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->npc_dialog().data(), this->npc_dialog().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->npc_dialog(), output);
+  }
+  
+  // optional bool quest = 3;
+  if (has_quest()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->quest(), output);
+  }
+  
+  // optional int32 quest_type = 4;
+  if (has_quest_type()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->quest_type(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* CDOTAUserMsg_AddQuestLogEntry::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // optional string npc_name = 1;
+  if (has_npc_name()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->npc_name().data(), this->npc_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->npc_name(), target);
+  }
+  
+  // optional string npc_dialog = 2;
+  if (has_npc_dialog()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->npc_dialog().data(), this->npc_dialog().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->npc_dialog(), target);
+  }
+  
+  // optional bool quest = 3;
+  if (has_quest()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->quest(), target);
+  }
+  
+  // optional int32 quest_type = 4;
+  if (has_quest_type()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->quest_type(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int CDOTAUserMsg_AddQuestLogEntry::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // optional string npc_name = 1;
+    if (has_npc_name()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->npc_name());
+    }
+    
+    // optional string npc_dialog = 2;
+    if (has_npc_dialog()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->npc_dialog());
+    }
+    
+    // optional bool quest = 3;
+    if (has_quest()) {
+      total_size += 1 + 1;
+    }
+    
+    // optional int32 quest_type = 4;
+    if (has_quest_type()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->quest_type());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void CDOTAUserMsg_AddQuestLogEntry::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const CDOTAUserMsg_AddQuestLogEntry* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const CDOTAUserMsg_AddQuestLogEntry*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void CDOTAUserMsg_AddQuestLogEntry::MergeFrom(const CDOTAUserMsg_AddQuestLogEntry& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_npc_name()) {
+      set_npc_name(from.npc_name());
+    }
+    if (from.has_npc_dialog()) {
+      set_npc_dialog(from.npc_dialog());
+    }
+    if (from.has_quest()) {
+      set_quest(from.quest());
+    }
+    if (from.has_quest_type()) {
+      set_quest_type(from.quest_type());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void CDOTAUserMsg_AddQuestLogEntry::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CDOTAUserMsg_AddQuestLogEntry::CopyFrom(const CDOTAUserMsg_AddQuestLogEntry& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CDOTAUserMsg_AddQuestLogEntry::IsInitialized() const {
+  
+  return true;
+}
+
+void CDOTAUserMsg_AddQuestLogEntry::Swap(CDOTAUserMsg_AddQuestLogEntry* other) {
+  if (other != this) {
+    std::swap(npc_name_, other->npc_name_);
+    std::swap(npc_dialog_, other->npc_dialog_);
+    std::swap(quest_, other->quest_);
+    std::swap(quest_type_, other->quest_type_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata CDOTAUserMsg_AddQuestLogEntry::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = CDOTAUserMsg_AddQuestLogEntry_descriptor_;
+  metadata.reflection = CDOTAUserMsg_AddQuestLogEntry_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int CDOTAUserMsg_SendStatPopup::kPlayerIdFieldNumber;
+const int CDOTAUserMsg_SendStatPopup::kStatpopupFieldNumber;
+#endif  // !_MSC_VER
+
+CDOTAUserMsg_SendStatPopup::CDOTAUserMsg_SendStatPopup()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void CDOTAUserMsg_SendStatPopup::InitAsDefaultInstance() {
+  statpopup_ = const_cast< ::CDOTAMsg_SendStatPopup*>(&::CDOTAMsg_SendStatPopup::default_instance());
+}
+
+CDOTAUserMsg_SendStatPopup::CDOTAUserMsg_SendStatPopup(const CDOTAUserMsg_SendStatPopup& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void CDOTAUserMsg_SendStatPopup::SharedCtor() {
+  _cached_size_ = 0;
+  player_id_ = 0;
+  statpopup_ = NULL;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+CDOTAUserMsg_SendStatPopup::~CDOTAUserMsg_SendStatPopup() {
+  SharedDtor();
+}
+
+void CDOTAUserMsg_SendStatPopup::SharedDtor() {
+  if (this != default_instance_) {
+    delete statpopup_;
+  }
+}
+
+void CDOTAUserMsg_SendStatPopup::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* CDOTAUserMsg_SendStatPopup::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return CDOTAUserMsg_SendStatPopup_descriptor_;
+}
+
+const CDOTAUserMsg_SendStatPopup& CDOTAUserMsg_SendStatPopup::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_dota_5fusermessages_2eproto();  return *default_instance_;
+}
+
+CDOTAUserMsg_SendStatPopup* CDOTAUserMsg_SendStatPopup::default_instance_ = NULL;
+
+CDOTAUserMsg_SendStatPopup* CDOTAUserMsg_SendStatPopup::New() const {
+  return new CDOTAUserMsg_SendStatPopup;
+}
+
+void CDOTAUserMsg_SendStatPopup::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    player_id_ = 0;
+    if (has_statpopup()) {
+      if (statpopup_ != NULL) statpopup_->::CDOTAMsg_SendStatPopup::Clear();
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool CDOTAUserMsg_SendStatPopup::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 player_id = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &player_id_)));
+          set_has_player_id();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_statpopup;
+        break;
+      }
+      
+      // optional .CDOTAMsg_SendStatPopup statpopup = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_statpopup:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_statpopup()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void CDOTAUserMsg_SendStatPopup::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // optional int32 player_id = 1;
+  if (has_player_id()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->player_id(), output);
+  }
+  
+  // optional .CDOTAMsg_SendStatPopup statpopup = 2;
+  if (has_statpopup()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->statpopup(), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* CDOTAUserMsg_SendStatPopup::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // optional int32 player_id = 1;
+  if (has_player_id()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->player_id(), target);
+  }
+  
+  // optional .CDOTAMsg_SendStatPopup statpopup = 2;
+  if (has_statpopup()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, this->statpopup(), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int CDOTAUserMsg_SendStatPopup::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // optional int32 player_id = 1;
+    if (has_player_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->player_id());
+    }
+    
+    // optional .CDOTAMsg_SendStatPopup statpopup = 2;
+    if (has_statpopup()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->statpopup());
+    }
+    
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void CDOTAUserMsg_SendStatPopup::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const CDOTAUserMsg_SendStatPopup* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const CDOTAUserMsg_SendStatPopup*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void CDOTAUserMsg_SendStatPopup::MergeFrom(const CDOTAUserMsg_SendStatPopup& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_player_id()) {
+      set_player_id(from.player_id());
+    }
+    if (from.has_statpopup()) {
+      mutable_statpopup()->::CDOTAMsg_SendStatPopup::MergeFrom(from.statpopup());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void CDOTAUserMsg_SendStatPopup::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CDOTAUserMsg_SendStatPopup::CopyFrom(const CDOTAUserMsg_SendStatPopup& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CDOTAUserMsg_SendStatPopup::IsInitialized() const {
+  
+  return true;
+}
+
+void CDOTAUserMsg_SendStatPopup::Swap(CDOTAUserMsg_SendStatPopup* other) {
+  if (other != this) {
+    std::swap(player_id_, other->player_id_);
+    std::swap(statpopup_, other->statpopup_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata CDOTAUserMsg_SendStatPopup::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = CDOTAUserMsg_SendStatPopup_descriptor_;
+  metadata.reflection = CDOTAUserMsg_SendStatPopup_reflection_;
   return metadata;
 }
 

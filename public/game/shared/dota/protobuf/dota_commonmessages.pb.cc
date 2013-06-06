@@ -27,7 +27,11 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* CDOTAMsg_WorldLine_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   CDOTAMsg_WorldLine_reflection_ = NULL;
+const ::google::protobuf::Descriptor* CDOTAMsg_SendStatPopup_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  CDOTAMsg_SendStatPopup_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* EDOTAChatWheelMessage_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* EDOTAStatPopupTypes_descriptor_ = NULL;
 
 }  // namespace
 
@@ -109,7 +113,25 @@ void protobuf_AssignDesc_dota_5fcommonmessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CDOTAMsg_WorldLine));
+  CDOTAMsg_SendStatPopup_descriptor_ = file->message_type(4);
+  static const int CDOTAMsg_SendStatPopup_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAMsg_SendStatPopup, style_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAMsg_SendStatPopup, stat_strings_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAMsg_SendStatPopup, stat_images_),
+  };
+  CDOTAMsg_SendStatPopup_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      CDOTAMsg_SendStatPopup_descriptor_,
+      CDOTAMsg_SendStatPopup::default_instance_,
+      CDOTAMsg_SendStatPopup_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAMsg_SendStatPopup, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAMsg_SendStatPopup, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(CDOTAMsg_SendStatPopup));
   EDOTAChatWheelMessage_descriptor_ = file->enum_type(0);
+  EDOTAStatPopupTypes_descriptor_ = file->enum_type(1);
 }
 
 namespace {
@@ -130,6 +152,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
     CDOTAMsg_MapLine_descriptor_, &CDOTAMsg_MapLine::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     CDOTAMsg_WorldLine_descriptor_, &CDOTAMsg_WorldLine::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    CDOTAMsg_SendStatPopup_descriptor_, &CDOTAMsg_SendStatPopup::default_instance());
 }
 
 }  // namespace
@@ -143,6 +167,8 @@ void protobuf_ShutdownFile_dota_5fcommonmessages_2eproto() {
   delete CDOTAMsg_MapLine_reflection_;
   delete CDOTAMsg_WorldLine::default_instance_;
   delete CDOTAMsg_WorldLine_reflection_;
+  delete CDOTAMsg_SendStatPopup::default_instance_;
+  delete CDOTAMsg_SendStatPopup_reflection_;
 }
 
 void protobuf_AddDesc_dota_5fcommonmessages_2eproto() {
@@ -163,25 +189,32 @@ void protobuf_AddDesc_dota_5fcommonmessages_2eproto() {
     "Line\022\t\n\001x\030\001 \001(\005\022\t\n\001y\030\002 \001(\005\022\017\n\007initial\030\003 "
     "\001(\010\"S\n\022CDOTAMsg_WorldLine\022\t\n\001x\030\001 \001(\005\022\t\n\001"
     "y\030\002 \001(\005\022\t\n\001z\030\003 \001(\005\022\017\n\007initial\030\004 \001(\010\022\013\n\003e"
-    "nd\030\005 \001(\010*\267\002\n\025EDOTAChatWheelMessage\022\021\n\rk_"
-    "EDOTA_CW_Ok\020\000\022\023\n\017k_EDOTA_CW_Care\020\001\022\026\n\022k_"
-    "EDOTA_CW_GetBack\020\002\022\030\n\024k_EDOTA_CW_NeedWar"
-    "ds\020\003\022\023\n\017k_EDOTA_CW_Stun\020\004\022\023\n\017k_EDOTA_CW_"
-    "Help\020\005\022\023\n\017k_EDOTA_CW_Push\020\006\022\026\n\022k_EDOTA_C"
-    "W_GoodJob\020\007\022\026\n\022k_EDOTA_CW_Missing\020\010\022\032\n\026k"
-    "_EDOTA_CW_Missing_Top\020\t\022\032\n\026k_EDOTA_CW_Mi"
-    "ssing_Mid\020\n\022\035\n\031k_EDOTA_CW_Missing_Bottom"
-    "\020\013B\005H\001\200\001\000", 689);
+    "nd\030\005 \001(\010\"~\n\026CDOTAMsg_SendStatPopup\0229\n\005st"
+    "yle\030\001 \001(\0162\024.EDOTAStatPopupTypes:\024k_EDOTA"
+    "_SPT_Textline\022\024\n\014stat_strings\030\002 \003(\t\022\023\n\013s"
+    "tat_images\030\003 \003(\005*\267\002\n\025EDOTAChatWheelMessa"
+    "ge\022\021\n\rk_EDOTA_CW_Ok\020\000\022\023\n\017k_EDOTA_CW_Care"
+    "\020\001\022\026\n\022k_EDOTA_CW_GetBack\020\002\022\030\n\024k_EDOTA_CW"
+    "_NeedWards\020\003\022\023\n\017k_EDOTA_CW_Stun\020\004\022\023\n\017k_E"
+    "DOTA_CW_Help\020\005\022\023\n\017k_EDOTA_CW_Push\020\006\022\026\n\022k"
+    "_EDOTA_CW_GoodJob\020\007\022\026\n\022k_EDOTA_CW_Missin"
+    "g\020\010\022\032\n\026k_EDOTA_CW_Missing_Top\020\t\022\032\n\026k_EDO"
+    "TA_CW_Missing_Mid\020\n\022\035\n\031k_EDOTA_CW_Missin"
+    "g_Bottom\020\013*\\\n\023EDOTAStatPopupTypes\022\030\n\024k_E"
+    "DOTA_SPT_Textline\020\000\022\025\n\021k_EDOTA_SPT_Basic"
+    "\020\001\022\024\n\020k_EDOTA_SPT_Poll\020\002B\005H\001\200\001\000", 911);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "dota_commonmessages.proto", &protobuf_RegisterTypes);
   CDOTAMsg_LocationPing::default_instance_ = new CDOTAMsg_LocationPing();
   CDOTAMsg_ItemAlert::default_instance_ = new CDOTAMsg_ItemAlert();
   CDOTAMsg_MapLine::default_instance_ = new CDOTAMsg_MapLine();
   CDOTAMsg_WorldLine::default_instance_ = new CDOTAMsg_WorldLine();
+  CDOTAMsg_SendStatPopup::default_instance_ = new CDOTAMsg_SendStatPopup();
   CDOTAMsg_LocationPing::default_instance_->InitAsDefaultInstance();
   CDOTAMsg_ItemAlert::default_instance_->InitAsDefaultInstance();
   CDOTAMsg_MapLine::default_instance_->InitAsDefaultInstance();
   CDOTAMsg_WorldLine::default_instance_->InitAsDefaultInstance();
+  CDOTAMsg_SendStatPopup::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_dota_5fcommonmessages_2eproto);
 }
 
@@ -210,6 +243,21 @@ bool EDOTAChatWheelMessage_IsValid(int value) {
     case 9:
     case 10:
     case 11:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::google::protobuf::EnumDescriptor* EDOTAStatPopupTypes_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return EDOTAStatPopupTypes_descriptor_;
+}
+bool EDOTAStatPopupTypes_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
       return true;
     default:
       return false;
@@ -1473,6 +1521,314 @@ void CDOTAMsg_WorldLine::Swap(CDOTAMsg_WorldLine* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = CDOTAMsg_WorldLine_descriptor_;
   metadata.reflection = CDOTAMsg_WorldLine_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int CDOTAMsg_SendStatPopup::kStyleFieldNumber;
+const int CDOTAMsg_SendStatPopup::kStatStringsFieldNumber;
+const int CDOTAMsg_SendStatPopup::kStatImagesFieldNumber;
+#endif  // !_MSC_VER
+
+CDOTAMsg_SendStatPopup::CDOTAMsg_SendStatPopup()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void CDOTAMsg_SendStatPopup::InitAsDefaultInstance() {
+}
+
+CDOTAMsg_SendStatPopup::CDOTAMsg_SendStatPopup(const CDOTAMsg_SendStatPopup& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void CDOTAMsg_SendStatPopup::SharedCtor() {
+  _cached_size_ = 0;
+  style_ = 0;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+CDOTAMsg_SendStatPopup::~CDOTAMsg_SendStatPopup() {
+  SharedDtor();
+}
+
+void CDOTAMsg_SendStatPopup::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void CDOTAMsg_SendStatPopup::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* CDOTAMsg_SendStatPopup::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return CDOTAMsg_SendStatPopup_descriptor_;
+}
+
+const CDOTAMsg_SendStatPopup& CDOTAMsg_SendStatPopup::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_dota_5fcommonmessages_2eproto();  return *default_instance_;
+}
+
+CDOTAMsg_SendStatPopup* CDOTAMsg_SendStatPopup::default_instance_ = NULL;
+
+CDOTAMsg_SendStatPopup* CDOTAMsg_SendStatPopup::New() const {
+  return new CDOTAMsg_SendStatPopup;
+}
+
+void CDOTAMsg_SendStatPopup::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    style_ = 0;
+  }
+  stat_strings_.Clear();
+  stat_images_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool CDOTAMsg_SendStatPopup::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional .EDOTAStatPopupTypes style = 1 [default = k_EDOTA_SPT_Textline];
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (EDOTAStatPopupTypes_IsValid(value)) {
+            set_style(static_cast< EDOTAStatPopupTypes >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(1, value);
+          }
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_stat_strings;
+        break;
+      }
+      
+      // repeated string stat_strings = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_stat_strings:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_stat_strings()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->stat_strings(0).data(), this->stat_strings(0).length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_stat_strings;
+        if (input->ExpectTag(24)) goto parse_stat_images;
+        break;
+      }
+      
+      // repeated int32 stat_images = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_stat_images:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 1, 24, input, this->mutable_stat_images())));
+        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
+                   == ::google::protobuf::internal::WireFormatLite::
+                      WIRETYPE_LENGTH_DELIMITED) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, this->mutable_stat_images())));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(24)) goto parse_stat_images;
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void CDOTAMsg_SendStatPopup::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // optional .EDOTAStatPopupTypes style = 1 [default = k_EDOTA_SPT_Textline];
+  if (has_style()) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->style(), output);
+  }
+  
+  // repeated string stat_strings = 2;
+  for (int i = 0; i < this->stat_strings_size(); i++) {
+  ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    this->stat_strings(i).data(), this->stat_strings(i).length(),
+    ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->stat_strings(i), output);
+  }
+  
+  // repeated int32 stat_images = 3;
+  for (int i = 0; i < this->stat_images_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(
+      3, this->stat_images(i), output);
+  }
+  
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* CDOTAMsg_SendStatPopup::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // optional .EDOTAStatPopupTypes style = 1 [default = k_EDOTA_SPT_Textline];
+  if (has_style()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->style(), target);
+  }
+  
+  // repeated string stat_strings = 2;
+  for (int i = 0; i < this->stat_strings_size(); i++) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->stat_strings(i).data(), this->stat_strings(i).length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteStringToArray(2, this->stat_strings(i), target);
+  }
+  
+  // repeated int32 stat_images = 3;
+  for (int i = 0; i < this->stat_images_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteInt32ToArray(3, this->stat_images(i), target);
+  }
+  
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int CDOTAMsg_SendStatPopup::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // optional .EDOTAStatPopupTypes style = 1 [default = k_EDOTA_SPT_Textline];
+    if (has_style()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->style());
+    }
+    
+  }
+  // repeated string stat_strings = 2;
+  total_size += 1 * this->stat_strings_size();
+  for (int i = 0; i < this->stat_strings_size(); i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->stat_strings(i));
+  }
+  
+  // repeated int32 stat_images = 3;
+  {
+    int data_size = 0;
+    for (int i = 0; i < this->stat_images_size(); i++) {
+      data_size += ::google::protobuf::internal::WireFormatLite::
+        Int32Size(this->stat_images(i));
+    }
+    total_size += 1 * this->stat_images_size() + data_size;
+  }
+  
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void CDOTAMsg_SendStatPopup::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const CDOTAMsg_SendStatPopup* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const CDOTAMsg_SendStatPopup*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void CDOTAMsg_SendStatPopup::MergeFrom(const CDOTAMsg_SendStatPopup& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  stat_strings_.MergeFrom(from.stat_strings_);
+  stat_images_.MergeFrom(from.stat_images_);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_style()) {
+      set_style(from.style());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void CDOTAMsg_SendStatPopup::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CDOTAMsg_SendStatPopup::CopyFrom(const CDOTAMsg_SendStatPopup& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CDOTAMsg_SendStatPopup::IsInitialized() const {
+  
+  return true;
+}
+
+void CDOTAMsg_SendStatPopup::Swap(CDOTAMsg_SendStatPopup* other) {
+  if (other != this) {
+    std::swap(style_, other->style_);
+    stat_strings_.Swap(&other->stat_strings_);
+    stat_images_.Swap(&other->stat_images_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata CDOTAMsg_SendStatPopup::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = CDOTAMsg_SendStatPopup_descriptor_;
+  metadata.reflection = CDOTAMsg_SendStatPopup_reflection_;
   return metadata;
 }
 

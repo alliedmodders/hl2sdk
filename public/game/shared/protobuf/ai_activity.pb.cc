@@ -53,7 +53,7 @@ void protobuf_AddDesc_ai_5factivity_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\021ai_activity.proto*\275v\n\010Activity\022\030\n\013ACT_"
+    "\n\021ai_activity.proto*\354{\n\010Activity\022\030\n\013ACT_"
     "INVALID\020\377\377\377\377\377\377\377\377\377\001\022\r\n\tACT_RESET\020\000\022\014\n\010ACT"
     "_IDLE\020\001\022\022\n\016ACT_TRANSITION\020\002\022\r\n\tACT_COVER"
     "\020\003\022\021\n\rACT_COVER_MED\020\004\022\021\n\rACT_COVER_LOW\020\005"
@@ -432,7 +432,25 @@ void protobuf_AddDesc_ai_5factivity_2eproto() {
     "NK_BONE\020\236\004\022\033\n\026ACT_DOTA_IDLE_SLEEPING\020\237\004\022"
     "\023\n\016ACT_DOTA_INTRO\020\240\004\022\033\n\026ACT_DOTA_GESTURE"
     "_POINT\020\241\004\022\034\n\027ACT_DOTA_GESTURE_ACCENT\020\242\004\022"
-    "\032\n\025ACT_DOTA_SLEEPING_END\020\243\004B\005H\001\200\001\000", 15194);
+    "\032\n\025ACT_DOTA_SLEEPING_END\020\243\004\022\024\n\017ACT_DOTA_"
+    "AMBUSH\020\244\004\022\027\n\022ACT_DOTA_ITEM_LOOK\020\245\004\022\025\n\020AC"
+    "T_DOTA_STARTLE\020\246\004\022\031\n\024ACT_DOTA_FRUSTRATIO"
+    "N\020\247\004\022\034\n\027ACT_DOTA_TELEPORT_REACT\020\250\004\022 \n\033AC"
+    "T_DOTA_TELEPORT_END_REACT\020\251\004\022\023\n\016ACT_DOTA"
+    "_SHRUG\020\252\004\022\034\n\027ACT_DOTA_RELAX_LOOP_END\020\253\004\022"
+    "\032\n\025ACT_DOTA_PRESENT_ITEM\020\254\004\022\034\n\027ACT_DOTA_"
+    "IDLE_IMPATIENT\020\255\004\022\034\n\027ACT_DOTA_SHARPEN_WE"
+    "APON\020\256\004\022 \n\033ACT_DOTA_SHARPEN_WEAPON_OUT\020\257"
+    "\004\022\037\n\032ACT_DOTA_IDLE_SLEEPING_END\020\260\004\022\034\n\027AC"
+    "T_DOTA_BRIDGE_DESTROY\020\261\004\022\032\n\025ACT_DOTA_TAU"
+    "NT_SNIPER\020\262\004\022\035\n\030ACT_DOTA_DEATH_BY_SNIPER"
+    "\020\263\004\022\031\n\024ACT_DOTA_LOOK_AROUND\020\264\004\022\036\n\031ACT_DO"
+    "TA_CAGED_CREEP_RAGE\020\265\004\022\"\n\035ACT_DOTA_CAGED"
+    "_CREEP_RAGE_OUT\020\266\004\022\037\n\032ACT_DOTA_CAGED_CRE"
+    "EP_SMASH\020\267\004\022#\n\036ACT_DOTA_CAGED_CREEP_SMAS"
+    "H_OUT\020\270\004\022&\n!ACT_DOTA_IDLE_IMPATIENT_SWOR"
+    "D_TAP\020\271\004\022\030\n\023ACT_DOTA_INTRO_LOOP\020\272\004B\005H\001\200\001"
+    "\000", 15881);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "ai_activity.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_ai_5factivity_2eproto);
@@ -998,6 +1016,29 @@ bool Activity_IsValid(int value) {
     case 545:
     case 546:
     case 547:
+    case 548:
+    case 549:
+    case 550:
+    case 551:
+    case 552:
+    case 553:
+    case 554:
+    case 555:
+    case 556:
+    case 557:
+    case 558:
+    case 559:
+    case 560:
+    case 561:
+    case 562:
+    case 563:
+    case 564:
+    case 565:
+    case 566:
+    case 567:
+    case 568:
+    case 569:
+    case 570:
       return true;
     default:
       return false;

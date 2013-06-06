@@ -229,8 +229,7 @@ inline bool SVC_Messages_Parse(
 }
 enum ESplitScreenMessageType {
   MSG_SPLITSCREEN_ADDUSER = 0,
-  MSG_SPLITSCREEN_REMOVEUSER = 1,
-  MSG_SPLITSCREEN_TYPE_BITS = 1
+  MSG_SPLITSCREEN_REMOVEUSER = 1
 };
 bool ESplitScreenMessageType_IsValid(int value);
 const ESplitScreenMessageType ESplitScreenMessageType_MIN = MSG_SPLITSCREEN_ADDUSER;

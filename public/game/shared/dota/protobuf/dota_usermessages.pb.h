@@ -89,6 +89,7 @@ class CDOTAUserMsg_ParticleManager_UpdateParticleLatency;
 class CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw;
 class CDOTAUserMsg_OverheadEvent;
 class CDOTAUserMsg_TutorialTipInfo;
+class CDOTAUserMsg_TutorialFinish;
 class CDOTAUserMsg_WorldLine;
 class CDOTAUserMsg_TournamentDrop;
 class CDOTAUserMsg_ChatWheel;
@@ -99,6 +100,8 @@ class CDOTAUserMsg_TutorialRequestExp;
 class CDOTAUserMsg_TutorialFade;
 class CDOTAUserMsg_TutorialPingMinimap;
 class CDOTA_UM_GamerulesStateChanged;
+class CDOTAUserMsg_AddQuestLogEntry;
+class CDOTAUserMsg_SendStatPopup;
 
 enum CDOTAResponseQuerySerialized_Fact_ValueType {
   CDOTAResponseQuerySerialized_Fact_ValueType_NUMERIC = 1,
@@ -163,11 +166,14 @@ enum EDotaUserMessages {
   DOTA_UM_TutorialPingMinimap = 105,
   DOTA_UM_GamerulesStateChanged = 106,
   DOTA_UM_ShowSurvey = 107,
-  DOTA_UM_TutorialFade = 108
+  DOTA_UM_TutorialFade = 108,
+  DOTA_UM_AddQuestLogEntry = 109,
+  DOTA_UM_SendStatPopup = 110,
+  DOTA_UM_TutorialFinish = 111
 };
 bool EDotaUserMessages_IsValid(int value);
 const EDotaUserMessages EDotaUserMessages_MIN = DOTA_UM_AddUnitToSelection;
-const EDotaUserMessages EDotaUserMessages_MAX = DOTA_UM_TutorialFade;
+const EDotaUserMessages EDotaUserMessages_MAX = DOTA_UM_TutorialFinish;
 const int EDotaUserMessages_ARRAYSIZE = EDotaUserMessages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* EDotaUserMessages_descriptor();
@@ -6137,6 +6143,120 @@ class CDOTAUserMsg_TutorialTipInfo : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class CDOTAUserMsg_TutorialFinish : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_TutorialFinish();
+  virtual ~CDOTAUserMsg_TutorialFinish();
+  
+  CDOTAUserMsg_TutorialFinish(const CDOTAUserMsg_TutorialFinish& from);
+  
+  inline CDOTAUserMsg_TutorialFinish& operator=(const CDOTAUserMsg_TutorialFinish& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_TutorialFinish& default_instance();
+  
+  void Swap(CDOTAUserMsg_TutorialFinish* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_TutorialFinish* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_TutorialFinish& from);
+  void MergeFrom(const CDOTAUserMsg_TutorialFinish& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional string heading = 1;
+  inline bool has_heading() const;
+  inline void clear_heading();
+  static const int kHeadingFieldNumber = 1;
+  inline const ::std::string& heading() const;
+  inline void set_heading(const ::std::string& value);
+  inline void set_heading(const char* value);
+  inline void set_heading(const char* value, size_t size);
+  inline ::std::string* mutable_heading();
+  inline ::std::string* release_heading();
+  
+  // optional string emblem = 2;
+  inline bool has_emblem() const;
+  inline void clear_emblem();
+  static const int kEmblemFieldNumber = 2;
+  inline const ::std::string& emblem() const;
+  inline void set_emblem(const ::std::string& value);
+  inline void set_emblem(const char* value);
+  inline void set_emblem(const char* value, size_t size);
+  inline ::std::string* mutable_emblem();
+  inline ::std::string* release_emblem();
+  
+  // optional string body = 3;
+  inline bool has_body() const;
+  inline void clear_body();
+  static const int kBodyFieldNumber = 3;
+  inline const ::std::string& body() const;
+  inline void set_body(const ::std::string& value);
+  inline void set_body(const char* value);
+  inline void set_body(const char* value, size_t size);
+  inline ::std::string* mutable_body();
+  inline ::std::string* release_body();
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_TutorialFinish)
+ private:
+  inline void set_has_heading();
+  inline void clear_has_heading();
+  inline void set_has_emblem();
+  inline void clear_has_emblem();
+  inline void set_has_body();
+  inline void clear_has_body();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* heading_;
+  ::std::string* emblem_;
+  ::std::string* body_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_TutorialFinish* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class CDOTAUserMsg_WorldLine : public ::google::protobuf::Message {
  public:
   CDOTAUserMsg_WorldLine();
@@ -7053,6 +7173,219 @@ class CDOTA_UM_GamerulesStateChanged : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static CDOTA_UM_GamerulesStateChanged* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_AddQuestLogEntry : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_AddQuestLogEntry();
+  virtual ~CDOTAUserMsg_AddQuestLogEntry();
+  
+  CDOTAUserMsg_AddQuestLogEntry(const CDOTAUserMsg_AddQuestLogEntry& from);
+  
+  inline CDOTAUserMsg_AddQuestLogEntry& operator=(const CDOTAUserMsg_AddQuestLogEntry& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_AddQuestLogEntry& default_instance();
+  
+  void Swap(CDOTAUserMsg_AddQuestLogEntry* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_AddQuestLogEntry* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_AddQuestLogEntry& from);
+  void MergeFrom(const CDOTAUserMsg_AddQuestLogEntry& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional string npc_name = 1;
+  inline bool has_npc_name() const;
+  inline void clear_npc_name();
+  static const int kNpcNameFieldNumber = 1;
+  inline const ::std::string& npc_name() const;
+  inline void set_npc_name(const ::std::string& value);
+  inline void set_npc_name(const char* value);
+  inline void set_npc_name(const char* value, size_t size);
+  inline ::std::string* mutable_npc_name();
+  inline ::std::string* release_npc_name();
+  
+  // optional string npc_dialog = 2;
+  inline bool has_npc_dialog() const;
+  inline void clear_npc_dialog();
+  static const int kNpcDialogFieldNumber = 2;
+  inline const ::std::string& npc_dialog() const;
+  inline void set_npc_dialog(const ::std::string& value);
+  inline void set_npc_dialog(const char* value);
+  inline void set_npc_dialog(const char* value, size_t size);
+  inline ::std::string* mutable_npc_dialog();
+  inline ::std::string* release_npc_dialog();
+  
+  // optional bool quest = 3;
+  inline bool has_quest() const;
+  inline void clear_quest();
+  static const int kQuestFieldNumber = 3;
+  inline bool quest() const;
+  inline void set_quest(bool value);
+  
+  // optional int32 quest_type = 4;
+  inline bool has_quest_type() const;
+  inline void clear_quest_type();
+  static const int kQuestTypeFieldNumber = 4;
+  inline ::google::protobuf::int32 quest_type() const;
+  inline void set_quest_type(::google::protobuf::int32 value);
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_AddQuestLogEntry)
+ private:
+  inline void set_has_npc_name();
+  inline void clear_has_npc_name();
+  inline void set_has_npc_dialog();
+  inline void clear_has_npc_dialog();
+  inline void set_has_quest();
+  inline void clear_has_quest();
+  inline void set_has_quest_type();
+  inline void clear_has_quest_type();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* npc_name_;
+  ::std::string* npc_dialog_;
+  bool quest_;
+  ::google::protobuf::int32 quest_type_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_AddQuestLogEntry* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_SendStatPopup : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_SendStatPopup();
+  virtual ~CDOTAUserMsg_SendStatPopup();
+  
+  CDOTAUserMsg_SendStatPopup(const CDOTAUserMsg_SendStatPopup& from);
+  
+  inline CDOTAUserMsg_SendStatPopup& operator=(const CDOTAUserMsg_SendStatPopup& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_SendStatPopup& default_instance();
+  
+  void Swap(CDOTAUserMsg_SendStatPopup* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_SendStatPopup* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_SendStatPopup& from);
+  void MergeFrom(const CDOTAUserMsg_SendStatPopup& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional int32 player_id = 1;
+  inline bool has_player_id() const;
+  inline void clear_player_id();
+  static const int kPlayerIdFieldNumber = 1;
+  inline ::google::protobuf::int32 player_id() const;
+  inline void set_player_id(::google::protobuf::int32 value);
+  
+  // optional .CDOTAMsg_SendStatPopup statpopup = 2;
+  inline bool has_statpopup() const;
+  inline void clear_statpopup();
+  static const int kStatpopupFieldNumber = 2;
+  inline const ::CDOTAMsg_SendStatPopup& statpopup() const;
+  inline ::CDOTAMsg_SendStatPopup* mutable_statpopup();
+  inline ::CDOTAMsg_SendStatPopup* release_statpopup();
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_SendStatPopup)
+ private:
+  inline void set_has_player_id();
+  inline void clear_has_player_id();
+  inline void set_has_statpopup();
+  inline void clear_has_statpopup();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::CDOTAMsg_SendStatPopup* statpopup_;
+  ::google::protobuf::int32 player_id_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_SendStatPopup* default_instance_;
 };
 // ===================================================================
 
@@ -11544,6 +11877,184 @@ inline void CDOTAUserMsg_TutorialTipInfo::set_progress(::google::protobuf::int32
 
 // -------------------------------------------------------------------
 
+// CDOTAUserMsg_TutorialFinish
+
+// optional string heading = 1;
+inline bool CDOTAUserMsg_TutorialFinish::has_heading() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_TutorialFinish::set_has_heading() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_TutorialFinish::clear_has_heading() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_TutorialFinish::clear_heading() {
+  if (heading_ != &::google::protobuf::internal::kEmptyString) {
+    heading_->clear();
+  }
+  clear_has_heading();
+}
+inline const ::std::string& CDOTAUserMsg_TutorialFinish::heading() const {
+  return *heading_;
+}
+inline void CDOTAUserMsg_TutorialFinish::set_heading(const ::std::string& value) {
+  set_has_heading();
+  if (heading_ == &::google::protobuf::internal::kEmptyString) {
+    heading_ = new ::std::string;
+  }
+  heading_->assign(value);
+}
+inline void CDOTAUserMsg_TutorialFinish::set_heading(const char* value) {
+  set_has_heading();
+  if (heading_ == &::google::protobuf::internal::kEmptyString) {
+    heading_ = new ::std::string;
+  }
+  heading_->assign(value);
+}
+inline void CDOTAUserMsg_TutorialFinish::set_heading(const char* value, size_t size) {
+  set_has_heading();
+  if (heading_ == &::google::protobuf::internal::kEmptyString) {
+    heading_ = new ::std::string;
+  }
+  heading_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_TutorialFinish::mutable_heading() {
+  set_has_heading();
+  if (heading_ == &::google::protobuf::internal::kEmptyString) {
+    heading_ = new ::std::string;
+  }
+  return heading_;
+}
+inline ::std::string* CDOTAUserMsg_TutorialFinish::release_heading() {
+  clear_has_heading();
+  if (heading_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = heading_;
+    heading_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional string emblem = 2;
+inline bool CDOTAUserMsg_TutorialFinish::has_emblem() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_TutorialFinish::set_has_emblem() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_TutorialFinish::clear_has_emblem() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_TutorialFinish::clear_emblem() {
+  if (emblem_ != &::google::protobuf::internal::kEmptyString) {
+    emblem_->clear();
+  }
+  clear_has_emblem();
+}
+inline const ::std::string& CDOTAUserMsg_TutorialFinish::emblem() const {
+  return *emblem_;
+}
+inline void CDOTAUserMsg_TutorialFinish::set_emblem(const ::std::string& value) {
+  set_has_emblem();
+  if (emblem_ == &::google::protobuf::internal::kEmptyString) {
+    emblem_ = new ::std::string;
+  }
+  emblem_->assign(value);
+}
+inline void CDOTAUserMsg_TutorialFinish::set_emblem(const char* value) {
+  set_has_emblem();
+  if (emblem_ == &::google::protobuf::internal::kEmptyString) {
+    emblem_ = new ::std::string;
+  }
+  emblem_->assign(value);
+}
+inline void CDOTAUserMsg_TutorialFinish::set_emblem(const char* value, size_t size) {
+  set_has_emblem();
+  if (emblem_ == &::google::protobuf::internal::kEmptyString) {
+    emblem_ = new ::std::string;
+  }
+  emblem_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_TutorialFinish::mutable_emblem() {
+  set_has_emblem();
+  if (emblem_ == &::google::protobuf::internal::kEmptyString) {
+    emblem_ = new ::std::string;
+  }
+  return emblem_;
+}
+inline ::std::string* CDOTAUserMsg_TutorialFinish::release_emblem() {
+  clear_has_emblem();
+  if (emblem_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = emblem_;
+    emblem_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional string body = 3;
+inline bool CDOTAUserMsg_TutorialFinish::has_body() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_TutorialFinish::set_has_body() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_TutorialFinish::clear_has_body() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_TutorialFinish::clear_body() {
+  if (body_ != &::google::protobuf::internal::kEmptyString) {
+    body_->clear();
+  }
+  clear_has_body();
+}
+inline const ::std::string& CDOTAUserMsg_TutorialFinish::body() const {
+  return *body_;
+}
+inline void CDOTAUserMsg_TutorialFinish::set_body(const ::std::string& value) {
+  set_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    body_ = new ::std::string;
+  }
+  body_->assign(value);
+}
+inline void CDOTAUserMsg_TutorialFinish::set_body(const char* value) {
+  set_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    body_ = new ::std::string;
+  }
+  body_->assign(value);
+}
+inline void CDOTAUserMsg_TutorialFinish::set_body(const char* value, size_t size) {
+  set_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    body_ = new ::std::string;
+  }
+  body_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_TutorialFinish::mutable_body() {
+  set_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    body_ = new ::std::string;
+  }
+  return body_;
+}
+inline ::std::string* CDOTAUserMsg_TutorialFinish::release_body() {
+  clear_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = body_;
+    body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// -------------------------------------------------------------------
+
 // CDOTAUserMsg_WorldLine
 
 // optional int32 player_id = 1;
@@ -12078,6 +12589,225 @@ inline ::google::protobuf::uint32 CDOTA_UM_GamerulesStateChanged::state() const 
 inline void CDOTA_UM_GamerulesStateChanged::set_state(::google::protobuf::uint32 value) {
   set_has_state();
   state_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_AddQuestLogEntry
+
+// optional string npc_name = 1;
+inline bool CDOTAUserMsg_AddQuestLogEntry::has_npc_name() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::set_has_npc_name() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::clear_has_npc_name() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::clear_npc_name() {
+  if (npc_name_ != &::google::protobuf::internal::kEmptyString) {
+    npc_name_->clear();
+  }
+  clear_has_npc_name();
+}
+inline const ::std::string& CDOTAUserMsg_AddQuestLogEntry::npc_name() const {
+  return *npc_name_;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::set_npc_name(const ::std::string& value) {
+  set_has_npc_name();
+  if (npc_name_ == &::google::protobuf::internal::kEmptyString) {
+    npc_name_ = new ::std::string;
+  }
+  npc_name_->assign(value);
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::set_npc_name(const char* value) {
+  set_has_npc_name();
+  if (npc_name_ == &::google::protobuf::internal::kEmptyString) {
+    npc_name_ = new ::std::string;
+  }
+  npc_name_->assign(value);
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::set_npc_name(const char* value, size_t size) {
+  set_has_npc_name();
+  if (npc_name_ == &::google::protobuf::internal::kEmptyString) {
+    npc_name_ = new ::std::string;
+  }
+  npc_name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_AddQuestLogEntry::mutable_npc_name() {
+  set_has_npc_name();
+  if (npc_name_ == &::google::protobuf::internal::kEmptyString) {
+    npc_name_ = new ::std::string;
+  }
+  return npc_name_;
+}
+inline ::std::string* CDOTAUserMsg_AddQuestLogEntry::release_npc_name() {
+  clear_has_npc_name();
+  if (npc_name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = npc_name_;
+    npc_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional string npc_dialog = 2;
+inline bool CDOTAUserMsg_AddQuestLogEntry::has_npc_dialog() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::set_has_npc_dialog() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::clear_has_npc_dialog() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::clear_npc_dialog() {
+  if (npc_dialog_ != &::google::protobuf::internal::kEmptyString) {
+    npc_dialog_->clear();
+  }
+  clear_has_npc_dialog();
+}
+inline const ::std::string& CDOTAUserMsg_AddQuestLogEntry::npc_dialog() const {
+  return *npc_dialog_;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::set_npc_dialog(const ::std::string& value) {
+  set_has_npc_dialog();
+  if (npc_dialog_ == &::google::protobuf::internal::kEmptyString) {
+    npc_dialog_ = new ::std::string;
+  }
+  npc_dialog_->assign(value);
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::set_npc_dialog(const char* value) {
+  set_has_npc_dialog();
+  if (npc_dialog_ == &::google::protobuf::internal::kEmptyString) {
+    npc_dialog_ = new ::std::string;
+  }
+  npc_dialog_->assign(value);
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::set_npc_dialog(const char* value, size_t size) {
+  set_has_npc_dialog();
+  if (npc_dialog_ == &::google::protobuf::internal::kEmptyString) {
+    npc_dialog_ = new ::std::string;
+  }
+  npc_dialog_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_AddQuestLogEntry::mutable_npc_dialog() {
+  set_has_npc_dialog();
+  if (npc_dialog_ == &::google::protobuf::internal::kEmptyString) {
+    npc_dialog_ = new ::std::string;
+  }
+  return npc_dialog_;
+}
+inline ::std::string* CDOTAUserMsg_AddQuestLogEntry::release_npc_dialog() {
+  clear_has_npc_dialog();
+  if (npc_dialog_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = npc_dialog_;
+    npc_dialog_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional bool quest = 3;
+inline bool CDOTAUserMsg_AddQuestLogEntry::has_quest() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::set_has_quest() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::clear_has_quest() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::clear_quest() {
+  quest_ = false;
+  clear_has_quest();
+}
+inline bool CDOTAUserMsg_AddQuestLogEntry::quest() const {
+  return quest_;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::set_quest(bool value) {
+  set_has_quest();
+  quest_ = value;
+}
+
+// optional int32 quest_type = 4;
+inline bool CDOTAUserMsg_AddQuestLogEntry::has_quest_type() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::set_has_quest_type() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::clear_has_quest_type() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::clear_quest_type() {
+  quest_type_ = 0;
+  clear_has_quest_type();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_AddQuestLogEntry::quest_type() const {
+  return quest_type_;
+}
+inline void CDOTAUserMsg_AddQuestLogEntry::set_quest_type(::google::protobuf::int32 value) {
+  set_has_quest_type();
+  quest_type_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_SendStatPopup
+
+// optional int32 player_id = 1;
+inline bool CDOTAUserMsg_SendStatPopup::has_player_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_SendStatPopup::set_has_player_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_SendStatPopup::clear_has_player_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_SendStatPopup::clear_player_id() {
+  player_id_ = 0;
+  clear_has_player_id();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_SendStatPopup::player_id() const {
+  return player_id_;
+}
+inline void CDOTAUserMsg_SendStatPopup::set_player_id(::google::protobuf::int32 value) {
+  set_has_player_id();
+  player_id_ = value;
+}
+
+// optional .CDOTAMsg_SendStatPopup statpopup = 2;
+inline bool CDOTAUserMsg_SendStatPopup::has_statpopup() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_SendStatPopup::set_has_statpopup() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_SendStatPopup::clear_has_statpopup() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_SendStatPopup::clear_statpopup() {
+  if (statpopup_ != NULL) statpopup_->::CDOTAMsg_SendStatPopup::Clear();
+  clear_has_statpopup();
+}
+inline const ::CDOTAMsg_SendStatPopup& CDOTAUserMsg_SendStatPopup::statpopup() const {
+  return statpopup_ != NULL ? *statpopup_ : *default_instance_->statpopup_;
+}
+inline ::CDOTAMsg_SendStatPopup* CDOTAUserMsg_SendStatPopup::mutable_statpopup() {
+  set_has_statpopup();
+  if (statpopup_ == NULL) statpopup_ = new ::CDOTAMsg_SendStatPopup;
+  return statpopup_;
+}
+inline ::CDOTAMsg_SendStatPopup* CDOTAUserMsg_SendStatPopup::release_statpopup() {
+  clear_has_statpopup();
+  ::CDOTAMsg_SendStatPopup* temp = statpopup_;
+  statpopup_ = NULL;
+  return temp;
 }
 
 

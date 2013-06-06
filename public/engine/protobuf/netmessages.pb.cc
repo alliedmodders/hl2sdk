@@ -1608,10 +1608,9 @@ void protobuf_AddDesc_netmessages_2eproto() {
     "\n\020svc_TempEntities\020\033\022\020\n\014svc_Prefetch\020\034\022\014"
     "\n\010svc_Menu\020\035\022\025\n\021svc_GameEventList\020\036\022\024\n\020s"
     "vc_GetCvarValue\020\037\022\026\n\022svc_PacketReliable\020"
-    " *u\n\027ESplitScreenMessageType\022\033\n\027MSG_SPLI"
+    " *V\n\027ESplitScreenMessageType\022\033\n\027MSG_SPLI"
     "TSCREEN_ADDUSER\020\000\022\036\n\032MSG_SPLITSCREEN_REM"
-    "OVEUSER\020\001\022\035\n\031MSG_SPLITSCREEN_TYPE_BITS\020\001"
-    "B\003\200\001\000", 6565);
+    "OVEUSER\020\001B\003\200\001\000", 6534);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "netmessages.proto", &protobuf_RegisterTypes);
   CMsgVector::default_instance_ = new CMsgVector();

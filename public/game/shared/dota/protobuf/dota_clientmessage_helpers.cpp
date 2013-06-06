@@ -30,6 +30,7 @@ CDotaClientMessageHelpers::CDotaClientMessageHelpers()
 	SETUP_DOTA_MESSAGE( RequestGraphUpdate );
 	SETUP_DOTA_MESSAGE( ItemAlert );
 	SETUP_DOTA_MESSAGE( ChatWheel );
+	SETUP_DOTA_MESSAGE( SendStatPopup );
 }
 
 const google::protobuf::Message *CDotaClientMessageHelpers::GetPrototype( int index ) const

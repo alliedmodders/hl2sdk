@@ -99,6 +99,9 @@ CDotaUsermessageHelpers::CDotaUsermessageHelpers()
 	SETUP_MESSAGE_MANUAL( DOTA_UM_GamerulesStateChanged, CDOTA_UM_GamerulesStateChanged, GamerulesStateChanged );
 	SETUP_DOTA_MESSAGE( ShowSurvey );
 	SETUP_DOTA_MESSAGE( TutorialFade );
+	SETUP_DOTA_MESSAGE( AddQuestLogEntry );
+	SETUP_DOTA_MESSAGE( SendStatPopup );
+	SETUP_DOTA_MESSAGE( TutorialFinish );
 }
 
 const google::protobuf::Message *CDotaUsermessageHelpers::GetPrototype( int index ) const
