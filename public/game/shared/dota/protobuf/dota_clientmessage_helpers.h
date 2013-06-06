@@ -2,7 +2,18 @@
 #define DOTA_CM_HELPERS
 
 #include <game/shared/dota/protobuf/dota_clientmessages.pb.h>
+
+#ifdef _DEBUG
+#define KILL_DEBUG
+#undef _DEBUG
+#endif
+
 #include <tier1/utlhashdict.h>
+
+#ifdef KILL_DEBUG
+#define _DEBUG
+#undef KILL_DEBUG
+#endif
 
 class CDotaClientMessageHelpers
 {
