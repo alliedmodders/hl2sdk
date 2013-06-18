@@ -81,7 +81,7 @@ typedef struct player_info_s player_info_t;
 #define DLLEXPORT /* */
 #endif
 
-#define INTERFACEVERSION_VENGINESERVER	"VEngineServer023"
+#define INTERFACEVERSION_VENGINESERVER	"VEngineServer024"
 
 struct bbox_t
 {
@@ -103,6 +103,12 @@ public:
 	
 	// Is this a dedicated server?
 	virtual bool		IsDedicatedServer( void ) = 0;
+	
+	// This is possibly similar to the next one (or not), but is for HLTV.
+	virtual bool		BUnknownFunc1( void ) = 0;
+	
+	// Is game server listening port 0(?). This needs a better name.
+	virtual bool		IsServerListeningPortNotSet( void ) = 0;
 	
 	// Is in Hammer editing mode?
 	virtual int			IsInEditMode( void ) = 0;
