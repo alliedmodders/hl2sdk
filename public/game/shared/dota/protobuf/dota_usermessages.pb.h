@@ -24,7 +24,7 @@
 #include <google/protobuf/extension_set.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include "google/protobuf/descriptor.pb.h"
-#include "netmessages.pb.h"
+#include "networkbasetypes.pb.h"
 #include "ai_activity.pb.h"
 #include "dota_commonmessages.pb.h"
 // @@protoc_insertion_point(includes)
@@ -85,11 +85,12 @@ class CDOTAUserMsg_ParticleManager_UpdateParticleOrient;
 class CDOTAUserMsg_ParticleManager_UpdateParticleFallback;
 class CDOTAUserMsg_ParticleManager_UpdateParticleOffset;
 class CDOTAUserMsg_ParticleManager_UpdateParticleEnt;
-class CDOTAUserMsg_ParticleManager_UpdateParticleLatency;
+class CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen;
 class CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw;
 class CDOTAUserMsg_OverheadEvent;
 class CDOTAUserMsg_TutorialTipInfo;
 class CDOTAUserMsg_TutorialFinish;
+class CDOTAUserMsg_SendGenericToolTip;
 class CDOTAUserMsg_WorldLine;
 class CDOTAUserMsg_TournamentDrop;
 class CDOTAUserMsg_ChatWheel;
@@ -102,6 +103,7 @@ class CDOTAUserMsg_TutorialPingMinimap;
 class CDOTA_UM_GamerulesStateChanged;
 class CDOTAUserMsg_AddQuestLogEntry;
 class CDOTAUserMsg_SendStatPopup;
+class CDOTAUserMsg_SendRoshanPopup;
 
 enum CDOTAResponseQuerySerialized_Fact_ValueType {
   CDOTAResponseQuerySerialized_Fact_ValueType_NUMERIC = 1,
@@ -169,11 +171,13 @@ enum EDotaUserMessages {
   DOTA_UM_TutorialFade = 108,
   DOTA_UM_AddQuestLogEntry = 109,
   DOTA_UM_SendStatPopup = 110,
-  DOTA_UM_TutorialFinish = 111
+  DOTA_UM_TutorialFinish = 111,
+  DOTA_UM_SendRoshanPopup = 112,
+  DOTA_UM_SendGenericToolTip = 113
 };
 bool EDotaUserMessages_IsValid(int value);
 const EDotaUserMessages EDotaUserMessages_MIN = DOTA_UM_AddUnitToSelection;
-const EDotaUserMessages EDotaUserMessages_MAX = DOTA_UM_TutorialFinish;
+const EDotaUserMessages EDotaUserMessages_MAX = DOTA_UM_SendGenericToolTip;
 const int EDotaUserMessages_ARRAYSIZE = EDotaUserMessages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* EDotaUserMessages_descriptor();
@@ -358,11 +362,12 @@ enum DOTA_PARTICLE_MESSAGE {
   DOTA_PARTICLE_MANAGER_EVENT_DESTROY_INVOLVING = 8,
   DOTA_PARTICLE_MANAGER_EVENT_RELEASE = 9,
   DOTA_PARTICLE_MANAGER_EVENT_LATENCY = 10,
-  DOTA_PARTICLE_MANAGER_EVENT_SHOULD_DRAW = 11
+  DOTA_PARTICLE_MANAGER_EVENT_SHOULD_DRAW = 11,
+  DOTA_PARTICLE_MANAGER_EVENT_FROZEN = 12
 };
 bool DOTA_PARTICLE_MESSAGE_IsValid(int value);
 const DOTA_PARTICLE_MESSAGE DOTA_PARTICLE_MESSAGE_MIN = DOTA_PARTICLE_MANAGER_EVENT_CREATE;
-const DOTA_PARTICLE_MESSAGE DOTA_PARTICLE_MESSAGE_MAX = DOTA_PARTICLE_MANAGER_EVENT_SHOULD_DRAW;
+const DOTA_PARTICLE_MESSAGE DOTA_PARTICLE_MESSAGE_MAX = DOTA_PARTICLE_MANAGER_EVENT_FROZEN;
 const int DOTA_PARTICLE_MESSAGE_ARRAYSIZE = DOTA_PARTICLE_MESSAGE_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* DOTA_PARTICLE_MESSAGE_descriptor();
@@ -5514,14 +5519,14 @@ class CDOTAUserMsg_ParticleManager_UpdateParticleEnt : public ::google::protobuf
 };
 // -------------------------------------------------------------------
 
-class CDOTAUserMsg_ParticleManager_UpdateParticleLatency : public ::google::protobuf::Message {
+class CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen : public ::google::protobuf::Message {
  public:
-  CDOTAUserMsg_ParticleManager_UpdateParticleLatency();
-  virtual ~CDOTAUserMsg_ParticleManager_UpdateParticleLatency();
+  CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen();
+  virtual ~CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen();
   
-  CDOTAUserMsg_ParticleManager_UpdateParticleLatency(const CDOTAUserMsg_ParticleManager_UpdateParticleLatency& from);
+  CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen(const CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen& from);
   
-  inline CDOTAUserMsg_ParticleManager_UpdateParticleLatency& operator=(const CDOTAUserMsg_ParticleManager_UpdateParticleLatency& from) {
+  inline CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen& operator=(const CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen& from) {
     CopyFrom(from);
     return *this;
   }
@@ -5535,17 +5540,17 @@ class CDOTAUserMsg_ParticleManager_UpdateParticleLatency : public ::google::prot
   }
   
   static const ::google::protobuf::Descriptor* descriptor();
-  static const CDOTAUserMsg_ParticleManager_UpdateParticleLatency& default_instance();
+  static const CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen& default_instance();
   
-  void Swap(CDOTAUserMsg_ParticleManager_UpdateParticleLatency* other);
+  void Swap(CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen* other);
   
   // implements Message ----------------------------------------------
   
-  CDOTAUserMsg_ParticleManager_UpdateParticleLatency* New() const;
+  CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const CDOTAUserMsg_ParticleManager_UpdateParticleLatency& from);
-  void MergeFrom(const CDOTAUserMsg_ParticleManager_UpdateParticleLatency& from);
+  void CopyFrom(const CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen& from);
+  void MergeFrom(const CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen& from);
   void Clear();
   bool IsInitialized() const;
   
@@ -5568,41 +5573,31 @@ class CDOTAUserMsg_ParticleManager_UpdateParticleLatency : public ::google::prot
   
   // accessors -------------------------------------------------------
   
-  // optional int32 player_latency = 1;
-  inline bool has_player_latency() const;
-  inline void clear_player_latency();
-  static const int kPlayerLatencyFieldNumber = 1;
-  inline ::google::protobuf::int32 player_latency() const;
-  inline void set_player_latency(::google::protobuf::int32 value);
+  // optional bool set_frozen = 1;
+  inline bool has_set_frozen() const;
+  inline void clear_set_frozen();
+  static const int kSetFrozenFieldNumber = 1;
+  inline bool set_frozen() const;
+  inline void set_set_frozen(bool value);
   
-  // optional int32 tick = 2;
-  inline bool has_tick() const;
-  inline void clear_tick();
-  static const int kTickFieldNumber = 2;
-  inline ::google::protobuf::int32 tick() const;
-  inline void set_tick(::google::protobuf::int32 value);
-  
-  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_ParticleManager.UpdateParticleLatency)
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_ParticleManager.UpdateParticleSetFrozen)
  private:
-  inline void set_has_player_latency();
-  inline void clear_has_player_latency();
-  inline void set_has_tick();
-  inline void clear_has_tick();
+  inline void set_has_set_frozen();
+  inline void clear_has_set_frozen();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
-  ::google::protobuf::int32 player_latency_;
-  ::google::protobuf::int32 tick_;
+  bool set_frozen_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
   
   friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
   friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
   
   void InitAsDefaultInstance();
-  static CDOTAUserMsg_ParticleManager_UpdateParticleLatency* default_instance_;
+  static CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -5750,7 +5745,7 @@ class CDOTAUserMsg_ParticleManager : public ::google::protobuf::Message {
   typedef CDOTAUserMsg_ParticleManager_UpdateParticleFallback UpdateParticleFallback;
   typedef CDOTAUserMsg_ParticleManager_UpdateParticleOffset UpdateParticleOffset;
   typedef CDOTAUserMsg_ParticleManager_UpdateParticleEnt UpdateParticleEnt;
-  typedef CDOTAUserMsg_ParticleManager_UpdateParticleLatency UpdateParticleLatency;
+  typedef CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen UpdateParticleSetFrozen;
   typedef CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw UpdateParticleShouldDraw;
   
   // accessors -------------------------------------------------------
@@ -5849,14 +5844,6 @@ class CDOTAUserMsg_ParticleManager : public ::google::protobuf::Message {
   inline ::CDOTAUserMsg_ParticleManager_UpdateParticleEnt* mutable_update_particle_ent();
   inline ::CDOTAUserMsg_ParticleManager_UpdateParticleEnt* release_update_particle_ent();
   
-  // optional .CDOTAUserMsg_ParticleManager.UpdateParticleLatency update_particle_latency = 13;
-  inline bool has_update_particle_latency() const;
-  inline void clear_update_particle_latency();
-  static const int kUpdateParticleLatencyFieldNumber = 13;
-  inline const ::CDOTAUserMsg_ParticleManager_UpdateParticleLatency& update_particle_latency() const;
-  inline ::CDOTAUserMsg_ParticleManager_UpdateParticleLatency* mutable_update_particle_latency();
-  inline ::CDOTAUserMsg_ParticleManager_UpdateParticleLatency* release_update_particle_latency();
-  
   // optional .CDOTAUserMsg_ParticleManager.UpdateParticleShouldDraw update_particle_should_draw = 14;
   inline bool has_update_particle_should_draw() const;
   inline void clear_update_particle_should_draw();
@@ -5864,6 +5851,14 @@ class CDOTAUserMsg_ParticleManager : public ::google::protobuf::Message {
   inline const ::CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw& update_particle_should_draw() const;
   inline ::CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw* mutable_update_particle_should_draw();
   inline ::CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw* release_update_particle_should_draw();
+  
+  // optional .CDOTAUserMsg_ParticleManager.UpdateParticleSetFrozen update_particle_set_frozen = 15;
+  inline bool has_update_particle_set_frozen() const;
+  inline void clear_update_particle_set_frozen();
+  static const int kUpdateParticleSetFrozenFieldNumber = 15;
+  inline const ::CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen& update_particle_set_frozen() const;
+  inline ::CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen* mutable_update_particle_set_frozen();
+  inline ::CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen* release_update_particle_set_frozen();
   
   // @@protoc_insertion_point(class_scope:CDOTAUserMsg_ParticleManager)
  private:
@@ -5891,10 +5886,10 @@ class CDOTAUserMsg_ParticleManager : public ::google::protobuf::Message {
   inline void clear_has_update_particle_offset();
   inline void set_has_update_particle_ent();
   inline void clear_has_update_particle_ent();
-  inline void set_has_update_particle_latency();
-  inline void clear_has_update_particle_latency();
   inline void set_has_update_particle_should_draw();
   inline void clear_has_update_particle_should_draw();
+  inline void set_has_update_particle_set_frozen();
+  inline void clear_has_update_particle_set_frozen();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -5910,8 +5905,8 @@ class CDOTAUserMsg_ParticleManager : public ::google::protobuf::Message {
   ::CDOTAUserMsg_ParticleManager_UpdateParticleFallback* update_particle_fallback_;
   ::CDOTAUserMsg_ParticleManager_UpdateParticleOffset* update_particle_offset_;
   ::CDOTAUserMsg_ParticleManager_UpdateParticleEnt* update_particle_ent_;
-  ::CDOTAUserMsg_ParticleManager_UpdateParticleLatency* update_particle_latency_;
   ::CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw* update_particle_should_draw_;
+  ::CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen* update_particle_set_frozen_;
   
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(14 + 31) / 32];
@@ -6230,6 +6225,13 @@ class CDOTAUserMsg_TutorialFinish : public ::google::protobuf::Message {
   inline ::std::string* mutable_body();
   inline ::std::string* release_body();
   
+  // optional bool success = 4;
+  inline bool has_success() const;
+  inline void clear_success();
+  static const int kSuccessFieldNumber = 4;
+  inline bool success() const;
+  inline void set_success(bool value);
+  
   // @@protoc_insertion_point(class_scope:CDOTAUserMsg_TutorialFinish)
  private:
   inline void set_has_heading();
@@ -6238,15 +6240,18 @@ class CDOTAUserMsg_TutorialFinish : public ::google::protobuf::Message {
   inline void clear_has_emblem();
   inline void set_has_body();
   inline void clear_has_body();
+  inline void set_has_success();
+  inline void clear_has_success();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::std::string* heading_;
   ::std::string* emblem_;
   ::std::string* body_;
+  bool success_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
@@ -6254,6 +6259,126 @@ class CDOTAUserMsg_TutorialFinish : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static CDOTAUserMsg_TutorialFinish* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_SendGenericToolTip : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_SendGenericToolTip();
+  virtual ~CDOTAUserMsg_SendGenericToolTip();
+  
+  CDOTAUserMsg_SendGenericToolTip(const CDOTAUserMsg_SendGenericToolTip& from);
+  
+  inline CDOTAUserMsg_SendGenericToolTip& operator=(const CDOTAUserMsg_SendGenericToolTip& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_SendGenericToolTip& default_instance();
+  
+  void Swap(CDOTAUserMsg_SendGenericToolTip* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_SendGenericToolTip* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_SendGenericToolTip& from);
+  void MergeFrom(const CDOTAUserMsg_SendGenericToolTip& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional string title = 1;
+  inline bool has_title() const;
+  inline void clear_title();
+  static const int kTitleFieldNumber = 1;
+  inline const ::std::string& title() const;
+  inline void set_title(const ::std::string& value);
+  inline void set_title(const char* value);
+  inline void set_title(const char* value, size_t size);
+  inline ::std::string* mutable_title();
+  inline ::std::string* release_title();
+  
+  // optional string text = 2;
+  inline bool has_text() const;
+  inline void clear_text();
+  static const int kTextFieldNumber = 2;
+  inline const ::std::string& text() const;
+  inline void set_text(const ::std::string& value);
+  inline void set_text(const char* value);
+  inline void set_text(const char* value, size_t size);
+  inline ::std::string* mutable_text();
+  inline ::std::string* release_text();
+  
+  // optional int32 entindex = 3;
+  inline bool has_entindex() const;
+  inline void clear_entindex();
+  static const int kEntindexFieldNumber = 3;
+  inline ::google::protobuf::int32 entindex() const;
+  inline void set_entindex(::google::protobuf::int32 value);
+  
+  // optional bool close = 4;
+  inline bool has_close() const;
+  inline void clear_close();
+  static const int kCloseFieldNumber = 4;
+  inline bool close() const;
+  inline void set_close(bool value);
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_SendGenericToolTip)
+ private:
+  inline void set_has_title();
+  inline void clear_has_title();
+  inline void set_has_text();
+  inline void clear_has_text();
+  inline void set_has_entindex();
+  inline void clear_has_entindex();
+  inline void set_has_close();
+  inline void clear_has_close();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* title_;
+  ::std::string* text_;
+  ::google::protobuf::int32 entindex_;
+  bool close_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_SendGenericToolTip* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -7386,6 +7511,98 @@ class CDOTAUserMsg_SendStatPopup : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static CDOTAUserMsg_SendStatPopup* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_SendRoshanPopup : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_SendRoshanPopup();
+  virtual ~CDOTAUserMsg_SendRoshanPopup();
+  
+  CDOTAUserMsg_SendRoshanPopup(const CDOTAUserMsg_SendRoshanPopup& from);
+  
+  inline CDOTAUserMsg_SendRoshanPopup& operator=(const CDOTAUserMsg_SendRoshanPopup& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_SendRoshanPopup& default_instance();
+  
+  void Swap(CDOTAUserMsg_SendRoshanPopup* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_SendRoshanPopup* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_SendRoshanPopup& from);
+  void MergeFrom(const CDOTAUserMsg_SendRoshanPopup& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional bool reclaimed = 1;
+  inline bool has_reclaimed() const;
+  inline void clear_reclaimed();
+  static const int kReclaimedFieldNumber = 1;
+  inline bool reclaimed() const;
+  inline void set_reclaimed(bool value);
+  
+  // optional int32 gametime = 2;
+  inline bool has_gametime() const;
+  inline void clear_gametime();
+  static const int kGametimeFieldNumber = 2;
+  inline ::google::protobuf::int32 gametime() const;
+  inline void set_gametime(::google::protobuf::int32 value);
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_SendRoshanPopup)
+ private:
+  inline void set_has_reclaimed();
+  inline void clear_has_reclaimed();
+  inline void set_has_gametime();
+  inline void clear_has_gametime();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  bool reclaimed_;
+  ::google::protobuf::int32 gametime_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_SendRoshanPopup* default_instance_;
 };
 // ===================================================================
 
@@ -11207,50 +11424,28 @@ inline ::CMsgVector* CDOTAUserMsg_ParticleManager_UpdateParticleEnt::release_fal
 
 // -------------------------------------------------------------------
 
-// CDOTAUserMsg_ParticleManager_UpdateParticleLatency
+// CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen
 
-// optional int32 player_latency = 1;
-inline bool CDOTAUserMsg_ParticleManager_UpdateParticleLatency::has_player_latency() const {
+// optional bool set_frozen = 1;
+inline bool CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen::has_set_frozen() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void CDOTAUserMsg_ParticleManager_UpdateParticleLatency::set_has_player_latency() {
+inline void CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen::set_has_set_frozen() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void CDOTAUserMsg_ParticleManager_UpdateParticleLatency::clear_has_player_latency() {
+inline void CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen::clear_has_set_frozen() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void CDOTAUserMsg_ParticleManager_UpdateParticleLatency::clear_player_latency() {
-  player_latency_ = 0;
-  clear_has_player_latency();
+inline void CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen::clear_set_frozen() {
+  set_frozen_ = false;
+  clear_has_set_frozen();
 }
-inline ::google::protobuf::int32 CDOTAUserMsg_ParticleManager_UpdateParticleLatency::player_latency() const {
-  return player_latency_;
+inline bool CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen::set_frozen() const {
+  return set_frozen_;
 }
-inline void CDOTAUserMsg_ParticleManager_UpdateParticleLatency::set_player_latency(::google::protobuf::int32 value) {
-  set_has_player_latency();
-  player_latency_ = value;
-}
-
-// optional int32 tick = 2;
-inline bool CDOTAUserMsg_ParticleManager_UpdateParticleLatency::has_tick() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void CDOTAUserMsg_ParticleManager_UpdateParticleLatency::set_has_tick() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void CDOTAUserMsg_ParticleManager_UpdateParticleLatency::clear_has_tick() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void CDOTAUserMsg_ParticleManager_UpdateParticleLatency::clear_tick() {
-  tick_ = 0;
-  clear_has_tick();
-}
-inline ::google::protobuf::int32 CDOTAUserMsg_ParticleManager_UpdateParticleLatency::tick() const {
-  return tick_;
-}
-inline void CDOTAUserMsg_ParticleManager_UpdateParticleLatency::set_tick(::google::protobuf::int32 value) {
-  set_has_tick();
-  tick_ = value;
+inline void CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen::set_set_frozen(bool value) {
+  set_has_set_frozen();
+  set_frozen_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -11618,44 +11813,15 @@ inline ::CDOTAUserMsg_ParticleManager_UpdateParticleEnt* CDOTAUserMsg_ParticleMa
   return temp;
 }
 
-// optional .CDOTAUserMsg_ParticleManager.UpdateParticleLatency update_particle_latency = 13;
-inline bool CDOTAUserMsg_ParticleManager::has_update_particle_latency() const {
-  return (_has_bits_[0] & 0x00001000u) != 0;
-}
-inline void CDOTAUserMsg_ParticleManager::set_has_update_particle_latency() {
-  _has_bits_[0] |= 0x00001000u;
-}
-inline void CDOTAUserMsg_ParticleManager::clear_has_update_particle_latency() {
-  _has_bits_[0] &= ~0x00001000u;
-}
-inline void CDOTAUserMsg_ParticleManager::clear_update_particle_latency() {
-  if (update_particle_latency_ != NULL) update_particle_latency_->::CDOTAUserMsg_ParticleManager_UpdateParticleLatency::Clear();
-  clear_has_update_particle_latency();
-}
-inline const ::CDOTAUserMsg_ParticleManager_UpdateParticleLatency& CDOTAUserMsg_ParticleManager::update_particle_latency() const {
-  return update_particle_latency_ != NULL ? *update_particle_latency_ : *default_instance_->update_particle_latency_;
-}
-inline ::CDOTAUserMsg_ParticleManager_UpdateParticleLatency* CDOTAUserMsg_ParticleManager::mutable_update_particle_latency() {
-  set_has_update_particle_latency();
-  if (update_particle_latency_ == NULL) update_particle_latency_ = new ::CDOTAUserMsg_ParticleManager_UpdateParticleLatency;
-  return update_particle_latency_;
-}
-inline ::CDOTAUserMsg_ParticleManager_UpdateParticleLatency* CDOTAUserMsg_ParticleManager::release_update_particle_latency() {
-  clear_has_update_particle_latency();
-  ::CDOTAUserMsg_ParticleManager_UpdateParticleLatency* temp = update_particle_latency_;
-  update_particle_latency_ = NULL;
-  return temp;
-}
-
 // optional .CDOTAUserMsg_ParticleManager.UpdateParticleShouldDraw update_particle_should_draw = 14;
 inline bool CDOTAUserMsg_ParticleManager::has_update_particle_should_draw() const {
-  return (_has_bits_[0] & 0x00002000u) != 0;
+  return (_has_bits_[0] & 0x00001000u) != 0;
 }
 inline void CDOTAUserMsg_ParticleManager::set_has_update_particle_should_draw() {
-  _has_bits_[0] |= 0x00002000u;
+  _has_bits_[0] |= 0x00001000u;
 }
 inline void CDOTAUserMsg_ParticleManager::clear_has_update_particle_should_draw() {
-  _has_bits_[0] &= ~0x00002000u;
+  _has_bits_[0] &= ~0x00001000u;
 }
 inline void CDOTAUserMsg_ParticleManager::clear_update_particle_should_draw() {
   if (update_particle_should_draw_ != NULL) update_particle_should_draw_->::CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw::Clear();
@@ -11673,6 +11839,35 @@ inline ::CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw* CDOTAUserMsg_Par
   clear_has_update_particle_should_draw();
   ::CDOTAUserMsg_ParticleManager_UpdateParticleShouldDraw* temp = update_particle_should_draw_;
   update_particle_should_draw_ = NULL;
+  return temp;
+}
+
+// optional .CDOTAUserMsg_ParticleManager.UpdateParticleSetFrozen update_particle_set_frozen = 15;
+inline bool CDOTAUserMsg_ParticleManager::has_update_particle_set_frozen() const {
+  return (_has_bits_[0] & 0x00002000u) != 0;
+}
+inline void CDOTAUserMsg_ParticleManager::set_has_update_particle_set_frozen() {
+  _has_bits_[0] |= 0x00002000u;
+}
+inline void CDOTAUserMsg_ParticleManager::clear_has_update_particle_set_frozen() {
+  _has_bits_[0] &= ~0x00002000u;
+}
+inline void CDOTAUserMsg_ParticleManager::clear_update_particle_set_frozen() {
+  if (update_particle_set_frozen_ != NULL) update_particle_set_frozen_->::CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen::Clear();
+  clear_has_update_particle_set_frozen();
+}
+inline const ::CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen& CDOTAUserMsg_ParticleManager::update_particle_set_frozen() const {
+  return update_particle_set_frozen_ != NULL ? *update_particle_set_frozen_ : *default_instance_->update_particle_set_frozen_;
+}
+inline ::CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen* CDOTAUserMsg_ParticleManager::mutable_update_particle_set_frozen() {
+  set_has_update_particle_set_frozen();
+  if (update_particle_set_frozen_ == NULL) update_particle_set_frozen_ = new ::CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen;
+  return update_particle_set_frozen_;
+}
+inline ::CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen* CDOTAUserMsg_ParticleManager::release_update_particle_set_frozen() {
+  clear_has_update_particle_set_frozen();
+  ::CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen* temp = update_particle_set_frozen_;
+  update_particle_set_frozen_ = NULL;
   return temp;
 }
 
@@ -12051,6 +12246,192 @@ inline ::std::string* CDOTAUserMsg_TutorialFinish::release_body() {
     body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
+}
+
+// optional bool success = 4;
+inline bool CDOTAUserMsg_TutorialFinish::has_success() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CDOTAUserMsg_TutorialFinish::set_has_success() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CDOTAUserMsg_TutorialFinish::clear_has_success() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CDOTAUserMsg_TutorialFinish::clear_success() {
+  success_ = false;
+  clear_has_success();
+}
+inline bool CDOTAUserMsg_TutorialFinish::success() const {
+  return success_;
+}
+inline void CDOTAUserMsg_TutorialFinish::set_success(bool value) {
+  set_has_success();
+  success_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_SendGenericToolTip
+
+// optional string title = 1;
+inline bool CDOTAUserMsg_SendGenericToolTip::has_title() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::set_has_title() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::clear_has_title() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::clear_title() {
+  if (title_ != &::google::protobuf::internal::kEmptyString) {
+    title_->clear();
+  }
+  clear_has_title();
+}
+inline const ::std::string& CDOTAUserMsg_SendGenericToolTip::title() const {
+  return *title_;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::set_title(const ::std::string& value) {
+  set_has_title();
+  if (title_ == &::google::protobuf::internal::kEmptyString) {
+    title_ = new ::std::string;
+  }
+  title_->assign(value);
+}
+inline void CDOTAUserMsg_SendGenericToolTip::set_title(const char* value) {
+  set_has_title();
+  if (title_ == &::google::protobuf::internal::kEmptyString) {
+    title_ = new ::std::string;
+  }
+  title_->assign(value);
+}
+inline void CDOTAUserMsg_SendGenericToolTip::set_title(const char* value, size_t size) {
+  set_has_title();
+  if (title_ == &::google::protobuf::internal::kEmptyString) {
+    title_ = new ::std::string;
+  }
+  title_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_SendGenericToolTip::mutable_title() {
+  set_has_title();
+  if (title_ == &::google::protobuf::internal::kEmptyString) {
+    title_ = new ::std::string;
+  }
+  return title_;
+}
+inline ::std::string* CDOTAUserMsg_SendGenericToolTip::release_title() {
+  clear_has_title();
+  if (title_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = title_;
+    title_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional string text = 2;
+inline bool CDOTAUserMsg_SendGenericToolTip::has_text() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::set_has_text() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::clear_has_text() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::clear_text() {
+  if (text_ != &::google::protobuf::internal::kEmptyString) {
+    text_->clear();
+  }
+  clear_has_text();
+}
+inline const ::std::string& CDOTAUserMsg_SendGenericToolTip::text() const {
+  return *text_;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::set_text(const ::std::string& value) {
+  set_has_text();
+  if (text_ == &::google::protobuf::internal::kEmptyString) {
+    text_ = new ::std::string;
+  }
+  text_->assign(value);
+}
+inline void CDOTAUserMsg_SendGenericToolTip::set_text(const char* value) {
+  set_has_text();
+  if (text_ == &::google::protobuf::internal::kEmptyString) {
+    text_ = new ::std::string;
+  }
+  text_->assign(value);
+}
+inline void CDOTAUserMsg_SendGenericToolTip::set_text(const char* value, size_t size) {
+  set_has_text();
+  if (text_ == &::google::protobuf::internal::kEmptyString) {
+    text_ = new ::std::string;
+  }
+  text_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_SendGenericToolTip::mutable_text() {
+  set_has_text();
+  if (text_ == &::google::protobuf::internal::kEmptyString) {
+    text_ = new ::std::string;
+  }
+  return text_;
+}
+inline ::std::string* CDOTAUserMsg_SendGenericToolTip::release_text() {
+  clear_has_text();
+  if (text_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = text_;
+    text_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional int32 entindex = 3;
+inline bool CDOTAUserMsg_SendGenericToolTip::has_entindex() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::set_has_entindex() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::clear_has_entindex() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::clear_entindex() {
+  entindex_ = 0;
+  clear_has_entindex();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_SendGenericToolTip::entindex() const {
+  return entindex_;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::set_entindex(::google::protobuf::int32 value) {
+  set_has_entindex();
+  entindex_ = value;
+}
+
+// optional bool close = 4;
+inline bool CDOTAUserMsg_SendGenericToolTip::has_close() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::set_has_close() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::clear_has_close() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::clear_close() {
+  close_ = false;
+  clear_has_close();
+}
+inline bool CDOTAUserMsg_SendGenericToolTip::close() const {
+  return close_;
+}
+inline void CDOTAUserMsg_SendGenericToolTip::set_close(bool value) {
+  set_has_close();
+  close_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -12808,6 +13189,54 @@ inline ::CDOTAMsg_SendStatPopup* CDOTAUserMsg_SendStatPopup::release_statpopup()
   ::CDOTAMsg_SendStatPopup* temp = statpopup_;
   statpopup_ = NULL;
   return temp;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_SendRoshanPopup
+
+// optional bool reclaimed = 1;
+inline bool CDOTAUserMsg_SendRoshanPopup::has_reclaimed() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_SendRoshanPopup::set_has_reclaimed() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_SendRoshanPopup::clear_has_reclaimed() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_SendRoshanPopup::clear_reclaimed() {
+  reclaimed_ = false;
+  clear_has_reclaimed();
+}
+inline bool CDOTAUserMsg_SendRoshanPopup::reclaimed() const {
+  return reclaimed_;
+}
+inline void CDOTAUserMsg_SendRoshanPopup::set_reclaimed(bool value) {
+  set_has_reclaimed();
+  reclaimed_ = value;
+}
+
+// optional int32 gametime = 2;
+inline bool CDOTAUserMsg_SendRoshanPopup::has_gametime() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_SendRoshanPopup::set_has_gametime() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_SendRoshanPopup::clear_has_gametime() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_SendRoshanPopup::clear_gametime() {
+  gametime_ = 0;
+  clear_has_gametime();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_SendRoshanPopup::gametime() const {
+  return gametime_;
+}
+inline void CDOTAUserMsg_SendRoshanPopup::set_gametime(::google::protobuf::int32 value) {
+  set_has_gametime();
+  gametime_ = value;
 }
 
 

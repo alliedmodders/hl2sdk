@@ -24,7 +24,7 @@
 #include <google/protobuf/extension_set.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include "google/protobuf/descriptor.pb.h"
-#include "netmessages.pb.h"
+#include "networkbasetypes.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Internal implementation detail -- do not call these.

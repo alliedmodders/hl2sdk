@@ -27,8 +27,21 @@
 //
 //=============================================================================
 
-// We care more about speed than code size
-option optimize_for = SPEED;
+// Note about encoding:
+//	http://code.google.com/apis/protocolbuffers/docs/encoding.html
+//
+// TL;DR: Use sint32/sint64 for values that may be negative.
+//
+// There is an important difference between the signed int types (sint32 and sint64)
+// and the "standard" int types (int32 and int64) when it comes to encoding negative
+// numbers.  If you use int32 or int64 as the type for a negative number, the
+// resulting varint is always ten bytes long – it is, effectively, treated like a
+// very large unsigned integer.  If you use one of the signed types, the resulting
+// varint uses ZigZag encoding, which is much more efficient.
+
+
+// Commenting this out allows it to be compiled for SPEED or LITE_RUNTIME.
+// option optimize_for = SPEED;
 
 // We don't use the service generation functionality
 option cc_generic_services = false;
@@ -58,75 +71,90 @@ option cc_generic_services = false;
 
 import "google/protobuf/descriptor.proto";
 
-// for CMsgVector, etc.
-import "networkbasetypes.proto";
-
 //=============================================================================
-// Dota Common Messages
-//=============================================================================
-enum EDOTAChatWheelMessage
-{
-	k_EDOTA_CW_Ok = 0;
-	k_EDOTA_CW_Care = 1;
-	k_EDOTA_CW_GetBack = 2;
-	k_EDOTA_CW_NeedWards = 3;
-	k_EDOTA_CW_Stun = 4;
-	k_EDOTA_CW_Help = 5;
-	k_EDOTA_CW_Push = 6;
-	k_EDOTA_CW_GoodJob = 7;
-	k_EDOTA_CW_Missing = 8;
-	k_EDOTA_CW_Missing_Top = 9;
-	k_EDOTA_CW_Missing_Mid = 10;
-	k_EDOTA_CW_Missing_Bottom = 11;
-}
-
-enum EDOTAStatPopupTypes
-{
-	k_EDOTA_SPT_Textline = 0;
-	k_EDOTA_SPT_Basic = 1;
-	k_EDOTA_SPT_Poll = 2;
-}
-
-message CDOTAMsg_LocationPing
-{
-	optional int32 x = 1;
-	optional int32 y = 2;
-	optional int32 target = 3;
-	optional bool direct_ping = 4;
-	optional int32 type = 5;
-}
-
-message CDOTAMsg_ItemAlert
-{
-	optional int32 x = 1;
-	optional int32 y = 2;
-	optional int32 itemid = 3;
-}
-
-message CDOTAMsg_MapLine
-{
-	optional int32 x = 1;
-	optional int32 y = 2;
-	optional bool initial = 3;
-}
-
-message CDOTAMsg_WorldLine
-{
-	optional int32 x = 1;
-	optional int32 y = 2;
-	optional int32 z = 3;
-	optional bool initial = 4;
-	optional bool end = 5;
-}
-
-message CDOTAMsg_SendStatPopup
-{
-	optional EDOTAStatPopupTypes style = 1 [default = k_EDOTA_SPT_Textline];
-	repeated string stat_strings = 2;
-	repeated int32 stat_images = 3;
-}
-
-
+// Common Types
 //=============================================================================
 
+message CMsgVector
+{
+	optional float x = 1;
+	optional float y = 2;
+	optional float z = 3;
+}
+
+message CMsgVector2D
+{
+	optional float x = 1;
+	optional float y = 2;
+}
+
+message CMsgQAngle
+{
+	optional float x = 1;
+	optional float y = 2;
+	optional float z = 3;
+}
+
+//=============================================================================
+// Bidirectional NET Messages
+//=============================================================================
+
+enum SIGNONSTATE
+{
+	SIGNONSTATE_NONE		= 0;	// no state yet; about to connect
+	SIGNONSTATE_CHALLENGE	= 1;	// client challenging server; all OOB packets
+	SIGNONSTATE_CONNECTED	= 2;	// client is connected to server; netchans ready
+	SIGNONSTATE_NEW			= 3;	// just got serverinfo and string tables
+	SIGNONSTATE_PRESPAWN	= 4;	// received signon buffers
+	SIGNONSTATE_SPAWN		= 5;	// ready to receive entity packets
+	SIGNONSTATE_FULL		= 6;	// we are fully connected; first non-delta packet received
+	SIGNONSTATE_CHANGELEVEL	= 7;	// server is changing level; please wait
+}
+
+message CSVCMsg_GameEvent
+{
+	message key_t
+	{
+		optional int32 type = 1;			// type
+		optional string val_string = 2;		// TYPE_STRING
+		optional float val_float = 3;		// TYPE_FLOAT 
+		optional int32 val_long = 4;		// TYPE_LONG  
+		optional int32 val_short = 5;		// TYPE_SHORT 
+		optional int32 val_byte = 6;		// TYPE_BYTE  
+		optional bool val_bool = 7;			// TYPE_BOOL  
+		optional uint64 val_uint64 = 8;		// TYPE_UINT64
+	}
+
+	optional string event_name = 1;
+	optional int32 eventid = 2;
+	repeated key_t keys = 3;
+}
+
+message CSVCMsgList_GameEvents
+{
+	message event_t
+	{
+		optional int32 tick = 1;
+		optional CSVCMsg_GameEvent event = 2;
+	}
+
+	repeated event_t events = 1;
+}
+
+message CSVCMsg_UserMessage
+{
+	optional int32 msg_type = 1;
+	optional bytes msg_data = 2;
+}
+
+message CSVCMsgList_UserMessages
+{
+	message usermsg_t
+	{
+		optional int32 tick = 1;
+		optional CSVCMsg_UserMessage msg = 2;
+	}
+
+	repeated usermsg_t usermsgs = 1;
+}
 

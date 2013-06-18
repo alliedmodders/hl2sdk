@@ -102,6 +102,8 @@ CDotaUsermessageHelpers::CDotaUsermessageHelpers()
 	SETUP_DOTA_MESSAGE( AddQuestLogEntry );
 	SETUP_DOTA_MESSAGE( SendStatPopup );
 	SETUP_DOTA_MESSAGE( TutorialFinish );
+	SETUP_DOTA_MESSAGE( SendRoshanPopup );
+	SETUP_DOTA_MESSAGE( SendGenericToolTip );
 }
 
 const google::protobuf::Message *CDotaUsermessageHelpers::GetPrototype( int index ) const

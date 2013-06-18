@@ -43,11 +43,12 @@ void protobuf_AssignDesc_dota_5fcommonmessages_2eproto() {
       "dota_commonmessages.proto");
   GOOGLE_CHECK(file != NULL);
   CDOTAMsg_LocationPing_descriptor_ = file->message_type(0);
-  static const int CDOTAMsg_LocationPing_offsets_[4] = {
+  static const int CDOTAMsg_LocationPing_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAMsg_LocationPing, x_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAMsg_LocationPing, y_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAMsg_LocationPing, target_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAMsg_LocationPing, direct_ping_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CDOTAMsg_LocationPing, type_),
   };
   CDOTAMsg_LocationPing_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -178,31 +179,32 @@ void protobuf_AddDesc_dota_5fcommonmessages_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::protobuf_AddDesc_google_2fprotobuf_2fdescriptor_2eproto();
-  ::protobuf_AddDesc_netmessages_2eproto();
+  ::protobuf_AddDesc_networkbasetypes_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\031dota_commonmessages.proto\032 google/prot"
-    "obuf/descriptor.proto\032\021netmessages.proto"
-    "\"R\n\025CDOTAMsg_LocationPing\022\t\n\001x\030\001 \001(\005\022\t\n\001"
-    "y\030\002 \001(\005\022\016\n\006target\030\003 \001(\005\022\023\n\013direct_ping\030\004"
-    " \001(\010\":\n\022CDOTAMsg_ItemAlert\022\t\n\001x\030\001 \001(\005\022\t\n"
-    "\001y\030\002 \001(\005\022\016\n\006itemid\030\003 \001(\005\"9\n\020CDOTAMsg_Map"
-    "Line\022\t\n\001x\030\001 \001(\005\022\t\n\001y\030\002 \001(\005\022\017\n\007initial\030\003 "
-    "\001(\010\"S\n\022CDOTAMsg_WorldLine\022\t\n\001x\030\001 \001(\005\022\t\n\001"
-    "y\030\002 \001(\005\022\t\n\001z\030\003 \001(\005\022\017\n\007initial\030\004 \001(\010\022\013\n\003e"
-    "nd\030\005 \001(\010\"~\n\026CDOTAMsg_SendStatPopup\0229\n\005st"
-    "yle\030\001 \001(\0162\024.EDOTAStatPopupTypes:\024k_EDOTA"
-    "_SPT_Textline\022\024\n\014stat_strings\030\002 \003(\t\022\023\n\013s"
-    "tat_images\030\003 \003(\005*\267\002\n\025EDOTAChatWheelMessa"
-    "ge\022\021\n\rk_EDOTA_CW_Ok\020\000\022\023\n\017k_EDOTA_CW_Care"
-    "\020\001\022\026\n\022k_EDOTA_CW_GetBack\020\002\022\030\n\024k_EDOTA_CW"
-    "_NeedWards\020\003\022\023\n\017k_EDOTA_CW_Stun\020\004\022\023\n\017k_E"
-    "DOTA_CW_Help\020\005\022\023\n\017k_EDOTA_CW_Push\020\006\022\026\n\022k"
-    "_EDOTA_CW_GoodJob\020\007\022\026\n\022k_EDOTA_CW_Missin"
-    "g\020\010\022\032\n\026k_EDOTA_CW_Missing_Top\020\t\022\032\n\026k_EDO"
-    "TA_CW_Missing_Mid\020\n\022\035\n\031k_EDOTA_CW_Missin"
-    "g_Bottom\020\013*\\\n\023EDOTAStatPopupTypes\022\030\n\024k_E"
-    "DOTA_SPT_Textline\020\000\022\025\n\021k_EDOTA_SPT_Basic"
-    "\020\001\022\024\n\020k_EDOTA_SPT_Poll\020\002B\005H\001\200\001\000", 911);
+    "obuf/descriptor.proto\032\026networkbasetypes."
+    "proto\"`\n\025CDOTAMsg_LocationPing\022\t\n\001x\030\001 \001("
+    "\005\022\t\n\001y\030\002 \001(\005\022\016\n\006target\030\003 \001(\005\022\023\n\013direct_p"
+    "ing\030\004 \001(\010\022\014\n\004type\030\005 \001(\005\":\n\022CDOTAMsg_Item"
+    "Alert\022\t\n\001x\030\001 \001(\005\022\t\n\001y\030\002 \001(\005\022\016\n\006itemid\030\003 "
+    "\001(\005\"9\n\020CDOTAMsg_MapLine\022\t\n\001x\030\001 \001(\005\022\t\n\001y\030"
+    "\002 \001(\005\022\017\n\007initial\030\003 \001(\010\"S\n\022CDOTAMsg_World"
+    "Line\022\t\n\001x\030\001 \001(\005\022\t\n\001y\030\002 \001(\005\022\t\n\001z\030\003 \001(\005\022\017\n"
+    "\007initial\030\004 \001(\010\022\013\n\003end\030\005 \001(\010\"~\n\026CDOTAMsg_"
+    "SendStatPopup\0229\n\005style\030\001 \001(\0162\024.EDOTAStat"
+    "PopupTypes:\024k_EDOTA_SPT_Textline\022\024\n\014stat"
+    "_strings\030\002 \003(\t\022\023\n\013stat_images\030\003 \003(\005*\267\002\n\025"
+    "EDOTAChatWheelMessage\022\021\n\rk_EDOTA_CW_Ok\020\000"
+    "\022\023\n\017k_EDOTA_CW_Care\020\001\022\026\n\022k_EDOTA_CW_GetB"
+    "ack\020\002\022\030\n\024k_EDOTA_CW_NeedWards\020\003\022\023\n\017k_EDO"
+    "TA_CW_Stun\020\004\022\023\n\017k_EDOTA_CW_Help\020\005\022\023\n\017k_E"
+    "DOTA_CW_Push\020\006\022\026\n\022k_EDOTA_CW_GoodJob\020\007\022\026"
+    "\n\022k_EDOTA_CW_Missing\020\010\022\032\n\026k_EDOTA_CW_Mis"
+    "sing_Top\020\t\022\032\n\026k_EDOTA_CW_Missing_Mid\020\n\022\035"
+    "\n\031k_EDOTA_CW_Missing_Bottom\020\013*\\\n\023EDOTASt"
+    "atPopupTypes\022\030\n\024k_EDOTA_SPT_Textline\020\000\022\025"
+    "\n\021k_EDOTA_SPT_Basic\020\001\022\024\n\020k_EDOTA_SPT_Pol"
+    "l\020\002B\005H\001\200\001\000", 930);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "dota_commonmessages.proto", &protobuf_RegisterTypes);
   CDOTAMsg_LocationPing::default_instance_ = new CDOTAMsg_LocationPing();
@@ -272,6 +274,7 @@ const int CDOTAMsg_LocationPing::kXFieldNumber;
 const int CDOTAMsg_LocationPing::kYFieldNumber;
 const int CDOTAMsg_LocationPing::kTargetFieldNumber;
 const int CDOTAMsg_LocationPing::kDirectPingFieldNumber;
+const int CDOTAMsg_LocationPing::kTypeFieldNumber;
 #endif  // !_MSC_VER
 
 CDOTAMsg_LocationPing::CDOTAMsg_LocationPing()
@@ -294,6 +297,7 @@ void CDOTAMsg_LocationPing::SharedCtor() {
   y_ = 0;
   target_ = 0;
   direct_ping_ = false;
+  type_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -332,6 +336,7 @@ void CDOTAMsg_LocationPing::Clear() {
     y_ = 0;
     target_ = 0;
     direct_ping_ = false;
+    type_ = 0;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -402,6 +407,22 @@ bool CDOTAMsg_LocationPing::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(40)) goto parse_type;
+        break;
+      }
+      
+      // optional int32 type = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_type:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &type_)));
+          set_has_type();
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -444,6 +465,11 @@ void CDOTAMsg_LocationPing::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->direct_ping(), output);
   }
   
+  // optional int32 type = 5;
+  if (has_type()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->type(), output);
+  }
+  
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -470,6 +496,11 @@ void CDOTAMsg_LocationPing::SerializeWithCachedSizes(
   // optional bool direct_ping = 4;
   if (has_direct_ping()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->direct_ping(), target);
+  }
+  
+  // optional int32 type = 5;
+  if (has_type()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->type(), target);
   }
   
   if (!unknown_fields().empty()) {
@@ -507,6 +538,13 @@ int CDOTAMsg_LocationPing::ByteSize() const {
     // optional bool direct_ping = 4;
     if (has_direct_ping()) {
       total_size += 1 + 1;
+    }
+    
+    // optional int32 type = 5;
+    if (has_type()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->type());
     }
     
   }
@@ -548,6 +586,9 @@ void CDOTAMsg_LocationPing::MergeFrom(const CDOTAMsg_LocationPing& from) {
     if (from.has_direct_ping()) {
       set_direct_ping(from.direct_ping());
     }
+    if (from.has_type()) {
+      set_type(from.type());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -575,6 +616,7 @@ void CDOTAMsg_LocationPing::Swap(CDOTAMsg_LocationPing* other) {
     std::swap(y_, other->y_);
     std::swap(target_, other->target_);
     std::swap(direct_ping_, other->direct_ping_);
+    std::swap(type_, other->type_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

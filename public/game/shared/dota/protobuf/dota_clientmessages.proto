@@ -59,7 +59,7 @@ option cc_generic_services = false;
 import "google/protobuf/descriptor.proto";
 
 // for CMsgVector, etc.
-import "netmessages.proto";
+import "networkbasetypes.proto";
 
 // for structures shared between user and client messages
 import "dota_commonmessages.proto";

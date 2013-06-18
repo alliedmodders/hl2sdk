@@ -24,7 +24,7 @@
 #include <google/protobuf/extension_set.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include "google/protobuf/descriptor.pb.h"
-#include "netmessages.pb.h"
+#include "networkbasetypes.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Internal implementation detail -- do not call these.
@@ -171,6 +171,13 @@ class CDOTAMsg_LocationPing : public ::google::protobuf::Message {
   inline bool direct_ping() const;
   inline void set_direct_ping(bool value);
   
+  // optional int32 type = 5;
+  inline bool has_type() const;
+  inline void clear_type();
+  static const int kTypeFieldNumber = 5;
+  inline ::google::protobuf::int32 type() const;
+  inline void set_type(::google::protobuf::int32 value);
+  
   // @@protoc_insertion_point(class_scope:CDOTAMsg_LocationPing)
  private:
   inline void set_has_x();
@@ -181,6 +188,8 @@ class CDOTAMsg_LocationPing : public ::google::protobuf::Message {
   inline void clear_has_target();
   inline void set_has_direct_ping();
   inline void clear_has_direct_ping();
+  inline void set_has_type();
+  inline void clear_has_type();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -188,9 +197,10 @@ class CDOTAMsg_LocationPing : public ::google::protobuf::Message {
   ::google::protobuf::int32 y_;
   ::google::protobuf::int32 target_;
   bool direct_ping_;
+  ::google::protobuf::int32 type_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
   
   friend void  protobuf_AddDesc_dota_5fcommonmessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fcommonmessages_2eproto();
@@ -730,6 +740,28 @@ inline bool CDOTAMsg_LocationPing::direct_ping() const {
 inline void CDOTAMsg_LocationPing::set_direct_ping(bool value) {
   set_has_direct_ping();
   direct_ping_ = value;
+}
+
+// optional int32 type = 5;
+inline bool CDOTAMsg_LocationPing::has_type() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CDOTAMsg_LocationPing::set_has_type() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CDOTAMsg_LocationPing::clear_has_type() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CDOTAMsg_LocationPing::clear_type() {
+  type_ = 0;
+  clear_has_type();
+}
+inline ::google::protobuf::int32 CDOTAMsg_LocationPing::type() const {
+  return type_;
+}
+inline void CDOTAMsg_LocationPing::set_type(::google::protobuf::int32 value) {
+  set_has_type();
+  type_ = value;
 }
 
 // -------------------------------------------------------------------

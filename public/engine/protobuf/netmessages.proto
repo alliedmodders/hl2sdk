@@ -71,29 +71,8 @@ option cc_generic_services = false;
 
 import "google/protobuf/descriptor.proto";
 
-//=============================================================================
-// Common Types
-//=============================================================================
-
-message CMsgVector
-{
-	optional float x = 1;
-	optional float y = 2;
-	optional float z = 3;
-}
-
-message CMsgVector2D
-{
-	optional float x = 1;
-	optional float y = 2;
-}
-
-message CMsgQAngle
-{
-	optional float x = 1;
-	optional float y = 2;
-	optional float z = 3;
-}
+// for CMsgVector, etc.
+import "networkbasetypes.proto";
 
 //=============================================================================
 // Bidirectional NET Messages
@@ -109,18 +88,6 @@ enum NET_Messages
 	net_StringCmd = 5; 				// a string command
 	net_SetConVar = 6;				// sends one/multiple convar/userinfo settings
 	net_SignonState = 7;			// signals or acks current signon state
-}
-
-enum SIGNONSTATE
-{
-	SIGNONSTATE_NONE		= 0;	// no state yet; about to connect
-	SIGNONSTATE_CHALLENGE	= 1;	// client challenging server; all OOB packets
-	SIGNONSTATE_CONNECTED	= 2;	// client is connected to server; netchans ready
-	SIGNONSTATE_NEW			= 3;	// just got serverinfo and string tables
-	SIGNONSTATE_PRESPAWN	= 4;	// received signon buffers
-	SIGNONSTATE_SPAWN		= 5;	// ready to receive entity packets
-	SIGNONSTATE_FULL		= 6;	// we are fully connected; first non-delta packet received
-	SIGNONSTATE_CHANGELEVEL	= 7;	// server is changing level; please wait
 }
 
 message CMsg_CVars
@@ -462,25 +429,6 @@ message CSVCMsg_SendTable
 	repeated sendprop_t props = 4;
 }
 
-message CSVCMsg_GameEvent
-{
-	message key_t
-	{
-		optional int32 type = 1;			// type
-		optional string val_string = 2;		// TYPE_STRING
-		optional float val_float = 3;		// TYPE_FLOAT 
-		optional int32 val_long = 4;		// TYPE_LONG  
-		optional int32 val_short = 5;		// TYPE_SHORT 
-		optional int32 val_byte = 6;		// TYPE_BYTE  
-		optional bool val_bool = 7;			// TYPE_BOOL  
-		optional uint64 val_uint64 = 8;		// TYPE_UINT64
-	}
-
-	optional string event_name = 1;
-	optional int32 eventid = 2;
-	repeated key_t keys = 3;
-}
-
 message CSVCMsg_GameEventList
 {
 	message key_t
@@ -536,12 +484,6 @@ message CSVCMsg_UpdateStringTable
 	optional bytes string_data = 3;
 }
 
-message CSVCMsg_UserMessage
-{
-	optional int32 msg_type = 1;
-	optional bytes msg_data = 2;
-}
-
 message CSVCMsg_VoiceData
 {
 	optional int32 client = 1;
@@ -550,28 +492,6 @@ message CSVCMsg_VoiceData
 	optional int32 audible_mask = 4; 
 	optional bytes voice_data = 5;
 	optional VoiceDataFormat_t format = 6 [default = VOICEDATA_FORMAT_STEAM];
-}
-
-message CSVCMsgList_GameEvents
-{
-	message event_t
-	{
-		optional int32 tick = 1;
-		optional CSVCMsg_GameEvent event = 2;
-	}
-
-	repeated event_t events = 1;
-}
-
-message CSVCMsgList_UserMessages
-{
-	message usermsg_t
-	{
-		optional int32 tick = 1;
-		optional CSVCMsg_UserMessage msg = 2;
-	}
-
-	repeated usermsg_t usermsgs = 1;
 }
 
 message CSVCMsg_PacketReliable

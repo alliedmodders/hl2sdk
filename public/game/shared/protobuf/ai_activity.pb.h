@@ -601,11 +601,12 @@ enum Activity {
   ACT_DOTA_CAGED_CREEP_SMASH = 567,
   ACT_DOTA_CAGED_CREEP_SMASH_OUT = 568,
   ACT_DOTA_IDLE_IMPATIENT_SWORD_TAP = 569,
-  ACT_DOTA_INTRO_LOOP = 570
+  ACT_DOTA_INTRO_LOOP = 570,
+  ACT_DOTA_BRIDGE_THREAT = 571
 };
 bool Activity_IsValid(int value);
 const Activity Activity_MIN = ACT_INVALID;
-const Activity Activity_MAX = ACT_DOTA_INTRO_LOOP;
+const Activity Activity_MAX = ACT_DOTA_BRIDGE_THREAT;
 const int Activity_ARRAYSIZE = Activity_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Activity_descriptor();

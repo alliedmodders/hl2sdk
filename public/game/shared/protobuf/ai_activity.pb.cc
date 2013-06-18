@@ -53,7 +53,7 @@ void protobuf_AddDesc_ai_5factivity_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\021ai_activity.proto*\354{\n\010Activity\022\030\n\013ACT_"
+    "\n\021ai_activity.proto*\211|\n\010Activity\022\030\n\013ACT_"
     "INVALID\020\377\377\377\377\377\377\377\377\377\001\022\r\n\tACT_RESET\020\000\022\014\n\010ACT"
     "_IDLE\020\001\022\022\n\016ACT_TRANSITION\020\002\022\r\n\tACT_COVER"
     "\020\003\022\021\n\rACT_COVER_MED\020\004\022\021\n\rACT_COVER_LOW\020\005"
@@ -449,8 +449,8 @@ void protobuf_AddDesc_ai_5factivity_2eproto() {
     "_CREEP_RAGE_OUT\020\266\004\022\037\n\032ACT_DOTA_CAGED_CRE"
     "EP_SMASH\020\267\004\022#\n\036ACT_DOTA_CAGED_CREEP_SMAS"
     "H_OUT\020\270\004\022&\n!ACT_DOTA_IDLE_IMPATIENT_SWOR"
-    "D_TAP\020\271\004\022\030\n\023ACT_DOTA_INTRO_LOOP\020\272\004B\005H\001\200\001"
-    "\000", 15881);
+    "D_TAP\020\271\004\022\030\n\023ACT_DOTA_INTRO_LOOP\020\272\004\022\033\n\026AC"
+    "T_DOTA_BRIDGE_THREAT\020\273\004B\005H\001\200\001\000", 15910);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "ai_activity.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_ai_5factivity_2eproto);
@@ -1039,6 +1039,7 @@ bool Activity_IsValid(int value) {
     case 568:
     case 569:
     case 570:
+    case 571:
       return true;
     default:
       return false;

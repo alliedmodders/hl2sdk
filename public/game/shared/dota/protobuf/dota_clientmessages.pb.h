@@ -24,7 +24,7 @@
 #include <google/protobuf/extension_set.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include "google/protobuf/descriptor.pb.h"
-#include "netmessages.pb.h"
+#include "networkbasetypes.pb.h"
 #include "dota_commonmessages.pb.h"
 // @@protoc_insertion_point(includes)
 
