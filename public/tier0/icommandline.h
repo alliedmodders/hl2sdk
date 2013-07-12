@@ -42,6 +42,10 @@ public:
 
 	// copies the string passwed
 	virtual void SetParm( int nIndex, char const *pNewParm ) =0;
+
+	virtual void RemoveParmByIndex( int nIndex ) = 0;
+	virtual void CreateCmdLinePrependAppName( const char *commandline ) = 0;
+	virtual const char **GetParms() const = 0;
 };
 
 //-----------------------------------------------------------------------------
