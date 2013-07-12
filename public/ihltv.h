@@ -19,6 +19,7 @@ class IServer;
 class IHLTVDirector;
 class IGameEvent;
 struct netadr_s;
+class CGameInfo;
 
 //-----------------------------------------------------------------------------
 // Interface the HLTV module exposes to the engine
@@ -43,6 +44,11 @@ public:
 	virtual bool	IsDemoPlayback( void ) = 0; // true if this is a HLTV demo
 
 	virtual void	BroadcastEvent(IGameEvent *event) = 0; // send a director command to all specs
+	
+	virtual bool	IsRecording() = 0;
+	virtual const char	*GetRecordingDemoFilename ( void ) = 0;
+	virtual void	StartAutoRecording( void ) = 0;
+	virtual void	StopAutoRecording( const CGameInfo *pInfo ) = 0;	
 };
 
 #endif

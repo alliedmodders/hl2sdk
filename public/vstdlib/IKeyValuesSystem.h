@@ -25,7 +25,7 @@ class IKeyValuesSystem
 public:
 	// allocates/frees a KeyValues object from the shared mempool
 	virtual void *AllocKeyValuesMemory() = 0;
-	virtual void FreeKeyValuesMemory(void *pMem) = 0;
+	virtual void FreeKeyValuesMemory(KeyValues *pKV) = 0;
 
 	// symbol table access (used for key names)
 	virtual HKeySymbol GetSymbolForString( const char *name, bool bCreate = true ) = 0;
