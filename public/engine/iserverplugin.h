@@ -18,6 +18,7 @@
 #include "tier1/KeyValues.h"
 
 class CCommand;
+struct CEntityIndex;
 
 //
 // you will also want to listen for game events via IGameEventManager::AddListener()
@@ -113,7 +114,7 @@ public:
 	// This is called when a query from IServerPluginHelpers::StartQueryCvarValue is finished.
 	// iCookie is the value returned by IServerPluginHelpers::StartQueryCvarValue.
 	// Added with version 2 of the interface.
-	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) = 0;
+	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, CEntityIndex index, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) = 0;
 
 	// added with version 3 of the interface.
 	virtual void			OnEdictAllocated( edict_t *edict ) = 0;

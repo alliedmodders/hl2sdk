@@ -591,13 +591,13 @@ bool ConCommand::IsCommand( void ) const
 //-----------------------------------------------------------------------------
 // Purpose: Invoke the function if there is one
 //-----------------------------------------------------------------------------
-void ConCommand::Dispatch( void *pUnknown, const CCommand &command )
+void ConCommand::Dispatch( const CCommandContext &context, const CCommand &command )
 {
 	if ( m_bUsingNewCommandCallback )
 	{
 		if ( m_fnCommandCallback )
 		{
-			( *m_fnCommandCallback )( pUnknown, command );
+			( *m_fnCommandCallback )( context, command );
 			return;
 		}
 	}
@@ -613,7 +613,7 @@ void ConCommand::Dispatch( void *pUnknown, const CCommand &command )
 	{
 		if ( m_pCommandCallback2 )
 		{
-			m_pCommandCallback2->CommandCallback( pUnknown, command );
+			m_pCommandCallback2->CommandCallback( context, command );
 			return;
 		}
 	}

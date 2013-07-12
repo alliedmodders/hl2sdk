@@ -60,6 +60,7 @@ class CSteamID;
 class ISPSharedMemory;
 class CGamestatsData;
 class CEngineHltvInfo_t;
+class INetworkStringTable;
 
 namespace google
 {
@@ -89,6 +90,37 @@ struct bbox_t
 	Vector maxs;
 };
 
+struct CPlayerSlot
+{
+	CPlayerSlot( int slot )
+	{
+		_slot = slot;
+	}
+	
+	int Get() const
+	{
+		return _slot;
+	}
+	
+private:
+	int _slot;
+};
+
+struct CEntityIndex
+{
+	CEntityIndex( int index )
+	{
+		_index = index;
+	}
+	
+	int Get() const
+	{
+		return _index;
+	}
+	
+	int _index;
+};
+
 //-----------------------------------------------------------------------------
 // Purpose: Interface the engine exposes to the game DLL
 //-----------------------------------------------------------------------------
@@ -104,11 +136,11 @@ public:
 	// Is this a dedicated server?
 	virtual bool		IsDedicatedServer( void ) = 0;
 	
-	// This is possibly similar to the next one (or not), but is for HLTV.
-	virtual bool		BUnknownFunc1( void ) = 0;
+	// Is this an HLTV relay?
+	virtual bool		IsHLTVRelay( void ) = 0;
 	
-	// Is game server listening port 0(?). This needs a better name.
-	virtual bool		IsServerListeningPortNotSet( void ) = 0;
+	// Is server only accepting local connections?
+	virtual bool		IsServerLocalOnly( void ) = 0;
 	
 	// Is in Hammer editing mode?
 	virtual int			IsInEditMode( void ) = 0;
@@ -146,8 +178,8 @@ public:
 
 	// Returns the server assigned userid for this player.  Useful for logging frags, etc.  
 	//  returns -1 if the edict couldn't be found in the list of players.
-	virtual int			GetPlayerUserId( int clientSlot ) = 0; 
-	virtual const char	*GetPlayerNetworkIDString( int clientSlot ) = 0;
+	virtual int			GetPlayerUserId( CPlayerSlot clientSlot ) = 0; 
+	virtual const char	*GetPlayerNetworkIDString( CPlayerSlot clientSlot ) = 0;
 	virtual bool		IsUserIDInUse( int userID ) = 0;	// TERROR: used for transitioning
 	virtual int			GetLoadingProgressForUserID( int userID ) = 0;	// TERROR: used for transitioning
 
@@ -158,7 +190,7 @@ public:
 	virtual int			GetMaxEntityCount( void ) = 0;
 	
 	// Get stats info interface for a client netchannel
-	virtual INetChannelInfo* GetPlayerNetInfo( int playerIndex ) = 0;
+	virtual INetChannelInfo* GetPlayerNetInfo( CEntityIndex playerIndex ) = 0;
 	
 	// Allocate space for string and return index/offset of string in global string list
 	// If iForceEdictIndex is not -1, then it will return the edict with that index. If that edict index
@@ -176,10 +208,10 @@ public:
 	virtual void		SaveFreeMemory( void *pSaveMem ) = 0;
 	
 	// Emit an ambient sound associated with the specified entity
-	virtual void		EmitAmbientSound( int entindex, const Vector &pos, const char *samp, float vol, soundlevel_t soundlevel, int fFlags, int pitch, float delay = 0.0f ) = 0;
+	virtual void		EmitAmbientSound( CEntityIndex entindex, const Vector &pos, const char *samp, float vol, soundlevel_t soundlevel, int fFlags, int pitch, float delay = 0.0f ) = 0;
 
 	// Fade out the client's volume level toward silence (or fadePercent)
-	virtual void        FadeClientVolume( int playerIndex, float fadePercent, float fadeOutSeconds, float holdTime, float fadeInSeconds ) = 0;
+	virtual void        FadeClientVolume( CEntityIndex playerIndex, float fadePercent, float fadeOutSeconds, float holdTime, float fadeInSeconds ) = 0;
 	
 	// Sentences / sentence groups
 	virtual int			SentenceGroupPick( int groupIndex, char *name, int nameBufLen ) = 0;
@@ -195,14 +227,14 @@ public:
 	// Execute any commands currently in the command parser immediately (instead of once per frame)
 	virtual void		ServerExecute( void ) = 0;
 	// Issue the specified command to the specified client (mimics that client typing the command at the console).
-	virtual void		ClientCommand( int playerIndex, const char *szFmt, ... ) FMTFUNCTION( 3, 4 ) = 0;
+	virtual void		ClientCommand( CEntityIndex playerIndex, const char *szFmt, ... ) FMTFUNCTION( 3, 4 ) = 0;
 
 	// Set the lightstyle to the specified value and network the change to any connected clients.  Note that val must not 
 	//  change place in memory (use MAKE_STRING) for anything that's not compiled into your mod.
 	virtual void		LightStyle( int style, const char *val ) = 0;
 
 	// Project a static decal onto the specified entity / model (for level placed decals in the .bsp)
-	virtual void		StaticDecal( const Vector &originInEntitySpace, int decalIndex, int entityIndex, int modelIndex, bool lowpriority ) = 0;
+	virtual void		StaticDecal( const Vector &originInEntitySpace, int decalIndex, CEntityIndex entityIndex, int modelIndex, bool lowpriority ) = 0;
 	
 	// Given the current PVS(or PAS) and origin, determine which players should hear/receive the message
 	virtual void		Message_DetermineMulticastRecipients( bool usepas, const Vector& origin, CPlayerBitVec& playerbits ) = 0;
@@ -210,7 +242,7 @@ public:
 	virtual void		SendUserMessage( IRecipientFilter &filter, int message, const google::protobuf::Message &msg ) = 0;
 
 	// Print szMsg to the client console.
-	virtual void		ClientPrintf( int playerIndex, const char *szMsg ) = 0;
+	virtual void		ClientPrintf( CEntityIndex playerIndex, const char *szMsg ) = 0;
 
 	// SINGLE PLAYER/LISTEN SERVER ONLY (just matching the client .dll api for this)
 	// Prints the formatted string to the notification area of the screen ( down the right hand edge
@@ -221,10 +253,10 @@ public:
 	virtual void		Con_NXPrintf( const struct con_nprint_s *info, const char *fmt, ... ) = 0;
 
 	// Change a specified player's "view entity" (i.e., use the view entity position/orientation for rendering the client view)
-	virtual void		SetView( int playerIndex, int viewEntIndex ) = 0;
+	virtual void		SetView( CEntityIndex playerIndex, CEntityIndex viewEntIndex ) = 0;
 
 	// Set the player's crosshair angle
-	virtual void		CrosshairAngle( int playerIndex, float pitch, float yaw ) = 0;
+	virtual void		CrosshairAngle( CEntityIndex playerIndex, float pitch, float yaw ) = 0;
 
 	// Get the current game directory (hl2, tf2, hl1, cstrike, etc.)
 	virtual void        GetGameDir( char *szGetGameDir, int maxlength ) = 0;
@@ -237,10 +269,10 @@ public:
 	virtual bool		LockNetworkStringTables( bool lock ) = 0;
 
 	// Create a bot with the given name.  Player index is -1 if fake client can't be created
-	virtual void		CreateFakeClient( int *playerIndex, const char *netname ) = 0;	
+	virtual CEntityIndex	CreateFakeClient( const char *netname ) = 0;	
 
 	// Get a convar keyvalue for s specified client
-	virtual const char	*GetClientConVarValue( int clientIndex, const char *name ) = 0;
+	virtual const char	*GetClientConVarValue( CEntityIndex clientIndex, const char *name ) = 0;
 	
 	// Parse a token from a file
 	virtual const char	*ParseFile( const char *data, char *token, int maxlen ) = 0;
@@ -286,12 +318,12 @@ public:
 	virtual void		LogPrint( const char *msg ) = 0;
 	virtual bool		IsLogEnabled() = 0;
 	// Builds PVS information for an entity
-	virtual void		BuildEntityClusterList( int edictIndex, PVSInfo_t *pPVSInfo ) = 0;
+	virtual void		BuildEntityClusterList( CEntityIndex edictIndex, PVSInfo_t *pPVSInfo ) = 0;
 
 	// A solid entity moved, update spatial partition
-	virtual void SolidMoved( int solidEntIndex, ICollideable *pSolidCollide, const Vector* pPrevAbsOrigin, bool testSurroundingBoundsOnly ) = 0;
+	virtual void SolidMoved( CEntityIndex solidEntIndex, ICollideable *pSolidCollide, const Vector* pPrevAbsOrigin, bool testSurroundingBoundsOnly ) = 0;
 	// A trigger entity moved, update spatial partition
-	virtual void TriggerMoved( int triggerEntIndex, bool testSurroundingBoundsOnly ) = 0;
+	virtual void TriggerMoved( CEntityIndex triggerEntIndex, bool testSurroundingBoundsOnly ) = 0;
 	
 	// Create/destroy a custom spatial partition
 	virtual ISpatialPartition *CreateSpatialPartition( const Vector& worldmin, const Vector& worldmax ) = 0;
@@ -324,7 +356,7 @@ public:
 	virtual void		ClearSaveDirAfterClientLoad() = 0;
 
 	// Sets a USERINFO client ConVar for a fakeclient
-	virtual void		SetFakeClientConVarValue( int clientIndex, const char *cvar, const char *value ) = 0;
+	virtual void		SetFakeClientConVarValue( CEntityIndex clientIndex, const char *cvar, const char *value ) = 0;
 	
 	// Marks the material (vmt file) for consistency checking.  If the client and server have different
 	// contents for the file, the client's vmt can only use the VertexLitGeneric shader, and can only
@@ -342,7 +374,7 @@ public:
 	virtual void		SetAreaPortalStates( const int *portalNumbers, const int *isOpen, int nPortals ) = 0;
 
 	// Called when relevant edict state flags change.
-	virtual void		NotifyEdictFlagsChange( int iEdict ) = 0;
+	virtual void		NotifyEdictFlagsChange( CEntityIndex iEdict ) = 0;
 	
 	virtual CSharedEdictChangeInfo* GetSharedEdictChangeInfo() = 0;
 
@@ -353,7 +385,7 @@ public:
 	// Returns true if the engine is an internal build. i.e. is using the internal bugreporter.
 	virtual bool		IsInternalBuild( void ) = 0;
 
-	virtual IChangeInfoAccessor *GetChangeAccessor( int edictIndex ) = 0;	
+	virtual IChangeInfoAccessor *GetChangeAccessor( CEntityIndex edictIndex ) = 0;	
 
 	// Name of most recently load .sav file
 	virtual char const *GetMostRecentlyLoadedFileName() = 0;
@@ -378,30 +410,30 @@ public:
 	//
 	// Store the return value if you want to match this specific query to the OnQueryCvarValueFinished call.
 	// Returns InvalidQueryCvarCookie if the entity is invalid.
-	virtual QueryCvarCookie_t StartQueryCvarValue( int clientIndex, const char *pName ) = 0;
+	virtual QueryCvarCookie_t StartQueryCvarValue( CEntityIndex clientIndex, const char *pName ) = 0;
 
 	virtual void InsertServerCommand( const char *str ) = 0;
 
 	// Fill in the player info structure for the specified player index (name, model, etc.)
-	virtual bool GetPlayerInfo( int ent_num, player_info_t *pinfo ) = 0;
+	virtual bool GetPlayerInfo( CEntityIndex ent_num, player_info_t *pinfo ) = 0;
 
 	// Returns true if this client has been fully authenticated by Steam
-	virtual bool IsClientFullyAuthenticated( int clientIndex ) = 0;
+	virtual bool IsClientFullyAuthenticated( CEntityIndex clientIndex ) = 0;
 
 	// This makes the host run 1 tick per frame instead of checking the system timer to see how many ticks to run in a certain frame.
 	// i.e. it does the same thing timedemo does.
 	virtual void SetDedicatedServerBenchmarkMode( bool bBenchmarkMode ) = 0;
 
-	virtual bool IsSplitScreenPlayer( int ent_num ) = 0;
-	virtual edict_t *GetSplitScreenPlayerAttachToEdict( int ent_num ) = 0;
-	virtual int	GetNumSplitScreenUsersAttachedToEdict( int ent_num ) = 0;
-	virtual edict_t *GetSplitScreenPlayerForEdict( int ent_num, int nSlot ) = 0;
+	virtual bool IsSplitScreenPlayer( CEntityIndex ent_num ) = 0;
+	virtual edict_t *GetSplitScreenPlayerAttachToEdict( CEntityIndex ent_num ) = 0;
+	virtual int	GetNumSplitScreenUsersAttachedToEdict( CEntityIndex ent_num ) = 0;
+	virtual edict_t *GetSplitScreenPlayerForEdict( CEntityIndex ent_num, int nSlot ) = 0;
 
 	// Used by Foundry to hook into the loadgame process and override the entities that are getting loaded.
 	virtual bool IsOverrideLoadGameEntsOn() = 0;
 
 	// Used by Foundry when it changes an entity (and possibly its class) but preserves its serial number.
-	virtual void ForceFlushEntity( int iEntity ) = 0;
+	virtual void ForceFlushEntity( CEntityIndex iEntity ) = 0;
 
 	//Finds or Creates a shared memory space, the returned pointer will automatically be AddRef()ed
 	virtual ISPSharedMemory *GetSinglePlayerSharedMemorySpace( const char *szName, int ent_num = MAX_EDICTS ) = 0;
@@ -426,7 +458,7 @@ public:
 	virtual CGamestatsData *GetGamestatsData() = 0;
 
 	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
-	virtual const CSteamID	*GetClientSteamID( int clientIndex ) = 0;
+	virtual const CSteamID	*GetClientSteamID( CEntityIndex clientIndex ) = 0;
 
 	// Returns the SteamID of the game server
 	virtual const CSteamID	*GetGameServerSteamID() = 0;
@@ -441,16 +473,16 @@ public:
 	virtual void RemoveAllPaint() = 0;
 
 	// Returns the XUID of the specified player. It'll be NULL if the player hasn't connected yet.
-	virtual uint64 GetClientXUID( int clientIndex ) = 0;
+	virtual uint64 GetClientXUID( CEntityIndex clientIndex ) = 0;
 	virtual bool IsActiveApp() = 0;
 	
-	virtual void DisconnectAllClients( const char * szReason, bool skipHLTV ) = 0;
+	virtual void DisconnectClient( CEntityIndex clientIndex, const char *szReason ) = 0;
 	
 	virtual int GetServerVersion( void ) = 0;
 	
-	virtual bool GetEngineHltvInfo( CEngineHltvInfo_t &out ) = 0;
+	virtual bool SetHLTVChatBan( int, bool ) = 0;
 	
-	virtual bool IsClientLowViolence( int clientIndex ) = 0;
+	virtual bool IsClientLowViolence( CEntityIndex clientIndex ) = 0;
 };
 
 abstract_class IServerGCLobby
@@ -559,7 +591,7 @@ public:
 	// This is called when a query from IServerPluginHelpers::StartQueryCvarValue is finished.
 	// iCookie is the value returned by IServerPluginHelpers::StartQueryCvarValue.
 	// Added with version 2 of the interface.
-	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) = 0;
+	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, CEntityIndex playerIndex, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) = 0;
 
 	// Called after tools are initialized (i.e. when Foundry is initialized so we can get IServerFoundry).
 	virtual void			PostToolsInit() = 0;
@@ -570,7 +602,7 @@ public:
 	// 
 	virtual void			GetMatchmakingTags( char *buf, size_t bufSize ) = 0;
 
-	virtual void			ServerHibernationUpdate( bool bHibernating ) = 0;
+	virtual void			SetServerHibernation( bool bHibernating ) = 0;
 
 	virtual void			GetMatchmakingGameData( char *buf, size_t bufSize ) = 0;
 
@@ -580,11 +612,9 @@ public:
 	virtual IServerGCLobby	*GetServerGCLobby() = 0;
 	virtual void			GameServerSteamAPIShutdown( void ) = 0;
 
-	virtual void			GetGameStatus( void (*inputFunc) (const char *fmt, ...) ) = 0;
+	virtual void			Status( void (*inputFunc) (const char *fmt, ...) ) = 0;
 
-	// Returns true if the game DLL wants the server not to be made public.
-	// Used by commentary system to hide multiplayer commentary servers from the master.
-	virtual bool			ShouldHideServer( void ) = 0;
+	virtual int				GetServerGameDLLFlags( void ) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -618,10 +648,12 @@ public:
 	//
 	// This is also where an entity can force other entities to be transmitted if it refers to them
 	// with ehandles.
-	virtual void			CheckTransmit( CCheckTransmitInfo *pInfo, const unsigned short *pEdictIndices, int nEdicts ) = 0;
+	virtual void			ProcessCheckTransmit( int, CCheckTransmitInfo **pInfos, CBitVec<MAX_EDICTS> &, const uint16 *, int ) = 0;
 
 	// TERROR: Perform any PVS cleanup before a full update
-	virtual void			PrepareForFullUpdate( edict_t *pEdict ) = 0;
+	virtual void			PrepareForFullUpdate( CEntityIndex entIndex ) = 0;
+	
+	virtual bool			ShouldClientReceiveStringTableUserData( const INetworkStringTable *, int, const CCheckTransmitInfo * ) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMECLIENTS		"ServerGameClients004"
@@ -637,51 +669,51 @@ public:
 
 	// Client is connecting to server ( return false to reject the connection )
 	//	You can specify a rejection message by writing it into reject
-	virtual bool			ClientConnect( int index, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen ) = 0;
+	virtual bool			ClientConnect( CEntityIndex index, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen ) = 0;
 
 	// Client is going active
 	// If bLoadGame is true, don't spawn the player because its state is already setup.
-	virtual void			ClientActive( int index, bool bLoadGame ) = 0;
+	virtual void			ClientActive( CEntityIndex index, bool bLoadGame ) = 0;
 	
-	virtual void			ClientFullyConnect( int index ) = 0;
+	virtual void			ClientFullyConnect( CEntityIndex index ) = 0;
 
 	// Client is disconnecting from server
-	virtual void			ClientDisconnect( int index ) = 0;
+	virtual void			ClientDisconnect( CEntityIndex index ) = 0;
 	
 	// Client is connected and should be put in the game
-	virtual void			ClientPutInServer( int index, char const *playername ) = 0;
+	virtual void			ClientPutInServer( CEntityIndex index, char const *playername ) = 0;
 	
 	// The client has typed a command at the console
-	virtual void			ClientCommand( int index, const CCommand &args ) = 0;
+	virtual void			ClientCommand( CEntityIndex index, const CCommand &args ) = 0;
 
 	// Sets the client index for the client who typed the command into his/her console
 	virtual void			SetCommandClient( int index ) = 0;
 	
 	// A player changed one/several replicated cvars (name etc)
-	virtual void			ClientSettingsChanged( int index ) = 0;
+	virtual void			ClientSettingsChanged( CEntityIndex index ) = 0;
 	
 	// Determine PVS origin and set PVS for the player/viewentity
-	virtual void			ClientSetupVisibility( edict_t *pViewEntity, int clientindex, unsigned char *pvs, int pvssize ) = 0;
+	virtual void			ClientSetupVisibility( CEntityIndex viewentIndex, CEntityIndex clientindex, unsigned char *pvs, int pvssize ) = 0;
 	
 	// A block of CUserCmds has arrived from the user, decode them and buffer for execution during player simulation
-	virtual float			ProcessUsercmds( int index, bf_read *buf, int numcmds, int totalcmds,
+	virtual float			ProcessUsercmds( CEntityIndex index, bf_read *buf, int numcmds, int totalcmds,
 								int dropped_packets, bool ignore, bool paused ) = 0;
 
 	// For players, looks up the CPlayerState structure corresponding to the player
-	virtual CPlayerState	*GetPlayerState( int index ) = 0;
+	virtual CPlayerState	*GetPlayerState( CEntityIndex index ) = 0;
 
 	// Get the ear position for a specified client
-	virtual void			ClientEarPosition( int index, Vector *pEarOrigin ) = 0;
+	virtual void			ClientEarPosition( CEntityIndex index, Vector *pEarOrigin ) = 0;
 
 	// returns number of delay ticks if player is in Replay mode (0 = no delay)
-	virtual int				GetReplayDelay( int index, int& entity ) = 0;
+	virtual int				GetReplayDelay( CEntityIndex index, int& entity ) = 0;
 
 	// Anything this game .dll wants to add to the bug reporter text (e.g., the entity/model under the picker crosshair)
 	//  can be added here
 	virtual void			GetBugReportInfo( char *buf, int buflen ) = 0;
 
 	// TERROR: A player sent a voice packet
-	virtual void			ClientVoice( int index ) = 0;
+	virtual void			ClientVoice( CEntityIndex index ) = 0;
 
 	// A user has had their network id setup and validated 
 	virtual void			NetworkIDValidated( const char *pszUserName, const char *pszNetworkID ) = 0;
@@ -692,13 +724,13 @@ public:
 	// Return # of human slots, -1 if can't determine or don't care (engine will assume it's == maxplayers )
 	virtual int				GetMaxHumanPlayers() = 0;
 
-	// Gets the player ptr like other funcs, but then does a dynamic cast on it, presumably to a DOTA player,
-	// then returns a bool value from casted player
-	virtual bool			UnknownFuncGetDOTASpecificPlayerSomething( int index ) = 0;
+	virtual bool			ClientCanPause( CEntityIndex index ) = 0;
 	
-	virtual void			UnknownFunc1() = 0;
+	virtual void			HLTVClientFullyConnect( int index, const CSteamID &steamID ) = 0;
 	
-	virtual bool			DispatchClientMessage( int index, int msg_type, int size, uint8 *pData ) = 0;
+	virtual bool			DispatchClientMessage( CEntityIndex index, int msg_type, int size, const uint8 *pData ) = 0;
+	
+	virtual bool			CanHLTVClientConnect( int index, const CSteamID &steamID, const char **ppszRejectReason ) = 0;
 };
 
 #define INTERFACEVERSION_UPLOADGAMESTATS		"ServerUploadGameStats001"

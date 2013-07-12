@@ -154,7 +154,7 @@ DECLARE_TIER2_INTERFACE( IInputSystem, g_pInputSystem );
 #define INPUTSTACKSYSTEM_INTERFACE_VERSION		"InputStackSystemVersion001"
 DECLARE_TIER2_INTERFACE( IInputStackSystem, g_pInputStackSystem );
 
-#define NETWORKSYSTEM_INTERFACE_VERSION			"NetworkSystemVersion001"
+#define NETWORKSYSTEM_INTERFACE_VERSION			"NetworkSystemVersion002"
 DECLARE_TIER2_INTERFACE( INetworkSystem, g_pNetworkSystem );
 
 #define MATERIALSYSTEM_HARDWARECONFIG_INTERFACE_VERSION		"MaterialSystemHardwareConfig013"

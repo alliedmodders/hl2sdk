@@ -79,14 +79,14 @@ public:
 	virtual uint64 GetUint64( const char *keyName = NULL, uint64 defaultValue = 0 ) = 0;
 	virtual float GetFloat( const char *keyName = NULL, float defaultValue = 0.0f ) = 0;
 	virtual const char *GetString( const char *keyName = NULL, const char *defaultValue = "" ) = 0;
-	virtual void *GetPointer( const char *keyName = NULL, void *defaultValue = NULL ) = 0;
+	virtual void *GetPtr( const char *keyName = NULL, void *defaultValue = NULL ) = 0;
 
 	virtual void SetBool( const char *keyName, bool value ) = 0;
 	virtual void SetInt( const char *keyName, int value ) = 0;
 	virtual void SetUint64( const char *keyName, uint64 value ) = 0;
 	virtual void SetFloat( const char *keyName, float value ) = 0;
 	virtual void SetString( const char *keyName, const char *value ) = 0;
-	virtual void SetPointer( const char *keyName, void *value ) = 0;
+	virtual void SetPtr( const char *keyName, void *value ) = 0;
 };
 
 #define EVENT_DEBUG_ID_INIT			42
@@ -143,6 +143,8 @@ public:
 	// write/read event to/from bitbuffer
 	virtual bool SerializeEvent( IGameEvent *event, bf_write *buf ) = 0;
 	virtual IGameEvent *UnserializeEvent( bf_read *buf ) = 0; // create new KeyValues, must be deleted
+	
+	virtual int LookupEventId( const char *name ) = 0;
 };
 
 // the old game event manager interface, don't use it. Rest is legacy support:
