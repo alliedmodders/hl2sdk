@@ -16,7 +16,7 @@
 
 class IServer;
 class INetMessage;
-struct NetMessageCvar_t;
+class CMsg_CVars;
 struct USERID_t;
 
 abstract_class IClient : public INetChannelHandler
