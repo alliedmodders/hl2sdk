@@ -49,7 +49,7 @@ public:
 	// Accessors (length -1 means don't change user data if string already exits)
 	virtual int				AddString( bool bIsServer, const char *value, int length = -1, const void *userdata = 0 ) = 0; 
 
-	virtual const char		*GetString( int stringNumber ) const = 0;
+	virtual const char		*GetString( int stringNumber, bool bUnknown ) const = 0;
 	virtual void			SetStringUserData( int stringNumber, int length, const void *userdata ) = 0;
 	virtual const void		*GetStringUserData( int stringNumber, int *length ) const = 0;
 	virtual int				FindStringIndex( char const *string ) = 0; // returns INVALID_STRING_INDEX if not found
