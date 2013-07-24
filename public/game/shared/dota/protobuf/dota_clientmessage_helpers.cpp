@@ -31,6 +31,7 @@ CDotaClientMessageHelpers::CDotaClientMessageHelpers()
 	SETUP_DOTA_MESSAGE( ItemAlert );
 	SETUP_DOTA_MESSAGE( ChatWheel );
 	SETUP_DOTA_MESSAGE( SendStatPopup );
+	SETUP_DOTA_MESSAGE( BeginLastHitChallenge );
 }
 
 const google::protobuf::Message *CDotaClientMessageHelpers::GetPrototype( int index ) const

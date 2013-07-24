@@ -50,6 +50,7 @@ class CDOTAClientMsg_WorldLine;
 class CDOTAClientMsg_RequestGraphUpdate;
 class CDOTAClientMsg_ChatWheel;
 class CDOTAClientMsg_SendStatPopup;
+class CDOTAClientMsg_BeginLastHitChallenge;
 
 enum EDotaClientMessages {
   DOTA_CM_MapLine = 1,
@@ -68,11 +69,12 @@ enum EDotaClientMessages {
   DOTA_CM_RequestGraphUpdate = 14,
   DOTA_CM_ItemAlert = 15,
   DOTA_CM_ChatWheel = 16,
-  DOTA_CM_SendStatPopup = 17
+  DOTA_CM_SendStatPopup = 17,
+  DOTA_CM_BeginLastHitChallenge = 18
 };
 bool EDotaClientMessages_IsValid(int value);
 const EDotaClientMessages EDotaClientMessages_MIN = DOTA_CM_MapLine;
-const EDotaClientMessages EDotaClientMessages_MAX = DOTA_CM_SendStatPopup;
+const EDotaClientMessages EDotaClientMessages_MAX = DOTA_CM_BeginLastHitChallenge;
 const int EDotaClientMessages_ARRAYSIZE = EDotaClientMessages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* EDotaClientMessages_descriptor();
@@ -1492,6 +1494,98 @@ class CDOTAClientMsg_SendStatPopup : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static CDOTAClientMsg_SendStatPopup* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class CDOTAClientMsg_BeginLastHitChallenge : public ::google::protobuf::Message {
+ public:
+  CDOTAClientMsg_BeginLastHitChallenge();
+  virtual ~CDOTAClientMsg_BeginLastHitChallenge();
+  
+  CDOTAClientMsg_BeginLastHitChallenge(const CDOTAClientMsg_BeginLastHitChallenge& from);
+  
+  inline CDOTAClientMsg_BeginLastHitChallenge& operator=(const CDOTAClientMsg_BeginLastHitChallenge& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAClientMsg_BeginLastHitChallenge& default_instance();
+  
+  void Swap(CDOTAClientMsg_BeginLastHitChallenge* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAClientMsg_BeginLastHitChallenge* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAClientMsg_BeginLastHitChallenge& from);
+  void MergeFrom(const CDOTAClientMsg_BeginLastHitChallenge& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional uint32 chosen_lane = 1;
+  inline bool has_chosen_lane() const;
+  inline void clear_chosen_lane();
+  static const int kChosenLaneFieldNumber = 1;
+  inline ::google::protobuf::uint32 chosen_lane() const;
+  inline void set_chosen_lane(::google::protobuf::uint32 value);
+  
+  // optional bool helper_enabled = 2;
+  inline bool has_helper_enabled() const;
+  inline void clear_helper_enabled();
+  static const int kHelperEnabledFieldNumber = 2;
+  inline bool helper_enabled() const;
+  inline void set_helper_enabled(bool value);
+  
+  // @@protoc_insertion_point(class_scope:CDOTAClientMsg_BeginLastHitChallenge)
+ private:
+  inline void set_has_chosen_lane();
+  inline void clear_has_chosen_lane();
+  inline void set_has_helper_enabled();
+  inline void clear_has_helper_enabled();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::uint32 chosen_lane_;
+  bool helper_enabled_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fclientmessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fclientmessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fclientmessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAClientMsg_BeginLastHitChallenge* default_instance_;
+};
 // ===================================================================
 
 
@@ -2043,6 +2137,54 @@ inline ::CDOTAMsg_SendStatPopup* CDOTAClientMsg_SendStatPopup::release_statpopup
   ::CDOTAMsg_SendStatPopup* temp = statpopup_;
   statpopup_ = NULL;
   return temp;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAClientMsg_BeginLastHitChallenge
+
+// optional uint32 chosen_lane = 1;
+inline bool CDOTAClientMsg_BeginLastHitChallenge::has_chosen_lane() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAClientMsg_BeginLastHitChallenge::set_has_chosen_lane() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAClientMsg_BeginLastHitChallenge::clear_has_chosen_lane() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAClientMsg_BeginLastHitChallenge::clear_chosen_lane() {
+  chosen_lane_ = 0u;
+  clear_has_chosen_lane();
+}
+inline ::google::protobuf::uint32 CDOTAClientMsg_BeginLastHitChallenge::chosen_lane() const {
+  return chosen_lane_;
+}
+inline void CDOTAClientMsg_BeginLastHitChallenge::set_chosen_lane(::google::protobuf::uint32 value) {
+  set_has_chosen_lane();
+  chosen_lane_ = value;
+}
+
+// optional bool helper_enabled = 2;
+inline bool CDOTAClientMsg_BeginLastHitChallenge::has_helper_enabled() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAClientMsg_BeginLastHitChallenge::set_has_helper_enabled() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAClientMsg_BeginLastHitChallenge::clear_has_helper_enabled() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAClientMsg_BeginLastHitChallenge::clear_helper_enabled() {
+  helper_enabled_ = false;
+  clear_has_helper_enabled();
+}
+inline bool CDOTAClientMsg_BeginLastHitChallenge::helper_enabled() const {
+  return helper_enabled_;
+}
+inline void CDOTAClientMsg_BeginLastHitChallenge::set_helper_enabled(bool value) {
+  set_has_helper_enabled();
+  helper_enabled_ = value;
 }
 
 

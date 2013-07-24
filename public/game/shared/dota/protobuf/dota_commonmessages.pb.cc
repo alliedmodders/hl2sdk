@@ -193,7 +193,7 @@ void protobuf_AddDesc_dota_5fcommonmessages_2eproto() {
     "\007initial\030\004 \001(\010\022\013\n\003end\030\005 \001(\010\"~\n\026CDOTAMsg_"
     "SendStatPopup\0229\n\005style\030\001 \001(\0162\024.EDOTAStat"
     "PopupTypes:\024k_EDOTA_SPT_Textline\022\024\n\014stat"
-    "_strings\030\002 \003(\t\022\023\n\013stat_images\030\003 \003(\005*\267\002\n\025"
+    "_strings\030\002 \003(\t\022\023\n\013stat_images\030\003 \003(\005*\252\016\n\025"
     "EDOTAChatWheelMessage\022\021\n\rk_EDOTA_CW_Ok\020\000"
     "\022\023\n\017k_EDOTA_CW_Care\020\001\022\026\n\022k_EDOTA_CW_GetB"
     "ack\020\002\022\030\n\024k_EDOTA_CW_NeedWards\020\003\022\023\n\017k_EDO"
@@ -201,10 +201,48 @@ void protobuf_AddDesc_dota_5fcommonmessages_2eproto() {
     "DOTA_CW_Push\020\006\022\026\n\022k_EDOTA_CW_GoodJob\020\007\022\026"
     "\n\022k_EDOTA_CW_Missing\020\010\022\032\n\026k_EDOTA_CW_Mis"
     "sing_Top\020\t\022\032\n\026k_EDOTA_CW_Missing_Mid\020\n\022\035"
-    "\n\031k_EDOTA_CW_Missing_Bottom\020\013*\\\n\023EDOTASt"
-    "atPopupTypes\022\030\n\024k_EDOTA_SPT_Textline\020\000\022\025"
-    "\n\021k_EDOTA_SPT_Basic\020\001\022\024\n\020k_EDOTA_SPT_Pol"
-    "l\020\002B\005H\001\200\001\000", 930);
+    "\n\031k_EDOTA_CW_Missing_Bottom\020\013\022\021\n\rk_EDOTA"
+    "_CW_Go\020\014\022\027\n\023k_EDOTA_CW_Initiate\020\r\022\025\n\021k_E"
+    "DOTA_CW_Follow\020\016\022\027\n\023k_EDOTA_CW_Group_Up\020"
+    "\017\022\031\n\025k_EDOTA_CW_Spread_Out\020\020\022\031\n\025k_EDOTA_"
+    "CW_Split_Farm\020\021\022\025\n\021k_EDOTA_CW_Attack\020\022\022\022"
+    "\n\016k_EDOTA_CW_BRB\020\023\022\023\n\017k_EDOTA_CW_Dive\020\024\022"
+    "\022\n\016k_EDOTA_CW_OMW\020\025\022\030\n\024k_EDOTA_CW_Get_Re"
+    "ady\020\026\022\023\n\017k_EDOTA_CW_Bait\020\027\022\023\n\017k_EDOTA_CW"
+    "_Heal\020\030\022\023\n\017k_EDOTA_CW_Mana\020\031\022\022\n\016k_EDOTA_"
+    "CW_OOM\020\032\022\035\n\031k_EDOTA_CW_Skill_Cooldown\020\033\022"
+    "\031\n\025k_EDOTA_CW_Ulti_Ready\020\034\022\035\n\031k_EDOTA_CW"
+    "_Enemy_Returned\020\035\022\032\n\026k_EDOTA_CW_All_Miss"
+    "ing\020\036\022\035\n\031k_EDOTA_CW_Enemy_Incoming\020\037\022\032\n\026"
+    "k_EDOTA_CW_Invis_Enemy\020 \022\035\n\031k_EDOTA_CW_E"
+    "nemy_Had_Rune\020!\022\031\n\025k_EDOTA_CW_Split_Push"
+    "\020\"\022\035\n\031k_EDOTA_CW_Coming_To_Gank\020#\022\033\n\027k_E"
+    "DOTA_CW_Request_Gank\020$\022 \n\034k_EDOTA_CW_Fig"
+    "ht_Under_Tower\020%\022\031\n\025k_EDOTA_CW_Deny_Towe"
+    "r\020&\022\032\n\026k_EDOTA_CW_Buy_Courier\020\'\022\036\n\032k_EDO"
+    "TA_CW_Upgrade_Courier\020(\022\035\n\031k_EDOTA_CW_Ne"
+    "ed_Detection\020)\022\"\n\036k_EDOTA_CW_They_Have_D"
+    "etection\020*\022\025\n\021k_EDOTA_CW_Buy_TP\020+\022\034\n\030k_E"
+    "DOTA_CW_Reuse_Courier\020,\022\025\n\021k_EDOTA_CW_De"
+    "ward\020-\022\033\n\027k_EDOTA_CW_Building_Mek\020.\022\034\n\030k"
+    "_EDOTA_CW_Building_Pipe\020/\022\035\n\031k_EDOTA_CW_"
+    "Stack_And_Pull\0200\022\023\n\017k_EDOTA_CW_Pull\0201\022\026\n"
+    "\022k_EDOTA_CW_Pulling\0202\022\024\n\020k_EDOTA_CW_Stac"
+    "k\0203\022\027\n\023k_EDOTA_CW_Jungling\0204\022\025\n\021k_EDOTA_"
+    "CW_Roshan\0205\022\032\n\026k_EDOTA_CW_Affirmative\0206\022"
+    "\023\n\017k_EDOTA_CW_Wait\0207\022\024\n\020k_EDOTA_CW_Pause"
+    "\0208\022\033\n\027k_EDOTA_CW_Current_Time\0209\022\032\n\026k_EDO"
+    "TA_CW_Check_Runes\020:\022\031\n\025k_EDOTA_CW_Smoke_"
+    "Gank\020;\022\023\n\017k_EDOTA_CW_GLHF\020<\022\023\n\017k_EDOTA_C"
+    "W_Nice\020=\022\025\n\021k_EDOTA_CW_Thanks\020>\022\024\n\020k_EDO"
+    "TA_CW_Sorry\020\?\022\031\n\025k_EDOTA_CW_No_Give_Up\020@"
+    "\022\034\n\030k_EDOTA_CW_Just_Happened\020A\022\033\n\027k_EDOT"
+    "A_CW_Game_Is_Hard\020B\022\027\n\023k_EDOTA_CW_New_Me"
+    "ta\020C\022\025\n\021k_EDOTA_CW_My_Bad\020D\022\025\n\021k_EDOTA_C"
+    "W_Regret\020E\022\024\n\020k_EDOTA_CW_Relax\020F*\\\n\023EDOT"
+    "AStatPopupTypes\022\030\n\024k_EDOTA_SPT_Textline\020"
+    "\000\022\025\n\021k_EDOTA_SPT_Basic\020\001\022\024\n\020k_EDOTA_SPT_"
+    "Poll\020\002B\005H\001\200\001\000", 2453);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "dota_commonmessages.proto", &protobuf_RegisterTypes);
   CDOTAMsg_LocationPing::default_instance_ = new CDOTAMsg_LocationPing();
@@ -245,6 +283,65 @@ bool EDOTAChatWheelMessage_IsValid(int value) {
     case 9:
     case 10:
     case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+    case 25:
+    case 26:
+    case 27:
+    case 28:
+    case 29:
+    case 30:
+    case 31:
+    case 32:
+    case 33:
+    case 34:
+    case 35:
+    case 36:
+    case 37:
+    case 38:
+    case 39:
+    case 40:
+    case 41:
+    case 42:
+    case 43:
+    case 44:
+    case 45:
+    case 46:
+    case 47:
+    case 48:
+    case 49:
+    case 50:
+    case 51:
+    case 52:
+    case 53:
+    case 54:
+    case 55:
+    case 56:
+    case 57:
+    case 58:
+    case 59:
+    case 60:
+    case 61:
+    case 62:
+    case 63:
+    case 64:
+    case 65:
+    case 66:
+    case 67:
+    case 68:
+    case 69:
+    case 70:
       return true;
     default:
       return false;
