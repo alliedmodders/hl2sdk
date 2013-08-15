@@ -121,6 +121,11 @@ public:
 	virtual const char *GetTViewModelArmsForMap( const char *mapName ) = 0;
 	virtual const char *GetCTViewModelArmsForMap( const char *mapName ) = 0;
 	
+	virtual const char *GetRequiredAttrForMap( const char *mapName ) = 0;
+	virtual int GetRequiredAttrValueForMap( const char *mapName ) = 0;
+	virtual const char *GetRequiredAttrRewardForMap( const char *mapName ) = 0;
+	virtual int GetRewardDropListForMap( const char *mapName ) = 0;
+	
 	virtual const CUtlStringList *GetMapGroupMapList( const char *mapGroup ) = 0;
 	
 	virtual bool GetRunMapWithDefaultGametype() = 0;
@@ -132,17 +137,8 @@ public:
 	virtual bool SetCustomBotDifficulty( int botDiff ) = 0;
 	virtual int GetCustomBotDifficulty() = 0;
 	
-	virtual bool IsGameModeELORanked( const char *gameType, const char *gameMode, ELOGameType_t *ELOIndex ) = 0;
-	virtual bool DoesCurrentGameModeELORankPlayers() = 0;
-	virtual ELOGameType_t GetCurrentELOIndex() = 0;
-	virtual int GetCurrentELOLockInTime() = 0;
-	virtual ELOCalcMode_t GetCurrentELOCalculationMode() = 0;
-	virtual float GetCurrentELOExpBase() = 0;
-	virtual float GetCurrentELOExpDenom() = 0;
-	virtual float GetCurrentELOExpScalar() = 0;
-	virtual bool GetCurrentELOBracketDisplay() = 0;
-	
 	virtual int GetCurrentServerNumSlots() = 0;
+	virtual int GetCurrentServerSettingInt(const char *settingName, int defaultValue) = 0;
 };
 
 #endif // IGAMETYPES_H
