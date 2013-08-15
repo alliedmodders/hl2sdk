@@ -56,6 +56,8 @@ class CCSUsrMsg_HintText;
 class CCSUsrMsg_KeyHintText;
 class CCSUsrMsg_ProcessSpottedEntityUpdate;
 class CCSUsrMsg_ProcessSpottedEntityUpdate_SpottedEntityUpdate;
+class CEconItemPreviewDataBlock;
+class CCSUsrMsg_SendPlayerItemDrops;
 class CCSUsrMsg_ReloadEffect;
 class CCSUsrMsg_AdjustMoney;
 class CCSUsrMsg_KillCam;
@@ -149,11 +151,12 @@ enum ECstrike15UserMessages {
   CS_UM_MarkAchievement = 57,
   CS_UM_MatchStatsUpdate = 58,
   CS_UM_ItemDrop = 59,
-  CS_UM_GlowPropTurnOff = 60
+  CS_UM_GlowPropTurnOff = 60,
+  CS_UM_SendPlayerItemDrops = 61
 };
 bool ECstrike15UserMessages_IsValid(int value);
 const ECstrike15UserMessages ECstrike15UserMessages_MIN = CS_UM_VGUIMenu;
-const ECstrike15UserMessages ECstrike15UserMessages_MAX = CS_UM_GlowPropTurnOff;
+const ECstrike15UserMessages ECstrike15UserMessages_MAX = CS_UM_SendPlayerItemDrops;
 const int ECstrike15UserMessages_ARRAYSIZE = ECstrike15UserMessages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ECstrike15UserMessages_descriptor();
@@ -2805,6 +2808,261 @@ class CCSUsrMsg_ProcessSpottedEntityUpdate : public ::google::protobuf::Message 
 };
 // -------------------------------------------------------------------
 
+class CEconItemPreviewDataBlock : public ::google::protobuf::Message {
+ public:
+  CEconItemPreviewDataBlock();
+  virtual ~CEconItemPreviewDataBlock();
+  
+  CEconItemPreviewDataBlock(const CEconItemPreviewDataBlock& from);
+  
+  inline CEconItemPreviewDataBlock& operator=(const CEconItemPreviewDataBlock& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CEconItemPreviewDataBlock& default_instance();
+  
+  void Swap(CEconItemPreviewDataBlock* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CEconItemPreviewDataBlock* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CEconItemPreviewDataBlock& from);
+  void MergeFrom(const CEconItemPreviewDataBlock& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional uint32 accountid = 1;
+  inline bool has_accountid() const;
+  inline void clear_accountid();
+  static const int kAccountidFieldNumber = 1;
+  inline ::google::protobuf::uint32 accountid() const;
+  inline void set_accountid(::google::protobuf::uint32 value);
+  
+  // optional uint64 itemid = 2;
+  inline bool has_itemid() const;
+  inline void clear_itemid();
+  static const int kItemidFieldNumber = 2;
+  inline ::google::protobuf::uint64 itemid() const;
+  inline void set_itemid(::google::protobuf::uint64 value);
+  
+  // optional uint32 defindex = 3;
+  inline bool has_defindex() const;
+  inline void clear_defindex();
+  static const int kDefindexFieldNumber = 3;
+  inline ::google::protobuf::uint32 defindex() const;
+  inline void set_defindex(::google::protobuf::uint32 value);
+  
+  // optional uint32 paintindex = 4;
+  inline bool has_paintindex() const;
+  inline void clear_paintindex();
+  static const int kPaintindexFieldNumber = 4;
+  inline ::google::protobuf::uint32 paintindex() const;
+  inline void set_paintindex(::google::protobuf::uint32 value);
+  
+  // optional uint32 rarity = 5;
+  inline bool has_rarity() const;
+  inline void clear_rarity();
+  static const int kRarityFieldNumber = 5;
+  inline ::google::protobuf::uint32 rarity() const;
+  inline void set_rarity(::google::protobuf::uint32 value);
+  
+  // optional uint32 quality = 6;
+  inline bool has_quality() const;
+  inline void clear_quality();
+  static const int kQualityFieldNumber = 6;
+  inline ::google::protobuf::uint32 quality() const;
+  inline void set_quality(::google::protobuf::uint32 value);
+  
+  // optional uint32 paintwear = 7;
+  inline bool has_paintwear() const;
+  inline void clear_paintwear();
+  static const int kPaintwearFieldNumber = 7;
+  inline ::google::protobuf::uint32 paintwear() const;
+  inline void set_paintwear(::google::protobuf::uint32 value);
+  
+  // optional uint32 paintseed = 8;
+  inline bool has_paintseed() const;
+  inline void clear_paintseed();
+  static const int kPaintseedFieldNumber = 8;
+  inline ::google::protobuf::uint32 paintseed() const;
+  inline void set_paintseed(::google::protobuf::uint32 value);
+  
+  // optional uint32 killeaterscoretype = 9;
+  inline bool has_killeaterscoretype() const;
+  inline void clear_killeaterscoretype();
+  static const int kKilleaterscoretypeFieldNumber = 9;
+  inline ::google::protobuf::uint32 killeaterscoretype() const;
+  inline void set_killeaterscoretype(::google::protobuf::uint32 value);
+  
+  // optional uint32 killeatervalue = 10;
+  inline bool has_killeatervalue() const;
+  inline void clear_killeatervalue();
+  static const int kKilleatervalueFieldNumber = 10;
+  inline ::google::protobuf::uint32 killeatervalue() const;
+  inline void set_killeatervalue(::google::protobuf::uint32 value);
+  
+  // @@protoc_insertion_point(class_scope:CEconItemPreviewDataBlock)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::google::protobuf::uint32 accountid_;
+  ::google::protobuf::uint64 itemid_;
+  ::google::protobuf::uint32 defindex_;
+  ::google::protobuf::uint32 paintindex_;
+  ::google::protobuf::uint32 rarity_;
+  ::google::protobuf::uint32 quality_;
+  ::google::protobuf::uint32 paintwear_;
+  ::google::protobuf::uint32 paintseed_;
+  ::google::protobuf::uint32 killeaterscoretype_;
+  ::google::protobuf::uint32 killeatervalue_;
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(10 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static CEconItemPreviewDataBlock* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_SendPlayerItemDrops : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_SendPlayerItemDrops();
+  virtual ~CCSUsrMsg_SendPlayerItemDrops();
+  
+  CCSUsrMsg_SendPlayerItemDrops(const CCSUsrMsg_SendPlayerItemDrops& from);
+  
+  inline CCSUsrMsg_SendPlayerItemDrops& operator=(const CCSUsrMsg_SendPlayerItemDrops& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_SendPlayerItemDrops& default_instance();
+  
+  void Swap(CCSUsrMsg_SendPlayerItemDrops* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CCSUsrMsg_SendPlayerItemDrops* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_SendPlayerItemDrops& from);
+  void MergeFrom(const CCSUsrMsg_SendPlayerItemDrops& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated .CEconItemPreviewDataBlock entity_updates = 1;
+  inline int entity_updates_size() const;
+  inline void clear_entity_updates();
+  static const int kEntityUpdatesFieldNumber = 1;
+  inline const ::CEconItemPreviewDataBlock& entity_updates(int index) const;
+  inline ::CEconItemPreviewDataBlock* mutable_entity_updates(int index);
+  inline ::CEconItemPreviewDataBlock* add_entity_updates();
+  inline const ::google::protobuf::RepeatedPtrField< ::CEconItemPreviewDataBlock >&
+      entity_updates() const;
+  inline ::google::protobuf::RepeatedPtrField< ::CEconItemPreviewDataBlock >*
+      mutable_entity_updates();
+  
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_SendPlayerItemDrops)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::google::protobuf::RepeatedPtrField< ::CEconItemPreviewDataBlock > entity_updates_;
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_SendPlayerItemDrops* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class CCSUsrMsg_ReloadEffect : public ::google::protobuf::Message {
  public:
   CCSUsrMsg_ReloadEffect();
@@ -2866,17 +3124,25 @@ class CCSUsrMsg_ReloadEffect : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 entidx() const;
   inline void set_entidx(::google::protobuf::int32 value);
   
+  // optional int32 actanim = 2;
+  inline bool has_actanim() const;
+  inline void clear_actanim();
+  static const int kActanimFieldNumber = 2;
+  inline ::google::protobuf::int32 actanim() const;
+  inline void set_actanim(::google::protobuf::int32 value);
+  
   // @@protoc_insertion_point(class_scope:CCSUsrMsg_ReloadEffect)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   mutable int _cached_size_;
   
   ::google::protobuf::int32 entidx_;
+  ::google::protobuf::int32 actanim_;
   friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -3668,13 +3934,6 @@ class CCSUsrMsg_PlayerStatsUpdate : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 version() const;
   inline void set_version(::google::protobuf::int32 value);
   
-  // optional int32 official_server = 2;
-  inline bool has_official_server() const;
-  inline void clear_official_server();
-  static const int kOfficialServerFieldNumber = 2;
-  inline ::google::protobuf::int32 official_server() const;
-  inline void set_official_server(::google::protobuf::int32 value);
-  
   // repeated .CCSUsrMsg_PlayerStatsUpdate.Stat stats = 4;
   inline int stats_size() const;
   inline void clear_stats();
@@ -3707,7 +3966,6 @@ class CCSUsrMsg_PlayerStatsUpdate : public ::google::protobuf::Message {
   mutable int _cached_size_;
   
   ::google::protobuf::int32 version_;
-  ::google::protobuf::int32 official_server_;
   ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_PlayerStatsUpdate_Stat > stats_;
   ::google::protobuf::int32 user_id_;
   ::google::protobuf::int32 crc_;
@@ -3715,7 +3973,7 @@ class CCSUsrMsg_PlayerStatsUpdate : public ::google::protobuf::Message {
   friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -8105,6 +8363,199 @@ CCSUsrMsg_ProcessSpottedEntityUpdate::mutable_entity_updates() {
 
 // -------------------------------------------------------------------
 
+// CEconItemPreviewDataBlock
+
+// optional uint32 accountid = 1;
+inline bool CEconItemPreviewDataBlock::has_accountid() const {
+  return _has_bit(0);
+}
+inline void CEconItemPreviewDataBlock::clear_accountid() {
+  accountid_ = 0u;
+  _clear_bit(0);
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::accountid() const {
+  return accountid_;
+}
+inline void CEconItemPreviewDataBlock::set_accountid(::google::protobuf::uint32 value) {
+  _set_bit(0);
+  accountid_ = value;
+}
+
+// optional uint64 itemid = 2;
+inline bool CEconItemPreviewDataBlock::has_itemid() const {
+  return _has_bit(1);
+}
+inline void CEconItemPreviewDataBlock::clear_itemid() {
+  itemid_ = GOOGLE_ULONGLONG(0);
+  _clear_bit(1);
+}
+inline ::google::protobuf::uint64 CEconItemPreviewDataBlock::itemid() const {
+  return itemid_;
+}
+inline void CEconItemPreviewDataBlock::set_itemid(::google::protobuf::uint64 value) {
+  _set_bit(1);
+  itemid_ = value;
+}
+
+// optional uint32 defindex = 3;
+inline bool CEconItemPreviewDataBlock::has_defindex() const {
+  return _has_bit(2);
+}
+inline void CEconItemPreviewDataBlock::clear_defindex() {
+  defindex_ = 0u;
+  _clear_bit(2);
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::defindex() const {
+  return defindex_;
+}
+inline void CEconItemPreviewDataBlock::set_defindex(::google::protobuf::uint32 value) {
+  _set_bit(2);
+  defindex_ = value;
+}
+
+// optional uint32 paintindex = 4;
+inline bool CEconItemPreviewDataBlock::has_paintindex() const {
+  return _has_bit(3);
+}
+inline void CEconItemPreviewDataBlock::clear_paintindex() {
+  paintindex_ = 0u;
+  _clear_bit(3);
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::paintindex() const {
+  return paintindex_;
+}
+inline void CEconItemPreviewDataBlock::set_paintindex(::google::protobuf::uint32 value) {
+  _set_bit(3);
+  paintindex_ = value;
+}
+
+// optional uint32 rarity = 5;
+inline bool CEconItemPreviewDataBlock::has_rarity() const {
+  return _has_bit(4);
+}
+inline void CEconItemPreviewDataBlock::clear_rarity() {
+  rarity_ = 0u;
+  _clear_bit(4);
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::rarity() const {
+  return rarity_;
+}
+inline void CEconItemPreviewDataBlock::set_rarity(::google::protobuf::uint32 value) {
+  _set_bit(4);
+  rarity_ = value;
+}
+
+// optional uint32 quality = 6;
+inline bool CEconItemPreviewDataBlock::has_quality() const {
+  return _has_bit(5);
+}
+inline void CEconItemPreviewDataBlock::clear_quality() {
+  quality_ = 0u;
+  _clear_bit(5);
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::quality() const {
+  return quality_;
+}
+inline void CEconItemPreviewDataBlock::set_quality(::google::protobuf::uint32 value) {
+  _set_bit(5);
+  quality_ = value;
+}
+
+// optional uint32 paintwear = 7;
+inline bool CEconItemPreviewDataBlock::has_paintwear() const {
+  return _has_bit(6);
+}
+inline void CEconItemPreviewDataBlock::clear_paintwear() {
+  paintwear_ = 0u;
+  _clear_bit(6);
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::paintwear() const {
+  return paintwear_;
+}
+inline void CEconItemPreviewDataBlock::set_paintwear(::google::protobuf::uint32 value) {
+  _set_bit(6);
+  paintwear_ = value;
+}
+
+// optional uint32 paintseed = 8;
+inline bool CEconItemPreviewDataBlock::has_paintseed() const {
+  return _has_bit(7);
+}
+inline void CEconItemPreviewDataBlock::clear_paintseed() {
+  paintseed_ = 0u;
+  _clear_bit(7);
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::paintseed() const {
+  return paintseed_;
+}
+inline void CEconItemPreviewDataBlock::set_paintseed(::google::protobuf::uint32 value) {
+  _set_bit(7);
+  paintseed_ = value;
+}
+
+// optional uint32 killeaterscoretype = 9;
+inline bool CEconItemPreviewDataBlock::has_killeaterscoretype() const {
+  return _has_bit(8);
+}
+inline void CEconItemPreviewDataBlock::clear_killeaterscoretype() {
+  killeaterscoretype_ = 0u;
+  _clear_bit(8);
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::killeaterscoretype() const {
+  return killeaterscoretype_;
+}
+inline void CEconItemPreviewDataBlock::set_killeaterscoretype(::google::protobuf::uint32 value) {
+  _set_bit(8);
+  killeaterscoretype_ = value;
+}
+
+// optional uint32 killeatervalue = 10;
+inline bool CEconItemPreviewDataBlock::has_killeatervalue() const {
+  return _has_bit(9);
+}
+inline void CEconItemPreviewDataBlock::clear_killeatervalue() {
+  killeatervalue_ = 0u;
+  _clear_bit(9);
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::killeatervalue() const {
+  return killeatervalue_;
+}
+inline void CEconItemPreviewDataBlock::set_killeatervalue(::google::protobuf::uint32 value) {
+  _set_bit(9);
+  killeatervalue_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_SendPlayerItemDrops
+
+// repeated .CEconItemPreviewDataBlock entity_updates = 1;
+inline int CCSUsrMsg_SendPlayerItemDrops::entity_updates_size() const {
+  return entity_updates_.size();
+}
+inline void CCSUsrMsg_SendPlayerItemDrops::clear_entity_updates() {
+  entity_updates_.Clear();
+}
+inline const ::CEconItemPreviewDataBlock& CCSUsrMsg_SendPlayerItemDrops::entity_updates(int index) const {
+  return entity_updates_.Get(index);
+}
+inline ::CEconItemPreviewDataBlock* CCSUsrMsg_SendPlayerItemDrops::mutable_entity_updates(int index) {
+  return entity_updates_.Mutable(index);
+}
+inline ::CEconItemPreviewDataBlock* CCSUsrMsg_SendPlayerItemDrops::add_entity_updates() {
+  return entity_updates_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::CEconItemPreviewDataBlock >&
+CCSUsrMsg_SendPlayerItemDrops::entity_updates() const {
+  return entity_updates_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::CEconItemPreviewDataBlock >*
+CCSUsrMsg_SendPlayerItemDrops::mutable_entity_updates() {
+  return &entity_updates_;
+}
+
+// -------------------------------------------------------------------
+
 // CCSUsrMsg_ReloadEffect
 
 // optional int32 entidx = 1;
@@ -8121,6 +8572,22 @@ inline ::google::protobuf::int32 CCSUsrMsg_ReloadEffect::entidx() const {
 inline void CCSUsrMsg_ReloadEffect::set_entidx(::google::protobuf::int32 value) {
   _set_bit(0);
   entidx_ = value;
+}
+
+// optional int32 actanim = 2;
+inline bool CCSUsrMsg_ReloadEffect::has_actanim() const {
+  return _has_bit(1);
+}
+inline void CCSUsrMsg_ReloadEffect::clear_actanim() {
+  actanim_ = 0;
+  _clear_bit(1);
+}
+inline ::google::protobuf::int32 CCSUsrMsg_ReloadEffect::actanim() const {
+  return actanim_;
+}
+inline void CCSUsrMsg_ReloadEffect::set_actanim(::google::protobuf::int32 value) {
+  _set_bit(1);
+  actanim_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -8459,22 +8926,6 @@ inline void CCSUsrMsg_PlayerStatsUpdate::set_version(::google::protobuf::int32 v
   version_ = value;
 }
 
-// optional int32 official_server = 2;
-inline bool CCSUsrMsg_PlayerStatsUpdate::has_official_server() const {
-  return _has_bit(1);
-}
-inline void CCSUsrMsg_PlayerStatsUpdate::clear_official_server() {
-  official_server_ = 0;
-  _clear_bit(1);
-}
-inline ::google::protobuf::int32 CCSUsrMsg_PlayerStatsUpdate::official_server() const {
-  return official_server_;
-}
-inline void CCSUsrMsg_PlayerStatsUpdate::set_official_server(::google::protobuf::int32 value) {
-  _set_bit(1);
-  official_server_ = value;
-}
-
 // repeated .CCSUsrMsg_PlayerStatsUpdate.Stat stats = 4;
 inline int CCSUsrMsg_PlayerStatsUpdate::stats_size() const {
   return stats_.size();
@@ -8502,33 +8953,33 @@ CCSUsrMsg_PlayerStatsUpdate::mutable_stats() {
 
 // optional int32 user_id = 5;
 inline bool CCSUsrMsg_PlayerStatsUpdate::has_user_id() const {
-  return _has_bit(3);
+  return _has_bit(2);
 }
 inline void CCSUsrMsg_PlayerStatsUpdate::clear_user_id() {
   user_id_ = 0;
-  _clear_bit(3);
+  _clear_bit(2);
 }
 inline ::google::protobuf::int32 CCSUsrMsg_PlayerStatsUpdate::user_id() const {
   return user_id_;
 }
 inline void CCSUsrMsg_PlayerStatsUpdate::set_user_id(::google::protobuf::int32 value) {
-  _set_bit(3);
+  _set_bit(2);
   user_id_ = value;
 }
 
 // optional int32 crc = 6;
 inline bool CCSUsrMsg_PlayerStatsUpdate::has_crc() const {
-  return _has_bit(4);
+  return _has_bit(3);
 }
 inline void CCSUsrMsg_PlayerStatsUpdate::clear_crc() {
   crc_ = 0;
-  _clear_bit(4);
+  _clear_bit(3);
 }
 inline ::google::protobuf::int32 CCSUsrMsg_PlayerStatsUpdate::crc() const {
   return crc_;
 }
 inline void CCSUsrMsg_PlayerStatsUpdate::set_crc(::google::protobuf::int32 value) {
-  _set_bit(4);
+  _set_bit(3);
   crc_ = value;
 }
 

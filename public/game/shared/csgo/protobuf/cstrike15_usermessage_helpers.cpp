@@ -70,6 +70,7 @@ CCstrike15UsermessageHelpers::CCstrike15UsermessageHelpers()
 	SETUP_MESSAGE( MatchStatsUpdate );
 	SETUP_MESSAGE( ItemDrop );
 	SETUP_MESSAGE( GlowPropTurnOff );
+	SETUP_MESSAGE( SendPlayerItemDrops );
 }
 
 const google::protobuf::Message *CCstrike15UsermessageHelpers::GetPrototype( int index ) const

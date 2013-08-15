@@ -123,6 +123,7 @@ enum ECstrike15UserMessages
 	CS_UM_MatchStatsUpdate = 58;
 	CS_UM_ItemDrop = 59;
 	CS_UM_GlowPropTurnOff = 60;
+	CS_UM_SendPlayerItemDrops = 61;
 }
 
 //=============================================================================
@@ -301,9 +302,29 @@ message CCSUsrMsg_ProcessSpottedEntityUpdate
 	repeated SpottedEntityUpdate entity_updates = 2;
 }
 
+message CEconItemPreviewDataBlock
+{
+	optional uint32 accountid = 1;
+	optional uint64 itemid = 2;
+	optional uint32 defindex = 3;
+	optional uint32 paintindex = 4;
+	optional uint32 rarity = 5;
+	optional uint32 quality = 6;
+	optional uint32 paintwear = 7;
+	optional uint32 paintseed = 8;
+	optional uint32 killeaterscoretype = 9;
+	optional uint32 killeatervalue = 10;
+}
+
+message CCSUsrMsg_SendPlayerItemDrops
+{
+	repeated CEconItemPreviewDataBlock entity_updates = 1;
+}
+
 message CCSUsrMsg_ReloadEffect
 {
 	optional int32 entidx = 1;
+	optional int32 actanim = 2;
 }
 
 message CCSUsrMsg_AdjustMoney
@@ -350,7 +371,6 @@ message CCSUsrMsg_MatchEndConditions
 message CCSUsrMsg_PlayerStatsUpdate
 {
 	optional int32 version = 1;
-	optional int32 official_server = 2;
 	
 	message Stat
 	{
