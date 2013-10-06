@@ -29,8 +29,10 @@ typedef enum _D3DFORMAT D3DFORMAT;
 // The various image format types
 //-----------------------------------------------------------------------------
 
+#ifdef _WIN32
 // don't bitch that inline functions aren't used!!!!
 #pragma warning(disable : 4514)
+#endif
 
 enum ImageFormat 
 {

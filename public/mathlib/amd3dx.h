@@ -593,7 +593,9 @@
 // The Microsoft Visual C++ version of the 3DNow! macros.
 
 // Stop the "no EMMS" warning, since it doesn't detect FEMMS properly
+#ifdef _WIN32
 #pragma warning(disable:4799)
+#endif
 
 // Defines for operands.
 #define _K3D_MM0 0xc0

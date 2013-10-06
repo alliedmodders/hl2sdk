@@ -5127,9 +5127,9 @@ float Studio_GetPoseParameter( const CStudioHdr *pStudioHdr, int iParameter, flo
 	return ctlValue * (PoseParam.end - PoseParam.start) + PoseParam.start;
 }
 
-
+#ifdef _WIN32
 #pragma warning (disable : 4701)
-
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -5237,8 +5237,9 @@ static int ClipRayToHitbox( const Ray_t &ray, mstudiobbox_t *pbox, matrix3x4_t& 
 	return hitside;
 }
 
+#ifdef _WIN32
 #pragma warning (default : 4701)
-
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose:

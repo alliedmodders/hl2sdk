@@ -13,7 +13,9 @@
 
 #include "cbase.h"
 
+#ifdef _WIN32
 #pragma warning( disable : 4800  )  // disable forcing int to bool performance warning
+#endif
 
 // VGUI panel includes
 #include <vgui_controls/Panel.h>

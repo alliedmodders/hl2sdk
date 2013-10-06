@@ -433,8 +433,10 @@ int __cdecl AdvisorStagingComparator(const EHANDLE *pe1, const EHANDLE *pe2)
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4706)
+#endif
 
 void CNPC_Advisor::Activate()
 {
@@ -468,7 +470,9 @@ void CNPC_Advisor::Activate()
 	AssertMsg(m_hvStagingPositions.Count() > 0, "You did not specify any staging positions in the advisor's staging_ent_names !");
 #endif
 }
+#ifdef _WIN32
 #pragma warning(pop)
+#endif
 
 
 //-----------------------------------------------------------------------------

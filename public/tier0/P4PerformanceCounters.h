@@ -8,7 +8,9 @@
 #ifndef P4PERFORMANCECOUNTERS_H
 #define P4PERFORMANCECOUNTERS_H
 
+#ifdef _WIN32
 #pragma once
+#endif
 // Pentium 4 support
 
 /*
@@ -75,7 +77,9 @@ enum Counters
 // register base for CCCR register
 #define MSR_CCCR_BASE       0x360
 
+#ifdef _WIN32
 #pragma pack(push, 1)
+#endif
 // access to these bits is through the methods
 typedef union ESCR
 {
@@ -121,7 +125,9 @@ typedef union CCCR
 
 } CCCR;
 
+#ifdef _WIN32
 #pragma pack(pop)
+#endif
 
 extern const unsigned short cccr_escr_map[NCOUNTERS][8];
 
@@ -144,7 +150,9 @@ enum P4OverflowInterrupt
 };
 
 // Turn off the no return value warning in ReadCounter.
+#ifdef _WIN32
 #pragma warning( disable : 4035 )
+#endif
 class P4BaseEvent
 {
     int m_counter;
@@ -314,7 +322,9 @@ public:
         pme->WriteMSR( cccrPort, cccr.flat );
     }
 };
+#ifdef _WIN32
 #pragma warning( default : 4035 )
+#endif
 
 #include "EventMasks.h" 
 #include "EventModes.h" 

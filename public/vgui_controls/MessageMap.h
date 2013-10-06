@@ -55,7 +55,9 @@ typedef void (Panel::*MessageFunc_t)(void);
 //			Contains the information to map a string message name with parameters
 //			to a function call
 //-----------------------------------------------------------------------------
+#ifdef _WIN32
 #pragma warning(disable:4121)
+#endif
 struct MessageMapItem_t
 {
 	const char *name;

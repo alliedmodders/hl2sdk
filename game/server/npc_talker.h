@@ -18,10 +18,14 @@
 #ifndef _XBOX
 #undef min
 #undef max
+#ifdef _WIN32
 #pragma warning(push)
+#endif // _WIN32
 #include <set>
+#ifdef _WIN32
 #pragma warning(pop)
-#endif
+#endif // _WIN32
+#endif // _XBOX
 
 #ifdef _WIN32
 #pragma once

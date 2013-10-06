@@ -12,11 +12,17 @@
 #include <tier0/dbg.h>
 #include <utlvector.h>
 #include <utldict.h>
+
+#ifdef _WIN32
 #pragma warning(push, 1)
 #pragma warning(disable:4701 4702 4530)
-#include <fstream>
-#pragma warning(pop)
+#endif
 
+#include <fstream>
+
+#ifdef _WIN32
+#pragma warning(pop)
+#endif
 
 #define KEYVALUE_MAX_KEY_LENGTH			80
 #define KEYVALUE_MAX_VALUE_LENGTH		512

@@ -9,7 +9,9 @@
 #include "tier1/ilocalize.h"
 #include "utlstring.h"
 
+#ifdef _WIN32
 #pragma warning( disable: 4018 ) // '<' : signed/unsigned mismatch
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: converts an english string to unicode

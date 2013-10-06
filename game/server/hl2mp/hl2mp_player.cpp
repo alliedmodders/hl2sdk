@@ -94,7 +94,9 @@ const char *g_ppszRandomCombineModels[] =
 
 #define HL2MPPLAYER_PHYSDAMAGE_SCALE 4.0f
 
+#ifdef _WIN32
 #pragma warning( disable : 4355 )
+#endif
 
 CHL2MP_Player::CHL2MP_Player() : m_PlayerAnimState( this )
 {

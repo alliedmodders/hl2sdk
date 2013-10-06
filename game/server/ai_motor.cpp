@@ -34,8 +34,10 @@ void DebugNoteMovementFailure()
 }
 
 // a place to put breakpoints
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable:4189)
+#endif
 AIMoveResult_t DbgResult( AIMoveResult_t result )
 {
 	if ( result < AIMR_OK )

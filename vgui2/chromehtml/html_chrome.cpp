@@ -1713,8 +1713,10 @@ const byte *CChromePainter::PPopupTextureDataCached()
 //-----------------------------------------------------------------------------
 // Purpose: Client implementation of the browser handler class
 //-----------------------------------------------------------------------------
+#ifdef _WIN32
 #pragma warning( push )
 #pragma warning( disable : 4355 ) // 'this' : used in base member initializer list
+#endif
 CClientHandler::CClientHandler( int iBrowser, const char *pchUserAgent, uint16 nSerial ) : m_Painter( this )
 {
 	m_nSerial = nSerial;
@@ -1737,7 +1739,9 @@ CClientHandler::CClientHandler( int iBrowser, const char *pchUserAgent, uint16 n
 	memset( &m_CachedHScroll, 0, sizeof( m_CachedHScroll ) );
 	memset( &m_CachedVScroll, 0, sizeof( m_CachedVScroll ) );
 }
+#ifdef _WIN32
 #pragma warning( pop )
+#endif
 
 
 //-----------------------------------------------------------------------------

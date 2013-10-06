@@ -521,7 +521,9 @@ const char *KeyValues::GetName( void ) const
 //-----------------------------------------------------------------------------
 // Purpose: Read a single token from buffer (0 terminated)
 //-----------------------------------------------------------------------------
+#ifdef _WIN32
 #pragma warning (disable:4706)
+#endif
 const char *KeyValues::ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasConditional )
 {
 	wasQuoted = false;
@@ -605,7 +607,9 @@ const char *KeyValues::ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasCon
 	s_pTokenBuf[ nCount ] = 0;
 	return s_pTokenBuf;
 }
+#ifdef _WIN32
 #pragma warning (default:4706)
+#endif
 
 	
 

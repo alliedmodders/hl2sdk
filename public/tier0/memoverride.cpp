@@ -811,7 +811,9 @@ void InvalidParameterViolation()
 // Disable compiler optimizations. If we don't do this then VC++ generates code
 // that confuses the Visual Studio debugger and causes it to display completely
 // random call stacks. That makes the minidumps excruciatingly hard to understand.
+#ifdef _WIN32
 #pragma optimize("", off)
+#endif
 
 // Write a minidump file, unless running under the debugger in which case break
 // into the debugger.
@@ -848,7 +850,9 @@ void VInvalidParameterHandler(const wchar_t* expression,
 }
 
 // Restore compiler optimizations.
+#ifdef _WIN32
 #pragma optimize("", on)
+#endif
 
 // Helper class for registering error callbacks. See above for details.
 class ErrorHandlerRegistrar
@@ -1592,8 +1596,10 @@ class _LocaleUpdate
 };
 
 
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable: 4483)
+#endif
 #if _MSC_FULL_VER >= 140050415
 #define _NATIVE_STARTUP_NAMESPACE  __identifier("<CrtImplementationDetails>")
 #else  /* _MSC_FULL_VER >= 140050415 */
@@ -1649,7 +1655,9 @@ namespace _NATIVE_STARTUP_NAMESPACE
         }
     };
 }
+#ifdef _WIN32
 #pragma warning(pop)
+#endif
 
 #endif // _MSC_VER >= 1400
 

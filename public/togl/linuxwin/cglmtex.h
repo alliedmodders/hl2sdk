@@ -124,8 +124,10 @@ bool LessFunc_GLMTexLayoutKey( const GLMTexLayoutKey &a, const GLMTexLayoutKey &
 #define	GLM_TEX_MAX_FACES	6
 #define	GLM_TEX_MAX_SLICES	(GLM_TEX_MAX_MIPS * GLM_TEX_MAX_FACES)
 
+#ifdef _WIN32
 #pragma warning( push )
 #pragma warning( disable : 4200 )
+#endif
 
 struct GLMTexLayout
 {
@@ -148,7 +150,9 @@ struct GLMTexLayout
 	GLMTexLayoutSlice	m_slices[0];				// dynamically allocated 2-d array [faces][mips]
 };
 
+#ifdef _WIN32
 #pragma warning( pop )
+#endif
 
 class	CGLMTexLayoutTable
 {

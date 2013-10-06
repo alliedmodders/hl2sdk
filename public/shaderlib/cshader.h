@@ -32,7 +32,9 @@
 #include "shaderlib/ShaderDLL.h"
 
 // make "local variable is initialized but not referenced" warnings errors for combo checking macros
+#ifdef _WIN32
 #pragma warning ( error : 4189 )
+#endif
 
 //-----------------------------------------------------------------------------
 // Global interfaces

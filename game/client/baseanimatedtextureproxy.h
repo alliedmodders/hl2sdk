@@ -13,7 +13,9 @@
 class IMaterial;
 class IMaterialVar;
 
+#ifdef _WIN32
 #pragma warning (disable : 4100)
+#endif
 
 class CBaseAnimatedTextureProxy : public IMaterialProxy
 {

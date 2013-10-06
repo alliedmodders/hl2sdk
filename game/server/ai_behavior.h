@@ -15,11 +15,15 @@
 #include "networkvar.h"
 
 #ifdef DEBUG
+#ifdef _WIN32
 #pragma warning(push)
+#endif // _WIN32
 #include <typeinfo>
+#ifdef _WIN32
 #pragma warning(pop)
 #pragma warning(disable:4290)
-#endif
+#endif // _WIN32
+#endif // DEBUG
 
 #if defined( _WIN32 )
 #pragma once

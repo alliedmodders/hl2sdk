@@ -6,7 +6,11 @@
 // $NoKeywords: $
 //=============================================================================//
 #include "cbase.h"
+
+#ifdef _WIN32
 #pragma warning (disable: 4514)
+#endif
+
 #include "vgui_bitmappanel.h"
 #include <KeyValues.h>
 #include "panelmetaclassmgr.h"

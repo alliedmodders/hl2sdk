@@ -8,9 +8,10 @@
 #include <windows.h>
 #include "consolewnd.h"
 
-
+#ifdef _WIN32
 #pragma warning( disable : 4311 ) // warning C4311: 'reinterpret_cast' : pointer truncation from 'CConsoleWnd *const ' to 'LONG'
 #pragma warning( disable : 4312 ) // warning C4312: 'type cast' : conversion from 'LONG' to 'CConsoleWnd *' of greater size
+#endif
 
 #define EDITCONTROL_BORDER_SIZE	5
 

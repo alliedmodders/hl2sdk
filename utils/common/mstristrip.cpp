@@ -13,11 +13,13 @@
 // Copyright (c) 1999-2000 Microsoft Corporation. All rights reserved.
 //-----------------------------------------------------------------------------
 
+#ifdef _WIN32
 // identifier was truncated to '255' characters in the debug information
 #pragma warning(disable: 4786)
 // conversion from 'double' to 'float'
 #pragma warning(disable: 4244)
 #pragma warning(disable: 4530)
+#endif
 
 #include <stdio.h>
 #include <stdarg.h>

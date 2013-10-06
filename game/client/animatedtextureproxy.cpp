@@ -20,7 +20,9 @@ public:
 
 EXPOSE_INTERFACE( CAnimatedTextureProxy, IMaterialProxy, "AnimatedTexture" IMATERIAL_PROXY_INTERFACE_VERSION );
 
+#ifdef _WIN32
 #pragma warning (disable : 4100)
+#endif
 
 float CAnimatedTextureProxy::GetAnimationStartTime( void* pBaseEntity )
 {

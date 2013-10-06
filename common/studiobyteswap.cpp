@@ -22,9 +22,11 @@
 #define ALIGN64( a ) a = (byte *)((int)((byte *)a + 63) & ~ 63)
 
 // Fixup macros create variables that may not be referenced
+#ifdef _WIN32
 #pragma warning( push )
 #pragma warning( disable:4189 ) // local variable is initialized but not referenced
 #pragma warning( disable:4366 ) // The result of the unary '&' operator may be unaligned
+#endif
 
 namespace StudioByteSwap
 {
@@ -2433,7 +2435,9 @@ void ProcessMDLFields( void *pDataBase, datadescProcessFunc_t pfnProcessFunc  )
 }
 
 
+#ifdef _WIN32
 #pragma warning( pop ) // local variable is initialized but not referenced
+#endif
 
 } // namespace StudioByteSwap
 

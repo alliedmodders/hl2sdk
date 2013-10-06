@@ -6,7 +6,10 @@
 
 #include "mathlib/IceKey.H"
 #include "tier0/memdbgon.h"
+
+#ifdef _WIN32
 #pragma warning(disable: 4244)
+#endif
 
 
 	/* Structure of a single round subkey */

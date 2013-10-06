@@ -39,9 +39,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#ifdef _WIN32
 #pragma warning(disable: 4142 4028)
+#endif
 #include <io.h>
+#ifdef _WIN32
 #pragma warning(default: 4142 4028)
+#endif
 
 #include <fcntl.h>
 #include <direct.h>

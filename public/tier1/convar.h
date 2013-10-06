@@ -579,7 +579,9 @@ void ConVar_PrintDescription( const ConCommandBase *pVar );
 //-----------------------------------------------------------------------------
 // Purpose: Utility class to quickly allow ConCommands to call member methods
 //-----------------------------------------------------------------------------
+#ifdef _WIN32
 #pragma warning (disable : 4355 )
+#endif
 
 template< class T >
 class CConCommandMemberAccessor : public ConCommand, public ICommandCallback, public ICommandCompletionCallback
@@ -626,8 +628,9 @@ private:
 	FnMemberCommandCompletionCallback_t m_CompletionFunc;
 };
 
+#ifdef _WIN32
 #pragma warning ( default : 4355 )
-
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: Utility macros to quicky generate a simple console command
