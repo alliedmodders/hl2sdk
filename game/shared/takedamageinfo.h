@@ -54,6 +54,8 @@ public:
 	void			ScaleDamage( float flScaleAmount );
 	void			AddDamage( float flAddAmount );
 	void			SubtractDamage( float flSubtractAmount );
+	float			GetDamageBonus() const;
+	void			SetDamageBonus( float flBonus );
 
 	float			GetBaseDamage() const;
 	bool			BaseDamageIsValid() const;
@@ -79,6 +81,12 @@ public:
 	int				GetAmmoType() const;
 	void			SetAmmoType( int iAmmoType );
 	const char *	GetAmmoName() const;
+
+	int				GetPlayerPenetrationCount() const { return m_iPlayerPenetrationCount; }
+	void			SetPlayerPenetrationCount( int iPlayerPenetrationCount ) { m_iPlayerPenetrationCount = iPlayerPenetrationCount; }
+	
+	int				GetDamagedOtherPlayers() const     { return m_iDamagedOtherPlayers; }
+	void			SetDamagedOtherPlayers( int iVal ) { m_iDamagedOtherPlayers = iVal; }
 
 	void			Set( CBaseEntity *pInflictor, CBaseEntity *pAttacker, float flDamage, int bitsDamageType, int iKillType = 0 );
 	void			Set( CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBaseEntity *pWeapon, float flDamage, int bitsDamageType, int iKillType = 0 );
@@ -113,8 +121,8 @@ protected:
 	int				m_iDamageStats;
 	int				m_iAmmoType;			// AmmoType of the weapon used to cause this damage, if any
 	int				m_iDamagedOtherPlayers;
-	int				m_iPlayerPenetrateCount;
-	float			m_flUnknown;
+	int				m_iPlayerPenetrationCount;
+	float			m_flDamageBonus;		// Anything that increases damage (crit) - store the delta
 
 	DECLARE_SIMPLE_DATADESC();
 };
@@ -231,6 +239,16 @@ inline void CTakeDamageInfo::SubtractDamage( float flSubtractAmount )
 	m_flDamage -= flSubtractAmount;
 }
 
+inline float CTakeDamageInfo::GetDamageBonus() const
+{
+	return m_flDamageBonus;
+}
+
+inline void CTakeDamageInfo::SetDamageBonus( float flBonus )
+{
+	m_flDamageBonus = flBonus;
+}
+
 inline float CTakeDamageInfo::GetBaseDamage() const
 {
 	if( BaseDamageIsValid() )
@@ -282,15 +300,15 @@ inline void CTakeDamageInfo::SetReportedPosition( const Vector &reportedPosition
 	m_vecReportedPosition = reportedPosition;
 }
 
-inline int CTakeDamageInfo::GetDamageType() const
-{
-	return m_bitsDamageType;
-}
-
 
 inline void CTakeDamageInfo::SetDamageType( int bitsDamageType )
 {
 	m_bitsDamageType = bitsDamageType;
+}
+
+inline int CTakeDamageInfo::GetDamageType() const
+{
+	return m_bitsDamageType;
 }
 
 inline void	CTakeDamageInfo::AddDamageType( int bitsDamageType )
