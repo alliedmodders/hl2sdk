@@ -14,8 +14,11 @@
 #pragma once
 #endif
 
-#if defined( POSIX )
+#if !defined( NO_MALLOC_OVERRIDE ) && defined( POSIX )
 #define NO_MALLOC_OVERRIDE
+#endif
+
+#if defined( NO_MALLOC_OVERRIDE ) && !defined( NO_HOOK_MALLOC )
 #define NO_HOOK_MALLOC
 #endif
 
