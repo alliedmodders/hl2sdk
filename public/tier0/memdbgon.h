@@ -11,7 +11,7 @@
 // to include this potentially multiple times (since we can deactivate debugging
 // by including memdbgoff.h)
 
-#if !defined(NO_MALLOC_OVERRIDE) && defined(_POSIX)
+#if !defined(NO_MALLOC_OVERRIDE) && defined(POSIX)
 #define NO_MALLOC_OVERRIDE
 #endif
 
