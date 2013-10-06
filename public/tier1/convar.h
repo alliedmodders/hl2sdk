@@ -130,6 +130,11 @@ public:
 	// Deal with next pointer
 	const ConCommandBase		*GetNext( void ) const;
 	ConCommandBase				*GetNext( void );
+
+	inline void SetNext(ConCommandBase *pBase)
+	{
+		m_pNext = pBase;
+	}
 	
 	virtual bool				IsRegistered( void ) const;
 
