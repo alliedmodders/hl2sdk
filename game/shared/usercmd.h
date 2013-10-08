@@ -179,6 +179,9 @@ public:
 	
 	// Player instantaneous view angles.
 	QAngle	viewangles;     
+	
+	Vector	aimdirection;
+	
 	// Intended velocities
 	//	forward velocity.
 	float	forwardmove;   
@@ -224,6 +227,10 @@ public:
 	Vector skill_dest;
 	short skill_dest_ent;
 #endif
+
+	QAngle	freeaimangles;
+	QAngle	muzzleangles;
+	Vector	muzzleposition;
 };
 
 void ReadUsercmd( bf_read *buf, CUserCmd *move, CUserCmd *from );

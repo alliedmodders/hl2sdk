@@ -890,9 +890,22 @@ template <> struct CAutoLockTypeDeducer<sizeof(CAlignedThreadFastMutex)> {	typed
 #define AUTO_LOCK_( type, mutex ) \
 	CAutoLockT< type > UNIQUE_ID( static_cast<const type &>( mutex ) )
 
-#define AUTO_LOCK( mutex ) \
-	AUTO_LOCK_( typeof(CAutoLockTypeDeducer<sizeof(mutex)>::Type_t), mutex )
+#if defined(GNUC)
 
+template<typename T> T strip_cv_quals_for_mutex(T&);
+template<typename T> T strip_cv_quals_for_mutex(const T&);
+template<typename T> T strip_cv_quals_for_mutex(volatile T&);
+template<typename T> T strip_cv_quals_for_mutex(const volatile T&);
+
+#define AUTO_LOCK( mutex ) \
+    AUTO_LOCK_( typeof(::strip_cv_quals_for_mutex(mutex)), mutex )
+
+#else // GNUC
+
+#define AUTO_LOCK( mutex ) \
+	AUTO_LOCK_( CAutoLockTypeDeducer<sizeof(mutex)>::Type_t, mutex )
+
+#endif
 
 #define AUTO_LOCK_FM( mutex ) \
 	AUTO_LOCK_( CThreadFastMutex, mutex )

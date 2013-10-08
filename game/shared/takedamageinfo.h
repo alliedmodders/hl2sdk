@@ -116,6 +116,12 @@ protected:
 	int				m_iDamageStats;
 	int				m_iAmmoType;			// AmmoType of the weapon used to cause this damage, if any
 	float			m_flRadius;
+	
+	// CS:GO
+	int				m_iDamagedOtherPlayers;
+	int				m_iObjectsPenetrated;
+	uint32			m_uiBulletID;
+	uint8			m_uiRecoilIndex;
 
 	DECLARE_SIMPLE_DATADESC();
 };

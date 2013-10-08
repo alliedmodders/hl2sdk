@@ -232,7 +232,7 @@ void MD5Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5Context_t *ctx)
     MD5Transform(ctx->buf, (unsigned int *) ctx->in);
     //byteReverse((unsigned char *) ctx->buf, 4);
     memcpy(digest, ctx->buf, MD5_DIGEST_LENGTH);
-    memset(ctx, 0, sizeof(MD5Context_t));        /* In case it's sensitive */
+    memset(ctx, 0, sizeof(*ctx));        /* In case it's sensitive */
 }
 
 //-----------------------------------------------------------------------------
@@ -268,4 +268,38 @@ unsigned int MD5_PseudoRandom(unsigned int nSeed)
 	MD5Final(digest, &ctx);
 
 	return *(unsigned int*)(digest+6);	// use 4 middle bytes for random value
+}
+
+//-----------------------------------------------------------------------------
+bool MD5_Compare( const MD5Value_t &data, const MD5Value_t &compare )
+{
+	return V_memcmp( data.bits, compare.bits, MD5_DIGEST_LENGTH ) == 0;
+}
+
+//-----------------------------------------------------------------------------
+void MD5Value_t::Zero()
+{
+	V_memset( bits, 0, sizeof( bits ) );
+}
+
+//-----------------------------------------------------------------------------
+bool MD5Value_t::IsZero() const
+{
+	for ( size_t i = 0 ; i < Q_ARRAYSIZE( bits ) ; ++i )
+	{
+		if ( bits[i] != 0 )
+			return false;
+	}
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+void MD5_ProcessSingleBuffer( const void *p, int len, MD5Value_t &md5Result )
+{
+	Assert( len >= 0 );
+	MD5Context_t ctx;
+	MD5Init( &ctx );
+	MD5Update( &ctx, (unsigned char const *)p, len );
+	MD5Final( md5Result.bits, &ctx );
 }
