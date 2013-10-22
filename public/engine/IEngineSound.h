@@ -49,8 +49,8 @@ class Vector;
 //-----------------------------------------------------------------------------
 // Client-server neutral effects interface
 //-----------------------------------------------------------------------------
-#define IENGINESOUND_CLIENT_INTERFACE_VERSION	"IEngineSoundClient003"
-#define IENGINESOUND_SERVER_INTERFACE_VERSION	"IEngineSoundServer003"
+#define IENGINESOUND_CLIENT_INTERFACE_VERSION	"IEngineSoundClient004"
+#define IENGINESOUND_SERVER_INTERFACE_VERSION	"IEngineSoundServer004"
 
 abstract_class IEngineSound
 {
@@ -95,6 +95,8 @@ public:
 	// Set the dsp preset for a player (client only)
 	virtual void SetPlayerDSP( IRecipientFilter& filter, int dspType, bool fastReset ) = 0;
 	
+	virtual void SetSpatialDSP( IRecipientFilter &filter, int dspType, bool fastReset ) = 0;
+	
 	// emit an "ambient" sound that isn't spatialized
 	// only available on the client, assert on server
 	virtual int EmitAmbientSound( const char *pSample, float flVolume, int iPitch = PITCH_NORM, int flags = 0, float soundtime = 0.0f ) = 0;
@@ -117,11 +119,14 @@ public:
 	virtual void	PrecacheSentenceGroup( const char *pGroupName ) = 0;
 	virtual void	NotifyBeginMoviePlayback() = 0;
 	virtual void	NotifyEndMoviePlayback() = 0;
+	
+	virtual bool	IsMoviePlaying() = 0;
 
 	virtual bool	GetSoundChannelVolume( const char* sound, float &flVolumeLeft, float &flVolumeRight ) = 0;
 	
 	virtual float	GetElapsedTimeByGuid( int guid ) = 0;
 
+	virtual bool	GetPreventSound() = 0;
 };
 
 
