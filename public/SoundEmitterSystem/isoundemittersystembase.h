@@ -23,8 +23,8 @@
 #define SOUNDGENDER_MACRO_LENGTH 7		// Length of above including $
 
 class KeyValues;
-typedef short HSOUNDSCRIPTHANDLE;
-#define SOUNDEMITTER_INVALID_HANDLE	(HSOUNDSCRIPTHANDLE)-1
+typedef unsigned int HSOUNDSCRIPTHASH;
+#define SOUNDEMITTER_INVALID_HASH	(HSOUNDSCRIPTHASH)-1
 
 
 //-----------------------------------------------------------------------------
@@ -47,6 +47,12 @@ struct CSoundParameters
 		count		= 0;
 
 		delay_msec	= 0;
+
+		m_nSoundEntryVersion = 1;
+		m_hSoundScriptHash = SOUNDEMITTER_INVALID_HASH;
+		m_pOperatorsKV = NULL;
+		m_nRandomSeed = -1;
+
 	}
 
 	int				channel;
@@ -59,6 +65,11 @@ struct CSoundParameters
 	int				count;
 	char 			soundname[ 128 ];
 	int				delay_msec;
+	HSOUNDSCRIPTHASH m_hSoundScriptHash;
+	int			    m_nSoundEntryVersion;
+	KeyValues		*m_pOperatorsKV;
+	int				m_nRandomSeed;
+
 };
 
 // A bit of a hack, but these are just utility function which are implemented in the SouneParametersInternal.cpp file which all users of this lib also compile
@@ -252,25 +263,21 @@ public:
 	//  .txt files that are read into the sound emitter system
 	virtual unsigned int	GetManifestFileTimeChecksum() = 0;
 
-	// Called from both client and server (single player) or just one (server only in dedicated server and client only if connected to a remote server)
-	// Called by LevelInitPreEntity to override sound scripts for the mod with level specific overrides based on custom mapnames, etc.
-	virtual void			AddSoundOverrides( char const *scriptfile ) = 0;
+	virtual bool			GetParametersForSoundEx( const char *soundname, HSOUNDSCRIPTHASH& handle, CSoundParameters& params, gender_t gender, bool isbeingemitted = false ) = 0;
+	virtual soundlevel_t	LookupSoundLevelByHandle( char const *soundname, HSOUNDSCRIPTHASH& handle ) = 0;
+	virtual KeyValues		*GetOperatorKVByHandle( HSOUNDSCRIPTHASH& handle ) = 0;
 
-	// Called by either client or server in LevelShutdown to clear out custom overrides
-	virtual void			ClearSoundOverrides() = 0;
-
-	virtual bool			GetParametersForSoundEx( const char *soundname, HSOUNDSCRIPTHANDLE& handle, CSoundParameters& params, gender_t gender, bool isbeingemitted = false ) = 0;
-	virtual soundlevel_t	LookupSoundLevelByHandle( char const *soundname, HSOUNDSCRIPTHANDLE& handle ) = 0;
-
-	virtual char const		*GetSoundNameForHash( unsigned int hash ) = 0; // Returns NULL if hash not found!!!
-	virtual unsigned int	HashSoundName( char const *pchSndName ) = 0;
-	virtual bool			IsValidHash( unsigned int hash ) = 0;
+	virtual char const		*GetSoundNameForHash( HSOUNDSCRIPTHASH hash ) const = 0; // Returns NULL if hash not found!!!
+	virtual int 			GetSoundIndexForHash( HSOUNDSCRIPTHASH hash ) const = 0;
+	virtual HSOUNDSCRIPTHASH HashSoundName( char const *pchSndName ) const = 0;
+	virtual bool			IsValidHash( HSOUNDSCRIPTHASH hash ) const = 0;
 
 	virtual void			DescribeSound( char const *soundname ) = 0;
 	// Flush and reload
 	virtual void			Flush() = 0;
 
-	virtual void			AddSoundsFromFile( const char *filename, bool bPreload, bool bIsOverride = false ) = 0;
+	virtual void			AddSoundsFromFile( const char *filename, bool bPreload, bool bAutoCache, bool bIsOverride = false ) = 0;
+
 };
 
 #endif // ISOUNDEMITTERSYSTEMBASE_H
