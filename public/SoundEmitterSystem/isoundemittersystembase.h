@@ -23,6 +23,7 @@
 #define SOUNDGENDER_MACRO_LENGTH 7		// Length of above including $
 
 class KeyValues;
+class IFileList;
 typedef unsigned int HSOUNDSCRIPTHASH;
 #define SOUNDEMITTER_INVALID_HASH	(HSOUNDSCRIPTHASH)-1
 
@@ -278,6 +279,7 @@ public:
 
 	virtual void			AddSoundsFromFile( const char *filename, bool bPreload, bool bAutoCache, bool bIsOverride = false ) = 0;
 
+	virtual void			ReloadSoundEntriesInList( IFileList *pFilesToReload ) = 0;
 };
 
 #endif // ISOUNDEMITTERSYSTEMBASE_H
