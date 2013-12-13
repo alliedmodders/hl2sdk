@@ -79,9 +79,9 @@ class CCommand;
 											// Note: IVEngineClient::ClientCmd_Unrestricted can run any client command.
 
 #define FCVAR_ACCESSIBLE_FROM_THREADS	(1<<25)	// used as a debugging tool necessary to check material system thread convars
+#define FCVAR_VCONSOLE_SET_FOCUS	(1<<31)
 // #define FCVAR_AVAILABLE			(1<<26)
 // #define FCVAR_AVAILABLE			(1<<27)
-// #define FCVAR_AVAILABLE			(1<<31)
 
 #define FCVAR_MATERIAL_THREAD_MASK ( FCVAR_RELOAD_MATERIALS | FCVAR_RELOAD_TEXTURES | FCVAR_MATERIAL_SYSTEM_THREAD )	
 
