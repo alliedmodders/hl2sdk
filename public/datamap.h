@@ -58,7 +58,7 @@ typedef enum _fieldtypes
 	FIELD_MATRIX3X4_WORLDSPACE,	// matrix3x4_t that maps some local space to world space (translation is fixed up on level transitions)
 
 	FIELD_INTERVAL,			// a start and range floating point interval ( e.g., 3.2->3.6 == 3.2 and 0.4 )
-	FIELD_MATERIALINDEX,	// a material index (using the material precache string table)
+	FIELD_UNUSED,
 	
 	FIELD_VECTOR2D,			// 2 floats
 	FIELD_INTEGER64,		// 64bit integer
@@ -67,7 +67,11 @@ typedef enum _fieldtypes
 
 	FIELD_RESOURCE,
 
-	FIELD_TYPECOUNT,		// MUST BE LAST
+	FIELD_TYPECOUNT,		// This is where script variant field types start. Formerly last.
+	
+	FIELD_MODELNAME = 45,		// Engine string that is a model name (needs precache)
+	FIELD_MODELINDEX,		// a model index
+	FIELD_MATERIALINDEX,	// a material index (using the material precache string table)
 } fieldtype_t;
 
 
