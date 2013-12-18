@@ -42,12 +42,10 @@ typedef enum _fieldtypes
 
 	FIELD_CLASSPTR,			// CBaseEntity *
 	FIELD_EHANDLE,			// Entity handle
-	FIELD_EDICT,			// edict_t *
 
 	FIELD_POSITION_VECTOR,	// A world coordinate (these are fixed up across level transitions automagically)
 	FIELD_TIME,				// a floating point time (these are fixed up automatically too!)
 	FIELD_TICK,				// an integer tick count( fixed up similarly to time)
-	FIELD_MODELNAME,		// Engine string that is a model name (needs precache)
 	FIELD_SOUNDNAME,		// Engine string that is a sound name (needs precache)
 
 	FIELD_INPUT,			// a list of inputed data fields (all derived from CMultiInputVar)
@@ -60,13 +58,14 @@ typedef enum _fieldtypes
 	FIELD_MATRIX3X4_WORLDSPACE,	// matrix3x4_t that maps some local space to world space (translation is fixed up on level transitions)
 
 	FIELD_INTERVAL,			// a start and range floating point interval ( e.g., 3.2->3.6 == 3.2 and 0.4 )
-	FIELD_MODELINDEX,		// a model index
 	FIELD_MATERIALINDEX,	// a material index (using the material precache string table)
 	
 	FIELD_VECTOR2D,			// 2 floats
 	FIELD_INTEGER64,		// 64bit integer
 
 	FIELD_VECTOR4D,			// 4 floats
+
+	FIELD_RESOURCE,
 
 	FIELD_TYPECOUNT,		// MUST BE LAST
 } fieldtype_t;
@@ -109,11 +108,9 @@ DECLARE_FIELD_SIZE( FIELD_CHARACTER,	sizeof(char))
 DECLARE_FIELD_SIZE( FIELD_COLOR32,		sizeof(int))
 DECLARE_FIELD_SIZE( FIELD_CLASSPTR,		sizeof(int))
 DECLARE_FIELD_SIZE( FIELD_EHANDLE,		sizeof(int))
-DECLARE_FIELD_SIZE( FIELD_EDICT,		sizeof(int))
 DECLARE_FIELD_SIZE( FIELD_POSITION_VECTOR, 	3 * sizeof(float))
 DECLARE_FIELD_SIZE( FIELD_TIME,			sizeof(float))
 DECLARE_FIELD_SIZE( FIELD_TICK,			sizeof(int))
-DECLARE_FIELD_SIZE( FIELD_MODELNAME,	sizeof(int))
 DECLARE_FIELD_SIZE( FIELD_SOUNDNAME,	sizeof(int))
 DECLARE_FIELD_SIZE( FIELD_INPUT,		sizeof(int))
 DECLARE_FIELD_SIZE( FIELD_FUNCTION,		sizeof(int *))
@@ -121,7 +118,6 @@ DECLARE_FIELD_SIZE( FIELD_VMATRIX,		16 * sizeof(float))
 DECLARE_FIELD_SIZE( FIELD_VMATRIX_WORLDSPACE,	16 * sizeof(float))
 DECLARE_FIELD_SIZE( FIELD_MATRIX3X4_WORLDSPACE,	12 * sizeof(float))
 DECLARE_FIELD_SIZE( FIELD_INTERVAL,		2 * sizeof( float) )  // NOTE:  Must match interval.h definition
-DECLARE_FIELD_SIZE( FIELD_MODELINDEX,	sizeof(int) )
 DECLARE_FIELD_SIZE( FIELD_MATERIALINDEX,	sizeof(int) )
 
 

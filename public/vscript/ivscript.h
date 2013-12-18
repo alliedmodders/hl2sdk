@@ -121,7 +121,7 @@ class CUtlBuffer;
 //
 //-----------------------------------------------------------------------------
 
-#define VSCRIPT_INTERFACE_VERSION		"VScriptManager009"
+#define VSCRIPT_INTERFACE_VERSION		"VScriptManager010"
 
 //-----------------------------------------------------------------------------
 //
@@ -164,6 +164,13 @@ enum ExtendedFieldType
 	FIELD_CSTRING,
 	FIELD_HSCRIPT,
 	FIELD_VARIANT,
+	FIELD_UINT64,
+	FIELD_DOUBLE,
+	FIELD_POSITIVEINTEGER_OR_NULL,
+	FIELD_HSCRIPT_NEW_INSTANCE,
+	FIELD_UINT,
+	FIELD_UTLSTRINGTOKEN,
+	FIELD_QANGLE,
 };
 
 typedef int ScriptDataType_t;
@@ -183,6 +190,11 @@ DECLARE_DEDUCE_FIELDTYPE( FIELD_BOOLEAN,	bool );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_CHARACTER,	char );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_HSCRIPT,	HSCRIPT );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_VARIANT,	ScriptVariant_t );
+DECLARE_DEDUCE_FIELDTYPE( FIELD_UINT64,	 	uint64 );
+DECLARE_DEDUCE_FIELDTYPE( FIELD_DOUBLE,		double );
+DECLARE_DEDUCE_FIELDTYPE( FIELD_UINT,		uint );
+DECLARE_DEDUCE_FIELDTYPE( FIELD_QANGLE,		QAngle );
+DECLARE_DEDUCE_FIELDTYPE( FIELD_QANGLE,		const QAngle &);
 
 #define ScriptDeduceType( T ) ScriptDeducer<T>::FIELD_TYPE
 
@@ -204,6 +216,11 @@ DECLARE_NAMED_FIELDTYPE( bool,	"boolean" );
 DECLARE_NAMED_FIELDTYPE( char,	"character" );
 DECLARE_NAMED_FIELDTYPE( HSCRIPT,	"hscript" );
 DECLARE_NAMED_FIELDTYPE( ScriptVariant_t,	"variant" );
+DECLARE_NAMED_FIELDTYPE( uint64, "uint64" );
+DECLARE_NAMED_FIELDTYPE( double, "double" );
+DECLARE_NAMED_FIELDTYPE( uint, "unsigned" );
+DECLARE_NAMED_FIELDTYPE( QAngle, "qangle" );
+DECLARE_NAMED_FIELDTYPE( const QAngle&, "qangle" );
 
 inline const char * ScriptFieldTypeName( int16 eType)
 {
@@ -218,6 +235,10 @@ inline const char * ScriptFieldTypeName( int16 eType)
 	case FIELD_CHARACTER:	return "character";
 	case FIELD_HSCRIPT:	return "hscript";
 	case FIELD_VARIANT:	return "variant";
+	case FIELD_UINT64: return "uint64";
+	case FIELD_DOUBLE: return "double";
+	case FIELD_UINT: return "unsigned";
+	case FIELD_QANGLE: return "qangle";
 	default:	return "unknown_script_type";
 	}
 }
@@ -310,37 +331,52 @@ struct ScriptVariant_t
 {
 	ScriptVariant_t() :						m_flags( 0 ), m_type( FIELD_VOID )		{ m_pVector = 0; }
 	ScriptVariant_t( int val ) :			m_flags( 0 ), m_type( FIELD_INTEGER )	{ m_int = val;}
+	ScriptVariant_t( uint val) :			m_flags( 0 ), m_type( FIELD_UINT )		{ m_uint = val; }
 	ScriptVariant_t( float val ) :			m_flags( 0 ), m_type( FIELD_FLOAT )		{ m_float = val; }
-	ScriptVariant_t( double val ) :			m_flags( 0 ), m_type( FIELD_FLOAT )		{ m_float = (float)val; }
+	ScriptVariant_t( double val ) :			m_flags( 0 ), m_type( FIELD_DOUBLE )	{ m_double = val; }
 	ScriptVariant_t( char val ) :			m_flags( 0 ), m_type( FIELD_CHARACTER )	{ m_char = val; }
 	ScriptVariant_t( bool val ) :			m_flags( 0 ), m_type( FIELD_BOOLEAN )	{ m_bool = val; }
 	ScriptVariant_t( HSCRIPT val ) :		m_flags( 0 ), m_type( FIELD_HSCRIPT )	{ m_hScript = val; }
+	ScriptVariant_t( int64 val) :			m_flags( 0 ), m_type( FIELD_INTEGER64 )	{ m_int64 = val; }
+	ScriptVariant_t( uint64 val) :			m_flags( 0 ), m_type( FIELD_UINT64)		{ m_uint64 = val; }
 
 	ScriptVariant_t( const Vector &val, bool bCopy = false ) :	m_flags( 0 ), m_type( FIELD_VECTOR )	{ if ( !bCopy ) { m_pVector = &val; } else { m_pVector = new Vector( val ); m_flags |= SV_FREE; } }
 	ScriptVariant_t( const Vector *val, bool bCopy = false ) :	m_flags( 0 ), m_type( FIELD_VECTOR )	{ if ( !bCopy ) { m_pVector = val; } else { m_pVector = new Vector( *val ); m_flags |= SV_FREE; } }
+	ScriptVariant_t( const QAngle &val, bool bCopy = false) :	m_flags( 0 ), m_type( FIELD_QANGLE )	{ if ( !bCopy ) { m_pQAngle = &val; } else { m_pQAngle = new QAngle(val); m_flags |= SV_FREE; } }
+	ScriptVariant_t( const QAngle *val, bool bCopy = false) :	m_flags( 0 ), m_type( FIELD_QANGLE )	{ if ( !bCopy ) { m_pQAngle = val; } else { m_pQAngle = new QAngle(*val); m_flags |= SV_FREE; } }
 	ScriptVariant_t( const char *val , bool bCopy = false ) :	m_flags( 0 ), m_type( FIELD_CSTRING )	{ if ( !bCopy ) { m_pszString = val; } else { m_pszString = strdup( val ); m_flags |= SV_FREE; } }
 
 	bool IsNull() const						{ return (m_type == FIELD_VOID ); }
 
 	operator int() const					{ Assert( m_type == FIELD_INTEGER );	return m_int; }
+	operator uint() const					{ Assert( m_type == FIELD_UINT );		return m_uint; }
+	operator int64() const					{ Assert( m_type == FIELD_INTEGER64);	return m_int64; }
+	operator uint64() const					{ Assert( m_type == FIELD_UINT64);		return m_uint64; }
 	operator float() const					{ Assert( m_type == FIELD_FLOAT );		return m_float; }
+	operator double() const					{ Assert( m_type == FIELD_DOUBLE );		return m_double; }
 	operator const char *() const			{ Assert( m_type == FIELD_CSTRING );	return ( m_pszString ) ? m_pszString : ""; }
 	operator const Vector &() const			{ Assert( m_type == FIELD_VECTOR );		static Vector vecNull(0, 0, 0); return (m_pVector) ? *m_pVector : vecNull; }
+	operator const QAngle &() const			{ Assert( m_type == FIELD_QANGLE);		static QAngle angNull(0, 0, 0); return (m_pQAngle) ? *m_pQAngle : angNull; }
 	operator char() const					{ Assert( m_type == FIELD_CHARACTER );	return m_char; }
 	operator bool() const					{ Assert( m_type == FIELD_BOOLEAN );	return m_bool; }
 	operator HSCRIPT() const				{ Assert( m_type == FIELD_HSCRIPT );	return m_hScript; }
 
 	void operator=( int i ) 				{ m_type = FIELD_INTEGER; m_int = i; }
+	void operator=( uint u )				{ m_type = FIELD_UINT; m_uint = u; }
+	void operator=( int64 i ) 				{ m_type = FIELD_INTEGER64; m_int64 = i; }
+	void operator=( uint64 u )				{ m_type = FIELD_UINT64; m_uint64 = u; }
 	void operator=( float f ) 				{ m_type = FIELD_FLOAT; m_float = f; }
-	void operator=( double f ) 				{ m_type = FIELD_FLOAT; m_float = (float)f; }
+	void operator=( double d ) 				{ m_type = FIELD_DOUBLE; m_double = d; }
 	void operator=( const Vector &vec )		{ m_type = FIELD_VECTOR; m_pVector = &vec; }
 	void operator=( const Vector *vec )		{ m_type = FIELD_VECTOR; m_pVector = vec; }
+	void operator=( const QAngle &ang)		{ m_type = FIELD_QANGLE; m_pQAngle = &ang; }
+	void operator=( const QAngle *ang)		{ m_type = FIELD_QANGLE; m_pQAngle = ang; }
 	void operator=( const char *psz )		{ m_type = FIELD_CSTRING; m_pszString = psz; }
 	void operator=( char c )				{ m_type = FIELD_CHARACTER; m_char = c; }
 	void operator=( bool b ) 				{ m_type = FIELD_BOOLEAN; m_bool = b; }
 	void operator=( HSCRIPT h ) 			{ m_type = FIELD_HSCRIPT; m_hScript = h; }
 
-	void Free()								{ if ( ( m_flags & SV_FREE ) && ( m_type == FIELD_HSCRIPT || m_type == FIELD_VECTOR || m_type == FIELD_CSTRING ) ) delete m_pszString; } // Generally only needed for return results
+	void Free()								{ if ( ( m_flags & SV_FREE ) && ( m_type == FIELD_HSCRIPT || m_type == FIELD_VECTOR || m_type == FIELD_QANGLE || m_type == FIELD_CSTRING ) ) delete m_pszString; } // Generally only needed for return results
 
 	template <typename T>
 	T Get()
@@ -364,13 +400,17 @@ struct ScriptVariant_t
 			return true;
 		}
 
-		if ( m_type != FIELD_VECTOR && m_type != FIELD_CSTRING && destType != FIELD_VECTOR && destType != FIELD_CSTRING )
+		if ( m_type != FIELD_VECTOR && m_type != FIELD_QANGLE && m_type != FIELD_CSTRING && destType != FIELD_VECTOR && destType != FIELD_QANGLE && destType != FIELD_CSTRING )
 		{
 			switch ( m_type )
 			{
 			case FIELD_VOID:		*pDest = 0; break;
 			case FIELD_INTEGER:		*pDest = m_int; return true;
+			case FIELD_INTEGER64:	*pDest = m_int64; return true;
+			case FIELD_UINT:		*pDest = m_uint; return true;
+			case FIELD_UINT64:		*pDest = m_uint64; return true;
 			case FIELD_FLOAT:		*pDest = m_float; return true;
+			case FIELD_DOUBLE:		*pDest = m_double; return true;
 			case FIELD_CHARACTER:	*pDest = m_char; return true;
 			case FIELD_BOOLEAN:		*pDest = m_bool; return true;
 			case FIELD_HSCRIPT:		*pDest = m_hScript; return true;
@@ -380,7 +420,7 @@ struct ScriptVariant_t
 		{
 			DevWarning( "No free conversion of %s script variant to %s right now\n",
 				ScriptFieldTypeName( m_type ), ScriptFieldTypeName<T>() );
-			if ( destType != FIELD_VECTOR )
+			if ( destType != FIELD_VECTOR && destType != FIELD_QANGLE )
 			{
 				*pDest = 0;
 			}
@@ -394,7 +434,11 @@ struct ScriptVariant_t
 		{
 		case FIELD_VOID:		*pDest = 0; return false;
 		case FIELD_INTEGER:		*pDest = m_int; return true;
+		case FIELD_INTEGER64:	*pDest = m_int64; return true;
+		case FIELD_UINT:		*pDest = m_uint; return true;
+		case FIELD_UINT64:		*pDest = m_uint64; return true;
 		case FIELD_FLOAT:		*pDest = m_float; return true;
+		case FIELD_DOUBLE:		*pDest = m_double; return true;
 		case FIELD_BOOLEAN:		*pDest = m_bool; return true;
 		default:
 			DevWarning( "No conversion from %s to float now\n", ScriptFieldTypeName( m_type ) );
@@ -408,7 +452,11 @@ struct ScriptVariant_t
 		{
 		case FIELD_VOID:		*pDest = 0; return false;
 		case FIELD_INTEGER:		*pDest = m_int; return true;
+		case FIELD_INTEGER64:	*pDest = m_int64; return true;
+		case FIELD_UINT:		*pDest = m_uint; return true;
+		case FIELD_UINT64:		*pDest = m_uint64; return true;
 		case FIELD_FLOAT:		*pDest = m_float; return true;
+		case FIELD_DOUBLE:		*pDest = m_double; return true;
 		case FIELD_BOOLEAN:		*pDest = m_bool; return true;
 		default:
 			DevWarning( "No conversion from %s to int now\n", ScriptFieldTypeName( m_type ) );
@@ -422,7 +470,11 @@ struct ScriptVariant_t
 		{
 		case FIELD_VOID:		*pDest = 0; return false;
 		case FIELD_INTEGER:		*pDest = m_int; return true;
+		case FIELD_INTEGER64:	*pDest = m_int64; return true;
+		case FIELD_UINT:		*pDest = m_uint; return true;
+		case FIELD_UINT64:		*pDest = m_uint64; return true;
 		case FIELD_FLOAT:		*pDest = m_float; return true;
+		case FIELD_DOUBLE:		*pDest = m_double; return true;
 		case FIELD_BOOLEAN:		*pDest = m_bool; return true;
 		default:
 			DevWarning( "No conversion from %s to bool now\n", ScriptFieldTypeName( m_type ) );
@@ -447,6 +499,12 @@ struct ScriptVariant_t
 			((Vector *)(pDest->m_pVector))->Init( m_pVector->x, m_pVector->y, m_pVector->z );
 			pDest->m_flags |= SV_FREE;
 		}
+		else if (m_type == FIELD_QANGLE)
+		{
+			pDest->m_pQAngle = new QAngle;
+			((QAngle *) (pDest->m_pQAngle))->Init(m_pQAngle->x, m_pQAngle->y, m_pQAngle->z);
+			pDest->m_flags |= SV_FREE;
+		}
 		else if ( m_type == FIELD_CSTRING ) 
 		{
 			pDest->m_pszString = strdup( m_pszString );
@@ -454,7 +512,7 @@ struct ScriptVariant_t
 		}
 		else
 		{
-			pDest->m_int = m_int;
+			pDest->m_int64 = m_int64;
 		}
 		return false;
 	}
@@ -462,9 +520,14 @@ struct ScriptVariant_t
 	union
 	{
 		int				m_int;
+		uint			m_uint;
+		int64			m_int64;
+		uint64			m_uint64;
 		float			m_float;
+		double			m_double;
 		const char *	m_pszString;
 		const Vector *	m_pVector;
+		const QAngle *	m_pQAngle;
 		char			m_char;
 		bool			m_bool;
 		HSCRIPT			m_hScript;
@@ -630,8 +693,14 @@ public:
 
 	virtual ScriptLanguage_t GetLanguage() = 0;
 	virtual const char *GetLanguageName() = 0;
+	
+	virtual void *GetInternalVM() = 0;
 
 	virtual void AddSearchPath( const char *pszSearchPath ) = 0;
+	
+	virtual void EnableLocalDiskAccess() = 0;
+	
+	virtual void ForwardConsoleCommand(const CCommandContext &, const CCommand &) = 0;
 
 	//--------------------------------------------------------
  
@@ -660,12 +729,13 @@ public:
 	// Scope
 	//--------------------------------------------------------
 	virtual HSCRIPT CreateScope( const char *pszScope, HSCRIPT hParent = NULL ) = 0;
+	virtual void ReferenceScope( HSCRIPT hScript ) = 0;
 	virtual void ReleaseScope( HSCRIPT hScript ) = 0;
 
 	//--------------------------------------------------------
 	// Script functions
 	//--------------------------------------------------------
-	virtual HSCRIPT LookupFunction( const char *pszFunction, HSCRIPT hScope = NULL ) = 0;
+	virtual HSCRIPT LookupFunction( const char *pszFunction, HSCRIPT hScope = NULL, bool raw = false ) = 0;
 	virtual void ReleaseFunction( HSCRIPT hScript ) = 0;
 
 	//--------------------------------------------------------
@@ -681,7 +751,7 @@ public:
 	//--------------------------------------------------------
 	// External classes
 	//--------------------------------------------------------
-	virtual bool RegisterClass( ScriptClassDesc_t *pClassDesc ) = 0;
+	virtual bool RegisterScriptClass( ScriptClassDesc_t *pClassDesc ) = 0;
 
 	//--------------------------------------------------------
 	// External instances. Note class will be auto-registered.
@@ -708,24 +778,34 @@ public:
 
 	virtual bool SetValue( HSCRIPT hScope, const char *pszKey, const char *pszValue ) = 0;
 	virtual bool SetValue( HSCRIPT hScope, const char *pszKey, const ScriptVariant_t &value ) = 0;
+	virtual bool SetValue( HSCRIPT hScope, int nIndex, const ScriptVariant_t &value ) = 0;
 	bool SetValue( const char *pszKey, const ScriptVariant_t &value )																{ return SetValue(NULL, pszKey, value ); }
 
 	virtual void CreateTable( ScriptVariant_t &Table ) = 0;
+	virtual bool IsTable( HSCRIPT hScope ) = 0;
 	virtual int	GetNumTableEntries( HSCRIPT hScope ) = 0;
 	virtual int GetKeyValue( HSCRIPT hScope, int nIterator, ScriptVariant_t *pKey, ScriptVariant_t *pValue ) = 0;
 
 	virtual bool GetValue( HSCRIPT hScope, const char *pszKey, ScriptVariant_t *pValue ) = 0;
+	virtual bool GetValue( HSCRIPT hScope, int nIndex, ScriptVariant_t *pValue ) = 0;
 	bool GetValue( const char *pszKey, ScriptVariant_t *pValue )																	{ return GetValue(NULL, pszKey, pValue ); }
+	virtual bool GetScalarValue( HSCRIPT hScope, ScriptVariant_t *pValue ) = 0;
 	virtual void ReleaseValue( ScriptVariant_t &value ) = 0;
 
 	virtual bool ClearValue( HSCRIPT hScope, const char *pszKey ) = 0;
 	bool ClearValue( const char *pszKey)																							{ return ClearValue( NULL, pszKey ); }
-
+	
+	virtual HSCRIPT CreateArray( ScriptVariant_t & ) = 0;
+	virtual bool IsArray( HSCRIPT hScope ) = 0;
+	virtual int GetArrayCount( HSCRIPT hScope ) = 0;
+	virtual void ArrayAddToTail( HSCRIPT hScope, const ScriptVariant_t &pValue ) = 0;
+	
 	//----------------------------------------------------------------------------
 
 	virtual void WriteState( CUtlBuffer *pBuffer ) = 0;
 	virtual void ReadState( CUtlBuffer *pBuffer ) = 0;
-	virtual void RemoveOrphanInstances() = 0;
+	
+	virtual void CollectGarbage( const char *, bool ) = 0;
 
 	virtual void DumpState() = 0;
 
