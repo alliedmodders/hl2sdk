@@ -542,12 +542,12 @@ public:
 	// Give the list of datatable classes to the engine.  The engine matches class names from here with
 	//  edict_t::classname to figure out how to encode a class's data for networking
 	virtual ServerClass*	GetAllServerClasses( void ) = 0;
-	
-	virtual const char     *GetAddonName( void ) const = 0;
 
 	// Returns string describing current .dll.  e.g., TeamFortress 2, Half-Life 2.  
 	//  Hey, it's more descriptive than just the name of the game directory
-	virtual const char     *GetGameDescription( void ) = 0;      
+	virtual const char     *GetGameDescription( void ) = 0;
+
+	virtual const char     *GetAddonName(void) const = 0;
 	
 	// Let the game .dll allocate it's own network/shared string tables
 	virtual void			CreateNetworkStringTables( void ) = 0;
