@@ -512,6 +512,8 @@ public:
 	// This is called when a new game is started. (restart, map)
 	virtual bool			GameInit( void ) = 0;
 
+	virtual void			PreChangeLevel( const char *pMapName ) = 0;
+
 	// Called any time a new level is started (after GameInit() also on level transitions within a game)
 	virtual bool			LevelInit( char const *pMapName, 
 									char const *pMapEntities, char const *pOldLevel, 
