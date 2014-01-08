@@ -116,6 +116,8 @@
 #endif
 
 class CUtlBuffer;
+class CCommand;
+struct CCommandContext;
 
 //-----------------------------------------------------------------------------
 //
@@ -682,6 +684,8 @@ enum ScriptStatus_t
 	SCRIPT_RUNNING,
 };
 
+class CSquirrelMetamethodDelegateImpl;
+
 class IScriptVM
 {
 public:
@@ -815,6 +819,19 @@ public:
 	//----------------------------------------------------------------------------
 
 	virtual bool RaiseException( const char *pszExceptionText ) = 0;
+
+	virtual HSCRIPT GetRootTable() = 0;
+
+	virtual HSCRIPT CopyHandle( HSCRIPT hScope ) = 0;
+
+	virtual int GetIdentity( HSCRIPT hScope ) = 0;
+
+	class ISquirrelMetamethodDelegate;
+
+	virtual void *MakeSquirrelMetamethod_Get( HSCRIPT&, const char*, ISquirrelMetamethodDelegate *, bool ) = 0;
+	virtual void DestroySquirrelMetamethod_Get( CSquirrelMetamethodDelegateImpl * ) = 0;
+
+	virtual int GetKeyValue2( HSCRIPT hScope, int iterator, ScriptVariant_t *pKey, ScriptVariant_t *pValue ) = 0;
 
 	//----------------------------------------------------------------------------
 	// Call API
