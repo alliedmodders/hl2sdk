@@ -34,6 +34,10 @@ public:
 
 	// populates list of files that bsp owns, i.e. world/cubmap materials, statis props, etc
 	virtual bool GetBSPDependants( IFileSystem *pFileSystem, const char *pBSPFilename, CUtlVector< CUtlString > *pList ) = 0;
+
+	// This is here to avoid having things like the runtime engine.dll have to statically link to LZMA for the encoder!!!
+	virtual void AddBufferToPackAndLZMACompress( const char *relativename, void *data, int length ) = 0;
+	virtual void RemoveFileFromPack( char const *relativename ) = 0;
 };
 
 #define IBSPPACK_VERSION_STRING "IBSPPACK003"
