@@ -37,6 +37,7 @@ class CDOTAMsg_ItemAlert;
 class CDOTAMsg_MapLine;
 class CDOTAMsg_WorldLine;
 class CDOTAMsg_SendStatPopup;
+class CDOTAMsg_CoachHUDPing;
 
 enum EDOTAChatWheelMessage {
   k_EDOTA_CW_Ok = 0,
@@ -109,11 +110,13 @@ enum EDOTAChatWheelMessage {
   k_EDOTA_CW_New_Meta = 67,
   k_EDOTA_CW_My_Bad = 68,
   k_EDOTA_CW_Regret = 69,
-  k_EDOTA_CW_Relax = 70
+  k_EDOTA_CW_Relax = 70,
+  k_EDOTA_CW_MissingHero = 71,
+  k_EDOTA_CW_ReturnedHero = 72
 };
 bool EDOTAChatWheelMessage_IsValid(int value);
 const EDOTAChatWheelMessage EDOTAChatWheelMessage_MIN = k_EDOTA_CW_Ok;
-const EDOTAChatWheelMessage EDOTAChatWheelMessage_MAX = k_EDOTA_CW_Relax;
+const EDOTAChatWheelMessage EDOTAChatWheelMessage_MAX = k_EDOTA_CW_ReturnedHero;
 const int EDOTAChatWheelMessage_ARRAYSIZE = EDOTAChatWheelMessage_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* EDOTAChatWheelMessage_descriptor();
@@ -706,6 +709,112 @@ class CDOTAMsg_SendStatPopup : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static CDOTAMsg_SendStatPopup* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class CDOTAMsg_CoachHUDPing : public ::google::protobuf::Message {
+ public:
+  CDOTAMsg_CoachHUDPing();
+  virtual ~CDOTAMsg_CoachHUDPing();
+  
+  CDOTAMsg_CoachHUDPing(const CDOTAMsg_CoachHUDPing& from);
+  
+  inline CDOTAMsg_CoachHUDPing& operator=(const CDOTAMsg_CoachHUDPing& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAMsg_CoachHUDPing& default_instance();
+  
+  void Swap(CDOTAMsg_CoachHUDPing* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAMsg_CoachHUDPing* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAMsg_CoachHUDPing& from);
+  void MergeFrom(const CDOTAMsg_CoachHUDPing& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional uint32 x = 1;
+  inline bool has_x() const;
+  inline void clear_x();
+  static const int kXFieldNumber = 1;
+  inline ::google::protobuf::uint32 x() const;
+  inline void set_x(::google::protobuf::uint32 value);
+  
+  // optional uint32 y = 2;
+  inline bool has_y() const;
+  inline void clear_y();
+  static const int kYFieldNumber = 2;
+  inline ::google::protobuf::uint32 y() const;
+  inline void set_y(::google::protobuf::uint32 value);
+  
+  // optional string tgtpath = 3;
+  inline bool has_tgtpath() const;
+  inline void clear_tgtpath();
+  static const int kTgtpathFieldNumber = 3;
+  inline const ::std::string& tgtpath() const;
+  inline void set_tgtpath(const ::std::string& value);
+  inline void set_tgtpath(const char* value);
+  inline void set_tgtpath(const char* value, size_t size);
+  inline ::std::string* mutable_tgtpath();
+  inline ::std::string* release_tgtpath();
+  
+  // @@protoc_insertion_point(class_scope:CDOTAMsg_CoachHUDPing)
+ private:
+  inline void set_has_x();
+  inline void clear_has_x();
+  inline void set_has_y();
+  inline void clear_has_y();
+  inline void set_has_tgtpath();
+  inline void clear_has_tgtpath();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::uint32 x_;
+  ::google::protobuf::uint32 y_;
+  ::std::string* tgtpath_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fcommonmessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fcommonmessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fcommonmessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAMsg_CoachHUDPing* default_instance_;
+};
 // ===================================================================
 
 
@@ -1171,6 +1280,112 @@ CDOTAMsg_SendStatPopup::stat_images() const {
 inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
 CDOTAMsg_SendStatPopup::mutable_stat_images() {
   return &stat_images_;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAMsg_CoachHUDPing
+
+// optional uint32 x = 1;
+inline bool CDOTAMsg_CoachHUDPing::has_x() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAMsg_CoachHUDPing::set_has_x() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAMsg_CoachHUDPing::clear_has_x() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAMsg_CoachHUDPing::clear_x() {
+  x_ = 0u;
+  clear_has_x();
+}
+inline ::google::protobuf::uint32 CDOTAMsg_CoachHUDPing::x() const {
+  return x_;
+}
+inline void CDOTAMsg_CoachHUDPing::set_x(::google::protobuf::uint32 value) {
+  set_has_x();
+  x_ = value;
+}
+
+// optional uint32 y = 2;
+inline bool CDOTAMsg_CoachHUDPing::has_y() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAMsg_CoachHUDPing::set_has_y() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAMsg_CoachHUDPing::clear_has_y() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAMsg_CoachHUDPing::clear_y() {
+  y_ = 0u;
+  clear_has_y();
+}
+inline ::google::protobuf::uint32 CDOTAMsg_CoachHUDPing::y() const {
+  return y_;
+}
+inline void CDOTAMsg_CoachHUDPing::set_y(::google::protobuf::uint32 value) {
+  set_has_y();
+  y_ = value;
+}
+
+// optional string tgtpath = 3;
+inline bool CDOTAMsg_CoachHUDPing::has_tgtpath() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAMsg_CoachHUDPing::set_has_tgtpath() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAMsg_CoachHUDPing::clear_has_tgtpath() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAMsg_CoachHUDPing::clear_tgtpath() {
+  if (tgtpath_ != &::google::protobuf::internal::kEmptyString) {
+    tgtpath_->clear();
+  }
+  clear_has_tgtpath();
+}
+inline const ::std::string& CDOTAMsg_CoachHUDPing::tgtpath() const {
+  return *tgtpath_;
+}
+inline void CDOTAMsg_CoachHUDPing::set_tgtpath(const ::std::string& value) {
+  set_has_tgtpath();
+  if (tgtpath_ == &::google::protobuf::internal::kEmptyString) {
+    tgtpath_ = new ::std::string;
+  }
+  tgtpath_->assign(value);
+}
+inline void CDOTAMsg_CoachHUDPing::set_tgtpath(const char* value) {
+  set_has_tgtpath();
+  if (tgtpath_ == &::google::protobuf::internal::kEmptyString) {
+    tgtpath_ = new ::std::string;
+  }
+  tgtpath_->assign(value);
+}
+inline void CDOTAMsg_CoachHUDPing::set_tgtpath(const char* value, size_t size) {
+  set_has_tgtpath();
+  if (tgtpath_ == &::google::protobuf::internal::kEmptyString) {
+    tgtpath_ = new ::std::string;
+  }
+  tgtpath_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAMsg_CoachHUDPing::mutable_tgtpath() {
+  set_has_tgtpath();
+  if (tgtpath_ == &::google::protobuf::internal::kEmptyString) {
+    tgtpath_ = new ::std::string;
+  }
+  return tgtpath_;
+}
+inline ::std::string* CDOTAMsg_CoachHUDPing::release_tgtpath() {
+  clear_has_tgtpath();
+  if (tgtpath_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = tgtpath_;
+    tgtpath_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
 }
 
 

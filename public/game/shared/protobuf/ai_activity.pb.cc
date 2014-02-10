@@ -53,7 +53,7 @@ void protobuf_AddDesc_ai_5factivity_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\021ai_activity.proto*\211|\n\010Activity\022\030\n\013ACT_"
+    "\n\021ai_activity.proto*\374~\n\010Activity\022\030\n\013ACT_"
     "INVALID\020\377\377\377\377\377\377\377\377\377\001\022\r\n\tACT_RESET\020\000\022\014\n\010ACT"
     "_IDLE\020\001\022\022\n\016ACT_TRANSITION\020\002\022\r\n\tACT_COVER"
     "\020\003\022\021\n\rACT_COVER_MED\020\004\022\021\n\rACT_COVER_LOW\020\005"
@@ -450,7 +450,17 @@ void protobuf_AddDesc_ai_5factivity_2eproto() {
     "EP_SMASH\020\267\004\022#\n\036ACT_DOTA_CAGED_CREEP_SMAS"
     "H_OUT\020\270\004\022&\n!ACT_DOTA_IDLE_IMPATIENT_SWOR"
     "D_TAP\020\271\004\022\030\n\023ACT_DOTA_INTRO_LOOP\020\272\004\022\033\n\026AC"
-    "T_DOTA_BRIDGE_THREAT\020\273\004B\005H\001\200\001\000", 15910);
+    "T_DOTA_BRIDGE_THREAT\020\273\004\022\023\n\016ACT_DOTA_DAGO"
+    "N\020\274\004\022*\n%ACT_DOTA_CAST_ABILITY_2_ES_ROLL_"
+    "START\020\275\004\022$\n\037ACT_DOTA_CAST_ABILITY_2_ES_R"
+    "OLL\020\276\004\022(\n#ACT_DOTA_CAST_ABILITY_2_ES_ROL"
+    "L_END\020\277\004\022\034\n\027ACT_DOTA_NIAN_PIN_START\020\300\004\022\033"
+    "\n\026ACT_DOTA_NIAN_PIN_LOOP\020\301\004\022\032\n\025ACT_DOTA_"
+    "NIAN_PIN_END\020\302\004\022\027\n\022ACT_DOTA_LEAP_STUN\020\303\004"
+    "\022\030\n\023ACT_DOTA_LEAP_SWIPE\020\304\004\022\035\n\030ACT_DOTA_N"
+    "IAN_INTRO_LEAP\020\305\004\022\027\n\022ACT_DOTA_AREA_DENY\020"
+    "\306\004\022\036\n\031ACT_DOTA_NIAN_PIN_TO_STUN\020\307\004B\005H\001\200\001"
+    "\000", 16281);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "ai_activity.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_ai_5factivity_2eproto);
@@ -1040,6 +1050,18 @@ bool Activity_IsValid(int value) {
     case 569:
     case 570:
     case 571:
+    case 572:
+    case 573:
+    case 574:
+    case 575:
+    case 576:
+    case 577:
+    case 578:
+    case 579:
+    case 580:
+    case 581:
+    case 582:
+    case 583:
       return true;
     default:
       return false;

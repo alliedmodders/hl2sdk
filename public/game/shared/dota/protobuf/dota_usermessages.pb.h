@@ -49,6 +49,7 @@ class CDOTAUserMsg_GlobalLightColor;
 class CDOTAUserMsg_GlobalLightDirection;
 class CDOTAUserMsg_LocationPing;
 class CDOTAUserMsg_ItemAlert;
+class CDOTAUserMsg_WillPurchaseAlert;
 class CDOTAUserMsg_MinimapEvent;
 class CDOTAUserMsg_MapLine;
 class CDOTAUserMsg_MinimapDebugPoint;
@@ -104,6 +105,17 @@ class CDOTA_UM_GamerulesStateChanged;
 class CDOTAUserMsg_AddQuestLogEntry;
 class CDOTAUserMsg_SendStatPopup;
 class CDOTAUserMsg_SendRoshanPopup;
+class CDOTAUserMsg_SendFinalGold;
+class CDOTAUserMsg_CustomMsg;
+class CDOTAUserMsg_CoachHUDPing;
+class CDOTAUserMsg_ClientLoadGridNav;
+class CDOTAUserMsg_AbilityPing;
+class CDOTAUserMsg_ShowGenericPopup;
+class CDOTAUserMsg_VoteStart;
+class CDOTAUserMsg_VoteUpdate;
+class CDOTAUserMsg_VoteEnd;
+class CDOTAUserMsg_BoosterStatePlayer;
+class CDOTAUserMsg_BoosterState;
 
 enum CDOTAResponseQuerySerialized_Fact_ValueType {
   CDOTAResponseQuerySerialized_Fact_ValueType_NUMERIC = 1,
@@ -173,11 +185,22 @@ enum EDotaUserMessages {
   DOTA_UM_SendStatPopup = 110,
   DOTA_UM_TutorialFinish = 111,
   DOTA_UM_SendRoshanPopup = 112,
-  DOTA_UM_SendGenericToolTip = 113
+  DOTA_UM_SendGenericToolTip = 113,
+  DOTA_UM_SendFinalGold = 114,
+  DOTA_UM_CustomMsg = 115,
+  DOTA_UM_CoachHUDPing = 116,
+  DOTA_UM_ClientLoadGridNav = 117,
+  DOTA_UM_AbilityPing = 118,
+  DOTA_UM_ShowGenericPopup = 119,
+  DOTA_UM_VoteStart = 120,
+  DOTA_UM_VoteUpdate = 121,
+  DOTA_UM_VoteEnd = 122,
+  DOTA_UM_BoosterState = 123,
+  DOTA_UM_WillPurchaseAlert = 124
 };
 bool EDotaUserMessages_IsValid(int value);
 const EDotaUserMessages EDotaUserMessages_MIN = DOTA_UM_AddUnitToSelection;
-const EDotaUserMessages EDotaUserMessages_MAX = DOTA_UM_SendGenericToolTip;
+const EDotaUserMessages EDotaUserMessages_MAX = DOTA_UM_WillPurchaseAlert;
 const int EDotaUserMessages_ARRAYSIZE = EDotaUserMessages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* EDotaUserMessages_descriptor();
@@ -248,11 +271,27 @@ enum DOTA_CHAT_MESSAGE {
   CHAT_MESSAGE_AEGIS_STOLEN = 53,
   CHAT_MESSAGE_ROSHAN_CANDY = 54,
   CHAT_MESSAGE_ITEM_GIFTED = 55,
-  CHAT_MESSAGE_HERO_KILL_WITH_GREEVIL = 56
+  CHAT_MESSAGE_HERO_KILL_WITH_GREEVIL = 56,
+  CHAT_MESSAGE_HOLDOUT_TOWER_DESTROYED = 57,
+  CHAT_MESSAGE_HOLDOUT_WALL_DESTROYED = 58,
+  CHAT_MESSAGE_HOLDOUT_WALL_FINISHED = 59,
+  CHAT_MESSAGE_SAFE_TO_LEAVE_ABANDONER_AFK = 60,
+  CHAT_MESSAGE_SAFE_TO_LEAVE_ABANDONER_AFK_EARLY = 61,
+  CHAT_MESSAGE_ABANDON_LIMITED_HERO = 62,
+  CHAT_MESSAGE_ABANDON_LIMITED_HERO_EXPLANATION = 63,
+  CHAT_MESSAGE_DISCONNECT_LIMITED_HERO = 64,
+  CHAT_MESSAGE_LOW_PRIORITY_COMPLETED_EXPLANATION = 65,
+  CHAT_MESSAGE_RECRUITMENT_DROP_RATE_BONUS = 66,
+  CHAT_MESSAGE_FROSTIVUS_SHINING_BOOSTER_ACTIVE = 67,
+  CHAT_MESSAGE_SAFE_TO_LEAVE_RANKED = 68,
+  CHAT_MESSAGE_SAFE_TO_LEAVE_ABANDONER_RANKED = 69,
+  CHAT_MESSAGE_SAFE_TO_LEAVE_ABANDONER_EARLY_RANKED = 70,
+  CHAT_MESSAGE_SAFE_TO_LEAVE_ABANDONER_AFK_RANKED = 71,
+  CHAT_MESSAGE_SAFE_TO_LEAVE_ABANDONER_AFK_EARLY_RANKED = 72
 };
 bool DOTA_CHAT_MESSAGE_IsValid(int value);
 const DOTA_CHAT_MESSAGE DOTA_CHAT_MESSAGE_MIN = CHAT_MESSAGE_INVALID;
-const DOTA_CHAT_MESSAGE DOTA_CHAT_MESSAGE_MAX = CHAT_MESSAGE_HERO_KILL_WITH_GREEVIL;
+const DOTA_CHAT_MESSAGE DOTA_CHAT_MESSAGE_MAX = CHAT_MESSAGE_SAFE_TO_LEAVE_ABANDONER_AFK_EARLY_RANKED;
 const int DOTA_CHAT_MESSAGE_ARRAYSIZE = DOTA_CHAT_MESSAGE_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* DOTA_CHAT_MESSAGE_descriptor();
@@ -287,11 +326,14 @@ inline bool DOTA_NO_BATTLE_POINTS_REASONS_Parse(
     DOTA_NO_BATTLE_POINTS_REASONS_descriptor(), name, value);
 }
 enum DOTA_CHAT_INFORMATIONAL {
-  COOP_BATTLE_POINTS_RULES = 1
+  INFO_COOP_BATTLE_POINTS_RULES = 1,
+  INFO_FROSTIVUS_ABANDON_REMINDER = 2,
+  INFO_RANKED_REMINDER = 3,
+  INFO_COOP_LOW_PRIORITY_PASSIVE_REMINDER = 4
 };
 bool DOTA_CHAT_INFORMATIONAL_IsValid(int value);
-const DOTA_CHAT_INFORMATIONAL DOTA_CHAT_INFORMATIONAL_MIN = COOP_BATTLE_POINTS_RULES;
-const DOTA_CHAT_INFORMATIONAL DOTA_CHAT_INFORMATIONAL_MAX = COOP_BATTLE_POINTS_RULES;
+const DOTA_CHAT_INFORMATIONAL DOTA_CHAT_INFORMATIONAL_MIN = INFO_COOP_BATTLE_POINTS_RULES;
+const DOTA_CHAT_INFORMATIONAL DOTA_CHAT_INFORMATIONAL_MAX = INFO_COOP_LOW_PRIORITY_PASSIVE_REMINDER;
 const int DOTA_CHAT_INFORMATIONAL_ARRAYSIZE = DOTA_CHAT_INFORMATIONAL_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* DOTA_CHAT_INFORMATIONAL_descriptor();
@@ -393,11 +435,14 @@ enum DOTA_OVERHEAD_ALERT {
   OVERHEAD_ALERT_BONUS_POISON_DAMAGE = 9,
   OVERHEAD_ALERT_HEAL = 10,
   OVERHEAD_ALERT_MANA_ADD = 11,
-  OVERHEAD_ALERT_MANA_LOSS = 12
+  OVERHEAD_ALERT_MANA_LOSS = 12,
+  OVERHEAD_ALERT_LAST_HIT_EARLY = 13,
+  OVERHEAD_ALERT_LAST_HIT_CLOSE = 14,
+  OVERHEAD_ALERT_LAST_HIT_MISS = 15
 };
 bool DOTA_OVERHEAD_ALERT_IsValid(int value);
 const DOTA_OVERHEAD_ALERT DOTA_OVERHEAD_ALERT_MIN = OVERHEAD_ALERT_GOLD;
-const DOTA_OVERHEAD_ALERT DOTA_OVERHEAD_ALERT_MAX = OVERHEAD_ALERT_MANA_LOSS;
+const DOTA_OVERHEAD_ALERT DOTA_OVERHEAD_ALERT_MAX = OVERHEAD_ALERT_LAST_HIT_MISS;
 const int DOTA_OVERHEAD_ALERT_ARRAYSIZE = DOTA_OVERHEAD_ALERT_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* DOTA_OVERHEAD_ALERT_descriptor();
@@ -409,6 +454,26 @@ inline bool DOTA_OVERHEAD_ALERT_Parse(
     const ::std::string& name, DOTA_OVERHEAD_ALERT* value) {
   return ::google::protobuf::internal::ParseNamedEnum<DOTA_OVERHEAD_ALERT>(
     DOTA_OVERHEAD_ALERT_descriptor(), name, value);
+}
+enum DOTA_ABILITY_PING_TYPE {
+  ABILITY_PING_READY = 1,
+  ABILITY_PING_MANA = 2,
+  ABILITY_PING_COOLDOWN = 3
+};
+bool DOTA_ABILITY_PING_TYPE_IsValid(int value);
+const DOTA_ABILITY_PING_TYPE DOTA_ABILITY_PING_TYPE_MIN = ABILITY_PING_READY;
+const DOTA_ABILITY_PING_TYPE DOTA_ABILITY_PING_TYPE_MAX = ABILITY_PING_COOLDOWN;
+const int DOTA_ABILITY_PING_TYPE_ARRAYSIZE = DOTA_ABILITY_PING_TYPE_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* DOTA_ABILITY_PING_TYPE_descriptor();
+inline const ::std::string& DOTA_ABILITY_PING_TYPE_Name(DOTA_ABILITY_PING_TYPE value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    DOTA_ABILITY_PING_TYPE_descriptor(), value);
+}
+inline bool DOTA_ABILITY_PING_TYPE_Parse(
+    const ::std::string& name, DOTA_ABILITY_PING_TYPE* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<DOTA_ABILITY_PING_TYPE>(
+    DOTA_ABILITY_PING_TYPE_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -1943,6 +2008,98 @@ class CDOTAUserMsg_ItemAlert : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static CDOTAUserMsg_ItemAlert* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_WillPurchaseAlert : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_WillPurchaseAlert();
+  virtual ~CDOTAUserMsg_WillPurchaseAlert();
+  
+  CDOTAUserMsg_WillPurchaseAlert(const CDOTAUserMsg_WillPurchaseAlert& from);
+  
+  inline CDOTAUserMsg_WillPurchaseAlert& operator=(const CDOTAUserMsg_WillPurchaseAlert& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_WillPurchaseAlert& default_instance();
+  
+  void Swap(CDOTAUserMsg_WillPurchaseAlert* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_WillPurchaseAlert* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_WillPurchaseAlert& from);
+  void MergeFrom(const CDOTAUserMsg_WillPurchaseAlert& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional int32 itemid = 1;
+  inline bool has_itemid() const;
+  inline void clear_itemid();
+  static const int kItemidFieldNumber = 1;
+  inline ::google::protobuf::int32 itemid() const;
+  inline void set_itemid(::google::protobuf::int32 value);
+  
+  // optional int32 player_id = 2;
+  inline bool has_player_id() const;
+  inline void clear_player_id();
+  static const int kPlayerIdFieldNumber = 2;
+  inline ::google::protobuf::int32 player_id() const;
+  inline void set_player_id(::google::protobuf::int32 value);
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_WillPurchaseAlert)
+ private:
+  inline void set_has_itemid();
+  inline void clear_has_itemid();
+  inline void set_has_player_id();
+  inline void clear_has_player_id();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::int32 itemid_;
+  ::google::protobuf::int32 player_id_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_WillPurchaseAlert* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -5486,6 +5643,13 @@ class CDOTAUserMsg_ParticleManager_UpdateParticleEnt : public ::google::protobuf
   inline ::CMsgVector* mutable_fallback_position();
   inline ::CMsgVector* release_fallback_position();
   
+  // optional bool include_wearables = 6;
+  inline bool has_include_wearables() const;
+  inline void clear_include_wearables();
+  static const int kIncludeWearablesFieldNumber = 6;
+  inline bool include_wearables() const;
+  inline void set_include_wearables(bool value);
+  
   // @@protoc_insertion_point(class_scope:CDOTAUserMsg_ParticleManager.UpdateParticleEnt)
  private:
   inline void set_has_control_point();
@@ -5498,6 +5662,8 @@ class CDOTAUserMsg_ParticleManager_UpdateParticleEnt : public ::google::protobuf
   inline void clear_has_attachment();
   inline void set_has_fallback_position();
   inline void clear_has_fallback_position();
+  inline void set_has_include_wearables();
+  inline void clear_has_include_wearables();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -5506,9 +5672,10 @@ class CDOTAUserMsg_ParticleManager_UpdateParticleEnt : public ::google::protobuf
   ::google::protobuf::int32 attach_type_;
   ::google::protobuf::int32 attachment_;
   ::CMsgVector* fallback_position_;
+  bool include_wearables_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
   
   friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
@@ -6646,6 +6813,13 @@ class CDOTAUserMsg_ChatWheel : public ::google::protobuf::Message {
   inline ::google::protobuf::uint32 account_id() const;
   inline void set_account_id(::google::protobuf::uint32 value);
   
+  // optional uint32 param_hero_id = 4;
+  inline bool has_param_hero_id() const;
+  inline void clear_param_hero_id();
+  static const int kParamHeroIdFieldNumber = 4;
+  inline ::google::protobuf::uint32 param_hero_id() const;
+  inline void set_param_hero_id(::google::protobuf::uint32 value);
+  
   // @@protoc_insertion_point(class_scope:CDOTAUserMsg_ChatWheel)
  private:
   inline void set_has_chat_message();
@@ -6654,15 +6828,18 @@ class CDOTAUserMsg_ChatWheel : public ::google::protobuf::Message {
   inline void clear_has_player_id();
   inline void set_has_account_id();
   inline void clear_has_account_id();
+  inline void set_has_param_hero_id();
+  inline void clear_has_param_hero_id();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   int chat_message_;
   ::google::protobuf::uint32 player_id_;
   ::google::protobuf::uint32 account_id_;
+  ::google::protobuf::uint32 param_hero_id_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
@@ -6840,17 +7017,41 @@ class CDOTAUserMsg_ShowSurvey : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 survey_id() const;
   inline void set_survey_id(::google::protobuf::int32 value);
   
+  // optional uint32 match_id = 2;
+  inline bool has_match_id() const;
+  inline void clear_match_id();
+  static const int kMatchIdFieldNumber = 2;
+  inline ::google::protobuf::uint32 match_id() const;
+  inline void set_match_id(::google::protobuf::uint32 value);
+  
+  // optional string response_style = 3;
+  inline bool has_response_style() const;
+  inline void clear_response_style();
+  static const int kResponseStyleFieldNumber = 3;
+  inline const ::std::string& response_style() const;
+  inline void set_response_style(const ::std::string& value);
+  inline void set_response_style(const char* value);
+  inline void set_response_style(const char* value, size_t size);
+  inline ::std::string* mutable_response_style();
+  inline ::std::string* release_response_style();
+  
   // @@protoc_insertion_point(class_scope:CDOTAUserMsg_ShowSurvey)
  private:
   inline void set_has_survey_id();
   inline void clear_has_survey_id();
+  inline void set_has_match_id();
+  inline void clear_has_match_id();
+  inline void set_has_response_style();
+  inline void clear_has_response_style();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::google::protobuf::int32 survey_id_;
+  ::google::protobuf::uint32 match_id_;
+  ::std::string* response_style_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
   
   friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
@@ -7377,40 +7578,20 @@ class CDOTAUserMsg_AddQuestLogEntry : public ::google::protobuf::Message {
   inline ::std::string* mutable_npc_dialog();
   inline ::std::string* release_npc_dialog();
   
-  // optional bool quest = 3;
-  inline bool has_quest() const;
-  inline void clear_quest();
-  static const int kQuestFieldNumber = 3;
-  inline bool quest() const;
-  inline void set_quest(bool value);
-  
-  // optional int32 quest_type = 4;
-  inline bool has_quest_type() const;
-  inline void clear_quest_type();
-  static const int kQuestTypeFieldNumber = 4;
-  inline ::google::protobuf::int32 quest_type() const;
-  inline void set_quest_type(::google::protobuf::int32 value);
-  
   // @@protoc_insertion_point(class_scope:CDOTAUserMsg_AddQuestLogEntry)
  private:
   inline void set_has_npc_name();
   inline void clear_has_npc_name();
   inline void set_has_npc_dialog();
   inline void clear_has_npc_dialog();
-  inline void set_has_quest();
-  inline void clear_has_quest();
-  inline void set_has_quest_type();
-  inline void clear_has_quest_type();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::std::string* npc_name_;
   ::std::string* npc_dialog_;
-  bool quest_;
-  ::google::protobuf::int32 quest_type_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
   
   friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
@@ -7603,6 +7784,1112 @@ class CDOTAUserMsg_SendRoshanPopup : public ::google::protobuf::Message {
   
   void InitAsDefaultInstance();
   static CDOTAUserMsg_SendRoshanPopup* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_SendFinalGold : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_SendFinalGold();
+  virtual ~CDOTAUserMsg_SendFinalGold();
+  
+  CDOTAUserMsg_SendFinalGold(const CDOTAUserMsg_SendFinalGold& from);
+  
+  inline CDOTAUserMsg_SendFinalGold& operator=(const CDOTAUserMsg_SendFinalGold& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_SendFinalGold& default_instance();
+  
+  void Swap(CDOTAUserMsg_SendFinalGold* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_SendFinalGold* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_SendFinalGold& from);
+  void MergeFrom(const CDOTAUserMsg_SendFinalGold& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated uint32 reliable_gold = 1;
+  inline int reliable_gold_size() const;
+  inline void clear_reliable_gold();
+  static const int kReliableGoldFieldNumber = 1;
+  inline ::google::protobuf::uint32 reliable_gold(int index) const;
+  inline void set_reliable_gold(int index, ::google::protobuf::uint32 value);
+  inline void add_reliable_gold(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      reliable_gold() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_reliable_gold();
+  
+  // repeated uint32 unreliable_gold = 2;
+  inline int unreliable_gold_size() const;
+  inline void clear_unreliable_gold();
+  static const int kUnreliableGoldFieldNumber = 2;
+  inline ::google::protobuf::uint32 unreliable_gold(int index) const;
+  inline void set_unreliable_gold(int index, ::google::protobuf::uint32 value);
+  inline void add_unreliable_gold(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      unreliable_gold() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_unreliable_gold();
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_SendFinalGold)
+ private:
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > reliable_gold_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > unreliable_gold_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_SendFinalGold* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_CustomMsg : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_CustomMsg();
+  virtual ~CDOTAUserMsg_CustomMsg();
+  
+  CDOTAUserMsg_CustomMsg(const CDOTAUserMsg_CustomMsg& from);
+  
+  inline CDOTAUserMsg_CustomMsg& operator=(const CDOTAUserMsg_CustomMsg& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_CustomMsg& default_instance();
+  
+  void Swap(CDOTAUserMsg_CustomMsg* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_CustomMsg* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_CustomMsg& from);
+  void MergeFrom(const CDOTAUserMsg_CustomMsg& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional string message = 1;
+  inline bool has_message() const;
+  inline void clear_message();
+  static const int kMessageFieldNumber = 1;
+  inline const ::std::string& message() const;
+  inline void set_message(const ::std::string& value);
+  inline void set_message(const char* value);
+  inline void set_message(const char* value, size_t size);
+  inline ::std::string* mutable_message();
+  inline ::std::string* release_message();
+  
+  // optional int32 player_id = 2;
+  inline bool has_player_id() const;
+  inline void clear_player_id();
+  static const int kPlayerIdFieldNumber = 2;
+  inline ::google::protobuf::int32 player_id() const;
+  inline void set_player_id(::google::protobuf::int32 value);
+  
+  // optional int32 value = 3;
+  inline bool has_value() const;
+  inline void clear_value();
+  static const int kValueFieldNumber = 3;
+  inline ::google::protobuf::int32 value() const;
+  inline void set_value(::google::protobuf::int32 value);
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_CustomMsg)
+ private:
+  inline void set_has_message();
+  inline void clear_has_message();
+  inline void set_has_player_id();
+  inline void clear_has_player_id();
+  inline void set_has_value();
+  inline void clear_has_value();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* message_;
+  ::google::protobuf::int32 player_id_;
+  ::google::protobuf::int32 value_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_CustomMsg* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_CoachHUDPing : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_CoachHUDPing();
+  virtual ~CDOTAUserMsg_CoachHUDPing();
+  
+  CDOTAUserMsg_CoachHUDPing(const CDOTAUserMsg_CoachHUDPing& from);
+  
+  inline CDOTAUserMsg_CoachHUDPing& operator=(const CDOTAUserMsg_CoachHUDPing& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_CoachHUDPing& default_instance();
+  
+  void Swap(CDOTAUserMsg_CoachHUDPing* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_CoachHUDPing* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_CoachHUDPing& from);
+  void MergeFrom(const CDOTAUserMsg_CoachHUDPing& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional uint32 player_id = 1;
+  inline bool has_player_id() const;
+  inline void clear_player_id();
+  static const int kPlayerIdFieldNumber = 1;
+  inline ::google::protobuf::uint32 player_id() const;
+  inline void set_player_id(::google::protobuf::uint32 value);
+  
+  // optional .CDOTAMsg_CoachHUDPing hud_ping = 2;
+  inline bool has_hud_ping() const;
+  inline void clear_hud_ping();
+  static const int kHudPingFieldNumber = 2;
+  inline const ::CDOTAMsg_CoachHUDPing& hud_ping() const;
+  inline ::CDOTAMsg_CoachHUDPing* mutable_hud_ping();
+  inline ::CDOTAMsg_CoachHUDPing* release_hud_ping();
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_CoachHUDPing)
+ private:
+  inline void set_has_player_id();
+  inline void clear_has_player_id();
+  inline void set_has_hud_ping();
+  inline void clear_has_hud_ping();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::CDOTAMsg_CoachHUDPing* hud_ping_;
+  ::google::protobuf::uint32 player_id_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_CoachHUDPing* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_ClientLoadGridNav : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_ClientLoadGridNav();
+  virtual ~CDOTAUserMsg_ClientLoadGridNav();
+  
+  CDOTAUserMsg_ClientLoadGridNav(const CDOTAUserMsg_ClientLoadGridNav& from);
+  
+  inline CDOTAUserMsg_ClientLoadGridNav& operator=(const CDOTAUserMsg_ClientLoadGridNav& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_ClientLoadGridNav& default_instance();
+  
+  void Swap(CDOTAUserMsg_ClientLoadGridNav* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_ClientLoadGridNav* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_ClientLoadGridNav& from);
+  void MergeFrom(const CDOTAUserMsg_ClientLoadGridNav& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_ClientLoadGridNav)
+ private:
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[1];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_ClientLoadGridNav* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_AbilityPing : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_AbilityPing();
+  virtual ~CDOTAUserMsg_AbilityPing();
+  
+  CDOTAUserMsg_AbilityPing(const CDOTAUserMsg_AbilityPing& from);
+  
+  inline CDOTAUserMsg_AbilityPing& operator=(const CDOTAUserMsg_AbilityPing& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_AbilityPing& default_instance();
+  
+  void Swap(CDOTAUserMsg_AbilityPing* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_AbilityPing* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_AbilityPing& from);
+  void MergeFrom(const CDOTAUserMsg_AbilityPing& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional uint32 player_id = 1;
+  inline bool has_player_id() const;
+  inline void clear_player_id();
+  static const int kPlayerIdFieldNumber = 1;
+  inline ::google::protobuf::uint32 player_id() const;
+  inline void set_player_id(::google::protobuf::uint32 value);
+  
+  // optional uint32 ability_id = 2;
+  inline bool has_ability_id() const;
+  inline void clear_ability_id();
+  static const int kAbilityIdFieldNumber = 2;
+  inline ::google::protobuf::uint32 ability_id() const;
+  inline void set_ability_id(::google::protobuf::uint32 value);
+  
+  // optional .DOTA_ABILITY_PING_TYPE type = 3 [default = ABILITY_PING_READY];
+  inline bool has_type() const;
+  inline void clear_type();
+  static const int kTypeFieldNumber = 3;
+  inline DOTA_ABILITY_PING_TYPE type() const;
+  inline void set_type(DOTA_ABILITY_PING_TYPE value);
+  
+  // optional uint32 cooldown_seconds = 4;
+  inline bool has_cooldown_seconds() const;
+  inline void clear_cooldown_seconds();
+  static const int kCooldownSecondsFieldNumber = 4;
+  inline ::google::protobuf::uint32 cooldown_seconds() const;
+  inline void set_cooldown_seconds(::google::protobuf::uint32 value);
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_AbilityPing)
+ private:
+  inline void set_has_player_id();
+  inline void clear_has_player_id();
+  inline void set_has_ability_id();
+  inline void clear_has_ability_id();
+  inline void set_has_type();
+  inline void clear_has_type();
+  inline void set_has_cooldown_seconds();
+  inline void clear_has_cooldown_seconds();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::uint32 player_id_;
+  ::google::protobuf::uint32 ability_id_;
+  int type_;
+  ::google::protobuf::uint32 cooldown_seconds_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_AbilityPing* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_ShowGenericPopup : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_ShowGenericPopup();
+  virtual ~CDOTAUserMsg_ShowGenericPopup();
+  
+  CDOTAUserMsg_ShowGenericPopup(const CDOTAUserMsg_ShowGenericPopup& from);
+  
+  inline CDOTAUserMsg_ShowGenericPopup& operator=(const CDOTAUserMsg_ShowGenericPopup& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_ShowGenericPopup& default_instance();
+  
+  void Swap(CDOTAUserMsg_ShowGenericPopup* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_ShowGenericPopup* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_ShowGenericPopup& from);
+  void MergeFrom(const CDOTAUserMsg_ShowGenericPopup& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required string header = 1;
+  inline bool has_header() const;
+  inline void clear_header();
+  static const int kHeaderFieldNumber = 1;
+  inline const ::std::string& header() const;
+  inline void set_header(const ::std::string& value);
+  inline void set_header(const char* value);
+  inline void set_header(const char* value, size_t size);
+  inline ::std::string* mutable_header();
+  inline ::std::string* release_header();
+  
+  // required string body = 2;
+  inline bool has_body() const;
+  inline void clear_body();
+  static const int kBodyFieldNumber = 2;
+  inline const ::std::string& body() const;
+  inline void set_body(const ::std::string& value);
+  inline void set_body(const char* value);
+  inline void set_body(const char* value, size_t size);
+  inline ::std::string* mutable_body();
+  inline ::std::string* release_body();
+  
+  // optional string param1 = 3;
+  inline bool has_param1() const;
+  inline void clear_param1();
+  static const int kParam1FieldNumber = 3;
+  inline const ::std::string& param1() const;
+  inline void set_param1(const ::std::string& value);
+  inline void set_param1(const char* value);
+  inline void set_param1(const char* value, size_t size);
+  inline ::std::string* mutable_param1();
+  inline ::std::string* release_param1();
+  
+  // optional string param2 = 4;
+  inline bool has_param2() const;
+  inline void clear_param2();
+  static const int kParam2FieldNumber = 4;
+  inline const ::std::string& param2() const;
+  inline void set_param2(const ::std::string& value);
+  inline void set_param2(const char* value);
+  inline void set_param2(const char* value, size_t size);
+  inline ::std::string* mutable_param2();
+  inline ::std::string* release_param2();
+  
+  // optional bool tint_screen = 5;
+  inline bool has_tint_screen() const;
+  inline void clear_tint_screen();
+  static const int kTintScreenFieldNumber = 5;
+  inline bool tint_screen() const;
+  inline void set_tint_screen(bool value);
+  
+  // optional bool show_no_other_dialogs = 6;
+  inline bool has_show_no_other_dialogs() const;
+  inline void clear_show_no_other_dialogs();
+  static const int kShowNoOtherDialogsFieldNumber = 6;
+  inline bool show_no_other_dialogs() const;
+  inline void set_show_no_other_dialogs(bool value);
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_ShowGenericPopup)
+ private:
+  inline void set_has_header();
+  inline void clear_has_header();
+  inline void set_has_body();
+  inline void clear_has_body();
+  inline void set_has_param1();
+  inline void clear_has_param1();
+  inline void set_has_param2();
+  inline void clear_has_param2();
+  inline void set_has_tint_screen();
+  inline void clear_has_tint_screen();
+  inline void set_has_show_no_other_dialogs();
+  inline void clear_has_show_no_other_dialogs();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* header_;
+  ::std::string* body_;
+  ::std::string* param1_;
+  ::std::string* param2_;
+  bool tint_screen_;
+  bool show_no_other_dialogs_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_ShowGenericPopup* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_VoteStart : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_VoteStart();
+  virtual ~CDOTAUserMsg_VoteStart();
+  
+  CDOTAUserMsg_VoteStart(const CDOTAUserMsg_VoteStart& from);
+  
+  inline CDOTAUserMsg_VoteStart& operator=(const CDOTAUserMsg_VoteStart& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_VoteStart& default_instance();
+  
+  void Swap(CDOTAUserMsg_VoteStart* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_VoteStart* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_VoteStart& from);
+  void MergeFrom(const CDOTAUserMsg_VoteStart& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional string title = 1;
+  inline bool has_title() const;
+  inline void clear_title();
+  static const int kTitleFieldNumber = 1;
+  inline const ::std::string& title() const;
+  inline void set_title(const ::std::string& value);
+  inline void set_title(const char* value);
+  inline void set_title(const char* value, size_t size);
+  inline ::std::string* mutable_title();
+  inline ::std::string* release_title();
+  
+  // optional float duration = 2;
+  inline bool has_duration() const;
+  inline void clear_duration();
+  static const int kDurationFieldNumber = 2;
+  inline float duration() const;
+  inline void set_duration(float value);
+  
+  // optional int32 choice_count = 3;
+  inline bool has_choice_count() const;
+  inline void clear_choice_count();
+  static const int kChoiceCountFieldNumber = 3;
+  inline ::google::protobuf::int32 choice_count() const;
+  inline void set_choice_count(::google::protobuf::int32 value);
+  
+  // repeated string choices = 4;
+  inline int choices_size() const;
+  inline void clear_choices();
+  static const int kChoicesFieldNumber = 4;
+  inline const ::std::string& choices(int index) const;
+  inline ::std::string* mutable_choices(int index);
+  inline void set_choices(int index, const ::std::string& value);
+  inline void set_choices(int index, const char* value);
+  inline void set_choices(int index, const char* value, size_t size);
+  inline ::std::string* add_choices();
+  inline void add_choices(const ::std::string& value);
+  inline void add_choices(const char* value);
+  inline void add_choices(const char* value, size_t size);
+  inline const ::google::protobuf::RepeatedPtrField< ::std::string>& choices() const;
+  inline ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_choices();
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_VoteStart)
+ private:
+  inline void set_has_title();
+  inline void clear_has_title();
+  inline void set_has_duration();
+  inline void clear_has_duration();
+  inline void set_has_choice_count();
+  inline void clear_has_choice_count();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::std::string* title_;
+  float duration_;
+  ::google::protobuf::int32 choice_count_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> choices_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_VoteStart* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_VoteUpdate : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_VoteUpdate();
+  virtual ~CDOTAUserMsg_VoteUpdate();
+  
+  CDOTAUserMsg_VoteUpdate(const CDOTAUserMsg_VoteUpdate& from);
+  
+  inline CDOTAUserMsg_VoteUpdate& operator=(const CDOTAUserMsg_VoteUpdate& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_VoteUpdate& default_instance();
+  
+  void Swap(CDOTAUserMsg_VoteUpdate* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_VoteUpdate* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_VoteUpdate& from);
+  void MergeFrom(const CDOTAUserMsg_VoteUpdate& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated int32 choice_counts = 1;
+  inline int choice_counts_size() const;
+  inline void clear_choice_counts();
+  static const int kChoiceCountsFieldNumber = 1;
+  inline ::google::protobuf::int32 choice_counts(int index) const;
+  inline void set_choice_counts(int index, ::google::protobuf::int32 value);
+  inline void add_choice_counts(::google::protobuf::int32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      choice_counts() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_choice_counts();
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_VoteUpdate)
+ private:
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > choice_counts_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_VoteUpdate* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_VoteEnd : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_VoteEnd();
+  virtual ~CDOTAUserMsg_VoteEnd();
+  
+  CDOTAUserMsg_VoteEnd(const CDOTAUserMsg_VoteEnd& from);
+  
+  inline CDOTAUserMsg_VoteEnd& operator=(const CDOTAUserMsg_VoteEnd& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_VoteEnd& default_instance();
+  
+  void Swap(CDOTAUserMsg_VoteEnd* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_VoteEnd* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_VoteEnd& from);
+  void MergeFrom(const CDOTAUserMsg_VoteEnd& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional int32 selected_choice = 1;
+  inline bool has_selected_choice() const;
+  inline void clear_selected_choice();
+  static const int kSelectedChoiceFieldNumber = 1;
+  inline ::google::protobuf::int32 selected_choice() const;
+  inline void set_selected_choice(::google::protobuf::int32 value);
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_VoteEnd)
+ private:
+  inline void set_has_selected_choice();
+  inline void clear_has_selected_choice();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::int32 selected_choice_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_VoteEnd* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_BoosterStatePlayer : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_BoosterStatePlayer();
+  virtual ~CDOTAUserMsg_BoosterStatePlayer();
+  
+  CDOTAUserMsg_BoosterStatePlayer(const CDOTAUserMsg_BoosterStatePlayer& from);
+  
+  inline CDOTAUserMsg_BoosterStatePlayer& operator=(const CDOTAUserMsg_BoosterStatePlayer& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_BoosterStatePlayer& default_instance();
+  
+  void Swap(CDOTAUserMsg_BoosterStatePlayer* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_BoosterStatePlayer* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_BoosterStatePlayer& from);
+  void MergeFrom(const CDOTAUserMsg_BoosterStatePlayer& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional uint32 player_id = 1;
+  inline bool has_player_id() const;
+  inline void clear_player_id();
+  static const int kPlayerIdFieldNumber = 1;
+  inline ::google::protobuf::uint32 player_id() const;
+  inline void set_player_id(::google::protobuf::uint32 value);
+  
+  // optional float bonus = 2;
+  inline bool has_bonus() const;
+  inline void clear_bonus();
+  static const int kBonusFieldNumber = 2;
+  inline float bonus() const;
+  inline void set_bonus(float value);
+  
+  // optional float event_bonus = 3;
+  inline bool has_event_bonus() const;
+  inline void clear_event_bonus();
+  static const int kEventBonusFieldNumber = 3;
+  inline float event_bonus() const;
+  inline void set_event_bonus(float value);
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_BoosterStatePlayer)
+ private:
+  inline void set_has_player_id();
+  inline void clear_has_player_id();
+  inline void set_has_bonus();
+  inline void clear_has_bonus();
+  inline void set_has_event_bonus();
+  inline void clear_has_event_bonus();
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::uint32 player_id_;
+  float bonus_;
+  float event_bonus_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_BoosterStatePlayer* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_BoosterState : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_BoosterState();
+  virtual ~CDOTAUserMsg_BoosterState();
+  
+  CDOTAUserMsg_BoosterState(const CDOTAUserMsg_BoosterState& from);
+  
+  inline CDOTAUserMsg_BoosterState& operator=(const CDOTAUserMsg_BoosterState& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_BoosterState& default_instance();
+  
+  void Swap(CDOTAUserMsg_BoosterState* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CDOTAUserMsg_BoosterState* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_BoosterState& from);
+  void MergeFrom(const CDOTAUserMsg_BoosterState& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // repeated .CDOTAUserMsg_BoosterStatePlayer boosted_players = 1;
+  inline int boosted_players_size() const;
+  inline void clear_boosted_players();
+  static const int kBoostedPlayersFieldNumber = 1;
+  inline const ::CDOTAUserMsg_BoosterStatePlayer& boosted_players(int index) const;
+  inline ::CDOTAUserMsg_BoosterStatePlayer* mutable_boosted_players(int index);
+  inline ::CDOTAUserMsg_BoosterStatePlayer* add_boosted_players();
+  inline const ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_BoosterStatePlayer >&
+      boosted_players() const;
+  inline ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_BoosterStatePlayer >*
+      mutable_boosted_players();
+  
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_BoosterState)
+ private:
+  
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  
+  ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_BoosterStatePlayer > boosted_players_;
+  
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+  
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+  
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_BoosterState* default_instance_;
 };
 // ===================================================================
 
@@ -8805,6 +10092,54 @@ inline ::CDOTAMsg_ItemAlert* CDOTAUserMsg_ItemAlert::release_item_alert() {
   ::CDOTAMsg_ItemAlert* temp = item_alert_;
   item_alert_ = NULL;
   return temp;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_WillPurchaseAlert
+
+// optional int32 itemid = 1;
+inline bool CDOTAUserMsg_WillPurchaseAlert::has_itemid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_WillPurchaseAlert::set_has_itemid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_WillPurchaseAlert::clear_has_itemid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_WillPurchaseAlert::clear_itemid() {
+  itemid_ = 0;
+  clear_has_itemid();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_WillPurchaseAlert::itemid() const {
+  return itemid_;
+}
+inline void CDOTAUserMsg_WillPurchaseAlert::set_itemid(::google::protobuf::int32 value) {
+  set_has_itemid();
+  itemid_ = value;
+}
+
+// optional int32 player_id = 2;
+inline bool CDOTAUserMsg_WillPurchaseAlert::has_player_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_WillPurchaseAlert::set_has_player_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_WillPurchaseAlert::clear_has_player_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_WillPurchaseAlert::clear_player_id() {
+  player_id_ = 0;
+  clear_has_player_id();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_WillPurchaseAlert::player_id() const {
+  return player_id_;
+}
+inline void CDOTAUserMsg_WillPurchaseAlert::set_player_id(::google::protobuf::int32 value) {
+  set_has_player_id();
+  player_id_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -11422,6 +12757,28 @@ inline ::CMsgVector* CDOTAUserMsg_ParticleManager_UpdateParticleEnt::release_fal
   return temp;
 }
 
+// optional bool include_wearables = 6;
+inline bool CDOTAUserMsg_ParticleManager_UpdateParticleEnt::has_include_wearables() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CDOTAUserMsg_ParticleManager_UpdateParticleEnt::set_has_include_wearables() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CDOTAUserMsg_ParticleManager_UpdateParticleEnt::clear_has_include_wearables() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CDOTAUserMsg_ParticleManager_UpdateParticleEnt::clear_include_wearables() {
+  include_wearables_ = false;
+  clear_has_include_wearables();
+}
+inline bool CDOTAUserMsg_ParticleManager_UpdateParticleEnt::include_wearables() const {
+  return include_wearables_;
+}
+inline void CDOTAUserMsg_ParticleManager_UpdateParticleEnt::set_include_wearables(bool value) {
+  set_has_include_wearables();
+  include_wearables_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // CDOTAUserMsg_ParticleManager_UpdateParticleSetFrozen
@@ -12644,6 +14001,28 @@ inline void CDOTAUserMsg_ChatWheel::set_account_id(::google::protobuf::uint32 va
   account_id_ = value;
 }
 
+// optional uint32 param_hero_id = 4;
+inline bool CDOTAUserMsg_ChatWheel::has_param_hero_id() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CDOTAUserMsg_ChatWheel::set_has_param_hero_id() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CDOTAUserMsg_ChatWheel::clear_has_param_hero_id() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CDOTAUserMsg_ChatWheel::clear_param_hero_id() {
+  param_hero_id_ = 0u;
+  clear_has_param_hero_id();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_ChatWheel::param_hero_id() const {
+  return param_hero_id_;
+}
+inline void CDOTAUserMsg_ChatWheel::set_param_hero_id(::google::protobuf::uint32 value) {
+  set_has_param_hero_id();
+  param_hero_id_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // CDOTAUserMsg_ReceivedXmasGift
@@ -12774,6 +14153,86 @@ inline ::google::protobuf::int32 CDOTAUserMsg_ShowSurvey::survey_id() const {
 inline void CDOTAUserMsg_ShowSurvey::set_survey_id(::google::protobuf::int32 value) {
   set_has_survey_id();
   survey_id_ = value;
+}
+
+// optional uint32 match_id = 2;
+inline bool CDOTAUserMsg_ShowSurvey::has_match_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_ShowSurvey::set_has_match_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_ShowSurvey::clear_has_match_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_ShowSurvey::clear_match_id() {
+  match_id_ = 0u;
+  clear_has_match_id();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_ShowSurvey::match_id() const {
+  return match_id_;
+}
+inline void CDOTAUserMsg_ShowSurvey::set_match_id(::google::protobuf::uint32 value) {
+  set_has_match_id();
+  match_id_ = value;
+}
+
+// optional string response_style = 3;
+inline bool CDOTAUserMsg_ShowSurvey::has_response_style() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_ShowSurvey::set_has_response_style() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_ShowSurvey::clear_has_response_style() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_ShowSurvey::clear_response_style() {
+  if (response_style_ != &::google::protobuf::internal::kEmptyString) {
+    response_style_->clear();
+  }
+  clear_has_response_style();
+}
+inline const ::std::string& CDOTAUserMsg_ShowSurvey::response_style() const {
+  return *response_style_;
+}
+inline void CDOTAUserMsg_ShowSurvey::set_response_style(const ::std::string& value) {
+  set_has_response_style();
+  if (response_style_ == &::google::protobuf::internal::kEmptyString) {
+    response_style_ = new ::std::string;
+  }
+  response_style_->assign(value);
+}
+inline void CDOTAUserMsg_ShowSurvey::set_response_style(const char* value) {
+  set_has_response_style();
+  if (response_style_ == &::google::protobuf::internal::kEmptyString) {
+    response_style_ = new ::std::string;
+  }
+  response_style_->assign(value);
+}
+inline void CDOTAUserMsg_ShowSurvey::set_response_style(const char* value, size_t size) {
+  set_has_response_style();
+  if (response_style_ == &::google::protobuf::internal::kEmptyString) {
+    response_style_ = new ::std::string;
+  }
+  response_style_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_ShowSurvey::mutable_response_style() {
+  set_has_response_style();
+  if (response_style_ == &::google::protobuf::internal::kEmptyString) {
+    response_style_ = new ::std::string;
+  }
+  return response_style_;
+}
+inline ::std::string* CDOTAUserMsg_ShowSurvey::release_response_style() {
+  clear_has_response_style();
+  if (response_style_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = response_style_;
+    response_style_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
 }
 
 // -------------------------------------------------------------------
@@ -13092,50 +14551,6 @@ inline ::std::string* CDOTAUserMsg_AddQuestLogEntry::release_npc_dialog() {
   }
 }
 
-// optional bool quest = 3;
-inline bool CDOTAUserMsg_AddQuestLogEntry::has_quest() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void CDOTAUserMsg_AddQuestLogEntry::set_has_quest() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void CDOTAUserMsg_AddQuestLogEntry::clear_has_quest() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void CDOTAUserMsg_AddQuestLogEntry::clear_quest() {
-  quest_ = false;
-  clear_has_quest();
-}
-inline bool CDOTAUserMsg_AddQuestLogEntry::quest() const {
-  return quest_;
-}
-inline void CDOTAUserMsg_AddQuestLogEntry::set_quest(bool value) {
-  set_has_quest();
-  quest_ = value;
-}
-
-// optional int32 quest_type = 4;
-inline bool CDOTAUserMsg_AddQuestLogEntry::has_quest_type() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void CDOTAUserMsg_AddQuestLogEntry::set_has_quest_type() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void CDOTAUserMsg_AddQuestLogEntry::clear_has_quest_type() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void CDOTAUserMsg_AddQuestLogEntry::clear_quest_type() {
-  quest_type_ = 0;
-  clear_has_quest_type();
-}
-inline ::google::protobuf::int32 CDOTAUserMsg_AddQuestLogEntry::quest_type() const {
-  return quest_type_;
-}
-inline void CDOTAUserMsg_AddQuestLogEntry::set_quest_type(::google::protobuf::int32 value) {
-  set_has_quest_type();
-  quest_type_ = value;
-}
-
 // -------------------------------------------------------------------
 
 // CDOTAUserMsg_SendStatPopup
@@ -13239,6 +14654,902 @@ inline void CDOTAUserMsg_SendRoshanPopup::set_gametime(::google::protobuf::int32
   gametime_ = value;
 }
 
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_SendFinalGold
+
+// repeated uint32 reliable_gold = 1;
+inline int CDOTAUserMsg_SendFinalGold::reliable_gold_size() const {
+  return reliable_gold_.size();
+}
+inline void CDOTAUserMsg_SendFinalGold::clear_reliable_gold() {
+  reliable_gold_.Clear();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_SendFinalGold::reliable_gold(int index) const {
+  return reliable_gold_.Get(index);
+}
+inline void CDOTAUserMsg_SendFinalGold::set_reliable_gold(int index, ::google::protobuf::uint32 value) {
+  reliable_gold_.Set(index, value);
+}
+inline void CDOTAUserMsg_SendFinalGold::add_reliable_gold(::google::protobuf::uint32 value) {
+  reliable_gold_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+CDOTAUserMsg_SendFinalGold::reliable_gold() const {
+  return reliable_gold_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+CDOTAUserMsg_SendFinalGold::mutable_reliable_gold() {
+  return &reliable_gold_;
+}
+
+// repeated uint32 unreliable_gold = 2;
+inline int CDOTAUserMsg_SendFinalGold::unreliable_gold_size() const {
+  return unreliable_gold_.size();
+}
+inline void CDOTAUserMsg_SendFinalGold::clear_unreliable_gold() {
+  unreliable_gold_.Clear();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_SendFinalGold::unreliable_gold(int index) const {
+  return unreliable_gold_.Get(index);
+}
+inline void CDOTAUserMsg_SendFinalGold::set_unreliable_gold(int index, ::google::protobuf::uint32 value) {
+  unreliable_gold_.Set(index, value);
+}
+inline void CDOTAUserMsg_SendFinalGold::add_unreliable_gold(::google::protobuf::uint32 value) {
+  unreliable_gold_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+CDOTAUserMsg_SendFinalGold::unreliable_gold() const {
+  return unreliable_gold_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+CDOTAUserMsg_SendFinalGold::mutable_unreliable_gold() {
+  return &unreliable_gold_;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_CustomMsg
+
+// optional string message = 1;
+inline bool CDOTAUserMsg_CustomMsg::has_message() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_CustomMsg::set_has_message() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_CustomMsg::clear_has_message() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_CustomMsg::clear_message() {
+  if (message_ != &::google::protobuf::internal::kEmptyString) {
+    message_->clear();
+  }
+  clear_has_message();
+}
+inline const ::std::string& CDOTAUserMsg_CustomMsg::message() const {
+  return *message_;
+}
+inline void CDOTAUserMsg_CustomMsg::set_message(const ::std::string& value) {
+  set_has_message();
+  if (message_ == &::google::protobuf::internal::kEmptyString) {
+    message_ = new ::std::string;
+  }
+  message_->assign(value);
+}
+inline void CDOTAUserMsg_CustomMsg::set_message(const char* value) {
+  set_has_message();
+  if (message_ == &::google::protobuf::internal::kEmptyString) {
+    message_ = new ::std::string;
+  }
+  message_->assign(value);
+}
+inline void CDOTAUserMsg_CustomMsg::set_message(const char* value, size_t size) {
+  set_has_message();
+  if (message_ == &::google::protobuf::internal::kEmptyString) {
+    message_ = new ::std::string;
+  }
+  message_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_CustomMsg::mutable_message() {
+  set_has_message();
+  if (message_ == &::google::protobuf::internal::kEmptyString) {
+    message_ = new ::std::string;
+  }
+  return message_;
+}
+inline ::std::string* CDOTAUserMsg_CustomMsg::release_message() {
+  clear_has_message();
+  if (message_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = message_;
+    message_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional int32 player_id = 2;
+inline bool CDOTAUserMsg_CustomMsg::has_player_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_CustomMsg::set_has_player_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_CustomMsg::clear_has_player_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_CustomMsg::clear_player_id() {
+  player_id_ = 0;
+  clear_has_player_id();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_CustomMsg::player_id() const {
+  return player_id_;
+}
+inline void CDOTAUserMsg_CustomMsg::set_player_id(::google::protobuf::int32 value) {
+  set_has_player_id();
+  player_id_ = value;
+}
+
+// optional int32 value = 3;
+inline bool CDOTAUserMsg_CustomMsg::has_value() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_CustomMsg::set_has_value() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_CustomMsg::clear_has_value() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_CustomMsg::clear_value() {
+  value_ = 0;
+  clear_has_value();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_CustomMsg::value() const {
+  return value_;
+}
+inline void CDOTAUserMsg_CustomMsg::set_value(::google::protobuf::int32 value) {
+  set_has_value();
+  value_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_CoachHUDPing
+
+// optional uint32 player_id = 1;
+inline bool CDOTAUserMsg_CoachHUDPing::has_player_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_CoachHUDPing::set_has_player_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_CoachHUDPing::clear_has_player_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_CoachHUDPing::clear_player_id() {
+  player_id_ = 0u;
+  clear_has_player_id();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_CoachHUDPing::player_id() const {
+  return player_id_;
+}
+inline void CDOTAUserMsg_CoachHUDPing::set_player_id(::google::protobuf::uint32 value) {
+  set_has_player_id();
+  player_id_ = value;
+}
+
+// optional .CDOTAMsg_CoachHUDPing hud_ping = 2;
+inline bool CDOTAUserMsg_CoachHUDPing::has_hud_ping() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_CoachHUDPing::set_has_hud_ping() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_CoachHUDPing::clear_has_hud_ping() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_CoachHUDPing::clear_hud_ping() {
+  if (hud_ping_ != NULL) hud_ping_->::CDOTAMsg_CoachHUDPing::Clear();
+  clear_has_hud_ping();
+}
+inline const ::CDOTAMsg_CoachHUDPing& CDOTAUserMsg_CoachHUDPing::hud_ping() const {
+  return hud_ping_ != NULL ? *hud_ping_ : *default_instance_->hud_ping_;
+}
+inline ::CDOTAMsg_CoachHUDPing* CDOTAUserMsg_CoachHUDPing::mutable_hud_ping() {
+  set_has_hud_ping();
+  if (hud_ping_ == NULL) hud_ping_ = new ::CDOTAMsg_CoachHUDPing;
+  return hud_ping_;
+}
+inline ::CDOTAMsg_CoachHUDPing* CDOTAUserMsg_CoachHUDPing::release_hud_ping() {
+  clear_has_hud_ping();
+  ::CDOTAMsg_CoachHUDPing* temp = hud_ping_;
+  hud_ping_ = NULL;
+  return temp;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_ClientLoadGridNav
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_AbilityPing
+
+// optional uint32 player_id = 1;
+inline bool CDOTAUserMsg_AbilityPing::has_player_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_AbilityPing::set_has_player_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_AbilityPing::clear_has_player_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_AbilityPing::clear_player_id() {
+  player_id_ = 0u;
+  clear_has_player_id();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_AbilityPing::player_id() const {
+  return player_id_;
+}
+inline void CDOTAUserMsg_AbilityPing::set_player_id(::google::protobuf::uint32 value) {
+  set_has_player_id();
+  player_id_ = value;
+}
+
+// optional uint32 ability_id = 2;
+inline bool CDOTAUserMsg_AbilityPing::has_ability_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_AbilityPing::set_has_ability_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_AbilityPing::clear_has_ability_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_AbilityPing::clear_ability_id() {
+  ability_id_ = 0u;
+  clear_has_ability_id();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_AbilityPing::ability_id() const {
+  return ability_id_;
+}
+inline void CDOTAUserMsg_AbilityPing::set_ability_id(::google::protobuf::uint32 value) {
+  set_has_ability_id();
+  ability_id_ = value;
+}
+
+// optional .DOTA_ABILITY_PING_TYPE type = 3 [default = ABILITY_PING_READY];
+inline bool CDOTAUserMsg_AbilityPing::has_type() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_AbilityPing::set_has_type() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_AbilityPing::clear_has_type() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_AbilityPing::clear_type() {
+  type_ = 1;
+  clear_has_type();
+}
+inline DOTA_ABILITY_PING_TYPE CDOTAUserMsg_AbilityPing::type() const {
+  return static_cast< DOTA_ABILITY_PING_TYPE >(type_);
+}
+inline void CDOTAUserMsg_AbilityPing::set_type(DOTA_ABILITY_PING_TYPE value) {
+  GOOGLE_DCHECK(DOTA_ABILITY_PING_TYPE_IsValid(value));
+  set_has_type();
+  type_ = value;
+}
+
+// optional uint32 cooldown_seconds = 4;
+inline bool CDOTAUserMsg_AbilityPing::has_cooldown_seconds() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CDOTAUserMsg_AbilityPing::set_has_cooldown_seconds() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CDOTAUserMsg_AbilityPing::clear_has_cooldown_seconds() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CDOTAUserMsg_AbilityPing::clear_cooldown_seconds() {
+  cooldown_seconds_ = 0u;
+  clear_has_cooldown_seconds();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_AbilityPing::cooldown_seconds() const {
+  return cooldown_seconds_;
+}
+inline void CDOTAUserMsg_AbilityPing::set_cooldown_seconds(::google::protobuf::uint32 value) {
+  set_has_cooldown_seconds();
+  cooldown_seconds_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_ShowGenericPopup
+
+// required string header = 1;
+inline bool CDOTAUserMsg_ShowGenericPopup::has_header() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_has_header() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::clear_has_header() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::clear_header() {
+  if (header_ != &::google::protobuf::internal::kEmptyString) {
+    header_->clear();
+  }
+  clear_has_header();
+}
+inline const ::std::string& CDOTAUserMsg_ShowGenericPopup::header() const {
+  return *header_;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_header(const ::std::string& value) {
+  set_has_header();
+  if (header_ == &::google::protobuf::internal::kEmptyString) {
+    header_ = new ::std::string;
+  }
+  header_->assign(value);
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_header(const char* value) {
+  set_has_header();
+  if (header_ == &::google::protobuf::internal::kEmptyString) {
+    header_ = new ::std::string;
+  }
+  header_->assign(value);
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_header(const char* value, size_t size) {
+  set_has_header();
+  if (header_ == &::google::protobuf::internal::kEmptyString) {
+    header_ = new ::std::string;
+  }
+  header_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_ShowGenericPopup::mutable_header() {
+  set_has_header();
+  if (header_ == &::google::protobuf::internal::kEmptyString) {
+    header_ = new ::std::string;
+  }
+  return header_;
+}
+inline ::std::string* CDOTAUserMsg_ShowGenericPopup::release_header() {
+  clear_has_header();
+  if (header_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = header_;
+    header_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// required string body = 2;
+inline bool CDOTAUserMsg_ShowGenericPopup::has_body() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_has_body() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::clear_has_body() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::clear_body() {
+  if (body_ != &::google::protobuf::internal::kEmptyString) {
+    body_->clear();
+  }
+  clear_has_body();
+}
+inline const ::std::string& CDOTAUserMsg_ShowGenericPopup::body() const {
+  return *body_;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_body(const ::std::string& value) {
+  set_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    body_ = new ::std::string;
+  }
+  body_->assign(value);
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_body(const char* value) {
+  set_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    body_ = new ::std::string;
+  }
+  body_->assign(value);
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_body(const char* value, size_t size) {
+  set_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    body_ = new ::std::string;
+  }
+  body_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_ShowGenericPopup::mutable_body() {
+  set_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    body_ = new ::std::string;
+  }
+  return body_;
+}
+inline ::std::string* CDOTAUserMsg_ShowGenericPopup::release_body() {
+  clear_has_body();
+  if (body_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = body_;
+    body_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional string param1 = 3;
+inline bool CDOTAUserMsg_ShowGenericPopup::has_param1() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_has_param1() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::clear_has_param1() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::clear_param1() {
+  if (param1_ != &::google::protobuf::internal::kEmptyString) {
+    param1_->clear();
+  }
+  clear_has_param1();
+}
+inline const ::std::string& CDOTAUserMsg_ShowGenericPopup::param1() const {
+  return *param1_;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_param1(const ::std::string& value) {
+  set_has_param1();
+  if (param1_ == &::google::protobuf::internal::kEmptyString) {
+    param1_ = new ::std::string;
+  }
+  param1_->assign(value);
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_param1(const char* value) {
+  set_has_param1();
+  if (param1_ == &::google::protobuf::internal::kEmptyString) {
+    param1_ = new ::std::string;
+  }
+  param1_->assign(value);
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_param1(const char* value, size_t size) {
+  set_has_param1();
+  if (param1_ == &::google::protobuf::internal::kEmptyString) {
+    param1_ = new ::std::string;
+  }
+  param1_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_ShowGenericPopup::mutable_param1() {
+  set_has_param1();
+  if (param1_ == &::google::protobuf::internal::kEmptyString) {
+    param1_ = new ::std::string;
+  }
+  return param1_;
+}
+inline ::std::string* CDOTAUserMsg_ShowGenericPopup::release_param1() {
+  clear_has_param1();
+  if (param1_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = param1_;
+    param1_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional string param2 = 4;
+inline bool CDOTAUserMsg_ShowGenericPopup::has_param2() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_has_param2() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::clear_has_param2() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::clear_param2() {
+  if (param2_ != &::google::protobuf::internal::kEmptyString) {
+    param2_->clear();
+  }
+  clear_has_param2();
+}
+inline const ::std::string& CDOTAUserMsg_ShowGenericPopup::param2() const {
+  return *param2_;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_param2(const ::std::string& value) {
+  set_has_param2();
+  if (param2_ == &::google::protobuf::internal::kEmptyString) {
+    param2_ = new ::std::string;
+  }
+  param2_->assign(value);
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_param2(const char* value) {
+  set_has_param2();
+  if (param2_ == &::google::protobuf::internal::kEmptyString) {
+    param2_ = new ::std::string;
+  }
+  param2_->assign(value);
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_param2(const char* value, size_t size) {
+  set_has_param2();
+  if (param2_ == &::google::protobuf::internal::kEmptyString) {
+    param2_ = new ::std::string;
+  }
+  param2_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_ShowGenericPopup::mutable_param2() {
+  set_has_param2();
+  if (param2_ == &::google::protobuf::internal::kEmptyString) {
+    param2_ = new ::std::string;
+  }
+  return param2_;
+}
+inline ::std::string* CDOTAUserMsg_ShowGenericPopup::release_param2() {
+  clear_has_param2();
+  if (param2_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = param2_;
+    param2_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional bool tint_screen = 5;
+inline bool CDOTAUserMsg_ShowGenericPopup::has_tint_screen() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_has_tint_screen() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::clear_has_tint_screen() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::clear_tint_screen() {
+  tint_screen_ = false;
+  clear_has_tint_screen();
+}
+inline bool CDOTAUserMsg_ShowGenericPopup::tint_screen() const {
+  return tint_screen_;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_tint_screen(bool value) {
+  set_has_tint_screen();
+  tint_screen_ = value;
+}
+
+// optional bool show_no_other_dialogs = 6;
+inline bool CDOTAUserMsg_ShowGenericPopup::has_show_no_other_dialogs() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_has_show_no_other_dialogs() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::clear_has_show_no_other_dialogs() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::clear_show_no_other_dialogs() {
+  show_no_other_dialogs_ = false;
+  clear_has_show_no_other_dialogs();
+}
+inline bool CDOTAUserMsg_ShowGenericPopup::show_no_other_dialogs() const {
+  return show_no_other_dialogs_;
+}
+inline void CDOTAUserMsg_ShowGenericPopup::set_show_no_other_dialogs(bool value) {
+  set_has_show_no_other_dialogs();
+  show_no_other_dialogs_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_VoteStart
+
+// optional string title = 1;
+inline bool CDOTAUserMsg_VoteStart::has_title() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_VoteStart::set_has_title() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_VoteStart::clear_has_title() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_VoteStart::clear_title() {
+  if (title_ != &::google::protobuf::internal::kEmptyString) {
+    title_->clear();
+  }
+  clear_has_title();
+}
+inline const ::std::string& CDOTAUserMsg_VoteStart::title() const {
+  return *title_;
+}
+inline void CDOTAUserMsg_VoteStart::set_title(const ::std::string& value) {
+  set_has_title();
+  if (title_ == &::google::protobuf::internal::kEmptyString) {
+    title_ = new ::std::string;
+  }
+  title_->assign(value);
+}
+inline void CDOTAUserMsg_VoteStart::set_title(const char* value) {
+  set_has_title();
+  if (title_ == &::google::protobuf::internal::kEmptyString) {
+    title_ = new ::std::string;
+  }
+  title_->assign(value);
+}
+inline void CDOTAUserMsg_VoteStart::set_title(const char* value, size_t size) {
+  set_has_title();
+  if (title_ == &::google::protobuf::internal::kEmptyString) {
+    title_ = new ::std::string;
+  }
+  title_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_VoteStart::mutable_title() {
+  set_has_title();
+  if (title_ == &::google::protobuf::internal::kEmptyString) {
+    title_ = new ::std::string;
+  }
+  return title_;
+}
+inline ::std::string* CDOTAUserMsg_VoteStart::release_title() {
+  clear_has_title();
+  if (title_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = title_;
+    title_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional float duration = 2;
+inline bool CDOTAUserMsg_VoteStart::has_duration() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_VoteStart::set_has_duration() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_VoteStart::clear_has_duration() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_VoteStart::clear_duration() {
+  duration_ = 0;
+  clear_has_duration();
+}
+inline float CDOTAUserMsg_VoteStart::duration() const {
+  return duration_;
+}
+inline void CDOTAUserMsg_VoteStart::set_duration(float value) {
+  set_has_duration();
+  duration_ = value;
+}
+
+// optional int32 choice_count = 3;
+inline bool CDOTAUserMsg_VoteStart::has_choice_count() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_VoteStart::set_has_choice_count() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_VoteStart::clear_has_choice_count() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_VoteStart::clear_choice_count() {
+  choice_count_ = 0;
+  clear_has_choice_count();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_VoteStart::choice_count() const {
+  return choice_count_;
+}
+inline void CDOTAUserMsg_VoteStart::set_choice_count(::google::protobuf::int32 value) {
+  set_has_choice_count();
+  choice_count_ = value;
+}
+
+// repeated string choices = 4;
+inline int CDOTAUserMsg_VoteStart::choices_size() const {
+  return choices_.size();
+}
+inline void CDOTAUserMsg_VoteStart::clear_choices() {
+  choices_.Clear();
+}
+inline const ::std::string& CDOTAUserMsg_VoteStart::choices(int index) const {
+  return choices_.Get(index);
+}
+inline ::std::string* CDOTAUserMsg_VoteStart::mutable_choices(int index) {
+  return choices_.Mutable(index);
+}
+inline void CDOTAUserMsg_VoteStart::set_choices(int index, const ::std::string& value) {
+  choices_.Mutable(index)->assign(value);
+}
+inline void CDOTAUserMsg_VoteStart::set_choices(int index, const char* value) {
+  choices_.Mutable(index)->assign(value);
+}
+inline void CDOTAUserMsg_VoteStart::set_choices(int index, const char* value, size_t size) {
+  choices_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CDOTAUserMsg_VoteStart::add_choices() {
+  return choices_.Add();
+}
+inline void CDOTAUserMsg_VoteStart::add_choices(const ::std::string& value) {
+  choices_.Add()->assign(value);
+}
+inline void CDOTAUserMsg_VoteStart::add_choices(const char* value) {
+  choices_.Add()->assign(value);
+}
+inline void CDOTAUserMsg_VoteStart::add_choices(const char* value, size_t size) {
+  choices_.Add()->assign(reinterpret_cast<const char*>(value), size);
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+CDOTAUserMsg_VoteStart::choices() const {
+  return choices_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+CDOTAUserMsg_VoteStart::mutable_choices() {
+  return &choices_;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_VoteUpdate
+
+// repeated int32 choice_counts = 1;
+inline int CDOTAUserMsg_VoteUpdate::choice_counts_size() const {
+  return choice_counts_.size();
+}
+inline void CDOTAUserMsg_VoteUpdate::clear_choice_counts() {
+  choice_counts_.Clear();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_VoteUpdate::choice_counts(int index) const {
+  return choice_counts_.Get(index);
+}
+inline void CDOTAUserMsg_VoteUpdate::set_choice_counts(int index, ::google::protobuf::int32 value) {
+  choice_counts_.Set(index, value);
+}
+inline void CDOTAUserMsg_VoteUpdate::add_choice_counts(::google::protobuf::int32 value) {
+  choice_counts_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+CDOTAUserMsg_VoteUpdate::choice_counts() const {
+  return choice_counts_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+CDOTAUserMsg_VoteUpdate::mutable_choice_counts() {
+  return &choice_counts_;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_VoteEnd
+
+// optional int32 selected_choice = 1;
+inline bool CDOTAUserMsg_VoteEnd::has_selected_choice() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_VoteEnd::set_has_selected_choice() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_VoteEnd::clear_has_selected_choice() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_VoteEnd::clear_selected_choice() {
+  selected_choice_ = 0;
+  clear_has_selected_choice();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_VoteEnd::selected_choice() const {
+  return selected_choice_;
+}
+inline void CDOTAUserMsg_VoteEnd::set_selected_choice(::google::protobuf::int32 value) {
+  set_has_selected_choice();
+  selected_choice_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_BoosterStatePlayer
+
+// optional uint32 player_id = 1;
+inline bool CDOTAUserMsg_BoosterStatePlayer::has_player_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_BoosterStatePlayer::set_has_player_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_BoosterStatePlayer::clear_has_player_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_BoosterStatePlayer::clear_player_id() {
+  player_id_ = 0u;
+  clear_has_player_id();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_BoosterStatePlayer::player_id() const {
+  return player_id_;
+}
+inline void CDOTAUserMsg_BoosterStatePlayer::set_player_id(::google::protobuf::uint32 value) {
+  set_has_player_id();
+  player_id_ = value;
+}
+
+// optional float bonus = 2;
+inline bool CDOTAUserMsg_BoosterStatePlayer::has_bonus() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_BoosterStatePlayer::set_has_bonus() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_BoosterStatePlayer::clear_has_bonus() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_BoosterStatePlayer::clear_bonus() {
+  bonus_ = 0;
+  clear_has_bonus();
+}
+inline float CDOTAUserMsg_BoosterStatePlayer::bonus() const {
+  return bonus_;
+}
+inline void CDOTAUserMsg_BoosterStatePlayer::set_bonus(float value) {
+  set_has_bonus();
+  bonus_ = value;
+}
+
+// optional float event_bonus = 3;
+inline bool CDOTAUserMsg_BoosterStatePlayer::has_event_bonus() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_BoosterStatePlayer::set_has_event_bonus() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_BoosterStatePlayer::clear_has_event_bonus() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_BoosterStatePlayer::clear_event_bonus() {
+  event_bonus_ = 0;
+  clear_has_event_bonus();
+}
+inline float CDOTAUserMsg_BoosterStatePlayer::event_bonus() const {
+  return event_bonus_;
+}
+inline void CDOTAUserMsg_BoosterStatePlayer::set_event_bonus(float value) {
+  set_has_event_bonus();
+  event_bonus_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_BoosterState
+
+// repeated .CDOTAUserMsg_BoosterStatePlayer boosted_players = 1;
+inline int CDOTAUserMsg_BoosterState::boosted_players_size() const {
+  return boosted_players_.size();
+}
+inline void CDOTAUserMsg_BoosterState::clear_boosted_players() {
+  boosted_players_.Clear();
+}
+inline const ::CDOTAUserMsg_BoosterStatePlayer& CDOTAUserMsg_BoosterState::boosted_players(int index) const {
+  return boosted_players_.Get(index);
+}
+inline ::CDOTAUserMsg_BoosterStatePlayer* CDOTAUserMsg_BoosterState::mutable_boosted_players(int index) {
+  return boosted_players_.Mutable(index);
+}
+inline ::CDOTAUserMsg_BoosterStatePlayer* CDOTAUserMsg_BoosterState::add_boosted_players() {
+  return boosted_players_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_BoosterStatePlayer >&
+CDOTAUserMsg_BoosterState::boosted_players() const {
+  return boosted_players_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_BoosterStatePlayer >*
+CDOTAUserMsg_BoosterState::mutable_boosted_players() {
+  return &boosted_players_;
+}
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -13281,6 +15592,10 @@ inline const EnumDescriptor* GetEnumDescriptor< DOTA_PARTICLE_MESSAGE>() {
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< DOTA_OVERHEAD_ALERT>() {
   return DOTA_OVERHEAD_ALERT_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< DOTA_ABILITY_PING_TYPE>() {
+  return DOTA_ABILITY_PING_TYPE_descriptor();
 }
 
 }  // namespace google

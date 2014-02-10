@@ -2399,6 +2399,17 @@ class CSVCMsg_ServerInfo : public ::google::protobuf::Message {
   inline ::std::string* mutable_host_name();
   inline ::std::string* release_host_name();
   
+  // optional string addon_name = 18;
+  inline bool has_addon_name() const;
+  inline void clear_addon_name();
+  static const int kAddonNameFieldNumber = 18;
+  inline const ::std::string& addon_name() const;
+  inline void set_addon_name(const ::std::string& value);
+  inline void set_addon_name(const char* value);
+  inline void set_addon_name(const char* value, size_t size);
+  inline ::std::string* mutable_addon_name();
+  inline ::std::string* release_addon_name();
+  
   // @@protoc_insertion_point(class_scope:CSVCMsg_ServerInfo)
  private:
   inline void set_has_protocol();
@@ -2435,6 +2446,8 @@ class CSVCMsg_ServerInfo : public ::google::protobuf::Message {
   inline void clear_has_sky_name();
   inline void set_has_host_name();
   inline void clear_has_host_name();
+  inline void set_has_addon_name();
+  inline void clear_has_addon_name();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -2454,10 +2467,11 @@ class CSVCMsg_ServerInfo : public ::google::protobuf::Message {
   ::std::string* map_name_;
   ::std::string* sky_name_;
   ::std::string* host_name_;
+  ::std::string* addon_name_;
   float tick_interval_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(17 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(18 + 31) / 32];
   
   friend void  protobuf_AddDesc_netmessages_2eproto();
   friend void protobuf_AssignDesc_netmessages_2eproto();
@@ -7580,6 +7594,64 @@ inline ::std::string* CSVCMsg_ServerInfo::release_host_name() {
   } else {
     ::std::string* temp = host_name_;
     host_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+
+// optional string addon_name = 18;
+inline bool CSVCMsg_ServerInfo::has_addon_name() const {
+  return (_has_bits_[0] & 0x00020000u) != 0;
+}
+inline void CSVCMsg_ServerInfo::set_has_addon_name() {
+  _has_bits_[0] |= 0x00020000u;
+}
+inline void CSVCMsg_ServerInfo::clear_has_addon_name() {
+  _has_bits_[0] &= ~0x00020000u;
+}
+inline void CSVCMsg_ServerInfo::clear_addon_name() {
+  if (addon_name_ != &::google::protobuf::internal::kEmptyString) {
+    addon_name_->clear();
+  }
+  clear_has_addon_name();
+}
+inline const ::std::string& CSVCMsg_ServerInfo::addon_name() const {
+  return *addon_name_;
+}
+inline void CSVCMsg_ServerInfo::set_addon_name(const ::std::string& value) {
+  set_has_addon_name();
+  if (addon_name_ == &::google::protobuf::internal::kEmptyString) {
+    addon_name_ = new ::std::string;
+  }
+  addon_name_->assign(value);
+}
+inline void CSVCMsg_ServerInfo::set_addon_name(const char* value) {
+  set_has_addon_name();
+  if (addon_name_ == &::google::protobuf::internal::kEmptyString) {
+    addon_name_ = new ::std::string;
+  }
+  addon_name_->assign(value);
+}
+inline void CSVCMsg_ServerInfo::set_addon_name(const char* value, size_t size) {
+  set_has_addon_name();
+  if (addon_name_ == &::google::protobuf::internal::kEmptyString) {
+    addon_name_ = new ::std::string;
+  }
+  addon_name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CSVCMsg_ServerInfo::mutable_addon_name() {
+  set_has_addon_name();
+  if (addon_name_ == &::google::protobuf::internal::kEmptyString) {
+    addon_name_ = new ::std::string;
+  }
+  return addon_name_;
+}
+inline ::std::string* CSVCMsg_ServerInfo::release_addon_name() {
+  clear_has_addon_name();
+  if (addon_name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = addon_name_;
+    addon_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
     return temp;
   }
 }

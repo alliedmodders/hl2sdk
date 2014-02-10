@@ -270,6 +270,13 @@ class CUserMsg_CloseCaption : public ::google::protobuf::Message {
   inline bool from_player() const;
   inline void set_from_player(bool value);
   
+  // optional int32 ent_index = 4;
+  inline bool has_ent_index() const;
+  inline void clear_ent_index();
+  static const int kEntIndexFieldNumber = 4;
+  inline ::google::protobuf::int32 ent_index() const;
+  inline void set_ent_index(::google::protobuf::int32 value);
+  
   // @@protoc_insertion_point(class_scope:CUserMsg_CloseCaption)
  private:
   inline void set_has_hash();
@@ -278,15 +285,18 @@ class CUserMsg_CloseCaption : public ::google::protobuf::Message {
   inline void clear_has_duration();
   inline void set_has_from_player();
   inline void clear_has_from_player();
+  inline void set_has_ent_index();
+  inline void clear_has_ent_index();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
   ::google::protobuf::uint32 hash_;
   float duration_;
   bool from_player_;
+  ::google::protobuf::int32 ent_index_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
   
   friend void  protobuf_AddDesc_usermessages_2eproto();
   friend void protobuf_AssignDesc_usermessages_2eproto();
@@ -3179,6 +3189,28 @@ inline bool CUserMsg_CloseCaption::from_player() const {
 inline void CUserMsg_CloseCaption::set_from_player(bool value) {
   set_has_from_player();
   from_player_ = value;
+}
+
+// optional int32 ent_index = 4;
+inline bool CUserMsg_CloseCaption::has_ent_index() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CUserMsg_CloseCaption::set_has_ent_index() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CUserMsg_CloseCaption::clear_has_ent_index() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CUserMsg_CloseCaption::clear_ent_index() {
+  ent_index_ = 0;
+  clear_has_ent_index();
+}
+inline ::google::protobuf::int32 CUserMsg_CloseCaption::ent_index() const {
+  return ent_index_;
+}
+inline void CUserMsg_CloseCaption::set_ent_index(::google::protobuf::int32 value) {
+  set_has_ent_index();
+  ent_index_ = value;
 }
 
 // -------------------------------------------------------------------
