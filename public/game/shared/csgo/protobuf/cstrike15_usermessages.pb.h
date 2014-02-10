@@ -57,6 +57,7 @@ class CCSUsrMsg_KeyHintText;
 class CCSUsrMsg_ProcessSpottedEntityUpdate;
 class CCSUsrMsg_ProcessSpottedEntityUpdate_SpottedEntityUpdate;
 class CEconItemPreviewDataBlock;
+class CEconItemPreviewDataBlock_Sticker;
 class CCSUsrMsg_SendPlayerItemDrops;
 class CCSUsrMsg_ReloadEffect;
 class CCSUsrMsg_AdjustMoney;
@@ -2808,6 +2809,127 @@ class CCSUsrMsg_ProcessSpottedEntityUpdate : public ::google::protobuf::Message 
 };
 // -------------------------------------------------------------------
 
+class CEconItemPreviewDataBlock_Sticker : public ::google::protobuf::Message {
+ public:
+  CEconItemPreviewDataBlock_Sticker();
+  virtual ~CEconItemPreviewDataBlock_Sticker();
+  
+  CEconItemPreviewDataBlock_Sticker(const CEconItemPreviewDataBlock_Sticker& from);
+  
+  inline CEconItemPreviewDataBlock_Sticker& operator=(const CEconItemPreviewDataBlock_Sticker& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+  
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+  
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CEconItemPreviewDataBlock_Sticker& default_instance();
+  
+  void Swap(CEconItemPreviewDataBlock_Sticker* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CEconItemPreviewDataBlock_Sticker* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CEconItemPreviewDataBlock_Sticker& from);
+  void MergeFrom(const CEconItemPreviewDataBlock_Sticker& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::google::protobuf::Metadata GetMetadata() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // optional uint32 slot = 1;
+  inline bool has_slot() const;
+  inline void clear_slot();
+  static const int kSlotFieldNumber = 1;
+  inline ::google::protobuf::uint32 slot() const;
+  inline void set_slot(::google::protobuf::uint32 value);
+  
+  // optional uint32 sticker_id = 2;
+  inline bool has_sticker_id() const;
+  inline void clear_sticker_id();
+  static const int kStickerIdFieldNumber = 2;
+  inline ::google::protobuf::uint32 sticker_id() const;
+  inline void set_sticker_id(::google::protobuf::uint32 value);
+  
+  // optional float wear = 3;
+  inline bool has_wear() const;
+  inline void clear_wear();
+  static const int kWearFieldNumber = 3;
+  inline float wear() const;
+  inline void set_wear(float value);
+  
+  // optional float scale = 4;
+  inline bool has_scale() const;
+  inline void clear_scale();
+  static const int kScaleFieldNumber = 4;
+  inline float scale() const;
+  inline void set_scale(float value);
+  
+  // optional float rotation = 5;
+  inline bool has_rotation() const;
+  inline void clear_rotation();
+  static const int kRotationFieldNumber = 5;
+  inline float rotation() const;
+  inline void set_rotation(float value);
+  
+  // @@protoc_insertion_point(class_scope:CEconItemPreviewDataBlock.Sticker)
+ private:
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+  mutable int _cached_size_;
+  
+  ::google::protobuf::uint32 slot_;
+  ::google::protobuf::uint32 sticker_id_;
+  float wear_;
+  float scale_;
+  float rotation_;
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+  
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static CEconItemPreviewDataBlock_Sticker* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class CEconItemPreviewDataBlock : public ::google::protobuf::Message {
  public:
   CEconItemPreviewDataBlock();
@@ -2859,6 +2981,8 @@ class CEconItemPreviewDataBlock : public ::google::protobuf::Message {
   ::google::protobuf::Metadata GetMetadata() const;
   
   // nested types ----------------------------------------------------
+  
+  typedef CEconItemPreviewDataBlock_Sticker Sticker;
   
   // accessors -------------------------------------------------------
   
@@ -2932,6 +3056,28 @@ class CEconItemPreviewDataBlock : public ::google::protobuf::Message {
   inline ::google::protobuf::uint32 killeatervalue() const;
   inline void set_killeatervalue(::google::protobuf::uint32 value);
   
+  // optional string customname = 11;
+  inline bool has_customname() const;
+  inline void clear_customname();
+  static const int kCustomnameFieldNumber = 11;
+  inline const ::std::string& customname() const;
+  inline void set_customname(const ::std::string& value);
+  inline void set_customname(const char* value);
+  inline void set_customname(const char* value, size_t size);
+  inline ::std::string* mutable_customname();
+  
+  // repeated .CEconItemPreviewDataBlock.Sticker stickers = 12;
+  inline int stickers_size() const;
+  inline void clear_stickers();
+  static const int kStickersFieldNumber = 12;
+  inline const ::CEconItemPreviewDataBlock_Sticker& stickers(int index) const;
+  inline ::CEconItemPreviewDataBlock_Sticker* mutable_stickers(int index);
+  inline ::CEconItemPreviewDataBlock_Sticker* add_stickers();
+  inline const ::google::protobuf::RepeatedPtrField< ::CEconItemPreviewDataBlock_Sticker >&
+      stickers() const;
+  inline ::google::protobuf::RepeatedPtrField< ::CEconItemPreviewDataBlock_Sticker >*
+      mutable_stickers();
+  
   // @@protoc_insertion_point(class_scope:CEconItemPreviewDataBlock)
  private:
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
@@ -2947,11 +3093,14 @@ class CEconItemPreviewDataBlock : public ::google::protobuf::Message {
   ::google::protobuf::uint32 paintseed_;
   ::google::protobuf::uint32 killeaterscoretype_;
   ::google::protobuf::uint32 killeatervalue_;
+  ::std::string* customname_;
+  static const ::std::string _default_customname_;
+  ::google::protobuf::RepeatedPtrField< ::CEconItemPreviewDataBlock_Sticker > stickers_;
   friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
   
-  ::google::protobuf::uint32 _has_bits_[(10 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(12 + 31) / 32];
   
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
@@ -8363,6 +8512,90 @@ CCSUsrMsg_ProcessSpottedEntityUpdate::mutable_entity_updates() {
 
 // -------------------------------------------------------------------
 
+// CEconItemPreviewDataBlock_Sticker
+
+// optional uint32 slot = 1;
+inline bool CEconItemPreviewDataBlock_Sticker::has_slot() const {
+  return _has_bit(0);
+}
+inline void CEconItemPreviewDataBlock_Sticker::clear_slot() {
+  slot_ = 0u;
+  _clear_bit(0);
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock_Sticker::slot() const {
+  return slot_;
+}
+inline void CEconItemPreviewDataBlock_Sticker::set_slot(::google::protobuf::uint32 value) {
+  _set_bit(0);
+  slot_ = value;
+}
+
+// optional uint32 sticker_id = 2;
+inline bool CEconItemPreviewDataBlock_Sticker::has_sticker_id() const {
+  return _has_bit(1);
+}
+inline void CEconItemPreviewDataBlock_Sticker::clear_sticker_id() {
+  sticker_id_ = 0u;
+  _clear_bit(1);
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock_Sticker::sticker_id() const {
+  return sticker_id_;
+}
+inline void CEconItemPreviewDataBlock_Sticker::set_sticker_id(::google::protobuf::uint32 value) {
+  _set_bit(1);
+  sticker_id_ = value;
+}
+
+// optional float wear = 3;
+inline bool CEconItemPreviewDataBlock_Sticker::has_wear() const {
+  return _has_bit(2);
+}
+inline void CEconItemPreviewDataBlock_Sticker::clear_wear() {
+  wear_ = 0;
+  _clear_bit(2);
+}
+inline float CEconItemPreviewDataBlock_Sticker::wear() const {
+  return wear_;
+}
+inline void CEconItemPreviewDataBlock_Sticker::set_wear(float value) {
+  _set_bit(2);
+  wear_ = value;
+}
+
+// optional float scale = 4;
+inline bool CEconItemPreviewDataBlock_Sticker::has_scale() const {
+  return _has_bit(3);
+}
+inline void CEconItemPreviewDataBlock_Sticker::clear_scale() {
+  scale_ = 0;
+  _clear_bit(3);
+}
+inline float CEconItemPreviewDataBlock_Sticker::scale() const {
+  return scale_;
+}
+inline void CEconItemPreviewDataBlock_Sticker::set_scale(float value) {
+  _set_bit(3);
+  scale_ = value;
+}
+
+// optional float rotation = 5;
+inline bool CEconItemPreviewDataBlock_Sticker::has_rotation() const {
+  return _has_bit(4);
+}
+inline void CEconItemPreviewDataBlock_Sticker::clear_rotation() {
+  rotation_ = 0;
+  _clear_bit(4);
+}
+inline float CEconItemPreviewDataBlock_Sticker::rotation() const {
+  return rotation_;
+}
+inline void CEconItemPreviewDataBlock_Sticker::set_rotation(float value) {
+  _set_bit(4);
+  rotation_ = value;
+}
+
+// -------------------------------------------------------------------
+
 // CEconItemPreviewDataBlock
 
 // optional uint32 accountid = 1;
@@ -8523,6 +8756,73 @@ inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::killeatervalue() co
 inline void CEconItemPreviewDataBlock::set_killeatervalue(::google::protobuf::uint32 value) {
   _set_bit(9);
   killeatervalue_ = value;
+}
+
+// optional string customname = 11;
+inline bool CEconItemPreviewDataBlock::has_customname() const {
+  return _has_bit(10);
+}
+inline void CEconItemPreviewDataBlock::clear_customname() {
+  if (customname_ != &_default_customname_) {
+    customname_->clear();
+  }
+  _clear_bit(10);
+}
+inline const ::std::string& CEconItemPreviewDataBlock::customname() const {
+  return *customname_;
+}
+inline void CEconItemPreviewDataBlock::set_customname(const ::std::string& value) {
+  _set_bit(10);
+  if (customname_ == &_default_customname_) {
+    customname_ = new ::std::string;
+  }
+  customname_->assign(value);
+}
+inline void CEconItemPreviewDataBlock::set_customname(const char* value) {
+  _set_bit(10);
+  if (customname_ == &_default_customname_) {
+    customname_ = new ::std::string;
+  }
+  customname_->assign(value);
+}
+inline void CEconItemPreviewDataBlock::set_customname(const char* value, size_t size) {
+  _set_bit(10);
+  if (customname_ == &_default_customname_) {
+    customname_ = new ::std::string;
+  }
+  customname_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CEconItemPreviewDataBlock::mutable_customname() {
+  _set_bit(10);
+  if (customname_ == &_default_customname_) {
+    customname_ = new ::std::string;
+  }
+  return customname_;
+}
+
+// repeated .CEconItemPreviewDataBlock.Sticker stickers = 12;
+inline int CEconItemPreviewDataBlock::stickers_size() const {
+  return stickers_.size();
+}
+inline void CEconItemPreviewDataBlock::clear_stickers() {
+  stickers_.Clear();
+}
+inline const ::CEconItemPreviewDataBlock_Sticker& CEconItemPreviewDataBlock::stickers(int index) const {
+  return stickers_.Get(index);
+}
+inline ::CEconItemPreviewDataBlock_Sticker* CEconItemPreviewDataBlock::mutable_stickers(int index) {
+  return stickers_.Mutable(index);
+}
+inline ::CEconItemPreviewDataBlock_Sticker* CEconItemPreviewDataBlock::add_stickers() {
+  return stickers_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::CEconItemPreviewDataBlock_Sticker >&
+CEconItemPreviewDataBlock::stickers() const {
+  return stickers_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::CEconItemPreviewDataBlock_Sticker >*
+CEconItemPreviewDataBlock::mutable_stickers() {
+  return &stickers_;
 }
 
 // -------------------------------------------------------------------
