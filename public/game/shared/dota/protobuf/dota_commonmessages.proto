@@ -137,6 +137,8 @@ enum EDOTAChatWheelMessage
 	k_EDOTA_CW_My_Bad = 68;
 	k_EDOTA_CW_Regret = 69;
 	k_EDOTA_CW_Relax = 70;
+	k_EDOTA_CW_MissingHero = 71;
+	k_EDOTA_CW_ReturnedHero = 72;
 }
 
 enum EDOTAStatPopupTypes
@@ -183,6 +185,13 @@ message CDOTAMsg_SendStatPopup
 	optional EDOTAStatPopupTypes style = 1 [default = k_EDOTA_SPT_Textline];
 	repeated string stat_strings = 2;
 	repeated int32 stat_images = 3;
+}
+
+message CDOTAMsg_CoachHUDPing
+{
+	optional uint32 x = 1;
+	optional uint32 y = 2;
+	optional string tgtpath = 3;
 }
 
 

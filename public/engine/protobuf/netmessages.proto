@@ -294,6 +294,7 @@ message CSVCMsg_ServerInfo
 	optional string map_name = 15;			// name of current map 
 	optional string sky_name = 16;			// name of current skybox 
 	optional string host_name = 17;			// server name
+	optional string addon_name = 18;
 }
 
 message CSVCMsg_ClassInfo
