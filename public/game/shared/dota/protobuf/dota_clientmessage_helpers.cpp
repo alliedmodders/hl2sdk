@@ -32,6 +32,12 @@ CDotaClientMessageHelpers::CDotaClientMessageHelpers()
 	SETUP_DOTA_MESSAGE( ChatWheel );
 	SETUP_DOTA_MESSAGE( SendStatPopup );
 	SETUP_DOTA_MESSAGE( BeginLastHitChallenge );
+	SETUP_DOTA_MESSAGE( UpdateQuickBuy );
+	SETUP_DOTA_MESSAGE( UpdateCoachListen );
+	SETUP_DOTA_MESSAGE( CoachHUDPing );
+	SETUP_DOTA_MESSAGE( RecordVote );
+	SETUP_DOTA_MESSAGE( UnitsAutoAttackAfterSpell );
+	SETUP_DOTA_MESSAGE( WillPurchaseAlert );
 }
 
 const google::protobuf::Message *CDotaClientMessageHelpers::GetPrototype( int index ) const

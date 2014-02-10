@@ -104,6 +104,17 @@ CDotaUsermessageHelpers::CDotaUsermessageHelpers()
 	SETUP_DOTA_MESSAGE( TutorialFinish );
 	SETUP_DOTA_MESSAGE( SendRoshanPopup );
 	SETUP_DOTA_MESSAGE( SendGenericToolTip );
+	SETUP_DOTA_MESSAGE( SendFinalGold );
+	SETUP_DOTA_MESSAGE( CustomMsg );
+	SETUP_DOTA_MESSAGE( CoachHUDPing );
+	SETUP_DOTA_MESSAGE( ClientLoadGridNav );
+	SETUP_DOTA_MESSAGE( AbilityPing );
+	SETUP_DOTA_MESSAGE( ShowGenericPopup );
+	SETUP_DOTA_MESSAGE( VoteStart );
+	SETUP_DOTA_MESSAGE( VoteUpdate );
+	SETUP_DOTA_MESSAGE( VoteEnd );
+	SETUP_DOTA_MESSAGE( BoosterState );
+	SETUP_DOTA_MESSAGE( WillPurchaseAlert );
 }
 
 const google::protobuf::Message *CDotaUsermessageHelpers::GetPrototype( int index ) const
