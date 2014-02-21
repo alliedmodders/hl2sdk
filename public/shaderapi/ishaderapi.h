@@ -286,6 +286,9 @@ public:
 	// NOTE: These methods have been ported to DX10
 	//
 
+	virtual bool IsRenderingPaint() const = 0;
+	virtual bool IsStereoActiveThisFrame() const = 0;
+
 	// Viewport methods
 	virtual void SetViewports( int nCount, const ShaderViewport_t* pViewports, bool setImmediately ) = 0;
 	virtual int GetViewports( ShaderViewport_t* pViewports, int nMax ) const = 0;
@@ -368,6 +371,10 @@ public:
 	// The cull mode
 	virtual void CullMode( MaterialCullMode_t cullMode ) = 0;
 	virtual void FlipCullMode( void ) = 0; //CW->CCW or CCW->CW, intended for mirror support where the view matrix is flipped horizontally
+
+	virtual void BeginGeneratingCSMs() = 0;
+	virtual void EndGeneratingCSMs() = 0;
+	virtual void PerpareForCascadeDraw( int, float, float ) = 0;
 
 	// Force writes only when z matches. . . useful for stenciling things out
 	// by rendering the desired Z values ahead of time.
@@ -472,7 +479,9 @@ public:
 	
 	// stuff that isn't to be used from within a shader
 	virtual void ClearBuffersObeyStencil( bool bClearColor, bool bClearDepth ) = 0;
-	virtual void ReadPixels( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat ) = 0;
+	virtual void ReadPixels( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat, ITexture *pTexture ) = 0;
+	virtual void ReadPixelsAsync( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat, ITexture *pTexture, CThreadEvent *pEvent ) = 0;
+	virtual void ReadPixelsAsyncGetResult( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat, CThreadEvent *pEvent ) = 0;
 	virtual void ReadPixels( Rect_t *pSrcRect, Rect_t *pDstRect, unsigned char *data, ImageFormat dstFormat, int nDstStride ) = 0;
 
 	virtual void FlushHardware() = 0;
@@ -789,7 +798,7 @@ public:
 	virtual void SetSRGBWrite( bool bState ) = 0;
 
 	virtual void PrintfVA( char *fmt, va_list vargs ) = 0;
-    virtual void Printf( char *fmt, ... ) = 0;
+	virtual void Printf( char *fmt, ... ) = 0;
 
 	virtual float Knob( char *knobname, float *setvalue ) = 0;
 

@@ -355,7 +355,9 @@ public:
 	virtual void ClearBuffersObeyStencil( bool bClearColor, bool bClearDepth );
 	virtual void ClearBuffersObeyStencilEx( bool bClearColor, bool bClearAlpha, bool bClearDepth );
 	virtual void PerformFullScreenStencilOperation();
-	virtual void ReadPixels( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat );
+	virtual void ReadPixels( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat, ITexture *pTexture );
+	virtual void ReadPixelsAsync( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat, ITexture *pTexture, CThreadEvent *pEvent );
+	virtual void ReadPixelsAsyncGetResult( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat, CThreadEvent *pEvent );
 	virtual void ReadPixels( Rect_t *pSrcRect, Rect_t *pDstRect, unsigned char *data, ImageFormat dstFormat, int nDstStride );
 	virtual int SelectionMode( bool selectionMode );
 	virtual void SelectionBuffer( unsigned int *pBuffer, int size );
@@ -400,7 +402,7 @@ public:
 	virtual bool SupportsMipmappedCubemaps() const;
 	virtual int NumVertexShaderConstants() const;
 	int NumBooleanVertexShaderConstants() const;
-    int NumIntegerVertexShaderConstants() const;
+	int NumIntegerVertexShaderConstants() const;
 	virtual int NumPixelShaderConstants() const;
 	virtual int MaxNumLights() const;
 	virtual int MaxVertexShaderBlendMatrices() const;
@@ -548,7 +550,7 @@ public:
 	virtual void UpdateStereoTexture( ShaderAPITextureHandle_t texHandle, bool *pStereoActiveThisFrame );
 	virtual void SetSRGBWrite( bool bState );
 	virtual void PrintfVA( char *fmt, va_list vargs );
-    virtual void Printf( char *fmt, ... );
+	virtual void Printf( char *fmt, ... );
 	virtual float Knob( char *knobname, float *setvalue );
 	virtual void AddShaderComboInformation( const ShaderComboSemantics_t *pSemantics );
 	virtual void SpinPresent( unsigned int nFrames );
@@ -562,6 +564,14 @@ public:
 	virtual float GetLightMapScaleFactor( void ) const;
 	virtual ShaderAPITextureHandle_t FindTexture( const char *pDebugName );
 	virtual void GetTextureDimensions( ShaderAPITextureHandle_t hTexture, int &nWidth, int &nHeight, int &nDepth );
+	virtual void SetVertexShaderViewProj();
+	virtual void UpdateVertexShaderMatrix( int );
+	virtual void SetVertexShaderModelViewProjAndModelView();
+	virtual void SetVertexShaderCameraPos();
+	virtual int SetSkinningMatrices( const MeshInstanceData_t & );
+	virtual void BeginGeneratingCSMs();
+	virtual void EndGeneratingCSMs();
+	virtual void PerpareForCascadeDraw( int, float, float );
 private:
 	enum
 	{
@@ -2113,7 +2123,17 @@ void CShaderAPIEmpty::PerformFullScreenStencilOperation()
 
 }
 
-void CShaderAPIEmpty::ReadPixels( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat )
+void CShaderAPIEmpty::ReadPixels( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat, ITexture *pTexture )
+{
+
+}
+
+void CShaderAPIEmpty::ReadPixelsAsync( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat, ITexture *pTexture, CThreadEvent *pEvent )
+{
+
+}
+
+void CShaderAPIEmpty::ReadPixelsAsyncGetResult( int x, int y, int width, int height, unsigned char *data, ImageFormat dstFormat, CThreadEvent *pEvent )
 {
 
 }
@@ -3154,6 +3174,46 @@ ShaderAPITextureHandle_t CShaderAPIEmpty::FindTexture( const char *pDebugName )
 }
 
 void CShaderAPIEmpty::GetTextureDimensions( ShaderAPITextureHandle_t hTexture, int &nWidth, int &nHeight, int &nDepth )
+{
+
+}
+
+void CShaderAPIEmpty::SetVertexShaderViewProj()
+{
+
+}
+
+void CShaderAPIEmpty::UpdateVertexShaderMatrix( int )
+{
+
+}
+
+void CShaderAPIEmpty::SetVertexShaderModelViewProjAndModelView()
+{
+
+}
+
+void CShaderAPIEmpty::SetVertexShaderCameraPos()
+{
+
+}
+
+int CShaderAPIEmpty::SetSkinningMatrices( const MeshInstanceData_t & )
+{
+	return 0;
+}
+
+void CShaderAPIEmpty::BeginGeneratingCSMs()
+{
+
+}
+
+void CShaderAPIEmpty::EndGeneratingCSMs()
+{
+
+}
+
+void CShaderAPIEmpty::PerpareForCascadeDraw( int, float, float )
 {
 
 }

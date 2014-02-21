@@ -137,6 +137,16 @@ enum TessellationMode_t;
 abstract_class IShaderDynamicAPI
 {
 public:
+	virtual void BeginPerfEEvent( wchar_t * ) {};
+	virtual void EndPerfEvent() {};
+
+	virtual void SetVertexShaderViewProj() = 0;
+	virtual void UpdateVertexShaderMatrix( int ) = 0;
+	virtual void SetVertexShaderModelViewProjAndModelView() = 0;
+	virtual void SetVertexShaderCameraPos() = 0;
+	virtual int SetSkinningMatrices( const MeshInstanceData_t & ) = 0;
+	virtual void BindTexture( Sampler_t stage, TextureBindFlags_t nBindFlags, ShaderAPITextureHandle_t textureHandle ) = 0;
+
 	// returns the current time in seconds....
 	virtual double CurrentTime() const = 0;
 
@@ -288,8 +298,6 @@ public:
 	virtual void DisablePredication() = 0;
 #endif // _X360
 
-	virtual bool IsRenderingPaint() const = 0;
-	virtual bool IsStereoActiveThisFrame() const = 0;
 };
 
 // end class IShaderDynamicAPI

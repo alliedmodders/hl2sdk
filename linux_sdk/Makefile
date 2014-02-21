@@ -84,6 +84,7 @@ ifeq "$(OS)" "Darwin"
 DEFINES = -D_OSX -DOSX
 SHLIBEXT = dylib
 SHLIBLDFLAGS = -dynamiclib -mmacosx-version-min=10.5
+ARCH_CFLAGS += -mmacosx-version-min=10.5
 else
 DEFINES = -D_LINUX -DLINUX
 SHLIBEXT = so
@@ -94,7 +95,8 @@ DEFINES += -DCOMPILER_GCC -DPOSIX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstri
 	-D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
-BASE_CFLAGS = -fno-strict-aliasing -Wall -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof
+BASE_CFLAGS = -fno-strict-aliasing -Wall -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
+	      -Wno-unused
 SHLIBCFLAGS = -fPIC
 
 # Flags passed to the c compiler
