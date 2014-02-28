@@ -57,10 +57,10 @@ void CTakeDamageInfo::Init( CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBa
 	m_vecDamagePosition = damagePosition;
 	m_vecReportedPosition = reportedPosition;
 	m_iAmmoType = -1;
-	
 	m_iDamagedOtherPlayers = 0;
-	m_iPlayerPenetrateCount = 0;
-	m_flUnknown = 0.0f;
+	m_iPlayerPenetrationCount = 0;
+	m_flDamageBonus = 0.f;
+	m_bForceFriendlyFire = false;
 }
 
 CTakeDamageInfo::CTakeDamageInfo()
@@ -244,6 +244,11 @@ void AddMultiDamage( const CTakeDamageInfo &info, CBaseEntity *pEntity )
 	g_MultiDamage.SetReportedPosition( info.GetReportedPosition() );
 	g_MultiDamage.SetMaxDamage( MAX( g_MultiDamage.GetMaxDamage(), info.GetDamage() ) );
 	g_MultiDamage.SetAmmoType( info.GetAmmoType() );
+
+	if ( g_MultiDamage.GetPlayerPenetrationCount() == 0 )
+	{
+		g_MultiDamage.SetPlayerPenetrationCount( info.GetPlayerPenetrationCount() );
+	}
 
 	bool bHasPhysicsForceDamage = !g_pGameRules->Damage_NoPhysicsForce( info.GetDamageType() );
 	if ( bHasPhysicsForceDamage && g_MultiDamage.GetDamageType() != DMG_GENERIC )
