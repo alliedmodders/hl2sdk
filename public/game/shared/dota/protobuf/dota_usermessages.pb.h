@@ -2529,6 +2529,21 @@ class CDOTAUserMsg_CreateLinearProjectile : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 handle() const;
   inline void set_handle(::google::protobuf::int32 value);
   
+  // optional .CMsgVector2D acceleration = 7;
+  inline bool has_acceleration() const;
+  inline void clear_acceleration();
+  static const int kAccelerationFieldNumber = 7;
+  inline const ::CMsgVector2D& acceleration() const;
+  inline ::CMsgVector2D* mutable_acceleration();
+  inline ::CMsgVector2D* release_acceleration();
+  
+  // optional float max_speed = 8;
+  inline bool has_max_speed() const;
+  inline void clear_max_speed();
+  static const int kMaxSpeedFieldNumber = 8;
+  inline float max_speed() const;
+  inline void set_max_speed(float value);
+  
   // @@protoc_insertion_point(class_scope:CDOTAUserMsg_CreateLinearProjectile)
  private:
   inline void set_has_origin();
@@ -2543,6 +2558,10 @@ class CDOTAUserMsg_CreateLinearProjectile : public ::google::protobuf::Message {
   inline void clear_has_particle_index();
   inline void set_has_handle();
   inline void clear_has_handle();
+  inline void set_has_acceleration();
+  inline void clear_has_acceleration();
+  inline void set_has_max_speed();
+  inline void clear_has_max_speed();
   
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
   
@@ -2552,9 +2571,11 @@ class CDOTAUserMsg_CreateLinearProjectile : public ::google::protobuf::Message {
   ::google::protobuf::int32 entindex_;
   ::google::protobuf::int32 particle_index_;
   ::google::protobuf::int32 handle_;
+  ::CMsgVector2D* acceleration_;
+  float max_speed_;
   
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
   
   friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
@@ -10558,6 +10579,57 @@ inline ::google::protobuf::int32 CDOTAUserMsg_CreateLinearProjectile::handle() c
 inline void CDOTAUserMsg_CreateLinearProjectile::set_handle(::google::protobuf::int32 value) {
   set_has_handle();
   handle_ = value;
+}
+
+// optional .CMsgVector2D acceleration = 7;
+inline bool CDOTAUserMsg_CreateLinearProjectile::has_acceleration() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void CDOTAUserMsg_CreateLinearProjectile::set_has_acceleration() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void CDOTAUserMsg_CreateLinearProjectile::clear_has_acceleration() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void CDOTAUserMsg_CreateLinearProjectile::clear_acceleration() {
+  if (acceleration_ != NULL) acceleration_->::CMsgVector2D::Clear();
+  clear_has_acceleration();
+}
+inline const ::CMsgVector2D& CDOTAUserMsg_CreateLinearProjectile::acceleration() const {
+  return acceleration_ != NULL ? *acceleration_ : *default_instance_->acceleration_;
+}
+inline ::CMsgVector2D* CDOTAUserMsg_CreateLinearProjectile::mutable_acceleration() {
+  set_has_acceleration();
+  if (acceleration_ == NULL) acceleration_ = new ::CMsgVector2D;
+  return acceleration_;
+}
+inline ::CMsgVector2D* CDOTAUserMsg_CreateLinearProjectile::release_acceleration() {
+  clear_has_acceleration();
+  ::CMsgVector2D* temp = acceleration_;
+  acceleration_ = NULL;
+  return temp;
+}
+
+// optional float max_speed = 8;
+inline bool CDOTAUserMsg_CreateLinearProjectile::has_max_speed() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void CDOTAUserMsg_CreateLinearProjectile::set_has_max_speed() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void CDOTAUserMsg_CreateLinearProjectile::clear_has_max_speed() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void CDOTAUserMsg_CreateLinearProjectile::clear_max_speed() {
+  max_speed_ = 0;
+  clear_has_max_speed();
+}
+inline float CDOTAUserMsg_CreateLinearProjectile::max_speed() const {
+  return max_speed_;
+}
+inline void CDOTAUserMsg_CreateLinearProjectile::set_max_speed(float value) {
+  set_has_max_speed();
+  max_speed_ = value;
 }
 
 // -------------------------------------------------------------------
