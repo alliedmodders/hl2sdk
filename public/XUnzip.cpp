@@ -4476,15 +4476,7 @@ bool SafeUnzipMemory( const void *pvZipped, int cubZipped, void *pvDest, int cub
 	int iRes = ZR_CORRUPT;
 	if ( hZip )
 	{
-		try
-		{
-			iRes = UnzipItem( hZip, 0, pvDest, cubDest, ZIP_MEMORY );
-		}
-		catch ( ... )
-		{
-			// failed to unzip, try to continue
-			iRes = ZR_CORRUPT;
-		}
+		iRes = UnzipItem( hZip, 0, pvDest, cubDest, ZIP_MEMORY );
 		CloseZip( hZip );
 	}
 

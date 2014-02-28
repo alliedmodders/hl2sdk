@@ -678,6 +678,12 @@ static void CalcLocalHierarchyAnimation(
 	int boneMask
 	)
 {
+#ifdef STAGING_ONLY
+	Assert( iNewParent == -1 || (iNewParent >= 0 && iNewParent < MAXSTUDIOBONES) );
+	Assert( iBone > 0 );
+	Assert( iBone < MAXSTUDIOBONES );
+#endif // STAGING_ONLY
+
 	Vector localPos;
 	Quaternion localQ;
 
@@ -715,12 +721,19 @@ static void CalcLocalHierarchyAnimation(
 	CalcDecompressedAnimation( pHierarchy->pLocalAnim(), iFrame - pHierarchy->iStart, flFraq, localPos, localQ );
 
 	BuildBoneChain( pStudioHdr, rootXform, pos, q, iBone, boneToWorld, boneComputed );
-	BuildBoneChain( pStudioHdr, rootXform, pos, q, iNewParent, boneToWorld, boneComputed );
 
 	matrix3x4_t localXform;
 	AngleMatrix( localQ, localPos, localXform );
 
-	ConcatTransforms( boneToWorld[iNewParent], localXform, boneToWorld[iBone] );
+	if ( iNewParent != -1 )
+	{
+		BuildBoneChain( pStudioHdr, rootXform, pos, q, iNewParent, boneToWorld, boneComputed );
+		ConcatTransforms( boneToWorld[iNewParent], localXform, boneToWorld[iBone] );
+	}
+	else
+	{
+		boneToWorld[iBone] = localXform;
+	}
 
 	// back solve
 	Vector p1;
@@ -995,10 +1008,17 @@ static void CalcVirtualAnimation( virtualmodel_t *pVModel, const CStudioHdr *pSt
 			int iBone = pAnimGroup->masterBone[pHierarchy->iBone];
 			if (iBone >= 0 && (pStudioHdr->boneFlags(iBone) & boneMask))
 			{
-				int iNewParent = pAnimGroup->masterBone[pHierarchy->iNewParent];
-				if (iNewParent >= 0 && (pStudioHdr->boneFlags(iNewParent) & boneMask))
+				if ( pHierarchy->iNewParent != -1 )
 				{
-					CalcLocalHierarchyAnimation( pStudioHdr, boneToWorld, boneComputed, pos, q, pbone, pHierarchy, iBone, iNewParent, cycle, iFrame, s, boneMask );
+					int iNewParent = pAnimGroup->masterBone[pHierarchy->iNewParent];
+					if (iNewParent >= 0 && (pStudioHdr->boneFlags(iNewParent) & boneMask))
+					{
+						CalcLocalHierarchyAnimation( pStudioHdr, boneToWorld, boneComputed, pos, q, pbone, pHierarchy, iBone, iNewParent, cycle, iFrame, s, boneMask );
+					}
+				}
+				else
+				{
+					CalcLocalHierarchyAnimation( pStudioHdr, boneToWorld, boneComputed, pos, q, pbone, pHierarchy, iBone, -1, cycle, iFrame, s, boneMask );
 				}
 			}
 		}
