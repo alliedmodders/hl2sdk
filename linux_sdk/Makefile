@@ -81,6 +81,7 @@ ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -msse -msse2 -m32
 
 ifeq "$(OS)" "Darwin"
 DEFINES = -D_OSX -DOSX
+ARCH_CFLAGS += -mmacosx-version-min=10.7
 else
 DEFINES = -D_LINUX -DLINUX
 endif
@@ -117,6 +118,7 @@ BASE_DEFINES = CC=$(CC) AR=$(AR) CPLUS=$(CPLUS) CPP_LIB=$(CPP_LIB) DEBUG=$(DEBUG
 # Project Makefile
 MAKE_SERVER = Makefile.server
 MAKE_VCPM = Makefile.vcpm
+MAKE_SRCDS = Makefile.srcds
 MAKE_PLUGIN = Makefile.plugin
 MAKE_TIER1 = Makefile.tier1
 MAKE_MATH = Makefile.mathlib
@@ -143,6 +145,9 @@ mod: check vcpm
 	./vcpm $(MOD_PROJ)
 	$(MAKE) -f $(MAKE_SERVER) $(BASE_DEFINES)
 
+srcds:
+	$(MAKE) -f $(MAKE_SRCDS) $(BASE_DEFINES)
+
 plugin: check
 	$(MAKE) -f $(MAKE_PLUGIN) $(BASE_DEFINES)
 	
@@ -167,6 +172,7 @@ installrelease:
 
 clean:
 	$(MAKE) -f $(MAKE_VCPM) $(BASE_DEFINES) clean
+	$(MAKE) -f $(MAKE_SRCDS) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_PLUGIN) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_SERVER) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_TIER1) $(BASE_DEFINES) clean
