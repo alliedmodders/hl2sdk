@@ -30,12 +30,13 @@ ifeq "$(OS)" "Darwin"
 CC = /usr/bin/clang
 CPLUS = /usr/bin/clang++
 CLINK = /usr/bin/clang
+CPP_LIB =
 else
 CC = /usr/bin/gcc
 CPLUS = /usr/bin/g++
 CLINK = /usr/bin/gcc
+CPP_LIB = "$(SRCDS_DIR)/bin/libstdc++.so.6 $(SRCDS_DIR)/bin/libgcc_s.so.1"
 endif
-CPP_LIB = "libstdc++.a libgcc_eh.a"
 
 # put any compiler flags you want passed here
 USER_CFLAGS =
@@ -56,7 +57,16 @@ DEBUG = false
 #############################################################################
 # Things below here shouldn't need to be altered
 #############################################################################
-OS := $(shell uname -s)
+IS_CLANG := $(shell $(CPP) --version | head -1 | grep clang > /dev/null && echo "1" || echo "0")
+
+ifeq "$(IS_CLANG)" "1"
+CPP_MAJOR := $(shell $(CPP) --version | grep clang | sed "s/.*version \([0-9]\)*\.[0-9]*.*/\1/")
+CPP_MINOR := $(shell $(CPP) --version | grep clang | sed "s/.*version [0-9]*\.\([0-9]\)*.*/\1/")
+else
+CPP_MAJOR := $(shell $(CPP) -dumpversion >&1 | cut -b1)
+CPP_MINOR := $(shell $(CPP) -dumpversion >&1 | cut -b3)
+endif
+
 MAKE = make
 AR = "ar rvs"
 
@@ -80,20 +90,30 @@ ARCH = i486
 ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -msse -msse2 -m32
 
 ifeq "$(OS)" "Darwin"
-DEFINES = -D_OSX -DOSX
+DEFINES = -D_OSX -DOSX -D_DLL_EXT=.dylib
 ARCH_CFLAGS += -mmacosx-version-min=10.7
+SHLIBEXT = dylib
+SHLIBLDFLAGS = -dynamiclib -mmacosx-version-min=10.7
+SHLIBSUFFIX =
 else
-DEFINES = -D_LINUX -DLINUX
+DEFINES = -D_LINUX -DLINUX -D_DLL_EXT=.so
+SHLIBEXT = so
+SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt
+SHLIBSUFFIX =
 endif
 
-DEFINES += -DCOMPILER_GCC -DPOSIX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp \
-	-D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
+DEFINES +=-DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp \
+	-Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DPOSIX -DGNUC -DCOMPILER_GCC -DNO_MALLOC_OVERRIDE
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
-BASE_CFLAGS = -fno-strict-aliasing -Wall -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof
-SHLIBEXT = so
+BASE_CFLAGS = -fno-strict-aliasing -Wall -Wsign-compare -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
+	      -Wno-unknown-pragmas -Wno-unused
 SHLIBCFLAGS = -fPIC
-SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt -Wl
+
+# Clang >= 3 || GCC >= 4.7
+ifeq "$(shell expr $(IS_CLANG) \& $(CPP_MAJOR) \>= 3 \| $(CPP_MAJOR) \>= 4 \& $(CPP_MINOR) \>= 7)" "1"
+BASE_CFLAGS += -Wno-delete-non-virtual-dtor -Wno-narrowing
+endif
 
 # Flags passed to the c compiler
 CFLAGS = $(DEFINES) $(ARCH_CFLAGS) -O3 $(BASE_CFLAGS)
@@ -109,7 +129,7 @@ DBG_CFLAGS = "$(DEFINES) $(ARCH_CFLAGS) -g -ggdb $(BASE_CFLAGS) $(UNDEF)"
 # define list passed to make for the sub makefile
 BASE_DEFINES = CC=$(CC) AR=$(AR) CPLUS=$(CPLUS) CPP_LIB=$(CPP_LIB) DEBUG=$(DEBUG) \
 	BUILD_DIR=$(BUILD_DIR) BUILD_OBJ_DIR=$(BUILD_OBJ_DIR) SRC_DIR=$(SRC_DIR) \
-	LIB_DIR=$(LIB_DIR) SHLIBLDFLAGS=$(SHLIBLDFLAGS) SHLIBEXT=$(SHLIBEXT) \
+	LIB_DIR=$(LIB_DIR) SHLIBLDFLAGS="$(SHLIBLDFLAGS)" SHLIBEXT=$(SHLIBEXT) SHLIBSUFFIX=$(SHLIBSUFFIX) \
 	CLINK=$(CLINK) CFLAGS="$(CFLAGS)" DBG_CFLAGS=$(DBG_CFLAGS) LDFLAGS=$(LDFLAGS) \
 	DEFINES="$(DEFINES)" DBG_DEFINES=$(DBG_DEFINES) \
 	ARCH=$(ARCH) SRCDS_DIR=$(SRCDS_DIR) MOD_CONFIG=$(MOD_CONFIG) NAME=$(NAME) \
@@ -133,10 +153,10 @@ check:
 	cd $(BUILD_DIR)
 	if [ ! -e "$(LIB_DIR)/tier1_i486.a" ]; then $(MAKE) tier1;fi
 	if [ ! -e "$(LIB_DIR)/mathlib_i486.a" ]; then $(MAKE) mathlib;fi
-	if [ ! -e "$(LIB_DIR)/choreoobjects_i486.a" ]; then $(MAKE) choreo;fi
-	if [ ! -f "tier0_i486.so" ]; then ln -s $(SRCDS_DIR)/bin/tier0_i486.so .; fi
-	if [ ! -f "vstdlib_i486.so" ]; then ln -s $(SRCDS_DIR)/bin/vstdlib_i486.so .; fi
-	if [ ! -f "steam_api_i486.so" ]; then ln -s $(SRCDS_DIR)/bin/steam_api_i486.so .; fi
+	if [ ! -e "$(LIB_DIR)/interfaces_i486.a" ]; then $(MAKE) interfaces;fi
+	if [ ! -f "libtier0$(SHLIBSUFFIX).$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libtier0$(SHLIBSUFFIX).$(SHLIBEXT) .; fi
+	if [ ! -f "libvstdlib$(SHLIBSUFFIX).$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libvstdlib$(SHLIBSUFFIX).$(SHLIBEXT) .; fi
+	if [ ! -f "libsteam_api.$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libsteam_api.$(SHLIBEXT) .; fi
 
 vcpm: check
 	if [ ! -e "vcpm" ]; then $(MAKE) -f $(MAKE_VCPM) $(BASE_DEFINES);fi

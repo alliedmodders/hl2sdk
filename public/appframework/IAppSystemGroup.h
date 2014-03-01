@@ -23,7 +23,7 @@
 #include "tier1/interface.h"
 #include "tier1/utlvector.h"
 #include "tier1/utldict.h"
-#include "tier1/utlstringmap.h"
+#include "tier1/UtlStringMap.h"
 #include "IAppSystem.h"
 
 //-----------------------------------------------------------------------------
