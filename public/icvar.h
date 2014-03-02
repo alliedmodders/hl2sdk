@@ -175,7 +175,7 @@ inline ICvar::Iterator::Iterator(ICvar *icvar)
 
 inline ICvar::Iterator::~Iterator( void )
 {
-	free(m_pIter);
+	MemAlloc_Free(m_pIter);
 }
 
 inline void ICvar::Iterator::SetFirst( void )

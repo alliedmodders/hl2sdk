@@ -37,7 +37,7 @@
 #define MEM_DEBUG_CLASSNAME 1
 
 #include <stddef.h>
-#if defined(OSX)
+#if defined( OSX )
 #include <malloc/malloc.h>
 #endif
 
@@ -178,6 +178,14 @@ inline void *MemAlloc_Alloc( size_t nSize, const char *pFileName, int nLine )
 	return g_pMemAlloc->IndirectAlloc( nSize, pFileName, nLine );
 }
 #endif
+inline void MemAlloc_Free( void *ptr )
+{
+	g_pMemAlloc->Free( ptr );
+}
+inline void MemAlloc_Free( void *ptr, const char *pFileName, int nLine )
+{
+	g_pMemAlloc->Free( ptr, pFileName, nLine );
+}
 
 //-----------------------------------------------------------------------------
 

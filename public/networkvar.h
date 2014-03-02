@@ -18,8 +18,9 @@
 	#include "basehandle.h"
 #endif
 
-
+#if defined( COMPILER_MSVC )
 #pragma warning( disable : 4284 ) // warning C4284: return type for 'CNetworkVarT<int>::operator ->' is 'int *' (ie; not a UDT or reference to a UDT.  Will produce errors if applied using infix notation)
+#endif
 
 #define MyOffsetOf( type, var ) ( (int)&((type*)0)->var )
 
@@ -57,7 +58,7 @@ public:
 	{
 		if ( pData )
 		{
-			g_pMemAlloc->Free(pData);
+			MemAlloc_Free(pData);
 		}
 	}
 
@@ -65,7 +66,7 @@ public:
 	{
 		if ( pData )
 		{
-			g_pMemAlloc->Free(pData, pFileName, nLine );
+			MemAlloc_Free(pData, pFileName, nLine);
 		}
 	}
 };
