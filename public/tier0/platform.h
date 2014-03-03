@@ -293,29 +293,61 @@ typedef unsigned int		uint;
 
 
 // Maximum and minimum representable values
-#ifndef PLATFORM_OSX
+#if !defined(PLATFORM_OSX) && !defined(__STDC_LIMIT_MACROS)
 
+#ifndef INT8_MAX
 #define  INT8_MAX			SCHAR_MAX
+#endif
+#ifndef INT16_MAX
 #define  INT16_MAX			SHRT_MAX
+#endif
+#ifndef INT32_MAX
 #define  INT32_MAX			LONG_MAX
+#endif
+#ifndef INT64_MAX
 #define  INT64_MAX			(((int64)~0) >> 1)
+#endif
 
+#ifndef INT8_MIN
 #define  INT8_MIN			SCHAR_MIN
+#endif
+#ifndef INT16_MIN
 #define  INT16_MIN			SHRT_MIN
+#endif
+#ifndef INT32_MIN
 #define  INT32_MIN			LONG_MIN
+#endif
+#ifndef INT64_MIN
 #define  INT64_MIN			(((int64)1) << 63)
+#endif
 
+#ifndef UINT8_MAX
 #define  UINT8_MAX			((uint8)~0)
+#endif
+#ifndef UINT16_MAX
 #define  UINT16_MAX			((uint16)~0)
+#endif
+#ifndef UINT32_MAX
 #define  UINT32_MAX			((uint32)~0)
+#endif
+#ifndef UINT16_MAX
 #define  UINT64_MAX			((uint64)~0)
+#endif
 
+#ifndef UINT8_MIN
 #define  UINT8_MIN			0
+#endif
+#ifndef UINT16_MIN
 #define  UINT16_MIN			0
+#endif
+#ifndef UINT32_MIN
 #define  UINT32_MIN			0
+#endif
+#ifndef UINT64_MIN
 #define  UINT64_MIN			0
+#endif
 
-#endif // PLATFORM_OSX
+#endif // !PLATFORM_OSX && !__STDC_LIMIT_MACROS
 
 #ifndef  UINT_MIN
 #define  UINT_MIN			UINT32_MIN
