@@ -1111,6 +1111,8 @@ PLATFORM_INTERFACE void				Plat_GetModuleFilename( char *pOut, int nMaxBytes );
 
 PLATFORM_INTERFACE void				Plat_ExitProcess( int nCode );
 
+PLATFORM_INTERFACE bool				Plat_ShouldCollectMiniDumpsForFatalErrors();
+
 // b/w compatibility
 #define Sys_FloatTime Plat_FloatTime
 
