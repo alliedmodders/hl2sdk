@@ -721,6 +721,8 @@ PLATFORM_INTERFACE void Plat_MessageBox( const char *pTitle, const tchar *pMessa
 #endif
 
 
+PLATFORM_INTERFACE void Plat_Printf ( const tchar *pFmt, ... ) FMTFUNCTION( 1, 2 );
+
 //-----------------------------------------------------------------------------
 // Posix platform helpers
 //-----------------------------------------------------------------------------
