@@ -1087,6 +1087,9 @@ inline void SwapFloat( float *pOut, const float *pIn )		{ SafeSwapFloat( pOut, p
 PLATFORM_INTERFACE void				Plat_SetBenchmarkMode( bool bBenchmarkMode );	
 PLATFORM_INTERFACE bool				Plat_IsInBenchmarkMode();
 
+// Returns true if running in test mode.
+// Test mode is turned on if -testmode is on the command line or the VALVE_TESTMODE environment variable is defined.
+PLATFORM_INTERFACE bool				Plat_IsInTestMode();
 
 PLATFORM_INTERFACE double			Plat_FloatTime();		// Returns time in seconds since the module was loaded.
 PLATFORM_INTERFACE uint32			Plat_MSTime();			// Time in milliseconds.
