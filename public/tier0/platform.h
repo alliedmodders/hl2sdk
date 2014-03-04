@@ -660,8 +660,12 @@ typedef unsigned int		uint;
 	#define DebuggerBreak()		__asm { int 3 }
 #elif COMPILER_MSVCX360
 	#define DebuggerBreak()		DebugBreak()
-#elif COMPILER_GCC 
-	#if defined( PLATFORM_CYGWIN ) || defined( PLATFORM_POSIX )
+#elif COMPILER_GCC
+	#if defined( PLATFORM_OSX )
+		// On OSX, SIGTRAP doesn't really stop the thread cold when debugging.
+		// So if being debugged, use INT3 which is precise.
+		#define DebuggerBreak()  { if ( Plat_IsInDebugSession() ) { __asm ( "int $3" ); } else { raise(SIGTRAP); } }
+	#elif defined( PLATFORM_CYGWIN ) || defined( PLATFORM_POSIX )
 		#define DebuggerBreak()		__asm__( "int $0x3;")
 	#else
 		#define DebuggerBreak()		asm( "int3" )
@@ -696,13 +700,13 @@ typedef unsigned int		uint;
 //-----------------------------------------------------------------------------
 // Returns true if debugger attached, false otherwise
 //-----------------------------------------------------------------------------
-#if defined( PLATFORM_WINDOWS )
+#if defined( PLATFORM_WINDOWS ) || defined( PLATFORM_LINUX ) || defined( PLATFORM_OSX )
+PLATFORM_INTERFACE bool Plat_IsInDebugSession();
 PLATFORM_INTERFACE void Plat_DebugString( const tchar * );
 #else
+inline bool Plat_IsInDebugSession() { return false; }
 #define Plat_DebugString(s) ((void)0)
 #endif
-
-PLATFORM_INTERFACE bool Plat_IsInDebugSession();
 
 #define	DebuggerBreakIfDebugging() if ( !Plat_IsInDebugSession() ) ; else DebuggerBreak()
 
@@ -746,6 +750,7 @@ PLATFORM_INTERFACE void Plat_MessageBox( const char *pTitle, const tchar *pMessa
 
 #include <alloca.h>
 #include <unistd.h>											// get unlink
+#include <signal.h>
 #include <errno.h>
 
 #endif // PLATFORM_POSIX
