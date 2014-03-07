@@ -29,6 +29,7 @@ SRCDS_BIN = srcds_osx
 LDFLAGS_SRCDS += -mmacosx-version-min=10.7
 else
 SRCDS_BIN = srcds_linux
+LDFLAGS_SRCDS += -lstdc++
 endif
 
 SRCDS_OBJS = \
