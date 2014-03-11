@@ -229,6 +229,10 @@ typedef double				float64;
 // for when we don't care about how many bits we use
 typedef unsigned int		uint;
 
+#if defined(__clang__)
+#define CLANG_VERSION (__clang_major__ * 100 + __clang_minor__)
+#endif
+
 #ifdef _MSC_VER
 #pragma once
 // Ensure that everybody has the right compiler version installed. The version
@@ -500,7 +504,12 @@ typedef void * HINSTANCE;
 	#define FMTFUNCTION( a, b )
 #elif defined(GNUC)
 	#define SELECTANY __attribute__((weak))
-	#define RESTRICT
+	// Versions of clang older than 3.4 or Apple's 5.1 mangle member function names with the __restrict modifier in a GCC-incompatible way
+	#if ( defined(LINUX) && !defined(DEDICATED) ) || ( defined(__clang__) && ( ( defined(__apple_build_version__) && CLANG_VERSION < 501 ) || CLANG_VERSION < 304 ) )	
+		#define RESTRICT
+	#else
+		#define RESTRICT __restrict
+	#endif
 	#define RESTRICT_FUNC
 	// squirrel.h does a #define printf DevMsg which leads to warnings when we try
 	// to use printf as the prototype format function. Using __printf__ instead.
