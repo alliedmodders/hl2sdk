@@ -217,10 +217,14 @@ typedef char *  va_list;
 
 #ifdef _WIN32
 #define CORRECT_PATH_SEPARATOR '\\'
+#define CORRECT_PATH_SEPARATOR_S "\\"
 #define INCORRECT_PATH_SEPARATOR '/'
+#define INCORRECT_PATH_SEPARATOR_S "/"
 #elif POSIX
 #define CORRECT_PATH_SEPARATOR '/'
+#define CORRECT_PATH_SEPARATOR_S "/"
 #define INCORRECT_PATH_SEPARATOR '\\'
+#define INCORRECT_PATH_SEPARATOR_S "\\"
 #endif
 
 int V_vsnprintf( char *pDest, int maxLen, const char *pFormat, va_list params );
