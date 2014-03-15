@@ -203,7 +203,7 @@ DECLARE_DEDUCE_FIELDTYPE( FIELD_QANGLE,		const QAngle &);
 template <typename T>
 inline const char * ScriptFieldTypeName() 
 {
-	T::using_unknown_script_type(); 
+	return T::using_unknown_script_type(); 
 }
 
 #define DECLARE_NAMED_FIELDTYPE( fieldType, strName ) template <> inline const char * ScriptFieldTypeName<fieldType>() { return strName; }
@@ -331,22 +331,22 @@ enum SVFlags_t
 #pragma warning(disable:4800)
 struct ScriptVariant_t
 {
-	ScriptVariant_t() :						m_flags( 0 ), m_type( FIELD_VOID )		{ m_pVector = 0; }
-	ScriptVariant_t( int val ) :			m_flags( 0 ), m_type( FIELD_INTEGER )	{ m_int = val;}
-	ScriptVariant_t( uint val) :			m_flags( 0 ), m_type( FIELD_UINT )		{ m_uint = val; }
-	ScriptVariant_t( float val ) :			m_flags( 0 ), m_type( FIELD_FLOAT )		{ m_float = val; }
-	ScriptVariant_t( double val ) :			m_flags( 0 ), m_type( FIELD_DOUBLE )	{ m_double = val; }
-	ScriptVariant_t( char val ) :			m_flags( 0 ), m_type( FIELD_CHARACTER )	{ m_char = val; }
-	ScriptVariant_t( bool val ) :			m_flags( 0 ), m_type( FIELD_BOOLEAN )	{ m_bool = val; }
-	ScriptVariant_t( HSCRIPT val ) :		m_flags( 0 ), m_type( FIELD_HSCRIPT )	{ m_hScript = val; }
-	ScriptVariant_t( int64 val) :			m_flags( 0 ), m_type( FIELD_INTEGER64 )	{ m_int64 = val; }
-	ScriptVariant_t( uint64 val) :			m_flags( 0 ), m_type( FIELD_UINT64)		{ m_uint64 = val; }
+	ScriptVariant_t() :						m_type( FIELD_VOID ), m_flags( 0 )		{ m_pVector = 0; }
+	ScriptVariant_t( int val ) :			m_type( FIELD_INTEGER ), m_flags( 0 )	{ m_int = val;}
+	ScriptVariant_t( uint val) :			m_type( FIELD_UINT ), m_flags( 0 )		{ m_uint = val; }
+	ScriptVariant_t( float val ) :			m_type( FIELD_FLOAT ), m_flags( 0 )		{ m_float = val; }
+	ScriptVariant_t( double val ) :			m_type( FIELD_DOUBLE ), m_flags( 0 )	{ m_double = val; }
+	ScriptVariant_t( char val ) :			m_type( FIELD_CHARACTER ), m_flags( 0 )	{ m_char = val; }
+	ScriptVariant_t( bool val ) :			m_type( FIELD_BOOLEAN ), m_flags( 0 )	{ m_bool = val; }
+	ScriptVariant_t( HSCRIPT val ) :		m_type( FIELD_HSCRIPT ), m_flags( 0 )	{ m_hScript = val; }
+	ScriptVariant_t( int64 val) :			m_type( FIELD_INTEGER64 ), m_flags( 0 )	{ m_int64 = val; }
+	ScriptVariant_t( uint64 val) :			m_type( FIELD_UINT64), m_flags( 0 )		{ m_uint64 = val; }
 
-	ScriptVariant_t( const Vector &val, bool bCopy = false ) :	m_flags( 0 ), m_type( FIELD_VECTOR )	{ if ( !bCopy ) { m_pVector = &val; } else { m_pVector = new Vector( val ); m_flags |= SV_FREE; } }
-	ScriptVariant_t( const Vector *val, bool bCopy = false ) :	m_flags( 0 ), m_type( FIELD_VECTOR )	{ if ( !bCopy ) { m_pVector = val; } else { m_pVector = new Vector( *val ); m_flags |= SV_FREE; } }
-	ScriptVariant_t( const QAngle &val, bool bCopy = false) :	m_flags( 0 ), m_type( FIELD_QANGLE )	{ if ( !bCopy ) { m_pQAngle = &val; } else { m_pQAngle = new QAngle(val); m_flags |= SV_FREE; } }
-	ScriptVariant_t( const QAngle *val, bool bCopy = false) :	m_flags( 0 ), m_type( FIELD_QANGLE )	{ if ( !bCopy ) { m_pQAngle = val; } else { m_pQAngle = new QAngle(*val); m_flags |= SV_FREE; } }
-	ScriptVariant_t( const char *val , bool bCopy = false ) :	m_flags( 0 ), m_type( FIELD_CSTRING )	{ if ( !bCopy ) { m_pszString = val; } else { m_pszString = strdup( val ); m_flags |= SV_FREE; } }
+	ScriptVariant_t( const Vector &val, bool bCopy = false ) :	m_type( FIELD_VECTOR ), m_flags( 0 )	{ if ( !bCopy ) { m_pVector = &val; } else { m_pVector = new Vector( val ); m_flags |= SV_FREE; } }
+	ScriptVariant_t( const Vector *val, bool bCopy = false ) :	m_type( FIELD_VECTOR ), m_flags( 0 )	{ if ( !bCopy ) { m_pVector = val; } else { m_pVector = new Vector( *val ); m_flags |= SV_FREE; } }
+	ScriptVariant_t( const QAngle &val, bool bCopy = false) :	m_type( FIELD_QANGLE ), m_flags( 0 )	{ if ( !bCopy ) { m_pQAngle = &val; } else { m_pQAngle = new QAngle(val); m_flags |= SV_FREE; } }
+	ScriptVariant_t( const QAngle *val, bool bCopy = false) :	m_type( FIELD_QANGLE ), m_flags( 0 )	{ if ( !bCopy ) { m_pQAngle = val; } else { m_pQAngle = new QAngle(*val); m_flags |= SV_FREE; } }
+	ScriptVariant_t( const char *val , bool bCopy = false ) :	m_type( FIELD_CSTRING ), m_flags( 0 )	{ if ( !bCopy ) { m_pszString = val; } else { m_pszString = strdup( val ); m_flags |= SV_FREE; } }
 
 	bool IsNull() const						{ return (m_type == FIELD_VOID ); }
 
@@ -488,7 +488,7 @@ struct ScriptVariant_t
 	{
 		DevWarning( "No free conversion of string or vector script variant right now\n" );
 		// If want to support this, probably need to malloc string and require free on other side [3/24/2008 tom]
-		*pDest = "";
+		*pDest = (char *)"";
 		return false;
 	}
 
