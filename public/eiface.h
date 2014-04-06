@@ -682,7 +682,7 @@ public:
 	virtual void			ClientFullyConnect( CEntityIndex index ) = 0;
 
 	// Client is disconnecting from server
-	virtual void			ClientDisconnect( CEntityIndex index ) = 0;
+	virtual void			ClientDisconnect( CEntityIndex index, /* ENetworkDisconnectionReason */ int reason ) = 0;
 	
 	// Client is connected and should be put in the game
 	virtual void			ClientPutInServer( CEntityIndex index, char const *playername ) = 0;
@@ -734,7 +734,7 @@ public:
 	
 	virtual bool			DispatchClientMessage( CEntityIndex index, int msg_type, int size, const uint8 *pData ) = 0;
 	
-	virtual bool			CanHLTVClientConnect( int index, const CSteamID &steamID, const char **ppszRejectReason ) = 0;
+	virtual bool			CanHLTVClientConnect( int index, const CSteamID &steamID, int *pRejectReason ) = 0;
 };
 
 #define INTERFACEVERSION_UPLOADGAMESTATS		"ServerUploadGameStats001"
