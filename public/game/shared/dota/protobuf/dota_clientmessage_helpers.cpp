@@ -59,7 +59,7 @@ const google::protobuf::Message *CDotaClientMessageHelpers::GetPrototype( const 
 
 int CDotaClientMessageHelpers::GetIndex( const char *name ) const
 {
-	int idx = m_NameIndexMap.Find( name );
+	unsigned int idx = m_NameIndexMap.Find( name );
 	if( idx != m_NameIndexMap.InvalidHandle() )
 		return m_NameIndexMap[idx];
 
