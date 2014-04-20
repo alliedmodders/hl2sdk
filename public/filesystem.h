@@ -432,7 +432,7 @@ public:
 	//  override is cleared and the current .bsp is searched for an embedded PAK file
 	//  and this file becomes the highest priority search path ( i.e., it's looked at first
 	//   even before the mod's file system path ).
-	virtual void			AddSearchPath( const char *pPath, const char *pathID, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) = 0;
+	virtual void			AddSearchPath( const char *pPath, const char *pathID, SearchPathAdd_t addType = PATH_ADD_TO_TAIL, bool isLocalized = false ) = 0;
 	virtual bool			RemoveSearchPath( const char *pPath, const char *pathID = 0 ) = 0;
 
 	// Remove all search paths (including write path?)
@@ -456,7 +456,9 @@ public:
 	// interface for custom pack files > 4Gb
 	virtual bool			AddPackFile( const char *fullpath, const char *pathID ) = 0;
 
-	virtual bool			IsLocalizedPath ( const char * ) = 0;
+	// returns true if the path ends with the current localized language
+	virtual bool			IsLocalizedPath( const char *pPath, const char *pathID ) = 0;
+
 	//--------------------------------------------------------
 	// File manipulation operations
 	//--------------------------------------------------------
@@ -513,7 +515,9 @@ public:
 		FileFindHandle_t *pHandle
 		) = 0;
 
-	virtual void			FindFileAbsoluteList( CUtlVector<CUtlString> &, const char *, const char * ) = 0;
+	// Searches for a file in all paths and results absolute path names for the file, works in pack files (zip and vpk) too
+	// Lets you search for something like sound/sound.cache and get a list of every sound cache
+	virtual void			FindFileAbsoluteList( CUtlVector< CUtlString > &outAbsolutePathNames, const char *pWildCard, const char *pPathID ) = 0;
 
 	//--------------------------------------------------------
 	// File name and directory operations
@@ -750,6 +754,7 @@ public:
 
 	virtual void AddVPKFile( char const *pszName, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) = 0;
 	virtual void RemoveVPKFile( char const *pszName ) = 0;
+	virtual void MoveOrAddVPKFile( char const *pszName, SearchPathAdd_t addType ) = 0;
 	virtual void GetVPKFileNames( CUtlVector<CUtlString> &destVector ) = 0;
 	virtual void			RemoveAllMapSearchPaths() = 0;
 	virtual void			SyncDvdDevCache() = 0;
@@ -768,9 +773,8 @@ public:
 	// will be issued whenever the indicated # of seconds go by without an i/o request.  Passing
 	// 0.0 will turn off the functionality.
 	virtual void            SetIODelayAlarm( float flThreshhold ) = 0;
-	
-	virtual void			AddXLSPUpdateSearchPath(const void *, int) = 0;
 
+	virtual bool			AddXLSPUpdateSearchPath( const void *pData, int nSize ) = 0;
 };
 
 //-----------------------------------------------------------------------------

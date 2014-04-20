@@ -352,10 +352,17 @@ public:
 	// Name of most recently load .sav file
 	virtual char const *GetMostRecentlyLoadedFileName() = 0;
 	virtual char const *GetSaveFileName() = 0;
+
+	// TERROR: savegame support
 	virtual void WriteSavegameScreenshot( const char *filename ) = 0;
-	
-	virtual int GetLightForPointListenServerOnly(const Vector &, bool, Vector *) = 0;
-	virtual int TraceLightingListenServerOnly(const Vector &, const Vector &, Vector *, Vector *) = 0;
+
+	// TERROR: Only valid on win32 listenservers!!!
+	virtual bool GetLightForPointListenServerOnly( const Vector &pos, bool bClamp, Vector *ambientColor ) = 0;
+
+	// TERROR: Only valid on win32 listenservers!!!
+	// Traces the line and reports the lighting information for the impact point
+	virtual bool TraceLightingListenServerOnly( const Vector &start, const Vector &end, 
+		Vector *diffuseLightColor, Vector *baseColor ) = 0;
 
 	// Cleans up the cluster list
 	virtual void CleanUpEntityClusterList( PVSInfo_t *pPVSInfo ) = 0;
@@ -424,15 +431,16 @@ public:
 	virtual CGamestatsData *GetGamestatsData() = 0;
 
 	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
-	virtual const CSteamID *GetClientSteamID( edict_t *pPlayerEdict ) = 0;
-	
+	virtual const CSteamID	*GetClientSteamID( edict_t *pPlayerEdict ) = 0;
+
 	// Validate session
 	virtual void HostValidateSession() = 0;
 
 	// Update the 360 pacifier/spinner
 	virtual void RefreshScreenIfNecessary() = 0;
 
-	virtual void *AllocLevelStaticDataName( unsigned int, const char * ) = 0;
+	// Allocate hunk memory
+	virtual void *AllocLevelStaticDataName( size_t bytes, const char *pszName ) = 0;
 
 	// Send a client command keyvalues
 	// keyvalues are deleted inside the function
@@ -440,6 +448,8 @@ public:
 
 	// Returns the XUID of the specified player. It'll be NULL if the player hasn't connected yet.
 	virtual uint64 GetClientXUID( edict_t *pPlayerEdict ) = 0;
+
+	virtual void RecalculateTags() = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
@@ -529,10 +539,6 @@ public:
 	// Called once per frame even when no level is loaded...
 	virtual void			Think( bool finalTick ) = 0;
 
-#ifdef _XBOX
-	virtual void			GetTitleName( const char *pMapName, char* pTitleBuff, int titleBuffSize ) = 0;
-#endif
-
 	virtual void			PreSaveGameLoaded( char const *pSaveName, bool bCurrentlyInGame ) = 0;
 
 	// Returns true if the game DLL wants the server not to be made public.
@@ -550,17 +556,26 @@ public:
 
 	// Called after tools are initialized (i.e. when Foundry is initialized so we can get IServerFoundry).
 	virtual void			PostToolsInit() = 0;
-	
+
 	// Called to apply lobby settings to a dedicated server
 	virtual void			ApplyGameSettings( KeyValues *pKV ) = 0;
 
+	// 
 	virtual void			GetMatchmakingTags( char *buf, size_t bufSize ) = 0;
 
 	virtual void			ServerHibernationUpdate( bool bHibernating ) = 0;
 
-	virtual void            GenerateLumpFileName( const char *, char *, int, int ) = 0;
+	virtual void			GenerateLumpFileName( const char *bspfilename, char *lumpfilename, int iBufferSize, int iIndex ) = 0;
 
-	virtual void            GetMatchmakingGameData( char *buf, size_t bufSize ) = 0; 
+	virtual void			GetMatchmakingGameData( char *buf, size_t bufSize ) = 0;
+
+	// Called after the steam API has been activated post-level startup
+	virtual void			GameServerSteamAPIActivated( void ) = 0;
+	
+	// Called after the steam API has been shutdown post-level startup
+	virtual void			GameServerSteamAPIShutdown( void ) = 0;
+	
+	virtual const char		*GetGameModeName( void ) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -730,7 +745,7 @@ public:
 
 #define SERVER_DLL_SHARED_APPSYSTEMS		"VServerDllSharedAppSystems001"
 
-#define INTERFACEVERSION_SERVERGAMETAGS		"ServerGameTags001"
+#define INTERFACEVERSION_SERVERGAMETAGS		"ServerGameTags002"
 
 //-----------------------------------------------------------------------------
 // Purpose: querying the game dll for Server cvar tags
@@ -740,6 +755,8 @@ abstract_class IServerGameTags
 public:
 	// Get the list of cvars that require tags to show differently in the server browser
 	virtual void			GetTaggedConVarList( KeyValues *pCvarTagList ) = 0;
+
+	virtual int				GetAvgServerLevel() = 0;
 };
 
 #endif // EIFACE_H

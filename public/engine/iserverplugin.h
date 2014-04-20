@@ -45,7 +45,8 @@ typedef int QueryCvarCookie_t;
 
 
 #define INTERFACEVERSION_ISERVERPLUGINCALLBACKS_VERSION_1	"ISERVERPLUGINCALLBACKS001"
-#define INTERFACEVERSION_ISERVERPLUGINCALLBACKS				"ISERVERPLUGINCALLBACKS002"
+#define INTERFACEVERSION_ISERVERPLUGINCALLBACKS_VERSION_2	"ISERVERPLUGINCALLBACKS002"
+#define INTERFACEVERSION_ISERVERPLUGINCALLBACKS				"ISERVERPLUGINCALLBACKS003"
 
 //-----------------------------------------------------------------------------
 // Purpose: callbacks the engine exposes to the 3rd party plugins (ala MetaMod)
@@ -110,7 +111,10 @@ public:
 	// iCookie is the value returned by IServerPluginHelpers::StartQueryCvarValue.
 	// Added with version 2 of the interface.
 	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) = 0;
-	
+
+	// added with version 3 of the interface.
+	virtual void			OnEdictAllocated( edict_t *edict ) = 0;
+	virtual void			OnEdictFreed( const edict_t *edict  ) = 0;	
 };
 
 #define INTERFACEVERSION_ISERVERPLUGINHELPERS			"ISERVERPLUGINHELPERS001"

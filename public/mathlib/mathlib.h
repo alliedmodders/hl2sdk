@@ -375,11 +375,6 @@ FORCEINLINE T Square( T const &a )
 }
 
 
-FORCEINLINE bool IsPowerOfTwo( uint x )
-{
-	return ( x & ( x - 1 ) ) == 0;
-}
-
 // return the smallest power of two >= x.
 // returns 0 if x == 0 or x > 0x80000000 (ie numbers that would be negative if x was signed)
 // NOTE: the old code took an int, and if you pass in an int of 0x80000000 casted to a uint,

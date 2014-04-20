@@ -25,7 +25,7 @@ public:
 	virtual	~IClient() {}
 
 	// connect client
-	virtual void	Connect( const char * szName, int nUserID, INetChannel *pNetChannel, bool bFakePlayer, CUtlVector< NetMessageCvar_t > *pVecCvars = NULL ) = 0;
+	virtual void	Connect(const char * szName, int nUserID, INetChannel *pNetChannel, bool bFakePlayer, int clientChallenge ) = 0;
 
 	// set the client in a pending state waiting for a new game
 	virtual void	Inactivate( void ) = 0;
@@ -88,14 +88,7 @@ public:
 
 	virtual bool	CheckConnect( void ) = 0;
 
-	virtual	bool	IsLowViolenceClient( void ) const = 0;
-
 	virtual IClient	*GetSplitScreenOwner() = 0;
-
-	// get the number of players on this client's machine
-	virtual int		GetNumPlayers() = 0;
-
-	virtual bool	IsHumanPlayer() const = 0;
 };
 
 #endif // ICLIENT_H

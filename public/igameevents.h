@@ -84,6 +84,8 @@ public:
 	virtual void SetUint64( const char *keyName, uint64 value ) = 0;
 	virtual void SetFloat( const char *keyName, float value ) = 0;
 	virtual void SetString( const char *keyName, const char *value ) = 0;
+
+	virtual KeyValues *GetDataKeys() = 0;
 };
 
 #define EVENT_DEBUG_ID_INIT			42

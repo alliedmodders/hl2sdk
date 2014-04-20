@@ -97,7 +97,8 @@ public:
 	
 	// emit an "ambient" sound that isn't spatialized
 	// only available on the client, assert on server
-	virtual void EmitAmbientSound( const char *pSample, float flVolume, int iPitch = PITCH_NORM, int flags = 0, float soundtime = 0.0f ) = 0;
+	// returns GUID
+	virtual int EmitAmbientSound( const char *pSample, float flVolume, int iPitch = PITCH_NORM, int flags = 0, float soundtime = 0.0f ) = 0;
 
 
 //	virtual EntChannel_t	CreateEntChannel() = 0;
@@ -107,7 +108,7 @@ public:
 	// Client .dll only functions
 	virtual int		GetGuidForLastSoundEmitted() = 0;
 	virtual bool	IsSoundStillPlaying( int guid ) = 0;
-	virtual void	StopSoundByGuid( int guid ) = 0;
+	virtual void	StopSoundByGuid( int guid, bool bForceSync = false ) = 0;
 	// Set's master volume (0.0->1.0)
 	virtual void	SetVolumeByGuid( int guid, float fvol ) = 0;
 
@@ -121,7 +122,6 @@ public:
 	virtual bool	GetSoundChannelVolume( const char* sound, float &flVolumeLeft, float &flVolumeRight ) = 0;
 	
 	virtual float	GetElapsedTimeByGuid( int guid ) = 0;
-
 };
 
 

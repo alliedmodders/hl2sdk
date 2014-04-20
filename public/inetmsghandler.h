@@ -34,13 +34,13 @@ public:
 
 	virtual void PacketEnd( void ) = 0; // all messages has been parsed
 
-	virtual void FileRequested(const char *fileName, unsigned int transferID, bool isReplayDemoFile) = 0; // other side request a file for download
+	virtual void FileRequested(const char *fileName, unsigned int transferID ) = 0; // other side request a file for download
 
-	virtual void FileReceived(const char *fileName, unsigned int transferID, bool isReplayDemoFile) = 0; // we received a file
+	virtual void FileReceived(const char *fileName, unsigned int transferID ) = 0; // we received a file
 	
-	virtual void FileDenied(const char *fileName, unsigned int transferID, bool isReplayDemoFile) = 0;	// a file request was denied by other side
+	virtual void FileDenied(const char *fileName, unsigned int transferID ) = 0;	// a file request was denied by other side
 
-	virtual void FileSent(const char *fileName, unsigned int transferID, bool isReplayDemoFile) = 0;	// we sent a file
+	virtual void FileSent(const char *fileName, unsigned int transferID ) = 0;	// we sent a file
 };
 
 #define PROCESS_NET_MESSAGE( name )	\

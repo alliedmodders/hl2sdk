@@ -27,6 +27,7 @@ class IToolSystem;
 class IClientRenderable;
 class Vector;
 class QAngle;
+class IEntityFactoryDictionary;
 
 
 //-----------------------------------------------------------------------------
@@ -159,6 +160,14 @@ public:
 #define VCLIENTTOOLS_INTERFACE_VERSION "VCLIENTTOOLS001"
 
 
+class CEntityRespawnInfo
+{
+public:
+	int m_nHammerID;
+	const char *m_pEntText;
+};
+
+
 //-----------------------------------------------------------------------------
 // Purpose: Interface from engine to tools for manipulating entities
 //-----------------------------------------------------------------------------
@@ -186,6 +195,11 @@ public:
 	// entity spawning
 	virtual void *CreateEntityByName( const char *szClassName ) = 0;
 	virtual void DispatchSpawn( void *pEntity ) = 0;
+	virtual bool DestroyEntityByHammerId( int iHammerID ) = 0;
+	
+	// This function respawns the entity into the same entindex slot AND tricks the EHANDLE system into thinking it's the same
+	// entity version so anyone holding an EHANDLE to the entity points at the newly-respawned entity.
+	virtual bool RespawnEntitiesWithEdits( CEntityRespawnInfo *pInfos, int nInfos ) = 0;
 
 	// This reloads a portion or all of a particle definition file.
 	// It's up to the server to decide if it cares about this file
@@ -193,28 +207,19 @@ public:
 	virtual void ReloadParticleDefintions( const char *pFileName, const void *pBufData, int nLen ) = 0;
 
 	virtual void AddOriginToPVS( const Vector &org ) = 0;
+	virtual void MoveEngineViewTo( const Vector &vPos, const QAngle &vAngles ) = 0;
+	
+	// Call UTIL_Remove on the entity.
+	virtual void RemoveEntity_OBSOLETE_USE_DESTROY( int nHammerID ) = 0;
+	virtual void RemoveEntity( CBaseEntity *pEntity ) = 0;
+	virtual void RemoveEntityImmediate( CBaseEntity *pEntity ) = 0;
+	virtual IEntityFactoryDictionary *GetEntityFactoryDictionary( void ) = 0;
 };
 
-#define VSERVERTOOLS_INTERFACE_VERSION "VSERVERTOOLS001"
+typedef IServerTools IServerTools001;
 
-//-----------------------------------------------------------------------------
-// Purpose: Client side tool interace (right now just handles IClientRenderables).
-//  In theory could support hooking into client side entities directly
-//-----------------------------------------------------------------------------
-class IServerChoreoTools : public IBaseInterface
-{
-public:
-
-	// Iterates through ALL entities (separate list for client vs. server)
-	virtual EntitySearchResult	NextChoreoEntity( EntitySearchResult currentEnt ) = 0;
-	EntitySearchResult			FirstChoreoEntity() { return NextChoreoEntity( NULL ); } 
-	virtual const char			*GetSceneFile( EntitySearchResult sr ) = 0;
-
-	// For interactive editing
-	virtual int					GetEntIndex( EntitySearchResult sr ) = 0;
-	virtual void				ReloadSceneFromDisk( int entindex ) = 0;
-};
-
-#define VSERVERCHOREOTOOLS_INTERFACE_VERSION "VSERVERCHOREOTOOLS001"
+#define VSERVERTOOLS_INTERFACE_VERSION_1	"VSERVERTOOLS001"
+#define VSERVERTOOLS_INTERFACE_VERSION		"VSERVERTOOLS002"
+#define VSERVERTOOLS_INTERFACE_VERSION_INT	2
 
 #endif // ITOOLENTITY_H

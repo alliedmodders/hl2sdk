@@ -34,9 +34,10 @@
 #define CLEARBITS(iBitVector, bits)		((iBitVector) &= ~(bits))
 #define FBitSet(iBitVector, bit)		((iBitVector) & (bit))
 
-inline bool IsPowerOfTwo( int value )
+template <typename T>
+inline bool IsPowerOfTwo( T value )
 {
-	return (value & ( value - 1 )) == 0;
+	return (value & ( value - (T)1 )) == (T)0;
 }
 
 #define CONST_INTEGER_AS_STRING(x) #x //Wraps the integer in quotes, allowing us to form constant strings with it

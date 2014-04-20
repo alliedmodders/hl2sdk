@@ -19,47 +19,53 @@
 #define USE_MEM_DEBUG 1
 #endif
 
+#if defined(NO_HOOK_MALLOC)
+#undef USE_MEM_DEBUG
+#endif
+
 // If debug build or ndebug and not already included MS custom alloc files, or already included this file
 #if (defined(_DEBUG) || !defined(_INC_CRTDBG)) || defined(MEMDBGON_H)
 
-#include "basetypes.h"
-#ifdef _WIN32
-#include <tchar.h>
-#else
-#include <wchar.h>
-#endif
-#include <string.h>
-#if defined __APPLE__
-#include <stdlib.h>
-#else
-#include <malloc.h>
-#endif
+#include "tier0/basetypes.h"
+
+#include "tier0/valve_off.h"
+	#ifdef COMPILER_MSVC
+		#include <tchar.h>
+	#else
+		#include <wchar.h>
+	#endif
+	#include <string.h>
+	#include <malloc.h>
+#include "tier0/valve_on.h"
+
 #include "commonmacros.h"
 #include "memalloc.h"
 
+#ifdef _WIN32
+#ifndef MEMALLOC_REGION
+#define MEMALLOC_REGION 0
+#endif
+#else
+#undef MEMALLOC_REGION
+#endif
+
 #if defined(USE_MEM_DEBUG)
-	#if defined(_LINUX) || defined(__APPLE__)
-	
+	#if defined(POSIX)
 		#define _NORMAL_BLOCK 1
 		
+		#include "tier0/valve_off.h"
 		#include <cstddef>
 		#include <glob.h>
 		#include <new>
 		#include <sys/types.h>
-		
 		#if !defined( DID_THE_OPERATOR_NEW )
-			#define DID_THE_OPERATOR_NEW
-			inline void* operator new( size_t nSize, int blah, const char *pFileName, int nLine )
-			{
-				return g_pMemAlloc->Alloc( nSize, pFileName, nLine );
-			}
-			inline void* operator new[]( size_t nSize, int blah, const char *pFileName, int nLine )
-			{
-				return g_pMemAlloc->Alloc( nSize, pFileName, nLine );
-			}
+                        #define DID_THE_OPERATOR_NEW
+			// posix doesn't have a new of this form, so we impl our own
+			void* operator new( size_t nSize, int blah, const char *pFileName, int nLine );
+			void* operator new[]( size_t nSize, int blah, const char *pFileName, int nLine );
 		#endif
 	
-	#else // defined(_LINUX)
+	#else // defined(POSIX)
 	
 		// Include crtdbg.h and make sure _DEBUG is set to 1.
 		#if !defined(_DEBUG)
@@ -70,7 +76,7 @@
 			#include <crtdbg.h>
 		#endif // !defined(_DEBUG)
 	
-	#endif // defined(_LINUX)
+	#endif // defined(POSIX)
 #endif
 
 #include "tier0/memdbgoff.h"
@@ -97,28 +103,37 @@ inline void *MemAlloc_InlineCallocMemset( void *pMem, size_t nCount, size_t nEle
 }
 #endif
 
+
 #define calloc(c, s)		MemAlloc_InlineCallocMemset(malloc(c*s), c, s)
+#ifndef USE_LIGHT_MEM_DEBUG
 #define free(p)				g_pMemAlloc->Free( p )
+#define _aligned_free( p )	MemAlloc_FreeAligned( p )
+#else
+extern const char *g_pszModule; 
+#define free(p)				g_pMemAlloc->Free( p, g_pszModule, 0 )
+#define _aligned_free( p )	MemAlloc_FreeAligned( p, g_pszModule, 0 )
+#endif
 #define _msize(p)			g_pMemAlloc->GetSize( p )
 #define _expand(p, s)		_expand_NoLongerSupported(p, s)
-#define _aligned_free( p )	MemAlloc_FreeAligned( p )
 
 // --------------------------------------------------------
 // Debug path
 #if defined(USE_MEM_DEBUG)
 
-#define malloc(s)				g_pMemAlloc->Alloc( s, __FILE__, __LINE__)
+#define malloc(s)				MemAlloc_Alloc( s, __FILE__, __LINE__)
 #define realloc(p, s)			g_pMemAlloc->Realloc( p, s, __FILE__, __LINE__ )
-#define _aligned_malloc( s, a )	MemAlloc_AllocAligned( s, a, __FILE__, __LINE__ )
+#define _aligned_malloc( s, a )	MemAlloc_AllocAlignedFileLine( s, a, __FILE__, __LINE__ )
 
 #define _malloc_dbg(s, t, f, l)	WHYCALLINGTHISDIRECTLY(s)
 
+#if !defined( GNUC )
 #if defined(__AFX_H__) && defined(DEBUG_NEW)
 	#define new DEBUG_NEW
 #else
 	#undef new
 	#define MEMALL_DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 	#define new MEMALL_DEBUG_NEW
+#endif
 #endif
 
 #undef _strdup
@@ -142,7 +157,7 @@ inline char *MemAlloc_StrDup(const char *pString, const char *pFileName, unsigne
 		return NULL;
 	
 	size_t len = strlen(pString) + 1;
-	if ((pMemory = (char *)g_pMemAlloc->Alloc(len, pFileName, nLine)) != NULL)
+	if ((pMemory = (char *)MemAlloc_Alloc(len, pFileName, nLine)) != NULL)
 	{
 		return strcpy( pMemory, pString );
 	}
@@ -158,7 +173,7 @@ inline wchar_t *MemAlloc_WcStrDup(const wchar_t *pString, const char *pFileName,
 		return NULL;
 	
 	size_t len = (wcslen(pString) + 1);
-	if ((pMemory = (wchar_t *)g_pMemAlloc->Alloc(len * sizeof(wchar_t), pFileName, nLine)) != NULL)
+	if ((pMemory = (wchar_t *)MemAlloc_Alloc(len * sizeof(wchar_t), pFileName, nLine)) != NULL)
 	{
 		return wcscpy( pMemory, pString );
 	}
@@ -172,9 +187,15 @@ inline wchar_t *MemAlloc_WcStrDup(const wchar_t *pString, const char *pFileName,
 // --------------------------------------------------------
 // Release path
 
-#define malloc(s)				g_pMemAlloc->Alloc( s )
+#ifndef USE_LIGHT_MEM_DEBUG
+#define malloc(s)				MemAlloc_Alloc( s )
 #define realloc(p, s)			g_pMemAlloc->Realloc( p, s )
 #define _aligned_malloc( s, a )	MemAlloc_AllocAligned( s, a )
+#else
+#define malloc(s)				MemAlloc_Alloc( s, g_pszModule, 0  )
+#define realloc(p, s)			g_pMemAlloc->Realloc( p, s, g_pszModule, 0 )
+#define _aligned_malloc( s, a )	MemAlloc_AllocAlignedFileLine( s, a, g_pszModule, 0 )
+#endif
 
 #ifndef _malloc_dbg
 #define _malloc_dbg(s, t, f, l)	WHYCALLINGTHISDIRECTLY(s)
@@ -203,7 +224,7 @@ inline char *MemAlloc_StrDup(const char *pString)
 		return NULL;
 
 	size_t len = strlen(pString) + 1;
-	if ((pMemory = (char *)g_pMemAlloc->Alloc(len)) != NULL)
+	if ((pMemory = (char *)malloc(len)) != NULL)
 	{
 		return strcpy( pMemory, pString );
 	}
@@ -219,7 +240,7 @@ inline wchar_t *MemAlloc_WcStrDup(const wchar_t *pString)
 		return NULL;
 
 	size_t len = (wcslen(pString) + 1);
-	if ((pMemory = (wchar_t *)g_pMemAlloc->Alloc(len * sizeof(wchar_t))) != NULL)
+	if ((pMemory = (wchar_t *)malloc(len * sizeof(wchar_t))) != NULL)
 	{
 		return wcscpy( pMemory, pString );
 	}
@@ -243,5 +264,10 @@ inline wchar_t *MemAlloc_WcStrDup(const wchar_t *pString)
 #endif
 #endif
 #endif // _INC_CRTDBG
+
+#else
+
+// Needed for MEM_ALLOC_CREDIT(), MemAlloc_Alloc(), etc.
+#include "memalloc.h"
 
 #endif // !STEAM && !NO_MALLOC_OVERRIDE

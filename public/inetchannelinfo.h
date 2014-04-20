@@ -32,6 +32,7 @@ public:
 		ENTITIES,		// all other entity bytes
 		SOUNDS,			// game sounds
 		EVENTS,			// event messages
+		TEMPENTS,		// temp entities
 		USERMESSAGES,	// user messages
 		ENTMESSAGES,	// entity messages
 		VOICE,			// voice data

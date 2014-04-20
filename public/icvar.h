@@ -156,6 +156,7 @@ protected:
 	class ICVarIteratorInternal
 	{
 	public:
+		virtual ~ICVarIteratorInternal() {}
 		virtual void		SetFirst( void ) = 0;
 		virtual void		Next( void ) = 0;
 		virtual	bool		IsValid( void ) = 0;
@@ -175,7 +176,7 @@ inline ICvar::Iterator::Iterator(ICvar *icvar)
 
 inline ICvar::Iterator::~Iterator( void )
 {
-	g_pMemAlloc->Free(m_pIter);
+	delete m_pIter;
 }
 
 inline void ICvar::Iterator::SetFirst( void )
