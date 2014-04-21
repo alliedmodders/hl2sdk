@@ -16,8 +16,10 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#ifdef _WIN32
 static const uint32 _sincos_masks[]	  = { (uint32)0x0,  (uint32)~0x0 };
 static const uint32 _sincos_inv_masks[] = { (uint32)~0x0, (uint32)0x0 };
+#endif
 
 //-----------------------------------------------------------------------------
 // Macros and constants required by some of the SSE assembly:
@@ -49,6 +51,7 @@ static const uint32 _sincos_inv_masks[] = { (uint32)~0x0, (uint32)0x0 };
 		static const __attribute__((aligned(16))) float _ps_##Name[4] = { Val, Val, Val, Val }
 #endif
 
+#ifdef _WIN32
 _PS_EXTERN_CONST(am_0, 0.0f);
 _PS_EXTERN_CONST(am_1, 1.0f);
 _PS_EXTERN_CONST(am_m1, -1.0f);
@@ -72,6 +75,7 @@ _PS_CONST(sincos_p0, 0.15707963267948963959e1f);
 _PS_CONST(sincos_p1, -0.64596409750621907082e0f);
 _PS_CONST(sincos_p2, 0.7969262624561800806e-1f);
 _PS_CONST(sincos_p3, -0.468175413106023168e-2f);
+#endif
 
 #ifdef PFN_VECTORMA
 void  __cdecl _SSE_VectorMA( const float *start, float scale, const float *direction, float *dest );

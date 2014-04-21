@@ -92,7 +92,7 @@ SHLIBSUFFIX =
 endif
 
 DEFINES +=-DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp \
-	-Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
+	-Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DPOSIX -DNO_MALLOC_OVERRIDE -DNO_HOOK_MALLOC
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
 BASE_CFLAGS = -fno-strict-aliasing -Wall -Wsign-compare -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \

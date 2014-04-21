@@ -35,7 +35,7 @@
 		#include <wchar.h>
 	#endif
 	#include <string.h>
-	#include <malloc.h>
+	#include <stdlib.h>
 #include "tier0/valve_on.h"
 
 #include "commonmacros.h"
