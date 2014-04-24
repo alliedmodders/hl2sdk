@@ -40,7 +40,7 @@ public:
 	// Non-paused frametime
 	float			absoluteframetime;
 	
-	float			framestarttime_stddeviation;
+	float			absoluteframestarttimestddev;
 
 	// Current time 
 	//
