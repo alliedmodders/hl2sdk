@@ -97,7 +97,7 @@ public:
 
 	virtual bool	IsNull() const = 0;
 	virtual void	SetInterpolationAmount( float flInterpolationAmount ) = 0;
-	virtual void	SetRemoteFramerate( float flFrameTime, float flFrameTimeStdDeviation ) = 0;
+	virtual void	SetRemoteFramerate( float flFrameTime, float flFrameTimeStdDeviation, float flFrameStartTimeStdDeviation ) = 0;
 
 	// Max # of payload bytes before we must split/fragment the packet
 	virtual void	SetMaxRoutablePayloadSize( int nSplitSize ) = 0;

@@ -37,6 +37,7 @@ public:
 	int				framecount;
 	// Non-paused frametime
 	float			absoluteframetime;
+        float			absoluteframestarttimestddev;
 
 	// Current time 
 	//
