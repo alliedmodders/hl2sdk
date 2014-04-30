@@ -24,6 +24,8 @@ abstract_class IServer : public IConnectionlessPacketHandler
 {
 public:
 	virtual	~IServer() {}
+	
+	virtual bool	SteamIDAllowedToConnect( CSteamID sid ) = 0;
 
 	virtual int		GetNumClients( void ) const = 0; // returns current number of clients
 	virtual int		GetNumProxies( void ) const = 0; // returns number of attached HLTV proxies
@@ -63,7 +65,7 @@ public:
 	virtual void	BroadcastMessage( INetMessage &msg, bool onlyActive = false, bool reliable = false) = 0;
 	virtual void	BroadcastMessage( INetMessage &msg, IRecipientFilter &filter ) = 0;
 
-	virtual void	DisconnectClient( IClient *client, const char *reason ) = 0;
+	virtual void	DisconnectClient( IClient *client, /* ENetworkDisconnectionReason */ int reason ) = 0;
 };
 
 

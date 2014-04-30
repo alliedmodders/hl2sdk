@@ -476,7 +476,7 @@ public:
 	virtual uint64 GetClientXUID( CEntityIndex clientIndex ) = 0;
 	virtual bool IsActiveApp() = 0;
 	
-	virtual void DisconnectClient( CEntityIndex clientIndex, const char *szReason ) = 0;
+	virtual void DisconnectClient( CEntityIndex clientIndex, /* ENetworkDisconnectionReason */ int reason ) = 0;
 	
 	virtual int GetServerVersion( void ) = 0;
 	
