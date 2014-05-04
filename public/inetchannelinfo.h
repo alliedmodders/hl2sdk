@@ -51,6 +51,7 @@ public:
 	virtual int			GetDataRate( void ) const = 0; // send data rate in byte/sec
 	
 	virtual bool		IsLoopback( void ) const = 0;	// true if loopback channel
+	virtual bool		IsLocalhost( void ) const = 0;	// true if localhost
 	virtual bool		IsTimingOut( void ) const = 0;	// true if timing out
 
 	virtual float		GetLatency( int flow ) const = 0;	 // current latency (RTT), more accurate but jittering

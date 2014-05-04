@@ -38,6 +38,12 @@ typedef struct netpacket_s
 } netpacket_t;
 #endif // NET_PACKET_ST_DEFINED
 
+enum ENetChannelBufType
+{
+	BUF_RELIABLE = 0,
+	BUF_UNRELIABLE,
+	BUF_VOICE,
+};
 
 abstract_class INetChannel : public INetChannelInfo
 {
@@ -52,9 +58,9 @@ public:
 	
 	virtual void	Reset( void ) = 0;
 	virtual void	Clear( void ) = 0;
-	virtual void	Shutdown(const char *reason) = 0;
+	virtual void	Shutdown(/* ENetworkDisconnectionReason */ int reason) = 0;
 	
-	virtual bool	ProcessDemoStream( struct netpacket_s* packet ) = 0;
+	virtual bool	ProcessDemoPacket( struct netpacket_s* packet ) = 0;
 	virtual void	ProcessPacket( struct netpacket_s* packet, bool bHasHeader ) = 0;
 			
 	virtual bool	SendNetMsg(INetMessage &msg, bool bForceReliable = false, bool bVoice = false ) = 0;
@@ -87,10 +93,10 @@ public:
 	virtual void	SetCompressionMode( bool bUseCompression ) = 0;
 	virtual unsigned int RequestFile(const char *filename, bool isReplayDemoFile) = 0;
 
-	virtual void	SetMaxBufferSize(bool bReliable, int nBytes, bool bVoice = false ) = 0;
+	virtual void	SetMaxBufferSize( ENetChannelBufType bufferType, int nBytes ) = 0;
 
 	virtual bool	IsNull() const = 0;
-	virtual void	SetInterpolationAmount( float flInterpolationAmount, float ) = 0;
+	virtual void	SetInterpolationAmount( float flInterpolationAmount ) = 0;
 	virtual void	SetRemoteFramerate( float flFrameTime, float flFrameTimeStdDeviation ) = 0;
 
 	// Max # of payload bytes before we must split/fragment the packet
@@ -104,11 +110,11 @@ public:
 
 	virtual bool	IsRemoteDisconnected() const = 0;
 	
-	virtual int		GetNumBitsWritten(int bufferType) = 0;
+	virtual int		GetNumBitsWritten(ENetChannelBufType bufferType) const = 0;
 	
 	virtual void	SetUsesMaxRoutablePlayload(bool useMax) = 0;
 	
-	virtual bool	WasLastMessageReliable() = 0;
+	virtual bool	WasLastMessageReliable() const = 0;
 };
 
 

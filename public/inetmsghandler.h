@@ -26,9 +26,9 @@ public:
 
 	virtual void ConnectionStart(INetChannel *chan) = 0;	// called first time network channel is established
 
-	virtual void ConnectionClosing(const char *reason) = 0; // network channel is being closed by remote site
+	virtual void ConnectionClosing(/* ENetworkDisconnectionReason */ int reason) = 0; // network channel is being closed by remote site
 
-	virtual void ConnectionCrashed(const char *reason) = 0; // network error occured
+	virtual void ConnectionCrashed(/* ENetworkDisconnectionReason */ int reason) = 0; // network error occured
 
 	virtual void PacketStart(int incoming_sequence, int outgoing_acknowledged) = 0;	// called each time a new packet arrived
 
