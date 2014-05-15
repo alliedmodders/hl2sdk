@@ -23,6 +23,7 @@
 #include "bitvec.h"
 #include "engine/iserverplugin.h"
 #include "tier1/bitbuf.h"
+#include "tier1/checksum_crc.h"
 #include "iclient.h"
 
 //-----------------------------------------------------------------------------
@@ -479,6 +480,13 @@ public:
 	virtual bool ReserveServerForQueuedGame( const char *szReservationPayload ) = 0;
 	
 	virtual bool GetEngineHltvInfo( CEngineHltvInfo_t &out ) = 0;
+	
+	virtual void AddHltvRelayProxyWhitelist( uint32 octet1, uint32 octet2, uint32 octet3, uint32 octet4, uint32 prefix) = 0;
+	
+	virtual int GetServerVersion() const = 0;
+	
+	// Update counts of external viewers (Twitch.tv)
+	virtual void UpdateHltvExternalViewers( uint32 totalSpectators, uint32 spectatorsLinkedToSteam) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
@@ -614,6 +622,9 @@ public:
 	virtual void			UpdateUGCMap( PublishedFileId_t file ) = 0;
 	virtual int				GetMessageEncryptionKey( INetMessage *msg ) = 0;
 	virtual bool			ShouldHoldGameServerReservation( float flTime ) = 0;
+	virtual bool			OnPureServerFileValidationFailure( edict_t *pPlayer, const char *pszPathID, const char *pszFileName,
+								CRC32_t crcIOSequence, int eFileHashType, int cbFileLen, int nPackFileNumber, int nPackFileID ) = 0;
+	virtual void			PrecacheParticleSystemFile( const char *pszFilename ) = 0;
 	virtual void			GetNewestSubscribedFiles() = 0;
 };
 
