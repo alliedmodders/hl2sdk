@@ -241,7 +241,11 @@ CSysModule *Sys_LoadModule( const char *pModuleName )
 	if ( !Q_IsAbsolutePath( pModuleName ) )
 	{
 		// full path wasn't passed in, using the current working dir
-		_getcwd( szCwd, sizeof( szCwd ) );
+		if (!_getcwd( szCwd, sizeof( szCwd ) ))
+		{
+			Msg("Failed to load %s\n", pModuleName);
+			return NULL;
+		}
 		if ( IsX360() )
 		{
 			int i = CommandLine()->FindParm( "-basedir" );

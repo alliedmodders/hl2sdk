@@ -14,6 +14,14 @@
 #pragma once
 #endif
 
+#if !defined( NO_MALLOC_OVERRIDE ) && defined( POSIX )
+#define NO_MALLOC_OVERRIDE
+#endif
+
+#if defined( NO_MALLOC_OVERRIDE ) && !defined( NO_HOOK_MALLOC )
+#define NO_HOOK_MALLOC
+#endif
+
 // Define this in release to get memory tracking even in release builds
 //#define USE_MEM_DEBUG 1
 
@@ -24,10 +32,14 @@
 // Undefine this if using a compiler lacking threadsafe RTTI (like vc6)
 #define MEM_DEBUG_CLASSNAME 1
 
-#if !defined(STEAM) && !defined(NO_MALLOC_OVERRIDE)
-
 #include <stddef.h>
+#if defined( OSX )
+#include <malloc/malloc.h>
+#endif
+
 #include "tier0/mem.h"
+
+#if !defined(STEAM) && !defined(NO_MALLOC_OVERRIDE)
 
 struct _CrtMemState;
 
@@ -112,6 +124,13 @@ public:
 	virtual void CompactIncremental() = 0; 
 
 	virtual void OutOfMemory( size_t nBytesAttempted = 0 ) = 0;
+
+	// Region-based allocations
+	virtual void *RegionAlloc( int region, size_t nSize ) = 0;
+	virtual void *RegionAlloc( int region, size_t nSize, const char *pFileName, int nLine ) = 0;
+
+	// Replacement for ::GlobalMemoryStatus which accounts for unused memory in our system
+	virtual void GlobalMemoryStatus( size_t *pUsedMemory, size_t *pFreeMemory ) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -343,6 +362,45 @@ struct MemAllocFileLine_t
 
 //-----------------------------------------------------------------------------
 
+#elif defined( POSIX )
+
+#if defined( OSX )
+// Mac always aligns allocs, don't need to call posix_memalign which doesn't exist in 10.5.8 which TF2 still needs to run on
+//inline void *memalign(size_t alignment, size_t size) {void *pTmp=NULL; posix_memalign(&pTmp, alignment, size); return pTmp;}
+inline void *memalign(size_t alignment, size_t size) {void *pTmp=NULL; pTmp = malloc(size); return pTmp;}
+#endif
+
+inline void *_aligned_malloc( size_t nSize, size_t align )															{ return memalign( align, nSize ); }
+inline void _aligned_free( void *ptr )																				{ free( ptr ); }
+
+inline void *MemAlloc_Alloc( size_t nSize, const char *pFileName = NULL, int nLine = 0 )							{ return malloc( nSize ); }
+inline void MemAlloc_Free( void *ptr, const char *pFileName = NULL, int nLine = 0 )									{ free( ptr ); }
+
+inline void *MemAlloc_AllocAligned( size_t size, size_t align, const char *pszFile = NULL, int nLine = 0  )	        { return memalign( align, size ); }
+inline void *MemAlloc_AllocAlignedFileLine( size_t size, size_t align, const char *pszFile = NULL, int nLine = 0 )	{ return memalign( align, size ); }
+inline void MemAlloc_FreeAligned( void *pMemBlock, const char *pszFile = NULL, int nLine = 0 ) 						{ free( pMemBlock ); }
+
+#if defined( OSX )
+inline size_t _msize( void *ptr )																					{ return malloc_size( ptr ); }
+#else
+inline size_t _msize( void *ptr )																					{ return malloc_usable_size( ptr ); }
+#endif
+
+inline void *MemAlloc_ReallocAligned( void *ptr, size_t size, size_t align )
+{
+	void *ptr_new_aligned = memalign( align, size );
+
+	if( ptr_new_aligned )
+	{
+		size_t old_size = _msize( ptr );
+		size_t copy_size = ( size < old_size ) ? size : old_size;
+
+		memcpy( ptr_new_aligned, ptr, copy_size );
+		free( ptr );
+	}
+
+	return ptr_new_aligned;
+}
 #endif // !STEAM && !NO_MALLOC_OVERRIDE
 
 //-----------------------------------------------------------------------------
@@ -351,9 +409,13 @@ struct MemAllocFileLine_t
 
 #define MEM_ALLOC_CREDIT_(tag)	((void)0)
 #define MEM_ALLOC_CREDIT()	MEM_ALLOC_CREDIT_(__FILE__)
+#define MEM_ALLOC_CREDIT_FUNCTION()
 #define MEM_ALLOC_CREDIT_CLASS()
 #define MEM_ALLOC_CLASSNAME(type) NULL
 
+#define MemAlloc_PushAllocDbgInfo( pszFile, line )
+#define MemAlloc_PopAllocDbgInfo()
+#define MEMALLOC_DEFINE_EXTERNAL_TRACKING( tag )
 #endif // !STEAM && NO_MALLOC_OVERRIDE
 
 //-----------------------------------------------------------------------------
