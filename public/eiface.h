@@ -596,7 +596,7 @@ public:
 	virtual void			PostToolsInit() = 0;
 
 	// Called after the steam API has been activated post-level startup
-	virtual void			GameServerSteamAPIActivated( void ) = 0;
+	virtual void			GameServerSteamAPIActivated( bool bActivated ) = 0;
 	
 	// Called to apply lobby settings to a dedicated server
 	virtual void			ApplyGameSettings( KeyValues *pKV ) = 0;
