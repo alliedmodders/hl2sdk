@@ -101,7 +101,9 @@ typedef void * HINSTANCE;
 	#define IsPlatformOSX()		false
 	#define IsPlatformPS3()		false
 	#define IsPlatformWindows() true
+	#ifndef PLATFORM_WINDOWS
 	#define PLATFORM_WINDOWS	1
+	#endif
 
 	#ifndef _X360
 		#define IsPlatformX360() false
@@ -136,16 +138,22 @@ typedef void * HINSTANCE;
 	#define IsPlatformWindowsPC64()	false
 	#define IsPlatformWindowsPC32()	false
 	#define IsPlatformPosix()		true
+	#ifndef PLATFORM_POSIX
 	#define PLATFORM_POSIX 1
+	#endif
 
 	#if defined( LINUX )
 		#define IsPlatformLinux() true
 		#define IsPlatformOSX() false
+		#ifndef PLATFORM_LINUX
 		#define PLATFORM_LINUX 1
+		#endif
 	#elif defined ( OSX )
 		#define IsPlatformLinux() false
 		#define IsPlatformOSX() true
+		#ifndef PLATFORM_OSX
 		#define PLATFORM_OSX 1
+		#endif
 	#else
 		#define IsPlatformLinux() false
 		#define IsPlatformOSX() false
@@ -281,29 +289,61 @@ typedef unsigned int		uint;
 
 
 // Maximum and minimum representable values
-#ifndef PLATFORM_OSX
+#if !defined(PLATFORM_OSX) && !defined(__STDC_LIMIT_MACROS)
 
+#ifndef INT8_MAX
 #define  INT8_MAX			SCHAR_MAX
+#endif
+#ifndef INT16_MAX
 #define  INT16_MAX			SHRT_MAX
+#endif
+#ifndef INT32_MAX
 #define  INT32_MAX			LONG_MAX
+#endif
+#ifndef INT64_MAX
 #define  INT64_MAX			(((int64)~0) >> 1)
+#endif
 
+#ifndef INT8_MIN
 #define  INT8_MIN			SCHAR_MIN
+#endif
+#ifndef INT16_MIN
 #define  INT16_MIN			SHRT_MIN
+#endif
+#ifndef INT32_MIN
 #define  INT32_MIN			LONG_MIN
+#endif
+#ifndef INT64_MIN
 #define  INT64_MIN			(((int64)1) << 63)
+#endif
 
+#ifndef UINT8_MAX
 #define  UINT8_MAX			((uint8)~0)
+#endif
+#ifndef UINT16_MAX
 #define  UINT16_MAX			((uint16)~0)
+#endif
+#ifndef UINT32_MAX
 #define  UINT32_MAX			((uint32)~0)
+#endif
+#ifndef UINT16_MAX
 #define  UINT64_MAX			((uint64)~0)
+#endif
 
+#ifndef UINT8_MIN
 #define  UINT8_MIN			0
+#endif
+#ifndef UINT16_MIN
 #define  UINT16_MIN			0
+#endif
+#ifndef UINT32_MIN
 #define  UINT32_MIN			0
+#endif
+#ifndef UINT64_MIN
 #define  UINT64_MIN			0
+#endif
 
-#endif // PLATFORM_OSX
+#endif // !PLATFORM_OSX && !__STDC_LIMIT_MACROS
 
 #ifndef  UINT_MIN
 #define  UINT_MIN			UINT32_MIN
@@ -1598,7 +1638,7 @@ int	_V_stricmp_NegativeForUnequal	  ( const char *s1, const char *s2 );
 
 #define stricmp(s1,s2) _V_stricmp(s1, s2)
 #define strcmpi(s1,s2) _V_stricmp(s1, s2)
-#define strnicmp V_strncasecmp 
+#define strnicmp V_strncasecmp
 #endif
 
 #endif /* PLATFORM_H */
