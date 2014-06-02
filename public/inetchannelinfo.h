@@ -56,6 +56,7 @@ public:
 
 	virtual float		GetLatency( int flow ) const = 0;	 // current latency (RTT), more accurate but jittering
 	virtual float		GetAvgLatency( int flow ) const = 0; // average packet latency in seconds
+	virtual float		GetStdDevLatency(int flow) const = 0; // standard deviation of latency
 	virtual float		GetAvgLoss( int flow ) const = 0;	 // avg packet loss[0..1]
 	virtual float		GetAvgChoke( int flow ) const = 0;	 // avg packet choke[0..1]
 	virtual float		GetAvgData( int flow ) const = 0;	 // data flow in bytes/sec
@@ -73,6 +74,13 @@ public:
 	virtual void		GetRemoteFramerate( float *pflFrameTime, float *pflFrameTimeStdDeviation, float *pflFrameStartTimeStdDeviation ) const = 0;
 
 	virtual float		GetTimeoutSeconds() const = 0;
+	
+	virtual float		GetPeakLatency( int flow ) const = 0;
+	virtual float		GetTotalAvgLatency( int flow ) const = 0;
+	virtual float		GetTotalStdDevLatency(int flow ) const = 0;
+	virtual int			GetTotalDropped( int flow ) const = 0;
+	virtual int			GetTotalChoked( int flow ) const = 0;
+	virtual int			GetTotal( int flow ) const = 0;
 };
 
 #endif // INETCHANNELINFO_H
