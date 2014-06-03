@@ -27,10 +27,12 @@ class INetworkPrepareStartupParams;
 abstract_class INetworkSystem : public IAppSystem
 {
 public:
+	virtual void InitGameServer() = 0;
 	virtual void SetDedicated( bool enable ) = 0;
 	virtual void SetMultiplayer( bool enable ) = 0;
 	virtual int CreateSocket( int, int, int, const char * ) = 0;
 	virtual void ForceOpenSocket( int sock ) = 0;
+	virtual void ForceReopenSocket( int sock, int ) = 0;
 	virtual void AddExtraSocket( int, const char * ) = 0;
 	virtual void RemoveAllExtraSockets() = 0;
 	virtual void EnableLoopbackBetweenSockets( int, int ) = 0;
