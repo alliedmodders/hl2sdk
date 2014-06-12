@@ -32,6 +32,7 @@ class CBaseAnimating;
 class CTakeDamageInfo;
 class ITempEntsSystem;
 class IEntityFactoryDictionary;
+class CBaseTempEntity;
 class CGlobalEntityList;
 class IEntityFindFilter;
 
@@ -219,8 +220,8 @@ public:
 	virtual void RadiusDamage( const CTakeDamageInfo &info, const Vector &vecSrc, float flRadius, int iClassIgnore, CBaseEntity *pEntityIgnore ) = 0;
 
 	virtual ITempEntsSystem *GetTempEntsSystem( void ) = 0;
-	
-	virtual void *GetTempEntList( void ) = 0;
+	virtual CBaseTempEntity *GetTempEntList( void ) = 0;
+
 	virtual CGlobalEntityList *GetEntityList( void ) = 0;
 	virtual bool IsEntityPtr( void *pTest ) = 0;
 	virtual CBaseEntity *FindEntityByClassname( CBaseEntity *pStartEntity, const char *szName ) = 0;
@@ -244,8 +245,9 @@ public:
 typedef IServerTools IServerTools001;
 
 #define VSERVERTOOLS_INTERFACE_VERSION_1	"VSERVERTOOLS001"
-#define VSERVERTOOLS_INTERFACE_VERSION		"VSERVERTOOLS002"
-#define VSERVERTOOLS_INTERFACE_VERSION_INT	2
+#define VSERVERTOOLS_INTERFACE_VERSION_2	"VSERVERTOOLS002"
+#define VSERVERTOOLS_INTERFACE_VERSION		"VSERVERTOOLS003"
+#define VSERVERTOOLS_INTERFACE_VERSION_INT	3
 
 //-----------------------------------------------------------------------------
 // Purpose: Client side tool interace (right now just handles IClientRenderables).
