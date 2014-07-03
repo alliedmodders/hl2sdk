@@ -57,6 +57,8 @@ class CStandardSendProxies;
 class IAchievementMgr;
 class CGamestatsData;
 class CSteamID;
+class IReplaySystem;
+class IServer;
 
 typedef struct player_info_s player_info_t;
 
@@ -395,7 +397,9 @@ public:
 	virtual int GetAllClusterBounds( bbox_t *pBoxes, int maxboxes ) = 0;
 	virtual edict_t *CreateFakeClientEx( const char *netname, bool bUnknown ) = 0;
 	virtual int GetServerVersion() const = 0;
-	virtual void *GetReplay() = 0;
+	virtual float GetServerTime() const = 0;
+	virtual IServer *GetIServer() = 0;
+	virtual IReplaySystem *GetReplay() = 0;
 };
 
 abstract_class IServerGCLobby
