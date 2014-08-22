@@ -412,8 +412,8 @@ public:
 
 	// this set of functions is hidden, will be moved out of class
 	explicit CSteamID( const char *pchSteamID, EUniverse eDefaultUniverse = k_EUniverseInvalid );
-	char * Render() const;				// renders this steam ID to string
-	static char * Render( uint64 ulSteamID );	// static method to render a uint64 representation of a steam ID to a string
+	const char * Render() const;				// renders this steam ID to string
+	static const char * Render( uint64 ulSteamID );	// static method to render a uint64 representation of a steam ID to a string
 
 	void SetFromString( const char *pchSteamID, EUniverse eDefaultUniverse );
 	bool SetFromSteam2String( const char *pchSteam2ID, EUniverse eUniverse );
