@@ -22,6 +22,8 @@
 #define INTERFACEVERSION_GAMEEVENTSMANAGER2	"GAMEEVENTSMANAGER002"	// new game event manager,
 
 #include "tier1/bitbuf.h"
+
+class CSVCMsg_GameEvent;
 //-----------------------------------------------------------------------------
 // Purpose: Engine interface into global game event management
 //-----------------------------------------------------------------------------
@@ -67,7 +69,7 @@ abstract_class IGameEvent
 public:
 	virtual ~IGameEvent() {};
 	virtual const char *GetName() const = 0;	// get event name
-	virtual KeyValues *GetKeys() const = 0;
+	virtual int GetID() const = 0;
 
 	virtual bool  IsReliable() const = 0; // if event handled reliable
 	virtual bool  IsLocal() const = 0; // if event is never networked
@@ -87,10 +89,9 @@ public:
 	virtual void SetFloat( const char *keyName, float value ) = 0;
 	virtual void SetString( const char *keyName, const char *value ) = 0;
 	virtual void SetPtr( const char *keyName, void *value ) = 0;
+	
+	virtual KeyValues *GetDataKeys() const = 0;
 };
-
-#define EVENT_DEBUG_ID_INIT			42
-#define EVENT_DEBUG_ID_SHUTDOWN		13
 
 abstract_class IGameEventListener2
 {
@@ -100,8 +101,6 @@ public:
 	// FireEvent is called by EventManager if event just occured
 	// KeyValue memory will be freed by manager if not needed anymore
 	virtual void FireGameEvent( IGameEvent *event ) = 0;
-
-	virtual int	 GetEventDebugID( void ) = 0;
 };
 
 abstract_class IGameEventManager2 : public IBaseInterface
@@ -141,10 +140,13 @@ public:
 	virtual void FreeEvent( IGameEvent *event ) = 0;
 
 	// write/read event to/from bitbuffer
-	virtual bool SerializeEvent( IGameEvent *event, bf_write *buf ) = 0;
-	virtual IGameEvent *UnserializeEvent( bf_read *buf ) = 0; // create new KeyValues, must be deleted
+	virtual bool SerializeEvent( IGameEvent *event, CSVCMsg_GameEvent *ev ) = 0;
+	virtual IGameEvent *UnserializeEvent( const CSVCMsg_GameEvent &ev ) = 0; // create new KeyValues, must be deleted
 	
 	virtual int LookupEventId( const char *name ) = 0;
+	
+	virtual void ReloadEventDefinitions() = 0;
+	virtual void UnloadEventsFile( const char *filename ) = 0;
 };
 
 // the old game event manager interface, don't use it. Rest is legacy support:
