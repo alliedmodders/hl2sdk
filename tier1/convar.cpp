@@ -519,7 +519,7 @@ ConCommand::ConCommand( const char *pName, FnCommandCallbackV1_t callback, const
 {
 	// Set the callback
 	m_fnCommandCallbackV1 = callback;
-	m_bUsingNewCommandCallback = false;
+	m_bUsingOldCommandCallback = true;
 	m_bUsingCommandCallbackInterface = false;
 	m_bUsingCommandCallbackInterface2 = false;
 	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
@@ -533,7 +533,7 @@ ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const c
 {
 	// Set the callback
 	m_fnCommandCallback = callback;
-	m_bUsingNewCommandCallback = true;
+	m_bUsingOldCommandCallback = false;
 	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
 	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
 	m_bUsingCommandCallbackInterface = false;
@@ -547,7 +547,7 @@ ConCommand::ConCommand( const char *pName, ICommandCallback *pCallback, const ch
 {
 	// Set the callback
 	m_pCommandCallback = pCallback;
-	m_bUsingNewCommandCallback = false;
+	m_bUsingOldCommandCallback = false;
 	m_pCommandCompletionCallback = pCompletionCallback;
 	m_bHasCompletionCallback = ( pCompletionCallback != 0 );
 	m_bUsingCommandCallbackInterface = true;
@@ -561,7 +561,7 @@ ConCommand::ConCommand( const char *pName, ICommandCallback2 *pCallback, const c
 {
 	// Set the callback
 	m_pCommandCallback2 = pCallback;
-	m_bUsingNewCommandCallback = false;
+	m_bUsingOldCommandCallback = false;
 	m_pCommandCompletionCallback = pCompletionCallback;
 	m_bHasCompletionCallback = ( pCompletionCallback != 0 );
 	m_bUsingCommandCallbackInterface = false;
@@ -593,11 +593,11 @@ bool ConCommand::IsCommand( void ) const
 //-----------------------------------------------------------------------------
 void ConCommand::Dispatch( const CCommandContext &context, const CCommand &command )
 {
-	if ( m_bUsingNewCommandCallback )
+	if ( m_bUsingOldCommandCallback )
 	{
-		if ( m_fnCommandCallback )
+		if ( m_fnCommandCallbackV1 )
 		{
-			( *m_fnCommandCallback )( context, command );
+			( *m_fnCommandCallbackV1 )();
 			return;
 		}
 	}
@@ -619,11 +619,11 @@ void ConCommand::Dispatch( const CCommandContext &context, const CCommand &comma
 	}
 	else
 	{
-		if ( m_fnCommandCallbackV1 )
+		if ( m_fnCommandCallback )
 		{
-			( *m_fnCommandCallbackV1 )();
+			( *m_fnCommandCallback )( context, command );
 			return;
-		}
+		}            
 	}
 
 	// Command without callback!!!
