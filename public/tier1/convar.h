@@ -345,8 +345,8 @@ private:
 	};
 
 	bool m_bHasCompletionCallback : 1;
-	bool m_bUsingNewCommandCallback : 1;
 	bool m_bUsingCommandCallbackInterface : 1;
+	bool m_bUsingOldCommandCallback : 1;
 	bool m_bUsingCommandCallbackInterface2 : 1;
 };
 
