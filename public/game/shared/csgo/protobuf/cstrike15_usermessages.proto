@@ -124,6 +124,8 @@ enum ECstrike15UserMessages
 	CS_UM_ItemDrop = 59;
 	CS_UM_GlowPropTurnOff = 60;
 	CS_UM_SendPlayerItemDrops = 61;
+	CS_UM_RoundBackupFilenames = 62;
+	CS_UM_SendPlayerItemFound = 63;
 }
 
 //=============================================================================
@@ -326,11 +328,20 @@ message CEconItemPreviewDataBlock
 	}
 	
 	repeated Sticker stickers = 12;
+	optional uint32 inventory = 13;
+	optional uint32 origin = 14;
+	optional uint32 questid = 15;
 }
 
 message CCSUsrMsg_SendPlayerItemDrops
 {
 	repeated CEconItemPreviewDataBlock entity_updates = 1;
+}
+
+message CCSUsrMsg_SendPlayerItemFound
+{
+	optional CEconItemPreviewDataBlock iteminfo = 1;
+	optional int32 entindex = 2;
 }
 
 message CCSUsrMsg_ReloadEffect
@@ -515,6 +526,14 @@ message CCSUsrMsg_GlowPropTurnOff
 {
 	optional int32 entidx = 1;
 }
+
+message CCSUsrMsg_RoundBackupFilenames {
+	optional int32 count = 1;
+	optional int32 index = 2;
+	optional string filename = 3;
+	optional string nicename = 4;
+}
+
 
 //=============================================================================
 // Messages where the data seems to be irrelevant

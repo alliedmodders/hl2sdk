@@ -122,8 +122,9 @@ enum NET_Messages
 message CNETMsg_Tick
 {
 	optional uint32 tick = 1;							// current tick count
-	optional uint32 host_frametime = 2;					// Host frame time in 1/100000th of a second
-	optional uint32 host_frametime_std_deviation = 3;	// Host frame time stddev in 1/100000th of a second
+	optional uint32 host_computationtime = 4;
+	optional uint32 host_computationtime_std_deviation = 5;
+	optional uint32 host_framestarttime_std_deviation = 6;
 }
 
 message CNETMsg_StringCmd
@@ -462,7 +463,7 @@ message CSVCMsg_BSPDecal
 
 message CSVCMsg_SplitScreen
 {
-	optional ESplitScreenMessageType type = 1;
+	optional ESplitScreenMessageType type = 1 [default = MSG_SPLITSCREEN_ADDUSER];
 	optional int32 slot = 2;
 	optional int32 player_index = 3;
 }
