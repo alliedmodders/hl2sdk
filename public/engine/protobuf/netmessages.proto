@@ -73,6 +73,7 @@ import "google/protobuf/descriptor.proto";
 
 // for CMsgVector, etc.
 import "networkbasetypes.proto";
+import "network_connection.proto";
 
 //=============================================================================
 // Bidirectional NET Messages
@@ -107,7 +108,7 @@ message CNETMsg_NOP
 
 message CNETMsg_Disconnect
 {
-	optional string text = 1;
+	optional ENetworkDisconnectionReason reason = 2 [default = NETWORK_DISCONNECT_INVALID];
 }
 
 message CNETMsg_File
@@ -126,8 +127,9 @@ message CNETMsg_SplitScreenUser
 message CNETMsg_Tick
 {
 	optional uint32 tick = 1;							// current tick count
-	optional uint32 host_frametime = 2;					// Host frame time in 1/100000th of a second
-	optional uint32 host_frametime_std_deviation = 3;	// Host frame time stddev in 1/100000th of a second
+	optional uint32 host_computationtime = 4;
+	optional uint32 host_computationtime_std_deviation = 5;
+	optional uint32 host_framestarttime_std_deviation = 6;
 }
 
 message CNETMsg_StringCmd
@@ -196,6 +198,9 @@ message CCLCMsg_VoiceData
 	optional bytes data = 1;
 	optional fixed64 xuid = 2;
 	optional VoiceDataFormat_t format = 3 [default = VOICEDATA_FORMAT_STEAM];
+	optional int32 sequence_bytes = 4;
+	optional uint32 section_number = 5;
+	optional uint32 uncompressed_sample_offset = 6;
 }
 
 message CCLCMsg_BaselineAck
@@ -273,6 +278,7 @@ enum SVC_Messages
 	svc_GameEventList 		= 30;		// list of known games events and fields
 	svc_GetCvarValue 		= 31;		// Server wants to know the value of a cvar on the client
 	svc_PacketReliable = 32;
+	svc_FullFrameSplit = 33;
 }
 
 message CSVCMsg_ServerInfo
@@ -457,6 +463,7 @@ message CSVCMsg_PacketEntities
 	optional int32 baseline = 5;
 	optional int32 delta_from = 6;
 	optional bytes entity_data = 7;
+	optional bool pending_full_frame = 8;
 }
 
 message CSVCMsg_TempEntities
@@ -493,6 +500,9 @@ message CSVCMsg_VoiceData
 	optional int32 audible_mask = 4; 
 	optional bytes voice_data = 5;
 	optional VoiceDataFormat_t format = 6 [default = VOICEDATA_FORMAT_STEAM];
+	optional int32 sequence_bytes = 7;
+	optional uint32 section_number = 8;
+	optional uint32 uncompressed_sample_offset = 9;
 }
 
 message CSVCMsg_PacketReliable
@@ -501,3 +511,10 @@ message CSVCMsg_PacketReliable
 	optional int32 messagessize = 2;
 }
 
+message CSVCMsg_FullFrameSplit
+{
+	optional int32 tick = 1;
+	optional int32 section = 2;
+	optional int32 total = 3;
+	optional bytes data = 4;
+}
