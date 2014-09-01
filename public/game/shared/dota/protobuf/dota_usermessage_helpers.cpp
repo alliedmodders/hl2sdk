@@ -54,6 +54,7 @@ CDotaUsermessageHelpers::CDotaUsermessageHelpers()
 	SETUP_MESSAGE( VoiceMask );
 	SETUP_MESSAGE( VoiceSubtitle );
 	SETUP_MESSAGE( SendAudio );
+	SETUP_MESSAGE( CameraTransition );
 
 	//SETUP_DOTA_MESSAGE( AddUnitToSelection );
 	SETUP_DOTA_MESSAGE( AIDebugLine );
@@ -115,6 +116,10 @@ CDotaUsermessageHelpers::CDotaUsermessageHelpers()
 	SETUP_DOTA_MESSAGE( VoteEnd );
 	SETUP_DOTA_MESSAGE( BoosterState );
 	SETUP_DOTA_MESSAGE( WillPurchaseAlert );
+	SETUP_DOTA_MESSAGE( TutorialMinimapPosition );
+	SETUP_DOTA_MESSAGE( PlayerMMR );
+	SETUP_DOTA_MESSAGE( AbilitySteal );
+	SETUP_DOTA_MESSAGE( CourierKilledAlert );
 }
 
 const google::protobuf::Message *CDotaUsermessageHelpers::GetPrototype( int index ) const

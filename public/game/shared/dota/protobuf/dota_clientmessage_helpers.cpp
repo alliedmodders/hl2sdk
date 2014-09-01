@@ -38,6 +38,11 @@ CDotaClientMessageHelpers::CDotaClientMessageHelpers()
 	SETUP_DOTA_MESSAGE( RecordVote );
 	SETUP_DOTA_MESSAGE( UnitsAutoAttackAfterSpell );
 	SETUP_DOTA_MESSAGE( WillPurchaseAlert );
+	SETUP_DOTA_MESSAGE( PlayerShowCase );
+	SETUP_DOTA_MESSAGE( TeleportRequiresHalt );
+	SETUP_DOTA_MESSAGE( CameraZoomAmount );
+	SETUP_DOTA_MESSAGE( BroadcasterUsingCamerman );
+	SETUP_DOTA_MESSAGE( BroadcastUsingAssistedCameraOperator );
 }
 
 const google::protobuf::Message *CDotaClientMessageHelpers::GetPrototype( int index ) const
