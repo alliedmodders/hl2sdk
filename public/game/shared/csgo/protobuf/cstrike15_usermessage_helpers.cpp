@@ -71,6 +71,8 @@ CCstrike15UsermessageHelpers::CCstrike15UsermessageHelpers()
 	SETUP_MESSAGE( ItemDrop );
 	SETUP_MESSAGE( GlowPropTurnOff );
 	SETUP_MESSAGE( SendPlayerItemDrops );
+	SETUP_MESSAGE( RoundBackupFilenames );
+	SETUP_MESSAGE( SendPlayerItemFound );
 }
 
 const google::protobuf::Message *CCstrike15UsermessageHelpers::GetPrototype( int index ) const
