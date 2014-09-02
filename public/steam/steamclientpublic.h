@@ -189,12 +189,7 @@ enum ESystemIMType
 	k_ESystemIMTypeMax
 };
 
-const unsigned int k_unSteamAccountIDMask = 0xFFFFFFFF;
-const unsigned int k_unSteamAccountInstanceMask = 0x000FFFFF;
-// we allow 3 simultaneous user account instances right now, 1= desktop, 2 = console, 4 = web, 0 = all
-const unsigned int k_unSteamUserDesktopInstance	= 1;	 
-const unsigned int k_unSteamUserConsoleInstance	= 2;
-const unsigned int k_unSteamUserWebInstance		= 4;
+
 #pragma pack( push, 1 )		
 
 // Steam ID structure (64 bits total)
@@ -435,8 +430,12 @@ private:
 	EUniverse			m_EUniverse : 8;			// universe this account belongs to
 };
 
-const int k_unSteamAccountIDMask = 0xFFFFFFFF;
-const int k_unSteamAccountInstanceMask = 0x000FFFFF;
+const unsigned int k_unSteamAccountIDMask = 0xFFFFFFFF;
+const unsigned int k_unSteamAccountInstanceMask = 0x000FFFFF;
+// we allow 3 simultaneous user account instances right now, 1= desktop, 2 = console, 4 = web, 0 = all
+const unsigned int k_unSteamUserDesktopInstance	= 1;	 
+const unsigned int k_unSteamUserConsoleInstance	= 2;
+const unsigned int k_unSteamUserWebInstance		= 4;
 
 // generic invalid CSteamID
 #define k_steamIDNil CSteamID()
