@@ -94,7 +94,7 @@ const google::protobuf::Message *CCstrike15UsermessageHelpers::GetPrototype( con
 
 int CCstrike15UsermessageHelpers::GetIndex( const char *name ) const
 {
-	int idx = m_NameIndexMap.Find( name );
+	unsigned int idx = m_NameIndexMap.Find( name );
 	if( idx != m_NameIndexMap.InvalidHandle() )
 		return m_NameIndexMap[idx];
 
