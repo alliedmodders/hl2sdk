@@ -189,6 +189,12 @@ enum ESystemIMType
 	k_ESystemIMTypeMax
 };
 
+const unsigned int k_unSteamAccountIDMask = 0xFFFFFFFF;
+const unsigned int k_unSteamAccountInstanceMask = 0x000FFFFF;
+// we allow 3 simultaneous user account instances right now, 1= desktop, 2 = console, 4 = web, 0 = all
+const unsigned int k_unSteamUserDesktopInstance	= 1;	 
+const unsigned int k_unSteamUserConsoleInstance	= 2;
+const unsigned int k_unSteamUserWebInstance		= 4;
 #pragma pack( push, 1 )		
 
 // Steam ID structure (64 bits total)
@@ -432,6 +438,8 @@ private:
 const int k_unSteamAccountIDMask = 0xFFFFFFFF;
 const int k_unSteamAccountInstanceMask = 0x000FFFFF;
 
+// generic invalid CSteamID
+#define k_steamIDNil CSteamID()
 // This steamID comes from a user game connection to an out of date GS that hasnt implemented the protocol
 // to provide its steamID
 const CSteamID k_steamIDOutofDateGS( 0, 0, k_EUniverseInvalid, k_EAccountTypeInvalid );
