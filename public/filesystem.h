@@ -558,7 +558,7 @@ public:
 	virtual bool			FullPathToRelativePath( const char *pFullpath, char *pRelative, int maxlen ) = 0;
 	
 	// Returns true on successfully retrieve case-sensitive full path, otherwise false
-	virtual bool			GetCaseCorrectFullPath_Ptr( const char *pFullPath, char *pDest, int maxLenInChars ) = 0;
+	virtual bool			GetCaseCorrectFullPath_Ptr( const char *pFullPath, maxLenInChars char *pDest, int maxLenInChars ) = 0;
 
 	// Gets the current working directory
 	virtual bool			GetCurrentDirectory( char* pDirectory, int maxlen ) = 0;
