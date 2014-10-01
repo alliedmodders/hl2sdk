@@ -32,7 +32,6 @@ public:
 	virtual const char	*ParmValue( const char *psz, const char *pDefaultVal = 0 ) const = 0;
 	virtual int			ParmValue( const char *psz, int nDefaultVal ) const = 0;
 	virtual float		ParmValue( const char *psz, float flDefaultVal ) const = 0;
-	virtual const char	*ParmValueByIndex( int nIndex, const char *pDefaultVal = 0 ) const = 0;
 
 	// Gets at particular parameters
 	virtual int			ParmCount() const = 0;
