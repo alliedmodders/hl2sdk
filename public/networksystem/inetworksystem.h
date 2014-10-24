@@ -28,9 +28,10 @@ abstract_class INetworkSystem : public IAppSystem
 {
 public:
 	virtual void InitGameServer() = 0;
+	virtual void ShutdownGameServer() = 0;
 	virtual void SetDedicated( bool enable ) = 0;
 	virtual void SetMultiplayer( bool enable ) = 0;
-	virtual int CreateSocket( int, int, int, const char * ) = 0;
+	virtual int CreateSocket( int, int, int, int, int, const char * ) = 0;
 	virtual void ForceOpenSocket( int sock ) = 0;
 	virtual void ForceReopenSocket( int sock, int ) = 0;
 	virtual void AddExtraSocket( int, const char * ) = 0;
@@ -53,7 +54,7 @@ public:
 	virtual void OutOfBandDelayedPrintf( int sock, const netadr_t &adr, unsigned int delay, const char *format, ...) = 0;
 	virtual void SetTime( double time ) = 0;
 	virtual void SetTimeScale( float timeScale ) = 0;
-	virtual double GetNetTime() = 0;
+	virtual double GetNetTime() const = 0;
 	virtual bool IsMultiplayer() = 0;
 	virtual bool IsDedicated() = 0;
 	virtual bool IsDedicatedForXbox() = 0;
