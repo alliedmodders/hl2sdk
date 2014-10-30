@@ -27,6 +27,8 @@
 class IUniformRandomStream
 {
 public:
+	virtual ~IUniformRandomStream() {}
+	
 	// Sets the seed of the random number generator
 	virtual void	SetSeed( int iSeed ) = 0;
 
