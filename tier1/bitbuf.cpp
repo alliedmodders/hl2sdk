@@ -849,7 +849,7 @@ void bf_read::SetDebugName( const char *pName )
 	m_pDebugName = pName;
 }
 
-void bf_read::SetOverflowFlag()
+void bf_read::SetOverflowFlag() RESTRICT
 {
 	if ( m_bAssertOnOverflow )
 	{
