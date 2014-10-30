@@ -57,6 +57,7 @@ class CStandardSendProxies;
 class IAchievementMgr;
 class CGamestatsData;
 class CSteamID;
+class IReplayFactory;
 class IReplaySystem;
 class IServer;
 
@@ -72,9 +73,15 @@ typedef struct player_info_s player_info_t;
 #define DLLEXPORT /* */
 #endif
 
-#define INTERFACEVERSION_VENGINESERVER	"VEngineServer021"
+#define INTERFACEVERSION_VENGINESERVER_VERSION_21	"VEngineServer021"
+#define INTERFACEVERSION_VENGINESERVER				"VEngineServer022"
+#define INTERFACEVERSION_VENGINESERVER_INT			22
 
-struct bbox_t;
+struct bbox_t
+{
+	Vector mins;
+	Vector maxs;
+};
 
 //-----------------------------------------------------------------------------
 // Purpose: Interface the engine exposes to the game DLL
@@ -222,7 +229,7 @@ public:
 	virtual bool		LockNetworkStringTables( bool lock ) = 0;
 
 	// Create a bot with the given name.  Returns NULL if fake client can't be created
-	virtual edict_t		*CreateFakeClient( const char *netname ) = 0;	
+	virtual edict_t		*CreateFakeClient( const char *netname ) = 0;
 
 	// Get a convar keyvalue for s specified client
 	virtual const char	*GetClientConVarValue( int clientIndex, const char *name ) = 0;
@@ -384,39 +391,43 @@ public:
 
 	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
 	virtual const CSteamID	*GetClientSteamID( edict_t *pPlayerEdict ) = 0;
-	
+
 	// Returns the SteamID of the game server
 	virtual const CSteamID	*GetGameServerSteamID() = 0;
 
 	// Send a client command keyvalues
 	// keyvalues are deleted inside the function
 	virtual void ClientCommandKeyValues( edict_t *pEdict, KeyValues *pCommand ) = 0;
-	
-	virtual const CSteamID *GetClientSteamIDByPlayerIndex( int index ) = 0;
+
+	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
+	virtual const CSteamID	*GetClientSteamIDByPlayerIndex( int entnum ) = 0;
+	// Gets a list of all clusters' bounds.  Returns total number of clusters.
 	virtual int GetClusterCount() = 0;
-	virtual int GetAllClusterBounds( bbox_t *pBoxes, int maxboxes ) = 0;
-	virtual edict_t *CreateFakeClientEx( const char *netname, bool bUnknown ) = 0;
+	virtual int GetAllClusterBounds( bbox_t *pBBoxList, int maxBBox ) = 0;
+
+	// Create a bot with the given name.  Returns NULL if fake client can't be created
+	virtual edict_t		*CreateFakeClientEx( const char *netname, bool bReportFakeClient = true ) = 0;
+
+	// Server version from the steam.inf, this will be compared to the GC version
 	virtual int GetServerVersion() const = 0;
+
+	// Get sv.GetTime()
 	virtual float GetServerTime() const = 0;
+
+	// Exposed for server plugin authors
 	virtual IServer *GetIServer() = 0;
+	
 	virtual IReplaySystem *GetReplay() = 0;
 };
 
-abstract_class IServerGCLobby
-{
-public:
-	virtual bool HasLobby() const = 0;
-	virtual bool SteamIDAllowedToConnect( const CSteamID &steamId ) const = 0;
-	virtual void UpdateServerDetails( void ) = 0;
-	virtual bool ShouldHibernate() = 0;
-};
+typedef IVEngineServer IVEngineServer021;
 
-#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
-#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_5	"ServerGameDLL005"
-#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_6	"ServerGameDLL006"
-#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_7	"ServerGameDLL007"
+
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_8	"ServerGameDLL008"
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL009"
+#define INTERFACEVERSION_SERVERGAMEDLL_INT			9
+
+class IServerGCLobby;
 
 //-----------------------------------------------------------------------------
 // Purpose: These are the interfaces that the game .dll exposes to the engine
@@ -430,9 +441,10 @@ public:
 										CreateInterfaceFn physicsFactory, 
 										CreateInterfaceFn fileSystemFactory, 
 										CGlobalVars *pGlobals) = 0;
-	
-	virtual bool			ReplayInit( CreateInterfaceFn replayFactory ) = 0;
-	
+
+	// Setup replay interfaces on the server
+	virtual bool			ReplayInit( CreateInterfaceFn fnReplayFactory ) = 0;
+
 	// This is called when a new game is started. (restart, map)
 	virtual bool			GameInit( void ) = 0;
 
@@ -522,19 +534,31 @@ public:
 	// iCookie is the value returned by IServerPluginHelpers::StartQueryCvarValue.
 	// Added with version 2 of the interface.
 	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) = 0;
-	
+
 	// Called after the steam API has been activated post-level startup
 	virtual void			GameServerSteamAPIActivated( void ) = 0;
-	
+
+	// Called after the steam API has been shutdown post-level startup
 	virtual void			GameServerSteamAPIShutdown( void ) = 0;
 
 	virtual void			SetServerHibernation( bool bHibernating ) = 0;
 
-	virtual IServerGCLobby	*GetServerGCLobby() = 0;
+	// interface to the new GC based lobby system
+	virtual IServerGCLobby *GetServerGCLobby() = 0;
 
-	virtual const char		*GetServerBrowserMapOverride() = 0;
-	virtual const char		*GetServerBrowserGameData() = 0;
+	// Return override string to show in the server browser
+	// "map" column, or NULL to just use the default value
+	// (the map name)
+	virtual const char *GetServerBrowserMapOverride() = 0;
+
+	// Get gamedata string to send to the master serer updater.
+	virtual const char *GetServerBrowserGameData() = 0;
+
+	// Called to add output to the status command
+	virtual void 			Status( void (*print) (const char *fmt, ...) ) = 0;
 };
+
+typedef IServerGameDLL IServerGameDLL008;
 
 //-----------------------------------------------------------------------------
 // Just an interface version name for the random number interface
@@ -573,7 +597,8 @@ public:
 	virtual void			CheckTransmit( CCheckTransmitInfo *pInfo, const unsigned short *pEdictIndices, int nEdicts ) = 0;
 };
 
-#define INTERFACEVERSION_SERVERGAMECLIENTS		"ServerGameClients004"
+#define INTERFACEVERSION_SERVERGAMECLIENTS_VERSION_3	"ServerGameClients003"
+#define INTERFACEVERSION_SERVERGAMECLIENTS				"ServerGameClients004"
 
 //-----------------------------------------------------------------------------
 // Purpose: Player / Client related functions
@@ -615,7 +640,7 @@ public:
 								int dropped_packets, bool ignore, bool paused ) = 0;
 	
 	// Let the game .dll do stuff after messages have been sent to all of the clients once the server frame is complete
-	virtual void			PostClientMessagesSent( void ) = 0;
+	virtual void			PostClientMessagesSent_DEPRECIATED( void ) = 0;
 
 	// For players, looks up the CPlayerState structure corresponding to the player
 	virtual CPlayerState	*GetPlayerState( edict_t *player ) = 0;
@@ -632,12 +657,16 @@ public:
 
 	// A user has had their network id setup and validated 
 	virtual void			NetworkIDValidated( const char *pszUserName, const char *pszNetworkID ) = 0;
-	
+
 	// The client has submitted a keyvalues command
 	virtual void			ClientCommandKeyValues( edict_t *pEntity, KeyValues *pKeyValues ) = 0;
-	
-	virtual void			ClientSpawned( edict_t *pEntity ) = 0;
+
+	// Hook for player spawning
+	virtual void			ClientSpawned( edict_t *pPlayer ) = 0;
 };
+
+typedef IServerGameClients IServerGameClients003;
+
 
 #define INTERFACEVERSION_UPLOADGAMESTATS		"ServerUploadGameStats001"
 
@@ -706,6 +735,18 @@ abstract_class IServerGameTags
 public:
 	// Get the list of cvars that require tags to show differently in the server browser
 	virtual void			GetTaggedConVarList( KeyValues *pCvarTagList ) = 0;
+};
+
+//-----------------------------------------------------------------------------
+// Purpose: Provide hooks for the GC based lobby system
+//-----------------------------------------------------------------------------
+abstract_class IServerGCLobby
+{
+public:
+	virtual bool HasLobby() const = 0;
+	virtual bool SteamIDAllowedToConnect( const CSteamID &steamId ) const = 0;
+	virtual void UpdateServerDetails(void) = 0;
+	virtual bool ShouldHibernate() = 0;
 };
 
 #endif // EIFACE_H
