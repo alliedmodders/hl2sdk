@@ -857,9 +857,9 @@ ConVarRef suitcharger( "sk_suitcharger" );
 			{
 				killer_weapon_name += 7;
 			}
-			else if ( strncmp( killer_weapon_name, "NPC_", 8 ) == 0 )
+			else if ( strncmp( killer_weapon_name, "NPC_", 4 ) == 0 )
 			{
-				killer_weapon_name += 8;
+				killer_weapon_name += 4;
 			}
 			else if ( strncmp( killer_weapon_name, "func_", 5 ) == 0 )
 			{
@@ -1149,14 +1149,17 @@ ConVarRef suitcharger( "sk_suitcharger" );
 		}
 	}
 
-	void StripChar(char *szBuffer, const char cWhiteSpace )
+	// Strip ' ' and '\n' characters from string.
+	static void StripWhitespaceChars( char *szBuffer )
 	{
+		char *szOut = szBuffer;
 
-		while ( char *pSpace = strchr( szBuffer, cWhiteSpace ) )
+		for ( char *szIn = szOut; *szIn; szIn++ )
 		{
-			char *pNextChar = pSpace + sizeof(char);
-			V_strcpy( pSpace, pNextChar );
+			if ( *szIn != ' ' && *szIn != '\r' )
+				*szOut++ = *szIn;
 		}
+		*szOut = '\0';
 	}
 
 	void CMultiplayRules::GetNextLevelName( char *pszNextMap, int bufsize, bool bRandom /* = false */ )
@@ -1283,9 +1286,8 @@ ConVarRef suitcharger( "sk_suitcharger" );
 		{
 			bool bIgnore = false;
 
-			// Strip out the spaces in the name
-			StripChar( mapList[i] , '\r');
-			StripChar( mapList[i] , ' ');
+			// Strip out ' ' and '\r' chars.
+			StripWhitespaceChars( mapList[i] );
 
 			if ( !Q_strncmp( mapList[i], "//", 2 ) || mapList[i][0] == '\0' )
 			{

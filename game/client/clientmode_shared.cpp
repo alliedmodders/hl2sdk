@@ -228,9 +228,9 @@ static void __MsgFunc_VGUIMenu( bf_read &msg )
 			&& keys->GetInt( "type", 0 ) == 2 // URL message type
 		) {
 			const char *pszURL = keys->GetString( "msg", "" );
-			if ( Q_strncmp( pszURL, "http://", 7 ) != 0 && Q_strncmp( pszURL, "https://", 8 ) != 0 )
+			if ( Q_strncmp( pszURL, "http://", 7 ) != 0 && Q_strncmp( pszURL, "https://", 8 ) != 0 && Q_stricmp( pszURL, "about:blank" ) != 0 )
 			{
-				Warning( "Blocking MOTD URL '%s'; must begin with 'http://' or 'https://'\n", pszURL );
+				Warning( "Blocking MOTD URL '%s'; must begin with 'http://' or 'https://' or be about:blank\n", pszURL );
 				keys->deleteThis();
 				return;
 			}
@@ -470,8 +470,17 @@ bool ClientModeShared::ShouldDrawEntity(C_BaseEntity *pEnt)
 	return true;
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
 bool ClientModeShared::ShouldDrawParticles( )
 {
+#ifdef TF_CLIENT_DLL
+	C_TFPlayer *pTFPlayer = C_TFPlayer::GetLocalTFPlayer();
+	if ( pTFPlayer && !pTFPlayer->ShouldPlayerDrawParticles() )
+		return false;
+#endif // TF_CLIENT_DLL
+
 	return true;
 }
 

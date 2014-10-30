@@ -811,9 +811,7 @@ void InvalidParameterViolation()
 // Disable compiler optimizations. If we don't do this then VC++ generates code
 // that confuses the Visual Studio debugger and causes it to display completely
 // random call stacks. That makes the minidumps excruciatingly hard to understand.
-#ifdef _WIN32
 #pragma optimize("", off)
-#endif
 
 // Write a minidump file, unless running under the debugger in which case break
 // into the debugger.
@@ -850,9 +848,7 @@ void VInvalidParameterHandler(const wchar_t* expression,
 }
 
 // Restore compiler optimizations.
-#ifdef _WIN32
 #pragma optimize("", on)
-#endif
 
 // Helper class for registering error callbacks. See above for details.
 class ErrorHandlerRegistrar
@@ -1147,7 +1143,6 @@ _TSCHAR * __cdecl _ttempnam ( const _TSCHAR *dir, const _TSCHAR *pfx )
 	Assert(0);
 	return 0;
 }
-#endif
 
 wchar_t * __cdecl _wcsdup_dbg ( const wchar_t * string, int nBlockUse, const char * szFileName, int nLine )
 {
@@ -1160,7 +1155,7 @@ wchar_t * __cdecl _wcsdup ( const wchar_t * string )
 	Assert(0);
 	return 0;
 }
-
+#endif
 } // end extern "C"
 
 #if _MSC_VER >= 1400

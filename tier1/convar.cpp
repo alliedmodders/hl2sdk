@@ -116,7 +116,7 @@ ConCommandBase::ConCommandBase( void )
 //-----------------------------------------------------------------------------
 ConCommandBase::ConCommandBase( const char *pName, const char *pHelpString /*=0*/, int flags /*= 0*/ )
 {
-	Create( pName, pHelpString, flags );
+	CreateBase( pName, pHelpString, flags );
 }
 
 //-----------------------------------------------------------------------------
@@ -153,16 +153,14 @@ CVarDLLIdentifier_t ConCommandBase::GetDLLIdentifier() const
 //			*pHelpString - 
 //			flags - 
 //-----------------------------------------------------------------------------
-void ConCommandBase::Create( const char *pName, const char *pHelpString /*= 0*/, int flags /*= 0*/ )
+void ConCommandBase::CreateBase( const char *pName, const char *pHelpString /*= 0*/, int flags /*= 0*/ )
 {
-	static char *empty_string = "";
-
 	m_bRegistered = false;
 
 	// Name should be static data
 	Assert( pName );
 	m_pszName = pName;
-	m_pszHelpString = pHelpString ? pHelpString : empty_string;
+	m_pszHelpString = pHelpString ? pHelpString : "";
 
 	m_nFlags = flags;
 
@@ -269,7 +267,7 @@ char *ConCommandBase::CopyString( const char *from )
 	int		len;
 	char	*to;
 
-	len = strlen( from );
+	len = V_strlen( from );
 	if ( len <= 0 )
 	{
 		to = new char[1];
@@ -507,7 +505,7 @@ int DefaultCompletionFunc( const char *partial, char commands[ COMMAND_COMPLETIO
 //	m_bIsNewConCommand = true;
 //}
 
-ConCommand::ConCommand( const char *pName, FnCommandCallbackV1_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
+ConCommand::ConCommand( const char *pName, FnCommandCallbackVoid_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
 	// Set the callback
 	m_fnCommandCallbackV1 = callback;
@@ -517,7 +515,7 @@ ConCommand::ConCommand( const char *pName, FnCommandCallbackV1_t callback, const
 	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
 
 	// Setup the rest
-	BaseClass::Create( pName, pHelpString, flags );
+	BaseClass::CreateBase( pName, pHelpString, flags );
 }
 
 ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
@@ -530,7 +528,7 @@ ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const c
 	m_bUsingCommandCallbackInterface = false;
 
 	// Setup the rest
-	BaseClass::Create( pName, pHelpString, flags );
+	BaseClass::CreateBase( pName, pHelpString, flags );
 }
 
 ConCommand::ConCommand( const char *pName, ICommandCallback *pCallback, const char *pHelpString /*= 0*/, int flags /*= 0*/, ICommandCompletionCallback *pCompletionCallback /*= 0*/ )
@@ -543,7 +541,7 @@ ConCommand::ConCommand( const char *pName, ICommandCallback *pCallback, const ch
 	m_bUsingCommandCallbackInterface = true;
 
 	// Setup the rest
-	BaseClass::Create( pName, pHelpString, flags );
+	BaseClass::CreateBase( pName, pHelpString, flags );
 }
 
 //-----------------------------------------------------------------------------
@@ -951,7 +949,7 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 	// Name should be static data
 	SetDefault( pDefaultValue );
 
-	m_StringLength = strlen( m_pszDefaultValue ) + 1;
+	m_StringLength = V_strlen( m_pszDefaultValue ) + 1;
 	m_pszString = new char[m_StringLength];
 	memcpy( m_pszString, m_pszDefaultValue, m_StringLength );
 	
@@ -963,6 +961,7 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 	m_fnChangeCallback = callback;
 
 	m_fValue = ( float )atof( m_pszString );
+	m_nValue = atoi( m_pszString ); // dont convert from float to int and lose bits
 
 	// Bounds Check, should never happen, if it does, no big deal
 	if ( m_bHasMin && ( m_fValue < m_fMinVal ) )
@@ -975,9 +974,7 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 		Assert( 0 );
 	}
 
-	m_nValue = ( int )m_fValue;
-
-	BaseClass::Create( pName, pHelpString, flags );
+	BaseClass::CreateBase( pName, pHelpString, flags );
 }
 
 //-----------------------------------------------------------------------------
@@ -1052,8 +1049,7 @@ const char *ConVar::GetDefault( void ) const
 
 void ConVar::SetDefault( const char *pszDefault ) 
 { 
-	static char *empty_string = "";
-	m_pszDefaultValue = pszDefault ? pszDefault : empty_string;
+	m_pszDefaultValue = pszDefault ? pszDefault : "";
 	Assert( m_pszDefaultValue );
 }
 

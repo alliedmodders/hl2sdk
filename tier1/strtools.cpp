@@ -1190,6 +1190,7 @@ bool Q_IsMeanSpaceW( wchar_t wch )
 	case L'\x200B':   // ZERO-WIDTH SPACE
 	case L'\x200C':   // ZERO-WIDTH NON-JOINER
 	case L'\x200D':   // ZERO WIDTH JOINER
+	case L'\x200E':	  // LEFT-TO-RIGHT MARK
 	case L'\x2028':   // LINE SEPARATOR
 	case L'\x2029':   // PARAGRAPH SEPARATOR
 	case L'\x202F':   // NARROW NO-BREAK SPACE
@@ -1238,6 +1239,48 @@ static wchar_t *StripWhitespaceWorker( int cchLength, wchar_t *pwch, bool *pbStr
 	}
 
 	return pwch;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Strips all evil characters (ie. zero-width no-break space)
+//			from a string.
+//-----------------------------------------------------------------------------
+bool Q_RemoveAllEvilCharacters( char *pch )
+{
+	// convert to unicode
+	int cch = Q_strlen( pch );
+	int cubDest = (cch + 1 ) * sizeof( wchar_t );
+	wchar_t *pwch = (wchar_t *)stackalloc( cubDest );
+	int cwch = Q_UTF8ToUnicode( pch, pwch, cubDest );
+
+	bool bStrippedWhitespace = false;
+
+	// Walk through and skip over evil characters
+	int nWalk = 0;
+	for( int i=0; i<cwch; ++i )
+	{
+		if( !Q_IsMeanSpaceW( pwch[i] ) )
+		{
+			pwch[nWalk] = pwch[i];
+			++nWalk;
+		}
+		else
+		{
+			bStrippedWhitespace = true;
+		}
+	}
+
+	// Null terminate
+	pwch[nWalk-1] = L'\0';
+	
+
+	// copy back, if necessary
+	if ( bStrippedWhitespace )
+	{
+		Q_UnicodeToUTF8( pwch, pch, cch );
+	}
+
+	return bStrippedWhitespace;
 }
 
 
@@ -1422,7 +1465,6 @@ int V_UCS2ToUnicode( const ucs2 *pUCS2, wchar_t *pUnicode, int cubDestSizeInByte
 	char *pOut = (char *)pUnicode;
 	if ( conv_t > 0 )
 	{
-		cchResult = 0;
 		cchResult = iconv( conv_t, &pIn, &nLenUnicde, &pOut, &nMaxUTF8 );
 		iconv_close( conv_t );
 		if ( (int)cchResult < 0 )
@@ -1463,7 +1505,6 @@ int V_UnicodeToUCS2( const wchar_t *pUnicode, int cubSrcInBytes, char *pUCS2, in
 	char *pOut = pUCS2;
 	if ( conv_t > 0 )
 	{
-		cchResult = 0;
 		cchResult = iconv( conv_t, &pIn, &nLenUnicde, &pOut, &nMaxUCS2 );
 		iconv_close( conv_t );
 		if ( (int)cchResult < 0 )
@@ -1510,7 +1551,6 @@ int V_UCS2ToUTF8( const ucs2 *pUCS2, char *pUTF8, int cubDestSizeInBytes )
 	char *pOut = (char *)pUTF8;
 	if ( conv_t > 0 )
 	{
-		cchResult = 0;
 		const size_t nBytesToWrite = nMaxUTF8;
 		cchResult = iconv( conv_t, &pIn, &nLenUnicde, &pOut, &nMaxUTF8 );
 
@@ -1556,7 +1596,6 @@ int V_UTF8ToUCS2( const char *pUTF8, int cubSrcInBytes, ucs2 *pUCS2, int cubDest
 	char *pOut = (char *)pUCS2;
 	if ( conv_t > 0 )
 	{
-		cchResult = 0;
 		cchResult = iconv( conv_t, &pIn, &nLenUnicde, &pOut, &nMaxUTF8 );
 		iconv_close( conv_t );
 		if ( (int)cchResult < 0 )
@@ -1824,7 +1863,18 @@ void V_DefaultExtension( char *path, const char *extension, int pathStringLength
 void V_SetExtension( char *path, const char *extension, int pathStringLength )
 {
 	V_StripExtension( path, path, pathStringLength );
-	V_DefaultExtension( path, extension, pathStringLength );
+
+	// We either had an extension and stripped it, or didn't have an extension
+	// at all. Either way, we need to concatenate our extension now.
+
+	// extension is not required to start with '.', so if it's not there,
+	// then append that first.
+	if ( extension[0] != '.' )
+	{
+		V_strncat( path, ".", pathStringLength, COPY_ALL_CHARACTERS );
+	}
+
+	V_strncat( path, extension, pathStringLength, COPY_ALL_CHARACTERS );
 }
 
 //-----------------------------------------------------------------------------
@@ -2663,6 +2713,217 @@ char *V_AddBackSlashesToSpecialChars( char const *pSrc )
 	*( pOut++ ) = 0;
 	return pRet;
 }
+
+//-----------------------------------------------------------------------------
+// Purpose: Helper for converting a numeric value to a hex digit, value should be 0-15.
+//-----------------------------------------------------------------------------
+char cIntToHexDigit( int nValue )
+{
+	Assert( nValue >= 0 && nValue <= 15 );
+	return "0123456789ABCDEF"[ nValue & 15 ];
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Helper for converting a hex char value to numeric, return -1 if the char
+//          is not a valid hex digit.
+//-----------------------------------------------------------------------------
+int iHexCharToInt( char cValue )
+{
+	int32 iValue = cValue;
+	if ( (uint32)( iValue - '0' ) < 10 )
+		return iValue - '0';
+
+	iValue |= 0x20;
+	if ( (uint32)( iValue - 'a' ) < 6 )
+		return iValue - 'a' + 10;
+
+	return -1;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Internal implementation of encode, works in the strict RFC manner, or
+//          with spaces turned to + like HTML form encoding.
+//-----------------------------------------------------------------------------
+void Q_URLEncodeInternal( char *pchDest, int nDestLen, const char *pchSource, int nSourceLen, bool bUsePlusForSpace )
+{
+	if ( nDestLen < 3*nSourceLen )
+	{
+		pchDest[0] = '\0';
+		AssertMsg( false, "Target buffer for Q_URLEncode needs to be 3 times larger than source to guarantee enough space\n" );
+		return;
+	}
+
+	int iDestPos = 0;
+	for ( int i=0; i < nSourceLen; ++i )
+	{
+		// We allow only a-z, A-Z, 0-9, period, underscore, and hyphen to pass through unescaped.
+		// These are the characters allowed by both the original RFC 1738 and the latest RFC 3986.
+		// Current specs also allow '~', but that is forbidden under original RFC 1738.
+		if ( !( pchSource[i] >= 'a' && pchSource[i] <= 'z' ) && !( pchSource[i] >= 'A' && pchSource[i] <= 'Z' ) && !(pchSource[i] >= '0' && pchSource[i] <= '9' )
+			&& pchSource[i] != '-' && pchSource[i] != '_' && pchSource[i] != '.'	
+			)
+		{
+			if ( bUsePlusForSpace && pchSource[i] == ' ' )
+			{
+				pchDest[iDestPos++] = '+';
+			}
+			else
+			{
+				pchDest[iDestPos++] = '%';
+				uint8 iValue = pchSource[i];
+				if ( iValue == 0 )
+				{
+					pchDest[iDestPos++] = '0';
+					pchDest[iDestPos++] = '0';
+				}
+				else
+				{
+					char cHexDigit1 = cIntToHexDigit( iValue % 16 );
+					iValue /= 16;
+					char cHexDigit2 = cIntToHexDigit( iValue );
+					pchDest[iDestPos++] = cHexDigit2;
+					pchDest[iDestPos++] = cHexDigit1;
+				}
+			}
+		}
+		else
+		{
+			pchDest[iDestPos++] = pchSource[i];
+		}
+	}
+
+	// Null terminate
+	pchDest[iDestPos++] = 0;
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Internal implementation of decode, works in the strict RFC manner, or
+//          with spaces turned to + like HTML form encoding.
+//
+//			Returns the amount of space used in the output buffer.
+//-----------------------------------------------------------------------------
+size_t Q_URLDecodeInternal( char *pchDecodeDest, int nDecodeDestLen, const char *pchEncodedSource, int nEncodedSourceLen, bool bUsePlusForSpace )
+{
+	if ( nDecodeDestLen < nEncodedSourceLen )
+	{
+		AssertMsg( false, "Q_URLDecode needs a dest buffer at least as large as the source" );
+		return 0;
+	}
+
+	int iDestPos = 0;
+	for( int i=0; i < nEncodedSourceLen; ++i )
+	{
+		if ( bUsePlusForSpace && pchEncodedSource[i] == '+' )
+		{
+			pchDecodeDest[ iDestPos++ ] = ' ';
+		}
+		else if ( pchEncodedSource[i] == '%' )
+		{
+			// Percent signifies an encoded value, look ahead for the hex code, convert to numeric, and use that
+
+			// First make sure we have 2 more chars
+			if ( i < nEncodedSourceLen - 2 )
+			{
+				char cHexDigit1 = pchEncodedSource[i+1];
+				char cHexDigit2 = pchEncodedSource[i+2];
+
+				// Turn the chars into a hex value, if they are not valid, then we'll
+				// just place the % and the following two chars direct into the string,
+				// even though this really shouldn't happen, who knows what bad clients
+				// may do with encoding.
+				bool bValid = false;
+				int iValue = iHexCharToInt( cHexDigit1 );
+				if ( iValue != -1 )
+				{
+					iValue *= 16;
+					int iValue2 = iHexCharToInt( cHexDigit2 );
+					if ( iValue2 != -1 )
+					{
+						iValue += iValue2;
+						pchDecodeDest[ iDestPos++ ] = iValue;
+						bValid = true;
+					}
+				}
+
+				if ( !bValid )
+				{
+					pchDecodeDest[ iDestPos++ ] = '%';
+					pchDecodeDest[ iDestPos++ ] = cHexDigit1;
+					pchDecodeDest[ iDestPos++ ] = cHexDigit2;
+				}
+			}
+
+			// Skip ahead
+			i += 2;
+		}
+		else
+		{
+			pchDecodeDest[ iDestPos++ ] = pchEncodedSource[i];
+		}
+	}
+
+	// We may not have extra room to NULL terminate, since this can be used on raw data, but if we do
+	// go ahead and do it as this can avoid bugs.
+	if ( iDestPos < nDecodeDestLen )
+	{
+		pchDecodeDest[iDestPos] = 0;
+	}
+
+	return (size_t)iDestPos;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Encodes a string (or binary data) from URL encoding format, see rfc1738 section 2.2.  
+//          This version of the call isn't a strict RFC implementation, but uses + for space as is
+//          the standard in HTML form encoding, despite it not being part of the RFC.
+//
+//          Dest buffer should be at least as large as source buffer to guarantee room for decode.
+//-----------------------------------------------------------------------------
+void Q_URLEncode( char *pchDest, int nDestLen, const char *pchSource, int nSourceLen )
+{
+	return Q_URLEncodeInternal( pchDest, nDestLen, pchSource, nSourceLen, true );
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Decodes a string (or binary data) from URL encoding format, see rfc1738 section 2.2.  
+//          This version of the call isn't a strict RFC implementation, but uses + for space as is
+//          the standard in HTML form encoding, despite it not being part of the RFC.
+//
+//          Dest buffer should be at least as large as source buffer to guarantee room for decode.
+//			Dest buffer being the same as the source buffer (decode in-place) is explicitly allowed.
+//-----------------------------------------------------------------------------
+size_t Q_URLDecode( char *pchDecodeDest, int nDecodeDestLen, const char *pchEncodedSource, int nEncodedSourceLen )
+{
+	return Q_URLDecodeInternal( pchDecodeDest, nDecodeDestLen, pchEncodedSource, nEncodedSourceLen, true );
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Encodes a string (or binary data) from URL encoding format, see rfc1738 section 2.2.  
+//          This version will not encode space as + (which HTML form encoding uses despite not being part of the RFC)
+//
+//          Dest buffer should be at least as large as source buffer to guarantee room for decode.
+//-----------------------------------------------------------------------------
+void Q_URLEncodeRaw( char *pchDest, int nDestLen, const char *pchSource, int nSourceLen )
+{
+	return Q_URLEncodeInternal( pchDest, nDestLen, pchSource, nSourceLen, false );
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Decodes a string (or binary data) from URL encoding format, see rfc1738 section 2.2.  
+//          This version will not recognize + as a space (which HTML form encoding uses despite not being part of the RFC)
+//
+//          Dest buffer should be at least as large as source buffer to guarantee room for decode.
+//			Dest buffer being the same as the source buffer (decode in-place) is explicitly allowed.
+//-----------------------------------------------------------------------------
+size_t Q_URLDecodeRaw( char *pchDecodeDest, int nDecodeDestLen, const char *pchEncodedSource, int nEncodedSourceLen )
+{
+	return Q_URLDecodeInternal( pchDecodeDest, nDecodeDestLen, pchEncodedSource, nEncodedSourceLen, false );
+}
+
 #if defined( LINUX ) || defined( _PS3 )
 extern "C" void qsort_s( void *base, size_t num, size_t width, int (*compare )(void *, const void *, const void *), void * context );
 #endif

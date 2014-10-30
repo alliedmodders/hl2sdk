@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//====== Copyright © 1996-2010, Valve Corporation, All rights reserved. =======
 //
 // Purpose: HTTP related enums, stuff that is shared by both clients and servers, and our
 // UI projects goes here.
@@ -20,13 +20,13 @@ enum EHTTPMethod
 	k_EHTTPMethodGET,
 	k_EHTTPMethodHEAD,
 	k_EHTTPMethodPOST,
+	k_EHTTPMethodPUT,
+	k_EHTTPMethodDELETE,
+	k_EHTTPMethodOPTIONS,
 
 	// The remaining HTTP methods are not yet supported, per rfc2616 section 5.1.1 only GET and HEAD are required for 
 	// a compliant general purpose server.  We'll likely add more as we find uses for them.
 
-	// k_EHTTPMethodOPTIONS,
-	k_EHTTPMethodPUT,
-	k_EHTTPMethodDELETE,
 	// k_EHTTPMethodTRACE,
 	// k_EHTTPMethodCONNECT
 };
@@ -81,6 +81,7 @@ enum EHTTPStatusCode
 	k_EHTTPStatusCode415UnsupportedMediaType =	415,
 	k_EHTTPStatusCode416RequestedRangeNotSatisfiable = 416,
 	k_EHTTPStatusCode417ExpectationFailed =		417,
+	k_EHTTPStatusCode429TooManyRequests	=		429,
 
 	// Server error codes
 	k_EHTTPStatusCode500InternalServerError =	500,

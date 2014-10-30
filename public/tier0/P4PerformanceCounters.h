@@ -8,9 +8,7 @@
 #ifndef P4PERFORMANCECOUNTERS_H
 #define P4PERFORMANCECOUNTERS_H
 
-#ifdef _WIN32
 #pragma once
-#endif
 // Pentium 4 support
 
 /*
@@ -77,9 +75,7 @@ enum Counters
 // register base for CCCR register
 #define MSR_CCCR_BASE       0x360
 
-#ifdef _WIN32
 #pragma pack(push, 1)
-#endif
 // access to these bits is through the methods
 typedef union ESCR
 {
@@ -125,9 +121,7 @@ typedef union CCCR
 
 } CCCR;
 
-#ifdef _WIN32
 #pragma pack(pop)
-#endif
 
 extern const unsigned short cccr_escr_map[NCOUNTERS][8];
 

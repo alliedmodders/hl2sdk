@@ -2571,11 +2571,10 @@ public:
 
 		// ctor
 		CActivityToSequenceMapping( void ) 
-			: m_pSequenceTuples(NULL), m_iSequenceTuplesCount(0),
+			: m_pSequenceTuples(NULL), m_iSequenceTuplesCount(0), m_ActToSeqHash(8,0,0), m_expectedPStudioHdr(NULL), m_expectedVModel(NULL) 
 #if STUDIO_SEQUENCE_ACTIVITY_LAZY_INITIALIZE
-			m_bIsInitialized(false),
+			, m_bIsInitialized(false) 
 #endif
-			m_ActToSeqHash(8,0,0), m_expectedPStudioHdr(NULL), m_expectedVModel(NULL)
 		{};
 
 		// dtor -- not virtual because this class has no inheritors

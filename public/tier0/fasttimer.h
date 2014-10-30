@@ -222,8 +222,6 @@ private:
 	unsigned	m_nIters;
 	CCycleCount m_Total;
 	CCycleCount	m_Peak;
-	bool		m_fReport;
-	const tchar *m_pszName;
 };
 
 // -------------------------------------------------------------------------- // 
@@ -499,10 +497,10 @@ public:
 	CLimitTimer() {}
 	CLimitTimer( uint64 cMicroSecDuration ) { SetLimit( cMicroSecDuration ); }
 	void SetLimit( uint64 m_cMicroSecDuration );
-	bool BLimitReached();
+	bool BLimitReached() const;
 
-	int CMicroSecOverage();
-	uint64 CMicroSecLeft(); 
+	int CMicroSecOverage() const;
+	uint64 CMicroSecLeft() const; 
 
 private:
 	uint64 m_lCycleLimit;
@@ -526,7 +524,7 @@ inline void CLimitTimer::SetLimit( uint64 cMicroSecDuration )
 // Purpose: Determines whether our specified time period has passed
 // Output:	true if at least the specified time period has passed
 //-----------------------------------------------------------------------------
-inline bool CLimitTimer::BLimitReached( )
+inline bool CLimitTimer::BLimitReached() const
 {
 	CCycleCount cycleCount;
 	cycleCount.Sample( );
@@ -538,7 +536,7 @@ inline bool CLimitTimer::BLimitReached( )
 // Purpose: If we're over our specified time period, return the amount of the overage.
 // Output:	# of microseconds since we reached our specified time period.
 //-----------------------------------------------------------------------------
-inline int CLimitTimer::CMicroSecOverage()
+inline int CLimitTimer::CMicroSecOverage() const
 {
 	CCycleCount cycleCount;
 	cycleCount.Sample();
@@ -555,7 +553,7 @@ inline int CLimitTimer::CMicroSecOverage()
 // Purpose: If we're under our specified time period, return the amount under.
 // Output:	# of microseconds until we reached our specified time period, 0 if we've passed it
 //-----------------------------------------------------------------------------
-inline uint64 CLimitTimer::CMicroSecLeft()
+inline uint64 CLimitTimer::CMicroSecLeft() const
 {
 	CCycleCount cycleCount;
 	cycleCount.Sample();

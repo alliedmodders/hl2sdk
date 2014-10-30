@@ -22,6 +22,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <limits.h>
+#include "tier1/utlbinaryblock.h"
 #include "tier1/utlstring.h"
 #include "tier1/strtools.h"
 #include "tier1/characterset.h"
@@ -552,7 +553,7 @@ bool Unserialize( CUtlBuffer &buf, CUtlString &dest )
 {
 	int nLen = buf.PeekDelimitedStringLength( s_pConv );
 	dest.SetLength( nLen - 1 );	// -1 because the length returned includes space for \0
-	buf.GetDelimitedString( s_pConv, dest.Get(), nLen );
+	buf.GetDelimitedString( s_pConv, dest.GetForModify(), nLen );
 	return buf.IsValid();
 }
 

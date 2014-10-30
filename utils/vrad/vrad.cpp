@@ -34,7 +34,7 @@ every surface must be divided into at least two patches each axis
 */
 
 CUtlVector<CPatch>		g_Patches;			
-CUtlVector<int>			g_FacePatches;		// constains all patches, children first
+CUtlVector<int>			g_FacePatches;		// contains all patches, children first
 CUtlVector<int>			faceParents;		// contains only root patches, use next parent to iterate
 CUtlVector<int>			clusterChildren;
 CUtlVector<Vector>		emitlight;
@@ -60,6 +60,8 @@ bool		g_bDumpRtEnv = false;
 bool		bRed2Black = true;
 bool		g_bFastAmbient = false;
 bool        g_bNoSkyRecurse = false;
+bool		g_bDumpPropLightmaps = false;
+
 
 int			junk;
 
@@ -2404,16 +2406,21 @@ int ParseCommandLine( int argc, char **argv, bool *onlydetail )
 		{
 			g_bLargeDispSampleRadius = true;
 		}
+		else if (!Q_stricmp( argv[i], "-dumppropmaps"))
+		{
+			g_bDumpPropLightmaps = true;
+		}
 		else if (!Q_stricmp(argv[i],"-bounce"))
 		{
 			if ( ++i < argc )
 			{
-				numbounce = atoi (argv[i]);
-				if ( numbounce < 0 )
+				int bounceParam = atoi (argv[i]);
+				if ( bounceParam < 0 )
 				{
 					Warning("Error: expected non-negative value after '-bounce'\n" );
 					return 1;
 				}
+				numbounce = (unsigned)bounceParam;
 			}
 			else
 			{

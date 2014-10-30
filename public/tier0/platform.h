@@ -90,7 +90,9 @@
 	#define IsLinux() false
 	#define IsOSX() false
 	#define IsPosix() false
+	#ifndef PLATFORM_WINDOWS
 	#define PLATFORM_WINDOWS 1 // Windows PC or Xbox 360
+	#endif
 	#ifndef _X360
 		#define IsWindows() true
 		#define IsPC() true
@@ -229,16 +231,16 @@ typedef double				float64;
 // for when we don't care about how many bits we use
 typedef unsigned int		uint;
 
-#if defined(__clang__)
-#define CLANG_VERSION (__clang_major__ * 100 + __clang_minor__)
-#endif
-
 #ifdef _MSC_VER
 #pragma once
 // Ensure that everybody has the right compiler version installed. The version
 // number can be obtained by looking at the compiler output when you type 'cl'
 // and removing the last two digits and the periods: 16.00.40219.01 becomes 160040219
-#if _MSC_FULL_VER > 160000000
+#if _MSC_FULL_VER > 180000000
+	#if _MSC_FULL_VER < 180030723
+		#error You must install VS 2013 Update 3
+	#endif
+#elif _MSC_FULL_VER > 160000000
 	#if _MSC_FULL_VER < 160040219
 		#error You must install VS 2010 SP1
 	#endif
@@ -405,6 +407,12 @@ typedef void * HINSTANCE;
 #endif
 #define	DebuggerBreakIfDebugging() if ( !Plat_IsInDebugSession() ) ; else DebuggerBreak()
 
+#ifdef STAGING_ONLY
+#define	DebuggerBreakIfDebugging_StagingOnly() if ( !Plat_IsInDebugSession() ) ; else DebuggerBreak()
+#else
+#define	DebuggerBreakIfDebugging_StagingOnly()
+#endif
+
 // C functions for external declarations that call the appropriate C++ methods
 #ifndef EXPORT
 	#ifdef _WIN32
@@ -504,8 +512,7 @@ typedef void * HINSTANCE;
 	#define FMTFUNCTION( a, b )
 #elif defined(GNUC)
 	#define SELECTANY __attribute__((weak))
-	// Versions of clang older than 3.4 or Apple's 5.1 mangle member function names with the __restrict modifier in a GCC-incompatible way
-	#if ( defined(LINUX) && !defined(DEDICATED) ) || ( defined(__clang__) && ( ( defined(__apple_build_version__) && CLANG_VERSION < 501 ) || CLANG_VERSION < 304 ) )	
+	#if defined(LINUX) && !defined(DEDICATED)
 		#define RESTRICT
 	#else
 		#define RESTRICT __restrict
@@ -675,7 +682,7 @@ typedef void * HINSTANCE;
 
 
 // When we port to 64 bit, we'll have to resolve the int, ptr vs size_t 32/64 bit problems...
-#if !defined( _WIN64 ) && defined ( _WIN32 )
+#if !defined( _WIN64 )
 #pragma warning( disable : 4267 )	// conversion from 'size_t' to 'int', possible loss of data
 #pragma warning( disable : 4311 )	// pointer truncation from 'char *' to 'int'
 #pragma warning( disable : 4312 )	// conversion from 'unsigned int' to 'memhandle_t' of greater size
@@ -1095,7 +1102,6 @@ PLATFORM_INTERFACE bool				Plat_IsInBenchmarkMode();
 
 PLATFORM_INTERFACE double			Plat_FloatTime();		// Returns time in seconds since the module was loaded.
 PLATFORM_INTERFACE unsigned int		Plat_MSTime();			// Time in milliseconds.
-PLATFORM_INTERFACE char *			Plat_asctime( const struct tm *tm, char *buf );
 PLATFORM_INTERFACE char *			Plat_ctime( const time_t *timep, char *buf, size_t bufsize );
 PLATFORM_INTERFACE struct tm *		Plat_gmtime( const time_t *timep, struct tm *result );
 PLATFORM_INTERFACE time_t			Plat_timegm( struct tm *timeptr );
@@ -1149,7 +1155,7 @@ inline uint64 Plat_Rdtsc()
 			memcpy( this, &src, sizeof(_classname) );	\
 			return *this;								\
 		}
-	
+
 // Processor Information:
 struct CPUInformation
 {
@@ -1253,7 +1259,7 @@ PLATFORM_INTERFACE void* Plat_SimpleLog( const tchar* file, int line );
 // Returns true if debugger attached, false otherwise
 //-----------------------------------------------------------------------------
 #if defined(_WIN32) || defined(LINUX) || defined(OSX)
-PLATFORM_INTERFACE bool Plat_IsInDebugSession( bool bForceRecheck = false );
+PLATFORM_INTERFACE bool Plat_IsInDebugSession();
 PLATFORM_INTERFACE void Plat_DebugString( const char * );
 #else
 inline bool Plat_IsInDebugSession( bool bForceRecheck = false ) { return false; }
@@ -1567,6 +1573,20 @@ private:
 	FUNCPTR_TYPE m_pfn;
 };
 #endif
+
+
+// Watchdog timer support. Call Plat_BeginWatchdogTimer( nn ) to kick the timer off.  if you don't call
+// Plat_EndWatchdogTimer within nn seconds, the program will kick off an exception.  This is for making
+// sure that hung dedicated servers abort (and restart) instead of staying hung. Calling
+// Plat_EndWatchdogTimer more than once or when there is no active watchdog is fine. Only does anything
+// under linux right now. It should be possible to implement this functionality in windows via a
+// thread, if desired.
+PLATFORM_INTERFACE void Plat_BeginWatchdogTimer( int nSecs );
+PLATFORM_INTERFACE void Plat_EndWatchdogTimer( void );
+PLATFORM_INTERFACE int Plat_GetWatchdogTime( void );
+
+typedef void (*Plat_WatchDogHandlerFunction_t)(void);
+PLATFORM_INTERFACE void Plat_SetWatchdogHandlerFunction( Plat_WatchDogHandlerFunction_t function );
 
 
 //-----------------------------------------------------------------------------

@@ -1888,9 +1888,13 @@ void CServerGameDLL::SetServerHibernation( bool bHibernating )
 const char *CServerGameDLL::GetServerBrowserMapOverride()
 {
 #ifdef TF_DLL
-	if ( TFGameRules() && TFGameRules()->IsMannVsMachineMode() && g_pPopulationManager && g_pPopulationManager->GetPopulationFilenameShort() != '\0' )
+	if ( TFGameRules() && TFGameRules()->IsMannVsMachineMode() )
 	{
-		return g_pPopulationManager->GetPopulationFilenameShort();
+		const char *pszFilenameShort = g_pPopulationManager ? g_pPopulationManager->GetPopulationFilenameShort() : NULL;
+		if ( pszFilenameShort && pszFilenameShort[0] )
+		{
+			return pszFilenameShort;
+		}
 	}
 #endif
 	return NULL;
@@ -1921,6 +1925,15 @@ const char *CServerGameDLL::GetServerBrowserGameData()
 	static char rchResult[2048];
 	V_strcpy_safe( rchResult, sResult );
 	return rchResult;
+}
+
+//-----------------------------------------------------------------------------
+void CServerGameDLL::Status( void (*print) (const char *fmt, ...) )
+{
+	if ( g_pGameRules )
+	{
+		g_pGameRules->Status( print );
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -2964,17 +2977,20 @@ void CServerGameClients::ClientSetupVisibility( edict_t *pViewEntity, edict_t *p
 	// Flush the remaining areaportal states.
 	engine->SetAreaPortalStates( portalNums, isOpen, iOutPortal );
 
-	// Update the area bits that get sent to the client.
-	pPlayer->m_Local.UpdateAreaBits( pPlayer, portalBits );
+	if ( pPlayer )
+	{
+		// Update the area bits that get sent to the client.
+		pPlayer->m_Local.UpdateAreaBits( pPlayer, portalBits );
 
 #ifdef PORTAL 
-	// *After* the player's view has updated its area bits, add on any other areas seen by portals
-	CPortal_Player* pPortalPlayer = dynamic_cast<CPortal_Player*>( pPlayer );
-	if ( pPortalPlayer )
-	{
-		pPortalPlayer->UpdatePortalViewAreaBits( pvs, pvssize );
-	}
+		// *After* the player's view has updated its area bits, add on any other areas seen by portals
+		CPortal_Player* pPortalPlayer = dynamic_cast<CPortal_Player*>( pPlayer );
+		if ( pPortalPlayer )
+		{
+			pPortalPlayer->UpdatePortalViewAreaBits( pvs, pvssize );
+		}
 #endif //PORTAL
+	}
 }
 
 
@@ -3325,7 +3341,7 @@ void MessageWriteEHandle( CBaseEntity *pEntity )
 	{
 		EHANDLE hEnt = pEntity;
 
-		int iSerialNum = hEnt.GetSerialNumber() & (1 << NUM_NETWORKED_EHANDLE_SERIAL_NUMBER_BITS) - 1;
+		int iSerialNum = hEnt.GetSerialNumber() & ( (1 << NUM_NETWORKED_EHANDLE_SERIAL_NUMBER_BITS) - 1 );
 		iEncodedEHandle = hEnt.GetEntryIndex() | (iSerialNum << MAX_EDICT_BITS);
 	}
 	else
