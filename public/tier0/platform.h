@@ -231,6 +231,10 @@ typedef double				float64;
 // for when we don't care about how many bits we use
 typedef unsigned int		uint;
 
+#if defined(__clang__)
+#define CLANG_VERSION (__clang_major__ * 100 + __clang_minor__)
+#endif
+
 #ifdef _MSC_VER
 #pragma once
 // Ensure that everybody has the right compiler version installed. The version
@@ -512,7 +516,8 @@ typedef void * HINSTANCE;
 	#define FMTFUNCTION( a, b )
 #elif defined(GNUC)
 	#define SELECTANY __attribute__((weak))
-	#if defined(LINUX) && !defined(DEDICATED)
+	// Versions of clang older than 3.4 or Apple's 5.1 mangle member function names with the __restrict modifier in a GCC-incompatible way
+	#if ( defined(LINUX) && !defined(DEDICATED) ) || ( defined(__clang__) && ( ( defined(__apple_build_version__) && CLANG_VERSION < 501 ) || CLANG_VERSION < 304 ) )	
 		#define RESTRICT
 	#else
 		#define RESTRICT __restrict
@@ -682,7 +687,7 @@ typedef void * HINSTANCE;
 
 
 // When we port to 64 bit, we'll have to resolve the int, ptr vs size_t 32/64 bit problems...
-#if !defined( _WIN64 )
+#if !defined( _WIN64 ) && defined( _WIN32 )
 #pragma warning( disable : 4267 )	// conversion from 'size_t' to 'int', possible loss of data
 #pragma warning( disable : 4311 )	// pointer truncation from 'char *' to 'int'
 #pragma warning( disable : 4312 )	// conversion from 'unsigned int' to 'memhandle_t' of greater size
