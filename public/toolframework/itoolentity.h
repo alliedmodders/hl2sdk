@@ -245,10 +245,15 @@ public:
 typedef IServerTools IServerTools001;
 typedef IServerTools IServerTools002;
 
+// AlliedModders - Shim until all supported mods are using the SDK Base that has this
+#if 0
 #define VSERVERTOOLS_INTERFACE_VERSION_1	"VSERVERTOOLS001"
 #define VSERVERTOOLS_INTERFACE_VERSION_2	"VSERVERTOOLS002"
 #define VSERVERTOOLS_INTERFACE_VERSION		"VSERVERTOOLS003"
 #define VSERVERTOOLS_INTERFACE_VERSION_INT	3
+#else
+#define VSERVERTOOLS_INTERFACE_VERSION		"VSERVERTOOLS002"
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: Client side tool interace (right now just handles IClientRenderables).

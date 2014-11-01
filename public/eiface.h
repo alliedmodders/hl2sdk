@@ -73,9 +73,14 @@ typedef struct player_info_s player_info_t;
 #define DLLEXPORT /* */
 #endif
 
+// AlliedModders - Shim until all supported mods are using the SDK Base that has this
+#if 0
 #define INTERFACEVERSION_VENGINESERVER_VERSION_21	"VEngineServer021"
 #define INTERFACEVERSION_VENGINESERVER				"VEngineServer022"
 #define INTERFACEVERSION_VENGINESERVER_INT			22
+#else
+#define INTERFACEVERSION_VENGINESERVER				"VEngineServer021"
+#endif
 
 struct bbox_t
 {
