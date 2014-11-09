@@ -156,6 +156,17 @@ typedef double float64;
 // for when we don't care about how many bits we use
 typedef unsigned int uint;
 
+
+#ifdef GNUC
+#undef offsetof
+//#define offsetof( type, var ) __builtin_offsetof( type, var ) 
+#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+#else
+#include <stddef.h>
+#undef offsetof
+#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+#endif
+
 // This can be used to ensure the size of pointers to members when declaring
 // a pointer type for a class that has only been forward declared
 #ifdef _MSC_VER

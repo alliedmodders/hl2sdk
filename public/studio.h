@@ -28,9 +28,6 @@
 #include "localflexcontroller.h"
 
 
-#ifndef offsetof
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
-#endif
 
 #define STUDIO_ENABLE_PERF_COUNTERS
 
