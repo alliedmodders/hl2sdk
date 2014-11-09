@@ -23,9 +23,6 @@
 #include "utlvector.h"
 
 
-#ifndef offsetof
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
-#endif
 
 
 //-----------------------------------------------------------------------------
