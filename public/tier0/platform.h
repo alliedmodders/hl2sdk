@@ -223,6 +223,16 @@ typedef void * HINSTANCE;
 #define MAX_PATH  260
 #endif
 
+
+#ifdef GNUC
+#undef offsetof
+//#define offsetof( type, var ) __builtin_offsetof( type, var ) 
+#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+#else
+#undef offsetof
+#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+#endif
+
 // Used to step into the debugger
 #ifdef _WIN32
 #define DebuggerBreak()  __asm { int 3 }
