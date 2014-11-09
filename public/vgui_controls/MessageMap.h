@@ -22,10 +22,6 @@ namespace vgui
 
 ////////////// MESSAGEMAP DEFINITIONS //////////////
 
-#ifndef offsetof
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
-#endif
-
 #ifndef ARRAYSIZE
 #define ARRAYSIZE(p)	(sizeof(p)/sizeof(p[0]))
 #endif
