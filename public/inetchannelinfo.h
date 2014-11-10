@@ -21,6 +21,8 @@
 #define FLOW_INCOMING	1
 #define MAX_FLOWS		2		// in & out
 
+struct SNetChannelLatencyStats;
+
 class INetChannelInfo
 {
 public:
@@ -75,12 +77,9 @@ public:
 
 	virtual float		GetTimeoutSeconds() const = 0;
 	
-	virtual float		GetPeakLatency( int flow ) const = 0;
-	virtual float		GetTotalAvgLatency( int flow ) const = 0;
-	virtual float		GetTotalStdDevLatency(int flow ) const = 0;
-	virtual int			GetTotalDropped( int flow ) const = 0;
-	virtual int			GetTotalChoked( int flow ) const = 0;
-	virtual int			GetTotal( int flow ) const = 0;
+	virtual void		ResetLatencyStats( int channel ) = 0;
+	virtual SNetChannelLatencyStats *GetLatencyStats( int channel ) const = 0;
+	virtual void		SetLatencyStats( int channel, const SNetChannelLatencyStats &stats ) = 0;
 };
 
 #endif // INETCHANNELINFO_H

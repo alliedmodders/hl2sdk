@@ -16,6 +16,7 @@
 #include "tier1/netadr.h"
 
 class	IDemoRecorder;
+class	IInstantReplayIntercept;
 class	INetMessage;
 class	INetChannelHandler;
 class	INetChannelInfo;
@@ -55,12 +56,14 @@ public:
 	virtual bool	UnregisterMessage(INetMessageBinder *msg) = 0;
 	virtual void	SetTimeout(float seconds, bool bForceExact = false) = 0;
 	virtual void	SetDemoRecorder(IDemoRecorder *recorder) = 0;
+	virtual void	SetInstantReplayIntercept(IInstantReplayIntercept *intercept) = 0;
 	
 	virtual void	Reset( void ) = 0;
 	virtual void	Clear( void ) = 0;
 	virtual void	Shutdown(/* ENetworkDisconnectionReason */ int reason) = 0;
 	
 	virtual bool	ProcessDemoPacket( struct netpacket_s* packet ) = 0;
+	virtual bool	InsertReplayMessage( INetMessage *msg ) = 0;
 	virtual void	ProcessPacket( struct netpacket_s* packet, bool bHasHeader ) = 0;
 			
 	virtual bool	SendNetMsg(INetMessage &msg, bool bForceReliable = false, bool bVoice = false ) = 0;
@@ -115,6 +118,9 @@ public:
 	virtual void	SetUsesMaxRoutablePlayload(bool useMax) = 0;
 	
 	virtual bool	WasLastMessageReliable() const = 0;
+	
+	virtual void	SetPendingDisconnect( int reason ) = 0;
+	virtual int		GetPendingDisconnect() const = 0;
 };
 
 
