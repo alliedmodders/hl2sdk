@@ -16,7 +16,13 @@
 #include "tier1/bitbuf.h"
 
 class IConnectionlessPacketHandler;
-class INetworkConfigChanged;
+
+abstract_class INetworkConfigChanged
+{
+public:
+	virtual void OnNetworkConfigChanged( bool bMultiplayer ) = 0;
+};
+
 class INetworkPacketFilter;
 class INetworkFileDownloadFilter;
 class INetworkFileSendCompleted;
@@ -30,10 +36,12 @@ public:
 	virtual void InitGameServer() = 0;
 	virtual void ShutdownGameServer() = 0;
 	virtual void SetDedicated( bool enable ) = 0;
-	virtual void SetMultiplayer( bool enable ) = 0;
 	virtual int CreateSocket( int, int, int, int, int, const char * ) = 0;
-	virtual void ForceOpenSocket( int sock ) = 0;
+	virtual void OpenSocket( int sock ) = 0;
+	virtual bool IsOpen ( int sock ) = 0;
+	virtual void CloseSocket( int sock ) = 0;
 	virtual void ForceReopenSocket( int sock, int ) = 0;
+	virtual void SetRemoteStreamChannel( int, int ) = 0;
 	virtual void AddExtraSocket( int, const char * ) = 0;
 	virtual void RemoveAllExtraSockets() = 0;
 	virtual void EnableLoopbackBetweenSockets( int, int ) = 0;
@@ -49,13 +57,12 @@ public:
 	virtual void RemoveNetChannel( INetChannel *netchan, bool ) = 0;
 	virtual void ListenSocket( int sock, bool ) = 0;
 	virtual void ConnectSocket( int sock , const netadr_t &adr ) = 0;
-	virtual void CloseSocket( int sock ) = 0;
+	virtual void CloseNetworkSocket( int sock, int ) = 0;
 	virtual void OutOfBandPrintf( int sock, const netadr_t &adr, const char *format, ...) = 0;
 	virtual void OutOfBandDelayedPrintf( int sock, const netadr_t &adr, unsigned int delay, const char *format, ...) = 0;
 	virtual void SetTime( double time ) = 0;
 	virtual void SetTimeScale( float timeScale ) = 0;
 	virtual double GetNetTime() const = 0;
-	virtual bool IsMultiplayer() = 0;
 	virtual bool IsDedicated() = 0;
 	virtual bool IsDedicatedForXbox() = 0;
 	virtual void LogBadPacket( netpacket_t * ) = 0;
