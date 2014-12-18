@@ -17,16 +17,12 @@
 
 class IConnectionlessPacketHandler;
 
-abstract_class INetworkConfigChanged
-{
-public:
-	virtual void OnNetworkConfigChanged( bool bMultiplayer ) = 0;
-};
-
 class INetworkPacketFilter;
 class INetworkFileDownloadFilter;
 class INetworkFileSendCompleted;
 class INetworkPrepareStartupParams;
+
+struct ns_address;
 
 // Reverse engineered interface: return types may be wrong
 
@@ -72,12 +68,10 @@ public:
 	virtual netadr_t& GetPublicAdr() = 0;
 	virtual netadr_t& GetLocalAdr() = 0;
 	virtual float GetFakeLag() = 0;
-	virtual int GetUDPPort( int ) = 0;
+	virtual uint16 GetUDPPort( int ) = 0;
 	virtual bool IsSafeFileToDownload( const char *file ) = 0;
 	virtual bool IsValidFileTransferExtension( const char *extension ) = 0;
 	virtual bool CanRedownloadFile( const char *file ) = 0;
-	virtual void AddNetworkConfigChangedCallback( INetworkConfigChanged *callback ) = 0;
-	virtual void RemoveNetworkConfigChangedCallback( INetworkConfigChanged *callback ) = 0;
 	virtual void AddNetworkPacketFilterCallback( INetworkPacketFilter *callback ) = 0;
 	virtual void RemoveNetworkPacketFilterCallback( INetworkPacketFilter *callback ) = 0;
 	virtual void AddNetworkFileDownloadFilter( INetworkFileDownloadFilter *callback ) = 0;
@@ -87,6 +81,7 @@ public:
 	virtual void AddNetworkPrepareStartupParamsCallback( INetworkPrepareStartupParams *callback ) = 0;
 	virtual void RemoveNetworkPrepareStartupParamsCallback( INetworkPrepareStartupParams *callback ) = 0;
 	virtual void CloseAllSockets() = 0;
+	virtual bool CheckConnectionLessRateLimits(const ns_address &) = 0;
 };
 
 DECLARE_TIER2_INTERFACE( INetworkSystem, g_pNetworkSystem );
