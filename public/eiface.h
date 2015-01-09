@@ -189,6 +189,9 @@ public:
 	// Return the maximum number of used edict slots
 	virtual int			GetMaxEntityCount( void ) = 0;
 	
+	// Return the number of free edict slots
+	virtual int			GetFreeEntityCount( void ) = 0;
+	
 	// Get stats info interface for a client netchannel
 	virtual INetChannelInfo* GetPlayerNetInfo( CEntityIndex playerIndex ) = 0;
 	
