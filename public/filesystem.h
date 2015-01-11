@@ -314,6 +314,8 @@ public:
 
 	// create a local directory structure
 	virtual void			CreateDirHierarchy( const char *path, const char *pathID = 0 ) = 0;
+	
+	virtual bool			UnknownFunc1( const char *path, const char *pathID = 0 ) = 0;
 
 	// File I/O and info
 	virtual bool			IsDirectory( const char *pFileName, const char *pathID = 0 ) = 0;

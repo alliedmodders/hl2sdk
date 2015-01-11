@@ -107,6 +107,7 @@ public:
 	virtual void			RemoveFile( char const* pRelativePath, const char *pathID )							{ m_pFileSystemPassThru->RemoveFile( pRelativePath, pathID ); }
 	virtual void			RenameFile( char const *pOldPath, char const *pNewPath, const char *pathID )		{ m_pFileSystemPassThru->RenameFile( pOldPath, pNewPath, pathID ); }
 	virtual void			CreateDirHierarchy( const char *path, const char *pathID )							{ m_pFileSystemPassThru->CreateDirHierarchy( path, pathID ); }
+	virtual bool			UnknownFunc1( const char *path, const char *pathID )								{ return m_pFileSystemPassThru->UnknownFunc1( path, pathID ); }
 	virtual bool			IsDirectory( const char *pFileName, const char *pathID )							{ return m_pFileSystemPassThru->IsDirectory( pFileName, pathID ); }
 	virtual void			FileTimeToString( char* pStrip, int maxCharsIncludingTerminator, long fileTime )	{ m_pFileSystemPassThru->FileTimeToString( pStrip, maxCharsIncludingTerminator, fileTime ); }
 	virtual void			SetBufferSize( FileHandle_t file, unsigned nBytes )									{ m_pFileSystemPassThru->SetBufferSize( file, nBytes  ); }
