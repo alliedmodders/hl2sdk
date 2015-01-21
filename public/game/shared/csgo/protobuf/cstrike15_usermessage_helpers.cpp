@@ -73,6 +73,7 @@ CCstrike15UsermessageHelpers::CCstrike15UsermessageHelpers()
 	SETUP_MESSAGE( SendPlayerItemDrops );
 	SETUP_MESSAGE( RoundBackupFilenames );
 	SETUP_MESSAGE( SendPlayerItemFound );
+	SETUP_MESSAGE( ReportHit );
 }
 
 const google::protobuf::Message *CCstrike15UsermessageHelpers::GetPrototype( int index ) const
