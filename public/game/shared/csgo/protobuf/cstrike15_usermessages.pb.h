@@ -64,6 +64,7 @@ class CCSUsrMsg_SendPlayerItemDrops;
 class CCSUsrMsg_SendPlayerItemFound;
 class CCSUsrMsg_ReloadEffect;
 class CCSUsrMsg_AdjustMoney;
+class CCSUsrMsg_ReportHit;
 class CCSUsrMsg_KillCam;
 class CCSUsrMsg_DesiredTimescale;
 class CCSUsrMsg_CurrentTimescale;
@@ -159,11 +160,12 @@ enum ECstrike15UserMessages {
   CS_UM_GlowPropTurnOff = 60,
   CS_UM_SendPlayerItemDrops = 61,
   CS_UM_RoundBackupFilenames = 62,
-  CS_UM_SendPlayerItemFound = 63
+  CS_UM_SendPlayerItemFound = 63,
+  CS_UM_ReportHit = 64
 };
 bool ECstrike15UserMessages_IsValid(int value);
 const ECstrike15UserMessages ECstrike15UserMessages_MIN = CS_UM_VGUIMenu;
-const ECstrike15UserMessages ECstrike15UserMessages_MAX = CS_UM_SendPlayerItemFound;
+const ECstrike15UserMessages ECstrike15UserMessages_MAX = CS_UM_ReportHit;
 const int ECstrike15UserMessages_ARRAYSIZE = ECstrike15UserMessages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ECstrike15UserMessages_descriptor();
@@ -3355,20 +3357,50 @@ class CCSUsrMsg_ReloadEffect : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 actanim() const;
   inline void set_actanim(::google::protobuf::int32 value);
 
+  // optional float origin_x = 3;
+  inline bool has_origin_x() const;
+  inline void clear_origin_x();
+  static const int kOriginXFieldNumber = 3;
+  inline float origin_x() const;
+  inline void set_origin_x(float value);
+
+  // optional float origin_y = 4;
+  inline bool has_origin_y() const;
+  inline void clear_origin_y();
+  static const int kOriginYFieldNumber = 4;
+  inline float origin_y() const;
+  inline void set_origin_y(float value);
+
+  // optional float origin_z = 5;
+  inline bool has_origin_z() const;
+  inline void clear_origin_z();
+  static const int kOriginZFieldNumber = 5;
+  inline float origin_z() const;
+  inline void set_origin_z(float value);
+
   // @@protoc_insertion_point(class_scope:CCSUsrMsg_ReloadEffect)
  private:
   inline void set_has_entidx();
   inline void clear_has_entidx();
   inline void set_has_actanim();
   inline void clear_has_actanim();
+  inline void set_has_origin_x();
+  inline void clear_has_origin_x();
+  inline void set_has_origin_y();
+  inline void clear_has_origin_y();
+  inline void set_has_origin_z();
+  inline void clear_has_origin_z();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::google::protobuf::int32 entidx_;
   ::google::protobuf::int32 actanim_;
+  float origin_x_;
+  float origin_y_;
+  float origin_z_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
 
   friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
@@ -3458,6 +3490,118 @@ class CCSUsrMsg_AdjustMoney : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static CCSUsrMsg_AdjustMoney* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_ReportHit : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_ReportHit();
+  virtual ~CCSUsrMsg_ReportHit();
+
+  CCSUsrMsg_ReportHit(const CCSUsrMsg_ReportHit& from);
+
+  inline CCSUsrMsg_ReportHit& operator=(const CCSUsrMsg_ReportHit& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_ReportHit& default_instance();
+
+  void Swap(CCSUsrMsg_ReportHit* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_ReportHit* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_ReportHit& from);
+  void MergeFrom(const CCSUsrMsg_ReportHit& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional float pos_x = 1;
+  inline bool has_pos_x() const;
+  inline void clear_pos_x();
+  static const int kPosXFieldNumber = 1;
+  inline float pos_x() const;
+  inline void set_pos_x(float value);
+
+  // optional float pos_y = 2;
+  inline bool has_pos_y() const;
+  inline void clear_pos_y();
+  static const int kPosYFieldNumber = 2;
+  inline float pos_y() const;
+  inline void set_pos_y(float value);
+
+  // optional float timestamp = 4;
+  inline bool has_timestamp() const;
+  inline void clear_timestamp();
+  static const int kTimestampFieldNumber = 4;
+  inline float timestamp() const;
+  inline void set_timestamp(float value);
+
+  // optional float pos_z = 3;
+  inline bool has_pos_z() const;
+  inline void clear_pos_z();
+  static const int kPosZFieldNumber = 3;
+  inline float pos_z() const;
+  inline void set_pos_z(float value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_ReportHit)
+ private:
+  inline void set_has_pos_x();
+  inline void clear_has_pos_x();
+  inline void set_has_pos_y();
+  inline void clear_has_pos_y();
+  inline void set_has_timestamp();
+  inline void clear_has_timestamp();
+  inline void set_has_pos_z();
+  inline void clear_has_pos_z();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  float pos_x_;
+  float pos_y_;
+  float timestamp_;
+  float pos_z_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_ReportHit* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -6800,21 +6944,21 @@ class CCSUsrMsg_ServerRankRevealAll : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional int32 dummy = 1;
-  inline bool has_dummy() const;
-  inline void clear_dummy();
-  static const int kDummyFieldNumber = 1;
-  inline ::google::protobuf::int32 dummy() const;
-  inline void set_dummy(::google::protobuf::int32 value);
+  // optional int32 seconds_till_shutdown = 1;
+  inline bool has_seconds_till_shutdown() const;
+  inline void clear_seconds_till_shutdown();
+  static const int kSecondsTillShutdownFieldNumber = 1;
+  inline ::google::protobuf::int32 seconds_till_shutdown() const;
+  inline void set_seconds_till_shutdown(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:CCSUsrMsg_ServerRankRevealAll)
  private:
-  inline void set_has_dummy();
-  inline void clear_has_dummy();
+  inline void set_has_seconds_till_shutdown();
+  inline void clear_has_seconds_till_shutdown();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
-  ::google::protobuf::int32 dummy_;
+  ::google::protobuf::int32 seconds_till_shutdown_;
 
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
@@ -9898,6 +10042,72 @@ inline void CCSUsrMsg_ReloadEffect::set_actanim(::google::protobuf::int32 value)
   actanim_ = value;
 }
 
+// optional float origin_x = 3;
+inline bool CCSUsrMsg_ReloadEffect::has_origin_x() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_ReloadEffect::set_has_origin_x() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_ReloadEffect::clear_has_origin_x() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_ReloadEffect::clear_origin_x() {
+  origin_x_ = 0;
+  clear_has_origin_x();
+}
+inline float CCSUsrMsg_ReloadEffect::origin_x() const {
+  return origin_x_;
+}
+inline void CCSUsrMsg_ReloadEffect::set_origin_x(float value) {
+  set_has_origin_x();
+  origin_x_ = value;
+}
+
+// optional float origin_y = 4;
+inline bool CCSUsrMsg_ReloadEffect::has_origin_y() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCSUsrMsg_ReloadEffect::set_has_origin_y() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCSUsrMsg_ReloadEffect::clear_has_origin_y() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCSUsrMsg_ReloadEffect::clear_origin_y() {
+  origin_y_ = 0;
+  clear_has_origin_y();
+}
+inline float CCSUsrMsg_ReloadEffect::origin_y() const {
+  return origin_y_;
+}
+inline void CCSUsrMsg_ReloadEffect::set_origin_y(float value) {
+  set_has_origin_y();
+  origin_y_ = value;
+}
+
+// optional float origin_z = 5;
+inline bool CCSUsrMsg_ReloadEffect::has_origin_z() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CCSUsrMsg_ReloadEffect::set_has_origin_z() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CCSUsrMsg_ReloadEffect::clear_has_origin_z() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CCSUsrMsg_ReloadEffect::clear_origin_z() {
+  origin_z_ = 0;
+  clear_has_origin_z();
+}
+inline float CCSUsrMsg_ReloadEffect::origin_z() const {
+  return origin_z_;
+}
+inline void CCSUsrMsg_ReloadEffect::set_origin_z(float value) {
+  set_has_origin_z();
+  origin_z_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // CCSUsrMsg_AdjustMoney
@@ -9922,6 +10132,98 @@ inline ::google::protobuf::int32 CCSUsrMsg_AdjustMoney::amount() const {
 inline void CCSUsrMsg_AdjustMoney::set_amount(::google::protobuf::int32 value) {
   set_has_amount();
   amount_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_ReportHit
+
+// optional float pos_x = 1;
+inline bool CCSUsrMsg_ReportHit::has_pos_x() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_ReportHit::set_has_pos_x() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_ReportHit::clear_has_pos_x() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_ReportHit::clear_pos_x() {
+  pos_x_ = 0;
+  clear_has_pos_x();
+}
+inline float CCSUsrMsg_ReportHit::pos_x() const {
+  return pos_x_;
+}
+inline void CCSUsrMsg_ReportHit::set_pos_x(float value) {
+  set_has_pos_x();
+  pos_x_ = value;
+}
+
+// optional float pos_y = 2;
+inline bool CCSUsrMsg_ReportHit::has_pos_y() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCSUsrMsg_ReportHit::set_has_pos_y() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCSUsrMsg_ReportHit::clear_has_pos_y() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCSUsrMsg_ReportHit::clear_pos_y() {
+  pos_y_ = 0;
+  clear_has_pos_y();
+}
+inline float CCSUsrMsg_ReportHit::pos_y() const {
+  return pos_y_;
+}
+inline void CCSUsrMsg_ReportHit::set_pos_y(float value) {
+  set_has_pos_y();
+  pos_y_ = value;
+}
+
+// optional float timestamp = 4;
+inline bool CCSUsrMsg_ReportHit::has_timestamp() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_ReportHit::set_has_timestamp() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_ReportHit::clear_has_timestamp() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_ReportHit::clear_timestamp() {
+  timestamp_ = 0;
+  clear_has_timestamp();
+}
+inline float CCSUsrMsg_ReportHit::timestamp() const {
+  return timestamp_;
+}
+inline void CCSUsrMsg_ReportHit::set_timestamp(float value) {
+  set_has_timestamp();
+  timestamp_ = value;
+}
+
+// optional float pos_z = 3;
+inline bool CCSUsrMsg_ReportHit::has_pos_z() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCSUsrMsg_ReportHit::set_has_pos_z() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCSUsrMsg_ReportHit::clear_has_pos_z() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCSUsrMsg_ReportHit::clear_pos_z() {
+  pos_z_ = 0;
+  clear_has_pos_z();
+}
+inline float CCSUsrMsg_ReportHit::pos_z() const {
+  return pos_z_;
+}
+inline void CCSUsrMsg_ReportHit::set_pos_z(float value) {
+  set_has_pos_z();
+  pos_z_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -12340,26 +12642,26 @@ inline void CCSUsrMsg_ClientInfo::set_dummy(::google::protobuf::int32 value) {
 
 // CCSUsrMsg_ServerRankRevealAll
 
-// optional int32 dummy = 1;
-inline bool CCSUsrMsg_ServerRankRevealAll::has_dummy() const {
+// optional int32 seconds_till_shutdown = 1;
+inline bool CCSUsrMsg_ServerRankRevealAll::has_seconds_till_shutdown() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void CCSUsrMsg_ServerRankRevealAll::set_has_dummy() {
+inline void CCSUsrMsg_ServerRankRevealAll::set_has_seconds_till_shutdown() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void CCSUsrMsg_ServerRankRevealAll::clear_has_dummy() {
+inline void CCSUsrMsg_ServerRankRevealAll::clear_has_seconds_till_shutdown() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void CCSUsrMsg_ServerRankRevealAll::clear_dummy() {
-  dummy_ = 0;
-  clear_has_dummy();
+inline void CCSUsrMsg_ServerRankRevealAll::clear_seconds_till_shutdown() {
+  seconds_till_shutdown_ = 0;
+  clear_has_seconds_till_shutdown();
 }
-inline ::google::protobuf::int32 CCSUsrMsg_ServerRankRevealAll::dummy() const {
-  return dummy_;
+inline ::google::protobuf::int32 CCSUsrMsg_ServerRankRevealAll::seconds_till_shutdown() const {
+  return seconds_till_shutdown_;
 }
-inline void CCSUsrMsg_ServerRankRevealAll::set_dummy(::google::protobuf::int32 value) {
-  set_has_dummy();
-  dummy_ = value;
+inline void CCSUsrMsg_ServerRankRevealAll::set_seconds_till_shutdown(::google::protobuf::int32 value) {
+  set_has_seconds_till_shutdown();
+  seconds_till_shutdown_ = value;
 }
 
 

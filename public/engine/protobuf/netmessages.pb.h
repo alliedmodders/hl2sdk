@@ -1029,20 +1029,30 @@ class CMsg_CVars_CVar : public ::google::protobuf::Message {
   inline ::std::string* release_value();
   inline void set_allocated_value(::std::string* value);
 
+  // optional uint32 dictionary_name = 3;
+  inline bool has_dictionary_name() const;
+  inline void clear_dictionary_name();
+  static const int kDictionaryNameFieldNumber = 3;
+  inline ::google::protobuf::uint32 dictionary_name() const;
+  inline void set_dictionary_name(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:CMsg_CVars.CVar)
  private:
   inline void set_has_name();
   inline void clear_has_name();
   inline void set_has_value();
   inline void clear_has_value();
+  inline void set_has_dictionary_name();
+  inline void clear_has_dictionary_name();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* name_;
   ::std::string* value_;
+  ::google::protobuf::uint32 dictionary_name_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
 
   friend void  protobuf_AddDesc_netmessages_2eproto();
   friend void protobuf_AssignDesc_netmessages_2eproto();
@@ -4216,6 +4226,13 @@ class CSVCMsg_VoiceData : public ::google::protobuf::Message {
   inline ::std::string* release_voice_data();
   inline void set_allocated_voice_data(::std::string* voice_data);
 
+  // optional bool caster = 6;
+  inline bool has_caster() const;
+  inline void clear_caster();
+  static const int kCasterFieldNumber = 6;
+  inline bool caster() const;
+  inline void set_caster(bool value);
+
   // @@protoc_insertion_point(class_scope:CSVCMsg_VoiceData)
  private:
   inline void set_has_client();
@@ -4228,17 +4245,20 @@ class CSVCMsg_VoiceData : public ::google::protobuf::Message {
   inline void clear_has_audible_mask();
   inline void set_has_voice_data();
   inline void clear_has_voice_data();
+  inline void set_has_caster();
+  inline void clear_has_caster();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::google::protobuf::int32 client_;
-  bool proximity_;
+  ::google::protobuf::int32 audible_mask_;
   ::google::protobuf::uint64 xuid_;
   ::std::string* voice_data_;
-  ::google::protobuf::int32 audible_mask_;
+  bool proximity_;
+  bool caster_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
 
   friend void  protobuf_AddDesc_netmessages_2eproto();
   friend void protobuf_AssignDesc_netmessages_2eproto();
@@ -7349,6 +7369,28 @@ inline void CMsg_CVars_CVar::set_allocated_value(::std::string* value) {
     clear_has_value();
     value_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   }
+}
+
+// optional uint32 dictionary_name = 3;
+inline bool CMsg_CVars_CVar::has_dictionary_name() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CMsg_CVars_CVar::set_has_dictionary_name() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CMsg_CVars_CVar::clear_has_dictionary_name() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CMsg_CVars_CVar::clear_dictionary_name() {
+  dictionary_name_ = 0u;
+  clear_has_dictionary_name();
+}
+inline ::google::protobuf::uint32 CMsg_CVars_CVar::dictionary_name() const {
+  return dictionary_name_;
+}
+inline void CMsg_CVars_CVar::set_dictionary_name(::google::protobuf::uint32 value) {
+  set_has_dictionary_name();
+  dictionary_name_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -11048,6 +11090,28 @@ inline void CSVCMsg_VoiceData::set_allocated_voice_data(::std::string* voice_dat
     clear_has_voice_data();
     voice_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   }
+}
+
+// optional bool caster = 6;
+inline bool CSVCMsg_VoiceData::has_caster() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CSVCMsg_VoiceData::set_has_caster() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CSVCMsg_VoiceData::clear_has_caster() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CSVCMsg_VoiceData::clear_caster() {
+  caster_ = false;
+  clear_has_caster();
+}
+inline bool CSVCMsg_VoiceData::caster() const {
+  return caster_;
+}
+inline void CSVCMsg_VoiceData::set_caster(bool value) {
+  set_has_caster();
+  caster_ = value;
 }
 
 // -------------------------------------------------------------------
