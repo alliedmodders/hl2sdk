@@ -69,87 +69,8 @@ option cc_generic_services = false;
 // time.
 //
 
-import "google/protobuf/descriptor.proto";
-
 // for CMsgVector, etc.
 import "networkbasetypes.proto";
-import "network_connection.proto";
-
-//=============================================================================
-// Bidirectional NET Messages
-//=============================================================================
-
-enum NET_Messages
-{
-	net_NOP = 0;
-	net_Disconnect = 1;				// disconnect, last message in connection
-	net_File = 2;					// file transmission message request/deny
-	net_SplitScreenUser = 3;		// Changes split screen user, client and server must both provide handler
-	net_Tick = 4; 					// s->c world tick, c->s ack world tick
-	net_StringCmd = 5; 				// a string command
-	net_SetConVar = 6;				// sends one/multiple convar/userinfo settings
-	net_SignonState = 7;			// signals or acks current signon state
-}
-
-message CMsg_CVars
-{
-	message CVar
-	{
-		optional string name = 1;
-		optional string value = 2;
-	}
-
-	repeated CVar cvars = 1;
-}
-
-message CNETMsg_NOP
-{
-}
-
-message CNETMsg_Disconnect
-{
-	optional ENetworkDisconnectionReason reason = 2 [default = NETWORK_DISCONNECT_INVALID];
-}
-
-message CNETMsg_File
-{
-	optional int32 transfer_id = 1;
-	optional string file_name = 2;
-	optional bool is_replay_demo_file = 3;
-	optional bool deny = 4;
-}
-
-message CNETMsg_SplitScreenUser
-{
-	optional int32 slot = 1;
-}
-
-message CNETMsg_Tick
-{
-	optional uint32 tick = 1;							// current tick count
-	optional uint32 host_computationtime = 4;
-	optional uint32 host_computationtime_std_deviation = 5;
-	optional uint32 host_framestarttime_std_deviation = 6;
-}
-
-message CNETMsg_StringCmd
-{
-	optional string command = 1;
-}
-
-message CNETMsg_SetConVar
-{
-	optional CMsg_CVars convars = 1;
-}
-
-message CNETMsg_SignonState
-{
-	optional uint32 signon_state = 1;				// See SIGNONSTATE_ defines
-	optional uint32 spawn_count = 2;				// server spawn count (session number)
-	optional uint32 num_server_players	 = 3; 		// Number of players the server discloses as connected to the server
-	repeated string players_networkids = 4;			// player network ids
-	optional string map_name = 5;					// Name of the current map
-}
 
 //=============================================================================
 // Client messages
@@ -201,6 +122,7 @@ message CCLCMsg_VoiceData
 	optional int32 sequence_bytes = 4;
 	optional uint32 section_number = 5;
 	optional uint32 uncompressed_sample_offset = 6;
+	optional uint32 tick = 7;
 }
 
 message CCLCMsg_BaselineAck
@@ -503,6 +425,7 @@ message CSVCMsg_VoiceData
 	optional int32 sequence_bytes = 7;
 	optional uint32 section_number = 8;
 	optional uint32 uncompressed_sample_offset = 9;
+	optional uint32 tick = 10;
 }
 
 message CSVCMsg_PacketReliable
@@ -517,4 +440,11 @@ message CSVCMsg_FullFrameSplit
 	optional int32 section = 2;
 	optional int32 total = 3;
 	optional bytes data = 4;
+}
+
+enum ENetworkSystemLimitReport
+{
+	NSLR_GlobalPacketRateExceeded = 0;
+	NSLR_ConnectionLessRateLimited = 1;
+	NSLR_NetChannelRateLimited = 2;
 }
