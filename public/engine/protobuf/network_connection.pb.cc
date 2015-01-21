@@ -58,7 +58,7 @@ void protobuf_AddDesc_network_5fconnection_2eproto() {
   ::google::protobuf::protobuf_AddDesc_google_2fprotobuf_2fdescriptor_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\030network_connection.proto\032 google/proto"
-    "buf/descriptor.proto*\201\034\n\033ENetworkDisconn"
+    "buf/descriptor.proto*\217 \n\033ENetworkDisconn"
     "ectionReason\022\036\n\032NETWORK_DISCONNECT_INVAL"
     "ID\020\000\022\037\n\033NETWORK_DISCONNECT_SHUTDOWN\020\001\022F\n"
     "%NETWORK_DISCONNECT_DISCONNECT_BY_USER\020\002"
@@ -148,9 +148,22 @@ void protobuf_AddDesc_network_5fconnection_2eproto() {
     "ONNECT_USERCMD\020-\032\036\242\324\030\032#GameUI_Disconnect"
     "_UserCmd\022N\n#NETWORK_DISCONNECT_REJECTED_"
     "BY_GAME\020.\032%\242\324\030!#GameUI_Disconnect_Reject"
-    "edByGame:E\n\030network_connection_token\022!.g"
-    "oogle.protobuf.EnumValueOptions\030\304\212\003 \001(\tB"
-    "\003\200\001\000", 3724);
+    "edByGame\022T\n&NETWORK_DISCONNECT_MESSAGE_P"
+    "ARSE_ERROR\020/\032(\242\324\030$#GameUI_Disconnect_Mes"
+    "sageParseError\022X\n(NETWORK_DISCONNECT_INV"
+    "ALID_MESSAGE_ERROR\0200\032*\242\324\030&#GameUI_Discon"
+    "nect_InvalidMessageError\022T\n&NETWORK_DISC"
+    "ONNECT_BAD_SERVER_PASSWORD\0201\032(\242\324\030$#GameU"
+    "I_Disconnect_BadServerPassword\0221\n-NETWOR"
+    "K_DISCONNECT_DIRECT_CONNECT_RESERVATION\020"
+    "2\022S\n%NETWORK_DISCONNECT_CONNECTION_FAILU"
+    "RE\0203\032(\242\324\030$#GameUI_Disconnect_ConnectionF"
+    "ailure\022Y\n)NETWORK_DISCONNECT_NO_PEER_GRO"
+    "UP_HANDLERS\0204\032*\242\324\030&#GameUI_Disconnect_No"
+    "PeerGroupHandlers\022#\n\037NETWORK_DISCONNECT_"
+    "RECONNECTION\0205:E\n\030network_connection_tok"
+    "en\022!.google.protobuf.EnumValueOptions\030\304\212"
+    "\003 \001(\tB\003\200\001\000", 4250);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "network_connection.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
@@ -218,6 +231,13 @@ bool ENetworkDisconnectionReason_IsValid(int value) {
     case 44:
     case 45:
     case 46:
+    case 47:
+    case 48:
+    case 49:
+    case 50:
+    case 51:
+    case 52:
+    case 53:
       return true;
     default:
       return false;

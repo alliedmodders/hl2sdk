@@ -56,7 +56,7 @@ void protobuf_AddDesc_ai_5factivity_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\021ai_activity.proto*\366\202\001\n\010Activity\022\030\n\013ACT"
+    "\n\021ai_activity.proto*\220\203\001\n\010Activity\022\030\n\013ACT"
     "_INVALID\020\377\377\377\377\377\377\377\377\377\001\022\r\n\tACT_RESET\020\000\022\014\n\010AC"
     "T_IDLE\020\001\022\022\n\016ACT_TRANSITION\020\002\022\r\n\tACT_COVE"
     "R\020\003\022\021\n\rACT_COVER_MED\020\004\022\021\n\rACT_COVER_LOW\020"
@@ -475,7 +475,8 @@ void protobuf_AddDesc_ai_5factivity_2eproto() {
     "DOTA_MIDNIGHT_PULSE\020\325\004\022\036\n\031ACT_DOTA_ANCES"
     "TRAL_SPIRIT\020\326\004\022\034\n\027ACT_DOTA_THUNDER_STRIK"
     "E\020\327\004\022\033\n\026ACT_DOTA_KINETIC_FIELD\020\330\004\022\032\n\025ACT"
-    "_DOTA_STATIC_STORM\020\331\004B\005H\001\200\001\000", 16788);
+    "_DOTA_STATIC_STORM\020\331\004\022\030\n\023ACT_DOTA_MINI_T"
+    "AUNT\020\332\004B\005H\001\200\001\000", 16814);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "ai_activity.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_ai_5factivity_2eproto);
@@ -1094,6 +1095,7 @@ bool Activity_IsValid(int value) {
     case 599:
     case 600:
     case 601:
+    case 602:
       return true;
     default:
       return false;

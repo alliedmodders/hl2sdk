@@ -205,74 +205,80 @@ void protobuf_AddDesc_dota_5fcommonmessages_2eproto() {
   already_here = true;
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-  ::google::protobuf::protobuf_AddDesc_google_2fprotobuf_2fdescriptor_2eproto();
-  ::protobuf_AddDesc_networkbasetypes_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\031dota_commonmessages.proto\032 google/prot"
-    "obuf/descriptor.proto\032\026networkbasetypes."
-    "proto\"`\n\025CDOTAMsg_LocationPing\022\t\n\001x\030\001 \001("
-    "\005\022\t\n\001y\030\002 \001(\005\022\016\n\006target\030\003 \001(\005\022\023\n\013direct_p"
-    "ing\030\004 \001(\010\022\014\n\004type\030\005 \001(\005\":\n\022CDOTAMsg_Item"
-    "Alert\022\t\n\001x\030\001 \001(\005\022\t\n\001y\030\002 \001(\005\022\016\n\006itemid\030\003 "
-    "\001(\005\"9\n\020CDOTAMsg_MapLine\022\t\n\001x\030\001 \001(\005\022\t\n\001y\030"
-    "\002 \001(\005\022\017\n\007initial\030\003 \001(\010\"S\n\022CDOTAMsg_World"
-    "Line\022\t\n\001x\030\001 \001(\005\022\t\n\001y\030\002 \001(\005\022\t\n\001z\030\003 \001(\005\022\017\n"
-    "\007initial\030\004 \001(\010\022\013\n\003end\030\005 \001(\010\"~\n\026CDOTAMsg_"
-    "SendStatPopup\0229\n\005style\030\001 \001(\0162\024.EDOTAStat"
-    "PopupTypes:\024k_EDOTA_SPT_Textline\022\024\n\014stat"
-    "_strings\030\002 \003(\t\022\023\n\013stat_images\030\003 \003(\005\">\n\025C"
-    "DOTAMsg_CoachHUDPing\022\t\n\001x\030\001 \001(\r\022\t\n\001y\030\002 \001"
-    "(\r\022\017\n\007tgtpath\030\003 \001(\t*\343\016\n\025EDOTAChatWheelMe"
-    "ssage\022\021\n\rk_EDOTA_CW_Ok\020\000\022\023\n\017k_EDOTA_CW_C"
-    "are\020\001\022\026\n\022k_EDOTA_CW_GetBack\020\002\022\030\n\024k_EDOTA"
-    "_CW_NeedWards\020\003\022\023\n\017k_EDOTA_CW_Stun\020\004\022\023\n\017"
-    "k_EDOTA_CW_Help\020\005\022\023\n\017k_EDOTA_CW_Push\020\006\022\026"
-    "\n\022k_EDOTA_CW_GoodJob\020\007\022\026\n\022k_EDOTA_CW_Mis"
-    "sing\020\010\022\032\n\026k_EDOTA_CW_Missing_Top\020\t\022\032\n\026k_"
-    "EDOTA_CW_Missing_Mid\020\n\022\035\n\031k_EDOTA_CW_Mis"
-    "sing_Bottom\020\013\022\021\n\rk_EDOTA_CW_Go\020\014\022\027\n\023k_ED"
-    "OTA_CW_Initiate\020\r\022\025\n\021k_EDOTA_CW_Follow\020\016"
-    "\022\027\n\023k_EDOTA_CW_Group_Up\020\017\022\031\n\025k_EDOTA_CW_"
-    "Spread_Out\020\020\022\031\n\025k_EDOTA_CW_Split_Farm\020\021\022"
-    "\025\n\021k_EDOTA_CW_Attack\020\022\022\022\n\016k_EDOTA_CW_BRB"
-    "\020\023\022\023\n\017k_EDOTA_CW_Dive\020\024\022\022\n\016k_EDOTA_CW_OM"
-    "W\020\025\022\030\n\024k_EDOTA_CW_Get_Ready\020\026\022\023\n\017k_EDOTA"
-    "_CW_Bait\020\027\022\023\n\017k_EDOTA_CW_Heal\020\030\022\023\n\017k_EDO"
-    "TA_CW_Mana\020\031\022\022\n\016k_EDOTA_CW_OOM\020\032\022\035\n\031k_ED"
-    "OTA_CW_Skill_Cooldown\020\033\022\031\n\025k_EDOTA_CW_Ul"
-    "ti_Ready\020\034\022\035\n\031k_EDOTA_CW_Enemy_Returned\020"
-    "\035\022\032\n\026k_EDOTA_CW_All_Missing\020\036\022\035\n\031k_EDOTA"
-    "_CW_Enemy_Incoming\020\037\022\032\n\026k_EDOTA_CW_Invis"
-    "_Enemy\020 \022\035\n\031k_EDOTA_CW_Enemy_Had_Rune\020!\022"
-    "\031\n\025k_EDOTA_CW_Split_Push\020\"\022\035\n\031k_EDOTA_CW"
-    "_Coming_To_Gank\020#\022\033\n\027k_EDOTA_CW_Request_"
-    "Gank\020$\022 \n\034k_EDOTA_CW_Fight_Under_Tower\020%"
-    "\022\031\n\025k_EDOTA_CW_Deny_Tower\020&\022\032\n\026k_EDOTA_C"
-    "W_Buy_Courier\020\'\022\036\n\032k_EDOTA_CW_Upgrade_Co"
-    "urier\020(\022\035\n\031k_EDOTA_CW_Need_Detection\020)\022\""
-    "\n\036k_EDOTA_CW_They_Have_Detection\020*\022\025\n\021k_"
-    "EDOTA_CW_Buy_TP\020+\022\034\n\030k_EDOTA_CW_Reuse_Co"
-    "urier\020,\022\025\n\021k_EDOTA_CW_Deward\020-\022\033\n\027k_EDOT"
-    "A_CW_Building_Mek\020.\022\034\n\030k_EDOTA_CW_Buildi"
-    "ng_Pipe\020/\022\035\n\031k_EDOTA_CW_Stack_And_Pull\0200"
-    "\022\023\n\017k_EDOTA_CW_Pull\0201\022\026\n\022k_EDOTA_CW_Pull"
-    "ing\0202\022\024\n\020k_EDOTA_CW_Stack\0203\022\027\n\023k_EDOTA_C"
-    "W_Jungling\0204\022\025\n\021k_EDOTA_CW_Roshan\0205\022\032\n\026k"
-    "_EDOTA_CW_Affirmative\0206\022\023\n\017k_EDOTA_CW_Wa"
-    "it\0207\022\024\n\020k_EDOTA_CW_Pause\0208\022\033\n\027k_EDOTA_CW"
-    "_Current_Time\0209\022\032\n\026k_EDOTA_CW_Check_Rune"
-    "s\020:\022\031\n\025k_EDOTA_CW_Smoke_Gank\020;\022\023\n\017k_EDOT"
-    "A_CW_GLHF\020<\022\023\n\017k_EDOTA_CW_Nice\020=\022\025\n\021k_ED"
-    "OTA_CW_Thanks\020>\022\024\n\020k_EDOTA_CW_Sorry\020\?\022\031\n"
-    "\025k_EDOTA_CW_No_Give_Up\020@\022\034\n\030k_EDOTA_CW_J"
-    "ust_Happened\020A\022\033\n\027k_EDOTA_CW_Game_Is_Har"
-    "d\020B\022\027\n\023k_EDOTA_CW_New_Meta\020C\022\025\n\021k_EDOTA_"
-    "CW_My_Bad\020D\022\025\n\021k_EDOTA_CW_Regret\020E\022\024\n\020k_"
-    "EDOTA_CW_Relax\020F\022\032\n\026k_EDOTA_CW_MissingHe"
-    "ro\020G\022\033\n\027k_EDOTA_CW_ReturnedHero\020H*r\n\023EDO"
-    "TAStatPopupTypes\022\030\n\024k_EDOTA_SPT_Textline"
-    "\020\000\022\025\n\021k_EDOTA_SPT_Basic\020\001\022\024\n\020k_EDOTA_SPT"
-    "_Poll\020\002\022\024\n\020k_EDOTA_SPT_Grid\020\003B\005H\001\200\001\000", 2596);
+    "\n\031dota_commonmessages.proto\"`\n\025CDOTAMsg_"
+    "LocationPing\022\t\n\001x\030\001 \001(\005\022\t\n\001y\030\002 \001(\005\022\016\n\006ta"
+    "rget\030\003 \001(\005\022\023\n\013direct_ping\030\004 \001(\010\022\014\n\004type\030"
+    "\005 \001(\005\":\n\022CDOTAMsg_ItemAlert\022\t\n\001x\030\001 \001(\005\022\t"
+    "\n\001y\030\002 \001(\005\022\016\n\006itemid\030\003 \001(\005\"9\n\020CDOTAMsg_Ma"
+    "pLine\022\t\n\001x\030\001 \001(\005\022\t\n\001y\030\002 \001(\005\022\017\n\007initial\030\003"
+    " \001(\010\"S\n\022CDOTAMsg_WorldLine\022\t\n\001x\030\001 \001(\005\022\t\n"
+    "\001y\030\002 \001(\005\022\t\n\001z\030\003 \001(\005\022\017\n\007initial\030\004 \001(\010\022\013\n\003"
+    "end\030\005 \001(\010\"~\n\026CDOTAMsg_SendStatPopup\0229\n\005s"
+    "tyle\030\001 \001(\0162\024.EDOTAStatPopupTypes:\024k_EDOT"
+    "A_SPT_Textline\022\024\n\014stat_strings\030\002 \003(\t\022\023\n\013"
+    "stat_images\030\003 \003(\005\">\n\025CDOTAMsg_CoachHUDPi"
+    "ng\022\t\n\001x\030\001 \001(\r\022\t\n\001y\030\002 \001(\r\022\017\n\007tgtpath\030\003 \001("
+    "\t*\305\021\n\025EDOTAChatWheelMessage\022\021\n\rk_EDOTA_C"
+    "W_Ok\020\000\022\023\n\017k_EDOTA_CW_Care\020\001\022\026\n\022k_EDOTA_C"
+    "W_GetBack\020\002\022\030\n\024k_EDOTA_CW_NeedWards\020\003\022\023\n"
+    "\017k_EDOTA_CW_Stun\020\004\022\023\n\017k_EDOTA_CW_Help\020\005\022"
+    "\023\n\017k_EDOTA_CW_Push\020\006\022\026\n\022k_EDOTA_CW_GoodJ"
+    "ob\020\007\022\026\n\022k_EDOTA_CW_Missing\020\010\022\032\n\026k_EDOTA_"
+    "CW_Missing_Top\020\t\022\032\n\026k_EDOTA_CW_Missing_M"
+    "id\020\n\022\035\n\031k_EDOTA_CW_Missing_Bottom\020\013\022\021\n\rk"
+    "_EDOTA_CW_Go\020\014\022\027\n\023k_EDOTA_CW_Initiate\020\r\022"
+    "\025\n\021k_EDOTA_CW_Follow\020\016\022\027\n\023k_EDOTA_CW_Gro"
+    "up_Up\020\017\022\031\n\025k_EDOTA_CW_Spread_Out\020\020\022\031\n\025k_"
+    "EDOTA_CW_Split_Farm\020\021\022\025\n\021k_EDOTA_CW_Atta"
+    "ck\020\022\022\022\n\016k_EDOTA_CW_BRB\020\023\022\023\n\017k_EDOTA_CW_D"
+    "ive\020\024\022\022\n\016k_EDOTA_CW_OMW\020\025\022\030\n\024k_EDOTA_CW_"
+    "Get_Ready\020\026\022\023\n\017k_EDOTA_CW_Bait\020\027\022\023\n\017k_ED"
+    "OTA_CW_Heal\020\030\022\023\n\017k_EDOTA_CW_Mana\020\031\022\022\n\016k_"
+    "EDOTA_CW_OOM\020\032\022\035\n\031k_EDOTA_CW_Skill_Coold"
+    "own\020\033\022\031\n\025k_EDOTA_CW_Ulti_Ready\020\034\022\035\n\031k_ED"
+    "OTA_CW_Enemy_Returned\020\035\022\032\n\026k_EDOTA_CW_Al"
+    "l_Missing\020\036\022\035\n\031k_EDOTA_CW_Enemy_Incoming"
+    "\020\037\022\032\n\026k_EDOTA_CW_Invis_Enemy\020 \022\035\n\031k_EDOT"
+    "A_CW_Enemy_Had_Rune\020!\022\031\n\025k_EDOTA_CW_Spli"
+    "t_Push\020\"\022\035\n\031k_EDOTA_CW_Coming_To_Gank\020#\022"
+    "\033\n\027k_EDOTA_CW_Request_Gank\020$\022 \n\034k_EDOTA_"
+    "CW_Fight_Under_Tower\020%\022\031\n\025k_EDOTA_CW_Den"
+    "y_Tower\020&\022\032\n\026k_EDOTA_CW_Buy_Courier\020\'\022\036\n"
+    "\032k_EDOTA_CW_Upgrade_Courier\020(\022\035\n\031k_EDOTA"
+    "_CW_Need_Detection\020)\022\"\n\036k_EDOTA_CW_They_"
+    "Have_Detection\020*\022\025\n\021k_EDOTA_CW_Buy_TP\020+\022"
+    "\034\n\030k_EDOTA_CW_Reuse_Courier\020,\022\025\n\021k_EDOTA"
+    "_CW_Deward\020-\022\033\n\027k_EDOTA_CW_Building_Mek\020"
+    ".\022\034\n\030k_EDOTA_CW_Building_Pipe\020/\022\035\n\031k_EDO"
+    "TA_CW_Stack_And_Pull\0200\022\023\n\017k_EDOTA_CW_Pul"
+    "l\0201\022\026\n\022k_EDOTA_CW_Pulling\0202\022\024\n\020k_EDOTA_C"
+    "W_Stack\0203\022\027\n\023k_EDOTA_CW_Jungling\0204\022\025\n\021k_"
+    "EDOTA_CW_Roshan\0205\022\032\n\026k_EDOTA_CW_Affirmat"
+    "ive\0206\022\023\n\017k_EDOTA_CW_Wait\0207\022\024\n\020k_EDOTA_CW"
+    "_Pause\0208\022\033\n\027k_EDOTA_CW_Current_Time\0209\022\032\n"
+    "\026k_EDOTA_CW_Check_Runes\020:\022\031\n\025k_EDOTA_CW_"
+    "Smoke_Gank\020;\022\023\n\017k_EDOTA_CW_GLHF\020<\022\023\n\017k_E"
+    "DOTA_CW_Nice\020=\022\025\n\021k_EDOTA_CW_Thanks\020>\022\024\n"
+    "\020k_EDOTA_CW_Sorry\020\?\022\031\n\025k_EDOTA_CW_No_Giv"
+    "e_Up\020@\022\034\n\030k_EDOTA_CW_Just_Happened\020A\022\033\n\027"
+    "k_EDOTA_CW_Game_Is_Hard\020B\022\027\n\023k_EDOTA_CW_"
+    "New_Meta\020C\022\025\n\021k_EDOTA_CW_My_Bad\020D\022\025\n\021k_E"
+    "DOTA_CW_Regret\020E\022\024\n\020k_EDOTA_CW_Relax\020F\022\032"
+    "\n\026k_EDOTA_CW_MissingHero\020G\022\033\n\027k_EDOTA_CW"
+    "_ReturnedHero\020H\022\021\n\rk_EDOTA_CW_GG\020I\022\023\n\017k_"
+    "EDOTA_CW_GGWP\020J\022\025\n\021k_EDOTA_CW_All_GG\020K\022\027"
+    "\n\023k_EDOTA_CW_All_GGWP\020L\022\032\n\026k_EDOTA_CW_Wh"
+    "at_To_Buy\020M\022\034\n\030k_EDOTA_CW_Im_Retreating\020"
+    "N\022\034\n\030k_EDOTA_CW_Space_Created\020O\022\025\n\021k_EDO"
+    "TA_CW_Whoops\020P\022\036\n\032k_EDOTA_CW_Tower_then_"
+    "Back\020Q\022!\n\035k_EDOTA_CW_Barracks_then_Back\020"
+    "R\022\037\n\033k_EDOTA_CW_Ward_Bottom_Rune\020S\022\034\n\030k_"
+    "EDOTA_CW_Ward_Top_Rune\020T\022\027\n\023k_EDOTA_CW_Z"
+    "eus_Ult\020U*r\n\023EDOTAStatPopupTypes\022\030\n\024k_ED"
+    "OTA_SPT_Textline\020\000\022\025\n\021k_EDOTA_SPT_Basic\020"
+    "\001\022\024\n\020k_EDOTA_SPT_Poll\020\002\022\024\n\020k_EDOTA_SPT_G"
+    "rid\020\003B\005H\001\200\001\000", 2892);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "dota_commonmessages.proto", &protobuf_RegisterTypes);
   CDOTAMsg_LocationPing::default_instance_ = new CDOTAMsg_LocationPing();
@@ -375,6 +381,19 @@ bool EDOTAChatWheelMessage_IsValid(int value) {
     case 70:
     case 71:
     case 72:
+    case 73:
+    case 74:
+    case 75:
+    case 76:
+    case 77:
+    case 78:
+    case 79:
+    case 80:
+    case 81:
+    case 82:
+    case 83:
+    case 84:
+    case 85:
       return true;
     default:
       return false;
@@ -411,6 +430,7 @@ const int CDOTAMsg_LocationPing::kTypeFieldNumber;
 CDOTAMsg_LocationPing::CDOTAMsg_LocationPing()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CDOTAMsg_LocationPing)
 }
 
 void CDOTAMsg_LocationPing::InitAsDefaultInstance() {
@@ -420,6 +440,7 @@ CDOTAMsg_LocationPing::CDOTAMsg_LocationPing(const CDOTAMsg_LocationPing& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CDOTAMsg_LocationPing)
 }
 
 void CDOTAMsg_LocationPing::SharedCtor() {
@@ -433,6 +454,7 @@ void CDOTAMsg_LocationPing::SharedCtor() {
 }
 
 CDOTAMsg_LocationPing::~CDOTAMsg_LocationPing() {
+  // @@protoc_insertion_point(destructor:CDOTAMsg_LocationPing)
   SharedDtor();
 }
 
@@ -463,33 +485,46 @@ CDOTAMsg_LocationPing* CDOTAMsg_LocationPing::New() const {
 }
 
 void CDOTAMsg_LocationPing::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    x_ = 0;
-    y_ = 0;
-    target_ = 0;
-    direct_ping_ = false;
-    type_ = 0;
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<CDOTAMsg_LocationPing*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  if (_has_bits_[0 / 32] & 31) {
+    ZR_(x_, type_);
   }
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool CDOTAMsg_LocationPing::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CDOTAMsg_LocationPing)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // optional int32 x = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &x_)));
           set_has_x();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(16)) goto parse_y;
         break;
@@ -497,15 +532,14 @@ bool CDOTAMsg_LocationPing::MergePartialFromCodedStream(
 
       // optional int32 y = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 16) {
          parse_y:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &y_)));
           set_has_y();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(24)) goto parse_target;
         break;
@@ -513,15 +547,14 @@ bool CDOTAMsg_LocationPing::MergePartialFromCodedStream(
 
       // optional int32 target = 3;
       case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 24) {
          parse_target:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &target_)));
           set_has_target();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(32)) goto parse_direct_ping;
         break;
@@ -529,15 +562,14 @@ bool CDOTAMsg_LocationPing::MergePartialFromCodedStream(
 
       // optional bool direct_ping = 4;
       case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 32) {
          parse_direct_ping:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &direct_ping_)));
           set_has_direct_ping();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(40)) goto parse_type;
         break;
@@ -545,25 +577,25 @@ bool CDOTAMsg_LocationPing::MergePartialFromCodedStream(
 
       // optional int32 type = 5;
       case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 40) {
          parse_type:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &type_)));
           set_has_type();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -571,12 +603,18 @@ bool CDOTAMsg_LocationPing::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CDOTAMsg_LocationPing)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CDOTAMsg_LocationPing)
+  return false;
 #undef DO_
 }
 
 void CDOTAMsg_LocationPing::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CDOTAMsg_LocationPing)
   // optional int32 x = 1;
   if (has_x()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->x(), output);
@@ -606,10 +644,12 @@ void CDOTAMsg_LocationPing::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CDOTAMsg_LocationPing)
 }
 
 ::google::protobuf::uint8* CDOTAMsg_LocationPing::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CDOTAMsg_LocationPing)
   // optional int32 x = 1;
   if (has_x()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->x(), target);
@@ -639,6 +679,7 @@ void CDOTAMsg_LocationPing::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CDOTAMsg_LocationPing)
   return target;
 }
 
@@ -775,6 +816,7 @@ const int CDOTAMsg_ItemAlert::kItemidFieldNumber;
 CDOTAMsg_ItemAlert::CDOTAMsg_ItemAlert()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CDOTAMsg_ItemAlert)
 }
 
 void CDOTAMsg_ItemAlert::InitAsDefaultInstance() {
@@ -784,6 +826,7 @@ CDOTAMsg_ItemAlert::CDOTAMsg_ItemAlert(const CDOTAMsg_ItemAlert& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CDOTAMsg_ItemAlert)
 }
 
 void CDOTAMsg_ItemAlert::SharedCtor() {
@@ -795,6 +838,7 @@ void CDOTAMsg_ItemAlert::SharedCtor() {
 }
 
 CDOTAMsg_ItemAlert::~CDOTAMsg_ItemAlert() {
+  // @@protoc_insertion_point(destructor:CDOTAMsg_ItemAlert)
   SharedDtor();
 }
 
@@ -825,31 +869,44 @@ CDOTAMsg_ItemAlert* CDOTAMsg_ItemAlert::New() const {
 }
 
 void CDOTAMsg_ItemAlert::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    x_ = 0;
-    y_ = 0;
-    itemid_ = 0;
-  }
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<CDOTAMsg_ItemAlert*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  ZR_(x_, itemid_);
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool CDOTAMsg_ItemAlert::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CDOTAMsg_ItemAlert)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // optional int32 x = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &x_)));
           set_has_x();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(16)) goto parse_y;
         break;
@@ -857,15 +914,14 @@ bool CDOTAMsg_ItemAlert::MergePartialFromCodedStream(
 
       // optional int32 y = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 16) {
          parse_y:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &y_)));
           set_has_y();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(24)) goto parse_itemid;
         break;
@@ -873,25 +929,25 @@ bool CDOTAMsg_ItemAlert::MergePartialFromCodedStream(
 
       // optional int32 itemid = 3;
       case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 24) {
          parse_itemid:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &itemid_)));
           set_has_itemid();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -899,12 +955,18 @@ bool CDOTAMsg_ItemAlert::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CDOTAMsg_ItemAlert)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CDOTAMsg_ItemAlert)
+  return false;
 #undef DO_
 }
 
 void CDOTAMsg_ItemAlert::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CDOTAMsg_ItemAlert)
   // optional int32 x = 1;
   if (has_x()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->x(), output);
@@ -924,10 +986,12 @@ void CDOTAMsg_ItemAlert::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CDOTAMsg_ItemAlert)
 }
 
 ::google::protobuf::uint8* CDOTAMsg_ItemAlert::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CDOTAMsg_ItemAlert)
   // optional int32 x = 1;
   if (has_x()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->x(), target);
@@ -947,6 +1011,7 @@ void CDOTAMsg_ItemAlert::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CDOTAMsg_ItemAlert)
   return target;
 }
 
@@ -1063,6 +1128,7 @@ const int CDOTAMsg_MapLine::kInitialFieldNumber;
 CDOTAMsg_MapLine::CDOTAMsg_MapLine()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CDOTAMsg_MapLine)
 }
 
 void CDOTAMsg_MapLine::InitAsDefaultInstance() {
@@ -1072,6 +1138,7 @@ CDOTAMsg_MapLine::CDOTAMsg_MapLine(const CDOTAMsg_MapLine& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CDOTAMsg_MapLine)
 }
 
 void CDOTAMsg_MapLine::SharedCtor() {
@@ -1083,6 +1150,7 @@ void CDOTAMsg_MapLine::SharedCtor() {
 }
 
 CDOTAMsg_MapLine::~CDOTAMsg_MapLine() {
+  // @@protoc_insertion_point(destructor:CDOTAMsg_MapLine)
   SharedDtor();
 }
 
@@ -1113,31 +1181,44 @@ CDOTAMsg_MapLine* CDOTAMsg_MapLine::New() const {
 }
 
 void CDOTAMsg_MapLine::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    x_ = 0;
-    y_ = 0;
-    initial_ = false;
-  }
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<CDOTAMsg_MapLine*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  ZR_(x_, initial_);
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool CDOTAMsg_MapLine::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CDOTAMsg_MapLine)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // optional int32 x = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &x_)));
           set_has_x();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(16)) goto parse_y;
         break;
@@ -1145,15 +1226,14 @@ bool CDOTAMsg_MapLine::MergePartialFromCodedStream(
 
       // optional int32 y = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 16) {
          parse_y:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &y_)));
           set_has_y();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(24)) goto parse_initial;
         break;
@@ -1161,25 +1241,25 @@ bool CDOTAMsg_MapLine::MergePartialFromCodedStream(
 
       // optional bool initial = 3;
       case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 24) {
          parse_initial:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &initial_)));
           set_has_initial();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -1187,12 +1267,18 @@ bool CDOTAMsg_MapLine::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CDOTAMsg_MapLine)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CDOTAMsg_MapLine)
+  return false;
 #undef DO_
 }
 
 void CDOTAMsg_MapLine::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CDOTAMsg_MapLine)
   // optional int32 x = 1;
   if (has_x()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->x(), output);
@@ -1212,10 +1298,12 @@ void CDOTAMsg_MapLine::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CDOTAMsg_MapLine)
 }
 
 ::google::protobuf::uint8* CDOTAMsg_MapLine::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CDOTAMsg_MapLine)
   // optional int32 x = 1;
   if (has_x()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->x(), target);
@@ -1235,6 +1323,7 @@ void CDOTAMsg_MapLine::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CDOTAMsg_MapLine)
   return target;
 }
 
@@ -1351,6 +1440,7 @@ const int CDOTAMsg_WorldLine::kEndFieldNumber;
 CDOTAMsg_WorldLine::CDOTAMsg_WorldLine()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CDOTAMsg_WorldLine)
 }
 
 void CDOTAMsg_WorldLine::InitAsDefaultInstance() {
@@ -1360,6 +1450,7 @@ CDOTAMsg_WorldLine::CDOTAMsg_WorldLine(const CDOTAMsg_WorldLine& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CDOTAMsg_WorldLine)
 }
 
 void CDOTAMsg_WorldLine::SharedCtor() {
@@ -1373,6 +1464,7 @@ void CDOTAMsg_WorldLine::SharedCtor() {
 }
 
 CDOTAMsg_WorldLine::~CDOTAMsg_WorldLine() {
+  // @@protoc_insertion_point(destructor:CDOTAMsg_WorldLine)
   SharedDtor();
 }
 
@@ -1403,33 +1495,46 @@ CDOTAMsg_WorldLine* CDOTAMsg_WorldLine::New() const {
 }
 
 void CDOTAMsg_WorldLine::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    x_ = 0;
-    y_ = 0;
-    z_ = 0;
-    initial_ = false;
-    end_ = false;
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<CDOTAMsg_WorldLine*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  if (_has_bits_[0 / 32] & 31) {
+    ZR_(x_, end_);
   }
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool CDOTAMsg_WorldLine::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CDOTAMsg_WorldLine)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // optional int32 x = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &x_)));
           set_has_x();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(16)) goto parse_y;
         break;
@@ -1437,15 +1542,14 @@ bool CDOTAMsg_WorldLine::MergePartialFromCodedStream(
 
       // optional int32 y = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 16) {
          parse_y:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &y_)));
           set_has_y();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(24)) goto parse_z;
         break;
@@ -1453,15 +1557,14 @@ bool CDOTAMsg_WorldLine::MergePartialFromCodedStream(
 
       // optional int32 z = 3;
       case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 24) {
          parse_z:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &z_)));
           set_has_z();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(32)) goto parse_initial;
         break;
@@ -1469,15 +1572,14 @@ bool CDOTAMsg_WorldLine::MergePartialFromCodedStream(
 
       // optional bool initial = 4;
       case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 32) {
          parse_initial:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &initial_)));
           set_has_initial();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(40)) goto parse_end;
         break;
@@ -1485,25 +1587,25 @@ bool CDOTAMsg_WorldLine::MergePartialFromCodedStream(
 
       // optional bool end = 5;
       case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 40) {
          parse_end:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &end_)));
           set_has_end();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -1511,12 +1613,18 @@ bool CDOTAMsg_WorldLine::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CDOTAMsg_WorldLine)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CDOTAMsg_WorldLine)
+  return false;
 #undef DO_
 }
 
 void CDOTAMsg_WorldLine::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CDOTAMsg_WorldLine)
   // optional int32 x = 1;
   if (has_x()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->x(), output);
@@ -1546,10 +1654,12 @@ void CDOTAMsg_WorldLine::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CDOTAMsg_WorldLine)
 }
 
 ::google::protobuf::uint8* CDOTAMsg_WorldLine::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CDOTAMsg_WorldLine)
   // optional int32 x = 1;
   if (has_x()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->x(), target);
@@ -1579,6 +1689,7 @@ void CDOTAMsg_WorldLine::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CDOTAMsg_WorldLine)
   return target;
 }
 
@@ -1713,6 +1824,7 @@ const int CDOTAMsg_SendStatPopup::kStatImagesFieldNumber;
 CDOTAMsg_SendStatPopup::CDOTAMsg_SendStatPopup()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CDOTAMsg_SendStatPopup)
 }
 
 void CDOTAMsg_SendStatPopup::InitAsDefaultInstance() {
@@ -1722,15 +1834,18 @@ CDOTAMsg_SendStatPopup::CDOTAMsg_SendStatPopup(const CDOTAMsg_SendStatPopup& fro
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CDOTAMsg_SendStatPopup)
 }
 
 void CDOTAMsg_SendStatPopup::SharedCtor() {
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   style_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
 CDOTAMsg_SendStatPopup::~CDOTAMsg_SendStatPopup() {
+  // @@protoc_insertion_point(destructor:CDOTAMsg_SendStatPopup)
   SharedDtor();
 }
 
@@ -1761,9 +1876,7 @@ CDOTAMsg_SendStatPopup* CDOTAMsg_SendStatPopup::New() const {
 }
 
 void CDOTAMsg_SendStatPopup::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    style_ = 0;
-  }
+  style_ = 0;
   stat_strings_.Clear();
   stat_images_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1772,14 +1885,17 @@ void CDOTAMsg_SendStatPopup::Clear() {
 
 bool CDOTAMsg_SendStatPopup::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CDOTAMsg_SendStatPopup)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // optional .EDOTAStatPopupTypes style = 1 [default = k_EDOTA_SPT_Textline];
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
@@ -1790,7 +1906,7 @@ bool CDOTAMsg_SendStatPopup::MergePartialFromCodedStream(
             mutable_unknown_fields()->AddVarint(1, value);
           }
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(18)) goto parse_stat_strings;
         break;
@@ -1798,17 +1914,17 @@ bool CDOTAMsg_SendStatPopup::MergePartialFromCodedStream(
 
       // repeated string stat_strings = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 18) {
          parse_stat_strings:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->add_stat_strings()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->stat_strings(this->stat_strings_size() - 1).data(),
             this->stat_strings(this->stat_strings_size() - 1).length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "stat_strings");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(18)) goto parse_stat_strings;
         if (input->ExpectTag(24)) goto parse_stat_images;
@@ -1817,31 +1933,29 @@ bool CDOTAMsg_SendStatPopup::MergePartialFromCodedStream(
 
       // repeated int32 stat_images = 3;
       case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 24) {
          parse_stat_images:
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  1, 24, input, this->mutable_stat_images())));
-        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
-                   == ::google::protobuf::internal::WireFormatLite::
-                      WIRETYPE_LENGTH_DELIMITED) {
+        } else if (tag == 26) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, this->mutable_stat_images())));
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(24)) goto parse_stat_images;
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -1849,12 +1963,18 @@ bool CDOTAMsg_SendStatPopup::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CDOTAMsg_SendStatPopup)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CDOTAMsg_SendStatPopup)
+  return false;
 #undef DO_
 }
 
 void CDOTAMsg_SendStatPopup::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CDOTAMsg_SendStatPopup)
   // optional .EDOTAStatPopupTypes style = 1 [default = k_EDOTA_SPT_Textline];
   if (has_style()) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
@@ -1863,9 +1983,10 @@ void CDOTAMsg_SendStatPopup::SerializeWithCachedSizes(
 
   // repeated string stat_strings = 2;
   for (int i = 0; i < this->stat_strings_size(); i++) {
-  ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+  ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
     this->stat_strings(i).data(), this->stat_strings(i).length(),
-    ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormat::SERIALIZE,
+    "stat_strings");
     ::google::protobuf::internal::WireFormatLite::WriteString(
       2, this->stat_strings(i), output);
   }
@@ -1880,10 +2001,12 @@ void CDOTAMsg_SendStatPopup::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CDOTAMsg_SendStatPopup)
 }
 
 ::google::protobuf::uint8* CDOTAMsg_SendStatPopup::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CDOTAMsg_SendStatPopup)
   // optional .EDOTAStatPopupTypes style = 1 [default = k_EDOTA_SPT_Textline];
   if (has_style()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
@@ -1892,9 +2015,10 @@ void CDOTAMsg_SendStatPopup::SerializeWithCachedSizes(
 
   // repeated string stat_strings = 2;
   for (int i = 0; i < this->stat_strings_size(); i++) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->stat_strings(i).data(), this->stat_strings(i).length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "stat_strings");
     target = ::google::protobuf::internal::WireFormatLite::
       WriteStringToArray(2, this->stat_strings(i), target);
   }
@@ -1909,6 +2033,7 @@ void CDOTAMsg_SendStatPopup::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CDOTAMsg_SendStatPopup)
   return target;
 }
 
@@ -2023,6 +2148,7 @@ const int CDOTAMsg_CoachHUDPing::kTgtpathFieldNumber;
 CDOTAMsg_CoachHUDPing::CDOTAMsg_CoachHUDPing()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CDOTAMsg_CoachHUDPing)
 }
 
 void CDOTAMsg_CoachHUDPing::InitAsDefaultInstance() {
@@ -2032,22 +2158,25 @@ CDOTAMsg_CoachHUDPing::CDOTAMsg_CoachHUDPing(const CDOTAMsg_CoachHUDPing& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CDOTAMsg_CoachHUDPing)
 }
 
 void CDOTAMsg_CoachHUDPing::SharedCtor() {
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   x_ = 0u;
   y_ = 0u;
-  tgtpath_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  tgtpath_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
 CDOTAMsg_CoachHUDPing::~CDOTAMsg_CoachHUDPing() {
+  // @@protoc_insertion_point(destructor:CDOTAMsg_CoachHUDPing)
   SharedDtor();
 }
 
 void CDOTAMsg_CoachHUDPing::SharedDtor() {
-  if (tgtpath_ != &::google::protobuf::internal::kEmptyString) {
+  if (tgtpath_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete tgtpath_;
   }
   if (this != default_instance_) {
@@ -2076,35 +2205,51 @@ CDOTAMsg_CoachHUDPing* CDOTAMsg_CoachHUDPing::New() const {
 }
 
 void CDOTAMsg_CoachHUDPing::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    x_ = 0u;
-    y_ = 0u;
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<CDOTAMsg_CoachHUDPing*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  if (_has_bits_[0 / 32] & 7) {
+    ZR_(x_, y_);
     if (has_tgtpath()) {
-      if (tgtpath_ != &::google::protobuf::internal::kEmptyString) {
+      if (tgtpath_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         tgtpath_->clear();
       }
     }
   }
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool CDOTAMsg_CoachHUDPing::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CDOTAMsg_CoachHUDPing)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // optional uint32 x = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &x_)));
           set_has_x();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(16)) goto parse_y;
         break;
@@ -2112,15 +2257,14 @@ bool CDOTAMsg_CoachHUDPing::MergePartialFromCodedStream(
 
       // optional uint32 y = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 16) {
          parse_y:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &y_)));
           set_has_y();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(26)) goto parse_tgtpath;
         break;
@@ -2128,26 +2272,27 @@ bool CDOTAMsg_CoachHUDPing::MergePartialFromCodedStream(
 
       // optional string tgtpath = 3;
       case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 26) {
          parse_tgtpath:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_tgtpath()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->tgtpath().data(), this->tgtpath().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "tgtpath");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -2155,12 +2300,18 @@ bool CDOTAMsg_CoachHUDPing::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CDOTAMsg_CoachHUDPing)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CDOTAMsg_CoachHUDPing)
+  return false;
 #undef DO_
 }
 
 void CDOTAMsg_CoachHUDPing::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CDOTAMsg_CoachHUDPing)
   // optional uint32 x = 1;
   if (has_x()) {
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->x(), output);
@@ -2173,10 +2324,11 @@ void CDOTAMsg_CoachHUDPing::SerializeWithCachedSizes(
 
   // optional string tgtpath = 3;
   if (has_tgtpath()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->tgtpath().data(), this->tgtpath().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "tgtpath");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       3, this->tgtpath(), output);
   }
 
@@ -2184,10 +2336,12 @@ void CDOTAMsg_CoachHUDPing::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CDOTAMsg_CoachHUDPing)
 }
 
 ::google::protobuf::uint8* CDOTAMsg_CoachHUDPing::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CDOTAMsg_CoachHUDPing)
   // optional uint32 x = 1;
   if (has_x()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->x(), target);
@@ -2200,9 +2354,10 @@ void CDOTAMsg_CoachHUDPing::SerializeWithCachedSizes(
 
   // optional string tgtpath = 3;
   if (has_tgtpath()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->tgtpath().data(), this->tgtpath().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "tgtpath");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         3, this->tgtpath(), target);
@@ -2212,6 +2367,7 @@ void CDOTAMsg_CoachHUDPing::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CDOTAMsg_CoachHUDPing)
   return target;
 }
 
