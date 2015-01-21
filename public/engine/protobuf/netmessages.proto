@@ -147,6 +147,7 @@ message CMsg_CVars
 	{
 		optional string name = 1;
 		optional string value = 2;
+		optional uint32 dictionary_name = 3;
 	}
 
 	repeated CVar cvars = 1;
@@ -291,6 +292,7 @@ message CCLCMsg_CmdKeyValues
 
 enum ESplitScreenMessageType 
 {
+	option allow_alias = true;
 	MSG_SPLITSCREEN_ADDUSER = 0;
 	MSG_SPLITSCREEN_REMOVEUSER = 1;
 	MSG_SPLITSCREEN_TYPE_BITS = 1;
@@ -432,8 +434,9 @@ message CSVCMsg_VoiceData
 	optional int32 client = 1;
 	optional bool proximity = 2;
 	optional fixed64 xuid = 3;
-	optional int32 audible_mask = 4; 
-	optional bytes voice_data = 5;	
+	optional int32 audible_mask = 4;
+	optional bytes voice_data = 5;
+	optional bool caster = 6;
 }
 
 message CSVCMsg_FixAngle
