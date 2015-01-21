@@ -43,6 +43,17 @@ CDotaClientMessageHelpers::CDotaClientMessageHelpers()
 	SETUP_DOTA_MESSAGE( CameraZoomAmount );
 	SETUP_DOTA_MESSAGE( BroadcasterUsingCamerman );
 	SETUP_DOTA_MESSAGE( BroadcastUsingAssistedCameraOperator );
+	SETUP_DOTA_MESSAGE( EnemyItemAlert );
+	SETUP_DOTA_MESSAGE( FreeInventory );
+	SETUP_DOTA_MESSAGE( BuyBackStateAlert );
+	SETUP_DOTA_MESSAGE( QuickBuyAlert );
+	SETUP_DOTA_MESSAGE( HeroStatueLike );
+	SETUP_DOTA_MESSAGE( ModifierAlert );
+	SETUP_DOTA_MESSAGE( TeamShowcaseEditor );
+	SETUP_DOTA_MESSAGE( HPManaAlert );
+	SETUP_DOTA_MESSAGE( GlyphAlert );
+	SETUP_DOTA_MESSAGE( TeamShowcaseClientData );
+	SETUP_DOTA_MESSAGE( PlayTeamShowcase );
 }
 
 const google::protobuf::Message *CDotaClientMessageHelpers::GetPrototype( int index ) const

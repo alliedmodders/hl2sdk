@@ -60,7 +60,7 @@ CDotaUsermessageHelpers::CDotaUsermessageHelpers()
 	SETUP_DOTA_MESSAGE( AIDebugLine );
 	SETUP_DOTA_MESSAGE( ChatEvent );
 	SETUP_DOTA_MESSAGE( CombatHeroPositions );
-	SETUP_DOTA_MESSAGE( CombatLogData );
+	//SETUP_DOTA_MESSAGE( CombatLogData );
 	SETUP_DOTA_MESSAGE( CombatLogShowDeath );
 	SETUP_DOTA_MESSAGE( CreateLinearProjectile );
 	SETUP_DOTA_MESSAGE( DestroyLinearProjectile );
@@ -89,7 +89,7 @@ CDotaUsermessageHelpers::CDotaUsermessageHelpers()
 	//SETUP_MESSAGE( CharacterSpeakConcept );
 	SETUP_DOTA_MESSAGE( SwapVerify );
 	SETUP_DOTA_MESSAGE( WorldLine );
-	SETUP_DOTA_MESSAGE( TournamentDrop );
+	//SETUP_DOTA_MESSAGE( TournamentDrop );
 	SETUP_DOTA_MESSAGE( ItemAlert );
 	SETUP_DOTA_MESSAGE( HalloweenDrops );
 	SETUP_DOTA_MESSAGE( ChatWheel );
@@ -120,6 +120,16 @@ CDotaUsermessageHelpers::CDotaUsermessageHelpers()
 	SETUP_DOTA_MESSAGE( PlayerMMR );
 	SETUP_DOTA_MESSAGE( AbilitySteal );
 	SETUP_DOTA_MESSAGE( CourierKilledAlert );
+	SETUP_DOTA_MESSAGE( EnemyItemAlert );
+	SETUP_DOTA_MESSAGE( StatsMatchDetails );
+	SETUP_DOTA_MESSAGE( MiniTaunt );
+	SETUP_DOTA_MESSAGE( BuyBackStateAlert );
+	SETUP_DOTA_MESSAGE( QuickBuyAlert );
+	//SETUP_DOTA_MESSAGE( StatsHeroDetails );
+	SETUP_DOTA_MESSAGE( PredictionResult );
+	SETUP_DOTA_MESSAGE( ModifierAlert );
+	SETUP_DOTA_MESSAGE( HPManaAlert );
+	SETUP_DOTA_MESSAGE( GlyphAlert );
 }
 
 const google::protobuf::Message *CDotaUsermessageHelpers::GetPrototype( int index ) const
