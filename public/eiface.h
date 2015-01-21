@@ -660,7 +660,7 @@ public:
 	// TERROR: Perform any PVS cleanup before a full update
 	virtual void			PrepareForFullUpdate( CEntityIndex entIndex ) = 0;
 	
-	virtual bool			ShouldClientReceiveStringTableUserData( const INetworkStringTable *, int, const CCheckTransmitInfo * ) = 0;
+	virtual bool			ShouldClientReceiveStringTableUserData( const INetworkStringTable *pStringTable, int iIndex, const CCheckTransmitInfo *pTransmitInfo ) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMECLIENTS		"ServerGameClients004"
