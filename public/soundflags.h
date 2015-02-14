@@ -130,9 +130,13 @@ enum SoundFlags_t
 	SND_SHOULDPAUSE		= (1<<7),		// this sound should be paused if the game is paused
 	SND_IGNORE_PHONEMES	= (1<<8),
 	SND_IGNORE_NAME		= (1<<9),		// used to change all sounds emitted by an entity, regardless of scriptname
+	SND_IS_SCRIPTHANDLE			= (1<<10),		// server has passed the actual SoundEntry instead of wave filename
+
+	SND_UPDATE_DELAY_FOR_CHOREO	= (1<<11),		// True if we have to update snd_delay_for_choreo with the IO latency.
+	SND_GENERATE_GUID			= (1<<12),		// True if we generate the GUID when we send the sound.
 };
 
-#define SND_FLAG_BITS_ENCODE 9
+#define SND_FLAG_BITS_ENCODE 13
 
 #define MAX_SOUND_INDEX_BITS	13
 #define	MAX_SOUNDS				(1<<MAX_SOUND_INDEX_BITS)
