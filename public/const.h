@@ -31,7 +31,7 @@
 
 // This is the max # of players the engine can handle
 // Note, must be power of 2
-#define ABSOLUTE_PLAYER_LIMIT 64
+#define ABSOLUTE_PLAYER_LIMIT 255
 #define ABSOLUTE_PLAYER_LIMIT_DW	( (ABSOLUTE_PLAYER_LIMIT/32) + 1 )
 
 #if ABSOLUTE_PLAYER_LIMIT > 32
