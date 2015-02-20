@@ -163,6 +163,52 @@ inline bool EDOTAStatPopupTypes_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<EDOTAStatPopupTypes>(
     EDOTAStatPopupTypes_descriptor(), name, value);
 }
+enum dotaunitorder_t {
+  DOTA_UNIT_ORDER_NONE = 0,
+  DOTA_UNIT_ORDER_MOVE_TO_POSITION = 1,
+  DOTA_UNIT_ORDER_MOVE_TO_TARGET = 2,
+  DOTA_UNIT_ORDER_ATTACK_MOVE = 3,
+  DOTA_UNIT_ORDER_ATTACK_TARGET = 4,
+  DOTA_UNIT_ORDER_CAST_POSITION = 5,
+  DOTA_UNIT_ORDER_CAST_TARGET = 6,
+  DOTA_UNIT_ORDER_CAST_TARGET_TREE = 7,
+  DOTA_UNIT_ORDER_CAST_NO_TARGET = 8,
+  DOTA_UNIT_ORDER_CAST_TOGGLE = 9,
+  DOTA_UNIT_ORDER_HOLD_POSITION = 10,
+  DOTA_UNIT_ORDER_TRAIN_ABILITY = 11,
+  DOTA_UNIT_ORDER_DROP_ITEM = 12,
+  DOTA_UNIT_ORDER_GIVE_ITEM = 13,
+  DOTA_UNIT_ORDER_PICKUP_ITEM = 14,
+  DOTA_UNIT_ORDER_PICKUP_RUNE = 15,
+  DOTA_UNIT_ORDER_PURCHASE_ITEM = 16,
+  DOTA_UNIT_ORDER_SELL_ITEM = 17,
+  DOTA_UNIT_ORDER_DISASSEMBLE_ITEM = 18,
+  DOTA_UNIT_ORDER_MOVE_ITEM = 19,
+  DOTA_UNIT_ORDER_CAST_TOGGLE_AUTO = 20,
+  DOTA_UNIT_ORDER_STOP = 21,
+  DOTA_UNIT_ORDER_TAUNT = 22,
+  DOTA_UNIT_ORDER_BUYBACK = 23,
+  DOTA_UNIT_ORDER_GLYPH = 24,
+  DOTA_UNIT_ORDER_EJECT_ITEM_FROM_STASH = 25,
+  DOTA_UNIT_ORDER_CAST_RUNE = 26,
+  DOTA_UNIT_ORDER_PING_ABILITY = 27,
+  DOTA_UNIT_ORDER_MOVE_TO_DIRECTION = 28
+};
+bool dotaunitorder_t_IsValid(int value);
+const dotaunitorder_t dotaunitorder_t_MIN = DOTA_UNIT_ORDER_NONE;
+const dotaunitorder_t dotaunitorder_t_MAX = DOTA_UNIT_ORDER_MOVE_TO_DIRECTION;
+const int dotaunitorder_t_ARRAYSIZE = dotaunitorder_t_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* dotaunitorder_t_descriptor();
+inline const ::std::string& dotaunitorder_t_Name(dotaunitorder_t value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    dotaunitorder_t_descriptor(), value);
+}
+inline bool dotaunitorder_t_Parse(
+    const ::std::string& name, dotaunitorder_t* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<dotaunitorder_t>(
+    dotaunitorder_t_descriptor(), name, value);
+}
 // ===================================================================
 
 class CDOTAMsg_LocationPing : public ::google::protobuf::Message {
@@ -1472,6 +1518,11 @@ template <> struct is_proto_enum< ::EDOTAStatPopupTypes> : ::google::protobuf::i
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::EDOTAStatPopupTypes>() {
   return ::EDOTAStatPopupTypes_descriptor();
+}
+template <> struct is_proto_enum< ::dotaunitorder_t> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::dotaunitorder_t>() {
+  return ::dotaunitorder_t_descriptor();
 }
 
 }  // namespace google

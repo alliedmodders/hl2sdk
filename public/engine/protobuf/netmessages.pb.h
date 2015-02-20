@@ -180,26 +180,6 @@ inline bool ESplitScreenMessageType_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<ESplitScreenMessageType>(
     ESplitScreenMessageType_descriptor(), name, value);
 }
-enum ENetworkSystemLimitReport {
-  NSLR_GlobalPacketRateExceeded = 0,
-  NSLR_ConnectionLessRateLimited = 1,
-  NSLR_NetChannelRateLimited = 2
-};
-bool ENetworkSystemLimitReport_IsValid(int value);
-const ENetworkSystemLimitReport ENetworkSystemLimitReport_MIN = NSLR_GlobalPacketRateExceeded;
-const ENetworkSystemLimitReport ENetworkSystemLimitReport_MAX = NSLR_NetChannelRateLimited;
-const int ENetworkSystemLimitReport_ARRAYSIZE = ENetworkSystemLimitReport_MAX + 1;
-
-const ::google::protobuf::EnumDescriptor* ENetworkSystemLimitReport_descriptor();
-inline const ::std::string& ENetworkSystemLimitReport_Name(ENetworkSystemLimitReport value) {
-  return ::google::protobuf::internal::NameOfEnum(
-    ENetworkSystemLimitReport_descriptor(), value);
-}
-inline bool ENetworkSystemLimitReport_Parse(
-    const ::std::string& name, ENetworkSystemLimitReport* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<ENetworkSystemLimitReport>(
-    ENetworkSystemLimitReport_descriptor(), name, value);
-}
 // ===================================================================
 
 class CCLCMsg_ClientInfo : public ::google::protobuf::Message {
@@ -10157,11 +10137,6 @@ template <> struct is_proto_enum< ::ESplitScreenMessageType> : ::google::protobu
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::ESplitScreenMessageType>() {
   return ::ESplitScreenMessageType_descriptor();
-}
-template <> struct is_proto_enum< ::ENetworkSystemLimitReport> : ::google::protobuf::internal::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::ENetworkSystemLimitReport>() {
-  return ::ENetworkSystemLimitReport_descriptor();
 }
 
 }  // namespace google

@@ -633,11 +633,20 @@ enum Activity {
   ACT_DOTA_THUNDER_STRIKE = 599,
   ACT_DOTA_KINETIC_FIELD = 600,
   ACT_DOTA_STATIC_STORM = 601,
-  ACT_DOTA_MINI_TAUNT = 602
+  ACT_DOTA_MINI_TAUNT = 602,
+  ACT_DOTA_ARCTIC_BURN_END = 603,
+  ACT_DOTA_LOADOUT_RARE = 604,
+  ACT_DOTA_SWIM = 605,
+  ACT_DOTA_FLEE = 606,
+  ACT_DOTA_TROT = 607,
+  ACT_DOTA_SHAKE = 608,
+  ACT_DOTA_SWIM_IDLE = 609,
+  ACT_DOTA_WAIT_IDLE = 610,
+  ACT_DOTA_GREET = 611
 };
 bool Activity_IsValid(int value);
 const Activity Activity_MIN = ACT_INVALID;
-const Activity Activity_MAX = ACT_DOTA_MINI_TAUNT;
+const Activity Activity_MAX = ACT_DOTA_GREET;
 const int Activity_ARRAYSIZE = Activity_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Activity_descriptor();

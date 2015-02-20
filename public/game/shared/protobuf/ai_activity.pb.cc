@@ -56,7 +56,7 @@ void protobuf_AddDesc_ai_5factivity_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\021ai_activity.proto*\220\203\001\n\010Activity\022\030\n\013ACT"
+    "\n\021ai_activity.proto*\343\204\001\n\010Activity\022\030\n\013ACT"
     "_INVALID\020\377\377\377\377\377\377\377\377\377\001\022\r\n\tACT_RESET\020\000\022\014\n\010AC"
     "T_IDLE\020\001\022\022\n\016ACT_TRANSITION\020\002\022\r\n\tACT_COVE"
     "R\020\003\022\021\n\rACT_COVER_MED\020\004\022\021\n\rACT_COVER_LOW\020"
@@ -476,7 +476,12 @@ void protobuf_AddDesc_ai_5factivity_2eproto() {
     "TRAL_SPIRIT\020\326\004\022\034\n\027ACT_DOTA_THUNDER_STRIK"
     "E\020\327\004\022\033\n\026ACT_DOTA_KINETIC_FIELD\020\330\004\022\032\n\025ACT"
     "_DOTA_STATIC_STORM\020\331\004\022\030\n\023ACT_DOTA_MINI_T"
-    "AUNT\020\332\004B\005H\001\200\001\000", 16814);
+    "AUNT\020\332\004\022\035\n\030ACT_DOTA_ARCTIC_BURN_END\020\333\004\022\032"
+    "\n\025ACT_DOTA_LOADOUT_RARE\020\334\004\022\022\n\rACT_DOTA_S"
+    "WIM\020\335\004\022\022\n\rACT_DOTA_FLEE\020\336\004\022\022\n\rACT_DOTA_T"
+    "ROT\020\337\004\022\023\n\016ACT_DOTA_SHAKE\020\340\004\022\027\n\022ACT_DOTA_"
+    "SWIM_IDLE\020\341\004\022\027\n\022ACT_DOTA_WAIT_IDLE\020\342\004\022\023\n"
+    "\016ACT_DOTA_GREET\020\343\004B\005H\001\200\001\000", 17025);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "ai_activity.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_ai_5factivity_2eproto);
@@ -1096,6 +1101,15 @@ bool Activity_IsValid(int value) {
     case 600:
     case 601:
     case 602:
+    case 603:
+    case 604:
+    case 605:
+    case 606:
+    case 607:
+    case 608:
+    case 609:
+    case 610:
+    case 611:
       return true;
     default:
       return false;

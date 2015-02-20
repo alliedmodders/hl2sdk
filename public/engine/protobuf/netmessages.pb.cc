@@ -136,7 +136,6 @@ const ::google::protobuf::EnumDescriptor* CLC_Messages_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* VoiceDataFormat_t_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* SVC_Messages_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ESplitScreenMessageType_descriptor_ = NULL;
-const ::google::protobuf::EnumDescriptor* ENetworkSystemLimitReport_descriptor_ = NULL;
 
 }  // namespace
 
@@ -837,7 +836,6 @@ void protobuf_AssignDesc_netmessages_2eproto() {
   VoiceDataFormat_t_descriptor_ = file->enum_type(1);
   SVC_Messages_descriptor_ = file->enum_type(2);
   ESplitScreenMessageType_descriptor_ = file->enum_type(3);
-  ENetworkSystemLimitReport_descriptor_ = file->enum_type(4);
 }
 
 namespace {
@@ -1146,10 +1144,7 @@ void protobuf_AddDesc_netmessages_2eproto() {
     "\n\022svc_PacketReliable\020 \022\026\n\022svc_FullFrameS"
     "plit\020!*V\n\027ESplitScreenMessageType\022\033\n\027MSG"
     "_SPLITSCREEN_ADDUSER\020\000\022\036\n\032MSG_SPLITSCREE"
-    "N_REMOVEUSER\020\001*\202\001\n\031ENetworkSystemLimitRe"
-    "port\022!\n\035NSLR_GlobalPacketRateExceeded\020\000\022"
-    "\"\n\036NSLR_ConnectionLessRateLimited\020\001\022\036\n\032N"
-    "SLR_NetChannelRateLimited\020\002B\003\200\001\000", 5312);
+    "N_REMOVEUSER\020\001B\003\200\001\000", 5179);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "netmessages.proto", &protobuf_RegisterTypes);
   CCLCMsg_ClientInfo::default_instance_ = new CCLCMsg_ClientInfo();
@@ -1319,21 +1314,6 @@ bool ESplitScreenMessageType_IsValid(int value) {
   switch(value) {
     case 0:
     case 1:
-      return true;
-    default:
-      return false;
-  }
-}
-
-const ::google::protobuf::EnumDescriptor* ENetworkSystemLimitReport_descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return ENetworkSystemLimitReport_descriptor_;
-}
-bool ENetworkSystemLimitReport_IsValid(int value) {
-  switch(value) {
-    case 0:
-    case 1:
-    case 2:
       return true;
     default:
       return false;

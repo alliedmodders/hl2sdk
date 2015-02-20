@@ -75,6 +75,7 @@ class CDOTAClientMsg_HeroStatueLike;
 class CDOTAClientMsg_TeamShowcaseEditor;
 class CDOTAClientMsg_TeamShowcaseClientData;
 class CDOTAClientMsg_PlayTeamShowcase;
+class CDOTAClientMsg_EventCNY2015Cmd;
 
 enum EDotaClientMessages {
   DOTA_CM_MapLine = 1,
@@ -116,11 +117,12 @@ enum EDotaClientMessages {
   DOTA_CM_HPManaAlert = 37,
   DOTA_CM_GlyphAlert = 38,
   DOTA_CM_TeamShowcaseClientData = 39,
-  DOTA_CM_PlayTeamShowcase = 40
+  DOTA_CM_PlayTeamShowcase = 40,
+  DOTA_CM_EventCNY2015Cmd = 41
 };
 bool EDotaClientMessages_IsValid(int value);
 const EDotaClientMessages EDotaClientMessages_MIN = DOTA_CM_MapLine;
-const EDotaClientMessages EDotaClientMessages_MAX = DOTA_CM_PlayTeamShowcase;
+const EDotaClientMessages EDotaClientMessages_MAX = DOTA_CM_EventCNY2015Cmd;
 const int EDotaClientMessages_ARRAYSIZE = EDotaClientMessages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* EDotaClientMessages_descriptor();
@@ -436,16 +438,26 @@ class CDOTAClientMsg_ModifierAlert : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 buff_internal_index() const;
   inline void set_buff_internal_index(::google::protobuf::int32 value);
 
+  // optional uint32 target_entindex = 2;
+  inline bool has_target_entindex() const;
+  inline void clear_target_entindex();
+  static const int kTargetEntindexFieldNumber = 2;
+  inline ::google::protobuf::uint32 target_entindex() const;
+  inline void set_target_entindex(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:CDOTAClientMsg_ModifierAlert)
  private:
   inline void set_has_buff_internal_index();
   inline void clear_has_buff_internal_index();
+  inline void set_has_target_entindex();
+  inline void clear_has_target_entindex();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
   ::google::protobuf::int32 buff_internal_index_;
+  ::google::protobuf::uint32 target_entindex_;
   friend void  protobuf_AddDesc_dota_5fclientmessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fclientmessages_2eproto();
   friend void protobuf_ShutdownFile_dota_5fclientmessages_2eproto();
@@ -3539,6 +3551,90 @@ class CDOTAClientMsg_PlayTeamShowcase : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static CDOTAClientMsg_PlayTeamShowcase* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class CDOTAClientMsg_EventCNY2015Cmd : public ::google::protobuf::Message {
+ public:
+  CDOTAClientMsg_EventCNY2015Cmd();
+  virtual ~CDOTAClientMsg_EventCNY2015Cmd();
+
+  CDOTAClientMsg_EventCNY2015Cmd(const CDOTAClientMsg_EventCNY2015Cmd& from);
+
+  inline CDOTAClientMsg_EventCNY2015Cmd& operator=(const CDOTAClientMsg_EventCNY2015Cmd& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAClientMsg_EventCNY2015Cmd& default_instance();
+
+  void Swap(CDOTAClientMsg_EventCNY2015Cmd* other);
+
+  // implements Message ----------------------------------------------
+
+  CDOTAClientMsg_EventCNY2015Cmd* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAClientMsg_EventCNY2015Cmd& from);
+  void MergeFrom(const CDOTAClientMsg_EventCNY2015Cmd& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional bytes data = 1;
+  inline bool has_data() const;
+  inline void clear_data();
+  static const int kDataFieldNumber = 1;
+  inline const ::std::string& data() const;
+  inline void set_data(const ::std::string& value);
+  inline void set_data(const char* value);
+  inline void set_data(const void* value, size_t size);
+  inline ::std::string* mutable_data();
+  inline ::std::string* release_data();
+  inline void set_allocated_data(::std::string* data);
+
+  // @@protoc_insertion_point(class_scope:CDOTAClientMsg_EventCNY2015Cmd)
+ private:
+  inline void set_has_data();
+  inline void clear_has_data();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::std::string* data_;
+  friend void  protobuf_AddDesc_dota_5fclientmessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fclientmessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fclientmessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CDOTAClientMsg_EventCNY2015Cmd* default_instance_;
+};
 // ===================================================================
 
 
@@ -3686,6 +3782,30 @@ inline void CDOTAClientMsg_ModifierAlert::set_buff_internal_index(::google::prot
   set_has_buff_internal_index();
   buff_internal_index_ = value;
   // @@protoc_insertion_point(field_set:CDOTAClientMsg_ModifierAlert.buff_internal_index)
+}
+
+// optional uint32 target_entindex = 2;
+inline bool CDOTAClientMsg_ModifierAlert::has_target_entindex() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAClientMsg_ModifierAlert::set_has_target_entindex() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAClientMsg_ModifierAlert::clear_has_target_entindex() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAClientMsg_ModifierAlert::clear_target_entindex() {
+  target_entindex_ = 0u;
+  clear_has_target_entindex();
+}
+inline ::google::protobuf::uint32 CDOTAClientMsg_ModifierAlert::target_entindex() const {
+  // @@protoc_insertion_point(field_get:CDOTAClientMsg_ModifierAlert.target_entindex)
+  return target_entindex_;
+}
+inline void CDOTAClientMsg_ModifierAlert::set_target_entindex(::google::protobuf::uint32 value) {
+  set_has_target_entindex();
+  target_entindex_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAClientMsg_ModifierAlert.target_entindex)
 }
 
 // -------------------------------------------------------------------
@@ -5160,6 +5280,86 @@ inline void CDOTAClientMsg_TeamShowcaseClientData::set_allocated_data(::std::str
 // -------------------------------------------------------------------
 
 // CDOTAClientMsg_PlayTeamShowcase
+
+// -------------------------------------------------------------------
+
+// CDOTAClientMsg_EventCNY2015Cmd
+
+// optional bytes data = 1;
+inline bool CDOTAClientMsg_EventCNY2015Cmd::has_data() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAClientMsg_EventCNY2015Cmd::set_has_data() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAClientMsg_EventCNY2015Cmd::clear_has_data() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAClientMsg_EventCNY2015Cmd::clear_data() {
+  if (data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    data_->clear();
+  }
+  clear_has_data();
+}
+inline const ::std::string& CDOTAClientMsg_EventCNY2015Cmd::data() const {
+  // @@protoc_insertion_point(field_get:CDOTAClientMsg_EventCNY2015Cmd.data)
+  return *data_;
+}
+inline void CDOTAClientMsg_EventCNY2015Cmd::set_data(const ::std::string& value) {
+  set_has_data();
+  if (data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    data_ = new ::std::string;
+  }
+  data_->assign(value);
+  // @@protoc_insertion_point(field_set:CDOTAClientMsg_EventCNY2015Cmd.data)
+}
+inline void CDOTAClientMsg_EventCNY2015Cmd::set_data(const char* value) {
+  set_has_data();
+  if (data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    data_ = new ::std::string;
+  }
+  data_->assign(value);
+  // @@protoc_insertion_point(field_set_char:CDOTAClientMsg_EventCNY2015Cmd.data)
+}
+inline void CDOTAClientMsg_EventCNY2015Cmd::set_data(const void* value, size_t size) {
+  set_has_data();
+  if (data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    data_ = new ::std::string;
+  }
+  data_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:CDOTAClientMsg_EventCNY2015Cmd.data)
+}
+inline ::std::string* CDOTAClientMsg_EventCNY2015Cmd::mutable_data() {
+  set_has_data();
+  if (data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    data_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:CDOTAClientMsg_EventCNY2015Cmd.data)
+  return data_;
+}
+inline ::std::string* CDOTAClientMsg_EventCNY2015Cmd::release_data() {
+  clear_has_data();
+  if (data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = data_;
+    data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void CDOTAClientMsg_EventCNY2015Cmd::set_allocated_data(::std::string* data) {
+  if (data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete data_;
+  }
+  if (data) {
+    set_has_data();
+    data_ = data;
+  } else {
+    clear_has_data();
+    data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:CDOTAClientMsg_EventCNY2015Cmd.data)
+}
 
 
 // @@protoc_insertion_point(namespace_scope)

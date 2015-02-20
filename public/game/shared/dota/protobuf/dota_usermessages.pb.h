@@ -64,6 +64,7 @@ class CDOTAUserMsg_CreateLinearProjectile;
 class CDOTAUserMsg_DestroyLinearProjectile;
 class CDOTAUserMsg_DodgeTrackingProjectiles;
 class CDOTAUserMsg_SpectatorPlayerClick;
+class CDOTAUserMsg_SpectatorPlayerUnitOrders;
 class CDOTAUserMsg_NevermoreRequiem;
 class CDOTAUserMsg_InvalidCommand;
 class CDOTAUserMsg_HudError;
@@ -136,10 +137,13 @@ class CDOTAUserMsg_StatsTeamMinuteDetails_LocationPerformance;
 class CDOTAUserMsg_StatsPlayerKillShare;
 class CDOTAUserMsg_StatsKillDetails;
 class CDOTAUserMsg_StatsMatchDetails;
+class CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails;
+class CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails;
 class CDOTAUserMsg_MiniTaunt;
 class CMsgHeroAbilityStat;
 class CMsgCombatAnalyzerPlayerStat;
 class CMsgCombatAnalyzerStats;
+class CDOTAUserMsg_BeastChat;
 
 enum CDOTAUserMsg_PredictionResult_Prediction_EResult {
   CDOTAUserMsg_PredictionResult_Prediction_EResult_k_eResult_ItemGranted = 1,
@@ -253,11 +257,13 @@ enum EDotaUserMessages {
   DOTA_UM_PredictionResult = 135,
   DOTA_UM_ModifierAlert = 136,
   DOTA_UM_HPManaAlert = 137,
-  DOTA_UM_GlyphAlert = 138
+  DOTA_UM_GlyphAlert = 138,
+  DOTA_UM_BeastChat = 139,
+  DOTA_UM_SpectatorPlayerUnitOrders = 140
 };
 bool EDotaUserMessages_IsValid(int value);
 const EDotaUserMessages EDotaUserMessages_MIN = DOTA_UM_AddUnitToSelection;
-const EDotaUserMessages EDotaUserMessages_MAX = DOTA_UM_GlyphAlert;
+const EDotaUserMessages EDotaUserMessages_MAX = DOTA_UM_SpectatorPlayerUnitOrders;
 const int EDotaUserMessages_ARRAYSIZE = EDotaUserMessages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* EDotaUserMessages_descriptor();
@@ -355,11 +361,13 @@ enum DOTA_CHAT_MESSAGE {
   CHAT_MESSAGE_ASSASSIN_DENIED = 89,
   CHAT_MESSAGE_VICTORY_PREDICTION_SINGLE_USER_CONFIRM = 90,
   CHAT_MESSAGE_EFFIGY_KILL = 91,
-  CHAT_MESSAGE_VOICE_TEXT_BANNED_OVERFLOW = 92
+  CHAT_MESSAGE_VOICE_TEXT_BANNED_OVERFLOW = 92,
+  CHAT_MESSAGE_YEAR_BEAST_KILLED = 93,
+  CHAT_MESSAGE_PAUSE_COUNTDOWN = 94
 };
 bool DOTA_CHAT_MESSAGE_IsValid(int value);
 const DOTA_CHAT_MESSAGE DOTA_CHAT_MESSAGE_MIN = CHAT_MESSAGE_INVALID;
-const DOTA_CHAT_MESSAGE DOTA_CHAT_MESSAGE_MAX = CHAT_MESSAGE_VOICE_TEXT_BANNED_OVERFLOW;
+const DOTA_CHAT_MESSAGE DOTA_CHAT_MESSAGE_MAX = CHAT_MESSAGE_PAUSE_COUNTDOWN;
 const int DOTA_CHAT_MESSAGE_ARRAYSIZE = DOTA_CHAT_MESSAGE_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* DOTA_CHAT_MESSAGE_descriptor();
@@ -538,7 +546,8 @@ enum DOTA_POSITION_CATEGORY {
   DOTA_POSITION_ROSHAN_PIT = 11,
   DOTA_POSITION_RADIANT_BASE = 12,
   DOTA_POSITION_DIRE_BASE = 13,
-  DOTA_POSITION_OTHER = 14
+  DOTA_POSITION_FOUNTAIN = 14,
+  DOTA_POSITION_OTHER = 15
 };
 bool DOTA_POSITION_CATEGORY_IsValid(int value);
 const DOTA_POSITION_CATEGORY DOTA_POSITION_CATEGORY_MIN = DOTA_POSITION_NONE;
@@ -554,6 +563,29 @@ inline bool DOTA_POSITION_CATEGORY_Parse(
     const ::std::string& name, DOTA_POSITION_CATEGORY* value) {
   return ::google::protobuf::internal::ParseNamedEnum<DOTA_POSITION_CATEGORY>(
     DOTA_POSITION_CATEGORY_descriptor(), name, value);
+}
+enum DOTA_ABILITY_TARGET_TYPE {
+  DOTA_ABILITY_TARGET_NONE = 0,
+  DOTA_ABILITY_TARGET_SELF = 1,
+  DOTA_ABILITY_TARGET_ALLY_HERO = 2,
+  DOTA_ABILITY_TARGET_ALLY_CREEP = 3,
+  DOTA_ABILITY_TARGET_ENEMY_HERO = 4,
+  DOTA_ABILITY_TARGET_ENEMY_CREEP = 5
+};
+bool DOTA_ABILITY_TARGET_TYPE_IsValid(int value);
+const DOTA_ABILITY_TARGET_TYPE DOTA_ABILITY_TARGET_TYPE_MIN = DOTA_ABILITY_TARGET_NONE;
+const DOTA_ABILITY_TARGET_TYPE DOTA_ABILITY_TARGET_TYPE_MAX = DOTA_ABILITY_TARGET_ENEMY_CREEP;
+const int DOTA_ABILITY_TARGET_TYPE_ARRAYSIZE = DOTA_ABILITY_TARGET_TYPE_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* DOTA_ABILITY_TARGET_TYPE_descriptor();
+inline const ::std::string& DOTA_ABILITY_TARGET_TYPE_Name(DOTA_ABILITY_TARGET_TYPE value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    DOTA_ABILITY_TARGET_TYPE_descriptor(), value);
+}
+inline bool DOTA_ABILITY_TARGET_TYPE_Parse(
+    const ::std::string& name, DOTA_ABILITY_TARGET_TYPE* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<DOTA_ABILITY_TARGET_TYPE>(
+    DOTA_ABILITY_TARGET_TYPE_descriptor(), name, value);
 }
 enum EHeroStatType {
   k_EHeroStatType_None = 0,
@@ -2130,6 +2162,13 @@ class CDOTAUserMsg_ModifierAlert : public ::google::protobuf::Message {
   inline bool is_debuff() const;
   inline void set_is_debuff(bool value);
 
+  // optional uint32 target_entindex = 5;
+  inline bool has_target_entindex() const;
+  inline void clear_target_entindex();
+  static const int kTargetEntindexFieldNumber = 5;
+  inline ::google::protobuf::uint32 target_entindex() const;
+  inline void set_target_entindex(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:CDOTAUserMsg_ModifierAlert)
  private:
   inline void set_has_player_id();
@@ -2140,6 +2179,8 @@ class CDOTAUserMsg_ModifierAlert : public ::google::protobuf::Message {
   inline void clear_has_stack_count();
   inline void set_has_is_debuff();
   inline void clear_has_is_debuff();
+  inline void set_has_target_entindex();
+  inline void clear_has_target_entindex();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -2149,6 +2190,7 @@ class CDOTAUserMsg_ModifierAlert : public ::google::protobuf::Message {
   ::google::protobuf::uint32 player_id_;
   ::google::protobuf::uint32 stack_count_;
   bool is_debuff_;
+  ::google::protobuf::uint32 target_entindex_;
   friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
   friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
@@ -3465,6 +3507,150 @@ class CDOTAUserMsg_SpectatorPlayerClick : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class CDOTAUserMsg_SpectatorPlayerUnitOrders : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_SpectatorPlayerUnitOrders();
+  virtual ~CDOTAUserMsg_SpectatorPlayerUnitOrders();
+
+  CDOTAUserMsg_SpectatorPlayerUnitOrders(const CDOTAUserMsg_SpectatorPlayerUnitOrders& from);
+
+  inline CDOTAUserMsg_SpectatorPlayerUnitOrders& operator=(const CDOTAUserMsg_SpectatorPlayerUnitOrders& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_SpectatorPlayerUnitOrders& default_instance();
+
+  void Swap(CDOTAUserMsg_SpectatorPlayerUnitOrders* other);
+
+  // implements Message ----------------------------------------------
+
+  CDOTAUserMsg_SpectatorPlayerUnitOrders* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_SpectatorPlayerUnitOrders& from);
+  void MergeFrom(const CDOTAUserMsg_SpectatorPlayerUnitOrders& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 entindex = 1;
+  inline bool has_entindex() const;
+  inline void clear_entindex();
+  static const int kEntindexFieldNumber = 1;
+  inline ::google::protobuf::int32 entindex() const;
+  inline void set_entindex(::google::protobuf::int32 value);
+
+  // optional int32 order_type = 2;
+  inline bool has_order_type() const;
+  inline void clear_order_type();
+  static const int kOrderTypeFieldNumber = 2;
+  inline ::google::protobuf::int32 order_type() const;
+  inline void set_order_type(::google::protobuf::int32 value);
+
+  // repeated int32 units = 3;
+  inline int units_size() const;
+  inline void clear_units();
+  static const int kUnitsFieldNumber = 3;
+  inline ::google::protobuf::int32 units(int index) const;
+  inline void set_units(int index, ::google::protobuf::int32 value);
+  inline void add_units(::google::protobuf::int32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      units() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_units();
+
+  // optional int32 target_index = 4;
+  inline bool has_target_index() const;
+  inline void clear_target_index();
+  static const int kTargetIndexFieldNumber = 4;
+  inline ::google::protobuf::int32 target_index() const;
+  inline void set_target_index(::google::protobuf::int32 value);
+
+  // optional int32 ability_index = 5;
+  inline bool has_ability_index() const;
+  inline void clear_ability_index();
+  static const int kAbilityIndexFieldNumber = 5;
+  inline ::google::protobuf::int32 ability_index() const;
+  inline void set_ability_index(::google::protobuf::int32 value);
+
+  // optional .CMsgVector position = 6;
+  inline bool has_position() const;
+  inline void clear_position();
+  static const int kPositionFieldNumber = 6;
+  inline const ::CMsgVector& position() const;
+  inline ::CMsgVector* mutable_position();
+  inline ::CMsgVector* release_position();
+  inline void set_allocated_position(::CMsgVector* position);
+
+  // optional bool queue = 7;
+  inline bool has_queue() const;
+  inline void clear_queue();
+  static const int kQueueFieldNumber = 7;
+  inline bool queue() const;
+  inline void set_queue(bool value);
+
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_SpectatorPlayerUnitOrders)
+ private:
+  inline void set_has_entindex();
+  inline void clear_has_entindex();
+  inline void set_has_order_type();
+  inline void clear_has_order_type();
+  inline void set_has_target_index();
+  inline void clear_has_target_index();
+  inline void set_has_ability_index();
+  inline void clear_has_ability_index();
+  inline void set_has_position();
+  inline void clear_has_position();
+  inline void set_has_queue();
+  inline void clear_has_queue();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::google::protobuf::int32 entindex_;
+  ::google::protobuf::int32 order_type_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > units_;
+  ::google::protobuf::int32 target_index_;
+  ::google::protobuf::int32 ability_index_;
+  ::CMsgVector* position_;
+  bool queue_;
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_SpectatorPlayerUnitOrders* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class CDOTAUserMsg_NevermoreRequiem : public ::google::protobuf::Message {
  public:
   CDOTAUserMsg_NevermoreRequiem();
@@ -4263,6 +4449,18 @@ class CDOTAUserMsg_PredictionResult : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_PredictionResult_Prediction >*
       mutable_predictions();
 
+  // repeated uint32 granted_item_defs = 6;
+  inline int granted_item_defs_size() const;
+  inline void clear_granted_item_defs();
+  static const int kGrantedItemDefsFieldNumber = 6;
+  inline ::google::protobuf::uint32 granted_item_defs(int index) const;
+  inline void set_granted_item_defs(int index, ::google::protobuf::uint32 value);
+  inline void add_granted_item_defs(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      granted_item_defs() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_granted_item_defs();
+
   // @@protoc_insertion_point(class_scope:CDOTAUserMsg_PredictionResult)
  private:
   inline void set_has_account_id();
@@ -4280,6 +4478,7 @@ class CDOTAUserMsg_PredictionResult : public ::google::protobuf::Message {
   ::google::protobuf::uint32 account_id_;
   bool correct_;
   ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_PredictionResult_Prediction > predictions_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > granted_item_defs_;
   friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
   friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
@@ -10326,6 +10525,70 @@ class CDOTAUserMsg_StatsHeroMinuteDetails : public ::google::protobuf::Message {
   inline ::google::protobuf::uint32 harvested_creep_gold() const;
   inline void set_harvested_creep_gold(::google::protobuf::uint32 value);
 
+  // optional uint32 claimed_farm = 9;
+  inline bool has_claimed_farm() const;
+  inline void clear_claimed_farm();
+  static const int kClaimedFarmFieldNumber = 9;
+  inline ::google::protobuf::uint32 claimed_farm() const;
+  inline void set_claimed_farm(::google::protobuf::uint32 value);
+
+  // optional uint32 wards_placed = 10;
+  inline bool has_wards_placed() const;
+  inline void clear_wards_placed();
+  static const int kWardsPlacedFieldNumber = 10;
+  inline ::google::protobuf::uint32 wards_placed() const;
+  inline void set_wards_placed(::google::protobuf::uint32 value);
+
+  // optional uint32 runes_collected = 11;
+  inline bool has_runes_collected() const;
+  inline void clear_runes_collected();
+  static const int kRunesCollectedFieldNumber = 11;
+  inline ::google::protobuf::uint32 runes_collected() const;
+  inline void set_runes_collected(::google::protobuf::uint32 value);
+
+  // optional uint32 tps_used = 12;
+  inline bool has_tps_used() const;
+  inline void clear_tps_used();
+  static const int kTpsUsedFieldNumber = 12;
+  inline ::google::protobuf::uint32 tps_used() const;
+  inline void set_tps_used(::google::protobuf::uint32 value);
+
+  // repeated uint32 mana_spent = 13;
+  inline int mana_spent_size() const;
+  inline void clear_mana_spent();
+  static const int kManaSpentFieldNumber = 13;
+  inline ::google::protobuf::uint32 mana_spent(int index) const;
+  inline void set_mana_spent(int index, ::google::protobuf::uint32 value);
+  inline void add_mana_spent(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      mana_spent() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_mana_spent();
+
+  // repeated uint32 damage_absorbed = 14;
+  inline int damage_absorbed_size() const;
+  inline void clear_damage_absorbed();
+  static const int kDamageAbsorbedFieldNumber = 14;
+  inline ::google::protobuf::uint32 damage_absorbed(int index) const;
+  inline void set_damage_absorbed(int index, ::google::protobuf::uint32 value);
+  inline void add_damage_absorbed(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      damage_absorbed() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_damage_absorbed();
+
+  // repeated uint32 damage_done = 15;
+  inline int damage_done_size() const;
+  inline void clear_damage_done();
+  static const int kDamageDoneFieldNumber = 15;
+  inline ::google::protobuf::uint32 damage_done(int index) const;
+  inline void set_damage_done(int index, ::google::protobuf::uint32 value);
+  inline void add_damage_done(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      damage_done() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_damage_done();
+
   // @@protoc_insertion_point(class_scope:CDOTAUserMsg_StatsHeroMinuteDetails)
  private:
   inline void set_has_last_hits();
@@ -10344,6 +10607,14 @@ class CDOTAUserMsg_StatsHeroMinuteDetails : public ::google::protobuf::Message {
   inline void clear_has_net_worth();
   inline void set_has_harvested_creep_gold();
   inline void clear_has_harvested_creep_gold();
+  inline void set_has_claimed_farm();
+  inline void clear_has_claimed_farm();
+  inline void set_has_wards_placed();
+  inline void clear_has_wards_placed();
+  inline void set_has_runes_collected();
+  inline void clear_has_runes_collected();
+  inline void set_has_tps_used();
+  inline void clear_has_tps_used();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -10357,6 +10628,13 @@ class CDOTAUserMsg_StatsHeroMinuteDetails : public ::google::protobuf::Message {
   ::google::protobuf::uint32 total_xp_;
   ::google::protobuf::uint32 net_worth_;
   ::google::protobuf::uint32 harvested_creep_gold_;
+  ::google::protobuf::uint32 claimed_farm_;
+  ::google::protobuf::uint32 wards_placed_;
+  ::google::protobuf::uint32 runes_collected_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > mana_spent_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > damage_absorbed_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > damage_done_;
+  ::google::protobuf::uint32 tps_used_;
   friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
   friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
@@ -10709,12 +10987,48 @@ class CDOTAUserMsg_StatsPlayerKillShare : public ::google::protobuf::Message {
   inline float kill_share_percent() const;
   inline void set_kill_share_percent(float value);
 
+  // optional float player_loc_x = 3;
+  inline bool has_player_loc_x() const;
+  inline void clear_player_loc_x();
+  static const int kPlayerLocXFieldNumber = 3;
+  inline float player_loc_x() const;
+  inline void set_player_loc_x(float value);
+
+  // optional float player_loc_y = 4;
+  inline bool has_player_loc_y() const;
+  inline void clear_player_loc_y();
+  static const int kPlayerLocYFieldNumber = 4;
+  inline float player_loc_y() const;
+  inline void set_player_loc_y(float value);
+
+  // optional float health_percent = 5;
+  inline bool has_health_percent() const;
+  inline void clear_health_percent();
+  static const int kHealthPercentFieldNumber = 5;
+  inline float health_percent() const;
+  inline void set_health_percent(float value);
+
+  // optional float mana_percent = 6;
+  inline bool has_mana_percent() const;
+  inline void clear_mana_percent();
+  static const int kManaPercentFieldNumber = 6;
+  inline float mana_percent() const;
+  inline void set_mana_percent(float value);
+
   // @@protoc_insertion_point(class_scope:CDOTAUserMsg_StatsPlayerKillShare)
  private:
   inline void set_has_player_id();
   inline void clear_has_player_id();
   inline void set_has_kill_share_percent();
   inline void clear_has_kill_share_percent();
+  inline void set_has_player_loc_x();
+  inline void clear_has_player_loc_x();
+  inline void set_has_player_loc_y();
+  inline void clear_has_player_loc_y();
+  inline void set_has_health_percent();
+  inline void clear_has_health_percent();
+  inline void set_has_mana_percent();
+  inline void clear_has_mana_percent();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -10722,6 +11036,10 @@ class CDOTAUserMsg_StatsPlayerKillShare : public ::google::protobuf::Message {
   mutable int _cached_size_;
   ::google::protobuf::int32 player_id_;
   float kill_share_percent_;
+  float player_loc_x_;
+  float player_loc_y_;
+  float health_percent_;
+  float mana_percent_;
   friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
   friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
@@ -10863,6 +11181,234 @@ class CDOTAUserMsg_StatsKillDetails : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails();
+  virtual ~CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails();
+
+  CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails(const CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails& from);
+
+  inline CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails& operator=(const CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails& default_instance();
+
+  void Swap(CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* other);
+
+  // implements Message ----------------------------------------------
+
+  CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails& from);
+  void MergeFrom(const CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated uint32 participants = 1;
+  inline int participants_size() const;
+  inline void clear_participants();
+  static const int kParticipantsFieldNumber = 1;
+  inline ::google::protobuf::uint32 participants(int index) const;
+  inline void set_participants(int index, ::google::protobuf::uint32 value);
+  inline void add_participants(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      participants() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_participants();
+
+  // repeated uint32 deaths = 2;
+  inline int deaths_size() const;
+  inline void clear_deaths();
+  static const int kDeathsFieldNumber = 2;
+  inline ::google::protobuf::uint32 deaths(int index) const;
+  inline void set_deaths(int index, ::google::protobuf::uint32 value);
+  inline void add_deaths(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      deaths() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_deaths();
+
+  // optional uint32 gold_delta = 3;
+  inline bool has_gold_delta() const;
+  inline void clear_gold_delta();
+  static const int kGoldDeltaFieldNumber = 3;
+  inline ::google::protobuf::uint32 gold_delta() const;
+  inline void set_gold_delta(::google::protobuf::uint32 value);
+
+  // optional uint32 xp_delta = 4;
+  inline bool has_xp_delta() const;
+  inline void clear_xp_delta();
+  static const int kXpDeltaFieldNumber = 4;
+  inline ::google::protobuf::uint32 xp_delta() const;
+  inline void set_xp_delta(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails)
+ private:
+  inline void set_has_gold_delta();
+  inline void clear_has_gold_delta();
+  inline void set_has_xp_delta();
+  inline void clear_has_xp_delta();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > participants_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > deaths_;
+  ::google::protobuf::uint32 gold_delta_;
+  ::google::protobuf::uint32 xp_delta_;
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails();
+  virtual ~CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails();
+
+  CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails(const CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails& from);
+
+  inline CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails& operator=(const CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails& default_instance();
+
+  void Swap(CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails* other);
+
+  // implements Message ----------------------------------------------
+
+  CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails& from);
+  void MergeFrom(const CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional float start_time = 1;
+  inline bool has_start_time() const;
+  inline void clear_start_time();
+  static const int kStartTimeFieldNumber = 1;
+  inline float start_time() const;
+  inline void set_start_time(float value);
+
+  // optional float end_time = 2;
+  inline bool has_end_time() const;
+  inline void clear_end_time();
+  static const int kEndTimeFieldNumber = 2;
+  inline float end_time() const;
+  inline void set_end_time(float value);
+
+  // optional .CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails radiant_fight_details = 3;
+  inline bool has_radiant_fight_details() const;
+  inline void clear_radiant_fight_details();
+  static const int kRadiantFightDetailsFieldNumber = 3;
+  inline const ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails& radiant_fight_details() const;
+  inline ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* mutable_radiant_fight_details();
+  inline ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* release_radiant_fight_details();
+  inline void set_allocated_radiant_fight_details(::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* radiant_fight_details);
+
+  // optional .CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails dire_fight_details = 4;
+  inline bool has_dire_fight_details() const;
+  inline void clear_dire_fight_details();
+  static const int kDireFightDetailsFieldNumber = 4;
+  inline const ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails& dire_fight_details() const;
+  inline ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* mutable_dire_fight_details();
+  inline ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* release_dire_fight_details();
+  inline void set_allocated_dire_fight_details(::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* dire_fight_details);
+
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails)
+ private:
+  inline void set_has_start_time();
+  inline void clear_has_start_time();
+  inline void set_has_end_time();
+  inline void clear_has_end_time();
+  inline void set_has_radiant_fight_details();
+  inline void clear_has_radiant_fight_details();
+  inline void set_has_dire_fight_details();
+  inline void clear_has_dire_fight_details();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  float start_time_;
+  float end_time_;
+  ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* radiant_fight_details_;
+  ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* dire_fight_details_;
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class CDOTAUserMsg_StatsMatchDetails : public ::google::protobuf::Message {
  public:
   CDOTAUserMsg_StatsMatchDetails();
@@ -10913,6 +11459,9 @@ class CDOTAUserMsg_StatsMatchDetails : public ::google::protobuf::Message {
   ::google::protobuf::Metadata GetMetadata() const;
 
   // nested types ----------------------------------------------------
+
+  typedef CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails CDOTAUserMsg_StatsFightTeamDetails;
+  typedef CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails CDOTAUserMsg_StatsFightDetails;
 
   // accessors -------------------------------------------------------
 
@@ -10976,6 +11525,18 @@ class CDOTAUserMsg_StatsMatchDetails : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_StatsKillDetails >*
       mutable_dire_kills();
 
+  // repeated .CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails fight_details = 6;
+  inline int fight_details_size() const;
+  inline void clear_fight_details();
+  static const int kFightDetailsFieldNumber = 6;
+  inline const ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails& fight_details(int index) const;
+  inline ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails* mutable_fight_details(int index);
+  inline ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails* add_fight_details();
+  inline const ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails >&
+      fight_details() const;
+  inline ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails >*
+      mutable_fight_details();
+
   // @@protoc_insertion_point(class_scope:CDOTAUserMsg_StatsMatchDetails)
  private:
 
@@ -10988,6 +11549,7 @@ class CDOTAUserMsg_StatsMatchDetails : public ::google::protobuf::Message {
   ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_StatsTeamMinuteDetails > dire_stats_;
   ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_StatsKillDetails > radiant_kills_;
   ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_StatsKillDetails > dire_kills_;
+  ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails > fight_details_;
   friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
   friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
@@ -11356,6 +11918,130 @@ class CMsgCombatAnalyzerStats : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static CMsgCombatAnalyzerStats* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDOTAUserMsg_BeastChat : public ::google::protobuf::Message {
+ public:
+  CDOTAUserMsg_BeastChat();
+  virtual ~CDOTAUserMsg_BeastChat();
+
+  CDOTAUserMsg_BeastChat(const CDOTAUserMsg_BeastChat& from);
+
+  inline CDOTAUserMsg_BeastChat& operator=(const CDOTAUserMsg_BeastChat& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDOTAUserMsg_BeastChat& default_instance();
+
+  void Swap(CDOTAUserMsg_BeastChat* other);
+
+  // implements Message ----------------------------------------------
+
+  CDOTAUserMsg_BeastChat* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDOTAUserMsg_BeastChat& from);
+  void MergeFrom(const CDOTAUserMsg_BeastChat& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 team = 1;
+  inline bool has_team() const;
+  inline void clear_team();
+  static const int kTeamFieldNumber = 1;
+  inline ::google::protobuf::uint32 team() const;
+  inline void set_team(::google::protobuf::uint32 value);
+
+  // optional string format = 2;
+  inline bool has_format() const;
+  inline void clear_format();
+  static const int kFormatFieldNumber = 2;
+  inline const ::std::string& format() const;
+  inline void set_format(const ::std::string& value);
+  inline void set_format(const char* value);
+  inline void set_format(const char* value, size_t size);
+  inline ::std::string* mutable_format();
+  inline ::std::string* release_format();
+  inline void set_allocated_format(::std::string* format);
+
+  // optional string message = 3;
+  inline bool has_message() const;
+  inline void clear_message();
+  static const int kMessageFieldNumber = 3;
+  inline const ::std::string& message() const;
+  inline void set_message(const ::std::string& value);
+  inline void set_message(const char* value);
+  inline void set_message(const char* value, size_t size);
+  inline ::std::string* mutable_message();
+  inline ::std::string* release_message();
+  inline void set_allocated_message(::std::string* message);
+
+  // optional string target = 4;
+  inline bool has_target() const;
+  inline void clear_target();
+  static const int kTargetFieldNumber = 4;
+  inline const ::std::string& target() const;
+  inline void set_target(const ::std::string& value);
+  inline void set_target(const char* value);
+  inline void set_target(const char* value, size_t size);
+  inline ::std::string* mutable_target();
+  inline ::std::string* release_target();
+  inline void set_allocated_target(::std::string* target);
+
+  // @@protoc_insertion_point(class_scope:CDOTAUserMsg_BeastChat)
+ private:
+  inline void set_has_team();
+  inline void clear_has_team();
+  inline void set_has_format();
+  inline void clear_has_format();
+  inline void set_has_message();
+  inline void clear_has_message();
+  inline void set_has_target();
+  inline void clear_has_target();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::std::string* format_;
+  ::std::string* message_;
+  ::std::string* target_;
+  ::google::protobuf::uint32 team_;
+  friend void  protobuf_AddDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_dota_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_dota_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CDOTAUserMsg_BeastChat* default_instance_;
 };
 // ===================================================================
 
@@ -12801,6 +13487,30 @@ inline void CDOTAUserMsg_ModifierAlert::set_is_debuff(bool value) {
   // @@protoc_insertion_point(field_set:CDOTAUserMsg_ModifierAlert.is_debuff)
 }
 
+// optional uint32 target_entindex = 5;
+inline bool CDOTAUserMsg_ModifierAlert::has_target_entindex() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CDOTAUserMsg_ModifierAlert::set_has_target_entindex() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CDOTAUserMsg_ModifierAlert::clear_has_target_entindex() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CDOTAUserMsg_ModifierAlert::clear_target_entindex() {
+  target_entindex_ = 0u;
+  clear_has_target_entindex();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_ModifierAlert::target_entindex() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_ModifierAlert.target_entindex)
+  return target_entindex_;
+}
+inline void CDOTAUserMsg_ModifierAlert::set_target_entindex(::google::protobuf::uint32 value) {
+  set_has_target_entindex();
+  target_entindex_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_ModifierAlert.target_entindex)
+}
+
 // -------------------------------------------------------------------
 
 // CDOTAUserMsg_HPManaAlert
@@ -13900,6 +14610,201 @@ inline void CDOTAUserMsg_SpectatorPlayerClick::set_target_index(::google::protob
 
 // -------------------------------------------------------------------
 
+// CDOTAUserMsg_SpectatorPlayerUnitOrders
+
+// optional int32 entindex = 1;
+inline bool CDOTAUserMsg_SpectatorPlayerUnitOrders::has_entindex() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_has_entindex() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_has_entindex() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_entindex() {
+  entindex_ = 0;
+  clear_has_entindex();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_SpectatorPlayerUnitOrders::entindex() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_SpectatorPlayerUnitOrders.entindex)
+  return entindex_;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_entindex(::google::protobuf::int32 value) {
+  set_has_entindex();
+  entindex_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_SpectatorPlayerUnitOrders.entindex)
+}
+
+// optional int32 order_type = 2;
+inline bool CDOTAUserMsg_SpectatorPlayerUnitOrders::has_order_type() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_has_order_type() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_has_order_type() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_order_type() {
+  order_type_ = 0;
+  clear_has_order_type();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_SpectatorPlayerUnitOrders::order_type() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_SpectatorPlayerUnitOrders.order_type)
+  return order_type_;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_order_type(::google::protobuf::int32 value) {
+  set_has_order_type();
+  order_type_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_SpectatorPlayerUnitOrders.order_type)
+}
+
+// repeated int32 units = 3;
+inline int CDOTAUserMsg_SpectatorPlayerUnitOrders::units_size() const {
+  return units_.size();
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_units() {
+  units_.Clear();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_SpectatorPlayerUnitOrders::units(int index) const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_SpectatorPlayerUnitOrders.units)
+  return units_.Get(index);
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_units(int index, ::google::protobuf::int32 value) {
+  units_.Set(index, value);
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_SpectatorPlayerUnitOrders.units)
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::add_units(::google::protobuf::int32 value) {
+  units_.Add(value);
+  // @@protoc_insertion_point(field_add:CDOTAUserMsg_SpectatorPlayerUnitOrders.units)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+CDOTAUserMsg_SpectatorPlayerUnitOrders::units() const {
+  // @@protoc_insertion_point(field_list:CDOTAUserMsg_SpectatorPlayerUnitOrders.units)
+  return units_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+CDOTAUserMsg_SpectatorPlayerUnitOrders::mutable_units() {
+  // @@protoc_insertion_point(field_mutable_list:CDOTAUserMsg_SpectatorPlayerUnitOrders.units)
+  return &units_;
+}
+
+// optional int32 target_index = 4;
+inline bool CDOTAUserMsg_SpectatorPlayerUnitOrders::has_target_index() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_has_target_index() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_has_target_index() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_target_index() {
+  target_index_ = 0;
+  clear_has_target_index();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_SpectatorPlayerUnitOrders::target_index() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_SpectatorPlayerUnitOrders.target_index)
+  return target_index_;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_target_index(::google::protobuf::int32 value) {
+  set_has_target_index();
+  target_index_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_SpectatorPlayerUnitOrders.target_index)
+}
+
+// optional int32 ability_index = 5;
+inline bool CDOTAUserMsg_SpectatorPlayerUnitOrders::has_ability_index() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_has_ability_index() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_has_ability_index() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_ability_index() {
+  ability_index_ = 0;
+  clear_has_ability_index();
+}
+inline ::google::protobuf::int32 CDOTAUserMsg_SpectatorPlayerUnitOrders::ability_index() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_SpectatorPlayerUnitOrders.ability_index)
+  return ability_index_;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_ability_index(::google::protobuf::int32 value) {
+  set_has_ability_index();
+  ability_index_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_SpectatorPlayerUnitOrders.ability_index)
+}
+
+// optional .CMsgVector position = 6;
+inline bool CDOTAUserMsg_SpectatorPlayerUnitOrders::has_position() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_has_position() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_has_position() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_position() {
+  if (position_ != NULL) position_->::CMsgVector::Clear();
+  clear_has_position();
+}
+inline const ::CMsgVector& CDOTAUserMsg_SpectatorPlayerUnitOrders::position() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_SpectatorPlayerUnitOrders.position)
+  return position_ != NULL ? *position_ : *default_instance_->position_;
+}
+inline ::CMsgVector* CDOTAUserMsg_SpectatorPlayerUnitOrders::mutable_position() {
+  set_has_position();
+  if (position_ == NULL) position_ = new ::CMsgVector;
+  // @@protoc_insertion_point(field_mutable:CDOTAUserMsg_SpectatorPlayerUnitOrders.position)
+  return position_;
+}
+inline ::CMsgVector* CDOTAUserMsg_SpectatorPlayerUnitOrders::release_position() {
+  clear_has_position();
+  ::CMsgVector* temp = position_;
+  position_ = NULL;
+  return temp;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_allocated_position(::CMsgVector* position) {
+  delete position_;
+  position_ = position;
+  if (position) {
+    set_has_position();
+  } else {
+    clear_has_position();
+  }
+  // @@protoc_insertion_point(field_set_allocated:CDOTAUserMsg_SpectatorPlayerUnitOrders.position)
+}
+
+// optional bool queue = 7;
+inline bool CDOTAUserMsg_SpectatorPlayerUnitOrders::has_queue() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_has_queue() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_has_queue() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::clear_queue() {
+  queue_ = false;
+  clear_has_queue();
+}
+inline bool CDOTAUserMsg_SpectatorPlayerUnitOrders::queue() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_SpectatorPlayerUnitOrders.queue)
+  return queue_;
+}
+inline void CDOTAUserMsg_SpectatorPlayerUnitOrders::set_queue(bool value) {
+  set_has_queue();
+  queue_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_SpectatorPlayerUnitOrders.queue)
+}
+
+// -------------------------------------------------------------------
+
 // CDOTAUserMsg_NevermoreRequiem
 
 // optional int32 entity_handle = 1;
@@ -14648,6 +15553,36 @@ inline ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_PredictionResult_Pre
 CDOTAUserMsg_PredictionResult::mutable_predictions() {
   // @@protoc_insertion_point(field_mutable_list:CDOTAUserMsg_PredictionResult.predictions)
   return &predictions_;
+}
+
+// repeated uint32 granted_item_defs = 6;
+inline int CDOTAUserMsg_PredictionResult::granted_item_defs_size() const {
+  return granted_item_defs_.size();
+}
+inline void CDOTAUserMsg_PredictionResult::clear_granted_item_defs() {
+  granted_item_defs_.Clear();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_PredictionResult::granted_item_defs(int index) const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_PredictionResult.granted_item_defs)
+  return granted_item_defs_.Get(index);
+}
+inline void CDOTAUserMsg_PredictionResult::set_granted_item_defs(int index, ::google::protobuf::uint32 value) {
+  granted_item_defs_.Set(index, value);
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_PredictionResult.granted_item_defs)
+}
+inline void CDOTAUserMsg_PredictionResult::add_granted_item_defs(::google::protobuf::uint32 value) {
+  granted_item_defs_.Add(value);
+  // @@protoc_insertion_point(field_add:CDOTAUserMsg_PredictionResult.granted_item_defs)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+CDOTAUserMsg_PredictionResult::granted_item_defs() const {
+  // @@protoc_insertion_point(field_list:CDOTAUserMsg_PredictionResult.granted_item_defs)
+  return granted_item_defs_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+CDOTAUserMsg_PredictionResult::mutable_granted_item_defs() {
+  // @@protoc_insertion_point(field_mutable_list:CDOTAUserMsg_PredictionResult.granted_item_defs)
+  return &granted_item_defs_;
 }
 
 // -------------------------------------------------------------------
@@ -20828,6 +21763,192 @@ inline void CDOTAUserMsg_StatsHeroMinuteDetails::set_harvested_creep_gold(::goog
   // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsHeroMinuteDetails.harvested_creep_gold)
 }
 
+// optional uint32 claimed_farm = 9;
+inline bool CDOTAUserMsg_StatsHeroMinuteDetails::has_claimed_farm() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::set_has_claimed_farm() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::clear_has_claimed_farm() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::clear_claimed_farm() {
+  claimed_farm_ = 0u;
+  clear_has_claimed_farm();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_StatsHeroMinuteDetails::claimed_farm() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsHeroMinuteDetails.claimed_farm)
+  return claimed_farm_;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::set_claimed_farm(::google::protobuf::uint32 value) {
+  set_has_claimed_farm();
+  claimed_farm_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsHeroMinuteDetails.claimed_farm)
+}
+
+// optional uint32 wards_placed = 10;
+inline bool CDOTAUserMsg_StatsHeroMinuteDetails::has_wards_placed() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::set_has_wards_placed() {
+  _has_bits_[0] |= 0x00000200u;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::clear_has_wards_placed() {
+  _has_bits_[0] &= ~0x00000200u;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::clear_wards_placed() {
+  wards_placed_ = 0u;
+  clear_has_wards_placed();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_StatsHeroMinuteDetails::wards_placed() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsHeroMinuteDetails.wards_placed)
+  return wards_placed_;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::set_wards_placed(::google::protobuf::uint32 value) {
+  set_has_wards_placed();
+  wards_placed_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsHeroMinuteDetails.wards_placed)
+}
+
+// optional uint32 runes_collected = 11;
+inline bool CDOTAUserMsg_StatsHeroMinuteDetails::has_runes_collected() const {
+  return (_has_bits_[0] & 0x00000400u) != 0;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::set_has_runes_collected() {
+  _has_bits_[0] |= 0x00000400u;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::clear_has_runes_collected() {
+  _has_bits_[0] &= ~0x00000400u;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::clear_runes_collected() {
+  runes_collected_ = 0u;
+  clear_has_runes_collected();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_StatsHeroMinuteDetails::runes_collected() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsHeroMinuteDetails.runes_collected)
+  return runes_collected_;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::set_runes_collected(::google::protobuf::uint32 value) {
+  set_has_runes_collected();
+  runes_collected_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsHeroMinuteDetails.runes_collected)
+}
+
+// optional uint32 tps_used = 12;
+inline bool CDOTAUserMsg_StatsHeroMinuteDetails::has_tps_used() const {
+  return (_has_bits_[0] & 0x00000800u) != 0;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::set_has_tps_used() {
+  _has_bits_[0] |= 0x00000800u;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::clear_has_tps_used() {
+  _has_bits_[0] &= ~0x00000800u;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::clear_tps_used() {
+  tps_used_ = 0u;
+  clear_has_tps_used();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_StatsHeroMinuteDetails::tps_used() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsHeroMinuteDetails.tps_used)
+  return tps_used_;
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::set_tps_used(::google::protobuf::uint32 value) {
+  set_has_tps_used();
+  tps_used_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsHeroMinuteDetails.tps_used)
+}
+
+// repeated uint32 mana_spent = 13;
+inline int CDOTAUserMsg_StatsHeroMinuteDetails::mana_spent_size() const {
+  return mana_spent_.size();
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::clear_mana_spent() {
+  mana_spent_.Clear();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_StatsHeroMinuteDetails::mana_spent(int index) const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsHeroMinuteDetails.mana_spent)
+  return mana_spent_.Get(index);
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::set_mana_spent(int index, ::google::protobuf::uint32 value) {
+  mana_spent_.Set(index, value);
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsHeroMinuteDetails.mana_spent)
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::add_mana_spent(::google::protobuf::uint32 value) {
+  mana_spent_.Add(value);
+  // @@protoc_insertion_point(field_add:CDOTAUserMsg_StatsHeroMinuteDetails.mana_spent)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+CDOTAUserMsg_StatsHeroMinuteDetails::mana_spent() const {
+  // @@protoc_insertion_point(field_list:CDOTAUserMsg_StatsHeroMinuteDetails.mana_spent)
+  return mana_spent_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+CDOTAUserMsg_StatsHeroMinuteDetails::mutable_mana_spent() {
+  // @@protoc_insertion_point(field_mutable_list:CDOTAUserMsg_StatsHeroMinuteDetails.mana_spent)
+  return &mana_spent_;
+}
+
+// repeated uint32 damage_absorbed = 14;
+inline int CDOTAUserMsg_StatsHeroMinuteDetails::damage_absorbed_size() const {
+  return damage_absorbed_.size();
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::clear_damage_absorbed() {
+  damage_absorbed_.Clear();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_StatsHeroMinuteDetails::damage_absorbed(int index) const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsHeroMinuteDetails.damage_absorbed)
+  return damage_absorbed_.Get(index);
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::set_damage_absorbed(int index, ::google::protobuf::uint32 value) {
+  damage_absorbed_.Set(index, value);
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsHeroMinuteDetails.damage_absorbed)
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::add_damage_absorbed(::google::protobuf::uint32 value) {
+  damage_absorbed_.Add(value);
+  // @@protoc_insertion_point(field_add:CDOTAUserMsg_StatsHeroMinuteDetails.damage_absorbed)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+CDOTAUserMsg_StatsHeroMinuteDetails::damage_absorbed() const {
+  // @@protoc_insertion_point(field_list:CDOTAUserMsg_StatsHeroMinuteDetails.damage_absorbed)
+  return damage_absorbed_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+CDOTAUserMsg_StatsHeroMinuteDetails::mutable_damage_absorbed() {
+  // @@protoc_insertion_point(field_mutable_list:CDOTAUserMsg_StatsHeroMinuteDetails.damage_absorbed)
+  return &damage_absorbed_;
+}
+
+// repeated uint32 damage_done = 15;
+inline int CDOTAUserMsg_StatsHeroMinuteDetails::damage_done_size() const {
+  return damage_done_.size();
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::clear_damage_done() {
+  damage_done_.Clear();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_StatsHeroMinuteDetails::damage_done(int index) const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsHeroMinuteDetails.damage_done)
+  return damage_done_.Get(index);
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::set_damage_done(int index, ::google::protobuf::uint32 value) {
+  damage_done_.Set(index, value);
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsHeroMinuteDetails.damage_done)
+}
+inline void CDOTAUserMsg_StatsHeroMinuteDetails::add_damage_done(::google::protobuf::uint32 value) {
+  damage_done_.Add(value);
+  // @@protoc_insertion_point(field_add:CDOTAUserMsg_StatsHeroMinuteDetails.damage_done)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+CDOTAUserMsg_StatsHeroMinuteDetails::damage_done() const {
+  // @@protoc_insertion_point(field_list:CDOTAUserMsg_StatsHeroMinuteDetails.damage_done)
+  return damage_done_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+CDOTAUserMsg_StatsHeroMinuteDetails::mutable_damage_done() {
+  // @@protoc_insertion_point(field_mutable_list:CDOTAUserMsg_StatsHeroMinuteDetails.damage_done)
+  return &damage_done_;
+}
+
 // -------------------------------------------------------------------
 
 // CDOTAUserMsg_StatsTeamMinuteDetails_LocationPerformance
@@ -21212,6 +22333,102 @@ inline void CDOTAUserMsg_StatsPlayerKillShare::set_kill_share_percent(float valu
   // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsPlayerKillShare.kill_share_percent)
 }
 
+// optional float player_loc_x = 3;
+inline bool CDOTAUserMsg_StatsPlayerKillShare::has_player_loc_x() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::set_has_player_loc_x() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::clear_has_player_loc_x() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::clear_player_loc_x() {
+  player_loc_x_ = 0;
+  clear_has_player_loc_x();
+}
+inline float CDOTAUserMsg_StatsPlayerKillShare::player_loc_x() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsPlayerKillShare.player_loc_x)
+  return player_loc_x_;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::set_player_loc_x(float value) {
+  set_has_player_loc_x();
+  player_loc_x_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsPlayerKillShare.player_loc_x)
+}
+
+// optional float player_loc_y = 4;
+inline bool CDOTAUserMsg_StatsPlayerKillShare::has_player_loc_y() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::set_has_player_loc_y() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::clear_has_player_loc_y() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::clear_player_loc_y() {
+  player_loc_y_ = 0;
+  clear_has_player_loc_y();
+}
+inline float CDOTAUserMsg_StatsPlayerKillShare::player_loc_y() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsPlayerKillShare.player_loc_y)
+  return player_loc_y_;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::set_player_loc_y(float value) {
+  set_has_player_loc_y();
+  player_loc_y_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsPlayerKillShare.player_loc_y)
+}
+
+// optional float health_percent = 5;
+inline bool CDOTAUserMsg_StatsPlayerKillShare::has_health_percent() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::set_has_health_percent() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::clear_has_health_percent() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::clear_health_percent() {
+  health_percent_ = 0;
+  clear_has_health_percent();
+}
+inline float CDOTAUserMsg_StatsPlayerKillShare::health_percent() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsPlayerKillShare.health_percent)
+  return health_percent_;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::set_health_percent(float value) {
+  set_has_health_percent();
+  health_percent_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsPlayerKillShare.health_percent)
+}
+
+// optional float mana_percent = 6;
+inline bool CDOTAUserMsg_StatsPlayerKillShare::has_mana_percent() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::set_has_mana_percent() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::clear_has_mana_percent() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::clear_mana_percent() {
+  mana_percent_ = 0;
+  clear_has_mana_percent();
+}
+inline float CDOTAUserMsg_StatsPlayerKillShare::mana_percent() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsPlayerKillShare.mana_percent)
+  return mana_percent_;
+}
+inline void CDOTAUserMsg_StatsPlayerKillShare::set_mana_percent(float value) {
+  set_has_mana_percent();
+  mana_percent_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsPlayerKillShare.mana_percent)
+}
+
 // -------------------------------------------------------------------
 
 // CDOTAUserMsg_StatsKillDetails
@@ -21368,6 +22585,252 @@ inline void CDOTAUserMsg_StatsKillDetails::set_killer_id(::google::protobuf::uin
 
 // -------------------------------------------------------------------
 
+// CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails
+
+// repeated uint32 participants = 1;
+inline int CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::participants_size() const {
+  return participants_.size();
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::clear_participants() {
+  participants_.Clear();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::participants(int index) const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.participants)
+  return participants_.Get(index);
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::set_participants(int index, ::google::protobuf::uint32 value) {
+  participants_.Set(index, value);
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.participants)
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::add_participants(::google::protobuf::uint32 value) {
+  participants_.Add(value);
+  // @@protoc_insertion_point(field_add:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.participants)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::participants() const {
+  // @@protoc_insertion_point(field_list:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.participants)
+  return participants_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::mutable_participants() {
+  // @@protoc_insertion_point(field_mutable_list:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.participants)
+  return &participants_;
+}
+
+// repeated uint32 deaths = 2;
+inline int CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::deaths_size() const {
+  return deaths_.size();
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::clear_deaths() {
+  deaths_.Clear();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::deaths(int index) const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.deaths)
+  return deaths_.Get(index);
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::set_deaths(int index, ::google::protobuf::uint32 value) {
+  deaths_.Set(index, value);
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.deaths)
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::add_deaths(::google::protobuf::uint32 value) {
+  deaths_.Add(value);
+  // @@protoc_insertion_point(field_add:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.deaths)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::deaths() const {
+  // @@protoc_insertion_point(field_list:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.deaths)
+  return deaths_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::mutable_deaths() {
+  // @@protoc_insertion_point(field_mutable_list:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.deaths)
+  return &deaths_;
+}
+
+// optional uint32 gold_delta = 3;
+inline bool CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::has_gold_delta() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::set_has_gold_delta() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::clear_has_gold_delta() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::clear_gold_delta() {
+  gold_delta_ = 0u;
+  clear_has_gold_delta();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::gold_delta() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.gold_delta)
+  return gold_delta_;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::set_gold_delta(::google::protobuf::uint32 value) {
+  set_has_gold_delta();
+  gold_delta_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.gold_delta)
+}
+
+// optional uint32 xp_delta = 4;
+inline bool CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::has_xp_delta() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::set_has_xp_delta() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::clear_has_xp_delta() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::clear_xp_delta() {
+  xp_delta_ = 0u;
+  clear_has_xp_delta();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::xp_delta() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.xp_delta)
+  return xp_delta_;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::set_xp_delta(::google::protobuf::uint32 value) {
+  set_has_xp_delta();
+  xp_delta_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails.xp_delta)
+}
+
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails
+
+// optional float start_time = 1;
+inline bool CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::has_start_time() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::set_has_start_time() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::clear_has_start_time() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::clear_start_time() {
+  start_time_ = 0;
+  clear_has_start_time();
+}
+inline float CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::start_time() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails.start_time)
+  return start_time_;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::set_start_time(float value) {
+  set_has_start_time();
+  start_time_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails.start_time)
+}
+
+// optional float end_time = 2;
+inline bool CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::has_end_time() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::set_has_end_time() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::clear_has_end_time() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::clear_end_time() {
+  end_time_ = 0;
+  clear_has_end_time();
+}
+inline float CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::end_time() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails.end_time)
+  return end_time_;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::set_end_time(float value) {
+  set_has_end_time();
+  end_time_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails.end_time)
+}
+
+// optional .CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails radiant_fight_details = 3;
+inline bool CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::has_radiant_fight_details() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::set_has_radiant_fight_details() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::clear_has_radiant_fight_details() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::clear_radiant_fight_details() {
+  if (radiant_fight_details_ != NULL) radiant_fight_details_->::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::Clear();
+  clear_has_radiant_fight_details();
+}
+inline const ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails& CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::radiant_fight_details() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails.radiant_fight_details)
+  return radiant_fight_details_ != NULL ? *radiant_fight_details_ : *default_instance_->radiant_fight_details_;
+}
+inline ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::mutable_radiant_fight_details() {
+  set_has_radiant_fight_details();
+  if (radiant_fight_details_ == NULL) radiant_fight_details_ = new ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails;
+  // @@protoc_insertion_point(field_mutable:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails.radiant_fight_details)
+  return radiant_fight_details_;
+}
+inline ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::release_radiant_fight_details() {
+  clear_has_radiant_fight_details();
+  ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* temp = radiant_fight_details_;
+  radiant_fight_details_ = NULL;
+  return temp;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::set_allocated_radiant_fight_details(::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* radiant_fight_details) {
+  delete radiant_fight_details_;
+  radiant_fight_details_ = radiant_fight_details;
+  if (radiant_fight_details) {
+    set_has_radiant_fight_details();
+  } else {
+    clear_has_radiant_fight_details();
+  }
+  // @@protoc_insertion_point(field_set_allocated:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails.radiant_fight_details)
+}
+
+// optional .CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightTeamDetails dire_fight_details = 4;
+inline bool CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::has_dire_fight_details() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::set_has_dire_fight_details() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::clear_has_dire_fight_details() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::clear_dire_fight_details() {
+  if (dire_fight_details_ != NULL) dire_fight_details_->::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails::Clear();
+  clear_has_dire_fight_details();
+}
+inline const ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails& CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::dire_fight_details() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails.dire_fight_details)
+  return dire_fight_details_ != NULL ? *dire_fight_details_ : *default_instance_->dire_fight_details_;
+}
+inline ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::mutable_dire_fight_details() {
+  set_has_dire_fight_details();
+  if (dire_fight_details_ == NULL) dire_fight_details_ = new ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails;
+  // @@protoc_insertion_point(field_mutable:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails.dire_fight_details)
+  return dire_fight_details_;
+}
+inline ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::release_dire_fight_details() {
+  clear_has_dire_fight_details();
+  ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* temp = dire_fight_details_;
+  dire_fight_details_ = NULL;
+  return temp;
+}
+inline void CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails::set_allocated_dire_fight_details(::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightTeamDetails* dire_fight_details) {
+  delete dire_fight_details_;
+  dire_fight_details_ = dire_fight_details;
+  if (dire_fight_details) {
+    set_has_dire_fight_details();
+  } else {
+    clear_has_dire_fight_details();
+  }
+  // @@protoc_insertion_point(field_set_allocated:CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails.dire_fight_details)
+}
+
+// -------------------------------------------------------------------
+
 // CDOTAUserMsg_StatsMatchDetails
 
 // repeated .CDOTAUserMsg_StatsHeroLookup hero_lookup = 1;
@@ -21518,6 +22981,36 @@ inline ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_StatsKillDetails >*
 CDOTAUserMsg_StatsMatchDetails::mutable_dire_kills() {
   // @@protoc_insertion_point(field_mutable_list:CDOTAUserMsg_StatsMatchDetails.dire_kills)
   return &dire_kills_;
+}
+
+// repeated .CDOTAUserMsg_StatsMatchDetails.CDOTAUserMsg_StatsFightDetails fight_details = 6;
+inline int CDOTAUserMsg_StatsMatchDetails::fight_details_size() const {
+  return fight_details_.size();
+}
+inline void CDOTAUserMsg_StatsMatchDetails::clear_fight_details() {
+  fight_details_.Clear();
+}
+inline const ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails& CDOTAUserMsg_StatsMatchDetails::fight_details(int index) const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_StatsMatchDetails.fight_details)
+  return fight_details_.Get(index);
+}
+inline ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails* CDOTAUserMsg_StatsMatchDetails::mutable_fight_details(int index) {
+  // @@protoc_insertion_point(field_mutable:CDOTAUserMsg_StatsMatchDetails.fight_details)
+  return fight_details_.Mutable(index);
+}
+inline ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails* CDOTAUserMsg_StatsMatchDetails::add_fight_details() {
+  // @@protoc_insertion_point(field_add:CDOTAUserMsg_StatsMatchDetails.fight_details)
+  return fight_details_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails >&
+CDOTAUserMsg_StatsMatchDetails::fight_details() const {
+  // @@protoc_insertion_point(field_list:CDOTAUserMsg_StatsMatchDetails.fight_details)
+  return fight_details_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::CDOTAUserMsg_StatsMatchDetails_CDOTAUserMsg_StatsFightDetails >*
+CDOTAUserMsg_StatsMatchDetails::mutable_fight_details() {
+  // @@protoc_insertion_point(field_mutable_list:CDOTAUserMsg_StatsMatchDetails.fight_details)
+  return &fight_details_;
 }
 
 // -------------------------------------------------------------------
@@ -21741,6 +23234,262 @@ CMsgCombatAnalyzerStats::mutable_player_stats() {
   return &player_stats_;
 }
 
+// -------------------------------------------------------------------
+
+// CDOTAUserMsg_BeastChat
+
+// optional uint32 team = 1;
+inline bool CDOTAUserMsg_BeastChat::has_team() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDOTAUserMsg_BeastChat::set_has_team() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDOTAUserMsg_BeastChat::clear_has_team() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDOTAUserMsg_BeastChat::clear_team() {
+  team_ = 0u;
+  clear_has_team();
+}
+inline ::google::protobuf::uint32 CDOTAUserMsg_BeastChat::team() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_BeastChat.team)
+  return team_;
+}
+inline void CDOTAUserMsg_BeastChat::set_team(::google::protobuf::uint32 value) {
+  set_has_team();
+  team_ = value;
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_BeastChat.team)
+}
+
+// optional string format = 2;
+inline bool CDOTAUserMsg_BeastChat::has_format() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDOTAUserMsg_BeastChat::set_has_format() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDOTAUserMsg_BeastChat::clear_has_format() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDOTAUserMsg_BeastChat::clear_format() {
+  if (format_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    format_->clear();
+  }
+  clear_has_format();
+}
+inline const ::std::string& CDOTAUserMsg_BeastChat::format() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_BeastChat.format)
+  return *format_;
+}
+inline void CDOTAUserMsg_BeastChat::set_format(const ::std::string& value) {
+  set_has_format();
+  if (format_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    format_ = new ::std::string;
+  }
+  format_->assign(value);
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_BeastChat.format)
+}
+inline void CDOTAUserMsg_BeastChat::set_format(const char* value) {
+  set_has_format();
+  if (format_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    format_ = new ::std::string;
+  }
+  format_->assign(value);
+  // @@protoc_insertion_point(field_set_char:CDOTAUserMsg_BeastChat.format)
+}
+inline void CDOTAUserMsg_BeastChat::set_format(const char* value, size_t size) {
+  set_has_format();
+  if (format_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    format_ = new ::std::string;
+  }
+  format_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:CDOTAUserMsg_BeastChat.format)
+}
+inline ::std::string* CDOTAUserMsg_BeastChat::mutable_format() {
+  set_has_format();
+  if (format_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    format_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:CDOTAUserMsg_BeastChat.format)
+  return format_;
+}
+inline ::std::string* CDOTAUserMsg_BeastChat::release_format() {
+  clear_has_format();
+  if (format_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = format_;
+    format_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void CDOTAUserMsg_BeastChat::set_allocated_format(::std::string* format) {
+  if (format_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete format_;
+  }
+  if (format) {
+    set_has_format();
+    format_ = format;
+  } else {
+    clear_has_format();
+    format_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:CDOTAUserMsg_BeastChat.format)
+}
+
+// optional string message = 3;
+inline bool CDOTAUserMsg_BeastChat::has_message() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDOTAUserMsg_BeastChat::set_has_message() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDOTAUserMsg_BeastChat::clear_has_message() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDOTAUserMsg_BeastChat::clear_message() {
+  if (message_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    message_->clear();
+  }
+  clear_has_message();
+}
+inline const ::std::string& CDOTAUserMsg_BeastChat::message() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_BeastChat.message)
+  return *message_;
+}
+inline void CDOTAUserMsg_BeastChat::set_message(const ::std::string& value) {
+  set_has_message();
+  if (message_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    message_ = new ::std::string;
+  }
+  message_->assign(value);
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_BeastChat.message)
+}
+inline void CDOTAUserMsg_BeastChat::set_message(const char* value) {
+  set_has_message();
+  if (message_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    message_ = new ::std::string;
+  }
+  message_->assign(value);
+  // @@protoc_insertion_point(field_set_char:CDOTAUserMsg_BeastChat.message)
+}
+inline void CDOTAUserMsg_BeastChat::set_message(const char* value, size_t size) {
+  set_has_message();
+  if (message_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    message_ = new ::std::string;
+  }
+  message_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:CDOTAUserMsg_BeastChat.message)
+}
+inline ::std::string* CDOTAUserMsg_BeastChat::mutable_message() {
+  set_has_message();
+  if (message_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    message_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:CDOTAUserMsg_BeastChat.message)
+  return message_;
+}
+inline ::std::string* CDOTAUserMsg_BeastChat::release_message() {
+  clear_has_message();
+  if (message_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = message_;
+    message_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void CDOTAUserMsg_BeastChat::set_allocated_message(::std::string* message) {
+  if (message_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete message_;
+  }
+  if (message) {
+    set_has_message();
+    message_ = message;
+  } else {
+    clear_has_message();
+    message_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:CDOTAUserMsg_BeastChat.message)
+}
+
+// optional string target = 4;
+inline bool CDOTAUserMsg_BeastChat::has_target() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CDOTAUserMsg_BeastChat::set_has_target() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CDOTAUserMsg_BeastChat::clear_has_target() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CDOTAUserMsg_BeastChat::clear_target() {
+  if (target_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    target_->clear();
+  }
+  clear_has_target();
+}
+inline const ::std::string& CDOTAUserMsg_BeastChat::target() const {
+  // @@protoc_insertion_point(field_get:CDOTAUserMsg_BeastChat.target)
+  return *target_;
+}
+inline void CDOTAUserMsg_BeastChat::set_target(const ::std::string& value) {
+  set_has_target();
+  if (target_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    target_ = new ::std::string;
+  }
+  target_->assign(value);
+  // @@protoc_insertion_point(field_set:CDOTAUserMsg_BeastChat.target)
+}
+inline void CDOTAUserMsg_BeastChat::set_target(const char* value) {
+  set_has_target();
+  if (target_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    target_ = new ::std::string;
+  }
+  target_->assign(value);
+  // @@protoc_insertion_point(field_set_char:CDOTAUserMsg_BeastChat.target)
+}
+inline void CDOTAUserMsg_BeastChat::set_target(const char* value, size_t size) {
+  set_has_target();
+  if (target_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    target_ = new ::std::string;
+  }
+  target_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:CDOTAUserMsg_BeastChat.target)
+}
+inline ::std::string* CDOTAUserMsg_BeastChat::mutable_target() {
+  set_has_target();
+  if (target_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    target_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:CDOTAUserMsg_BeastChat.target)
+  return target_;
+}
+inline ::std::string* CDOTAUserMsg_BeastChat::release_target() {
+  clear_has_target();
+  if (target_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = target_;
+    target_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void CDOTAUserMsg_BeastChat::set_allocated_target(::std::string* target) {
+  if (target_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete target_;
+  }
+  if (target) {
+    set_has_target();
+    target_ = target;
+  } else {
+    clear_has_target();
+    target_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:CDOTAUserMsg_BeastChat.target)
+}
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -21802,6 +23551,11 @@ template <> struct is_proto_enum< ::DOTA_POSITION_CATEGORY> : ::google::protobuf
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::DOTA_POSITION_CATEGORY>() {
   return ::DOTA_POSITION_CATEGORY_descriptor();
+}
+template <> struct is_proto_enum< ::DOTA_ABILITY_TARGET_TYPE> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::DOTA_ABILITY_TARGET_TYPE>() {
+  return ::DOTA_ABILITY_TARGET_TYPE_descriptor();
 }
 template <> struct is_proto_enum< ::EHeroStatType> : ::google::protobuf::internal::true_type {};
 template <>

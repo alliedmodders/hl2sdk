@@ -38,6 +38,7 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
   CDOTAMsg_CoachHUDPing_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* EDOTAChatWheelMessage_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* EDOTAStatPopupTypes_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* dotaunitorder_t_descriptor_ = NULL;
 
 }  // namespace
 
@@ -156,6 +157,7 @@ void protobuf_AssignDesc_dota_5fcommonmessages_2eproto() {
       sizeof(CDOTAMsg_CoachHUDPing));
   EDOTAChatWheelMessage_descriptor_ = file->enum_type(0);
   EDOTAStatPopupTypes_descriptor_ = file->enum_type(1);
+  dotaunitorder_t_descriptor_ = file->enum_type(2);
 }
 
 namespace {
@@ -278,7 +280,32 @@ void protobuf_AddDesc_dota_5fcommonmessages_2eproto() {
     "eus_Ult\020U*r\n\023EDOTAStatPopupTypes\022\030\n\024k_ED"
     "OTA_SPT_Textline\020\000\022\025\n\021k_EDOTA_SPT_Basic\020"
     "\001\022\024\n\020k_EDOTA_SPT_Poll\020\002\022\024\n\020k_EDOTA_SPT_G"
-    "rid\020\003B\005H\001\200\001\000", 2892);
+    "rid\020\003*\333\007\n\017dotaunitorder_t\022\030\n\024DOTA_UNIT_O"
+    "RDER_NONE\020\000\022$\n DOTA_UNIT_ORDER_MOVE_TO_P"
+    "OSITION\020\001\022\"\n\036DOTA_UNIT_ORDER_MOVE_TO_TAR"
+    "GET\020\002\022\037\n\033DOTA_UNIT_ORDER_ATTACK_MOVE\020\003\022!"
+    "\n\035DOTA_UNIT_ORDER_ATTACK_TARGET\020\004\022!\n\035DOT"
+    "A_UNIT_ORDER_CAST_POSITION\020\005\022\037\n\033DOTA_UNI"
+    "T_ORDER_CAST_TARGET\020\006\022$\n DOTA_UNIT_ORDER"
+    "_CAST_TARGET_TREE\020\007\022\"\n\036DOTA_UNIT_ORDER_C"
+    "AST_NO_TARGET\020\010\022\037\n\033DOTA_UNIT_ORDER_CAST_"
+    "TOGGLE\020\t\022!\n\035DOTA_UNIT_ORDER_HOLD_POSITIO"
+    "N\020\n\022!\n\035DOTA_UNIT_ORDER_TRAIN_ABILITY\020\013\022\035"
+    "\n\031DOTA_UNIT_ORDER_DROP_ITEM\020\014\022\035\n\031DOTA_UN"
+    "IT_ORDER_GIVE_ITEM\020\r\022\037\n\033DOTA_UNIT_ORDER_"
+    "PICKUP_ITEM\020\016\022\037\n\033DOTA_UNIT_ORDER_PICKUP_"
+    "RUNE\020\017\022!\n\035DOTA_UNIT_ORDER_PURCHASE_ITEM\020"
+    "\020\022\035\n\031DOTA_UNIT_ORDER_SELL_ITEM\020\021\022$\n DOTA"
+    "_UNIT_ORDER_DISASSEMBLE_ITEM\020\022\022\035\n\031DOTA_U"
+    "NIT_ORDER_MOVE_ITEM\020\023\022$\n DOTA_UNIT_ORDER"
+    "_CAST_TOGGLE_AUTO\020\024\022\030\n\024DOTA_UNIT_ORDER_S"
+    "TOP\020\025\022\031\n\025DOTA_UNIT_ORDER_TAUNT\020\026\022\033\n\027DOTA"
+    "_UNIT_ORDER_BUYBACK\020\027\022\031\n\025DOTA_UNIT_ORDER"
+    "_GLYPH\020\030\022)\n%DOTA_UNIT_ORDER_EJECT_ITEM_F"
+    "ROM_STASH\020\031\022\035\n\031DOTA_UNIT_ORDER_CAST_RUNE"
+    "\020\032\022 \n\034DOTA_UNIT_ORDER_PING_ABILITY\020\033\022%\n!"
+    "DOTA_UNIT_ORDER_MOVE_TO_DIRECTION\020\034B\005H\001\200"
+    "\001\000", 3882);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "dota_commonmessages.proto", &protobuf_RegisterTypes);
   CDOTAMsg_LocationPing::default_instance_ = new CDOTAMsg_LocationPing();
@@ -410,6 +437,47 @@ bool EDOTAStatPopupTypes_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::google::protobuf::EnumDescriptor* dotaunitorder_t_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return dotaunitorder_t_descriptor_;
+}
+bool dotaunitorder_t_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+    case 25:
+    case 26:
+    case 27:
+    case 28:
       return true;
     default:
       return false;
