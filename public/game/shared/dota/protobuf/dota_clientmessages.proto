@@ -105,6 +105,7 @@ enum EDotaClientMessages
 	DOTA_CM_GlyphAlert = 38;
 	DOTA_CM_TeamShowcaseClientData = 39;
 	DOTA_CM_PlayTeamShowcase = 40;
+	DOTA_CM_EventCNY2015Cmd = 41;
 }
 
 //=============================================================================
@@ -127,6 +128,7 @@ message CDOTAClientMsg_EnemyItemAlert
 message CDOTAClientMsg_ModifierAlert
 {
 	optional int32 buff_internal_index = 1;
+	optional uint32 target_entindex = 2;
 }
 
 message CDOTAClientMsg_HPManaAlert
@@ -321,3 +323,7 @@ message CDOTAClientMsg_PlayTeamShowcase
 {
 }
 
+message CDOTAClientMsg_EventCNY2015Cmd
+{
+	optional bytes data = 1;
+}
