@@ -54,6 +54,7 @@ CDotaClientMessageHelpers::CDotaClientMessageHelpers()
 	SETUP_DOTA_MESSAGE( GlyphAlert );
 	SETUP_DOTA_MESSAGE( TeamShowcaseClientData );
 	SETUP_DOTA_MESSAGE( PlayTeamShowcase );
+	SETUP_DOTA_MESSAGE( EventCNY2015Cmd );
 }
 
 const google::protobuf::Message *CDotaClientMessageHelpers::GetPrototype( int index ) const

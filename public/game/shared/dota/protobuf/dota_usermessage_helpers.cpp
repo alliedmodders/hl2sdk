@@ -130,6 +130,8 @@ CDotaUsermessageHelpers::CDotaUsermessageHelpers()
 	SETUP_DOTA_MESSAGE( ModifierAlert );
 	SETUP_DOTA_MESSAGE( HPManaAlert );
 	SETUP_DOTA_MESSAGE( GlyphAlert );
+	SETUP_DOTA_MESSAGE( BeastChat );
+	SETUP_DOTA_MESSAGE( SpectatorPlayerUnitOrders );
 }
 
 const google::protobuf::Message *CDotaUsermessageHelpers::GetPrototype( int index ) const
