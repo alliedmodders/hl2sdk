@@ -157,6 +157,7 @@ protected:
 	class ICVarIteratorInternal
 	{
 	public:
+		virtual ~ICVarIteratorInternal() {}
 		virtual void		SetFirst( void ) = 0;
 		virtual void		Next( void ) = 0;
 		virtual	bool		IsValid( void ) = 0;
