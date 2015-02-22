@@ -60,6 +60,7 @@ class CGamestatsData;
 class CSteamID;
 class ISPSharedMemory;
 class CGamestatsData;
+class IServer;
 
 typedef struct player_info_s player_info_t;
 
@@ -464,6 +465,17 @@ public:
 	virtual void EnsureInstanceBaseline( int ent_num ) = 0;
 	
 	virtual bool ReserveServerForQueuedGame( const char *szReservationPayload ) = 0;
+	
+	virtual edict_t *CreateFakeClientEx( const char *netname, bool bReportFakeClient = true ) = 0;
+	virtual CSteamID *GetClientOwnerSteamID( edict_t *pEdict ) = 0;
+	
+	// These two return types may be wrong. Not implemented in dedicated server engine bin.
+	virtual bool GetLightForPointListenServerOnly( const Vector &, bool, Vector * ) = 0;
+	virtual bool TraceLightingListenServerOnly( const Vector &, const Vector &, Vector *, Vector * ) = 0;
+	
+	virtual int GetServerVersion() = 0;
+	virtual float GetServerTime() = 0;
+	virtual IServer *GetIServer() = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
