@@ -60,12 +60,12 @@ public:
 	virtual void	ProcessPacket( struct netpacket_s* packet, bool bHasHeader ) = 0;
 			
 	virtual bool	SendNetMsg(INetMessage &msg, bool bForceReliable = false, bool bVoice = false ) = 0;
-#ifdef _LINUX
+#ifdef POSIX
 	FORCEINLINE bool SendNetMsg(INetMessage const &msg, bool bForceReliable = false, bool bVoice = false ) { return SendNetMsg( *( (INetMessage *) &msg ), bForceReliable, bVoice ); }
 #endif
 	virtual bool	SendData(bf_write &msg, bool bReliable = true) = 0;
-	virtual bool	SendFile(const char *filename, unsigned int transferID) = 0;
-	virtual void	DenyFile(const char *filename, unsigned int transferID) = 0;
+	virtual bool	SendFile(const char *filename, unsigned int transferID, bool bIsReplayDemoFile = false ) = 0;
+	virtual void	DenyFile(const char *filename, unsigned int transferID, bool bIsReplayDemoFile = false ) = 0;
 	virtual void	RequestFile_OLD(const char *filename, unsigned int transferID) = 0;	// get rid of this function when we version the 
 	virtual void	SetChoked( void ) = 0;
 	virtual int		SendDatagram(bf_write *data) = 0;		
@@ -87,7 +87,8 @@ public:
 
 	virtual void	SetFileTransmissionMode(bool bBackgroundMode) = 0;
 	virtual void	SetCompressionMode( bool bUseCompression ) = 0;
-	virtual unsigned int RequestFile(const char *filename) = 0;
+	virtual unsigned int RequestFile(const char *filename, bool bIsReplayDemoFile = false ) = 0;
+	virtual float	GetTimeSinceLastReceived( void ) const = 0;	// get time since last received packet in seconds
 
 	virtual void	SetMaxBufferSize(bool bReliable, int nBytes, bool bVoice = false ) = 0;
 
