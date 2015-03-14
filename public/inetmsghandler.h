@@ -28,19 +28,19 @@ public:
 
 	virtual void ConnectionClosing(const char *reason) = 0; // network channel is being closed by remote site
 
-	virtual void ConnectionCrashed(const char *reason) = 0; // network error occured
+	virtual void ConnectionCrashed(const char *reason) = 0; // network error occurred
 
 	virtual void PacketStart(int incoming_sequence, int outgoing_acknowledged) = 0;	// called each time a new packet arrived
 
 	virtual void PacketEnd( void ) = 0; // all messages has been parsed
 
-	virtual void FileRequested(const char *fileName, unsigned int transferID, bool isReplayDemoFile) = 0; // other side request a file for download
+	virtual void FileRequested(const char *fileName, unsigned int transferID, bool bIsReplayDemoFile = false ) = 0; // other side request a file for download
 
-	virtual void FileReceived(const char *fileName, unsigned int transferID, bool isReplayDemoFile) = 0; // we received a file
+	virtual void FileReceived(const char *fileName, unsigned int transferID, bool bIsReplayDemoFile = false ) = 0; // we received a file
 	
-	virtual void FileDenied(const char *fileName, unsigned int transferID, bool isReplayDemoFile) = 0;	// a file request was denied by other side
+	virtual void FileDenied(const char *fileName, unsigned int transferID, bool bIsReplayDemoFile = false ) = 0;	// a file request was denied by other side
 
-	virtual void FileSent(const char *fileName, unsigned int transferID, bool isReplayDemoFile) = 0;	// we sent a file
+	virtual void FileSent(const char *fileName, unsigned int transferID, bool bIsReplayDemoFile = false ) = 0;
 };
 
 #define PROCESS_NET_MESSAGE( name )	\
