@@ -211,6 +211,10 @@ public:
 
 	// NOTE: this is in the edict instead of being accessed by a virtual because the engine needs fast access to it.
 	IServerNetworkable	*m_pNetworkable;
+	
+	// New as of "6.84" update.
+	int unknown1;
+	int unknown2;
 
 protected:
 	IServerUnknown		*m_pUnk;		
