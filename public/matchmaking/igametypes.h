@@ -139,6 +139,8 @@ public:
 	
 	virtual int GetCurrentServerNumSlots() = 0;
 	virtual int GetCurrentServerSettingInt(const char *settingName, int defaultValue) = 0;
+	
+	virtual bool GetGameTypeFromMode( const char* modeName, const char **pTypeName ) = 0;
 };
 
 #endif // IGAMETYPES_H
