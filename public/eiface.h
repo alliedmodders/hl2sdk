@@ -417,6 +417,9 @@ public:
 	// Exposed for server plugin authors
 	virtual IServer *GetIServer() = 0;
 	
+	virtual bool IsPlayerNameLocked( const edict_t *pPlayer ) = 0;
+	virtual bool CanPlayerChangeName( const edict_t *pPlayer ) = 0;
+	
 	virtual IReplaySystem *GetReplay() = 0;
 };
 
