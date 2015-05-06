@@ -421,6 +421,14 @@ public:
 
 	// Exposed for server plugin authors
 	virtual IServer *GetIServer() = 0;
+	
+	// This function currently appears to be unused
+	virtual void ManageAddonsForActiveSession(bool,char const*,char const*) = 0;
+	
+	virtual bool IsPlayerNameLocked(const edict_t *pPlayer) = 0;
+	virtual bool CanPlayerChangeName(const edict_t *pPlayer) = 0;
+	
+	virtual void *GetReplay() = 0;
 };
 
 typedef IVEngineServer IVEngineServer021;
