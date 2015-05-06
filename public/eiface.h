@@ -428,7 +428,7 @@ public:
 	virtual bool IsPlayerNameLocked(const edict_t *pPlayer) = 0;
 	virtual bool CanPlayerChangeName(const edict_t *pPlayer) = 0;
 	
-	virtual void *GetReplay() = 0;
+	virtual IReplaySystem *GetReplay() = 0;
 };
 
 typedef IVEngineServer IVEngineServer021;
