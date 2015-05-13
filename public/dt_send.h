@@ -169,6 +169,15 @@ class CSendTablePrecalc;
 #define SENDPROP_DEFAULT_PRIORITY ((byte)128)
 #define SENDPROP_CHANGES_OFTEN_PRIORITY ((byte)64)
 
+
+// This adds in all the flags that we OR into the var's offset.
+#define SENDPROP_NETWORKVAR_FLAGS_SHIFT 20	// We store the networkvar flags in SendProp::m_Offset and this is what we shift it by.
+#define SENDPROP_OFFSET_MASK			( ( 1 << SENDPROP_NETWORKVAR_FLAGS_SHIFT ) - 1 )
+
+#define NETWORKVAR_OFFSET_FLAGS( className, varName ) \
+	( className::NetworkVarType_##varName::GetNetworkVarFlags() << SENDPROP_NETWORKVAR_FLAGS_SHIFT )
+
+
 class SendProp
 {
 public:
@@ -233,6 +242,14 @@ public:
 	byte 				GetPriority() const;
 	void				SetPriority( byte priority );
 
+	// These tell us which kind of CNetworkVar we're referring to.
+	int					GetNetworkVarFlags() const;
+	bool				AreNetworkVarFlagsSet( int nFlags ) const;
+
+	// This is only ever used by SendPropXXX functions internally. They receive offset with the networkvar
+	// flags OR'd and shifted in, so they'll specify both at the same time.
+	void				SetOffsetAndNetworkVarFlags( int nOffsetAndFlags );
+
 public:
 
 	RecvProp		*m_pMatchingRecvProp;	// This is temporary and only used while precalculating
@@ -266,8 +283,8 @@ private:
 	
 	SendTable			*m_pDataTable;
 	
-	// SENDPROP_VECTORELEM makes this negative to start with so we can detect that and
-	// set the SPROP_IS_VECTOR_ELEM flag.
+	// This also contains the NETWORKVAR_ flags shifted into the SENDPROP_NETWORKVAR_FLAGS_SHIFT range. 
+	// (Use GetNetworkVarFlags to access them).
 	int					m_Offset;
 
 	// Extra data bound to this property.
@@ -277,12 +294,28 @@ private:
 
 inline int SendProp::GetOffset() const
 {
-	return m_Offset & 0xFFFFF;
+	return m_Offset & SENDPROP_OFFSET_MASK;
 }
 
-inline void SendProp::SetOffset( int i )
+inline void SendProp::SetOffset( int nOffset )
 {
-	m_Offset = i; 
+	Assert( !( nOffset & ~SENDPROP_OFFSET_MASK ) );
+	m_Offset = nOffset;
+}
+
+inline void SendProp::SetOffsetAndNetworkVarFlags( int nOffset )
+{
+	m_Offset = nOffset;
+}
+
+inline int SendProp::GetNetworkVarFlags() const 
+{ 
+	return m_Offset >> SENDPROP_NETWORKVAR_FLAGS_SHIFT; 
+}
+
+inline bool SendProp::AreNetworkVarFlagsSet( int nFlags ) const
+{
+	return ( GetNetworkVarFlags() & nFlags ) == nFlags;
 }
 
 inline SendVarProxyFn SendProp::GetProxyFn() const
@@ -580,7 +613,7 @@ inline void SendTable::SetHasPropsEncodedAgainstTickcount( bool bState )
 // These can simplify creating the variables.
 // Note: currentSendDTClass::MakeANetworkVar_##varName equates to currentSendDTClass. It's
 // there as a check to make sure all networked variables use the CNetworkXXXX macros in network_var.h.
-#define SENDINFO(varName)					#varName, offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName), sizeof(((currentSendDTClass*)0)->varName)
+#define SENDINFO(varName)					#varName, offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName) | NETWORKVAR_OFFSET_FLAGS( currentSendDTClass, varName ), sizeof(((currentSendDTClass*)0)->varName)
 #define SENDINFO_ARRAY(varName)				#varName, offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName), sizeof(((currentSendDTClass*)0)->varName[0])
 #define SENDINFO_ARRAY3(varName)			#varName, offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName), sizeof(((currentSendDTClass*)0)->varName[0]), sizeof(((currentSendDTClass*)0)->varName)/sizeof(((currentSendDTClass*)0)->varName[0])
 #define SENDINFO_ARRAYELEM(varName, i)		#varName "[" #i "]", offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName[i]), sizeof(((currentSendDTClass*)0)->varName[0])
@@ -590,9 +623,9 @@ inline void SendTable::SetHasPropsEncodedAgainstTickcount( bool bState )
 // right after each other, otherwise it might miss the Y or Z component in SP.
 //
 // Note: this macro specifies a negative offset so the engine can detect it and setup m_pNext
-#define SENDINFO_VECTORELEM(varName, i)		#varName "[" #i "]", -(int)offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName.m_Value[i]), sizeof(((currentSendDTClass*)0)->varName.m_Value[0])
+#define SENDINFO_VECTORELEM(varName, i)		#varName "[" #i "]", (int)offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName.m_Value[i]) | NETWORKVAR_OFFSET_FLAGS( currentSendDTClass, varName ), sizeof(((currentSendDTClass*)0)->varName.m_Value[0])
 
-#define SENDINFO_STRUCTELEM(varName)		#varName, offsetof(currentSendDTClass, varName), sizeof(((currentSendDTClass*)0)->varName.m_Value)
+#define SENDINFO_STRUCTELEM(className, structVarName, varName)		#structVarName "." #varName, offsetof(currentSendDTClass, structVarName.varName) | NETWORKVAR_OFFSET_FLAGS( className, varName ), sizeof(((currentSendDTClass*)0)->structVarName.varName.m_Value)
 #define SENDINFO_STRUCTARRAYELEM(varName, i)#varName "[" #i "]", offsetof(currentSendDTClass, varName.m_Value[i]), sizeof(((currentSendDTClass*)0)->varName.m_Value[0])
 
 // Use this when you're not using a CNetworkVar to represent the data you're sending.
