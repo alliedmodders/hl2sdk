@@ -20,6 +20,7 @@
 #endif
 
 #include "appframework/IAppSystem.h"
+#include "filesystem.h"
 
 //-----------------------------------------------------------------------------
 // Forward declarations
@@ -72,11 +73,17 @@ enum MDLCacheDataType_t
 abstract_class IMDLCacheNotify
 {
 public:
+	virtual ~IMDLCacheNotify() {};
+
 	// Called right after the data is loaded
 	virtual void OnDataLoaded( MDLCacheDataType_t type, MDLHandle_t handle ) = 0;
 
+	virtual void OnCombinerPreCache( MDLCacheDataType_t type, MDLHandle_t handle ) = 0;
+
 	// Called right before the data is unloaded
 	virtual void OnDataUnloaded( MDLCacheDataType_t type, MDLHandle_t handle ) = 0;
+
+	virtual bool ShouldSupressLoadWarning( MDLHandle_t handle ) = 0;
 };
 
 
