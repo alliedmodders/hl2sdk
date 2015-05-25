@@ -209,7 +209,7 @@ public:
 	// Finish the EntityMessage and dispatch to network layer
 	virtual void		MessageEnd( void ) = 0;
 	
-	virtual void		SendUserMessage( IRecipientFilter &filter, int message, const google::protobuf::Message &msg );
+	virtual void		SendUserMessage( IRecipientFilter &filter, int message, const google::protobuf::Message &msg ) = 0;
 
 	// Print szMsg to the client console.
 	virtual void		ClientPrintf( edict_t *pEdict, const char *szMsg ) = 0;
