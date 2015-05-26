@@ -179,6 +179,7 @@ enum DataCacheAddFlags_t
 abstract_class IDataCacheSection
 {
 public:
+	virtual ~IDataCacheSection() = 0;
 	//--------------------------------------------------------
 
 	virtual IDataCache *GetSharedCache() = 0;
