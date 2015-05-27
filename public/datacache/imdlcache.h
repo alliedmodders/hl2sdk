@@ -227,7 +227,7 @@ public:
 	virtual void DumpDictionaryState() = 0;
 	virtual MDLHandle_t CreateCombinedModel(char  const* name) = 0;
 	virtual bool CreateCombinedModel(MDLHandle_t handle) = 0;
-	virtual bool SetCombineModels(MDLHandle_t handle, CUtlVector<SCombinerModelInput_t, CUtlMemory<SCombinerModelInput_t, int>>  const& unk2) = 0;
+	virtual bool SetCombineModels(MDLHandle_t handle, CUtlVector<SCombinerModelInput_t>  const& unk2) = 0;
 	virtual bool FinishCombinedModel(MDLHandle_t handle, void* unk2, void* unk3) = 0;
 	virtual bool IsCombinedPlaceholder(MDLHandle_t handle) = 0;
 	virtual bool IsCombinedModel(MDLHandle_t handle) = 0;
