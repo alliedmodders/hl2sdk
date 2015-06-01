@@ -343,6 +343,7 @@ public:
 class IEntityListener
 {
 public:
+	virtual void OnEntityPreSpawned( CBaseEntity *pEntity ) {};
 	virtual void OnEntityCreated( CBaseEntity *pEntity ) {};
 	virtual void OnEntitySpawned( CBaseEntity *pEntity ) {};
 	virtual void OnEntityDeleted( CBaseEntity *pEntity ) {};
