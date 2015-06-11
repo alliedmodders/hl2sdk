@@ -83,6 +83,27 @@ struct bbox_t
 	Vector maxs;
 };
 
+// Except in the case of an exact match, pMapName is updated to the canonical name of the match.
+// NOTE That this is subject to the same limitation as ServerGameDLL::CanProvideLevel -- This is non-blocking, so it
+//      is possible that blocking ServerGameDLL::PrepareLevelResources call may be able to pull a better match than
+//      is immediately available to this call (e.g. blocking lookups of cloud maps)
+enum eFindMapResult {
+	// A direct match for this name was found
+	eFindMap_Found,
+	// No match for this map name could be found.
+	eFindMap_NotFound,
+	// A fuzzy match for this mapname was found and pMapName was updated to the full name.
+	// Ex: cp_dust -> cp_dustbowl
+	eFindMap_FuzzyMatch,
+	// A match for this map name was found, and the map name was updated to the canonical version of the
+	// name.
+	// Ex: workshop/1234 -> workshop/cp_qualified_name.ugc1234
+	eFindMap_NonCanonical,
+	// No currently available match for this map name could be found, but it may be possible to load ( see caveat
+	// about PrepareLevelResources above )
+	eFindMap_PossiblyAvailable
+};
+
 //-----------------------------------------------------------------------------
 // Purpose: Interface the engine exposes to the game DLL
 //-----------------------------------------------------------------------------
@@ -420,26 +441,6 @@ public:
 	virtual bool IsPlayerNameLocked( const edict_t *pPlayer ) = 0;
 	virtual bool CanPlayerChangeName( const edict_t *pPlayer ) = 0;
 	
-	// Except in the case of an exact match, pMapName is updated to the canonical name of the match.
-	// NOTE That this is subject to the same limitation as ServerGameDLL::CanProvideLevel -- This is non-blocking, so it
-	//      is possible that blocking ServerGameDLL::PrepareLevelResources call may be able to pull a better match than
-	//      is immediately available to this call (e.g. blocking lookups of cloud maps)
-	enum eFindMapResult {
-		// A direct match for this name was found
-		eFindMap_Found,
-		// No match for this map name could be found.
-		eFindMap_NotFound,
-		// A fuzzy match for this mapname was found and pMapName was updated to the full name.
-		// Ex: cp_dust -> cp_dustbowl
-		eFindMap_FuzzyMatch,
-		// A match for this map name was found, and the map name was updated to the canonical version of the
-		// name.
-		// Ex: workshop/1234 -> workshop/cp_qualified_name.ugc1234
-		eFindMap_NonCanonical,
-		// No currently available match for this map name could be found, but it may be possible to load ( see caveat
-		// about PrepareLevelResources above )
-		eFindMap_PossiblyAvailable
-	};
 	virtual eFindMapResult FindMap( /* in/out */ char *pMapName, int nMapNameMax ) = 0;
 	
 	virtual IReplaySystem *GetReplay() = 0;
