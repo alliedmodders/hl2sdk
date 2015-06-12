@@ -162,6 +162,8 @@ public:
 //-----------------------------------------------------------------------------
 // Purpose: Interface from engine to tools for manipulating entities
 //-----------------------------------------------------------------------------
+class CEntityRespawnInfo;
+
 class IServerTools : public IBaseInterface
 {
 public:
@@ -187,12 +189,19 @@ public:
 	virtual void *CreateEntityByName( const char *szClassName ) = 0;
 	virtual void DispatchSpawn( void *pEntity ) = 0;
 
+	virtual bool DestroyEntityByHammerId(int iHammerId) = 0;
+	virtual void RespawnEntitiesWithEdits(CEntityRespawnInfo * pInfo, int iUnk1) = 0;
+
 	// This reloads a portion or all of a particle definition file.
 	// It's up to the server to decide if it cares about this file
 	// Use a UtlBuffer to crack the data
 	virtual void ReloadParticleDefintions( const char *pFileName, const void *pBufData, int nLen ) = 0;
 
 	virtual void AddOriginToPVS( const Vector &org ) = 0;
+
+	virtual void MoveEngineViewTo( const Vector &vPos, const QAngle &vAngles ) = 0;
+	// Same like DestroyEntityByHammerId, but doesn't tell you if the entity was removed.
+	virtual void RemoveEntity(int iHammerId) = 0;
 };
 
 #define VSERVERTOOLS_INTERFACE_VERSION "VSERVERTOOLS001"
