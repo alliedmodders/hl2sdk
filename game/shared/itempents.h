@@ -114,8 +114,6 @@ public:
 				 const Vector &pos, const Vector &dir, float size, float speed ) = 0;
 	virtual void GaussExplosion( IRecipientFilter& filer, float delay,
 				const Vector &pos, const Vector &dir, int type ) = 0;
-	virtual void DispatchEffect( IRecipientFilter& filter, float delay,
-				const Vector &pos, const char *pName, const CEffectData &data ) = 0;
 	virtual void PhysicsProp( IRecipientFilter& filter, float delay, int modelindex, int skin, 
 		const Vector& pos, const QAngle &angles, const Vector& vel, int flags, int effects ) = 0;
 
