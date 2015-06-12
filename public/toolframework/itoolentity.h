@@ -159,11 +159,17 @@ public:
 #define VCLIENTTOOLS_INTERFACE_VERSION "VCLIENTTOOLS001"
 
 
+class CEntityRespawnInfo
+{
+public:
+	int m_nHammerID;
+	const char *m_pEntText;
+};
+
+
 //-----------------------------------------------------------------------------
 // Purpose: Interface from engine to tools for manipulating entities
 //-----------------------------------------------------------------------------
-class CEntityRespawnInfo;
-
 class IServerTools : public IBaseInterface
 {
 public:
@@ -188,9 +194,11 @@ public:
 	// entity spawning
 	virtual void *CreateEntityByName( const char *szClassName ) = 0;
 	virtual void DispatchSpawn( void *pEntity ) = 0;
-
-	virtual bool DestroyEntityByHammerId(int iHammerId) = 0;
-	virtual void RespawnEntitiesWithEdits(CEntityRespawnInfo * pInfo, int iUnk1) = 0;
+	virtual bool DestroyEntityByHammerId( int iHammerID ) = 0;
+	
+	// This function respawns the entity into the same entindex slot AND tricks the EHANDLE system into thinking it's the same
+	// entity version so anyone holding an EHANDLE to the entity points at the newly-respawned entity.
+	virtual bool RespawnEntitiesWithEdits( CEntityRespawnInfo *pInfos, int nInfos ) = 0;
 
 	// This reloads a portion or all of a particle definition file.
 	// It's up to the server to decide if it cares about this file
@@ -198,10 +206,10 @@ public:
 	virtual void ReloadParticleDefintions( const char *pFileName, const void *pBufData, int nLen ) = 0;
 
 	virtual void AddOriginToPVS( const Vector &org ) = 0;
-
 	virtual void MoveEngineViewTo( const Vector &vPos, const QAngle &vAngles ) = 0;
-	// Same like DestroyEntityByHammerId, but doesn't tell you if the entity was removed.
-	virtual void RemoveEntity(int iHammerId) = 0;
+	
+	// Call UTIL_Remove on the entity.
+	virtual void RemoveEntity( int nHammerID ) = 0;
 };
 
 #define VSERVERTOOLS_INTERFACE_VERSION "VSERVERTOOLS001"
