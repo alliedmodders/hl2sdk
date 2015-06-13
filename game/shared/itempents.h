@@ -26,6 +26,7 @@ class KeyValues;
 abstract_class ITempEntsSystem : public IPredictionSystem
 {
 public:
+	virtual bool SuppressTE(IRecipientFilter& filter) = 0;
 	virtual void ArmorRicochet( IRecipientFilter& filer, float delay,
 		const Vector* pos, const Vector* dir ) = 0;
 	virtual void BeamEntPoint( IRecipientFilter& filer, float delay,
