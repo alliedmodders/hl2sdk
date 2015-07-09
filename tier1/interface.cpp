@@ -154,7 +154,7 @@ static HMODULE InternalLoadLibrary( const char *pName )
 	return LoadLibraryEx( pName, NULL, LOAD_WITH_ALTERED_SEARCH_PATH );
 #endif
 }
-unsigned ThreadedLoadLibraryFunc( void *pParam )
+uintp ThreadedLoadLibraryFunc(void *pParam)
 {
 	ThreadedLoadLibaryContext_t *pContext = (ThreadedLoadLibaryContext_t*)pParam;
 	pContext->m_hLibrary = InternalLoadLibrary(pContext->m_pLibraryName);
