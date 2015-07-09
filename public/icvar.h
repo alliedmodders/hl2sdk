@@ -19,6 +19,9 @@ class ConCommandBase;
 class ConCommand;
 class ConVar;
 class Color;
+class IConVarListener;
+class CConVarDetail;
+struct ConVarSnapshot_t;
 
 
 //-----------------------------------------------------------------------------
@@ -166,6 +169,15 @@ protected:
 
 	virtual ICVarIteratorInternal	*FactoryInternalIterator( void ) = 0;
 	friend class Iterator;
+	
+	virtual void	InstallConVarListener( IConVarListener *pListener ) = 0;
+	virtual void	RemoveConVarListener( IConVarListener *pListener ) = 0;
+	virtual void	GetConVarDetails( CUtlVector<CConVarDetail> &out ) = 0;
+	
+	virtual void	ResetConVarsToDefaultValues( const char *pszPrefix ) = 0;
+	virtual ConVarSnapshot_t *TakeConVarSnapshot( void ) = 0;
+	virtual void	ResetConVarsToSnapshot( ConVarSnapshot_t *pSnapshot ) = 0;
+	virtual void	DestroyConVarSnapshot( ConVarSnapshot_t *pSnaoshot ) = 0;
 };
 
 inline ICvar::Iterator::Iterator(ICvar *icvar)

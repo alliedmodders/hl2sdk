@@ -91,16 +91,14 @@ void ConVar_PublishToVXConsole();
 //-----------------------------------------------------------------------------
 // Called when a ConCommand needs to execute
 //-----------------------------------------------------------------------------
-typedef void ( *FnCommandCallbackV1_t )( void );
-typedef void ( *FnCommandCallback_t )( const CCommandContext &context, const CCommand &command );
-
-#define COMMAND_COMPLETION_MAXITEMS		64
-#define COMMAND_COMPLETION_ITEM_LENGTH	64
+typedef void ( *FnCommandCallbackV1_t )( const CCommandContext &context );
+typedef void ( *FnCommandCallbackV2_t )( const CCommandContext &context, const CCommand &command );
+typedef void ( *FnCommandCallback_t )( const CCommand &command );
 
 //-----------------------------------------------------------------------------
 // Returns 0 to COMMAND_COMPLETION_MAXITEMS worth of completion strings
 //-----------------------------------------------------------------------------
-typedef int  ( *FnCommandCompletionCallback )( const char *partial, char commands[ COMMAND_COMPLETION_MAXITEMS ][ COMMAND_COMPLETION_ITEM_LENGTH ] );
+typedef int(*FnCommandCompletionCallback)( const char *partial, CUtlVector< CUtlString > &commands );
 
 
 //-----------------------------------------------------------------------------
@@ -109,13 +107,7 @@ typedef int  ( *FnCommandCompletionCallback )( const char *partial, char command
 class ICommandCallback
 {
 public:
-	virtual void CommandCallback( const CCommand &command ) = 0;
-};
-
-class ICommandCallback2
-{
-public:
-	virtual void CommandCallback( const CCommandContext &context, const CCommand &command ) = 0;
+	virtual void CommandCallback(const CCommandContext &context, const CCommand &command) = 0;
 };
 
 class ICommandCompletionCallback
@@ -183,6 +175,8 @@ protected:
 	char						*CopyString( const char *from );
 
 private:
+	int m_Unknown;
+	
 	// Next ConVar in chain
 	// Prior to register, it points to the next convar in the DLL.
 	// Once registered, though, m_pNext is reset to point to the next
@@ -198,6 +192,7 @@ private:
 	
 	// ConVar flags
 	int							m_nFlags;
+	int							m_nFlags2;
 
 protected:
 	// ConVars add themselves to this list for the executable. 
@@ -300,13 +295,9 @@ friend class CCvar;
 public:
 	typedef ConCommandBase BaseClass;
 
-	ConCommand( const char *pName, FnCommandCallbackV1_t callback, 
-		const char *pHelpString = 0, int flags = 0, FnCommandCompletionCallback completionFunc = 0 );
 	ConCommand( const char *pName, FnCommandCallback_t callback, 
 		const char *pHelpString = 0, int flags = 0, FnCommandCompletionCallback completionFunc = 0 );
 	ConCommand( const char *pName, ICommandCallback *pCallback, 
-		const char *pHelpString = 0, int flags = 0, ICommandCompletionCallback *pCommandCompletionCallback = 0 );
-	ConCommand( const char *pName, ICommandCallback2 *pCallback, 
 		const char *pHelpString = 0, int flags = 0, ICommandCompletionCallback *pCommandCompletionCallback = 0 );
 
 	virtual ~ConCommand( void );
@@ -329,25 +320,34 @@ private:
 	// Those fields will not exist in the version of this class that is instanced
 	// in mod code.
 
-	// Call this function when executing the command
 	union
 	{
 		FnCommandCallbackV1_t m_fnCommandCallbackV1;
-		FnCommandCallback_t m_fnCommandCallback;
-		ICommandCallback *m_pCommandCallback; 
-		ICommandCallback2 *m_pCommandCallback2; 
-	};
-
-	union
-	{
+		FnCommandCallbackV2_t m_fnCommandCallbackV2;
 		FnCommandCompletionCallback	m_fnCompletionCallback;
 		ICommandCompletionCallback *m_pCommandCompletionCallback;
 	};
 
 	bool m_bHasCompletionCallback : 1;
-	bool m_bUsingCommandCallbackInterface : 1;
-	bool m_bUsingOldCommandCallback : 1;
-	bool m_bUsingCommandCallbackInterface2 : 1;
+	bool m_bUsingCommandCompletionInterface : 1;
+	
+	struct ConCommandCB
+	{		
+		// Call this function when executing the command
+		union
+		{
+			FnCommandCallback_t m_fnCommandCallback;
+			FnCommandCallbackV2_t m_fnCommandCallbackV2;
+			ICommandCallback *m_pCommandCallback; 
+		};
+		
+		bool m_bUsingCommandCallbackInterface : 1;
+		bool m_bUsingOldCommandCallback : 1;
+		bool m_bUsingV2CommandCallback : 1;
+	};
+	CUtlVector<ConCommandCB> m_Callbacks;
+	
+	ConCommand *m_pParent;
 };
 
 
@@ -957,9 +957,9 @@ private:
 // Purpose: Utility macros to quicky generate a simple console command
 //-----------------------------------------------------------------------------
 #define CON_COMMAND( name, description ) \
-   static void name( const CCommandContext &context, const CCommand &args ); \
+   static void name( const CCommand &args ); \
    static ConCommand name##_command( #name, name, description ); \
-   static void name( const CCommandContext &context, const CCommand &args )
+   static void name( const CCommand &args )
 
 #ifdef CLIENT_DLL
 	#define CON_COMMAND_SHARED( name, description ) \

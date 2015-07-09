@@ -227,6 +227,8 @@ typedef char *  va_list;
 #define INCORRECT_PATH_SEPARATOR_S "\\"
 #endif
 
+int V_vsnprintf( char *pDest, int maxLenInCharacters, const char *pFormat, va_list params );
+template <size_t maxLenInCharacters> int V_vsprintf_safe( char (&pDest)[maxLenInCharacters], const char *pFormat, va_list params ) { return V_vsnprintf( pDest, maxLenInCharacters, pFormat, params ); }
 int V_vsnprintf( char *pDest, int maxLen, const char *pFormat, va_list params );
 
 // Prints out a pretified memory counter string value ( e.g., 7,233.27 Mb, 1,298.003 Kb, 127 bytes )

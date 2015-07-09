@@ -1,3 +1,4 @@
+
 //===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
@@ -103,7 +104,10 @@ ConCommandBase::ConCommandBase( void )
 	m_pszHelpString = NULL;
 
 	m_nFlags = 0;
+	m_nFlags2 = 0;
 	m_pNext  = NULL;
+
+	m_Unknown = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -501,43 +505,26 @@ int CCommand::FindArgInt( const char *pName, int nDefaultVal ) const
 //-----------------------------------------------------------------------------
 // Default console command autocompletion function 
 //-----------------------------------------------------------------------------
-int DefaultCompletionFunc( const char *partial, char commands[ COMMAND_COMPLETION_MAXITEMS ][ COMMAND_COMPLETION_ITEM_LENGTH ] )
+int DefaultCompletionFunc( const char *partial, CUtlVector< CUtlString > &commands )
 {
 	return 0;
 }
 
 
-//-----------------------------------------------------------------------------
-// Purpose: Constructs a console command
-//-----------------------------------------------------------------------------
-//ConCommand::ConCommand()
-//{
-//	m_bIsNewConCommand = true;
-//}
-
-ConCommand::ConCommand( const char *pName, FnCommandCallbackV1_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
-{
-	// Set the callback
-	m_fnCommandCallbackV1 = callback;
-	m_bUsingOldCommandCallback = true;
-	m_bUsingCommandCallbackInterface = false;
-	m_bUsingCommandCallbackInterface2 = false;
-	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
-	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
-
-	// Setup the rest
-	BaseClass::Create( pName, pHelpString, flags );
-}
-
 ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
 	// Set the callback
-	m_fnCommandCallback = callback;
-	m_bUsingOldCommandCallback = false;
+	ConCommandCB cb;
+	cb.m_fnCommandCallback = callback;
+	cb.m_bUsingOldCommandCallback = false;
+	cb.m_bUsingCommandCallbackInterface = false;
+	m_Callbacks.AddToTail(cb);
+
 	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
 	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
-	m_bUsingCommandCallbackInterface = false;
-	m_bUsingCommandCallbackInterface2 = false;
+	m_bUsingCommandCompletionInterface = false;
+
+	m_pParent = this;
 
 	// Setup the rest
 	BaseClass::Create( pName, pHelpString, flags );
@@ -546,26 +533,17 @@ ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const c
 ConCommand::ConCommand( const char *pName, ICommandCallback *pCallback, const char *pHelpString /*= 0*/, int flags /*= 0*/, ICommandCompletionCallback *pCompletionCallback /*= 0*/ )
 {
 	// Set the callback
-	m_pCommandCallback = pCallback;
-	m_bUsingOldCommandCallback = false;
+	ConCommandCB cb;
+	cb.m_pCommandCallback = pCallback;
+	cb.m_bUsingOldCommandCallback = false;
+	cb.m_bUsingCommandCallbackInterface = true;
+	m_Callbacks.AddToTail(cb);
+
 	m_pCommandCompletionCallback = pCompletionCallback;
 	m_bHasCompletionCallback = ( pCompletionCallback != 0 );
-	m_bUsingCommandCallbackInterface = true;
-	m_bUsingCommandCallbackInterface2 = false;
+	m_bUsingCommandCompletionInterface = true;
 
-	// Setup the rest
-	BaseClass::Create( pName, pHelpString, flags );
-}
-
-ConCommand::ConCommand( const char *pName, ICommandCallback2 *pCallback, const char *pHelpString /*= 0*/, int flags /*= 0*/, ICommandCompletionCallback *pCompletionCallback /*= 0*/ )
-{
-	// Set the callback
-	m_pCommandCallback2 = pCallback;
-	m_bUsingOldCommandCallback = false;
-	m_pCommandCompletionCallback = pCompletionCallback;
-	m_bHasCompletionCallback = ( pCompletionCallback != 0 );
-	m_bUsingCommandCallbackInterface = false;
-	m_bUsingCommandCallbackInterface2 = true;
+	m_pParent = this;
 
 	// Setup the rest
 	BaseClass::Create( pName, pHelpString, flags );
@@ -593,41 +571,44 @@ bool ConCommand::IsCommand( void ) const
 //-----------------------------------------------------------------------------
 void ConCommand::Dispatch( const CCommandContext &context, const CCommand &command )
 {
-	if ( m_bUsingOldCommandCallback )
+	FOR_EACH_VEC(m_Callbacks, i)
 	{
-		if ( m_fnCommandCallbackV1 )
+		ConCommandCB cb = m_Callbacks[i];
+		if (cb.m_bUsingOldCommandCallback)
 		{
-			( *m_fnCommandCallbackV1 )();
-			return;
+			if (m_fnCommandCallbackV1)
+			{
+				(*m_fnCommandCallbackV1)(context);
+				return;
+			}
 		}
-	}
-	else if ( m_bUsingCommandCallbackInterface )
-	{
-		if ( m_pCommandCallback )
+		else if (cb.m_bUsingCommandCallbackInterface)
 		{
-			m_pCommandCallback->CommandCallback( command );
-			return;
+			if (cb.m_pCommandCallback)
+			{
+				cb.m_pCommandCallback->CommandCallback(context, command);
+				return;
+			}
 		}
-	}
-	else if (m_bUsingCommandCallbackInterface2 )
-	{
-		if ( m_pCommandCallback2 )
+		else if (cb.m_bUsingV2CommandCallback)
 		{
-			m_pCommandCallback2->CommandCallback( context, command );
-			return;
+			if (cb.m_bUsingV2CommandCallback)
+			{
+				cb.m_fnCommandCallbackV2(context, command);
+			}
 		}
-	}
-	else
-	{
-		if ( m_fnCommandCallback )
+		else
 		{
-			( *m_fnCommandCallback )( context, command );
-			return;
-		}            
-	}
+			if (cb.m_fnCommandCallback)
+			{
+				(*cb.m_fnCommandCallback)(command);
+				return;
+			}
+		}
 
-	// Command without callback!!!
-	AssertMsg( 0, ( "Encountered ConCommand without a callback!\n" ) );
+		// Command without callback!!!
+		AssertMsg(0, ("Encountered ConCommand without a callback!\n"));
+	}
 }
 
 
@@ -636,7 +617,7 @@ void ConCommand::Dispatch( const CCommandContext &context, const CCommand &comma
 //-----------------------------------------------------------------------------
 int	ConCommand::AutoCompleteSuggest( const char *partial, CUtlVector< CUtlString > &commands )
 {
-	if ( m_bUsingCommandCallbackInterface )
+	if (m_bUsingCommandCompletionInterface)
 	{
 		if ( !m_pCommandCompletionCallback )
 			return 0;
@@ -647,14 +628,7 @@ int	ConCommand::AutoCompleteSuggest( const char *partial, CUtlVector< CUtlString
 	if ( !m_fnCompletionCallback )
 		return 0;
 
-	char rgpchCommands[ COMMAND_COMPLETION_MAXITEMS ][ COMMAND_COMPLETION_ITEM_LENGTH ];
-	int iret = ( m_fnCompletionCallback )( partial, rgpchCommands );
-	for ( int i = 0 ; i < iret; ++i )
-	{
-		CUtlString str = rgpchCommands[ i ];
-		commands.AddToTail( str );
-	}
-	return iret;
+	return m_fnCompletionCallback( partial, commands );
 }
 
 

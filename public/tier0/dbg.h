@@ -82,8 +82,6 @@ class Color;
 //	 DebuggerBreak();
 //-----------------------------------------------------------------------------
 
-PLATFORM_INTERFACE void _ExitOnFatalAssert( const tchar* pFile, int line );
-
 PLATFORM_INTERFACE bool SetupWin32ConsoleIO();
 
 // Returns true if they want to break in the debugger.
@@ -96,11 +94,6 @@ PLATFORM_INTERFACE bool SetupWin32ConsoleIO();
 		{ 																\
 			LoggingResponse_t ret = Log_Assert( "%s (%d) : %s\n", __TFILE__, __LINE__, _msg );	\
 			_executeExp; 												\
-			if ( ret == LR_DEBUGGER )									\
-			{															\
-				if ( _bFatal )											\
-					_ExitOnFatalAssert( __TFILE__, __LINE__ );			\
-			}															\
 		}																\
 	} while (0)
 

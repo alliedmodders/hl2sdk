@@ -1541,8 +1541,8 @@ void V_AppendSlash( char *pStr, int strSize )
 	int len = V_strlen( pStr );
 	if ( len > 0 && !PATHSEPARATOR(pStr[len-1]) )
 	{
-		if ( len+1 >= strSize )
-			Error( "V_AppendSlash: ran out of space on %s.", pStr );
+		//if ( len+1 >= strSize )
+			//Error( "V_AppendSlash: ran out of space on %s.", pStr );
 		
 		pStr[len] = CORRECT_PATH_SEPARATOR;
 		pStr[len+1] = 0;
@@ -1566,8 +1566,8 @@ void V_MakeAbsolutePath( char *pOut, int outLen, const char *pPath, const char *
 		}
 		else
 		{
-			if ( !_getcwd( pOut, outLen ) )
-				Error( "V_MakeAbsolutePath: _getcwd failed." );
+			//if ( !_getcwd( pOut, outLen ) )
+				//Error( "V_MakeAbsolutePath: _getcwd failed." );
 
 			if ( pStartingDir )
 			{
@@ -1581,8 +1581,8 @@ void V_MakeAbsolutePath( char *pOut, int outLen, const char *pPath, const char *
 		V_strncat( pOut, pPath, outLen, COPY_ALL_CHARACTERS );
 	}
 
-	if ( !V_RemoveDotSlashes( pOut ) )
-		Error( "V_MakeAbsolutePath: tried to \"..\" past the root." );
+	//if ( !V_RemoveDotSlashes( pOut ) )
+		//Error( "V_MakeAbsolutePath: tried to \"..\" past the root." );
 
 	V_FixSlashes( pOut );
 }
