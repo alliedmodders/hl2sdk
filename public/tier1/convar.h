@@ -140,13 +140,13 @@ public:
 	virtual	bool				IsCommand( void ) const;
 
 	// Check flag
-	virtual bool				IsFlagSet( int flag ) const;
+	virtual bool				IsFlagSet( int64 flag ) const;
 	// Set flag
-	virtual void				AddFlags( int flags );
+	virtual void				AddFlags( int64 flags );
 	// Clear flag
-	virtual void				RemoveFlags( int flags );
+	virtual void				RemoveFlags( int64 flags );
 
-	virtual int					GetFlags() const;
+	virtual int64				GetFlags() const;
 
 	// Return name of cvar
 	virtual const char			*GetName( void ) const;
@@ -174,9 +174,7 @@ protected:
 	// Internal copy routine ( uses new operator from correct module )
 	char						*CopyString( const char *from );
 
-private:
-	int m_Unknown;
-	
+private:	
 	// Next ConVar in chain
 	// Prior to register, it points to the next convar in the DLL.
 	// Once registered, though, m_pNext is reset to point to the next
@@ -191,8 +189,7 @@ private:
 	const char 					*m_pszHelpString;
 	
 	// ConVar flags
-	int							m_nFlags;
-	int							m_nFlags2;
+	int64						m_nFlags;
 
 protected:
 	// ConVars add themselves to this list for the executable. 
@@ -377,7 +374,7 @@ public:
 
 	virtual						~ConVar( void );
 
-	virtual bool				IsFlagSet( int flag ) const;
+	virtual bool				IsFlagSet( int64 flag ) const;
 	virtual const char*			GetHelpText( void ) const;
 	virtual bool				IsRegistered( void ) const;
 	virtual const char			*GetName( void ) const;
@@ -385,8 +382,8 @@ public:
 	virtual const char			*GetBaseName( void ) const;
 	virtual int					GetSplitScreenPlayerSlot() const;
 
-	virtual void				AddFlags( int flags );
-	virtual int					GetFlags() const;
+	virtual void				AddFlags( int64 flags );
+	virtual int64				GetFlags() const;
 	virtual	bool				IsCommand( void ) const;
 
 	// Install a change callback (there shouldn't already be one....)
@@ -636,7 +633,7 @@ public:
 
 	void Init( const char *pName, bool bIgnoreMissing );
 	bool IsValid() const;
-	bool IsFlagSet( int nFlags ) const;
+	bool IsFlagSet( int64 nFlags ) const;
 	IConVar *GetLinkedConVar();
 
 	// Get/Set value
@@ -670,7 +667,7 @@ private:
 //-----------------------------------------------------------------------------
 // Did we find an existing convar of that name?
 //-----------------------------------------------------------------------------
-FORCEINLINE_CVAR bool ConVarRef::IsFlagSet( int nFlags ) const
+FORCEINLINE_CVAR bool ConVarRef::IsFlagSet( int64 nFlags ) const
 {
 	return ( m_pConVar->IsFlagSet( nFlags ) != 0 );
 }
@@ -771,7 +768,7 @@ public:
 
 	void Init( const char *pName, bool bIgnoreMissing );
 	bool IsValid() const;
-	bool IsFlagSet( int nFlags ) const;
+	bool IsFlagSet( int64 nFlags ) const;
 
 	// Get/Set value
 	float GetFloat( int nSlot ) const;
@@ -805,7 +802,7 @@ private:
 //-----------------------------------------------------------------------------
 // Did we find an existing convar of that name?
 //-----------------------------------------------------------------------------
-FORCEINLINE_CVAR bool SplitScreenConVarRef::IsFlagSet( int nFlags ) const
+FORCEINLINE_CVAR bool SplitScreenConVarRef::IsFlagSet( int64 nFlags ) const
 {
 	return ( m_Info[ 0 ].m_pConVar->IsFlagSet( nFlags ) != 0 );
 }
