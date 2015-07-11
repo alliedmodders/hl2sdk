@@ -21,7 +21,6 @@
 #include "engine/ivmodelinfo.h"
 #include "soundflags.h"
 #include "bitvec.h"
-#include "engine/iserverplugin.h"
 #include "tier1/bitbuf.h"
 #include "tier1/utlstring.h"
 #include <steam/steamclientpublic.h>
@@ -70,7 +69,7 @@ struct EconControlPointInfo_t;
 class CEntityHandle;
 struct RenderDeviceInfo_t;
 struct RenderMultisampleType_t;
-struct GameSessionConfiguration_t;
+class GameSessionConfiguration_t;
 struct StringTableDef_t;
 struct HostStateLoopModeType_t;
 class ILoopModePrerequisiteRegistry;

@@ -58,7 +58,7 @@ void protobuf_AddDesc_network_5fconnection_2eproto() {
   ::google::protobuf::protobuf_AddDesc_google_2fprotobuf_2fdescriptor_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\030network_connection.proto\032 google/proto"
-    "buf/descriptor.proto*\217 \n\033ENetworkDisconn"
+    "buf/descriptor.proto*\241*\n\033ENetworkDisconn"
     "ectionReason\022\036\n\032NETWORK_DISCONNECT_INVAL"
     "ID\020\000\022\037\n\033NETWORK_DISCONNECT_SHUTDOWN\020\001\022F\n"
     "%NETWORK_DISCONNECT_DISCONNECT_BY_USER\020\002"
@@ -161,9 +161,41 @@ void protobuf_AddDesc_network_5fconnection_2eproto() {
     "ailure\022Y\n)NETWORK_DISCONNECT_NO_PEER_GRO"
     "UP_HANDLERS\0204\032*\242\324\030&#GameUI_Disconnect_No"
     "PeerGroupHandlers\022#\n\037NETWORK_DISCONNECT_"
-    "RECONNECTION\0205:E\n\030network_connection_tok"
-    "en\022!.google.protobuf.EnumValueOptions\030\304\212"
-    "\003 \001(\tB\003\200\001\000", 4250);
+    "RECONNECTION\0205\022H\n\037NETWORK_DISCONNECT_LOO"
+    "PSHUTDOWN\0206\032#\242\324\030\037#GameUI_Disconnect_Loop"
+    "Shutdown\022L\n!NETWORK_DISCONNECT_LOOPDEACT"
+    "IVATE\0207\032%\242\324\030!#GameUI_Disconnect_LoopDeac"
+    "tivate\022H\n\037NETWORK_DISCONNECT_HOST_ENDGAM"
+    "E\0208\032#\242\324\030\037#GameUI_Disconnect_Host_EndGame"
+    "\022\\\n*NETWORK_DISCONNECT_LOOP_LEVELLOAD_AC"
+    "TIVATE\0209\032,\242\324\030(#GameUI_Disconnect_LoopLev"
+    "elLoadActivate\022V\n\'NETWORK_DISCONNECT_CRE"
+    "ATE_SERVER_FAILED\020:\032)\242\324\030%#GameUI_Disconn"
+    "ect_CreateServerFailed\022D\n\032NETWORK_DISCON"
+    "NECT_EXITING\020;\032$\242\324\030 #GameUI_Disconnect_E"
+    "xitingEngine\022T\n)NETWORK_DISCONNECT_REQUE"
+    "ST_HOSTSTATE_IDLE\020<\032%\242\324\030!#GameUI_Disconn"
+    "ect_Request_HSIdle\022\\\n.NETWORK_DISCONNECT"
+    "_REQUEST_HOSTSTATE_HLTVRELAY\020=\032(\242\324\030$#Gam"
+    "eUI_Disconnect_Request_HLTVRelay\022Q\n*NETW"
+    "ORK_DISCONNECT_CLIENT_CONSISTENCY_FAIL\020>"
+    "\032!\242\324\030\035#GameUI_ClientConsistencyFail\022Q\n+N"
+    "ETWORK_DISCONNECT_CLIENT_UNABLE_TO_CRC_M"
+    "AP\020\?\032 \242\324\030\034#GameUI_ClientUnableToCRCMap\022="
+    "\n NETWORK_DISCONNECT_CLIENT_NO_MAP\020@\032\027\242\324"
+    "\030\023#GameUI_ClientNoMap\022K\n\'NETWORK_DISCONN"
+    "ECT_CLIENT_DIFFERENT_MAP\020A\032\036\242\324\030\032#GameUI_"
+    "ClientDifferentMap\022M\n(NETWORK_DISCONNECT"
+    "_SERVER_REQUIRES_STEAM\020B\032\037\242\324\030\033#GameUI_Se"
+    "rverRequireSteams\022M\n\"NETWORK_DISCONNECT_"
+    "STEAM_DENY_MISC\020C\032%\242\324\030!#GameUI_Disconnec"
+    "t_SteamDeny_Misc\022_\n,NETWORK_DISCONNECT_S"
+    "TEAM_DENY_BAD_ANTI_CHEAT\020D\032-\242\324\030)#GameUI_"
+    "Disconnect_SteamDeny_BadAntiCheat\022M\n\"NET"
+    "WORK_DISCONNECT_SERVER_SHUTDOWN\020E\032%\242\324\030!#"
+    "GameUI_Disconnect_ServerShutdown:E\n\030netw"
+    "ork_connection_token\022!.google.protobuf.E"
+    "numValueOptions\030\304\212\003 \001(\tB\003\200\001\000", 5548);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "network_connection.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::ExtensionSet::RegisterExtension(
@@ -238,6 +270,22 @@ bool ENetworkDisconnectionReason_IsValid(int value) {
     case 51:
     case 52:
     case 53:
+    case 54:
+    case 55:
+    case 56:
+    case 57:
+    case 58:
+    case 59:
+    case 60:
+    case 61:
+    case 62:
+    case 63:
+    case 64:
+    case 65:
+    case 66:
+    case 67:
+    case 68:
+    case 69:
       return true;
     default:
       return false;

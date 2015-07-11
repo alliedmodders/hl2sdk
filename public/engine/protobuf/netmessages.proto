@@ -1,97 +1,107 @@
-//====== Copyright (c) 2012, Valve Corporation, All rights reserved. ========//
-//
-// Redistribution and use in source and binary forms, with or without 
-// modification, are permitted provided that the following conditions are met:
-//
-// Redistributions of source code must retain the above copyright notice, this
-// list of conditions and the following disclaimer.
-// Redistributions in binary form must reproduce the above copyright notice, 
-// this list of conditions and the following disclaimer in the documentation 
-// and/or other materials provided with the distribution.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE 
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
-// THE POSSIBILITY OF SUCH DAMAGE.
-//===========================================================================//
-//
-// Purpose: The file defines our Google Protocol Buffers which are used in over 
-// the wire messages for the Source engine.
-//
-//=============================================================================
-
-// Note about encoding:
-//	http://code.google.com/apis/protocolbuffers/docs/encoding.html
-//
-// TL;DR: Use sint32/sint64 for values that may be negative.
-//
-// There is an important difference between the signed int types (sint32 and sint64)
-// and the "standard" int types (int32 and int64) when it comes to encoding negative
-// numbers.  If you use int32 or int64 as the type for a negative number, the
-// resulting varint is always ten bytes long – it is, effectively, treated like a
-// very large unsigned integer.  If you use one of the signed types, the resulting
-// varint uses ZigZag encoding, which is much more efficient.
-
-
-// Commenting this out allows it to be compiled for SPEED or LITE_RUNTIME.
-// option optimize_for = SPEED;
-
-// We don't use the service generation functionality
-option cc_generic_services = false;
-
-
-// 
-// STYLE NOTES:
-//
-// Use CamelCase CMsgMyMessageName style names for messages.
-// 
-// Use lowercase _ delimited names like my_steam_id for field names, this is non-standard for Steam,
-// but plays nice with the Google formatted code generation.  
-// 
-// Try not to use required fields ever. Only do so if you are really really sure you'll never want them removed. 
-// Optional should be preffered as it will make versioning easier and cleaner in the future if someone refactors
-// your message and wants to remove or rename fields.
-//
-// Use fixed64 for JobId_t, GID_t, or SteamID.  This is appropriate for any field that is normally
-// going to be larger than 2^56.  Otherwise use int64 for 64 bit values that are frequently smaller
-// than 2^56 as it will safe space on the wire in those cases.
-//
-// Similar to fixed64, use fixed32 for RTime32 or other 32 bit values that are frequently larger than
-// 2^28.  It will safe space in those cases, otherwise use int32 which will safe space for smaller values.
-// An exception to this rule for RTime32 is if the value will frequently be zero rather than set to an actual 
-// time.
-//
-
-// for CMsgVector, etc.
 import "networkbasetypes.proto";
 
-//=============================================================================
-// Client messages
-//=============================================================================
+option cc_generic_services = false;
 
-enum CLC_Messages
-{
-	clc_ClientInfo 				= 8;				// client info (table CRC etc)    
-	clc_Move 					= 9;				// [CUserCmd]     
-	clc_VoiceData 				= 10;				// Voicestream data from a client    
-	clc_BaselineAck 			= 11;				// client acknowledges a new baseline seqnr   
-	clc_ListenEvents 			= 12;				// client acknowledges a new baseline seqnr   
-	clc_RespondCvarValue 		= 13;				// client is responding to a svc_GetCvarValue message.  
-	clc_FileCRCCheck 			= 14;				// client is sending a file's CRC to the server to be verified.   
-	clc_LoadingProgress 		= 15;				// client loading progress  
-	clc_SplitPlayerConnect 		= 16;
-	clc_ClientMessage 			= 17;  
+enum CLC_Messages {
+	clc_ClientInfo = 20;
+	clc_Move = 21;
+	clc_VoiceData = 22;
+	clc_BaselineAck = 23;
+	clc_ListenEvents = 24;
+	clc_RespondCvarValue = 25;
+	clc_FileCRCCheck = 26;
+	clc_LoadingProgress = 27;
+	clc_SplitPlayerConnect = 28;
+	clc_ClientMessage = 29;
+	clc_SplitPlayerDisconnect = 30;
+	clc_ServerStatus = 31;
+	clc_ServerPing = 32;
+	clc_RequestPause = 33;
+	clc_CmdKeyValues = 34;
 }
 
-message CCLCMsg_ClientInfo
-{
+enum SVC_Messages {
+	svc_ServerInfo = 40;
+	svc_FlattenedSerializer = 41;
+	svc_ClassInfo = 42;
+	svc_SetPause = 43;
+	svc_CreateStringTable = 44;
+	svc_UpdateStringTable = 45;
+	svc_VoiceInit = 46;
+	svc_VoiceData = 47;
+	svc_Print = 48;
+	svc_Sounds = 49;
+	svc_SetView = 50;
+	svc_ClearAllStringTables = 51;
+	svc_CmdKeyValues = 52;
+	svc_BSPDecal = 53;
+	svc_SplitScreen = 54;
+	svc_PacketEntities = 55;
+	svc_Prefetch = 56;
+	svc_Menu = 57;
+	svc_GetCvarValue = 58;
+	svc_StopSound = 59;
+	svc_PeerList = 60;
+	svc_PacketReliable = 61;
+	svc_UserMessage = 62;
+	svc_SendTable = 63;
+	svc_GameEvent = 67;
+	svc_TempEntities = 68;
+	svc_GameEventList = 69;
+	svc_FullFrameSplit = 70;
+}
+
+enum VoiceDataFormat_t {
+	VOICEDATA_FORMAT_STEAM = 0;
+	VOICEDATA_FORMAT_ENGINE = 1;
+}
+
+enum RequestPause_t {
+	RP_PAUSE = 0;
+	RP_UNPAUSE = 1;
+	RP_TOGGLEPAUSE = 2;
+}
+
+enum PrefetchType {
+	PFT_SOUND = 0;
+}
+
+enum ESplitScreenMessageType {
+	MSG_SPLITSCREEN_ADDUSER = 0;
+	MSG_SPLITSCREEN_REMOVEUSER = 1;
+}
+
+enum EQueryCvarValueStatus {
+	eQueryCvarValueStatus_ValueIntact = 0;
+	eQueryCvarValueStatus_CvarNotFound = 1;
+	eQueryCvarValueStatus_NotACvar = 2;
+	eQueryCvarValueStatus_CvarProtected = 3;
+}
+
+enum DIALOG_TYPE {
+	DIALOG_MSG = 0;
+	DIALOG_MENU = 1;
+	DIALOG_TEXT = 2;
+	DIALOG_ENTRY = 3;
+	DIALOG_ASKCONNECT = 4;
+}
+
+enum SVC_Messages_LowFrequency {
+	svc_dummy = 600;
+}
+
+enum Bidirectional_Messages {
+	bi_RebroadcastGameEvent = 16;
+	bi_RebroadcastSource = 17;
+	bi_GameEvent = 18;
+}
+
+enum Bidirectional_Messages_LowFrequency {
+	bi_RelayInfo = 700;
+	bi_RelayPacket = 701;
+}
+
+message CCLCMsg_ClientInfo {
 	optional fixed32 send_table_crc = 1;
 	optional uint32 server_count = 2;
 	optional bool is_hltv = 3;
@@ -101,51 +111,44 @@ message CCLCMsg_ClientInfo
 	repeated fixed32 custom_files = 7;
 }
 
-message CCLCMsg_Move
-{
-	optional uint32 num_backup_commands = 1;		// new commands = user_cmds_size() - num_backup_commands
+message CCLCMsg_Move {
+	optional uint32 num_backup_commands = 1;
 	optional uint32 num_new_commands = 2;
 	optional bytes data = 3;
 }
 
-enum VoiceDataFormat_t
-{
-	VOICEDATA_FORMAT_STEAM = 0;
-	VOICEDATA_FORMAT_ENGINE = 1;
-}
-
-message CCLCMsg_VoiceData
-{
-	optional bytes data = 1;
-	optional fixed64 xuid = 2;
-	optional VoiceDataFormat_t format = 3 [default = VOICEDATA_FORMAT_STEAM];
-	optional int32 sequence_bytes = 4;
-	optional uint32 section_number = 5;
+message CMsgVoiceAudio {
+	optional .VoiceDataFormat_t format = 1 [default = VOICEDATA_FORMAT_STEAM];
+	optional bytes voice_data = 2;
+	optional int32 sequence_bytes = 3;
+	optional uint32 section_number = 4;
+	optional uint32 sample_rate = 5;
 	optional uint32 uncompressed_sample_offset = 6;
-	optional uint32 tick = 7;
 }
 
-message CCLCMsg_BaselineAck
-{
+message CCLCMsg_VoiceData {
+	optional .CMsgVoiceAudio audio = 1;
+	optional fixed64 xuid = 2;
+	optional uint32 tick = 3;
+}
+
+message CCLCMsg_BaselineAck {
 	optional int32 baseline_tick = 1;
 	optional int32 baseline_nr = 2;
 }
 
-message CCLCMsg_ListenEvents
-{
+message CCLCMsg_ListenEvents {
 	repeated fixed32 event_mask = 1;
 }
 
-message CCLCMsg_RespondCvarValue
-{
-	optional int32 cookie = 1;			// QueryCvarCookie_t
-	optional int32 status_code = 2;		// EQueryCvarValueStatus
+message CCLCMsg_RespondCvarValue {
+	optional int32 cookie = 1;
+	optional int32 status_code = 2;
 	optional string name = 3;
 	optional string value = 4;
 }
 
-message CCLCMsg_FileCRCCheck
-{
+message CCLCMsg_FileCRCCheck {
 	optional int32 code_path = 1;
 	optional string path = 2;
 	optional int32 code_filename = 3;
@@ -153,291 +156,350 @@ message CCLCMsg_FileCRCCheck
 	optional fixed32 crc = 5;
 }
 
-message CCLCMsg_LoadingProgress
-{
+message CCLCMsg_LoadingProgress {
 	optional int32 progress = 1;
 }
 
-message CCLCMsg_SplitPlayerConnect
-{
-	optional CMsg_CVars convars = 1;
+message CCLCMsg_SplitPlayerConnect {
+	optional string playername = 1;
 }
 
-message CCLCMsg_ClientMessage
-{
+message CCLCMsg_ClientMessage {
 	optional int32 msg_type = 1;
 	optional bytes data = 2;
 }
 
-//=============================================================================
-// Server messages
-//=============================================================================
-
-enum SVC_Messages
-{
-	svc_ServerInfo 			= 8;		// first message from server about game; map etc
-	svc_SendTable 			= 9;		// sends a sendtable description for a game class
-	svc_ClassInfo 			= 10;		// Info about classes (first byte is a CLASSINFO_ define).							
-	svc_SetPause 			= 11;		// tells client if server paused or unpaused
-	svc_CreateStringTable 	= 12;		// inits shared string tables
-	svc_UpdateStringTable 	= 13;		// updates a string table
-	svc_VoiceInit 			= 14;		// inits used voice codecs & quality
-	svc_VoiceData 			= 15;		// Voicestream data from the server
-	svc_Print 				= 16;		// print text to console
-	svc_Sounds 				= 17;		// starts playing sound
-	svc_SetView 			= 18;		// sets entity as point of view
-	svc_FixAngle 			= 19;		// sets/corrects players viewangle
-	svc_CrosshairAngle 		= 20;		// adjusts crosshair in auto aim mode to lock on traget
-	svc_BSPDecal 			= 21;		// add a static decal to the world BSP
-	svc_SplitScreen 		= 22;		// split screen style message
-	svc_UserMessage 		= 23;		// a game specific message 
-	svc_EntityMessage 		= 24;		// a message for an entity
-	svc_GameEvent 			= 25;		// global game event fired
-	svc_PacketEntities 		= 26;		// non-delta compressed entities
-	svc_TempEntities 		= 27;		// non-reliable event object
-	svc_Prefetch 			= 28;		// only sound indices for now
-	svc_Menu 				= 29;		// display a menu from a plugin
-	svc_GameEventList 		= 30;		// list of known games events and fields
-	svc_GetCvarValue 		= 31;		// Server wants to know the value of a cvar on the client
-	svc_PacketReliable = 32;
-	svc_FullFrameSplit = 33;
+message CCLCMsg_SplitPlayerDisconnect {
+	optional int32 slot = 1;
 }
 
-message CSVCMsg_ServerInfo
-{
-	optional int32 protocol = 1;			// protocol version
-	optional int32 server_count = 2;		// number of changelevels since server start
-	optional bool is_dedicated = 3;  		// dedicated server ?	
-	optional bool is_hltv = 4;				// HLTV server ?
-	optional bool is_replay = 5;			// Replay server ?
-	optional int32 c_os = 6;				// L = linux, W = Win32
-	optional fixed32 map_crc = 7;			// server map CRC
-	optional fixed32 client_crc = 8;		// client.dll CRC server is using
-	optional fixed32 string_table_crc = 9;	// string table CRC server is using
-	optional int32 max_clients = 10;		// max number of clients on server
-	optional int32 max_classes = 11;		// max number of server classes
-	optional int32 player_slot = 12;		// our client slot number
-	optional float tick_interval = 13;		// server tick interval
-	optional string game_dir = 14;			// game directory eg "tf2"
-	optional string map_name = 15;			// name of current map 
-	optional string sky_name = 16;			// name of current skybox 
-	optional string host_name = 17;			// server name
+message CCLCMsg_ServerStatus {
+	optional bool simplified = 1;
+}
+
+message CCLCMsg_ServerPing {
+}
+
+message CCLCMsg_RequestPause {
+	optional .RequestPause_t pause_type = 1 [default = RP_PAUSE];
+	optional int32 pause_group = 2;
+}
+
+message CCLCMsg_CmdKeyValues {
+	optional bytes data = 1;
+}
+
+message CSVCMsg_ServerInfo {
+	optional int32 protocol = 1;
+	optional int32 server_count = 2;
+	optional bool is_dedicated = 3;
+	optional bool is_hltv = 4;
+	optional bool is_replay = 5;
+	optional int32 c_os = 6;
+	optional fixed32 map_crc = 7;
+	optional fixed32 client_crc = 8;
+	optional fixed32 string_table_crc = 9;
+	optional int32 max_clients = 10;
+	optional int32 max_classes = 11;
+	optional int32 player_slot = 12;
+	optional float tick_interval = 13;
+	optional string game_dir = 14;
+	optional string map_name = 15;
+	optional string sky_name = 16;
+	optional string host_name = 17;
 	optional string addon_name = 18;
+	optional .CSVCMsg_GameSessionConfiguration game_session_config = 19;
+	optional bytes game_session_manifest = 20;
 }
 
-message CSVCMsg_ClassInfo
-{
-	message class_t
-	{
+message CSVCMsg_ClassInfo {
+	message class_t {
 		optional int32 class_id = 1;
 		optional string data_table_name = 2;
 		optional string class_name = 3;
 	}
 
 	optional bool create_on_client = 1;
-	repeated class_t classes = 2;
+	repeated .CSVCMsg_ClassInfo.class_t classes = 2;
 }
 
-message CSVCMsg_SetPause
-{
+message CSVCMsg_SetPause {
 	optional bool paused = 1;
 }
 
-message CSVCMsg_VoiceInit
-{
+message CSVCMsg_VoiceInit {
 	optional int32 quality = 1;
 	optional string codec = 2;
 	optional int32 version = 3 [default = 0];
 }
 
-message CSVCMsg_Print
-{
+message CSVCMsg_Print {
 	optional string text = 1;
 }
 
-message CSVCMsg_Sounds
-{
-	message sounddata_t
-	{
-		optional sint32			origin_x = 1;
-		optional sint32			origin_y = 2;
-		optional sint32			origin_z = 3;
-		optional uint32			volume = 4;
-		optional float			delay_value = 5;
-		optional int32			sequence_number = 6;
-		optional int32			entity_index = 7;
-		optional int32			channel = 8;
-		optional int32			pitch = 9;
-		optional int32			flags = 10;
-		optional uint32 		sound_num = 11;
-		optional fixed32		sound_num_handle = 12;
-		optional int32			speaker_entity = 13;
-		optional int32			random_seed = 14;
-		optional int32			sound_level = 15; // soundlevel_t
-		optional bool			is_sentence = 16;
-		optional bool			is_ambient = 17;
-	};
+message CSVCMsg_Sounds {
+	message sounddata_t {
+		optional sint32 origin_x = 1;
+		optional sint32 origin_y = 2;
+		optional sint32 origin_z = 3;
+		optional uint32 volume = 4;
+		optional float delay_value = 5;
+		optional int32 sequence_number = 6;
+		optional int32 entity_index = 7;
+		optional int32 channel = 8;
+		optional int32 pitch = 9;
+		optional int32 flags = 10;
+		optional uint32 sound_num = 11;
+		optional fixed32 sound_num_handle = 12;
+		optional int32 speaker_entity = 13;
+		optional int32 random_seed = 14;
+		optional int32 sound_level = 15;
+		optional bool is_sentence = 16;
+		optional bool is_ambient = 17;
+		optional uint32 guid = 18;
+		optional fixed64 sound_resource_id = 19;
+	}
 
 	optional bool reliable_sound = 1;
-	repeated sounddata_t sounds = 2;
+	repeated .CSVCMsg_Sounds.sounddata_t sounds = 2;
 }
 
-message CSVCMsg_Prefetch
-{
+message CSVCMsg_Prefetch {
 	optional int32 sound_index = 1;
+	optional .PrefetchType resource_type = 2 [default = PFT_SOUND];
 }
 
-message CSVCMsg_SetView
-{
+message CSVCMsg_SetView {
 	optional int32 entity_index = 1;
+	optional int32 slot = 2;
 }
 
-message CSVCMsg_FixAngle
-{
+message CSVCMsg_FixAngle {
 	optional bool relative = 1;
-	optional CMsgQAngle angle = 2;
+	optional .CMsgQAngle angle = 2;
 }
 
-message CSVCMsg_CrosshairAngle
-{
-	optional CMsgQAngle angle = 1;
+message CSVCMsg_CrosshairAngle {
+	optional .CMsgQAngle angle = 1;
 }
 
-message CSVCMsg_BSPDecal
-{
-	optional CMsgVector pos = 1;
+message CSVCMsg_BSPDecal {
+	optional .CMsgVector pos = 1;
 	optional int32 decal_texture_index = 2;
 	optional int32 entity_index = 3;
 	optional int32 model_index = 4;
 	optional bool low_priority = 5;
 }
 
-enum ESplitScreenMessageType 
-{
-	MSG_SPLITSCREEN_ADDUSER = 0;
-	MSG_SPLITSCREEN_REMOVEUSER = 1;
-};
-
-message CSVCMsg_SplitScreen
-{
-	optional ESplitScreenMessageType type = 1 [default = MSG_SPLITSCREEN_ADDUSER];
+message CSVCMsg_SplitScreen {
+	optional .ESplitScreenMessageType type = 1 [default = MSG_SPLITSCREEN_ADDUSER];
 	optional int32 slot = 2;
 	optional int32 player_index = 3;
 }
 
-message CSVCMsg_GetCvarValue
-{
-	optional int32 cookie = 1;		// QueryCvarCookie_t
+message CSVCMsg_GetCvarValue {
+	optional int32 cookie = 1;
 	optional string cvar_name = 2;
 }
 
-message CSVCMsg_Menu
-{
-	optional int32 dialog_type = 1;		// DIALOG_TYPE
-	optional bytes menu_key_values = 2; // KeyValues.WriteAsBinary()
+message CSVCMsg_Menu {
+	optional int32 dialog_type = 1;
+	optional bytes menu_key_values = 2;
 }
 
-message CSVCMsg_SendTable
-{
-	message sendprop_t
-	{
-		optional int32 type = 1;				// SendPropType
+message CSVCMsg_SendTable {
+	message sendprop_t {
+		optional int32 type = 1;
 		optional string var_name = 2;
 		optional int32 flags = 3;
 		optional int32 priority = 4;
-		optional string dt_name = 5;			// if pProp->m_Type == DPT_DataTable || IsExcludeProp
-		optional int32 num_elements = 6;		// else if pProp->m_Type == DPT_Array
-		optional float low_value = 7;			// else ...
-		optional float high_value = 8;			// 		...
-		optional int32 num_bits = 9;			//		...
-	};
+		optional string dt_name = 5;
+		optional int32 num_elements = 6;
+		optional float low_value = 7;
+		optional float high_value = 8;
+		optional int32 num_bits = 9;
+	}
 
 	optional bool is_end = 1;
 	optional string net_table_name = 2;
 	optional bool needs_decoder = 3;
-	repeated sendprop_t props = 4;
+	repeated .CSVCMsg_SendTable.sendprop_t props = 4;
 }
 
-message CSVCMsg_GameEventList
-{
-	message key_t
-	{
+message CSVCMsg_GameEventList {
+	message key_t {
 		optional int32 type = 1;
 		optional string name = 2;
-	};
+	}
 
-	message descriptor_t
-	{
+	message descriptor_t {
 		optional int32 eventid = 1;
 		optional string name = 2;
-		repeated key_t keys = 3;
-	};
+		repeated .CSVCMsg_GameEventList.key_t keys = 3;
+	}
 
-	repeated descriptor_t descriptors = 1;
+	repeated .CSVCMsg_GameEventList.descriptor_t descriptors = 1;
 }
 
-message CSVCMsg_PacketEntities
-{
+message CSVCMsg_PacketEntities {
 	optional int32 max_entries = 1;
 	optional int32 updated_entries = 2;
-	optional bool is_delta = 3;	
+	optional bool is_delta = 3;
 	optional bool update_baseline = 4;
 	optional int32 baseline = 5;
 	optional int32 delta_from = 6;
 	optional bytes entity_data = 7;
 	optional bool pending_full_frame = 8;
+	optional uint32 active_spawngroup_handle = 9;
+	optional uint32 max_spawngroup_creationsequence = 10;
 }
 
-message CSVCMsg_TempEntities
-{
+message CSVCMsg_TempEntities {
 	optional bool reliable = 1;
 	optional int32 num_entries = 2;
 	optional bytes entity_data = 3;
 }
 
-message CSVCMsg_CreateStringTable
-{
+message CSVCMsg_CreateStringTable {
 	optional string name = 1;
-	optional int32 max_entries = 2;
-	optional int32 num_entries = 3;
-	optional bool user_data_fixed_size = 4;
-	optional int32 user_data_size = 5;
-	optional int32 user_data_size_bits = 6;
-	optional int32 flags = 7;
-	optional bytes string_data = 8;
+	optional int32 num_entries = 2;
+	optional bool user_data_fixed_size = 3;
+	optional int32 user_data_size = 4;
+	optional int32 user_data_size_bits = 5;
+	optional int32 flags = 6;
+	optional bytes string_data = 7;
+	optional int32 uncompressed_size = 8;
+	optional bool data_compressed = 9;
 }
 
-message CSVCMsg_UpdateStringTable
-{
+message CSVCMsg_UpdateStringTable {
 	optional int32 table_id = 1;
 	optional int32 num_changed_entries = 2;
 	optional bytes string_data = 3;
 }
 
-message CSVCMsg_VoiceData
-{
-	optional int32 client = 1;
-	optional bool proximity = 2;
-	optional fixed64 xuid = 3;
-	optional int32 audible_mask = 4; 
-	optional bytes voice_data = 5;
-	optional VoiceDataFormat_t format = 6 [default = VOICEDATA_FORMAT_STEAM];
-	optional int32 sequence_bytes = 7;
-	optional uint32 section_number = 8;
-	optional uint32 uncompressed_sample_offset = 9;
-	optional uint32 tick = 10;
+message CSVCMsg_VoiceData {
+	optional .CMsgVoiceAudio audio = 1;
+	optional int32 client = 2;
+	optional bool proximity = 3;
+	optional fixed64 xuid = 4;
+	optional int32 audible_mask = 5;
+	optional uint32 tick = 6;
 }
 
-message CSVCMsg_PacketReliable
-{
+message CSVCMsg_PacketReliable {
 	optional int32 tick = 1;
 	optional int32 messagessize = 2;
+	optional bool state = 3;
 }
 
-message CSVCMsg_FullFrameSplit
-{
+message CSVCMsg_FullFrameSplit {
 	optional int32 tick = 1;
 	optional int32 section = 2;
 	optional int32 total = 3;
 	optional bytes data = 4;
 }
+
+message CSVCMsg_CmdKeyValues {
+	optional bytes data = 1;
+}
+
+message CMsgIPCAddress {
+	optional fixed64 computer_guid = 1;
+	optional uint32 process_id = 2;
+}
+
+message CMsgServerPeer {
+	optional int32 player_slot = 1;
+	optional fixed64 steamid = 2;
+	optional .CMsgIPCAddress ipc = 3;
+	optional bool they_hear_you = 4;
+	optional bool you_hear_them = 5;
+	optional bool is_listenserver_host = 6;
+}
+
+message CSVCMsg_PeerList {
+	repeated .CMsgServerPeer peer = 1;
+}
+
+message CSVCMsg_ClearAllStringTables {
+	optional string mapname = 1;
+	optional uint32 map_crc = 2;
+}
+
+message ProtoFlattenedSerializerField_t {
+	optional int32 var_type_sym = 1;
+	optional int32 var_name_sym = 2;
+	optional int32 bit_count = 3;
+	optional float low_value = 4;
+	optional float high_value = 5;
+	optional int32 encode_flags = 6;
+	optional int32 field_serializer_name_sym = 7;
+	optional int32 field_serializer_version = 8;
+	optional int32 send_node_sym = 9;
+}
+
+message ProtoFlattenedSerializer_t {
+	optional int32 serializer_name_sym = 1;
+	optional int32 serializer_version = 2;
+	repeated int32 fields_index = 3;
+}
+
+message CSVCMsg_FlattenedSerializer {
+	repeated .ProtoFlattenedSerializer_t serializers = 1;
+	repeated string symbols = 2;
+	repeated .ProtoFlattenedSerializerField_t fields = 3;
+}
+
+message CSVCMsg_StopSound {
+	optional fixed32 guid = 1;
+}
+
+message CBidirMsg_RebroadcastGameEvent {
+	optional bool posttoserver = 1;
+	optional int32 buftype = 2;
+	optional uint32 clientbitcount = 3;
+	optional uint64 receivingclients = 4;
+}
+
+message CBidirMsg_RebroadcastSource {
+	optional int32 eventsource = 1;
+}
+
+message SerializedNetAddress_t {
+	required bytes serializedAddress = 1;
+}
+
+message CBidirMsg_RelayInfo {
+	enum Operation_t {
+		RIO_REQUEST_RELAY = 0;
+		RIO_WILL_RELAY = 1;
+		RIO_NO_ROUTE = 2;
+		RIO_REJECT_RELAY = 3;
+		RIO_ESTABLISH_CONNECTION = 4;
+	}
+
+	required .CBidirMsg_RelayInfo.Operation_t operation = 1 [default = RIO_REQUEST_RELAY];
+	optional .SerializedNetAddress_t serializedTargetAddress = 2;
+	optional uint32 additionalHops = 3;
+}
+
+message SignedPayload_t {
+	required bytes payloadData = 1;
+	required uint32 signature = 2;
+	required bool bPayloadEncrypted = 3;
+}
+
+message CBidirMsg_RelayPacket {
+	message SignedDestinationAddress_t {
+		required .SerializedNetAddress_t serializedAddr = 1;
+		required uint32 signature = 2;
+		optional bytes encryptedPayloadKey = 3;
+	}
+
+	required uint32 prevhopcount = 1;
+	required .SerializedNetAddress_t originalSender = 2;
+	required .SignedPayload_t signedPayload = 3;
+	repeated .CBidirMsg_RelayPacket.SignedDestinationAddress_t recipientList = 4;
+}
+
