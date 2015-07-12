@@ -27,6 +27,17 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/memdbgon.h>
 
+template<typename T>
+T *KVStringAlloc(size_t nLength)
+{
+	return reinterpret_cast<T*>(MemAlloc_Alloc(sizeof(T) * nLength));
+}
+
+void KVStringDelete(void* pMem)
+{
+	MemAlloc_Free(pMem);
+}
+
 static const char * s_LastFileLoadingFrom = "unknown"; // just needed for error messages
 
 #define KEYVALUES_TOKEN_SIZE	1024
@@ -323,9 +334,9 @@ void KeyValues::RemoveEverything()
 		delete dat;
 	}
 
-	delete [] m_sValue;
+	KVStringDelete(m_sValue);
 	m_sValue = NULL;
-	delete [] m_wsValue;
+	KVStringDelete(m_wsValue);
 	m_wsValue = NULL;
 }
 
@@ -1280,9 +1291,9 @@ void KeyValues::SetColor( const char *keyName, Color value)
 void KeyValues::SetStringValue( char const *strValue )
 {
 	// delete the old value
-	delete [] m_sValue;
+	KVStringDelete(m_sValue);
 	// make sure we're not storing the WSTRING  - as we're converting over to STRING
-	delete [] m_wsValue;
+	KVStringDelete(m_wsValue);
 	m_wsValue = NULL;
 
 	if (!strValue)
@@ -1293,7 +1304,7 @@ void KeyValues::SetStringValue( char const *strValue )
 
 	// allocate memory for the new value and copy it in
 	int len = Q_strlen( strValue );
-	m_sValue = new char[len + 1];
+	m_sValue = KVStringAlloc<char>(len + 1);
 	Q_memcpy( m_sValue, strValue, len+1 );
 
 	m_iDataType = TYPE_STRING;
@@ -1309,9 +1320,9 @@ void KeyValues::SetString( const char *keyName, const char *value )
 	if ( dat )
 	{
 		// delete the old value
-		delete [] dat->m_sValue;
+		KVStringDelete(dat->m_sValue);
 		// make sure we're not storing the WSTRING  - as we're converting over to STRING
-		delete [] dat->m_wsValue;
+		KVStringDelete(dat->m_wsValue);
 		dat->m_wsValue = NULL;
 
 		if (!value)
@@ -1322,7 +1333,7 @@ void KeyValues::SetString( const char *keyName, const char *value )
 
 		// allocate memory for the new value and copy it in
 		int len = Q_strlen( value );
-		dat->m_sValue = new char[len + 1];
+		dat->m_sValue = KVStringAlloc<char>(len + 1);
 		Q_memcpy( dat->m_sValue, value, len+1 );
 
 		dat->m_iDataType = TYPE_STRING;
@@ -1338,9 +1349,9 @@ void KeyValues::SetWString( const char *keyName, const wchar_t *value )
 	if ( dat )
 	{
 		// delete the old value
-		delete [] dat->m_wsValue;
+		KVStringDelete(dat->m_wsValue);
 		// make sure we're not storing the STRING  - as we're converting over to WSTRING
-		delete [] dat->m_sValue;
+		KVStringDelete(dat->m_sValue);
 		dat->m_sValue = NULL;
 
 		if (!value)
@@ -1351,7 +1362,7 @@ void KeyValues::SetWString( const char *keyName, const wchar_t *value )
 
 		// allocate memory for the new value and copy it in
 		int len = wcslen( value );
-		dat->m_wsValue = new wchar_t[len + 1];
+		dat->m_wsValue = KVStringAlloc<wchar_t>(len + 1);
 		Q_memcpy( dat->m_wsValue, value, (len+1) * sizeof(wchar_t) );
 
 		dat->m_iDataType = TYPE_WSTRING;
@@ -1382,12 +1393,12 @@ void KeyValues::SetUint64( const char *keyName, uint64 value )
 	if ( dat )
 	{
 		// delete the old value
-		delete [] dat->m_sValue;
+		KVStringDelete(dat->m_sValue);
 		// make sure we're not storing the WSTRING  - as we're converting over to STRING
-		delete [] dat->m_wsValue;
+		KVStringDelete(dat->m_wsValue);
 		dat->m_wsValue = NULL;
 
-		dat->m_sValue = new char[sizeof(uint64)];
+		dat->m_sValue = KVStringAlloc<char>(sizeof(uint64));
 		*((uint64 *)dat->m_sValue) = value;
 		dat->m_iDataType = TYPE_UINT64;
 	}
@@ -1444,7 +1455,7 @@ void KeyValues::RecursiveCopyKeyValues( KeyValues& src )
 			if( src.m_sValue )
 			{
 				int len = Q_strlen(src.m_sValue) + 1;
-				m_sValue = new char[len];
+				m_sValue = KVStringAlloc<char>(len);
 				Q_strncpy( m_sValue, src.m_sValue, len );
 			}
 			break;
@@ -1453,7 +1464,7 @@ void KeyValues::RecursiveCopyKeyValues( KeyValues& src )
 				m_iValue = src.m_iValue;
 				Q_snprintf( buf,sizeof(buf), "%d", m_iValue );
 				int len = Q_strlen(buf) + 1;
-				m_sValue = new char[len];
+				m_sValue = KVStringAlloc<char>(len);
 				Q_strncpy( m_sValue, buf, len  );
 			}
 			break;
@@ -1462,7 +1473,7 @@ void KeyValues::RecursiveCopyKeyValues( KeyValues& src )
 				m_flValue = src.m_flValue;
 				Q_snprintf( buf,sizeof(buf), "%f", m_flValue );
 				int len = Q_strlen(buf) + 1;
-				m_sValue = new char[len];
+				m_sValue = KVStringAlloc<char>(len);
 				Q_strncpy( m_sValue, buf, len );
 			}
 			break;
@@ -1473,7 +1484,7 @@ void KeyValues::RecursiveCopyKeyValues( KeyValues& src )
 			break;
 		case TYPE_UINT64:
 			{
-				m_sValue = new char[sizeof(uint64)];
+				m_sValue = KVStringAlloc<char>(sizeof(uint64));
 				Q_memcpy( m_sValue, src.m_sValue, sizeof(uint64) );
 			}
 			break;
@@ -1584,7 +1595,7 @@ KeyValues *KeyValues::MakeCopy( void ) const
 			{
 				int len = Q_strlen( m_sValue );
 				Assert( !newKeyValue->m_sValue );
-				newKeyValue->m_sValue = new char[len + 1];
+				newKeyValue->m_sValue = KVStringAlloc<char>(len + 1);
 				Q_memcpy( newKeyValue->m_sValue, m_sValue, len+1 );
 			}
 		}
@@ -1594,7 +1605,7 @@ KeyValues *KeyValues::MakeCopy( void ) const
 			if ( m_wsValue )
 			{
 				int len = wcslen( m_wsValue );
-				newKeyValue->m_wsValue = new wchar_t[len+1];
+				newKeyValue->m_wsValue = KVStringAlloc<wchar_t>(len + 1);
 				Q_memcpy( newKeyValue->m_wsValue, m_wsValue, (len+1)*sizeof(wchar_t));
 			}
 		}
@@ -1620,7 +1631,7 @@ KeyValues *KeyValues::MakeCopy( void ) const
 		break;
 
 	case TYPE_UINT64:
-		newKeyValue->m_sValue = new char[sizeof(uint64)];
+		newKeyValue->m_sValue = KVStringAlloc<char>(sizeof(uint64));
 		Q_memcpy( newKeyValue->m_sValue, m_sValue, sizeof(uint64) );
 		break;
 	};
@@ -2062,7 +2073,7 @@ void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &b
 			
 			if (dat->m_sValue)
 			{
-				delete[] dat->m_sValue;
+				KVStringDelete(dat->m_sValue);
 				dat->m_sValue = NULL;
 			}
 
@@ -2094,7 +2105,7 @@ void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &b
 							digit -= 'A' - ( '9' + 1 );
 					retVal = ( retVal * 16 ) + ( digit - '0' );
 				}
-				dat->m_sValue = new char[sizeof(uint64)];
+				dat->m_sValue = KVStringAlloc<char>(sizeof(uint64));
 				*((uint64 *)dat->m_sValue) = retVal;
 				dat->m_iDataType = TYPE_UINT64;
 			}
@@ -2116,7 +2127,7 @@ void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &b
 			if (dat->m_iDataType == TYPE_STRING)
 			{
 				// copy in the string information
-				dat->m_sValue = new char[len+1];
+				dat->m_sValue = KVStringAlloc<char>(len + 1);
 				Q_memcpy( dat->m_sValue, value, len+1 );
 			}
 
@@ -2274,7 +2285,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 				token[KEYVALUES_TOKEN_SIZE-1] = 0;
 
 				int len = Q_strlen( token );
-				dat->m_sValue = new char[len + 1];
+				dat->m_sValue = KVStringAlloc<char>(len + 1);
 				Q_memcpy( dat->m_sValue, token, len+1 );
 								
 				break;
@@ -2293,7 +2304,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 
 		case TYPE_UINT64:
 			{
-				dat->m_sValue = new char[sizeof(uint64)];
+				dat->m_sValue = KVStringAlloc<char>(sizeof(uint64));
 				*((double *)dat->m_sValue) = buffer.GetDouble();
 			}
 
