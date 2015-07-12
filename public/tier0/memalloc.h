@@ -128,6 +128,24 @@ MEM_INTERFACE IMemAlloc *g_pMemAlloc;
 
 //-----------------------------------------------------------------------------
 
+inline void *MemAlloc_Alloc( size_t nSize )
+{ 
+	return g_pMemAlloc->Alloc( nSize );
+}
+
+inline void *MemAlloc_Alloc( size_t nSize, const char *pFileName, int nLine )
+{ 
+	return g_pMemAlloc->Alloc( nSize, pFileName, nLine );
+}
+inline void MemAlloc_Free( void *ptr )
+{
+	g_pMemAlloc->Free( ptr );
+}
+inline void MemAlloc_Free( void *ptr, const char *pFileName, int nLine )
+{
+	g_pMemAlloc->Free( ptr, pFileName, nLine );
+}
+
 inline void *MemAlloc_AllocAligned( size_t size, size_t align )
 {
 	unsigned char *pAlloc, *pResult;
