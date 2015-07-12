@@ -176,6 +176,7 @@ public:
 	short			GetShort( );
 	unsigned short	GetUnsignedShort( );
 	int				GetInt( );
+	int64			GetInt64( );
 	int				GetIntHex( );
 	unsigned int	GetUnsignedInt( );
 	float			GetFloat( );
@@ -249,6 +250,7 @@ public:
 	void			PutShort( short s );
 	void			PutUnsignedShort( unsigned short us );
 	void			PutInt( int i );
+	void			PutInt64( int64 i );
 	void			PutUnsignedInt( unsigned int u );
 	void			PutFloat( float f );
 	void			PutDouble( double d );
@@ -700,6 +702,13 @@ inline int CUtlBuffer::GetInt( )
 	return i;
 }
 
+inline int64 CUtlBuffer::GetInt64( )
+{
+	int64 i;
+	GetType( i, "%lld" );
+	return i;
+}
+
 inline int CUtlBuffer::GetIntHex( )
 {
 	int i;
@@ -918,6 +927,11 @@ inline void CUtlBuffer::PutUnsignedShort( unsigned short s )
 inline void CUtlBuffer::PutInt( int i )
 {
 	PutType( i, "%d" );
+}
+
+inline void CUtlBuffer::PutInt64( int64 i )
+{
+	PutType( i, "%llu" );
 }
 
 inline void CUtlBuffer::PutUnsignedInt( unsigned int u )

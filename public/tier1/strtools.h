@@ -110,6 +110,8 @@ int			V_strcasecmp (const char *s1, const char *s2);
 int			V_strncasecmp (const char *s1, const char *s2, int n);
 int			V_strnicmp (const char *s1, const char *s2, int n);
 int			V_atoi (const char *str);
+int64 		V_atoi64(const char *str);
+uint64 		V_atoui64(const char *str);
 float		V_atof (const char *str);
 char*		V_stristr( char* pStr, const char* pSearch );
 const char*	V_stristr( const char* pStr, const char* pSearch );
@@ -409,6 +411,8 @@ bool V_GenerateUniqueName( char *name, int memsize, const char *prefix, const Na
 #define	Q_strncasecmp			V_strncasecmp
 #define	Q_strnicmp				V_strnicmp
 #define	Q_atoi					V_atoi
+#define	Q_atoi64				V_atoi64
+#define Q_atoui64				V_atoui64
 #define	Q_atof					V_atof
 #define	Q_stristr				V_stristr
 #define	Q_strnistr				V_strnistr
