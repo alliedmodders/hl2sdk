@@ -623,7 +623,7 @@ public:
 		return m_pfnProxied == static_cast< CFunctorCallback0* >( pSrc )->m_pfnProxied; 
 	}
 	virtual const char *GetImplClassName() const { return "CFunctorCallback0"; }
-	virtual const void *GetTarget() const { return m_pfnProxied; }
+	virtual const void *GetTarget() const { return (const void *) m_pfnProxied; }
 private:
 	Callback_t m_pfnProxied; 
 };
