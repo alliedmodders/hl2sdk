@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -25,10 +25,20 @@
 #include "utlvector.h"
 #include "Color.h"
 
+#define FOR_EACH_SUBKEY( kvRoot, kvSubKey ) \
+	for ( KeyValues * kvSubKey = kvRoot->GetFirstSubKey(); kvSubKey != NULL; kvSubKey = kvSubKey->GetNextKey() )
+
+#define FOR_EACH_TRUE_SUBKEY( kvRoot, kvSubKey ) \
+	for ( KeyValues * kvSubKey = kvRoot->GetFirstTrueSubKey(); kvSubKey != NULL; kvSubKey = kvSubKey->GetNextTrueSubKey() )
+
+#define FOR_EACH_VALUE( kvRoot, kvValue ) \
+	for ( KeyValues * kvValue = kvRoot->GetFirstValue(); kvValue != NULL; kvValue = kvValue->GetNextValue() )
+
 class IBaseFileSystem;
 class CUtlBuffer;
 class Color;
 typedef void * FileHandle_t;
+class CKeyValuesGrowableStringTable;
 
 //-----------------------------------------------------------------------------
 // Purpose: Simple recursive data access class
@@ -39,7 +49,7 @@ typedef void * FileHandle_t;
 //	About KeyValues Text File Format:
 
 //	It has 3 control characters '{', '}' and '"'. Names and values may be quoted or
-//	not. The quote '"' charater must not be used within name or values, only for
+//	not. The quote '"' character must not be used within name or values, only for
 //	quoting whole tokens. You may use escape sequences wile parsing and add within a
 //	quoted token a \" to add quotes within your name or token. When using Escape
 //	Sequence the parser must now that by setting KeyValues::UsesEscapeSequences( true ),
@@ -49,11 +59,25 @@ typedef void * FileHandle_t;
 //  with a closing bracket '}'. Subkeys use the same definitions recursively.
 //  Whitespaces are space, return, newline and tabulator. Allowed Escape sequences
 //	are \n, \t, \\, \n and \". The number character '#' is used for macro purposes 
-//	(eg #include), don't use it as first charater in key names.
+//	(eg #include), don't use it as first character in key names.
 //-----------------------------------------------------------------------------
 class KeyValues
 {
 public:
+	//	By default, the KeyValues class uses a string table for the key names that is
+	//	limited to 4MB. The game will exit in error if this space is exhausted. In
+	//	general this is preferable for game code for performance and memory fragmentation
+	//	reasons.
+	//
+	//	If this is not acceptable, you can use this call to switch to a table that can grow
+	//	arbitrarily. This call must be made before any KeyValues objects are allocated or it
+	//	will result in undefined behavior. If you use the growable string table, you cannot
+	//	share KeyValues pointers directly with any other module. You can serialize them across
+	//	module boundaries. These limitations are acceptable in the Steam backend code 
+	//	this option was written for, but may not be in other situations. Make sure to
+	//	understand the implications before using this.
+	static void SetUseGrowableStringTable( bool bUseGrowableTable );
+
 	KeyValues( const char *setName );
 
 	//
@@ -68,8 +92,11 @@ public:
 	{
 	public:
 		explicit inline AutoDelete( KeyValues *pKeyValues ) : m_pKeyValues( pKeyValues ) {}
+		explicit inline AutoDelete( const char *pchKVName ) : m_pKeyValues( new KeyValues( pchKVName ) ) {}
 		inline ~AutoDelete( void ) { if( m_pKeyValues ) m_pKeyValues->deleteThis(); }
 		inline void Assign( KeyValues *pKeyValues ) { m_pKeyValues = pKeyValues; }
+		KeyValues *operator->()	{ return m_pKeyValues; }
+		operator KeyValues *()	{ return m_pKeyValues; }
 	private:
 		AutoDelete( AutoDelete const &x ); // forbid
 		AutoDelete & operator= ( AutoDelete const &x ); // forbid
@@ -88,12 +115,13 @@ public:
 	void SetName( const char *setName);
 
 	// gets the name as a unique int
-	int GetNameSymbol() const;
+	int GetNameSymbol() const { return m_iKeyName; }
 
 	// File access. Set UsesEscapeSequences true, if resource file/buffer uses Escape Sequences (eg \n, \t)
 	void UsesEscapeSequences(bool state); // default false
+	void UsesConditionals(bool state); // default true
 	bool LoadFromFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID = NULL );
-	bool SaveToFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID = NULL);
+	bool SaveToFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID = NULL, bool sortKeys = false, bool bAllowEmptyString = false );
 
 	// Read from a buffer...  Note that the buffer must be null terminated
 	bool LoadFromBuffer( char const *resourceName, const char *pBuffer, IBaseFileSystem* pFileSystem = NULL, const char *pPathID = NULL );
@@ -114,9 +142,10 @@ public:
 	// NOTE: GetFirstSubKey/GetNextKey will iterate keys AND values. Use the functions 
 	// below if you want to iterate over just the keys or just the values.
 	//
-	KeyValues *GetFirstSubKey();	// returns the first subkey in the list
-	KeyValues *GetNextKey();		// returns the next subkey
+	KeyValues *GetFirstSubKey() { return m_pSub; }	// returns the first subkey in the list
+	KeyValues *GetNextKey() { return m_pPeer; }		// returns the next subkey
 	void SetNextKey( KeyValues * pDat);
+	KeyValues *FindLastSubKey();	// returns the LAST subkey in the list.  This requires a linked list iteration to find the key.  Returns NULL if we don't have any children
 
 	//
 	// These functions can be used to treat it like a true key/values tree instead of 
@@ -145,6 +174,7 @@ public:
 	const char *GetString( const char *keyName = NULL, const char *defaultValue = "" );
 	const wchar_t *GetWString( const char *keyName = NULL, const wchar_t *defaultValue = L"" );
 	void *GetPtr( const char *keyName = NULL, void *defaultValue = (void*)0 );
+	bool GetBool( const char *keyName = NULL, bool defaultValue = false, bool* optGotDefault = NULL );
 	Color GetColor( const char *keyName = NULL /* default value is all black */);
 	bool  IsEmpty(const char *keyName = NULL);
 
@@ -165,6 +195,7 @@ public:
 	void SetFloat( const char *keyName, float value );
 	void SetPtr( const char *keyName, void *value );
 	void SetColor( const char *keyName, Color value);
+	void SetBool( const char *keyName, bool value ) { SetInt( keyName, value ? 1 : 0 ); }
 
 	// Memory allocation (optimized)
 	void *operator new( size_t iAllocSize );
@@ -178,10 +209,10 @@ public:
 	// in the one we're chained to.
 	void ChainKeyValue( KeyValues* pChain );
 	
-	void RecursiveSaveToFile( CUtlBuffer& buf, int indentLevel );
+	void RecursiveSaveToFile( CUtlBuffer& buf, int indentLevel, bool sortKeys = false, bool bAllowEmptyString = false );
 
 	bool WriteAsBinary( CUtlBuffer &buffer );
-	bool ReadAsBinary( CUtlBuffer &buffer );
+	bool ReadAsBinary( CUtlBuffer &buffer, int nStackDepth = 0 );
 
 	// Allocate & create a new copy of the keys
 	KeyValues *MakeCopy( void ) const;
@@ -213,11 +244,17 @@ public:
 	void SetStringValue( char const *strValue );
 
 	// unpack a key values list into a structure
-	void UnpackIntoStructure( struct KeyValuesUnpackStructure const *pUnpackTable, void *pDest );
+	void UnpackIntoStructure( struct KeyValuesUnpackStructure const *pUnpackTable, void *pDest, size_t DestSizeInBytes );
 
 	// Process conditional keys for widescreen support.
 	bool ProcessResolutionKeys( const char *pResString );
+
+	// Dump keyvalues recursively into a dump context
+	bool Dump( class IKeyValuesDumpContext *pDump, int nIndentLevel = 0 );
 		
+	// Merge in another KeyValues, keeping "our" settings
+	void RecursiveMergeKeyValues( KeyValues *baseKV );
+
 private:
 	KeyValues( KeyValues& );	// prevent copy constructor being used
 
@@ -225,7 +262,14 @@ private:
 	~KeyValues();
 
 	KeyValues* CreateKey( const char *keyName );
-	
+
+	/// Create a child key, given that we know which child is currently the last child.
+	/// This avoids the O(N^2) behaviour when adding children in sequence to KV,
+	/// when CreateKey() wil have to re-locate the end of the list each time.  This happens,
+	/// for example, every time we load any KV file whatsoever.
+	KeyValues* CreateKeyUsingKnownLastChild( const char *keyName, KeyValues *pLastChild );
+	void AddSubkeyUsingKnownLastChild( KeyValues *pSubKey, KeyValues *pLastChild );
+
 	void RecursiveCopyKeyValues( KeyValues& src );
 	void RemoveEverything();
 //	void RecursiveSaveToFile( IBaseFileSystem *filesystem, CUtlBuffer &buffer, int indentLevel );
@@ -233,7 +277,8 @@ private:
 	
 	// NOTE: If both filesystem and pBuf are non-null, it'll save to both of them.
 	// If filesystem is null, it'll ignore f.
-	void RecursiveSaveToFile( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, int indentLevel );
+	void RecursiveSaveToFile( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, int indentLevel, bool sortKeys, bool bAllowEmptyString );
+	void SaveKeyToFile( KeyValues *dat, IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, int indentLevel, bool sortKeys, bool bAllowEmptyString );
 	void WriteConvertedString( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, const char *pszString );
 	
 	void RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &buf );
@@ -245,7 +290,6 @@ private:
 
 	// For handling #base "filename"
 	void MergeBaseKeys( CUtlVector< KeyValues * >& baseKeys );
-	void RecursiveMergeKeyValues( KeyValues *baseKV );
 
 	// NOTE: If both filesystem and pBuf are non-null, it'll save to both of them.
 	// If filesystem is null, it'll ignore f.
@@ -275,12 +319,35 @@ private:
 	
 	char	   m_iDataType;
 	char	   m_bHasEscapeSequences; // true, if while parsing this KeyValue, Escape Sequences are used (default false)
-	char	   unused[2];
+	char	   m_bEvaluateConditionals; // true, if while parsing this KeyValue, conditionals blocks are evaluated (default true)
+	char	   unused[1];
 
 	KeyValues *m_pPeer;	// pointer to next key in list
 	KeyValues *m_pSub;	// pointer to Start of a new sub key list
 	KeyValues *m_pChain;// Search here if it's not in our list
+
+private:
+	// Statics to implement the optional growable string table
+	// Function pointers that will determine which mode we are in
+	static int (*s_pfGetSymbolForString)( const char *name, bool bCreate );
+	static const char *(*s_pfGetStringForSymbol)( int symbol );
+	static CKeyValuesGrowableStringTable *s_pGrowableStringTable;
+
+public:
+	// Functions that invoke the default behavior
+	static int GetSymbolForStringClassic( const char *name, bool bCreate = true );
+	static const char *GetStringForSymbolClassic( int symbol );
+	
+	// Functions that use the growable string table
+	static int GetSymbolForStringGrowable( const char *name, bool bCreate = true );
+	static const char *GetStringForSymbolGrowable( int symbol );
+
+	// Functions to get external access to whichever of the above functions we're going to call.
+	static int CallGetSymbolForString( const char *name, bool bCreate = true ) { return s_pfGetSymbolForString( name, bCreate ); }
+	static const char *CallGetStringForSymbol( int symbol ) { return s_pfGetStringForSymbol( symbol ); }
 };
+
+typedef KeyValues::AutoDelete KeyValuesAD;
 
 enum KeyValuesUnpackDestinationTypes_t
 {
@@ -353,5 +420,58 @@ inline bool  KeyValues::IsEmpty( int keySymbol )
 }
 
 bool EvaluateConditional( const char *str );
+
+class CUtlSortVectorKeyValuesByName
+{
+public:
+	bool Less( const KeyValues* lhs, const KeyValues* rhs, void * )
+	{
+		return Q_stricmp( lhs->GetName(), rhs->GetName() ) < 0;
+	}
+};
+
+//
+// KeyValuesDumpContext and generic implementations
+//
+
+class IKeyValuesDumpContext
+{
+public:
+	virtual bool KvBeginKey( KeyValues *pKey, int nIndentLevel ) = 0;
+	virtual bool KvWriteValue( KeyValues *pValue, int nIndentLevel ) = 0;
+	virtual bool KvEndKey( KeyValues *pKey, int nIndentLevel ) = 0;
+};
+
+class IKeyValuesDumpContextAsText : public IKeyValuesDumpContext
+{
+public:
+	virtual bool KvBeginKey( KeyValues *pKey, int nIndentLevel );
+	virtual bool KvWriteValue( KeyValues *pValue, int nIndentLevel );
+	virtual bool KvEndKey( KeyValues *pKey, int nIndentLevel );
+
+public:
+	virtual bool KvWriteIndent( int nIndentLevel );
+	virtual bool KvWriteText( char const *szText ) = 0;
+};
+
+class CKeyValuesDumpContextAsDevMsg : public IKeyValuesDumpContextAsText
+{
+public:
+	// Overrides developer level to dump in DevMsg, zero to dump as Msg
+	CKeyValuesDumpContextAsDevMsg( int nDeveloperLevel = 1 ) : m_nDeveloperLevel( nDeveloperLevel ) {}
+
+public:
+	virtual bool KvBeginKey( KeyValues *pKey, int nIndentLevel );
+	virtual bool KvWriteText( char const *szText );
+
+protected:
+	int m_nDeveloperLevel;
+};
+
+inline bool KeyValuesDumpAsDevMsg( KeyValues *pKeyValues, int nIndentLevel = 0, int nDeveloperLevel = 1 )
+{
+	CKeyValuesDumpContextAsDevMsg ctx( nDeveloperLevel );
+	return pKeyValues->Dump( &ctx, nIndentLevel );
+}
 
 #endif // KEYVALUES_H
