@@ -316,13 +316,13 @@ const char *StringAfterPrefixCaseSensitive( const char *str, const char *prefix 
 }
 
 
-int V_atoi (const char *str)
+int64 V_atoi64( const char *str )
 {
 	AssertValidStringPtr( str );
 
-	int             val;
-	int             sign;
-	int             c;
+	int64             val;
+	int64             sign;
+	int64             c;
 	
 	Assert( str );
 	if (*str == '-')
@@ -377,6 +377,63 @@ int V_atoi (const char *str)
 	return 0;
 }
 
+uint64 V_atoui64( const char *str )
+{
+	AssertValidStringPtr( str );
+
+	uint64             val;
+	uint64             c;
+
+	Assert( str );
+
+	val = 0;
+
+	//
+	// check for hex
+	//
+	if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X') )
+	{
+		str += 2;
+		while (1)
+		{
+			c = *str++;
+			if (c >= '0' && c <= '9')
+				val = (val<<4) + c - '0';
+			else if (c >= 'a' && c <= 'f')
+				val = (val<<4) + c - 'a' + 10;
+			else if (c >= 'A' && c <= 'F')
+				val = (val<<4) + c - 'A' + 10;
+			else
+				return val;
+		}
+	}
+
+	//
+	// check for character
+	//
+	if (str[0] == '\'')
+	{
+		return str[1];
+	}
+
+	//
+	// assume decimal
+	//
+	while (1)
+	{
+		c = *str++;
+		if (c <'0' || c > '9')
+			return val;
+		val = val*10 + c - '0';
+	}
+
+	return 0;
+}
+
+int V_atoi( const char *str )
+{ 
+	return (int)V_atoi64( str );
+}
 
 float V_atof (const char *str)
 {

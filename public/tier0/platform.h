@@ -75,27 +75,58 @@
 
 #ifdef _WIN32
 	#define IsLinux() false
+	#define IsOSX() false
+	#define IsPosix() false
+	#ifndef PLATFORM_WINDOWS
+	#define PLATFORM_WINDOWS 1 // Windows PC or Xbox 360
+	#endif
 	#ifndef _X360
+		#define IsWindows() true
 		#define IsPC() true
 		#define IsConsole() false
 		#define IsX360() false
 		#define IsPS3() false
 		#define IS_WINDOWS_PC
-	#else
-        #ifndef _CONSOLE
-		#define _CONSOLE
+		#define PLATFORM_WINDOWS_PC 1 // Windows PC
+		#ifdef _WIN64
+			#define IsPlatformWindowsPC64() true
+			#define IsPlatformWindowsPC32() false
+			#define PLATFORM_WINDOWS_PC64 1
+		#else
+			#define IsPlatformWindowsPC64() false
+			#define IsPlatformWindowsPC32() true
+			#define PLATFORM_WINDOWS_PC32 1
 		#endif
+	#else
+		#define PLATFORM_X360 1
+		#ifndef _CONSOLE
+			#define _CONSOLE
+		#endif
+		#define IsWindows() false
 		#define IsPC() false
 		#define IsConsole() true
 		#define IsX360() true
 		#define IsPS3() false
 	#endif
-#elif defined(_LINUX) || defined(__APPLE__)
+#elif defined(POSIX)
 	#define IsPC() true
+	#define IsWindows() false
 	#define IsConsole() false
 	#define IsX360() false
 	#define IsPS3() false
-	#define IsLinux() true
+	#if defined( LINUX )
+		#define IsLinux() true
+	#else
+		#define IsLinux() false
+	#endif
+	
+	#if defined( OSX )
+		#define IsOSX() true
+	#else
+		#define IsOSX() false
+	#endif
+	
+	#define IsPosix() true
 #else
 	#error
 #endif
