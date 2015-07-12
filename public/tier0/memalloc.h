@@ -174,6 +174,14 @@ inline void *MemAlloc_Alloc( size_t nSize, const char *pFileName, int nLine )
 	return g_pMemAlloc->IndirectAlloc( nSize, pFileName, nLine );
 }
 #endif
+inline void MemAlloc_Free( void *ptr )
+{
+	g_pMemAlloc->Free( ptr );
+}
+inline void MemAlloc_Free( void *ptr, const char *pFileName, int nLine )
+{
+	g_pMemAlloc->Free( ptr, pFileName, nLine );
+}
 
 //-----------------------------------------------------------------------------
 
