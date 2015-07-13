@@ -37,26 +37,6 @@
 #define UTLMEMORY_TRACK_FREE()		((void)0)
 #endif
 
-#if defined(_LINUX) || defined(__APPLE__)
-inline void *_aligned_malloc( size_t size, size_t align )
-{
-	unsigned char *pAlloc, *pResult;
-
-	if (!IsPowerOfTwo(uint(align)))
-		return NULL;
-
-	align = (align > sizeof(void *) ? align : sizeof(void *)) - 1;
-
-	if ( (pAlloc = (unsigned char*)malloc( sizeof(void *) + align + size ) ) == (unsigned char*)NULL)
-		return NULL;
-
-	pResult = (unsigned char*)( (size_t)(pAlloc + sizeof(void *) + align ) & ~align );
-	((unsigned char**)(pResult))[-1] = pAlloc;
-
-	return (void *)pResult;
-}
-#endif
-
 
 //-----------------------------------------------------------------------------
 // The CUtlMemory class:
