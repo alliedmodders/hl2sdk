@@ -42,7 +42,7 @@ public:
 
 	virtual void FileSent(const char *fileName, unsigned int transferID, bool isReplayDemoFile) = 0;	// we sent a file
 	
-	virtual bool ChangeSplitscreenUser(int);
+	virtual bool ChangeSplitscreenUser(int) = 0;
 };
 
 #define PROCESS_NET_MESSAGE( name )	\
