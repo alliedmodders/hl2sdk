@@ -508,50 +508,18 @@ public:
 abstract_class ISource2ServerConfig : public IAppSystem
 {
 public:
-#if 0
-	virtual void	AllocateScratchRenderTargets( SwapChainHandle_t *, const RenderDeviceInfo_t &, RenderMultisampleType_t ) = 0;
-	
-	virtual int		GetDesiredRenderingPipeline( void ) = 0;
-	
-	virtual bool	InstantReplayShouldSkipMessage( /* EBaseEntityMessages */ int message ) const = 0;
-	virtual bool	InstantReplayShouldIgnoreMessage( /* EBaseEntityMessages */ int message ) const = 0;
-	
-	virtual const char *GetEncryptionKey() = 0;
-	
-	virtual CBaseEntity *FindProceduralEntity( const char *szClassname ) = 0;
-	
-	virtual void		SetupGameSessionConfiguration( KeyValues *pKV, GameSessionConfiguration_t *pConfig ) = 0;
-	virtual void		InitGameSession( const GameSessionConfiguration_t &config ) = 0;
-	virtual void		ShutdownGameSession( void ) = 0;
-	
-	virtual const char *GetModName( void ) = 0;
-	
-	virtual bool		ShouldPreserveEntityForRespawn( const char *szClassname ) = 0;
-	
-	virtual void		LoopPostInitAllGameSystems( const GameSessionConfiguration_t &, ILoopModePrerequisiteRegistry * ) = 0;
-	
-	virtual void		RegisterGameActivities( void ) = 0;
-	
-	virtual void		ExecuteURL( const char *szURL ) = 0;
-	
-	virtual void		GetBugReportLaunchURLParameters( KeyValues *pKV ) = 0;
-	
-	virtual void		GetStringTableDefs( CUtlVector<StringTableDef_t> &defs ) = 0;
-	
-	virtual bool		IsUserMessage( int id ) const = 0;
-	
-	virtual KeyValues	*GetCurrentGameSessionConfigKeyValues() = 0;
-#endif
 	// Returns string describing current .dll.  e.g., TeamFortress 2, Half-Life 2.  
 	//  Hey, it's more descriptive than just the name of the game directory
 	virtual const char *GetGameDescription( void ) = 0;
+	
+	virtual int			GetNetworkVersion( void ) = 0;
 	
 	// Get the simulation interval (must be compiled with identical values into both client and game .dll for MOD!!!)
 	// Right now this is only requested at server startup time so it can't be changed on the fly, etc.
 	virtual float			GetTickInterval( void ) const = 0;
 	
 	// Get server maxplayers and lower bound for same
-	virtual void			GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers ) const = 0;
+	virtual void			GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers, bool &unknown ) const = 0;
 	
 	// Returns max splitscreen slot count ( 1 == no splits, 2 for 2-player split screen )
 	virtual int		GetMaxSplitscreenPlayers( void ) = 0;
@@ -570,10 +538,6 @@ public:
 	virtual bool		AllowDedicatedServers( EUniverse universe ) const = 0;
 	
 	virtual void		GetConVarPrefixesToResetToDefaults( CUtlString &prefixes ) const = 0;
-	
-#if 0
-	virtual void		ExecuteURL( int, const URLArgument_t * ) = 0;
-#endif
 };
 
 #define INTERFACEVERSION_SERVERGAMECLIENTS		"Source2GameClients001"
