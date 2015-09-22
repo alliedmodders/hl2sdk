@@ -250,10 +250,6 @@ public:
 	// Change a specified player's "view entity" (i.e., use the view entity position/orientation for rendering the client view)
 	virtual void		SetView( CEntityIndex playerIndex, CEntityIndex viewEntIndex ) = 0;
 	
-	// Locks/unlocks the network string tables (.e.g, when adding bots to server, this needs to happen).
-	// Be sure to reset the lock after executing your code!!!
-	virtual bool		LockNetworkStringTables( bool lock ) = 0;
-	
 	// Get the current game directory (hl2, tf2, hl1, cstrike, etc.)
 	virtual void        GetGameDir( char *szGetGameDir, int maxlength ) = 0;
 	
@@ -347,7 +343,7 @@ public:
 	// Returns the SteamID of the game server
 	virtual const CSteamID	*GetGameServerSteamID() = 0;
 	
-	virtual int GetServerVersion( void ) = 0;
+	virtual int GetBuildVersion( void ) const = 0;
 	
 	virtual bool IsClientLowViolence( CEntityIndex clientIndex ) = 0;
 	
@@ -513,6 +509,7 @@ public:
 	virtual const char *GetGameDescription( void ) = 0;
 	
 	virtual int			GetNetworkVersion( void ) = 0;
+	virtual bool		ValidateNetworkVersion ( int version ) const = 0;
 	
 	// Get the simulation interval (must be compiled with identical values into both client and game .dll for MOD!!!)
 	// Right now this is only requested at server startup time so it can't be changed on the fly, etc.
@@ -605,7 +602,7 @@ public:
 	virtual void			NetworkIDValidated( const char *pszUserName, const char *pszNetworkID ) = 0;
 	
 	// The client has submitted a keyvalues command
-	virtual void			ClientCommandKeyValues( edict_t *pEntity, KeyValues *pKeyValues ) = 0;
+	virtual void			ClientCommandKeyValues( CEntityIndex index, KeyValues *pKeyValues ) = 0;
 
 	virtual bool			ClientCanPause( CEntityIndex index ) = 0;
 	
