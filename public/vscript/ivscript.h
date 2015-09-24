@@ -686,9 +686,6 @@ public:
 	virtual bool Init() = 0;
 	virtual void Shutdown() = 0;
 
-	virtual bool ConnectDebugger() = 0;
-	virtual void DisconnectDebugger() = 0;
-
 	virtual ScriptLanguage_t GetLanguage() = 0;
 	virtual const char *GetLanguageName() = 0;
 	
@@ -777,7 +774,11 @@ public:
 	virtual bool SetValue( HSCRIPT hScope, const char *pszKey, const char *pszValue ) = 0;
 	virtual bool SetValue( HSCRIPT hScope, const char *pszKey, const ScriptVariant_t &value ) = 0;
 	virtual bool SetValue( HSCRIPT hScope, int nIndex, const ScriptVariant_t &value ) = 0;
+
 	bool SetValue( const char *pszKey, const ScriptVariant_t &value )																{ return SetValue(NULL, pszKey, value ); }
+
+	virtual bool SetEnumValue(HSCRIPT hScope, char const* unk1, char const *unk2, int unk3, char const* unk4) = 0;
+	virtual bool CreateKeyValuesFromTable(HSCRIPT hScope, const char* unk1, void* fUnk, void* unk2) = 0;
 
 	virtual void CreateTable( ScriptVariant_t &Table ) = 0;
 	virtual bool IsTable( HSCRIPT hScope ) = 0;
