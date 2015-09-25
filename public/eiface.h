@@ -341,7 +341,7 @@ public:
 	virtual SpawnGroupHandle_t	FindSpawnGroupByName( const char *szName ) = 0;
 	
 	// Returns the SteamID of the game server
-	virtual const CSteamID	*GetGameServerSteamID() = 0;
+	virtual CSteamID	GetGameServerSteamID() = 0;
 	
 	virtual int GetBuildVersion( void ) const = 0;
 	
@@ -444,7 +444,7 @@ public:
 	// Called after the steam API has been activated post-level startup
 	virtual void			GameServerSteamAPIActivated( void ) = 0;
 
-	virtual void			GameServerSteamAPIShutdown( void ) = 0;
+	virtual void			GameServerSteamAPIDeactivated( void ) = 0;
 	
 	virtual void			OnHostNameChanged( const char *pszNewHostname ) = 0;
 	virtual void			PreFatalShutdown( void ) const = 0;

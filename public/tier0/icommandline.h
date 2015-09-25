@@ -40,12 +40,12 @@ public:
 	virtual float		ParmValue( const char *psz, float flDefaultVal ) const = 0;
 	virtual bool		ParmValue( const char *psz, const char *pDefaultVal, char *pszOut, unsigned int size ) = 0;
 
-	// copies the string passwed
-	virtual void SetParm( int nIndex, char const *pNewParm ) =0;
-
-	virtual void RemoveParmByIndex( int nIndex ) = 0;
+	virtual const char	*ParmValueByIndex( int nIndex, const char *pDefaultVal ) const = 0;
+	
 	virtual void CreateCmdLinePrependAppName( const char *commandline ) = 0;
 	virtual const char **GetParms() const = 0;
+	
+	virtual bool		IsWellInitialized( void ) const = 0;
 };
 
 //-----------------------------------------------------------------------------
