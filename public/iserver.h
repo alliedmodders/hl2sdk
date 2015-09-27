@@ -103,7 +103,7 @@ public:
 	virtual void	AddServerPrerequisites( const GameSessionConfiguration_t &, const char *, ILoopModePrerequisiteRegistry *, bool ) = 0;
 	virtual void	SetServerSocket( int ) = 0;
 	virtual bool	IsServerRunning( void ) const = 0;
-	virtual void	DisconnectGameNow( ENetworkDisconnectionReason ) = 0;
+	virtual void	DisconnectGameNow( /*ENetworkDisconnectionReason*/ int ) = 0;
 	virtual void	PrintSpawnGroupStatus( void ) const = 0;
 	virtual void	SetFinalSimulationTickThisFrame( int ) = 0;
 	virtual void	*GetGameServer( void ) = 0;
