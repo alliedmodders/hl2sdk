@@ -88,9 +88,6 @@ namespace google
 typedef uint32 SpawnGroupHandle_t;
 typedef uint32 SwapChainHandle_t;
 
-// This is really an enum included in a proto-generated header. Not sure if we want to include that here.
-typedef int ENetworkDisconnectionReason;
-
 //-----------------------------------------------------------------------------
 // defines
 //-----------------------------------------------------------------------------
@@ -128,6 +125,21 @@ private:
 struct CEntityIndex
 {
 	CEntityIndex( int index )
+	{
+		_index = index;
+	}
+	
+	int Get() const
+	{
+		return _index;
+	}
+	
+	int _index;
+};
+
+struct CSplitScreenSlot
+{
+	CSplitScreenSlot( int index )
 	{
 		_index = index;
 	}
@@ -562,8 +574,8 @@ public:
 	virtual void			ClientFullyConnect( CEntityIndex index, CPlayerSlot slot ) = 0;
 
 	// Client is disconnecting from server
-	virtual void			ClientDisconnect( CEntityIndex index, int userId, ENetworkDisconnectionReason reason, const char *pszName,
-								uint64 xuid, const char *pszNetworkID ) = 0;
+	virtual void			ClientDisconnect( CEntityIndex index, int userId, /* ENetworkDisconnectionReason */ int reason,
+								const char *pszName, uint64 xuid, const char *pszNetworkID ) = 0;
 
 	// Sets the client index for the client who typed the command into his/her console
 	virtual void			SetCommandClient( CPlayerSlot slot) = 0;
