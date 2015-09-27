@@ -554,7 +554,7 @@ public:
 //-----------------------------------------------------------------------------
 // Purpose: Player / Client related functions
 //-----------------------------------------------------------------------------
-abstract_class ISource2GameClients
+abstract_class ISource2GameClients : public IAppSystem
 {
 public:
 	// Client is connecting to server ( return false to reject the connection )
