@@ -374,6 +374,7 @@ public:
 	virtual void UpdateServerDetails( void ) = 0;
 	virtual bool ShouldHibernate() = 0;
 	virtual bool SteamIDAllowedToP2PConnect( const CSteamID &steamId ) const = 0;
+	virtual bool LobbyAllowsCheats( void ) const = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL				"Source2Server001"
