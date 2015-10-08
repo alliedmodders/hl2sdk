@@ -12,9 +12,9 @@
 
 #include "vstdlib/vstdlib.h"
 
-// handle to a KeyValues key name symbol
-typedef int HKeySymbol;
-#define INVALID_KEY_SYMBOL (-1)
+class KeyValues;
+DECLARE_HANDLE_32BIT(HKeySymbol)
+#define INVALID_KEY_SYMBOL (HKeySymbol::MakeHandle(~0))
 
 //-----------------------------------------------------------------------------
 // Purpose: Interface to shared data repository for KeyValues (included in vgui_controls.lib)
@@ -42,6 +42,12 @@ public:
 
 	// symbol table access from code with case-preserving requirements (used for key names)
 	virtual HKeySymbol GetSymbolForStringCaseSensitive( HKeySymbol &hCaseInsensitiveSymbol, const char *name, bool bCreate = true ) = 0;
+	virtual HKeySymbol GetCaseInsensitiveSymbolFromCaseSensitiveSymbol( HKeySymbol symbol ) = 0;
+	
+	virtual const char *CopyString( const char * ) = 0;
+	virtual void ReleaseStringCopy( const char * ) = 0;
+	virtual const wchar_t *CopyWString( const wchar_t * ) = 0;
+	virtual void ReleaseWStringCopy( const wchar_t * ) = 0;
 };
 
 VSTDLIB_INTERFACE IKeyValuesSystem *KeyValuesSystem();

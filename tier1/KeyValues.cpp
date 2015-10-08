@@ -51,7 +51,7 @@ public:
 
 	// entering a new keyvalues block, save state for errors
 	// Not save symbols instead of pointers because the pointers can move!
-	int Push( int symName )
+	int Push(HKeySymbol symName)
 	{
 		if ( m_errorIndex < MAX_ERROR_STACK )
 		{
@@ -70,7 +70,7 @@ public:
 	}
 
 	// Allows you to keep the same stack level, but change the name as you parse peers
-	void Reset( int stackLevel, int symName )
+	void Reset(int stackLevel, HKeySymbol symName)
 	{
 		Assert( stackLevel >= 0 && stackLevel < m_errorIndex );
 		m_errorStack[stackLevel] = symName;
@@ -98,7 +98,7 @@ public:
 	}
 
 private:
-	int		m_errorStack[MAX_ERROR_STACK];
+	HKeySymbol		m_errorStack[MAX_ERROR_STACK];
 	const char *m_pFilename;
 	int		m_errorIndex;
 	int		m_maxErrorIndex;
@@ -118,16 +118,16 @@ public:
 	{
 		g_KeyValuesErrorStack.Pop();
 	}
-	CKeyErrorContext( int symName )
+	CKeyErrorContext( HKeySymbol symName )
 	{
 		Init( symName );
 	}
-	void Reset( int symName )
+	void Reset( HKeySymbol symName )
 	{
 		g_KeyValuesErrorStack.Reset( m_stackLevel, symName );
 	}
 private:
-	void Init( int symName )
+	void Init( HKeySymbol symName )
 	{
 		m_stackLevel = g_KeyValuesErrorStack.Push( symName );
 	}
@@ -275,9 +275,7 @@ KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue,
 //-----------------------------------------------------------------------------
 void KeyValues::Init()
 {
-	m_iKeyName = 0;
-	m_iKeyNameCaseSensitive1 = 0;
-	m_iKeyNameCaseSensitive2 = 0;
+	m_iKeyName = HKeySymbol::MakeHandle(0);
 	m_iDataType = TYPE_NONE;
 
 	m_pSub = NULL;
@@ -359,7 +357,7 @@ const char *KeyValues::GetName( void ) const
 //-----------------------------------------------------------------------------
 // Purpose: Get the symbol name of the current key section
 //-----------------------------------------------------------------------------
-int KeyValues::GetNameSymbol() const
+HKeySymbol KeyValues::GetNameSymbol() const
 {
 	return m_iKeyName;
 }
@@ -714,7 +712,7 @@ void KeyValues::RecursiveSaveToFile( IBaseFileSystem *filesystem, FileHandle_t f
 //-----------------------------------------------------------------------------
 // Purpose: looks up a key by symbol name
 //-----------------------------------------------------------------------------
-KeyValues *KeyValues::FindKey(int keySymbol) const
+KeyValues *KeyValues::FindKey(HKeySymbol keySymbol) const
 {
 	for (KeyValues *dat = m_pSub; dat != NULL; dat = dat->m_pPeer)
 	{
@@ -2337,6 +2335,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 
 #include "tier0/memdbgoff.h"
 
+#if 0
 //-----------------------------------------------------------------------------
 // Purpose: memory allocator
 //-----------------------------------------------------------------------------
@@ -2366,6 +2365,7 @@ void KeyValues::operator delete( void *pMem, int nBlockUse, const char *pFileNam
 {
 	KeyValuesSystem()->FreeKeyValuesMemory((KeyValues *)pMem);
 }
+#endif
 
 void KeyValues::UnpackIntoStructure( KeyValuesUnpackStructure const *pUnpackTable, void *pDest )
 {
