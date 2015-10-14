@@ -18,6 +18,7 @@
 
 class	INetChannel;
 typedef struct netpacket_s netpacket_t;
+class ns_address;
 
 class INetChannelHandler
 {
