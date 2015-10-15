@@ -39,7 +39,7 @@ typedef struct netpacket_s
 } netpacket_t;
 #endif // NET_PACKET_ST_DEFINED
 
-enum ENetChannelBufType
+enum NetChannelBufType_t
 {
 	BUF_RELIABLE = 0,
 	BUF_UNRELIABLE,

@@ -182,7 +182,7 @@ class IConnectionlessPacketHandler
 public:
 	virtual	~IConnectionlessPacketHandler( void ) {};
 
-	virtual bool ProcessConnectionlessPacket( netpacket_t *packet ) = 0;	// process a connectionless packet
+	virtual bool ProcessConnectionlessPacket( const ns_address *addr, bf_read *bf ) = 0;	// process a connectionless packet
 };
 
 

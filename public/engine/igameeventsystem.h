@@ -8,6 +8,7 @@
 #include <eiface.h>
 
 #include <tier1/utldelegate.h>
+#include <inetchannel.h>
 
 class IRecipientFilter;
 class CUtlSlot;
@@ -17,10 +18,6 @@ namespace google {
 		class Message;
 	}
 }
-
-enum NetChannelBufType_t
-{
-};
 
 struct GameEventHandle_t__
 {
