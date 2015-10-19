@@ -138,6 +138,8 @@ public:
 	virtual						~ConCommandBase( void );
 
 	virtual	bool				IsCommand( void ) const;
+	
+	virtual bool				IsBoundedVar( void ) const;
 
 	// Check flag
 	virtual bool				IsFlagSet( int64 flag ) const;
@@ -448,6 +450,9 @@ public:
 		return m_Value;
 	}
 
+	virtual float				GetFloatVirtualized( void ) const;
+	virtual int					GetIntVirtualized( void ) const;
+	virtual bool				GetBoolVirtualized( void ) const;
 private:
 	bool						InternalSetColorFromString( const char *value );
 	// Called by CCvar when the value of a var is changing.

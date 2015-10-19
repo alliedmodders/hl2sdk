@@ -310,6 +310,10 @@ bool ConCommandBase::IsRegistered( void ) const
 	return m_bRegistered;
 }
 
+bool ConCommandBase::IsBoundedVar(void) const
+{
+	return false;
+}
 
 //-----------------------------------------------------------------------------
 //
@@ -937,6 +941,21 @@ void ConVar::InternalSetColorValue( Color cValue )
 {
 	int color = cValue.GetRawColor();
 	InternalSetIntValue( color );
+}
+
+bool ConVar::GetBoolVirtualized() const
+{
+	return m_Value.m_nValue != 0;
+}
+
+int ConVar::GetIntVirtualized() const
+{
+	return m_Value.m_nValue;
+}
+
+float ConVar::GetFloatVirtualized() const
+{
+	return m_Value.m_fValue;
 }
 
 //-----------------------------------------------------------------------------
