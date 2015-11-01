@@ -70,8 +70,7 @@ public:
 	
 	virtual bool	SendData( bf_write &msg, NetChannelBufType_t bufferType ) = 0;
 	virtual void	SetChoked( void ) = 0;
-	virtual int		SendDatagram(bf_write *data) = 0;		
-	virtual bool	Transmit(bool onlyReliable = false) = 0;
+	virtual bool	Transmit( const char *, bf_write * ) = 0;
 
 	virtual const netadr_t	&GetRemoteAddress( void ) const = 0;
 	virtual int				GetDropNumber( void ) const = 0;
@@ -129,6 +128,9 @@ public:
   
 	virtual void	SetPendingDisconnect( /*ENetworkDisconnectReason*/ int reason ) = 0;
 	virtual int		GetPendingDisconnect() const = 0;
+	
+	virtual bool	IsSuppressingTransmit() const = 0;
+	virtual void	SuppressTransmit( bool ) = 0;
 };
 
 
