@@ -62,6 +62,8 @@ void CTakeDamageInfo::Init( CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBa
 	m_flDamageBonus = 0.f;
 	m_bForceFriendlyFire = false;
 	m_flDamageForForce = 0.f;
+	
+	m_eCritType = kCritType_None;
 }
 
 CTakeDamageInfo::CTakeDamageInfo()
@@ -112,6 +114,18 @@ void CTakeDamageInfo::Set( CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBas
 		vecReported = *reportedPosition;
 	}
 	Init( pInflictor, pAttacker, pWeapon, damageForce, damagePosition, vecReported, flDamage, bitsDamageType, iKillType );
+}
+
+void CTakeDamageInfo::SetCritType( ECritType type )
+{
+	if ( type == kCritType_None )
+	{
+		m_eCritType = kCritType_None;
+	}
+	else if ( type > m_eCritType )
+	{
+		m_eCritType = type;
+	}
 }
 
 //-----------------------------------------------------------------------------
