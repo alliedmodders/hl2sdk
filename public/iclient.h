@@ -19,6 +19,7 @@ class INetMessage;
 struct NetMessageCvar_t;
 struct USERID_t;
 class CMsg_CVars;
+class HltvReplayParams_t;
 
 enum CrossPlayPlatform_t
 {
@@ -108,6 +109,13 @@ public:
 	virtual bool	IsHumanPlayer() const = 0;
 
 	virtual CrossPlayPlatform_t		GetClientPlatform() const = 0;
+	
+	virtual bool StartHltvReplay( const HltvReplayParams_t & ) = 0;
+	virtual void StopHltvReplay( void ) = 0;
+	virtual int GetHltvReplayDelay( void ) = 0;
+	virtual const char *GetHltvReplayStatus( void ) const = 0;
+	virtual bool CanStartHltvReplay( void ) = 0;
+	virtual void ResetReplayRequestTime( void ) = 0;
 };
 
 #endif // ICLIENT_H

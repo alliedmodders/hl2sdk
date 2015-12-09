@@ -25,6 +25,8 @@ public:
 	virtual	~INetChannelHandler( void ) {};
 
 	virtual void ConnectionStart(INetChannel *chan) = 0;	// called first time network channel is established
+	
+	virtual void ConnectionStop() = 0;
 
 	virtual void ConnectionClosing(const char *reason) = 0; // network channel is being closed by remote site
 

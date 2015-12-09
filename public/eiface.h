@@ -63,6 +63,7 @@ class ISPSharedMemory;
 class CGamestatsData;
 class CEngineHltvInfo_t;
 class INetMessage;
+class HltvReplayParams_t;
 
 namespace google
 {
@@ -487,6 +488,15 @@ public:
 	
 	// Update counts of external viewers (Twitch.tv)
 	virtual void UpdateHltvExternalViewers( uint32 totalSpectators, uint32 spectatorsLinkedToSteam) = 0;
+	
+	virtual bool WasShutDownRequested( void ) const = 0;
+	virtual void *StartClientHltvReplay( int client , const HltvReplayParams_t & ) = 0;
+	virtual void *StopClientHltvReplay( int client ) = 0;
+	virtual int GetClientHltvReplayDelay( int client ) = 0;
+	virtual bool HasHltvReplay( void ) = 0;
+	virtual bool ClientCanStartHltvReplay( int client ) = 0;
+	virtual int ClientResetReplayRequestTime( int client ) = 0;
+	virtual bool AnyClientsInHltvReplayMode( void ) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
@@ -625,7 +635,10 @@ public:
 	virtual bool			OnPureServerFileValidationFailure( edict_t *pPlayer, const char *pszPathID, const char *pszFileName,
 								CRC32_t crcIOSequence, int eFileHashType, int cbFileLen, int nPackFileNumber, int nPackFileID ) = 0;
 	virtual void			PrecacheParticleSystemFile( const char *pszFilename ) = 0;
+	virtual void			ClientConnectionValidatePreNetChan( bool, const char *, int, unsigned long long ) = 0;
+	virtual void			OnEngineClientNetworkEvent( edict_t *, unsigned long long, int, void * ) = 0;
 	virtual void			GetNewestSubscribedFiles() = 0;
+	virtual bool			ValidateAndAddActiveCaster( const CSteamID & ) = 0;
 };
 
 //-----------------------------------------------------------------------------
