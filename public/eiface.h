@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -717,6 +717,8 @@ public:
 	// Get the ear position for a specified client
 	virtual void			ClientEarPosition( edict_t *pEntity, Vector *pEarOrigin ) = 0;
 
+	virtual bool			ClientReplayEvent( edict_t *player, void *event /* ClientReplayEventParams_t const& */ ) = 0;
+
 	// returns number of delay ticks if player is in Replay mode (0 = no delay)
 	virtual int				GetReplayDelay( edict_t *player, int& entity ) = 0;
 
@@ -738,6 +740,8 @@ public:
 
 	// The client has submitted a keyvalues command
 	virtual void			ClientCommandKeyValues( edict_t *pEntity, KeyValues *pKeyValues ) = 0;
+	
+	virtual void			ClientNameHandler( unsigned long long steamid, const char *name ) = 0;
 };
 
 #define INTERFACEVERSION_UPLOADGAMESTATS		"ServerUploadGameStats001"
