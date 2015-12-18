@@ -30,15 +30,29 @@ class CMsgSteamDatagramGameServerAuthTicket;
 class CUtlStringToken;
 class CPeerToPeerAddress;
 
+enum ENSAddressType
+{
+	kAddressDirect,
+	kAddressP2P,
+	kAddressProxiedGameServer,
+	kAddressProxiedClient,
+
+	kAddressMax
+};
+
 class ns_address
 {
 public:
-	inline uint32 IP() const { return m_IP; }
-	inline uint16 Port() const { return m_Port; }
+	const netadr_t &GetAddress() const { return m_Address; }
+	const CSteamID& GetSteamID() const { return m_ID; }
+	const uint16 GetRemotePort() const { return m_nRemotePort; }
+	ENSAddressType GetAddressType() const { return m_AddressType; }
 private:
-	int iUnknown;
-	uint32 m_IP;
-	uint16 m_Port;
+	netadr_t m_Address;
+	CSteamID m_ID;
+	uint16 m_nRemotePort;
+	int m_Unknown;
+	ENSAddressType m_AddressType;
 };
 
 enum
