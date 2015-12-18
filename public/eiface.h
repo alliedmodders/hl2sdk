@@ -165,8 +165,6 @@ abstract_class ISource2Engine : public IAppSystem
 	
 	virtual void		*FindOrCreateWorldSession( const char *, CResourceManifestPrerequisite * ) = 0;
 	
-	virtual void		UpdateAddonSearchPaths( bool, bool, const char* ) = 0;
-	
 	virtual CEntityLump	*GetEntityLumpForTemplate( const char *, bool, const char *, const char * ) = 0;
 	
 	virtual uint32		GetStatsAppID() const = 0;
@@ -430,7 +428,7 @@ public:
 	// return true to disconnect client due to timeout (used to do stricter timeouts when the game is sure the client isn't loading a map)
 	virtual bool			ShouldTimeoutClient( int nUserID, float flTimeSinceLastReceived ) = 0;
 	
-	virtual void			Status( void (*inputFunc) (const char *fmt, ...) ) = 0;
+	virtual void			PrintStatus( CEntityIndex, CUtlString * ) = 0;
 	
 	virtual int				GetServerGameDLLFlags( void ) const = 0;
 	
@@ -462,17 +460,23 @@ public:
 	virtual void			OnHostNameChanged( const char *pszNewHostname ) = 0;
 	virtual void			PreFatalShutdown( void ) const = 0;
 	virtual void			UpdateWhenNotInGame( float ) = 0;
+	
 	virtual void			GetEconItemNamesForModel( const char *pszModel, bool, bool, CUtlVector<CUtlString> &out ) = 0;
 	virtual void			GetEconItemNamesForCharacter( const char *pszCharacter, bool, bool, CUtlVector<CUtlString> &out ) = 0;
-	virtual void			GetInfoForEconItems( const char *, const char *, CUtlVector<EconItemInfo_t> &out ) = 0;
+	virtual void			GetEconItemsInfoForModel( const char *pszModel, const char *, bool, bool, bool, CUtlVector<EconItemInfo_t> &out ) = 0;
+	virtual void			GetEconItemsInfoForCharacter( const char *pszCharacter, const char *, bool, bool, bool, CUtlVector<EconItemInfo_t> &out ) = 0;
+	
 	virtual void			GetDefaultScaleForModel( const char *pszModel ) = 0;
 	virtual void			GetDefaultScaleForCharacter( const char *pszCharacter ) = 0;
 	virtual void			GetDefaultControlPointAutoUpdates( const char *, CUtlVector<EconControlPointInfo_t> &out ) = 0;
 	virtual void			GetCharacterNameForModel( const char *pszCharacter, char *pszOut, int size ) = 0;
-	virtual void			GetDefaultModelNameForCharacter( const char *pszCharacter, char *pszOut, int size ) = 0;
+	virtual void			GetModelNameForCharacter( const char *pszModel, int, char *pszOut, int size ) = 0;  
 	virtual void			GetCharacterList( CUtlVector<CUtlString> &out ) = 0;
 	virtual void			GetDefaultChoreoDirForModel( const char *pszModel, char *pszOut, int size ) = 0;
-	virtual void			OnStreamEntitiesFromFileCompleted( CUtlVector<CEntityHandle> &handles ) = 0;
+	
+	virtual void			*GetEconItemSystem( void ) = 0;
+	
+	virtual void			ServerConVarChanged( const char *pszName, const char *pszValue ) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -522,7 +526,6 @@ public:
 	virtual const char *GetGameDescription( void ) = 0;
 	
 	virtual int			GetNetworkVersion( void ) = 0;
-	virtual bool		ValidateNetworkVersion ( int version ) const = 0;
 	
 	// Get the simulation interval (must be compiled with identical values into both client and game .dll for MOD!!!)
 	// Right now this is only requested at server startup time so it can't be changed on the fly, etc.
