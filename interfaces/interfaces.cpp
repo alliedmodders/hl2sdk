@@ -137,7 +137,7 @@ static int s_nRegistrationCount;
 
 static ConnectionRegistration_t s_pConnectionRegistration[NUM_INTERFACES + 1];
 
-void ReconnectInterface(CreateInterfaceFn factory, char const *pInterfaceName, void **w);
+void ReconnectInterface(CreateInterfaceFn factory, char const *pInterfaceName, void **ppGlobal);
 
 void ConnectInterfaces(CreateInterfaceFn *pFactoryList, int nFactoryCount)
 {
@@ -207,7 +207,10 @@ void ReconnectInterface(CreateInterfaceFn factory, char const *pInterfaceName, v
 	for (int i = 0; i < s_nRegistrationCount; i++)
 	{
 		if (s_pConnectionRegistration[i].m_ppGlobalStorage == ppGlobal)
+		{
 			got = true;
+			break;
+		}
 	}
 
 	if ((s_nRegistrationCount <= 0 || !got) && *ppGlobal)
