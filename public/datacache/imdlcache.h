@@ -72,6 +72,8 @@ enum MDLCacheDataType_t
 abstract_class IMDLCacheNotify
 {
 public:
+	virtual ~IMDLCacheNotify() {};
+
 	// Called right after the data is loaded
 	virtual void OnDataLoaded( MDLCacheDataType_t type, MDLHandle_t handle ) = 0;
 
