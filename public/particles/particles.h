@@ -1452,7 +1452,7 @@ inline void CParticleCollection::SwapPosAndPrevPos( void )
 {
 	// strides better be the same!
 	Assert( m_nParticleFloatStrides[PARTICLE_ATTRIBUTE_XYZ] == m_nParticleFloatStrides[ PARTICLE_ATTRIBUTE_PREV_XYZ ] );
-	::V_swap( m_pParticleAttributes[ PARTICLE_ATTRIBUTE_XYZ ], m_pParticleAttributes[ PARTICLE_ATTRIBUTE_PREV_XYZ ] );
+	V_swap( m_pParticleAttributes[ PARTICLE_ATTRIBUTE_XYZ ], m_pParticleAttributes[ PARTICLE_ATTRIBUTE_PREV_XYZ ] );
 }
 
 inline void CParticleCollection::LoanKillListTo( CParticleCollection *pBorrower ) const

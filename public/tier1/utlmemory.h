@@ -327,9 +327,9 @@ void CUtlMemory<T,I>::Init( int nGrowSize /*= 0*/, int nInitSize /*= 0*/ )
 template< class T, class I >
 void CUtlMemory<T,I>::Swap( CUtlMemory<T,I> &mem )
 {
-	::V_swap( m_nGrowSize, mem.m_nGrowSize );
-	::V_swap( m_pMemory, mem.m_pMemory );
-	::V_swap( m_nAllocationCount, mem.m_nAllocationCount );
+	V_swap( m_nGrowSize, mem.m_nGrowSize );
+	V_swap( m_pMemory, mem.m_pMemory );
+	V_swap( m_nAllocationCount, mem.m_nAllocationCount );
 }
 
 
