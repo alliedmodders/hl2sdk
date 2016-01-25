@@ -365,7 +365,7 @@ STRIPLIST::iterator FindBestCachedStrip(STRIPLIST *pstriplist,
     // make sure we keep the list in order and always pull off
     // the first dude.
     if(istriplistbest != pstriplist->begin())
-        swap(*istriplistbest, *pstriplist->begin());
+        ::V_swap(*istriplistbest, *pstriplist->begin());
 
     return pstriplist->begin();
 }

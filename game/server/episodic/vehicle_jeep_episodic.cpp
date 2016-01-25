@@ -1626,13 +1626,13 @@ void CPropJeepEpisodic::InputOutsideTransition( inputdata_t &inputdata )
 		VectorRotate( vecSurroundMaxs, vecTeleportAngles, vecMaxs );
 
 		if ( vecMaxs.x < vecMins.x )
-			swap( vecMins.x, vecMaxs.x );
+			::V_swap( vecMins.x, vecMaxs.x );
 
 		if ( vecMaxs.y < vecMins.y )
-			swap( vecMins.y, vecMaxs.y );
+			::V_swap( vecMins.y, vecMaxs.y );
 
 		if ( vecMaxs.z < vecMins.z )
-			swap( vecMins.z, vecMaxs.z );
+			::V_swap( vecMins.z, vecMaxs.z );
 
 		// Move up
 		vecTeleportPos.z += ( vecMaxs.z - vecMins.z );
