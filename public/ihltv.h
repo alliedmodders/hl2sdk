@@ -25,6 +25,8 @@ struct netadr_s;
 //-----------------------------------------------------------------------------
 #define INTERFACEVERSION_HLTVSERVER	"HLTVServer001"
 
+class CGameInfo;
+
 class IHLTVServer : public IBaseInterface
 {
 public:
@@ -43,6 +45,11 @@ public:
 	virtual bool	IsDemoPlayback( void ) = 0; // true if this is a HLTV demo
 
 	virtual void	BroadcastEvent(IGameEvent *event) = 0; // send a director command to all specs
+
+	virtual bool IsRecording(void) = 0;
+	virtual char *GetRecordingDemoFilename(void) = 0;
+	virtual int StartAutoRecording(void) = 0;
+	virtual void StopRecording(CGameInfo const *info) = 0;
 };
 
 #endif
