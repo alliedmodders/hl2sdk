@@ -154,21 +154,6 @@ DECLARE_POINTER_HANDLE( HSCRIPT );
 // 
 //-----------------------------------------------------------------------------
 
-enum ExtendedFieldType
-{
-	FIELD_TYPEUNKNOWN = FIELD_TYPECOUNT,
-	FIELD_CSTRING,
-	FIELD_HSCRIPT,
-	FIELD_VARIANT,
-	FIELD_UINT64,
-	FIELD_DOUBLE,
-	FIELD_POSITIVEINTEGER_OR_NULL,
-	FIELD_HSCRIPT_NEW_INSTANCE,
-	FIELD_UINT,
-	FIELD_UTLSTRINGTOKEN,
-	FIELD_QANGLE,
-};
-
 typedef int ScriptDataType_t;
 struct ScriptVariant_t;
 
@@ -187,7 +172,7 @@ DECLARE_DEDUCE_FIELDTYPE( FIELD_CHARACTER,	char );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_HSCRIPT,	HSCRIPT );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_VARIANT,	ScriptVariant_t );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_UINT64,	 	uint64 );
-DECLARE_DEDUCE_FIELDTYPE( FIELD_DOUBLE,		double );
+DECLARE_DEDUCE_FIELDTYPE( FIELD_FLOAT64,	float64 );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_UINT,		uint );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_QANGLE,		QAngle );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_QANGLE,		const QAngle &);
@@ -213,7 +198,7 @@ DECLARE_NAMED_FIELDTYPE( char,	"character" );
 DECLARE_NAMED_FIELDTYPE( HSCRIPT,	"hscript" );
 DECLARE_NAMED_FIELDTYPE( ScriptVariant_t,	"variant" );
 DECLARE_NAMED_FIELDTYPE( uint64, "uint64" );
-DECLARE_NAMED_FIELDTYPE( double, "double" );
+DECLARE_NAMED_FIELDTYPE( float64, "float64" );
 DECLARE_NAMED_FIELDTYPE( uint, "unsigned" );
 DECLARE_NAMED_FIELDTYPE( QAngle, "qangle" );
 DECLARE_NAMED_FIELDTYPE( const QAngle&, "qangle" );
@@ -232,10 +217,10 @@ inline const char * ScriptFieldTypeName( int16 eType)
 	case FIELD_HSCRIPT:	return "hscript";
 	case FIELD_VARIANT:	return "variant";
 	case FIELD_UINT64: return "uint64";
-	case FIELD_DOUBLE: return "double";
+	case FIELD_FLOAT64: return "float64";
 	case FIELD_UINT: return "unsigned";
 	case FIELD_QANGLE: return "qangle";
-	default:	return "unknown_script_type";
+	default:	return "unknown_variant_type";
 	}
 }
 
@@ -329,7 +314,7 @@ struct ScriptVariant_t
 	ScriptVariant_t( int val ) :			m_type( FIELD_INTEGER ), m_flags( 0 )	{ m_int = val;}
 	ScriptVariant_t( uint val) :			m_type( FIELD_UINT ), m_flags( 0 )		{ m_uint = val; }
 	ScriptVariant_t( float val ) :			m_type( FIELD_FLOAT ), m_flags( 0 )		{ m_float = val; }
-	ScriptVariant_t( double val ) :			m_type( FIELD_DOUBLE ), m_flags( 0 )	{ m_double = val; }
+	ScriptVariant_t( float64 val ) :		m_type( FIELD_FLOAT64 ), m_flags( 0 )	{ m_float64 = val; }
 	ScriptVariant_t( char val ) :			m_type( FIELD_CHARACTER ), m_flags( 0 )	{ m_char = val; }
 	ScriptVariant_t( bool val ) :			m_type( FIELD_BOOLEAN ), m_flags( 0 )	{ m_bool = val; }
 	ScriptVariant_t( HSCRIPT val ) :		m_type( FIELD_HSCRIPT ), m_flags( 0 )	{ m_hScript = val; }
@@ -349,7 +334,7 @@ struct ScriptVariant_t
 	operator int64() const					{ Assert( m_type == FIELD_INTEGER64);	return m_int64; }
 	operator uint64() const					{ Assert( m_type == FIELD_UINT64);		return m_uint64; }
 	operator float() const					{ Assert( m_type == FIELD_FLOAT );		return m_float; }
-	operator double() const					{ Assert( m_type == FIELD_DOUBLE );		return m_double; }
+	operator float64() const				{ Assert( m_type == FIELD_FLOAT64 );		return m_float64; }
 	operator const char *() const			{ Assert( m_type == FIELD_CSTRING );	return ( m_pszString ) ? m_pszString : ""; }
 	operator const Vector &() const			{ Assert( m_type == FIELD_VECTOR );		static Vector vecNull(0, 0, 0); return (m_pVector) ? *m_pVector : vecNull; }
 	operator const QAngle &() const			{ Assert( m_type == FIELD_QANGLE);		static QAngle angNull(0, 0, 0); return (m_pQAngle) ? *m_pQAngle : angNull; }
@@ -362,7 +347,7 @@ struct ScriptVariant_t
 	void operator=( int64 i ) 				{ m_type = FIELD_INTEGER64; m_int64 = i; }
 	void operator=( uint64 u )				{ m_type = FIELD_UINT64; m_uint64 = u; }
 	void operator=( float f ) 				{ m_type = FIELD_FLOAT; m_float = f; }
-	void operator=( double d ) 				{ m_type = FIELD_DOUBLE; m_double = d; }
+	void operator=( float64 d )				{ m_type = FIELD_FLOAT64; m_float64 = d; }
 	void operator=( const Vector &vec )		{ m_type = FIELD_VECTOR; m_pVector = &vec; }
 	void operator=( const Vector *vec )		{ m_type = FIELD_VECTOR; m_pVector = vec; }
 	void operator=( const QAngle &ang)		{ m_type = FIELD_QANGLE; m_pQAngle = &ang; }
@@ -406,7 +391,7 @@ struct ScriptVariant_t
 			case FIELD_UINT:		*pDest = m_uint; return true;
 			case FIELD_UINT64:		*pDest = m_uint64; return true;
 			case FIELD_FLOAT:		*pDest = m_float; return true;
-			case FIELD_DOUBLE:		*pDest = m_double; return true;
+			case FIELD_FLOAT64:		*pDest = m_float64; return true;
 			case FIELD_CHARACTER:	*pDest = m_char; return true;
 			case FIELD_BOOLEAN:		*pDest = m_bool; return true;
 			case FIELD_HSCRIPT:		*pDest = m_hScript; return true;
@@ -434,7 +419,7 @@ struct ScriptVariant_t
 		case FIELD_UINT:		*pDest = m_uint; return true;
 		case FIELD_UINT64:		*pDest = m_uint64; return true;
 		case FIELD_FLOAT:		*pDest = m_float; return true;
-		case FIELD_DOUBLE:		*pDest = m_double; return true;
+		case FIELD_FLOAT64:		*pDest = m_float64; return true;
 		case FIELD_BOOLEAN:		*pDest = m_bool; return true;
 		default:
 			DevWarning( "No conversion from %s to float now\n", ScriptFieldTypeName( m_type ) );
@@ -452,7 +437,7 @@ struct ScriptVariant_t
 		case FIELD_UINT:		*pDest = m_uint; return true;
 		case FIELD_UINT64:		*pDest = m_uint64; return true;
 		case FIELD_FLOAT:		*pDest = m_float; return true;
-		case FIELD_DOUBLE:		*pDest = m_double; return true;
+		case FIELD_FLOAT64:		*pDest = m_float64; return true;
 		case FIELD_BOOLEAN:		*pDest = m_bool; return true;
 		default:
 			DevWarning( "No conversion from %s to int now\n", ScriptFieldTypeName( m_type ) );
@@ -470,7 +455,7 @@ struct ScriptVariant_t
 		case FIELD_UINT:		*pDest = m_uint; return true;
 		case FIELD_UINT64:		*pDest = m_uint64; return true;
 		case FIELD_FLOAT:		*pDest = m_float; return true;
-		case FIELD_DOUBLE:		*pDest = m_double; return true;
+		case FIELD_FLOAT64:		*pDest = m_float64; return true;
 		case FIELD_BOOLEAN:		*pDest = m_bool; return true;
 		default:
 			DevWarning( "No conversion from %s to bool now\n", ScriptFieldTypeName( m_type ) );
@@ -520,7 +505,7 @@ struct ScriptVariant_t
 		int64			m_int64;
 		uint64			m_uint64;
 		float			m_float;
-		double			m_double;
+		float64			m_float64;
 		const char *	m_pszString;
 		const Vector *	m_pVector;
 		const QAngle *	m_pQAngle;
