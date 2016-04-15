@@ -394,7 +394,7 @@ public:
 	
 	virtual void			PreWorldUpdate( bool simulating ) = 0;
 	
-	virtual CUtlVector<Entity2Networkable_t>	&GetEntity2Networkables( void ) const = 0;
+	virtual CUtlMap<int, Entity2Networkable_t>	*GetEntity2Networkables( void ) const = 0;
 	virtual bool			GetEntity2Networkable( CEntityIndex index, Entity2Networkable_t &out ) = 0;
 	
 	virtual void			ClearInstancedBaselineFromServerClasses( void ) = 0;
