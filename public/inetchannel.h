@@ -90,7 +90,6 @@ public:
 	virtual void	SetFileTransmissionMode(bool bBackgroundMode) = 0;
 	virtual void	SetCompressionMode( bool bUseCompression ) = 0;
 	virtual unsigned int RequestFile(const char *filename, bool isReplayDemoFile) = 0;
-	virtual float	GetTimeSinceLastReceived( void ) const = 0;	// get time since last received packet in seconds
 
 	virtual void	SetMaxBufferSize(bool bReliable, int nBytes, bool bVoice = false ) = 0;
 
@@ -109,8 +108,9 @@ public:
 	virtual void	DetachSplitPlayer( int nSplitPlayerSlot ) = 0;
 
 	virtual bool	IsRemoteDisconnected() const = 0;
-	
 	virtual bool	WasLastMessageReliable() const = 0;
+	virtual unsigned int GetChannelEncryptionKey( void ) const = 0;
+	virtual bool	EnqueueVeryLargeAsyncTransfer(INetMessage &msg) = 0;
 };
 
 

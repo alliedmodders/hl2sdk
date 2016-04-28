@@ -217,7 +217,7 @@ public:
 	virtual void ReloadVCollide( MDLHandle_t handle ) = 0;
 	
 	virtual bool ReleaseAnimBlockAllocator() = 0;
-	virtual void RestoreHardwareData(MDLHandle_t handle, FSAsyncControl_t* unk2, FSAsyncControl_t* unk3) = 0;
+	virtual bool RestoreHardwareData( MDLHandle_t handle, FSAsyncControl_t *pAsyncVTXControl, FSAsyncControl_t *pAsyncVVDControl ) = 0;
 	virtual void DisableVCollideLoad() = 0;
 	virtual void EnableVCollideLoad() = 0;
 	virtual void DisableFileNotFoundWarnings() = 0;
@@ -225,19 +225,19 @@ public:
 	virtual void ProcessPendingHardwareRestore() = 0;
 	virtual void UnloadQueuedHardwareData() = 0;
 	virtual void DumpDictionaryState() = 0;
-	virtual MDLHandle_t CreateCombinedModel(char  const* name) = 0;
-	virtual bool CreateCombinedModel(MDLHandle_t handle) = 0;
-	virtual bool SetCombineModels(MDLHandle_t handle, CUtlVector<SCombinerModelInput_t>  const& unk2) = 0;
-	virtual bool FinishCombinedModel(MDLHandle_t handle, void* unk2, void* unk3) = 0;
-	virtual bool IsCombinedPlaceholder(MDLHandle_t handle) = 0;
-	virtual bool IsCombinedModel(MDLHandle_t handle) = 0;
-	virtual int GetNumCombinedSubModels(MDLHandle_t handle) = 0;
-	virtual void GetCombinedSubModelFilename(MDLHandle_t handle, int iSubModel, char* szOutput, int iOutputBufferLength) = 0;
-	virtual KeyValues* GetCombinedMaterialKV(MDLHandle_t handle, int unk2) = 0;
+	virtual MDLHandle_t CreateCombinedModel( const char *name ) = 0;
+	virtual bool CreateCombinedModel( MDLHandle_t handle ) = 0;
+	virtual bool SetCombineModels( MDLHandle_t handle, const CUtlVector<SCombinerModelInput_t> &unk2 ) = 0;
+	virtual bool FinishCombinedModel( MDLHandle_t handle, void *unk2, void *unk3 ) = 0;
+	virtual bool IsCombinedPlaceholder( MDLHandle_t handle ) = 0;
+	virtual bool IsCombinedModel( MDLHandle_t handle ) = 0;
+	virtual int GetNumCombinedSubModels( MDLHandle_t handle ) = 0;
+	virtual void GetCombinedSubModelFilename( MDLHandle_t handle, int iSubModel, char *szOutput, int iOutputBufferLength ) = 0;
+	virtual KeyValues *GetCombinedMaterialKV( MDLHandle_t handle, int unk2) = 0;
 	virtual void UpdateCombiner() = 0;
-	virtual void GetCombinedInternalAsset(ECombinedAsset combinedAsset, char  const* unk2, int * unk3) = 0;
-	virtual void SetCombinerFlags(MDLHandle_t handle) = 0;
-	virtual void ClearCombinerFlags(MDLHandle_t handle) = 0;
+	virtual void GetCombinedInternalAsset( ECombinedAsset combinedAsset, const char *unk2, int *unk3 ) = 0;
+	virtual void SetCombinerFlags( MDLHandle_t handle ) = 0;
+	virtual void ClearCombinerFlags( MDLHandle_t handle ) = 0;
 	virtual void DebugCombinerInfo() = 0;
 };
 

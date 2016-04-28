@@ -83,6 +83,8 @@
 
 #define SPROP_CHANGES_OFTEN				(1<<18)	// this is an often changed field, moved to head of sendtable so it gets a small index
 
+#define SPROP_VARINT					(1<<19)	// use var int encoded (google protobuf style), note you want to include SPROP_UNSIGNED if needed, its more efficient 
+
 #define SPROP_NUMFLAGBITS_NETWORKED		19
 
 
