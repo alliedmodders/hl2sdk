@@ -22,6 +22,7 @@
 #include "soundflags.h"
 #include "bitvec.h"
 #include "tier1/bitbuf.h"
+#include "tier1/utlmap.h"
 #include "tier1/utlstring.h"
 #include <steam/steamclientpublic.h>
 
