@@ -743,7 +743,7 @@ public:
 	virtual void			ClientVoice( edict_t *pEdict ) = 0;
 
 	// A user has had their network id setup and validated 
-	virtual void			NetworkIDValidated( const char *pszUserName, const char *pszNetworkID ) = 0;
+	virtual void			NetworkIDValidated( const char *pszUserName, const char *pszNetworkID, CSteamID steamID ) = 0;
 
 	// Returns max splitscreen slot count ( 1 == no splits, 2 for 2-player split screen )
 	virtual int				GetMaxSplitscreenPlayers() = 0;
