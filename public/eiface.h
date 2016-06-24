@@ -391,8 +391,6 @@ public:
 	
 	virtual void			WriteSignonMessages( bf_write &bf ) = 0;
 	
-	virtual void			EnumSaveRestoreMapClasses( const void *, unsigned long, IClassnameForMapClassCallback * ) = 0;
-	
 	virtual void			PreWorldUpdate( bool simulating ) = 0;
 	
 	virtual CUtlMap<int, Entity2Networkable_t>	*GetEntity2Networkables( void ) const = 0;
