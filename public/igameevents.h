@@ -78,7 +78,8 @@ public:
 	virtual uint64 GetUint64( const char *keyName = NULL, uint64 defaultValue = 0 ) = 0;
 	virtual float GetFloat( const char *keyName = NULL, float defaultValue = 0.0f ) = 0;
 	virtual const char *GetString( const char *keyName = NULL, const char *defaultValue = "" ) = 0;
-	virtual const wchar_t * GetWString(char const *keyName = NULL, const wchar_t *defaultValue = L"") = 0;
+	virtual const wchar_t *GetWString(char const *keyName = NULL, const wchar_t *defaultValue = L"") = 0;
+	virtual const void *GetPtr( const char *keyname = NULL, const void *defaultValues = NULL ) = 0;
 
 	virtual void SetBool( const char *keyName, bool value ) = 0;
 	virtual void SetInt( const char *keyName, int value ) = 0;
@@ -86,6 +87,8 @@ public:
 	virtual void SetFloat( const char *keyName, float value ) = 0;
 	virtual void SetString( const char *keyName, const char *value ) = 0;
 	virtual void SetWString( const char *keyName, const wchar_t *value ) = 0;
+	virtual void SetPtr( const char *keyname, const void *value ) = 0;
+	
 };
 
 #define EVENT_DEBUG_ID_INIT			42
