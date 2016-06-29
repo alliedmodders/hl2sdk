@@ -84,6 +84,12 @@ enum ENSAddressType
 class ns_address
 {
 public:
+	ns_address( const netadr_t &adr )
+	{
+			m_Address = adr;
+			m_AddressType = kAddressDirect;
+	}
+public:
 	const netadr_t &GetAddress() const { return m_Address; }
 	const CSteamID& GetSteamID() const { return m_ID; }
 	const uint16 GetRemotePort() const { return m_nRemotePort; }
