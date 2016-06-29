@@ -13,32 +13,8 @@
 #endif
 
 #include "tier0/platform.h"
+#include <steam/steamclientpublic.h>
 #undef SetPort
-
-enum ENSAddressType
-{
-	kAddressDirect,
-	kAddressP2P,
-	kAddressProxiedGameServer,
-	kAddressProxiedClient,
-
-	kAddressMax
-};
-
-class ns_address
-{
-public:
-	const netadr_t &GetAddress() const { return m_Address; }
-	const CSteamID& GetSteamID() const { return m_ID; }
-	const uint16 GetRemotePort() const { return m_nRemotePort; }
-	ENSAddressType GetAddressType() const { return m_AddressType; }
-private:
-	netadr_t m_Address;
-	CSteamID m_ID;
-	uint16 m_nRemotePort;
-	int m_Unknown;
-	ENSAddressType m_AddressType;
-};
 
 typedef enum
 { 
@@ -94,5 +70,30 @@ public:	// members are public to avoid to much changes
 	unsigned char	ip[4];
 	unsigned short	port;
 } netadr_t;
+
+enum ENSAddressType
+{
+	kAddressDirect,
+	kAddressP2P,
+	kAddressProxiedGameServer,
+	kAddressProxiedClient,
+
+	kAddressMax
+};
+
+class ns_address
+{
+public:
+	const netadr_t &GetAddress() const { return m_Address; }
+	const CSteamID& GetSteamID() const { return m_ID; }
+	const uint16 GetRemotePort() const { return m_nRemotePort; }
+	ENSAddressType GetAddressType() const { return m_AddressType; }
+private:
+	netadr_t m_Address;
+	CSteamID m_ID;
+	uint16 m_nRemotePort;
+	int m_Unknown;
+	ENSAddressType m_AddressType;
+};
 
 #endif // NETADR_H
