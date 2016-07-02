@@ -202,6 +202,10 @@ public:
 
 	int		random_seed;	// For shared random functions
 
+#ifndef CLIENT_DLL
+	int		SOMETHING;
+#endif
+
 	short	mousedx;		// mouse accum in x from create move
 	short	mousedy;		// mouse accum in y from create move
 
