@@ -25,16 +25,12 @@ SRCDS_DIR = ~/srcds/orangebox
 # set this so that 'make install' or 'make installrelease' will copy your binary over automatically.
 GAME_DIR = $(SRCDS_DIR)/scratchmod
 
-# compiler options (gcc 3.4.1 or above is required - 4.1.2+ recommended)
-ifeq "$(OS)" "Darwin"
 CC = /usr/bin/clang
 CPLUS = /usr/bin/clang++
 CLINK = /usr/bin/clang
+ifeq "$(OS)" "Darwin"
 CPP_LIB =
 else
-CC = /usr/bin/gcc
-CPLUS = /usr/bin/g++
-CLINK = /usr/bin/gcc
 CPP_LIB = "$(SRCDS_DIR)/bin/libstdc++.so.6 $(SRCDS_DIR)/bin/libgcc_s.so.1"
 endif
 
