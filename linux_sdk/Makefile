@@ -83,7 +83,7 @@ endif
 
 # the CPU target for the build, must be i486 for now
 ARCH = i486
-ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -msse -msse2 -m32
+ARCH_CFLAGS = -march=nocona -mmmx -msse -msse2 -m64
 
 ifeq "$(OS)" "Darwin"
 DEFINES = -D_OSX -DOSX -D_DLL_EXT=.dylib
@@ -98,11 +98,11 @@ SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt
 SHLIBSUFFIX =
 endif
 
-DEFINES +=-DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp \
+DEFINES +=-DX64BITS -DPLATFORM_64BITS -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp \
 	-Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DPOSIX -DGNUC -DCOMPILER_GCC -DNO_MALLOC_OVERRIDE
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
-BASE_CFLAGS = -fno-strict-aliasing -Wall -Wsign-compare -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
+BASE_CFLAGS = -fPIC -fno-strict-aliasing -Wall -Wsign-compare -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
 	      -Wno-unknown-pragmas -Wno-unused
 SHLIBCFLAGS = -fPIC
 
