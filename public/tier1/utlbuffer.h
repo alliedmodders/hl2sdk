@@ -187,8 +187,9 @@ public:
 
 	FORCEINLINE void ActivateByteSwappingIfBigEndian( void )
 	{
-		if ( IsX360() )
+#if defined( _X360 )
 			ActivateByteSwapping( true );
+#endif
 	}
 
 
@@ -671,7 +672,8 @@ inline void CUtlBuffer::GetTypeBin< float >( float &dest )
 	if ( CheckGet( sizeof( float ) ) )
 	{
 		uintp pData = (uintp)PeekGet();
-		if ( IsX360() && ( pData & 0x03 ) )
+#if defined( _X360 )
+		if ( pData & 0x03 )
 		{
 			// handle unaligned read
 			((unsigned char*)&dest)[0] = ((unsigned char*)pData)[0];
@@ -684,6 +686,9 @@ inline void CUtlBuffer::GetTypeBin< float >( float &dest )
 			// aligned read
 			dest = *(float *)pData;
 		}
+#else
+		dest = *(float *)pData;
+#endif
 		if ( m_Byteswap.IsSwappingBytes() )
 		{
 			m_Byteswap.SwapBufferToTargetEndian< float >( &dest, &dest );
@@ -702,7 +707,8 @@ inline void CUtlBuffer::GetTypeBin< double >( double &dest )
 	if ( CheckGet( sizeof( double ) ) )
 	{
 		uintp pData = (uintp)PeekGet();
-		if ( IsX360() && ( pData & 0x07 ) )
+#if defined( _X360 )
+		if ( pData & 0x07 )
 		{
 			// handle unaligned read
 			((unsigned char*)&dest)[0] = ((unsigned char*)pData)[0];
@@ -719,6 +725,9 @@ inline void CUtlBuffer::GetTypeBin< double >( double &dest )
 			// aligned read
 			dest = *(double *)pData;
 		}
+#else
+		dest = *(double *)pData;
+#endif
 		if ( m_Byteswap.IsSwappingBytes() )
 		{
 			m_Byteswap.SwapBufferToTargetEndian< double >( &dest, &dest );

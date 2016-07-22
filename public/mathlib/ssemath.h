@@ -218,7 +218,7 @@ extern const int32 ALIGN16 g_SIMD_EveryOtherMask[];				// 0, ~0, 0, ~0
 template<class T>
 inline T *AlignPointer(void * ptr)
 {
-	unsigned temp = (unsigned)ptr;
+	uintp temp = (uintp)ptr;
 	temp = ALIGN_VALUE(temp, sizeof(T));
 	return (T *)temp;
 }
