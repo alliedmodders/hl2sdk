@@ -517,13 +517,13 @@ public:
 //-----------------------------------------------------------------------------
 template< typename T, class A >
 inline CUtlVector<T, A>::CUtlVector( int growSize, int initSize )	: 
-	m_Memory(growSize, initSize), m_Size(0)
+	m_Size(0), m_Memory(growSize, initSize)
 {
 }
 
 template< typename T, class A >
 inline CUtlVector<T, A>::CUtlVector( T* pMemory, int allocationCount, int numElements )	: 
-	m_Memory(pMemory, allocationCount), m_Size(numElements)
+	m_Size(numElements), m_Memory(pMemory, allocationCount)
 {
 }
 
@@ -886,9 +886,6 @@ void CUtlVector<T, A>::Swap( CUtlVector< T, A > &vec )
 {
 	m_Memory.Swap( vec.m_Memory );
 	V_swap( m_Size, vec.m_Size );
-#ifndef _X360
-	V_swap( m_pElements, vec.m_pElements );
-#endif
 }
 
 template< typename T, class A >
