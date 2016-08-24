@@ -32,8 +32,10 @@ public:
 	// These methods return the bounds of an OBB measured in "collision" space
 	// which can be retreived through the CollisionToWorldTransform or
 	// GetCollisionOrigin/GetCollisionAngles methods
-	virtual const Vector&	OBBMins( ) const = 0;
-	virtual const Vector&	OBBMaxs( ) const = 0;
+	virtual const Vector&	OBBMinsPreScaled() const = 0;
+	virtual const Vector&	OBBMaxsPreScaled() const = 0;
+	virtual const Vector&	OBBMins() const = 0;
+	virtual const Vector&	OBBMaxs() const = 0;
 
 	// Returns the bounds of a world-space box used when the collideable is being traced
 	// against as a trigger. It's only valid to call these methods if the solid flags

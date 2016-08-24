@@ -6,6 +6,7 @@
 //
 //=============================================================================//
 #include <quantize.h>
+#include <tier0/basetypes.h>
 
 #define N_EXTRAVALUES 1
 #define N_DIMENSIONS (3+N_EXTRAVALUES)

@@ -72,8 +72,6 @@ public:
 	virtual void	SetCompressionMode( bool bUseCompression ) = 0;
 	virtual unsigned int RequestFile(const char *filename) = 0;
 	
-	virtual float	GetTimeSinceLastReceived( void ) const = 0;
-
 	virtual void	SetMaxBufferSize(bool bReliable, int nBytes, bool bVoice = false ) = 0;
 
 	virtual bool	IsNull() const = 0;

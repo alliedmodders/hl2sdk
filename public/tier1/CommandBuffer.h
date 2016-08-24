@@ -113,7 +113,7 @@ private:
 	bool ParseArgV0( CUtlBuffer &buf, char *pArgv0, int nMaxLen, const char **pArgs );
 
 	char	m_pArgSBuffer[ ARGS_BUFFER_LENGTH ];
-	int		m_nLastUsedArgSSize;
+	//int		m_nLastUsedArgSSize;
 	int		m_nArgSBufferSize;
 	CUtlFixedLinkedList< Command_t >	m_Commands;
 	int		m_nCurrentTick;

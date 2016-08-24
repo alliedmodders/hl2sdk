@@ -57,6 +57,8 @@ class CStandardSendProxies;
 class IAchievementMgr;
 class CGamestatsData;
 class CSteamID;
+class IGet;
+class IGMODDataTable;
 
 typedef struct player_info_s player_info_t;
 
@@ -71,6 +73,12 @@ typedef struct player_info_s player_info_t;
 #endif
 
 #define INTERFACEVERSION_VENGINESERVER	"VEngineServer021"
+
+struct bbox_t
+{
+	Vector mins;
+	Vector maxs;
+};
 
 //-----------------------------------------------------------------------------
 // Purpose: Interface the engine exposes to the game DLL
@@ -387,12 +395,35 @@ public:
 	// Send a client command keyvalues
 	// keyvalues are deleted inside the function
 	virtual void ClientCommandKeyValues( edict_t *pEdict, KeyValues *pCommand ) = 0;
+
+	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
+	virtual const CSteamID	*GetClientSteamIDByPlayerIndex( int entnum ) = 0;
+	// Gets a list of all clusters' bounds.  Returns total number of clusters.
+	virtual int GetClusterCount() = 0;
+	virtual int GetAllClusterBounds( bbox_t *pBBoxList, int maxBBox ) = 0;
+
+	// Create a bot with the given name.  Returns NULL if fake client can't be created
+	virtual edict_t		*CreateFakeClientEx( const char *netname, bool bReportFakeClient = true ) = 0;
+
+	// Server version from the steam.inf, this will be compared to the GC version
+	virtual int GetServerVersion() const = 0;
+	
+	virtual void		GMOD_SetTimeManipulator( float flFramerateScale ) = 0;
+	virtual void		GMOD_SendToClient( IRecipientFilter *filter, void *pData, int size ) = 0;
+	virtual void		GMOD_SendToClient( int player_idx, void *pData, int size ) = 0;
+	virtual void		GMOD_RawServerCommand( const char *str ) = 0;
+	virtual IGMODDataTable *GMOD_CreateDataTable( void ) = 0;
+	virtual void		GMOD_DestroyDataTable( IGMODDataTable *pTable ) = 0;
+	virtual const char *GMOD_GetServerAddress( void ) = 0;
+	virtual void		GMOD_LoadModel( const char *pszModel ) = 0;
 };
 
-#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_4	"ServerGameDLL004"
-#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_5	"ServerGameDLL005"
-#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_6	"ServerGameDLL006"
-#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL007"
+#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_8	"ServerGameDLL008"
+#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_9	"ServerGameDLL009"
+#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL009"
+#define INTERFACEVERSION_SERVERGAMEDLL_INT			9
+
+class IServerGCLobby;
 
 //-----------------------------------------------------------------------------
 // Purpose: These are the interfaces that the game .dll exposes to the engine
@@ -400,15 +431,18 @@ public:
 abstract_class IServerGameDLL
 {
 public:
+	virtual bool			PreInit( CreateInterfaceFn engineFactory, IGet *get ) = 0;
+	
 	// Initialize the game (one-time call when the DLL is first loaded )
 	// Return false if there is an error during startup.
 	virtual bool			DLLInit(	CreateInterfaceFn engineFactory, 
 										CreateInterfaceFn physicsFactory, 
 										CreateInterfaceFn fileSystemFactory, 
 										CGlobalVars *pGlobals) = 0;
-	
-	virtual bool			ReplayInit( CreateInterfaceFn replayFactory ) = 0;
-	
+
+	// Setup replay interfaces on the server
+	virtual bool			ReplayInit( CreateInterfaceFn fnReplayFactory ) = 0;
+
 	// This is called when a new game is started. (restart, map)
 	virtual bool			GameInit( void ) = 0;
 
@@ -498,11 +532,29 @@ public:
 	// iCookie is the value returned by IServerPluginHelpers::StartQueryCvarValue.
 	// Added with version 2 of the interface.
 	virtual void			OnQueryCvarValueFinished( QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue ) = 0;
-	
+
 	// Called after the steam API has been activated post-level startup
 	virtual void			GameServerSteamAPIActivated( void ) = 0;
-	
+
+	// Called after the steam API has been shutdown post-level startup
 	virtual void			GameServerSteamAPIShutdown( void ) = 0;
+
+	virtual void			SetServerHibernation( bool bHibernating ) = 0;
+
+	// interface to the new GC based lobby system
+	virtual IServerGCLobby *GetServerGCLobby() = 0;
+
+	// Return override string to show in the server browser
+	// "map" column, or NULL to just use the default value
+	// (the map name)
+	virtual const char *GetServerBrowserMapOverride() = 0;
+
+	// Get gamedata string to send to the master serer updater.
+	virtual const char *GetServerBrowserGameData() = 0;
+
+	virtual bool GMOD_CheckPassword(
+		unsigned long long, const char *, const char *, const char *, const char *, char *pszRejectMsg, unsigned int len
+		) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -606,6 +658,8 @@ public:
 	virtual void			ClientCommandKeyValues( edict_t *pEntity, KeyValues *pKeyValues ) = 0;
 	
 	virtual void			ClientSpawned( edict_t *pEntity ) = 0;
+	
+	virtual void			GMOD_ReceiveClientMessage( int, edict_t *pEntity, bf_read *bf, int len ) = 0;
 };
 
 #define INTERFACEVERSION_UPLOADGAMESTATS		"ServerUploadGameStats001"

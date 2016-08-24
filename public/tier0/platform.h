@@ -75,27 +75,58 @@
 
 #ifdef _WIN32
 	#define IsLinux() false
+	#define IsOSX() false
+	#define IsPosix() false
+	#ifndef PLATFORM_WINDOWS
+	#define PLATFORM_WINDOWS 1 // Windows PC or Xbox 360
+	#endif
 	#ifndef _X360
+		#define IsWindows() true
 		#define IsPC() true
 		#define IsConsole() false
 		#define IsX360() false
 		#define IsPS3() false
 		#define IS_WINDOWS_PC
-	#else
-        #ifndef _CONSOLE
-		#define _CONSOLE
+		#define PLATFORM_WINDOWS_PC 1 // Windows PC
+		#ifdef _WIN64
+			#define IsPlatformWindowsPC64() true
+			#define IsPlatformWindowsPC32() false
+			#define PLATFORM_WINDOWS_PC64 1
+		#else
+			#define IsPlatformWindowsPC64() false
+			#define IsPlatformWindowsPC32() true
+			#define PLATFORM_WINDOWS_PC32 1
 		#endif
+	#else
+		#define PLATFORM_X360 1
+		#ifndef _CONSOLE
+			#define _CONSOLE
+		#endif
+		#define IsWindows() false
 		#define IsPC() false
 		#define IsConsole() true
 		#define IsX360() true
 		#define IsPS3() false
 	#endif
-#elif defined(_LINUX) || defined(__APPLE__)
+#elif defined(POSIX)
 	#define IsPC() true
+	#define IsWindows() false
 	#define IsConsole() false
 	#define IsX360() false
 	#define IsPS3() false
-	#define IsLinux() true
+	#if defined( LINUX )
+		#define IsLinux() true
+	#else
+		#define IsLinux() false
+	#endif
+	
+	#if defined( OSX )
+		#define IsOSX() true
+	#else
+		#define IsOSX() false
+	#endif
+	
+	#define IsPosix() true
 #else
 	#error
 #endif
@@ -252,6 +283,17 @@ typedef void * HINSTANCE;
 #define MAX_PATH  260
 #endif
 
+
+#ifdef GNUC
+#undef offsetof
+//#define offsetof( type, var ) __builtin_offsetof( type, var ) 
+#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+#else
+#undef offsetof
+#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+#endif
+
+
 #define ALIGN_VALUE( val, alignment ) ( ( val + alignment - 1 ) & ~( alignment - 1 ) ) //  need macro for constant expression
 
 // Used to step into the debugger
@@ -283,17 +325,41 @@ typedef void * HINSTANCE;
 #ifdef _WIN32
         #define DECL_ALIGN(x) __declspec(align(x))
 
-#elif defined(_LINUX) || defined(__APPLE__)
+#elif GNUC
 	#define DECL_ALIGN(x) __attribute__((aligned(x)))
 #else
         #define DECL_ALIGN(x) /* */
 #endif
 
+#ifdef _MSC_VER
+// MSVC has the align at the start of the struct
+#define ALIGN4 DECL_ALIGN(4)
 #define ALIGN8 DECL_ALIGN(8)
 #define ALIGN16 DECL_ALIGN(16)
 #define ALIGN32 DECL_ALIGN(32)
 #define ALIGN128 DECL_ALIGN(128)
 
+#define ALIGN4_POST
+#define ALIGN8_POST
+#define ALIGN16_POST
+#define ALIGN32_POST
+#define ALIGN128_POST
+#elif defined( GNUC )
+// gnuc has the align decoration at the end
+#define ALIGN4
+#define ALIGN8 
+#define ALIGN16
+#define ALIGN32
+#define ALIGN128
+
+#define ALIGN4_POST DECL_ALIGN(4)
+#define ALIGN8_POST DECL_ALIGN(8)
+#define ALIGN16_POST DECL_ALIGN(16)
+#define ALIGN32_POST DECL_ALIGN(32)
+#define ALIGN128_POST DECL_ALIGN(128)
+#else
+#error
+#endif
 
 // Linux had a few areas where it didn't construct objects in the same order that Windows does.
 // So when CVProfile::CVProfile() would access g_pMemAlloc, it would crash because the allocator wasn't initalized yet.
@@ -824,7 +890,17 @@ struct CPUInformation
 	tchar* m_szProcessorID;				// Processor vendor Identification.
 };
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
+#endif
+
 PLATFORM_INTERFACE const CPUInformation& GetCPUInformation();
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 PLATFORM_INTERFACE void GetCurrentDate( int *pDay, int *pMonth, int *pYear );
 

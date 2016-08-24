@@ -215,24 +215,18 @@ public:
 
 	virtual DVDMode_t		GetDVDMode() { return m_pFileSystemPassThru->GetDVDMode(); }
 
-	virtual void EnableWhitelistFileTracking( bool bEnable )
-		{ m_pFileSystemPassThru->EnableWhitelistFileTracking( bEnable ); }
-	virtual void RegisterFileWhitelist( IFileList *pForceMatchList, IFileList *pAllowFromDiskList, IFileList **pFilesToReload )
-		{ m_pFileSystemPassThru->RegisterFileWhitelist( pForceMatchList, pAllowFromDiskList, pFilesToReload ); }
+	virtual void EnableWhitelistFileTracking( bool bEnable, bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes )
+		{ m_pFileSystemPassThru->EnableWhitelistFileTracking( bEnable, bCacheAllVPKHashes, bRecalculateAndCheckHashes ); }
+	virtual void RegisterFileWhitelist( IPureServerWhitelist *pPureList, IFileList **pFilesToReload )
+		{ m_pFileSystemPassThru->RegisterFileWhitelist( pPureList, pFilesToReload ); }
 	virtual void MarkAllCRCsUnverified()
 		{ m_pFileSystemPassThru->MarkAllCRCsUnverified(); }
 	virtual void CacheFileCRCs( const char *pPathname, ECacheCRCType eType, IFileList *pFilter )
 		{ return m_pFileSystemPassThru->CacheFileCRCs( pPathname, eType, pFilter ); }
-	virtual void CacheFileMD5s( const char *pPathname, ECacheCRCType eType, IFileList *pFilter )
-		{ return m_pFileSystemPassThru->CacheFileMD5s( pPathname, eType, pFilter ); }
-	virtual EFileCRCStatus CheckCachedFileCRC( const char *pPathID, const char *pRelativeFilename, CRC32_t *pCRC )
-		{ return m_pFileSystemPassThru->CheckCachedFileCRC( pPathID, pRelativeFilename, pCRC ); }
-	virtual EFileCRCStatus CheckCachedFileMD5( const char *pPathID, const char *pRelativeFilename, void *pMD5 )
-		{ return m_pFileSystemPassThru->CheckCachedFileMD5( pPathID, pRelativeFilename, pMD5 ); }
-	virtual int GetUnverifiedCRCFiles( CUnverifiedCRCFile *pFiles, int nMaxFiles )
-		{ return m_pFileSystemPassThru->GetUnverifiedCRCFiles( pFiles, nMaxFiles ); }
-	virtual int GetUnverifiedMD5Files( void *pFiles, int nMaxFiles )
-		{ return m_pFileSystemPassThru->GetUnverifiedMD5Files( pFiles, nMaxFiles ); }
+	virtual EFileCRCStatus CheckCachedFileHash( const char *pPathID, const char *pRelativeFilename, int nFileFraction, FileHash_t *pFileHash )
+		{ return m_pFileSystemPassThru->CheckCachedFileHash( pPathID, pRelativeFilename, nFileFraction, pFileHash ); }
+	virtual int GetUnverifiedFileHashes( CUnverifiedFileHash *pFiles, int nMaxFiles )
+		{ return m_pFileSystemPassThru->GetUnverifiedFileHashes( pFiles, nMaxFiles ); }
 	virtual int GetWhitelistSpewFlags()
 		{ return m_pFileSystemPassThru->GetWhitelistSpewFlags(); }
 	virtual void SetWhitelistSpewFlags( int spewFlags )
@@ -252,6 +246,19 @@ public:
 		{ return m_pFileSystemPassThru->IsFileCacheLoaded( pFileCache ); }
 	virtual void			DestroyFileCache( void *pFileCache )
 		{ m_pFileSystemPassThru->DestroyFileCache( pFileCache ); }
+
+	virtual bool RegisterMemoryFile( void *pFile, void **ppExistingFileWithRef )
+		{ return m_pFileSystemPassThru->RegisterMemoryFile( pFile, ppExistingFileWithRef ); }
+	virtual void UnregisterMemoryFile( void *pFile )
+		{ m_pFileSystemPassThru->UnregisterMemoryFile( pFile ); }
+
+	virtual void CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes )
+		{ m_pFileSystemPassThru->CacheAllVPKFileHashes( bCacheAllVPKHashes, bRecalculateAndCheckHashes ); }
+	virtual bool CheckVPKFileHash( int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t &md5Value )
+		{ return m_pFileSystemPassThru->CheckVPKFileHash( PackFileID, nPackFileNumber, nFileFraction, md5Value ); }
+
+	virtual void NotifyFileUnloaded( const char *pFileName, const char *pPathId )
+		{ m_pFileSystemPassThru->NotifyFileUnloaded( pFileName, pPathId ); }
 
 protected:
 	IFileSystem *m_pFileSystemPassThru;

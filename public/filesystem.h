@@ -11,6 +11,7 @@
 #include "tier0/memalloc.h"
 #include "tier1/interface.h"
 #include "tier1/utlsymbol.h"
+#include "tier1/utlstring.h"
 #include "appframework/IAppSystem.h"
 #include "tier1/checksum_crc.h"
 
@@ -300,7 +301,8 @@ enum FSAsyncFlags_t
 enum EFileCRCStatus
 {
 	k_eFileCRCStatus_CantOpenFile,		// We don't have this file. 
-	k_eFileCRCStatus_GotCRC
+	k_eFileCRCStatus_GotCRC,
+	k_eFileCRCStatus_FileInVPK
 };
 
 // Used in CacheFileCRCs.
@@ -338,6 +340,29 @@ struct FileAsyncRequest_t
 	FSAllocFunc_t			pfnAlloc;			// custom allocator. can be null. not compatible with FSASYNC_FLAGS_FREEDATAPTR
 };
 
+struct MD5Value_t
+{
+	unsigned char bits[16];
+};
+
+struct FileHash_t
+{
+	int m_eFileHashType;
+	CRC32_t m_crcIOSequence;
+	MD5Value_t m_md5contents;
+	int m_cbFileLen;
+	int m_PackFileID;
+	int m_nPackFileNumber;
+};
+
+class CUnverifiedFileHash
+{
+public:
+	char m_PathID[MAX_PATH];
+	char m_Filename[MAX_PATH];
+	int m_nFileFraction;
+	FileHash_t m_FileHash;
+};
 
 class CUnverifiedCRCFile
 {
@@ -347,12 +372,21 @@ public:
 	CRC32_t m_CRC;
 };
 
-
 // Spew flags for SetWhitelistSpewFlags (set with the fs_whitelist_spew_flags cvar).
 // Update the comment for the fs_whitelist_spew_flags cvar if you change these.
 #define WHITELIST_SPEW_WHILE_LOADING		0x0001	// list files as they are added to the CRC tracker
 #define WHITELIST_SPEW_RELOAD_FILES			0x0002	// show files the filesystem is telling the engine to reload
 #define WHITELIST_SPEW_DONT_RELOAD_FILES	0x0004	// show files the filesystem is NOT telling the engine to reload
+
+abstract_class IPureServerWhitelist
+{
+public:
+	virtual void		AddRef() = 0;
+	virtual void		Release() = 0;
+	virtual const char	*GetFileClass( const char * ) = 0;
+	virtual int			GetTrustedKeyCount() const = 0;
+	virtual void		GetTrustedKey( int keyIndex, int *pBuffer ) = 0;
+};
 
 
 //-----------------------------------------------------------------------------
@@ -401,7 +435,7 @@ public:
 // Main file system interface
 //-----------------------------------------------------------------------------
 
-#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem019"
+#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem022"
 
 abstract_class IFileSystem : public IAppSystem, public IBaseFileSystem
 {
@@ -692,7 +726,7 @@ public:
 
 	// This should be called ONCE at startup. Multiplayer games (gameinfo.txt does not contain singleplayer_only)
 	// want to enable this so sv_pure works.
-	virtual void			EnableWhitelistFileTracking( bool bEnable ) = 0;
+	virtual void			EnableWhitelistFileTracking( bool bEnable, bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) = 0;
 
 	// This is called when the client connects to a server using a pure_server_whitelist.txt file.
 	//
@@ -714,7 +748,7 @@ public:
 	// and the engine should reload it so it can come from Steam.
 	//
 	// Be sure to call Release() on pFilesToReload.
-	virtual void			RegisterFileWhitelist( IFileList *pWantCRCList, IFileList *pAllowFromDiskList, IFileList **pFilesToReload ) = 0;
+	virtual void			RegisterFileWhitelist( IPureServerWhitelist *pPureList, IFileList **pFilesToReload ) = 0;
 
 	// Called when the client logs onto a server. Any files that came off disk should be marked as 
 	// unverified because this server may have a different set of files it wants to guarantee.
@@ -723,24 +757,16 @@ public:
 	// As the server loads whitelists when it transitions maps, it calls this to calculate CRCs for any files marked
 	// with check_crc.   Then it calls CheckCachedFileCRC later when it gets client requests to verify CRCs.
 	virtual void			CacheFileCRCs( const char *pPathname, ECacheCRCType eType, IFileList *pFilter ) = 0;
-	virtual EFileCRCStatus	CheckCachedFileCRC( const char *pPathID, const char *pRelativeFilename, CRC32_t *pCRC ) = 0;
+	virtual EFileCRCStatus	CheckCachedFileHash( const char *pPathID, const char *pRelativeFilename, int nFileFraction, FileHash_t *pFileHash ) = 0;
 	
-	virtual void			CacheFileMD5s( const char *pPathname, ECacheCRCType eType, IFileList *pFilter ) = 0;
-
-	// Last param is an MD5Value_t pointer.
-	virtual	EFileCRCStatus	CheckCachedFileMD5( const char *pPathID, const char *pRelativeFilename, void *pMD5 ) = 0;
-
 	// Fills in the list of files that have been loaded off disk and have not been verified.
 	// Returns the number of files filled in (between 0 and nMaxFiles).
 	//
 	// This also removes any files it's returning from the unverified CRC list, so they won't be
 	// returned from here again.
 	// The client sends batches of these to the server to verify.
-	virtual int				GetUnverifiedCRCFiles( CUnverifiedCRCFile *pFiles, int nMaxFiles ) = 0;
+	virtual int				GetUnverifiedFileHashes( CUnverifiedFileHash *pFiles, int nMaxFiles ) = 0;
 
-	// First param is a CUnverifiedMD5File pointer.
-	virtual int				GetUnverifiedMD5Files( void *pFiles, int nMaxFiles ) = 0;
-	
 	// Control debug message output.
 	// Pass a combination of WHITELIST_SPEW_ flags.
 	virtual int				GetWhitelistSpewFlags() = 0;
@@ -757,6 +783,14 @@ public:
 	virtual bool			IsFileCacheFileLoaded( void *pFileCache, const char *szFile ) = 0;
 	virtual bool			IsFileCacheLoaded( void *pFileCache ) = 0;
 	virtual void			DestroyFileCache( void *pFileCache ) = 0;
+
+	virtual bool			RegisterMemoryFile( void *pFile, void **ppExistingFileWithRef ) = 0;
+	virtual void			UnregisterMemoryFile( void *pFile ) = 0;
+
+	virtual void			CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) = 0;
+	virtual bool			CheckVPKFileHash( int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t &md5Value ) = 0;
+
+	virtual void			NotifyFileUnloaded( const char *pFileName, const char *pPathId ) = 0;
 };
 
 //-----------------------------------------------------------------------------
