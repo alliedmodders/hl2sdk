@@ -398,7 +398,6 @@ public:
 	
 	virtual void			ClearInstancedBaselineFromServerClasses( void ) = 0;
 	
-	virtual void			GetLevelsFromSaveFile( const char *pszFileName, CUtlVector<CCreateGameServerLoadInfo> &out, bool ) = 0;
 	virtual void			ClearSaveDirectory( void ) = 0;
 	
 	virtual void			*GetEntityInfo() = 0;
@@ -552,7 +551,7 @@ public:
 	virtual void		GetConVarPrefixesToResetToDefaults( CUtlString &prefixes ) const = 0;
 };
 
-#define INTERFACEVERSION_SERVERGAMECLIENTS		"Source2GameClients001"
+#define INTERFACEVERSION_SERVERGAMECLIENTS		"Source2GameClients002"
 
 //-----------------------------------------------------------------------------
 // Purpose: Player / Client related functions
