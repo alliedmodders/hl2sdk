@@ -296,6 +296,10 @@ public:
 
 	ConCommand( const char *pName, FnCommandCallback_t callback, 
 		const char *pHelpString = 0, int flags = 0, FnCommandCompletionCallback completionFunc = 0 );
+	ConCommand(const char *pName, FnCommandCallbackV1_t callback,
+		const char *pHelpString = 0, int flags = 0, FnCommandCompletionCallback completionFunc = 0);
+	ConCommand(const char *pName, FnCommandCallbackV2_t callback,
+		const char *pHelpString = 0, int flags = 0, FnCommandCompletionCallback completionFunc = 0);
 	ConCommand( const char *pName, ICommandCallback *pCallback, 
 		const char *pHelpString = 0, int flags = 0, ICommandCompletionCallback *pCommandCompletionCallback = 0 );
 
@@ -321,8 +325,6 @@ private:
 
 	union
 	{
-		FnCommandCallbackV1_t m_fnCommandCallbackV1;
-		FnCommandCallbackV2_t m_fnCommandCallbackV2;
 		FnCommandCompletionCallback	m_fnCompletionCallback;
 		ICommandCompletionCallback *m_pCommandCompletionCallback;
 	};
@@ -335,13 +337,16 @@ private:
 		// Call this function when executing the command
 		union
 		{
+			void *m_fnCallbackAny;
 			FnCommandCallback_t m_fnCommandCallback;
+			FnCommandCallbackV1_t m_fnCommandCallbackV1;
 			FnCommandCallbackV2_t m_fnCommandCallbackV2;
 			ICommandCallback *m_pCommandCallback; 
 		};
 		
 		bool m_bUsingCommandCallbackInterface : 1;
 		bool m_bUsingOldCommandCallback : 1;
+		bool m_bUsingV1CommandCallback : 1;
 		bool m_bUsingV2CommandCallback : 1;
 	};
 	CUtlVector<ConCommandCB> m_Callbacks;

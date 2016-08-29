@@ -514,12 +514,17 @@ int DefaultCompletionFunc( const char *partial, CUtlVector< CUtlString > &comman
 
 ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
-	// Set the callback
-	ConCommandCB cb;
-	cb.m_fnCommandCallback = callback;
-	cb.m_bUsingOldCommandCallback = false;
-	cb.m_bUsingCommandCallbackInterface = false;
-	m_Callbacks.AddToTail(cb);
+	// Add the callback
+	if (callback)
+	{
+		ConCommandCB cb;
+		cb.m_fnCommandCallback = callback;
+		cb.m_bUsingOldCommandCallback = true;
+		cb.m_bUsingV1CommandCallback = false;
+		cb.m_bUsingV2CommandCallback = false;		
+		cb.m_bUsingCommandCallbackInterface = false;
+		m_Callbacks.AddToTail(cb);
+	}
 
 	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
 	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
@@ -531,14 +536,67 @@ ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const c
 	BaseClass::Create( pName, pHelpString, flags );
 }
 
+ConCommand::ConCommand(const char *pName, FnCommandCallbackV1_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/)
+{
+	// Add the callback
+	if (callback)
+	{
+		ConCommandCB cb;
+		cb.m_fnCommandCallbackV1 = callback;
+		cb.m_bUsingOldCommandCallback = false;
+		cb.m_bUsingV1CommandCallback = true;
+		cb.m_bUsingV2CommandCallback = false;
+		cb.m_bUsingCommandCallbackInterface = false;
+		m_Callbacks.AddToTail(cb);
+	}
+
+	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
+	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
+	m_bUsingCommandCompletionInterface = false;
+
+	m_pParent = this;
+
+	// Setup the rest
+	BaseClass::Create(pName, pHelpString, flags);
+}
+
+ConCommand::ConCommand(const char *pName, FnCommandCallbackV2_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/)
+{
+	// Add the callback
+	if (callback)
+	{
+		ConCommandCB cb;
+		cb.m_fnCommandCallbackV2 = callback;
+		cb.m_bUsingOldCommandCallback = false;
+		cb.m_bUsingV1CommandCallback = false;
+		cb.m_bUsingV2CommandCallback = true;
+		cb.m_bUsingCommandCallbackInterface = false;
+		m_Callbacks.AddToTail(cb);
+	}
+
+	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
+	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
+	m_bUsingCommandCompletionInterface = false;
+
+	m_pParent = this;
+
+	// Setup the rest
+	BaseClass::Create(pName, pHelpString, flags);
+}
+
 ConCommand::ConCommand( const char *pName, ICommandCallback *pCallback, const char *pHelpString /*= 0*/, int flags /*= 0*/, ICommandCompletionCallback *pCompletionCallback /*= 0*/ )
 {
-	// Set the callback
-	ConCommandCB cb;
-	cb.m_pCommandCallback = pCallback;
-	cb.m_bUsingOldCommandCallback = false;
-	cb.m_bUsingCommandCallbackInterface = true;
-	m_Callbacks.AddToTail(cb);
+	// Add the callback iface
+	if (pCallback)
+	{
+		ConCommandCB cb;
+		cb.m_pCommandCallback = pCallback;
+		cb.m_bUsingOldCommandCallback = false;
+		cb.m_bUsingV1CommandCallback = false;
+		cb.m_bUsingV2CommandCallback = false;
+		cb.m_bUsingCommandCallbackInterface = true;
+		m_Callbacks.AddToTail(cb);
+	}
 
 	m_pCommandCompletionCallback = pCompletionCallback;
 	m_bHasCompletionCallback = ( pCompletionCallback != 0 );
@@ -575,35 +633,26 @@ void ConCommand::Dispatch( const CCommandContext &context, const CCommand &comma
 	FOR_EACH_VEC(m_Callbacks, i)
 	{
 		ConCommandCB cb = m_Callbacks[i];
-		if (cb.m_bUsingOldCommandCallback)
+		if (cb.m_fnCallbackAny)
 		{
-			if (m_fnCommandCallbackV1)
+			if (cb.m_bUsingOldCommandCallback)
 			{
-				(*m_fnCommandCallbackV1)(context);
+				(*cb.m_fnCommandCallback)(command);
 				return;
 			}
-		}
-		else if (cb.m_bUsingCommandCallbackInterface)
-		{
-			if (cb.m_pCommandCallback)
+			else if (cb.m_bUsingCommandCallbackInterface)
 			{
 				cb.m_pCommandCallback->CommandCallback(context, command);
 				return;
 			}
-		}
-		else if (cb.m_bUsingV2CommandCallback)
-		{
-			if (cb.m_bUsingV2CommandCallback)
+			else if (cb.m_bUsingV1CommandCallback)
+			{
+				(*cb.m_fnCommandCallbackV1)(context);
+				return;
+			}
+			else if (cb.m_bUsingV2CommandCallback)
 			{
 				cb.m_fnCommandCallbackV2(context, command);
-			}
-		}
-		else
-		{
-			if (cb.m_fnCommandCallback)
-			{
-				(*cb.m_fnCommandCallback)(command);
-				return;
 			}
 		}
 
