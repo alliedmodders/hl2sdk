@@ -125,6 +125,8 @@ public:
 
 	// removes a listener 
 	virtual void RemoveListener( IGameEventListener2 *listener) = 0;
+	
+	virtual void AddListenerGlobal( IGameEventListener2 * listener, bool bIsServerSide ) = 0;
 
 	// create an event by name, but doesn't fire it. returns NULL is event is not
 	// known or no listener is registered for it. bForce forces the creation even if no listener is active
@@ -145,6 +147,8 @@ public:
 	// write/read event to/from bitbuffer
 	virtual bool SerializeEvent( IGameEvent *event, bf_write *buf ) = 0;
 	virtual IGameEvent *UnserializeEvent( bf_read *buf ) = 0; // create new KeyValues, must be deleted
+	
+	virtual KeyValues *GetEventDataTypes( IGameEvent *event ) = 0;
 };
 
 // the old game event manager interface, don't use it. Rest is legacy support:
@@ -178,7 +182,7 @@ public:
 	virtual bool AddListener( IGameEventListener * listener, bool bIsServerSide ) = 0; 
 	
 	// removes a listener 
-	virtual void RemoveListener( IGameEventListener * listener) = 0;
+	virtual void RemoveListener( IGameEventListener * listener ) = 0;
 		
 	// fires an global event, specific event data is stored in KeyValues
 	// local listeners will receive the event instantly
