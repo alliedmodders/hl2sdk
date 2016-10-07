@@ -178,7 +178,9 @@ public:
 	virtual bool AddListener( IGameEventListener * listener, bool bIsServerSide ) = 0; 
 	
 	// removes a listener 
-	virtual void RemoveListener( IGameEventListener * listener) = 0;
+	virtual void RemoveListener( IGameEventListener * listener ) = 0;
+
+	virtual void AddListenerGlobal( IGameEventListener2 * listener, bool bIsServerSide ) = 0;
 		
 	// fires an global event, specific event data is stored in KeyValues
 	// local listeners will receive the event instantly
@@ -196,6 +198,8 @@ public:
 	// write/read event to/from bitbuffer
 	virtual bool SerializeKeyValues( KeyValues *event, bf_write *buf, CGameEvent *eventtype = NULL ) = 0;
 	virtual KeyValues *UnserializeKeyValue( bf_read *msg ) = 0; // create new KeyValues, must be deleted
+
+	virtual KeyValues *GetEventDataTypes( IGameEvent *event ) = 0;
 };
 
 
