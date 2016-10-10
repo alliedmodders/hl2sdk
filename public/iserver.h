@@ -81,7 +81,7 @@ public:
 	virtual void	SetSpawnGroupDescription( SpawnGroupHandle_t, const char * ) = 0;
 	virtual void	AddServerPrerequisites( IPrerequisite * ) = 0;
 	virtual void	RemoveServerPrerequisites( void ) = 0;
-	virtual CUtlVector<INetworkGameClient *> *StartChangeLevel(int unknown) = 0;
+	virtual CUtlVector<INetworkGameClient *> *StartChangeLevel( const char *, void * ) = 0;
 	virtual void	FinishChangeLevel( CServerChangelevelState * ) = 0;
 	virtual bool	IsChangelevelPending( void ) const = 0;
 	virtual void	GetAllLoadingSpawnGroups( CUtlVector<SpawnGroupHandle_t> *pOut ) = 0;
