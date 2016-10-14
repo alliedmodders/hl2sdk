@@ -248,6 +248,10 @@ typedef bool (*PFNLegacyKeyInstalled)();
 
 const int k_unSteamAccountIDMask = 0xFFFFFFFF;
 const int k_unSteamAccountInstanceMask = 0x000FFFFF;
+// we allow 3 simultaneous user account instances right now, 1= desktop, 2 = console, 4 = web, 0 = all
+const unsigned int k_unSteamUserDesktopInstance	= 1;	 
+const unsigned int k_unSteamUserConsoleInstance	= 2;
+const unsigned int k_unSteamUserWebInstance		= 4;
 
 // Special flags for Chat accounts - they go in the top 8 bits
 // of the steam ID's "instance", leaving 12 for the actual instances
