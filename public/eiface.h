@@ -434,7 +434,7 @@ public:
 	virtual CGamestatsData *GetGamestatsData() = 0;
 
 	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
-	virtual const CSteamID	*GetClientSteamID( const edict_t *pPlayerEdict ) = 0;
+	virtual const CSteamID	*GetClientSteamID( const edict_t *pPlayerEdict, bool bUnknown = false ) = 0;
 
 	// Returns the SteamID of the game server
 	virtual const CSteamID	*GetGameServerSteamID() = 0;
