@@ -128,12 +128,9 @@ class IScriptVM;
 enum ScriptLanguage_t
 {
 	SL_NONE,
-	SL_GAMEMONKEY,
-	SL_SQUIRREL,
 	SL_LUA,
-	SL_PYTHON,
 
-	SL_DEFAULT = SL_SQUIRREL
+	SL_DEFAULT = SL_LUA
 };
 
 class IScriptManager : public IAppSystem
