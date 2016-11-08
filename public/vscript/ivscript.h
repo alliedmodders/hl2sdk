@@ -678,6 +678,9 @@ public:
 
 	virtual void AddSearchPath( const char *pszSearchPath ) = 0;
 	
+	// ??????????????
+	virtual void *UnknownFunc() = 0;
+	
 	virtual void EnableLocalDiskAccess() = 0;
 	
 	virtual void ForwardConsoleCommand(const CCommandContext &, const CCommand &) = 0;
