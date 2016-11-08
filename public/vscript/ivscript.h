@@ -133,11 +133,24 @@ enum ScriptLanguage_t
 	SL_DEFAULT = SL_LUA
 };
 
+class IScriptDebugger
+{
+public:
+	virtual bool		StartDebugging( const char *pszIDEKey ) = 0;
+	virtual void		StopDebugging() = 0;
+	virtual void		ConnectVM( void * ) = 0;
+	virtual void		Update( void * ) = 0;
+	virtual const char	*GetIDEKey() = 0;
+	virtual void		HandleOutputMsg( const char *, void * ) = 0;
+	virtual void		HandleErrorMsg( const char *, void * ) = 0;
+};
+
 class IScriptManager : public IAppSystem
 {
 public:
 	virtual IScriptVM *CreateVM( ScriptLanguage_t language = SL_DEFAULT ) = 0;
 	virtual void DestroyVM( IScriptVM * ) = 0;
+	virtual IScriptDebugger *GetDebugger() = 0;
 };
 
 //-----------------------------------------------------------------------------
