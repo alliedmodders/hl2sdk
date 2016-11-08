@@ -17,6 +17,16 @@
 
 
 //-----------------------------------------------------------------------------
+// Specifies a module + interface name for initialization
+//-----------------------------------------------------------------------------
+struct AppSystemInfo_t
+{
+	const char *m_pModuleName;
+	const char *m_pInterfaceName;
+};
+
+
+//-----------------------------------------------------------------------------
 // Client systems are singleton objects in the client codebase responsible for
 // various tasks
 // The order in which the client systems appear in this list are the
@@ -30,6 +40,16 @@ enum InitReturnVal_t
 	INIT_OK,
 
 	INIT_LAST_VAL,
+};
+
+enum AppSystemTier_t
+{
+	APP_SYSTEM_TIER0 = 0,
+	APP_SYSTEM_TIER1,
+	APP_SYSTEM_TIER2,
+	APP_SYSTEM_TIER3,
+
+	APP_SYSTEM_TIER_OTHER,
 };
 
 
@@ -47,6 +67,15 @@ public:
 	// Init, shutdown
 	virtual InitReturnVal_t Init() = 0;
 	virtual void Shutdown() = 0;
+
+	// Returns all dependent libraries
+	virtual const AppSystemInfo_t* GetDependencies() = 0;
+
+	// Returns the tier
+	virtual AppSystemTier_t GetTier() = 0;
+
+	// Reconnect to a particular interface
+	virtual void Reconnect( CreateInterfaceFn factory, const char *pInterfaceName ) = 0;
 };
 
 

@@ -92,6 +92,9 @@ public:
 	virtual void *QueryInterface( const char *pInterfaceName )													{ return m_pFileSystemPassThru->QueryInterface( pInterfaceName ); }
 	virtual InitReturnVal_t Init()																				{ return m_pFileSystemPassThru->Init(); }
 	virtual void Shutdown()																						{ m_pFileSystemPassThru->Shutdown(); }
+	virtual const AppSystemInfo_t* GetDependencies()															{ return m_pFileSystemPassThru->GetDependencies(); }
+	virtual AppSystemTier_t GetTier()																			{ return m_pFileSystemPassThru->GetTier(); }
+	virtual void Reconnect( CreateInterfaceFn factory, const char *pInterfaceName )								{ m_pFileSystemPassThru->Reconnect( factory, pInterfaceName ); }
 
 	virtual void			RemoveAllSearchPaths( void )														{ m_pFileSystemPassThru->RemoveAllSearchPaths(); }
 	virtual void			AddSearchPath( const char *pPath, const char *pathID, SearchPathAdd_t addType )		{ m_pFileSystemPassThru->AddSearchPath( pPath, pathID, addType ); }
