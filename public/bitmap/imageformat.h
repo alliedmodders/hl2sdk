@@ -102,6 +102,9 @@ enum ImageFormat
 	IMAGE_FORMAT_LE_BGRA8888,
 #endif
 
+	IMAGE_FORMAT_DXT1_RUNTIME,
+	IMAGE_FORMAT_DXT5_RUNTIME,
+
 	NUM_IMAGE_FORMATS
 };
 
@@ -376,7 +379,7 @@ namespace ImageLoader
 	struct ResampleInfo_t
 	{
 
-		ResampleInfo_t() : m_nSrcDepth(1), m_nDestDepth(1), m_flAlphaThreshhold(0.4f), m_flAlphaHiFreqThreshhold(0.4f), m_nFlags(0)
+		ResampleInfo_t() : m_nFlags(0), m_flAlphaThreshhold(0.4f), m_flAlphaHiFreqThreshhold(0.4f), m_nSrcDepth(1), m_nDestDepth(1)
 		{
 			m_flColorScale[0] = 1.0f, m_flColorScale[1] = 1.0f, m_flColorScale[2] = 1.0f, m_flColorScale[3] = 1.0f;
 			m_flColorGoal[0] = 0.0f, m_flColorGoal[1] = 0.0f, m_flColorGoal[2] = 0.0f, m_flColorGoal[3] = 0.0f;
@@ -450,6 +453,9 @@ namespace ImageLoader
 							   int height,	int depth, ImageFormat imageFormat, float srcGamma, float dstGamma, 
 							   int numLevels = 0 );
 
+	// Low quality mipmap generation, but way faster. 
+	void GenerateMipmapLevelsLQ( unsigned char* pSrc, unsigned char* pDst, int width, int height, 
+		                         ImageFormat imageFormat, int numLevels );
 
 	//-----------------------------------------------------------------------------
 	// operations on square images (src and dst can be the same)
@@ -513,6 +519,10 @@ namespace ImageLoader
 		return ( info.m_NumRedBits > 8 || info.m_NumGreeBits > 8 || info.m_NumBlueBits > 8 || info.m_NumAlphaBits > 8 );
 	}
 
+	inline bool IsRuntimeCompressed( ImageFormat fmt )
+	{
+		return ( fmt == IMAGE_FORMAT_DXT1_RUNTIME ) || ( fmt == IMAGE_FORMAT_DXT5_RUNTIME );
+	}
 
 } // end namespace ImageLoader
 

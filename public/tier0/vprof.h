@@ -140,6 +140,8 @@
 #define VPROF_BUDGETGROUP_TENFOOT					VPROF_BUDGETGROUP_HTMLSURFACE
 #define VPROF_BUDGETGROUP_STEAMUI					VPROF_BUDGETGROUP_HTMLSURFACE
 #define VPROF_BUDGETGROUP_ATTRIBUTES				_T("Attributes")
+#define VPROF_BUDGETGROUP_FINDATTRIBUTE				_T("FindAttribute")
+#define VPROF_BUDGETGROUP_FINDATTRIBUTEUNSAFE		_T("FindAttributeUnsafe")
 	
 #ifdef _X360
 // update flags
@@ -775,9 +777,9 @@ private:
 
 inline CVProfNode::CVProfNode( const tchar * pszName, int detailLevel, CVProfNode *pParent, const tchar *pBudgetGroupName, int budgetFlags )
  :	m_pszName( pszName ),
-	m_nRecursions( 0 ),
 	m_nCurFrameCalls( 0 ),
 	m_nPrevFrameCalls( 0 ),
+	m_nRecursions( 0 ),
 	m_pParent( pParent ),
 	m_pChild( NULL ),
 	m_pSibling( NULL ),
