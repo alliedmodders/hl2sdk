@@ -164,7 +164,7 @@ DECLARE_POINTER_HANDLE( HSCRIPT );
 // 
 //-----------------------------------------------------------------------------
 
-typedef int ScriptDataType_t;
+typedef uint8 ScriptDataType_t;
 struct ScriptVariant_t;
 
 template <typename T> struct ScriptDeducer { /*enum { FIELD_TYPE = FIELD_TYPEUNKNOWN };*/ };
@@ -242,14 +242,24 @@ struct ScriptFuncDescriptor_t
 	{
 		m_pszFunction = NULL;
 		m_ReturnType = FIELD_TYPEUNKNOWN;
+		m_iVariantCount = 0;
+		m_iParamCount = 0;
+		memcpy(m_Parameters, 0, sizeof(m_Parameters));
 		m_pszDescription = NULL;
+		m_pszParameterNames = NULL;
 	}
 
 	const char *m_pszScriptName;
 	const char *m_pszFunction;
 	const char *m_pszDescription;
 	ScriptDataType_t m_ReturnType;
-	CUtlVector<ScriptDataType_t> m_Parameters;
+	uint8 m_iVariantCount;
+	uint8 m_iParamCount;
+	ScriptDataType_t m_Parameters[12];
+
+	// Any/all parameter names. Read as a buffer of null-termed strings.
+	// If first is NULL / 0-len, no parameter names are present.
+	const char *m_pszParameterNames;
 };
 
 
@@ -688,8 +698,7 @@ public:
 
 	virtual void AddSearchPath( const char *pszSearchPath ) = 0;
 	
-	// ??????????????
-	virtual void *UnknownFunc() = 0;
+	virtual void ClearTypeMap() = 0;
 	
 	virtual void EnableLocalDiskAccess() = 0;
 	
