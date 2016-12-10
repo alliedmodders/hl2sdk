@@ -784,7 +784,7 @@ public:
 
 	bool SetValue( const char *pszKey, const ScriptVariant_t &value )																{ return SetValue(NULL, pszKey, value ); }
 
-	virtual bool SetEnumValue(HSCRIPT hScope, char const* unk1, char const *unk2, int unk3, char const* unk4) = 0;
+	virtual bool SetEnumValue(HSCRIPT hScope, const char *pszEnumName, const char *pszValueName, int value, const char *pszDescription) = 0;
 	virtual bool CreateKeyValuesFromTable(HSCRIPT hScope, const char* unk1, void* fUnk, void* unk2) = 0;
 
 	virtual void CreateTable( ScriptVariant_t &Table ) = 0;
