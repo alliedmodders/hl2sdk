@@ -59,7 +59,7 @@ typedef enum _fieldtypes
 
 	FIELD_INTERVAL,			// a start and range floating point interval ( e.g., 3.2->3.6 == 3.2 and 0.4 )
 	FIELD_UNUSED,
-	
+
 	FIELD_VECTOR2D,			// 2 floats
 	FIELD_INTEGER64,		// 64bit integer
 
@@ -68,7 +68,7 @@ typedef enum _fieldtypes
 	FIELD_RESOURCE,
 
 	FIELD_TYPEUNKNOWN,
-	
+
 	FIELD_CSTRING,
 	FIELD_HSCRIPT,
 	FIELD_VARIANT,
@@ -92,6 +92,7 @@ typedef enum _fieldtypes
 	FIELD_V8_OBJECT,
 	FIELD_V8_ARRAY,
 	FIELD_V8_CALLBACK_INFO,
+	FIELD_UTLSTRING,
 	
 	FIELD_TYPECOUNT
 } fieldtype_t;
