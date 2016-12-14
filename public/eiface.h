@@ -170,6 +170,8 @@ public:
 	virtual CEntityLump	*GetEntityLumpForTemplate( const char *, bool, const char *, const char * ) = 0;
 	
 	virtual uint32		GetStatsAppID() const = 0;
+	
+	virtual void		*UnknownFunc1(const char *pszFilename, void *pUnknown1, void *pUnknown2, void *pUnknown3) = 0;
 };
 
 //-----------------------------------------------------------------------------
