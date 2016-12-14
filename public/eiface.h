@@ -158,6 +158,7 @@ struct CSplitScreenSlot
 //-----------------------------------------------------------------------------
 abstract_class ISource2Engine : public IAppSystem
 {
+public:
 	// Is the game paused?
 	virtual bool		IsPaused() = 0;
 	
