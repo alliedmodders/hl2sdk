@@ -180,8 +180,6 @@ public:
 abstract_class IVEngineServer2 : public ISource2Engine
 {
 public:
-	virtual CreateInterfaceFn GetGameServerFactory() = 0;
-	
 	// Tell engine to change level ( "changelevel s1\n" or "changelevel2 s1 s2\n" )
 	virtual void		ChangeLevel( const char *s1, const char *s2 ) = 0;
 	
@@ -341,9 +339,6 @@ public:
 	
 	// Fill in the player info structure for the specified player index (name, model, etc.)
 	virtual bool GetPlayerInfo( CEntityIndex ent_num, google::protobuf::Message &info ) = 0;
-	
-	// Validate session
-	virtual void HostValidateSession() = 0;
 	
 	// Returns the XUID of the specified player. It'll be NULL if the player hasn't connected yet.
 	virtual uint64 GetClientXUID( CEntityIndex clientIndex ) = 0;
