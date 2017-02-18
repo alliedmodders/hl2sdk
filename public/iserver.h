@@ -24,7 +24,6 @@ struct EventServerPostSimulate_t;
 struct server_state_t;
 class IPrerequisite;
 class CServerChangelevelState;
-class INetworkGameServerFactory;
 class ISource2WorldSession;
 class INetworkGameClient;
 class GameSessionConfiguration_t;
@@ -95,8 +94,7 @@ public:
 	virtual INetworkGameServer	*GetIGameServer( void ) = 0;
 	virtual bool	IsActiveInGame( void ) const = 0;
 	virtual bool	IsMultiplayer( void ) const = 0;
-	virtual void	StartupServer( const GameSessionConfiguration_t &config, INetworkGameServerFactory *pFactory,
-							ISource2WorldSession *pWorldSession, const char * ) = 0;
+	virtual void	StartupServer( const GameSessionConfiguration_t &config, ISource2WorldSession *pWorldSession, const char * ) = 0;
 	virtual void	SetGameSpawnGroupMgr( IGameSpawnGroupMgr *pMgr ) = 0;
 	virtual void	AddServerPrerequisites( const GameSessionConfiguration_t &, const char *, ILoopModePrerequisiteRegistry *, bool ) = 0;
 	virtual void	SetServerSocket( int ) = 0;
@@ -115,12 +113,6 @@ public:
 	virtual void	PreserveSteamID( void ) = 0;
 	virtual CRC32_t	GetServerSerializersCRC( void ) = 0;
 	virtual void	*GetServerSerializersMsg( void ) = 0;
-};
-
-abstract_class INetworkGameServerFactory
-{
-public:
-	virtual INetworkGameServer *Allocate(int, INetworkServerService *, ISource2WorldSession *) = 0;
 };
 
 typedef INetworkGameServer IServer;
