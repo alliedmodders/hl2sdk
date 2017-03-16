@@ -435,6 +435,8 @@ public:
 	//  edict_t::classname to figure out how to encode a class's data for networking
 	virtual ServerClass*	GetAllServerClasses( void ) = 0;
 	
+	virtual void 			*UnknownFunc2() = 0;
+	
 	virtual const char		*GetLoadedMapName( void ) const = 0;
 	
 	virtual bool			IsPaused( void ) const = 0;
