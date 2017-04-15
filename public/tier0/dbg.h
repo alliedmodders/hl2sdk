@@ -251,8 +251,22 @@ DECLARE_LOGGING_CHANNEL( LOG_DEVELOPER_VERBOSE );
 PLATFORM_INTERFACE void Msg( const tchar* pMsg, ... );
 PLATFORM_INTERFACE void Warning( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
 PLATFORM_INTERFACE void Warning_SpewCallStack( int iMaxCallStackLength, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
-PLATFORM_INTERFACE void Error( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
-PLATFORM_INTERFACE void Error_SpewCallStack( int iMaxCallStackLength, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
+
+// This is gone in Source2. Provide helper to roughyl mimic Source1 behavior
+inline void Error( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 )
+{
+	char szBuf[256];
+	va_list arg_ptr;
+
+	va_start(arg_ptr, pMsg);
+	vsnprintf(szBuf, sizeof(szBuf)-1, pMsg, arg_ptr);
+	va_end(arg_ptr);
+
+	szBuf[sizeof(szBuf)-1] = 0;
+	
+	Msg("%s", szBuf);
+	Plat_ExitProcess(1);
+}
 
 // @TODO: these callstack spew functions are currently disabled in the new logging system.  Need to add support for these if desired.
 PLATFORM_INTERFACE void _Warning_AlwaysSpewCallStack_Enable( bool bEnable );
