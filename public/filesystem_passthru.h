@@ -276,6 +276,8 @@ public:
 		{ return m_pFileSystemPassThru->CheckVPKFileHash( PackFileID, nPackFileNumber, nFileFraction, md5Value ); }
 	virtual void			GetVPKFileStatisticsKV( KeyValues *pKV )
 		{ m_pFileSystemPassThru->GetVPKFileStatisticsKV( pKV ); }
+	
+	virtual bool			BUnknown() { return m_pFileSystemPassThru->BUnknown(); }
 
 protected:
 	IFileSystem *m_pFileSystemPassThru;
