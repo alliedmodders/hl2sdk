@@ -67,7 +67,11 @@
 #include <time.h>
 #endif
 
+#if defined __APPLE__
+#include <stdlib.h>
+#else
 #include <malloc.h>
+#endif
 #include <new>
 
 // need this for memset
