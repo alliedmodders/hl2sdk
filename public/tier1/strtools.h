@@ -17,6 +17,7 @@
 #include <ctype.h>
 #include <wchar.h>
 #include <math.h>
+#include <wctype.h>
 #endif
 
 #include <string.h>
@@ -137,13 +138,24 @@ void			V_normalizeFloatString( char* pFloat );
 // pDest[maxLen-1] is always NULL terminated if pSrc's length is >= maxLen.
 //
 // This means the last parameter can usually be a sizeof() of a string.
-void V_strncpy( char *pDest, const char *pSrc, int maxLen );
+void V_strncpy( OUT_Z_CAP(maxLenInChars) char *pDest, const char *pSrc, int maxLenInChars );
+
+// Ultimate safe strcpy function, for arrays only -- buffer size is inferred by the compiler
+template <size_t maxLenInChars> void V_strcpy_safe( OUT_Z_ARRAY char (&pDest)[maxLenInChars], const char *pSrc ) 
+{ 
+	V_strncpy( pDest, pSrc, (int)maxLenInChars ); 
+}
+
 int V_snprintf( char *pDest, int destLen, const char *pFormat, ... );
 void V_wcsncpy( wchar_t *pDest, wchar_t const *pSrc, int maxLenInBytes );
 int V_snwprintf( wchar_t *pDest, int destLen, const wchar_t *pFormat, ... );
 
 #define COPY_ALL_CHARACTERS -1
-char *V_strncat(char *, const char *, size_t destBufferSize, int max_chars_to_copy=COPY_ALL_CHARACTERS );
+char *V_strncat( INOUT_Z_CAP(cchDest) char *pDest, const char *pSrc, size_t cchDest, int max_chars_to_copy=COPY_ALL_CHARACTERS );
+template <size_t cchDest> char *V_strcat_safe( INOUT_Z_ARRAY char (&pDest)[cchDest], const char *pSrc, int nMaxCharsToCopy=COPY_ALL_CHARACTERS )
+{ 
+	return V_strncat( pDest, pSrc, (int)cchDest, nMaxCharsToCopy ); 
+}
 char *V_strnlwr(char *, size_t);
 
 
@@ -169,16 +181,20 @@ typedef char *  va_list;
 
 #endif   // _VA_LIST_DEFINED
 
-#elif defined(_LINUX) || defined(__APPLE__)
+#elif POSIX
 #include <stdarg.h>
 #endif
 
 #ifdef _WIN32
 #define CORRECT_PATH_SEPARATOR '\\'
+#define CORRECT_PATH_SEPARATOR_S "\\"
 #define INCORRECT_PATH_SEPARATOR '/'
-#elif defined(_LINUX) || defined(__APPLE__)
+#define INCORRECT_PATH_SEPARATOR_S "/"
+#elif POSIX
 #define CORRECT_PATH_SEPARATOR '/'
+#define CORRECT_PATH_SEPARATOR_S "/"
 #define INCORRECT_PATH_SEPARATOR '\\'
+#define INCORRECT_PATH_SEPARATOR_S "\\"
 #endif
 
 int V_vsnprintf( char *pDest, int maxLen, const char *pFormat, va_list params );
@@ -193,6 +209,16 @@ char *V_pretifynum( int64 value );
 int V_UTF8ToUnicode( const char *pUTF8, wchar_t *pwchDest, int cubDestSizeInBytes );
 int V_UnicodeToUTF8( const wchar_t *pUnicode, char *pUTF8, int cubDestSizeInBytes );
 
+
+// strips leading and trailing whitespace; returns true if any characters were removed. UTF-8 and UTF-16 versions.
+bool Q_StripPrecedingAndTrailingWhitespace( char *pch );
+bool Q_StripPrecedingAndTrailingWhitespaceW( wchar_t *pwch );
+
+// strips leading and trailing whitespace, also taking "aggressive" characters 
+// like punctuation spaces, non-breaking spaces, composing characters, and so on
+bool Q_AggressiveStripPrecedingAndTrailingWhitespace( char *pch );
+bool Q_AggressiveStripPrecedingAndTrailingWhitespaceW( wchar_t *pwch );
+bool Q_RemoveAllEvilCharacters( char *pch );
 // Functions for converting hexidecimal character strings back into binary data etc.
 //
 // e.g., 

@@ -337,6 +337,9 @@ typedef void * HINSTANCE;
 #define ALIGN128 DECL_ALIGN(128)
 
 
+// Pull in the /analyze code annotations.
+#include "annotations.h"
+
 // Linux had a few areas where it didn't construct objects in the same order that Windows does.
 // So when CVProfile::CVProfile() would access g_pMemAlloc, it would crash because the allocator wasn't initalized yet.
 #if defined(_LINUX) || defined(__APPLE__)

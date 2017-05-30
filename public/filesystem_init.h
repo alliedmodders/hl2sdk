@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -148,13 +148,16 @@ public:
 	// This specifies the directory where gameinfo.txt is. This must be set.
 	const char		*m_pDirectoryName;
 
-	// If this is set, then it will add a search path with _<language> appended to the pathname
-	// for each search path with a path ID of "game".
+	// If this is set, then any search paths with a _english will be replaced with _m_pLanguage and added before the
+	// _english path
 	// (default: null)
 	const char		*m_pLanguage;
 
 	// This is the filesystem FileSystem_LoadSearchPaths is talking to.
 	IFileSystem		*m_pFileSystem;
+
+	bool m_bMountHDContent;
+	bool m_bLowViolence;
 
 // Outputs.
 public:
@@ -205,11 +208,6 @@ void FileSystem_ClearSteamEnvVars();
 
 // Find the steam.cfg above you for optional stuff
 FSReturnCode_t GetSteamCfgPath( char *steamCfgPath, int steamCfgPathLen );
-
-// Setup the Steam.dll path without needing all the extra gameinfo stuff first
-// used by the CSteamApplication::Create() code to LoadModule() on the filesystem
-// before the underlying apps know specific details about the environment to load
-FSReturnCode_t FileSystem_SetupSteamInstallPath();
 
 // Returns the last error.
 const char *FileSystem_GetLastErrorString();
