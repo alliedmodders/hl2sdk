@@ -1081,8 +1081,8 @@ public:
 	// The bits will be retained by the material system and can be freed upon return.
 	virtual ITexture*			CreateNamedTextureFromBitsEx( const char* pName, const char *pTextureGroupName, int w, int h, int mips, ImageFormat fmt, int srcBufferSize, byte* srcBits, int nFlags ) = 0;
 	
-	virtual bool				AddTextureCompositorTemplate( const char *pName, KeyValues *kv, int a );
-	virtual bool				VerifyTextureCompositorTemplates ( void );
+	virtual bool				AddTextureCompositorTemplate( const char *pName, KeyValues *kv, int a ) = 0;
+	virtual bool				VerifyTextureCompositorTemplates ( void ) = 0;
 };
 
 
