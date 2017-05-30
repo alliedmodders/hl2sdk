@@ -229,12 +229,12 @@ class CKeyValuesGrowableStringTable
 public: 
 	// Constructor
 	CKeyValuesGrowableStringTable() :
+		m_hashLookup( 2048, 0, 0, m_Functor, m_Functor ),
 		#ifdef PLATFORM_64BITS
 			m_vecStrings( 0, 4 * 512 * 1024 )
 		#else
 			m_vecStrings( 0, 512 * 1024 )
 		#endif
-		, m_hashLookup( 2048, 0, 0, m_Functor, m_Functor )
 	{
 		m_vecStrings.AddToTail( '\0' );
 	}
@@ -1465,14 +1465,14 @@ const wchar_t *KeyValues::GetWString( const char *keyName, const wchar_t *defaul
 bool KeyValues::GetBool( const char *keyName, bool defaultValue, bool* optGotDefault )
 {
 	if ( FindKey( keyName ) )
-    {
-        if ( optGotDefault )
-            (*optGotDefault) = false;
+	{
+		if ( optGotDefault )
+			(*optGotDefault) = false;
 		return 0 != GetInt( keyName, 0 );
-    }
+	}
     
-    if ( optGotDefault )
-        (*optGotDefault) = true;
+	if ( optGotDefault )
+		(*optGotDefault) = true;
 
 	return defaultValue;
 }

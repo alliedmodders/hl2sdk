@@ -142,53 +142,59 @@ struct ThreadedLoadLibaryContext_t
 #ifdef _WIN32
 
 // wraps LoadLibraryEx() since 360 doesn't support that
-static HMODULE InternalLoadLibrary( const char *pName )
+static HMODULE InternalLoadLibrary( const char *pName, Sys_Flags flags )
 {
 #if defined(_X360)
 	return LoadLibrary( pName );
 #else
-	return LoadLibraryEx( pName, NULL, LOAD_WITH_ALTERED_SEARCH_PATH );
+	if ( flags & SYS_NOLOAD )
+		return GetModuleHandle( pName );
+	else
+		return LoadLibraryEx( pName, NULL, LOAD_WITH_ALTERED_SEARCH_PATH );
 #endif
 }
 unsigned ThreadedLoadLibraryFunc( void *pParam )
 {
 	ThreadedLoadLibaryContext_t *pContext = (ThreadedLoadLibaryContext_t*)pParam;
-	pContext->m_hLibrary = InternalLoadLibrary(pContext->m_pLibraryName);
+	pContext->m_hLibrary = InternalLoadLibrary( pContext->m_pLibraryName, SYS_NOFLAGS );
 	return 0;
 }
-#endif
 
-HMODULE Sys_LoadLibrary( const char *pLibraryName )
+#endif // _WIN32
+
+HMODULE Sys_LoadLibrary( const char *pLibraryName, Sys_Flags flags )
 {
-	char str[1024];
-#if defined( _WIN32 ) && !defined( _X360 )
-	const char *pModuleExtension = ".dll";
-	const char *pModuleAddition = pModuleExtension;
-#elif defined( _X360 )
-	const char *pModuleExtension = "_360.dll";
-	const char *pModuleAddition = pModuleExtension;
-#elif defined( _LINUX )
-	const char *pModuleExtension = ".so";
-	const char *pModuleAddition = "_i486.so"; // if an extension is on the filename assume the i486 binary set
-#elif defined( __APPLE__ )
-	const char *pModuleExtension = ".dylib";
-	const char *pModuleAddition = ".dylib";
-#endif
+	char str[ 1024 ];
+	// Note: DLL_EXT_STRING can be "_srv.so" or "_360.dll". So be careful
+	//	when using the V_*Extension* routines...
+	const char *pDllStringExtension = V_GetFileExtension( DLL_EXT_STRING );
+	const char *pModuleExtension = pDllStringExtension ? ( pDllStringExtension - 1 ) : DLL_EXT_STRING;
+
 	Q_strncpy( str, pLibraryName, sizeof(str) );
-	if ( !Q_stristr( str, pModuleExtension ) )
+
+	if ( IsX360() )
 	{
-		if ( IsX360() )
+		// old, probably busted, behavior for xbox
+		if ( !Q_stristr( str, pModuleExtension ) )
 		{
-			Q_StripExtension( str, str, sizeof(str) );
+			V_SetExtension( str, pModuleExtension, sizeof(str) );
 		}
-		Q_strncat( str, pModuleAddition, sizeof(str) );
 	}
+	else
+	{
+		// always force the final extension to be .dll
+		V_SetExtension( str, pModuleExtension, sizeof(str) );
+	}
+
 	Q_FixSlashes( str );
 
 #ifdef _WIN32
 	ThreadedLoadLibraryFunc_t threadFunc = GetThreadedLoadLibraryFunc();
 	if ( !threadFunc )
-		return InternalLoadLibrary( str );
+		return InternalLoadLibrary( str, flags );
+
+	// We shouldn't be passing noload while threaded.
+	Assert( !( flags & SYS_NOLOAD ) );
 
 	ThreadedLoadLibaryContext_t context;
 	context.m_pLibraryName = str;
@@ -209,28 +215,33 @@ HMODULE Sys_LoadLibrary( const char *pLibraryName )
 	ReleaseThreadHandle( h );
 	return context.m_hLibrary;
 
-#elif defined _LINUX || defined __APPLE__
-	HMODULE ret = dlopen( str, RTLD_NOW );
-	if ( ! ret )
+#elif POSIX
+	int dlopen_mode = RTLD_NOW;
+
+	if ( flags & SYS_NOLOAD )
+		dlopen_mode |= RTLD_NOLOAD;
+
+	HMODULE ret = ( HMODULE )dlopen( str, dlopen_mode );
+	if ( !ret && !( flags & SYS_NOLOAD ) )
 	{
 		const char *pError = dlerror();
-		if ( pError && ( strstr( pError, "No such file" ) == 0 ) )
+		if ( pError && ( strstr( pError, "No such file" ) == 0 ) && ( strstr( pError, "image not found" ) == 0 ) )
 		{
 			Msg( " failed to dlopen %s error=%s\n", str, pError );
-
 		}
 	}
 	
 	return ret;
 #endif
 }
+static bool s_bRunningWithDebugModules = false;
 
 //-----------------------------------------------------------------------------
 // Purpose: Loads a DLL/component from disk and returns a handle to it
 // Input  : *pModuleName - filename of the component
 // Output : opaque handle to the module (hides system dependency)
 //-----------------------------------------------------------------------------
-CSysModule *Sys_LoadModule( const char *pModuleName )
+CSysModule *Sys_LoadModule( const char *pModuleName, Sys_Flags flags /* = SYS_NOFLAGS (0) */ )
 {
 	// If using the Steam filesystem, either the DLL must be a minimum footprint
 	// file in the depot (MFP) or a filesystem GetLocalCopy() call must be made
@@ -247,7 +258,7 @@ CSysModule *Sys_LoadModule( const char *pModuleName )
 			int i = CommandLine()->FindParm( "-basedir" );
 			if ( i )
 			{
-				strcpy( szCwd, CommandLine()->GetParm( i+1 ) );
+				V_strcpy_safe( szCwd, CommandLine()->GetParm( i + 1 ) );
 			}
 		}
 		if (szCwd[strlen(szCwd) - 1] == '/' || szCwd[strlen(szCwd) - 1] == '\\' )
@@ -256,7 +267,8 @@ CSysModule *Sys_LoadModule( const char *pModuleName )
 		}
 
 		char szAbsoluteModuleName[1024];
-		if ( strstr( pModuleName, "bin/") == pModuleName )
+		size_t cCwd = strlen( szCwd );
+		if ( strstr( pModuleName, "bin/") == pModuleName || ( szCwd[ cCwd - 1 ] == 'n'  && szCwd[ cCwd - 2 ] == 'i' && szCwd[ cCwd - 3 ] == 'b' )  )
 		{
 			// don't make bin/bin path
 			Q_snprintf( szAbsoluteModuleName, sizeof(szAbsoluteModuleName), "%s/%s", szCwd, pModuleName );			
@@ -265,13 +277,13 @@ CSysModule *Sys_LoadModule( const char *pModuleName )
 		{
 			Q_snprintf( szAbsoluteModuleName, sizeof(szAbsoluteModuleName), "%s/bin/%s", szCwd, pModuleName );
 		}
-		hDLL = Sys_LoadLibrary( szAbsoluteModuleName );
+		hDLL = Sys_LoadLibrary( szAbsoluteModuleName, flags );
 	}
 
 	if ( !hDLL )
 	{
 		// full path failed, let LoadLibrary() try to search the PATH now
-		hDLL = Sys_LoadLibrary( pModuleName );
+		hDLL = Sys_LoadLibrary( pModuleName, flags );
 #if defined( _DEBUG )
 		if ( !hDLL )
 		{
@@ -293,26 +305,67 @@ CSysModule *Sys_LoadModule( const char *pModuleName )
 
 			LocalFree( (HLOCAL)lpMsgBuf );
 #elif defined( _X360 )
-			Msg( "Failed to load %s:\n", pModuleName );
+			DWORD error = GetLastError();
+			Msg( "Error(%d) - Failed to load %s:\n", error, pModuleName );
 #else
-			Error( "Failed to load %s: %s\n", pModuleName, dlerror() );
+			Msg( "Failed to load %s: %s\n", pModuleName, dlerror() );
 #endif // _WIN32
 		}
 #endif // DEBUG
 	}
 
+#if !defined(LINUX)
 	// If running in the debugger, assume debug binaries are okay, otherwise they must run with -allowdebug
-	if ( !IsX360() && hDLL && 
-		!CommandLine()->FindParm( "-allowdebug" ) && 
-		!Sys_IsDebuggerPresent() )
+	if ( Sys_GetProcAddress( hDLL, "BuiltDebug" ) )
 	{
-		if ( Sys_GetProcAddress( hDLL, "BuiltDebug" ) )
+		if ( !IsX360() && hDLL && 
+			 !CommandLine()->FindParm( "-allowdebug" ) && 
+			 !Sys_IsDebuggerPresent() )
 		{
 			Error( "Module %s is a debug build\n", pModuleName );
 		}
+
+		DevWarning( "Module %s is a debug build\n", pModuleName );
+
+		if ( !s_bRunningWithDebugModules )
+		{
+			s_bRunningWithDebugModules = true;
+			
+#if 0 //def IS_WINDOWS_PC
+			char chMemoryName[ MAX_PATH ];
+			DebugKernelMemoryObjectName( chMemoryName );
+			
+			(void) CreateFileMapping( INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 1024, chMemoryName );
+			// Created a shared memory kernel object specific to process id
+			// Existence of this object indicates that we have debug modules loaded
+#endif
+		}
 	}
+#endif
 
 	return reinterpret_cast<CSysModule *>(hDLL);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Determine if any debug modules were loaded
+//-----------------------------------------------------------------------------
+bool Sys_RunningWithDebugModules()
+{
+	if ( !s_bRunningWithDebugModules )
+	{
+#if 0 //def IS_WINDOWS_PC
+		char chMemoryName[ MAX_PATH ];
+		DebugKernelMemoryObjectName( chMemoryName );
+
+		HANDLE hObject = OpenFileMapping( FILE_MAP_READ, FALSE, chMemoryName );
+		if ( hObject && hObject != INVALID_HANDLE_VALUE )
+		{
+			CloseHandle( hObject );
+			s_bRunningWithDebugModules = true;
+		}
+#endif
+	}
+	return s_bRunningWithDebugModules;
 }
 
 

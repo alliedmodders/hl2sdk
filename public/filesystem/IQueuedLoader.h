@@ -14,6 +14,8 @@
 #include "tier0/platform.h"
 #include "appframework/IAppSystem.h"
 
+class CFunctor;
+
 enum LoaderError_t
 {
 	LOADERERROR_NONE     = 0,
@@ -29,6 +31,8 @@ enum LoaderPriority_t
 };
 
 typedef void ( *QueuedLoaderCallback_t )( void *pContext, void *pContext2, const void *pData, int nSize, LoaderError_t loaderError );
+
+typedef void ( *DynamicResourceCallback_t )( const char *pFilename, void *pContext, void *pContext2 );
 
 struct LoaderJob_t
 {
@@ -106,7 +110,7 @@ public:
 #define LOADER_DETAIL_LATECOMPLETIONS	(1<<2)
 #define LOADER_DETAIL_PURGES			(1<<3)
 
-#define QUEUEDLOADER_INTERFACE_VERSION		"QueuedLoaderVersion001"
+#define QUEUEDLOADER_INTERFACE_VERSION		"QueuedLoaderVersion004"
 abstract_class IQueuedLoader : public IAppSystem
 {
 public:
@@ -122,6 +126,11 @@ public:
 	// injects a resource into the map's reslist, rejected if not understood
 	virtual void				AddMapResource( const char *pFilename ) = 0;
 
+	// dynamically load a map resource
+	virtual void				DynamicLoadMapResource( const char *pFilename, DynamicResourceCallback_t pCallback, void *pContext, void *pContext2 ) = 0;
+	virtual void				QueueDynamicLoadFunctor( CFunctor* pFunctor ) = 0;
+	virtual bool				CompleteDynamicLoad() = 0;
+
 	// callback is asynchronous
 	virtual bool				ClaimAnonymousJob( const char *pFilename, QueuedLoaderCallback_t pCallback, void *pContext, void *pContext2 = NULL ) = 0;
 	// provides data if loaded, caller owns data
@@ -133,6 +142,8 @@ public:
 
 	// callers can expect that jobs are not immediately started when batching
 	virtual bool				IsBatching() const = 0;
+
+	virtual bool				IsDynamic() const = 0;
 
 	// callers can conditionalize operational spew
 	virtual int					GetSpewDetail() const = 0;

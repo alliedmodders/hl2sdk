@@ -102,7 +102,7 @@ void CChoreoScene::choreoprintf( int level, const char *fmt, ... )
 	}
 	else
 	{
-		printf( string );
+		printf( "%s", string );
 	}
 	
 	Msg( "%s", string );

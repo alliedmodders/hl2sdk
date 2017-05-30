@@ -790,5 +790,68 @@ void CUtlVector<T, A>::Validate( CValidator &validator, char *pchName )
 }
 #endif // DBGFLAG_VALIDATE
 
+// A vector class for storing pointers, so that the elements pointed to by the pointers are deleted
+// on exit.
+template<class T> class CUtlVectorAutoPurge : public CUtlVector< T, CUtlMemory< T, int> >
+{
+public:
+	~CUtlVectorAutoPurge( void )
+	{
+		this->PurgeAndDeleteElements();
+	}
+
+};
+
+// easy string list class with dynamically allocated strings. For use with V_SplitString, etc.
+// Frees the dynamic strings in destructor.
+class CUtlStringList : public CUtlVectorAutoPurge< char *>
+{
+public:
+	void CopyAndAddToTail( char const *pString )			// clone the string and add to the end
+	{
+		char *pNewStr = new char[1 + strlen( pString )];
+		V_strcpy( pNewStr, pString );
+		AddToTail( pNewStr );
+	}
+
+	static int __cdecl SortFunc( char * const * sz1, char * const * sz2 )
+	{
+		return strcmp( *sz1, *sz2 );
+	}
+
+	inline void PurgeAndDeleteElements()
+	{
+		for( int i=0; i < m_Size; i++ )
+		{
+			delete [] Element(i);
+		}
+		Purge();
+	}
+
+	~CUtlStringList( void )
+	{
+		this->PurgeAndDeleteElements();
+	}
+};
+
+
+
+// <Sergiy> placing it here a few days before Cert to minimize disruption to the rest of codebase
+class CSplitString: public CUtlVector<char*, CUtlMemory<char*, int> >
+{
+public:
+	CSplitString(const char *pString, const char *pSeparator);
+	CSplitString(const char *pString, const char **pSeparators, int nSeparators);
+	~CSplitString();
+	//
+	// NOTE: If you want to make Construct() public and implement Purge() here, you'll have to free m_szBuffer there
+	//
+private:
+	void Construct(const char *pString, const char **pSeparators, int nSeparators);
+	void PurgeAndDeleteElements();
+private:
+	char *m_szBuffer; // a copy of original string, with '\0' instead of separators
+};
+
 
 #endif // CCVECTOR_H

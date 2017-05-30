@@ -513,12 +513,14 @@ public:
 		case DC_AGE_DISCARD:
 		case DC_FLUSH_DISCARD:
 		case DC_REMOVED:
-			STORAGE_TYPE *p = (STORAGE_TYPE *)notification.clientId;
-			p->DestroyResource();
+			{
+				STORAGE_TYPE *p = (STORAGE_TYPE *)notification.clientId;
+				p->DestroyResource();
+			}
 			return true;
+		default:
+			return CDefaultDataCacheClient::HandleCacheNotification( notification );
 		}
-
-		return CDefaultDataCacheClient::HandleCacheNotification( notification );
 	}
 
 

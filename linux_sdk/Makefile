@@ -35,7 +35,7 @@ else
 CC = /usr/bin/gcc
 CPLUS = /usr/bin/g++
 CLINK = /usr/bin/gcc
-CPP_LIB = $(SRCDS_DIR)/bin/libstdc++.so.6 $(SRCDS_DIR)/bin/libgcc_s.so.1
+CPP_LIB = #$(SRCDS_DIR)/bin/libstdc++.so.6 $(SRCDS_DIR)/bin/libgcc_s.so.1
 endif
 
 # put any compiler flags you want passed here
@@ -57,6 +57,16 @@ DEBUG = false
 #############################################################################
 # Things below here shouldn't need to be altered
 #############################################################################
+IS_CLANG := $(shell $(CPP) --version | head -1 | grep clang > /dev/null && echo "1" || echo "0")
+
+ifeq "$(IS_CLANG)" "1"
+CPP_MAJOR := $(shell $(CPP) --version | grep clang | sed "s/.*version \([0-9]\)*\.[0-9]*.*/\1/")
+CPP_MINOR := $(shell $(CPP) --version | grep clang | sed "s/.*version [0-9]*\.\([0-9]\)*.*/\1/")
+else
+CPP_MAJOR := $(shell $(CPP) -dumpversion >&1 | cut -b1)
+CPP_MINOR := $(shell $(CPP) -dumpversion >&1 | cut -b3)
+endif
+
 MAKE = make
 AR = "ar rvs"
 
@@ -77,27 +87,37 @@ endif
 
 # the CPU target for the build, must be i486 for now
 ARCH = i486
-ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -m32
+ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -msse -msse2 -m32
 
 ifeq "$(OS)" "Darwin"
-DEFINES = -D_OSX -DOSX
+DEFINES = -D_OSX -DOSX -D_DLL_EXT=.dylib
+ARCH_CFLAGS += -mmacosx-version-min=10.5
 SHLIBEXT = dylib
 SHLIBLDFLAGS = -dynamiclib -mmacosx-version-min=10.5
 SHLIBSUFFIX = 
 else
-DEFINES = -D_LINUX -DLINUX
+DEFINES = -D_LINUX -DLINUX -D_DLL_EXT=.so
 SHLIBEXT = so
-SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt -Wl
+SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt
 SHLIBSUFFIX = _srv
 endif
 
 DEFINES +=-DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp \
-	-Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
+	-Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp -DPOSIX -DGNUC -DCOMPILER_GCC -DNO_MALLOC_OVERRIDE
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
 BASE_CFLAGS = -fno-strict-aliasing -Wall -Wsign-compare -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
-	      -Wno-delete-non-virtual-dtor
+	      -Wno-unknown-pragmas -Wno-unused
 SHLIBCFLAGS = -fPIC
+
+# Clang >= 3 || GCC >= 4.7
+ifeq "$(shell expr $(IS_CLANG) \& $(CPP_MAJOR) \>= 3 \| $(CPP_MAJOR) \>= 4 \& $(CPP_MINOR) \>= 7)" "1"
+BASE_CFLAGS += -Wno-delete-non-virtual-dtor -Wno-narrowing
+endif
+
+ifeq "$(shell expr $(IS_CLANG) \= 0 \& $(CPP_MAJOR) \>= 6)" "1"
+BASE_CFLAGS += -Wno-nonnull-compare
+endif
 
 # Flags passed to the c compiler
 CFLAGS = $(DEFINES) $(ARCH_CFLAGS) -O3 $(BASE_CFLAGS)

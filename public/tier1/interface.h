@@ -179,12 +179,18 @@ extern CreateInterfaceFn	Sys_GetFactory( CSysModule *pModule );
 extern CreateInterfaceFn	Sys_GetFactory( const char *pModuleName );
 extern CreateInterfaceFn	Sys_GetFactoryThis( void );
 
+enum Sys_Flags
+{
+    SYS_NOFLAGS = 0x00,
+    SYS_NOLOAD = 0x01   // no loading, no ref-counting, only returns handle if lib is loaded. 
+};
+
 //-----------------------------------------------------------------------------
 // Load & Unload should be called in exactly one place for each module
 // The factory for that module should be passed on to dependent components for
 // proper versioning.
 //-----------------------------------------------------------------------------
-extern CSysModule			*Sys_LoadModule( const char *pModuleName );
+extern CSysModule			*Sys_LoadModule( const char *pModuleName, Sys_Flags flags = SYS_NOFLAGS );
 extern void					Sys_UnloadModule( CSysModule *pModule );
 
 // This is a helper function to load a module, get its factory, and get a specific interface.
