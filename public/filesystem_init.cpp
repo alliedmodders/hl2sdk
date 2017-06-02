@@ -23,9 +23,8 @@
 #include "tier1/strtools.h"
 #include "filesystem_init.h"
 #include "tier0/icommandline.h"
-#include "tier0/stacktools.h"
-#include "keyvalues.h"
-#include "appframework/iappsystemgroup.h"
+#include "KeyValues.h"
+#include "appframework/IAppSystemGroup.h"
 #include "tier1/smartptr.h"
 #if defined( _X360 )
 #include "xbox\xbox_win32stubs.h"
@@ -37,7 +36,7 @@
 #include <tier0/memdbgon.h>
 
 #if !defined( _X360 )
-#define GAMEINFO_FILENAME			"GameInfo.txt"
+#define GAMEINFO_FILENAME			"gameinfo.txt"
 #else
 // The .xtx file is a TCR requirement, as .txt files cannot live on the DVD.
 // The .xtx file only exists outside the zips (same as .txt and is made during the image build) and is read to setup the search paths.
@@ -382,7 +381,17 @@ bool FileSystem_GetExecutableDir( char *exedir, int exeDirLen )
 	Q_StrRight( exedir, 4, ext, sizeof( ext ) );
 	if ( ext[0] != CORRECT_PATH_SEPARATOR || Q_stricmp( ext+1, "bin" ) != 0 )
 	{
+#if !defined(PLATFORM_64BITS)
 		Q_strncat( exedir, "\\bin", exeDirLen, COPY_ALL_CHARACTERS );
+#else
+#if defined(PLATFORM_WINDOWS)
+		Q_strncat( exedir, "\\bin\\win64", exeDirLen, COPY_ALL_CHARACTERS );
+#elif defined(PLATFORM_LINUX)
+		Q_strncat( exedir, "\\bin\\linux64", exeDirLen, COPY_ALL_CHARACTERS );
+#elif defined(PLATFORM_OSX)
+		Q_strncat( exedir, "\\bin\\osx64", exeDirLen, COPY_ALL_CHARACTERS );
+#endif
+#endif
 		Q_FixSlashes( exedir );
 	}
 	
@@ -546,7 +555,7 @@ bool IsLowViolenceBuild( void )
 	return retVal;
 #elif POSIX
 	return false;
-#elif
+#else
 	#error "Fix me"
 #endif
 }
@@ -620,21 +629,6 @@ static void FileSystem_AddLoadedSearchPath(
 	initInfo.m_pFileSystem->AddSearchPath( fullLocationPath, pPathID, PATH_ADD_TO_TAIL );
 }
 
-
-bool FileSystem_IsHldsUpdateToolDedicatedServer()
-{
-	// To determine this, we see if the directory our executable was launched from is "orangebox".
-	// We only are under "orangebox" if we're run from hldsupdatetool.
-	char baseDir[MAX_PATH];
-	if ( !FileSystem_GetBaseDir( baseDir, sizeof( baseDir ) ) )
-		return false;
-
-	V_FixSlashes( baseDir );
-	V_StripTrailingSlash( baseDir );
-	const char *pLastDir = V_UnqualifiedFileName( baseDir );
-	return ( pLastDir && V_stricmp( pLastDir, "orangebox" ) == 0 );
-}
-
 #ifdef ENGINE_DLL
 	extern void FileSystem_UpdateAddonSearchPaths( IFileSystem *pFileSystem );
 #endif
@@ -690,14 +684,6 @@ FSReturnCode_t FileSystem_LoadSearchPaths( CFSSearchPathsInit &initInfo )
 			// Add the Orange-box path (which also will include whatever the depots mapped in as well if we're 
 			// running a Steam-launched app).
 			FileSystem_AddLoadedSearchPath( initInfo, pPathID, &bFirstGamePath, baseDir, pLocation, bLowViolence );
-
-			if ( FileSystem_IsHldsUpdateToolDedicatedServer() )
-			{			
-				// If we're using the hldsupdatetool dedicated server, then go up a directory to get the ep1-era files too.
-				char ep1EraPath[MAX_PATH];
-				V_snprintf( ep1EraPath, sizeof( ep1EraPath ), "..%c%s", CORRECT_PATH_SEPARATOR, pLocation );
-				FileSystem_AddLoadedSearchPath( initInfo, pPathID, &bFirstGamePath, baseDir, ep1EraPath, bLowViolence );
-			}
 		}
 		else
 		{

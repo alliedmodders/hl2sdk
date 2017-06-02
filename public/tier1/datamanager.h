@@ -14,9 +14,9 @@
 #include "utlmultilist.h"
 #include "utlvector.h"
 
-FORWARD_DECLARE_HANDLE( memhandle_t );
+DECLARE_HANDLE_32BIT( datamanhandle_t );
 
-#define INVALID_MEMHANDLE ((memhandle_t)0xffffffff)
+#define INVALID_MEMHANDLE (datamanhandle_t::MakeHandle(~0))
 
 class CDataManagerBase
 {
@@ -25,27 +25,27 @@ public:
 	// public API
 	// -----------------------------------------------------------------------------
 	// memhandle_t			CreateResource( params ) // implemented by derived class
-	void					DestroyResource( memhandle_t handle );
+	void					DestroyResource( datamanhandle_t handle );
 
 	// type-safe implementation in derived class
-	//void					*LockResource( memhandle_t handle );
-	int						UnlockResource( memhandle_t handle );
-	void					TouchResource( memhandle_t handle );
-	void					MarkAsStale( memhandle_t handle );		// move to head of LRU
+	//void					*LockResource( datamanhandle_t handle );
+	int						UnlockResource( datamanhandle_t handle );
+	void					TouchResource( datamanhandle_t handle );
+	void					MarkAsStale( datamanhandle_t handle );		// move to head of LRU
 
-	int						LockCount( memhandle_t handle );
-	int						BreakLock( memhandle_t handle );
+	int						LockCount( datamanhandle_t handle );
+	int						BreakLock( datamanhandle_t handle );
 	int						BreakAllLocks();
 
 	// HACKHACK: For convenience - offers no lock protection 
 	// type-safe implementation in derived class
-	//void					*GetResource_NoLock( memhandle_t handle );
+	//void					*GetResource_NoLock( datamanhandle_t handle );
 
 	unsigned int			TargetSize();
 	unsigned int			AvailableSize();
 	unsigned int			UsedSize();
 
-	void					NotifySizeChanged( memhandle_t handle, unsigned int oldSize, unsigned int newSize );
+	void					NotifySizeChanged( datamanhandle_t handle, unsigned int oldSize, unsigned int newSize );
 
 	void					SetTargetSize( unsigned int targetSize );
 
@@ -68,18 +68,18 @@ public:
 	void					SetFreeOnDestruct( bool value ) { m_freeOnDestruct = value; }
 
 	// Debugging only!!!!
-	void					GetLRUHandleList( CUtlVector< memhandle_t >& list );
-	void					GetLockHandleList( CUtlVector< memhandle_t >& list );
+	void					GetLRUHandleList( CUtlVector< datamanhandle_t >& list );
+	void					GetLockHandleList( CUtlVector< datamanhandle_t >& list );
 
 
 protected:
 	// derived class must call these to implement public API
 	unsigned short			CreateHandle( bool bCreateLocked );
-	memhandle_t				StoreResourceInHandle( unsigned short memoryIndex, void *pStore, unsigned int realSize );
-	void					*GetResource_NoLock( memhandle_t handle );
-	void					*GetResource_NoLockNoLRUTouch( memhandle_t handle );
-	void					*LockResource( memhandle_t handle );
-	void					*LockResourceReturnCount( int *pCount, memhandle_t handle );
+	datamanhandle_t				StoreResourceInHandle( unsigned short memoryIndex, void *pStore, unsigned int realSize );
+	void					*GetResource_NoLock( datamanhandle_t handle );
+	void					*GetResource_NoLockNoLRUTouch( datamanhandle_t handle );
+	void					*LockResource( datamanhandle_t handle );
+	void					*LockResourceReturnCount( int *pCount, datamanhandle_t handle );
 
 	// NOTE: you must call this from the destructor of the derived class! (will assert otherwise)
 	void					FreeAllLists()	{ FlushAll(); m_listsAreFreed = true; }
@@ -96,8 +96,8 @@ protected:
 	virtual void			DestroyResourceStorage( void * ) = 0;
 	virtual unsigned int	GetRealSize( void * ) = 0;
 
-	memhandle_t				ToHandle( unsigned short index );
-	unsigned short			FromHandle( memhandle_t handle );
+	datamanhandle_t				ToHandle( unsigned short index );
+	unsigned short			FromHandle( datamanhandle_t handle );
 	
 	void					TouchByIndex( unsigned short memoryIndex );
 	void *					GetForFreeByIndex( unsigned short memoryIndex );
@@ -150,7 +150,7 @@ public:
 	}
 
 	// Use GetData() to translate pointer to LOCK_TYPE
-	LOCK_TYPE LockResource( memhandle_t hMem )
+	LOCK_TYPE LockResource( datamanhandle_t hMem )
 	{
 		void *pLock = BaseClass::LockResource( hMem );
 		if ( pLock )
@@ -161,7 +161,7 @@ public:
 		return NULL;
 	}
 
-	LOCK_TYPE LockResourceReturnCount( int *pCount, memhandle_t hMem )
+	LOCK_TYPE LockResourceReturnCount( int *pCount, datamanhandle_t hMem )
 	{
 		void *pLock = BaseClass::LockResourceReturnCount( pCount, hMem );
 		if ( pLock )
@@ -173,7 +173,7 @@ public:
 	}
 
 	// Use GetData() to translate pointer to LOCK_TYPE
-	LOCK_TYPE GetResource_NoLock( memhandle_t hMem )
+	LOCK_TYPE GetResource_NoLock( datamanhandle_t hMem )
 	{
 		void *pLock = const_cast<void *>(BaseClass::GetResource_NoLock( hMem ));
 		if ( pLock )
@@ -185,7 +185,7 @@ public:
 
 	// Use GetData() to translate pointer to LOCK_TYPE
 	// Doesn't touch the memory LRU
-	LOCK_TYPE GetResource_NoLockNoLRUTouch( memhandle_t hMem )
+	LOCK_TYPE GetResource_NoLockNoLRUTouch( datamanhandle_t hMem )
 	{
 		void *pLock = const_cast<void *>(BaseClass::GetResource_NoLockNoLRUTouch( hMem ));
 		if ( pLock )
@@ -196,7 +196,7 @@ public:
 	}
 
 	// Wrapper to match implementation of allocation with typed storage & alloc params.
-	memhandle_t CreateResource( const CREATE_PARAMS &createParams, bool bCreateLocked = false )
+	datamanhandle_t CreateResource( const CREATE_PARAMS &createParams, bool bCreateLocked = false )
 	{
 		BaseClass::EnsureCapacity(STORAGE_TYPE::EstimatedSize(createParams));
 		STORAGE_TYPE *pStore = STORAGE_TYPE::CreateResource( createParams );
@@ -206,7 +206,7 @@ public:
 	}
 
 	// Iteration. Must lock first
-	memhandle_t GetFirstUnlocked()
+	datamanhandle_t GetFirstUnlocked()
 	{
 		unsigned node = m_memoryLists.Head(m_lruList);
 		if ( node == m_memoryLists.InvalidIndex() )
@@ -216,7 +216,7 @@ public:
 		return ToHandle( node );
 	}
 
-	memhandle_t GetFirstLocked()
+	datamanhandle_t GetFirstLocked()
 	{
 		unsigned node = m_memoryLists.Head(m_lockList);
 		if ( node == m_memoryLists.InvalidIndex() )
@@ -226,7 +226,7 @@ public:
 		return ToHandle( node );
 	}
 
-	memhandle_t GetNext( memhandle_t hPrev )
+	datamanhandle_t GetNext( datamanhandle_t hPrev )
 	{
 		if ( hPrev == INVALID_MEMHANDLE )
 		{
@@ -268,9 +268,9 @@ private:
 
 //-----------------------------------------------------------------------------
 
-inline unsigned short CDataManagerBase::FromHandle( memhandle_t handle )
+inline unsigned short CDataManagerBase::FromHandle( datamanhandle_t handle )
 {
-	unsigned int fullWord = (unsigned int)handle;
+	unsigned int fullWord = handle.GetHandleValue();
 	unsigned short serial = fullWord>>16;
 	unsigned short index = fullWord & 0xFFFF;
 	index--;
@@ -279,7 +279,7 @@ inline unsigned short CDataManagerBase::FromHandle( memhandle_t handle )
 	return m_memoryLists.InvalidIndex();
 }
 
-inline int CDataManagerBase::LockCount( memhandle_t handle )
+inline int CDataManagerBase::LockCount( datamanhandle_t handle )
 {
 	Lock();
 	int result = 0;

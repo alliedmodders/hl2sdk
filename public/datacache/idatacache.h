@@ -352,6 +352,7 @@ public:
 		case DC_AGE_DISCARD:
 		case DC_FLUSH_DISCARD:
 		case DC_REMOVED:
+		default:
 			Assert ( 0 );
 			return false;
 		}
@@ -537,6 +538,7 @@ public:
 		case DC_AGE_DISCARD:
 		case DC_FLUSH_DISCARD:
 		case DC_REMOVED:
+		default:
 			STORAGE_TYPE *p = (STORAGE_TYPE *)notification.clientId;
 			p->DestroyResource();
 			return true;

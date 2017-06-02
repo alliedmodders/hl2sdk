@@ -45,7 +45,7 @@ typedef unsigned short MDLHandle_t;
 
 inline MDLHandle_t VoidPtrToMDLHandle( void *ptr )
 {
-	return (MDLHandle_t)(int)ptr;
+	return (MDLHandle_t)(intp)ptr;
 }
 
 enum

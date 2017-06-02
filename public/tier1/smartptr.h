@@ -107,7 +107,7 @@ template < typename T >
 class CArrayAutoPtr : public CPlainAutoPtr < T > // Warning: no polymorphic destructor (delete on base class will be a mistake)
 {
 public:
-	explicit CArrayAutoPtr( T *p = NULL )		{ Attach( p ); }
+	explicit CArrayAutoPtr( T *p = NULL )		{ this->Attach( p ); }
 	~CArrayAutoPtr( void )						{ Delete(); }
 
 public:

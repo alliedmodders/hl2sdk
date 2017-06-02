@@ -22,12 +22,14 @@
 #endif
 #endif
 
+#ifdef _MSC_VER
 #pragma warning( disable: 4786 )	// disables 'identifier truncated in browser information' warning
 #pragma warning( disable: 4355 )	// disables 'this' : used in base member initializer list
 #pragma warning( disable: 4097 )	// warning C4097: typedef-name 'BaseClass' used as synonym for class-name
 #pragma warning( disable: 4514 )	// warning C4514: 'Color::Color' : unreferenced inline function has been removed
 #pragma warning( disable: 4100 )	// warning C4100: 'code' : unreferenced formal parameter
 #pragma warning( disable: 4127 )	// warning C4127: conditional expression is constant
+#endif
 
 typedef unsigned char  uchar;
 typedef unsigned short ushort;

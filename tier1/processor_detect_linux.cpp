@@ -11,30 +11,43 @@
 
 bool CheckMMXTechnology(void)
 {
+#ifndef PLATFORM_64BITS
     unsigned long eax,ebx,edx,unused;
     cpuid(1,eax,ebx,unused,edx);
 
     return edx & 0x800000;
+#else
+    return true;
+#endif
 }
 
 bool CheckSSETechnology(void)
 {
+#ifndef PLATFORM_64BITS
     unsigned long eax,ebx,edx,unused;
     cpuid(1,eax,ebx,unused,edx);
 
     return edx & 0x2000000L;
+#else
+    return true;
+#endif
 }
 
 bool CheckSSE2Technology(void)
 {
+#ifndef PLATFORM_64BITS
     unsigned long eax,ebx,edx,unused;
     cpuid(1,eax,ebx,unused,edx);
 
     return edx & 0x04000000;
+#else
+    return true;
+#endif
 }
 
 bool Check3DNowTechnology(void)
 {
+#ifndef PLATFORM_64BITS
     unsigned long eax, unused;
     cpuid(0x80000000,eax,unused,unused,unused);
 
@@ -44,4 +57,7 @@ bool Check3DNowTechnology(void)
 		return ( eax & 1<<31 );
     }
     return false;
+#else
+    return true;
+#endif
 }

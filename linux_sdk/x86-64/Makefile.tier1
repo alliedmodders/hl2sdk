@@ -1,0 +1,77 @@
+#
+# Tier1 Static Library Makefile
+#
+
+override NAME = tier1
+
+LIB_SRC_DIR = $(SRC_DIR)/$(NAME)
+PUBLIC_SRC_DIR = $(SRC_DIR)/public
+TIER0_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier0
+TIER1_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier1
+
+LIB_OBJ_DIR=$(BUILD_OBJ_DIR)/$(NAME)_$(ARCH)
+
+# Extension of linux static library
+override SHLIBEXT = a
+
+INCLUDEDIRS = -I$(PUBLIC_SRC_DIR) -I$(TIER0_PUBLIC_SRC_DIR) -I$(TIER1_PUBLIC_SRC_DIR) -D_LIB -DTIER1_STATIC_LIB
+
+DO_CC = $(CPLUS) $(INCLUDEDIRS) -DARCH=$(ARCH)
+
+ifeq "$(DEBUG)" "true"
+	DO_CC += $(DBG_DEFINES) $(DBG_CFLAGS)
+else
+	DO_CC += -DNDEBUG $(CFLAGS)
+endif
+
+DO_CC += -o $@ -c $<
+
+#####################################################################
+
+LIB_OBJS= \
+	$(LIB_OBJ_DIR)/bitbuf.o \
+	$(LIB_OBJ_DIR)/byteswap.o \
+	$(LIB_OBJ_DIR)/characterset.o \
+	$(LIB_OBJ_DIR)/checksum_crc.o \
+	$(LIB_OBJ_DIR)/checksum_md5.o \
+	$(LIB_OBJ_DIR)/commandbuffer.o \
+	$(LIB_OBJ_DIR)/convar.o \
+	$(LIB_OBJ_DIR)/datamanager.o \
+	$(LIB_OBJ_DIR)/diff.o \
+	$(LIB_OBJ_DIR)/generichash.o \
+	$(LIB_OBJ_DIR)/interface.o \
+	$(LIB_OBJ_DIR)/KeyValues.o \
+	$(LIB_OBJ_DIR)/mempool.o \
+	$(LIB_OBJ_DIR)/memstack.o \
+	$(LIB_OBJ_DIR)/NetAdr.o \
+	$(LIB_OBJ_DIR)/newbitbuf.o \
+	$(LIB_OBJ_DIR)/processor_detect.o \
+	$(LIB_OBJ_DIR)/rangecheckedvar.o \
+	$(LIB_OBJ_DIR)/stringpool.o \
+	$(LIB_OBJ_DIR)/strtools.o \
+	$(LIB_OBJ_DIR)/tier1.o \
+	$(LIB_OBJ_DIR)/undiff.o \
+	$(LIB_OBJ_DIR)/uniqueid.o \
+	$(LIB_OBJ_DIR)/utlbuffer.o \
+	$(LIB_OBJ_DIR)/utlbufferutil.o \
+	$(LIB_OBJ_DIR)/utlstring.o \
+	$(LIB_OBJ_DIR)/utlsymbol.o \
+
+all: dirs $(NAME).$(SHLIBEXT)
+
+dirs:
+	-mkdir -p $(BUILD_OBJ_DIR)
+	-mkdir -p $(LIB_OBJ_DIR)
+
+$(NAME).$(SHLIBEXT): $(LIB_OBJS)
+	$(AR) $(LIB_DIR)/$@ $(LIB_OBJS)
+
+$(LIB_OBJ_DIR)/%.o: $(LIB_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+install:
+	cp -f $(NAME).$(SHLIBEXT) $(LIB_DIR)/$(NAME).$(SHLIBEXT)
+
+clean:
+	-rm -rf $(LIB_OBJ_DIR)
+
