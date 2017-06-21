@@ -253,7 +253,8 @@ PLATFORM_INTERFACE void Warning( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
 PLATFORM_INTERFACE void Warning_SpewCallStack( int iMaxCallStackLength, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
 
 // This is gone in Source2. Provide helper to roughyl mimic Source1 behavior
-inline void Error( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 )
+void Error( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+inline void Error( const tchar *pMsg, ... )
 {
 	char szBuf[256];
 	va_list arg_ptr;
