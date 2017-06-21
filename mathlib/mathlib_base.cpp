@@ -1862,10 +1862,13 @@ void QuaternionMult( const Quaternion &p, const Quaternion &q, Quaternion &qt )
 
 void QuaternionMatrix( const Quaternion &q, const Vector &pos, matrix3x4_t& matrix )
 {
-	if ( !HushAsserts() )
+#ifdef DBGFLAG_ASSERT
+	static bool s_bHushAsserts = !!CommandLine()->FindParm("-hushasserts");
+	if (!s_bHushAsserts)
 	{
 		Assert( pos.IsValid() );
 	}
+#endif
 
 	QuaternionMatrix( q, matrix );
 
@@ -1877,10 +1880,13 @@ void QuaternionMatrix( const Quaternion &q, const Vector &pos, matrix3x4_t& matr
 void QuaternionMatrix( const Quaternion &q, matrix3x4_t& matrix )
 {
 	Assert( s_bMathlibInitialized );
-	if ( !HushAsserts() )
+#ifdef DBGFLAG_ASSERT
+	static bool s_bHushAsserts = !!CommandLine()->FindParm("-hushasserts");
+	if ( !s_bHushAsserts )
 	{
 		Assert( q.IsValid() );
 	}
+#endif
 
 #ifdef _VPROF_MATHLIB
 	VPROF_BUDGET( "QuaternionMatrix", "Mathlib" );
