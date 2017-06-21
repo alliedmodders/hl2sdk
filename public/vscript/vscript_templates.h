@@ -37,7 +37,7 @@
 		FUNC_APPEND_PARAMS_##N \
 		for (size_t i = 0; i < pDesc->m_iParamCount; ++i) \
 			if (pDesc->m_Parameters[i] == FIELD_VARIANT) \
-				++pDesc->m_VariantCount; \
+				++pDesc->m_iVariantCount; \
 	}
 
 FUNC_GENERATE_ALL(DEFINE_NONMEMBER_FUNC_TYPE_DEDUCER);
@@ -50,7 +50,7 @@ FUNC_GENERATE_ALL(DEFINE_NONMEMBER_FUNC_TYPE_DEDUCER);
 		FUNC_APPEND_PARAMS_##N \
 		for (size_t i = 0; i < pDesc->m_iParamCount; ++i) \
 			if (pDesc->m_Parameters[i] == FIELD_VARIANT) \
-				++pDesc->m_VariantCount; \
+				++pDesc->m_iVariantCount; \
 	}
 
 FUNC_GENERATE_ALL( DEFINE_MEMBER_FUNC_TYPE_DEDUCER );
@@ -65,7 +65,7 @@ FUNC_GENERATE_ALL( DEFINE_MEMBER_FUNC_TYPE_DEDUCER );
 		FUNC_APPEND_PARAMS_##N \
 		for (size_t i = 0; i < pDesc->m_iParamCount; ++i) \
 			if (pDesc->m_Parameters[i] == FIELD_VARIANT) \
-				++pDesc->m_VariantCount; \
+				++pDesc->m_iVariantCount; \
 	}
 
 FUNC_GENERATE_ALL( DEFINE_CONST_MEMBER_FUNC_TYPE_DEDUCER );
