@@ -244,7 +244,7 @@ struct ScriptFuncDescriptor_t
 		m_ReturnType = FIELD_TYPEUNKNOWN;
 		m_iVariantCount = 0;
 		m_iParamCount = 0;
-		memcpy(m_Parameters, 0, sizeof(m_Parameters));
+		memset(m_Parameters, 0, sizeof(m_Parameters));
 		m_pszDescription = NULL;
 		m_pszParameterNames = NULL;
 	}
