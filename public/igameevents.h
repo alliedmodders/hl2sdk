@@ -17,10 +17,6 @@
 #endif
 
 #include "tier1/interface.h"
-
-#define INTERFACEVERSION_GAMEEVENTSMANAGER	"GAMEEVENTSMANAGER001"	// old game event manager, don't use it!
-#define INTERFACEVERSION_GAMEEVENTSMANAGER2	"GAMEEVENTSMANAGER002"	// new game event manager,
-
 #include "tier1/bitbuf.h"
 
 class CSVCMsg_GameEvent;
@@ -145,62 +141,8 @@ public:
 	
 	virtual int LookupEventId( const char *name ) = 0;
 	
-	virtual void ReloadEventDefinitions() = 0;
-	virtual void UnloadEventsFile( const char *filename ) = 0;
+	virtual void PrintEventToString( IGameEvent *event, CUtlString &out ) = 0;
 };
-
-// the old game event manager interface, don't use it. Rest is legacy support:
-
-abstract_class IGameEventListener
-{
-public:
-	virtual	~IGameEventListener( void ) {};
-
-	// FireEvent is called by EventManager if event just occured
-	// KeyValue memory will be freed by manager if not needed anymore
-	virtual void FireGameEvent( KeyValues * event) = 0;
-};
-
-abstract_class IGameEventManager : public IBaseInterface
-{
-public:
-	virtual	~IGameEventManager( void ) {};
-	
-	// load game event descriptions from a file eg "resource\gameevents.res"
-	virtual int LoadEventsFromFile( const char * filename ) = 0;
-
-	// removes all and anything
-	virtual void  Reset() = 0;	
-				
-	virtual KeyValues *GetEvent(const char * name) = 0; // returns keys for event
-	
-	// adds a listener for a particular event
-	virtual bool AddListener( IGameEventListener * listener, const char * event, bool bIsServerSide ) = 0;
-	// registers for all known events
-	virtual bool AddListener( IGameEventListener * listener, bool bIsServerSide ) = 0; 
-	
-	// removes a listener 
-	virtual void RemoveListener( IGameEventListener * listener) = 0;
-		
-	// fires an global event, specific event data is stored in KeyValues
-	// local listeners will receive the event instantly
-	// a network message will be send to all connected clients to invoke
-	// the same event there
-	virtual bool FireEvent( KeyValues * event ) = 0;
-
-	// fire a side server event, that it wont be broadcasted to player clients
-	virtual bool FireEventServerOnly( KeyValues * event ) = 0;
-
-	// fires an event only on this local client
-	// can be used to fake events coming over the network 
-	virtual bool FireEventClientOnly( KeyValues * event ) = 0;
-
-	// write/read event to/from bitbuffer
-	virtual bool SerializeKeyValues( KeyValues *event, bf_write *buf, CGameEvent *eventtype = NULL ) = 0;
-	virtual KeyValues *UnserializeKeyValue( bf_read *msg ) = 0; // create new KeyValues, must be deleted
-};
-
-
 
 
 #endif // IGAMEEVENTS_H
