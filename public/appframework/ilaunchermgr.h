@@ -33,6 +33,7 @@ class CShowPixelsParams;
 #if defined(DEDICATED)
 typedef void *PseudoGLContextPtr;
 class GLMRendererInfoFields;
+class SDL_Cursor;
 #endif
 
 #endif // DX_TO_GL_ABSTRACTION
@@ -47,7 +48,7 @@ class ILauncherMgr : public IAppSystem
 {
 public:
 	// Create the window.
-	virtual bool CreateGameWindow( const char *pTitle, bool bWindowed, int width, int height ) = 0;
+	virtual bool CreateGameWindow( const char *pTitle, bool bWindowed, int width, int height, bool bUnknown ) = 0;
 
 #if defined( DX_TO_GL_ABSTRACTION )
 	virtual void GetDesiredPixelFormatAttribsAndRendererInfo( uint **ptrOut, uint *countOut, GLMRendererInfoFields *rendInfoOut ) = 0;
@@ -60,13 +61,12 @@ public:
 
 	// Set the mouse cursor position.
 	virtual void SetCursorPosition( int x, int y ) = 0;
-	virtual void GetCursorPosition( int *x, int *y ) = 0;
 
 #if defined( DX_TO_GL_ABSTRACTION )
 	virtual void ShowPixels( CShowPixelsParams *params ) = 0;
 #endif
 
-	virtual void SetWindowFullScreen( bool bFullScreen, int nWidth, int nHeight ) = 0;
+	virtual void SetWindowFullScreen( bool bFullScreen, int nWidth, int nHeight, bool bUnknown ) = 0;
 	virtual bool IsWindowFullScreen() = 0;
 	virtual void MoveWindow( int x, int y ) = 0;
 	virtual void SizeWindow( int width, int tall ) = 0;
@@ -87,14 +87,8 @@ public:
 
 	virtual void WaitUntilUserInput( int msSleepTime ) = 0;
 
-	// Loads a cursor defined in a file
-	virtual InputCursorHandle_t LoadCursorFromFile( const char *pFileName ) = 0;
-	virtual void FreeCursor( InputCursorHandle_t hCursor ) = 0;
-	// Sets the cursor icon
-	virtual void SetCursorIcon( InputCursorHandle_t hCursor ) = 0;
-
 #if defined( DX_TO_GL_ABSTRACTION )
-	virtual PseudoGLContextPtr	GetMainContext() = 0;
+	virtual PseudoGLContextPtr GetMainContext() = 0;
 	virtual PseudoGLContextPtr CreateExtraContext() = 0;
 	virtual void DeleteContext( PseudoGLContextPtr hContext ) = 0;
 	virtual bool MakeContextCurrent( PseudoGLContextPtr hContext ) = 0;
@@ -105,11 +99,31 @@ public:
 	virtual void *GetWindowRef() = 0;
 
 	virtual void SetMouseVisible( bool bState ) = 0;
+
+	virtual int GetActiveDisplayIndex() = 0;
+
+	virtual void SetMouseCursor(SDL_Cursor *pCursor) = 0;
+
 	virtual void SetForbidMouseGrab( bool bForbidMouseGrab ) = 0;
 
-	virtual void SetGammaRamp( const uint16 *pRed, const uint16 *pGreen, const uint16 *pBlue ) = 0;
+	virtual void OnFrameRendered() = 0;
+
+	virtual void ForceSystemCursorVisible() = 0;
+	virtual void UnforceSystemCursorVisible() = 0;
 
 	virtual double GetPrevGLSwapWindowTime() = 0;
+
+	virtual void GetCursorPosition( int *x, int *y ) = 0;
+
+	// Loads a cursor defined in a file
+	virtual InputCursorHandle_t LoadCursorFromFile( const char *pFileName ) = 0;
+
+	virtual void FreeCursor( InputCursorHandle_t hCursor ) = 0;
+
+	// Sets the cursor icon
+	virtual void SetCursorIcon( InputCursorHandle_t hCursor ) = 0;
+
+	virtual void SetGammaRamp( const uint16 *pRed, const uint16 *pGreen, const uint16 *pBlue ) = 0;
 };
 
 extern ILauncherMgr *g_pLauncherMgr;

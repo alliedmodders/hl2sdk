@@ -16,7 +16,7 @@ SHADER_OBJ_DIR = $(BUILD_OBJ_DIR)/materialsystem/$(NAME)
 
 INCLUDEDIRS = -I$(PUBLIC_SRC_DIR) -I$(MAT_SRC_DIR) -I$(MAT_PUBLIC_SRC_DIR) \
 	-I $(SHADERAPI_PUBLIC_SRC_DIR) -I$(TIER0_PUBLIC_SRC_DIR) -I$(TIER1_PUBLIC_SRC_DIR)
-LDFLAGS_SHADER = -lm -ldl libtier0.$(SHLIBEXT) libvstdlib.$(SHLIBEXT) \
+LDFLAGS_SHADER = -lm -ldl libtier0$(SHLIBSUFFIX).$(SHLIBEXT) libvstdlib$(SHLIBSUFFIX).$(SHLIBEXT) \
 	$(LIB_DIR)/tier1.a $(LIB_DIR)/interfaces.a
 
 DO_CC = $(CPLUS) $(INCLUDEDIRS) -DARCH=$(ARCH)
@@ -34,22 +34,22 @@ DO_CC += -o $@ -c $<
 SHADER_OBJS= \
 	$(SHADER_OBJ_DIR)/shaderapiempty.o \
 
-all: dirs $(NAME).$(SHLIBEXT)
+all: dirs $(NAME)$(SHLIBSUFFIX).$(SHLIBEXT)
 
 dirs:
 	-mkdir -p $(BUILD_OBJ_DIR)
 	-mkdir -p $(SHADER_OBJ_DIR)
 
-$(NAME).$(SHLIBEXT): $(SHADER_OBJS)
+$(NAME)$(SHLIBSUFFIX).$(SHLIBEXT): $(SHADER_OBJS)
 	$(CPLUS) $(SHLIBLDFLAGS) -o $(BUILD_DIR)/$@ $(SHADER_OBJS) $(LDFLAGS_SHADER) $(CPP_LIB)
 
 $(SHADER_OBJ_DIR)/%.o: $(SHADER_SRC_DIR)/%.cpp
 	$(DO_CC)
 
 install:
-	cp -f $(NAME).$(SHLIBEXT) $(LIB_DIR)/$(NAME).$(SHLIBEXT)
+	cp -f $(NAME)$(SHLIBSUFFIX).$(SHLIBEXT) $(LIB_DIR)/$(NAME)$(SHLIBSUFFIX).$(SHLIBEXT)
 
 clean:
 	-rm -rf $(SHADER_OBJ_DIR)
-	-rm -rf $(NAME).$(SHLIBEXT)
+	-rm -rf $(NAME)$(SHLIBSUFFIX).$(SHLIBEXT)
 

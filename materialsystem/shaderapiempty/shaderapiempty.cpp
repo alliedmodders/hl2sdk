@@ -572,6 +572,12 @@ public:
 	virtual void BeginGeneratingCSMs();
 	virtual void EndGeneratingCSMs();
 	virtual void PerpareForCascadeDraw( int, float, float );
+	virtual bool GetCSMAccurateBlending() const;
+	virtual void SetCSMAccurateBlending( bool bEnable );
+	virtual bool SupportsResolveDepth() const;
+	virtual bool HasFullResolutionDepthTexture() const;
+	virtual int NumBooleanPixelShaderConstants() const;
+	virtual int NumIntegerPixelShaderConstants() const;
 private:
 	enum
 	{
@@ -3217,3 +3223,34 @@ void CShaderAPIEmpty::PerpareForCascadeDraw( int, float, float )
 {
 
 }
+
+bool CShaderAPIEmpty::GetCSMAccurateBlending() const
+{
+	return false;
+}
+
+void CShaderAPIEmpty::SetCSMAccurateBlending( bool bEnable )
+{
+
+}
+
+bool CShaderAPIEmpty::SupportsResolveDepth() const
+{
+	return false;
+}
+
+bool CShaderAPIEmpty::HasFullResolutionDepthTexture() const
+{
+	return false;
+}
+
+int CShaderAPIEmpty::NumBooleanPixelShaderConstants() const
+{
+	return 0;
+}
+
+int CShaderAPIEmpty::NumIntegerPixelShaderConstants() const
+{
+	return 0;
+}
+

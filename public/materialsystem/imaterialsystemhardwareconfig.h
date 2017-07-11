@@ -218,6 +218,19 @@ public:
 	virtual CSMQualityMode_t GetCSMQuality() const = 0;
 	virtual bool SupportsBilinearPCFSampling() const = 0;
 	virtual CSMShaderMode_t GetCSMShaderMode( CSMQualityMode_t nQualityLevel ) const = 0;
+
+	virtual bool GetCSMAccurateBlending() const = 0;
+	virtual void SetCSMAccurateBlending( bool bEnable ) = 0;
+
+	virtual bool SupportsResolveDepth() const = 0;
+	virtual bool HasFullResolutionDepthTexture() const = 0;
+	virtual const char *GetHWSpecificShaderDLLName() const = 0;
+	virtual bool HasStencilBuffer() const = 0;
+
+	virtual int NumBooleanVertexShaderConstants() const = 0;
+	virtual int NumIntegerVertexShaderConstants() const = 0;
+	virtual int NumBooleanPixelShaderConstants() const = 0;
+	virtual int NumIntegerPixelShaderConstants() const = 0;
 };
 
 #endif // IMATERIALSYSTEMHARDWARECONFIG_H
