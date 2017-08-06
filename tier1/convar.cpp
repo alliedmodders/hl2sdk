@@ -784,6 +784,7 @@ int ConVar::GetSplitScreenPlayerSlot( void ) const
 void ConVar::InternalSetValue( const char *value )
 {
 	float fNewValue;
+	double dblNewValue;
 	char  tempVal[ 32 ];
 	char  *val;
 
@@ -792,17 +793,19 @@ void ConVar::InternalSetValue( const char *value )
 	float flOldValue = m_Value.m_fValue;
 
 	val = (char *)value;
-	fNewValue = ( float )atof( value );
+	dblNewValue = V_atod(value);
+	fNewValue = ( float )dblNewValue;
 
 	if ( ClampValue( fNewValue ) )
 	{
+		dblNewValue = fNewValue;
 		Q_snprintf( tempVal,sizeof(tempVal), "%f", fNewValue );
 		val = tempVal;
 	}
 	
 	// Redetermine value
 	m_Value.m_fValue		= fNewValue;
-	m_Value.m_nValue		= ( int )( fNewValue );
+	m_Value.m_nValue		= ( int )( dblNewValue );
 
 	if ( !( m_nFlags & FCVAR_NEVER_AS_STRING ) )
 	{
@@ -970,7 +973,8 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 	if (callback)
 		m_fnChangeCallbacks.AddToTail(callback);
 
-	m_Value.m_fValue = ( float )atof( m_Value.m_pszString );
+	double dblValue = V_atod( m_Value.m_pszString );
+	m_Value.m_fValue = ( float )dblValue;
 
 	// Bounds Check, should never happen, if it does, no big deal
 	if ( m_bHasMin && ( m_Value.m_fValue < m_fMinVal ) )
@@ -983,7 +987,7 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 		Assert( 0 );
 	}
 
-	m_Value.m_nValue = ( int )m_Value.m_fValue;
+	m_Value.m_nValue = ( int )dblValue;
 
 	BaseClass::Create( pName, pHelpString, flags );
 }

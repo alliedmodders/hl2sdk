@@ -127,6 +127,7 @@ int			V_atoi (const char *str);
 int64 		V_atoi64(const char *str);
 uint64 		V_atoui64(const char *str);
 float		V_atof (const char *str);
+double		V_atod(const char *str);
 char*		V_stristr( char* pStr, const char* pSearch );
 const char*	V_stristr( const char* pStr, const char* pSearch );
 const char*	V_strnistr( const char* pStr, const char* pSearch, int n );
