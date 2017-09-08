@@ -229,6 +229,8 @@ public:
 	
 	// Call UTIL_Remove on the entity.
 	virtual void RemoveEntity( int nHammerID ) = 0;
+	
+	virtual void *CreateItemEntityByName( const char *szSchemaName ) = 0;
 };
 
 #define VSERVERTOOLS_INTERFACE_VERSION "VSERVERTOOLS001"
