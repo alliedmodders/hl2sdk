@@ -32,9 +32,9 @@ CPLUS = /usr/bin/clang++
 CLINK = /usr/bin/clang
 CPP_LIB =
 else
-CC = /usr/bin/gcc
-CPLUS = /usr/bin/g++
-CLINK = /usr/bin/gcc
+CC = /usr/bin/clang
+CPLUS = /usr/bin/clang++
+CLINK = /usr/bin/clang
 CPP_LIB =
 endif
 
@@ -87,7 +87,7 @@ endif
 
 # the CPU target for the build, must be i486 for now
 ARCH = x86_64
-ARCH_CFLAGS = -mtune=x86-64 -march=core2 -mmmx -msse -msse2
+ARCH_CFLAGS = -mtune=generic -march=core2 -mmmx -msse -msse2 -std=gnu++11
 
 ifeq "$(OS)" "Darwin"
 DEFINES = -D_OSX -DOSX -D_DLL_EXT=.dylib
@@ -113,6 +113,10 @@ SHLIBCFLAGS = -fPIC
 # Clang >= 3 || GCC >= 4.7
 ifeq "$(shell expr $(IS_CLANG) \& $(CPP_MAJOR) \>= 3 \| $(CPP_MAJOR) \>= 4 \& $(CPP_MINOR) \>= 7)" "1"
 BASE_CFLAGS += -Wno-delete-non-virtual-dtor -Wno-narrowing
+endif
+
+ifeq "$(shell expr $(IS_CLANG) \& $(CPP_MAJOR) \>= 3 \& $(CPP_MINOR) \>= 4 \| $(CPP_MAJOR) \>= 4)" "1"
+BASE_CFLAGS += -Wno-deprecated-register
 endif
 
 # Flags passed to the c compiler
@@ -144,8 +148,6 @@ MAKE_TIER1 = Makefile.tier1
 MAKE_MATH = Makefile.mathlib
 MAKE_IFACE = Makefile.interfaces
 MAKE_CHOREO = Makefile.choreo
-MAKE_APPFRMWRK = Makefile.appframework
-MAKE_DEDICATED = Makefile.dedicated
 
 all: check vcpm mod
 
@@ -155,7 +157,6 @@ check:
 	cd $(BUILD_DIR)
 	if [ ! -e "$(LIB_DIR)/tier1.a" ]; then $(MAKE) tier1;fi
 	if [ ! -e "$(LIB_DIR)/mathlib.a" ]; then $(MAKE) mathlib;fi
-	if [ ! -e "$(LIB_DIR)/appframework.a" ]; then $(MAKE) appframework;fi
 	if [ ! -f "libtier0.$(SHLIBEXT)" ]; then ln -s $(LIB_DIR)/libtier0.$(SHLIBEXT) .; fi
 	if [ ! -f "libvstdlib.$(SHLIBEXT)" ]; then ln -s $(LIB_DIR)/libvstdlib.$(SHLIBEXT) .; fi
 	if [ ! -f "libsteam_api.$(SHLIBEXT)" ]; then ln -s $(LIB_DIR)/libsteam_api.$(SHLIBEXT) .; fi
@@ -185,12 +186,6 @@ interfaces:
 choreo:
 	$(MAKE) -f $(MAKE_CHOREO) $(BASE_DEFINES)
 
-appframework:
-	$(MAKE) -f $(MAKE_APPFRMWRK) $(BASE_DEFINES)
-
-dedicated: check
-	$(MAKE) -f $(MAKE_DEDICATED) $(BASE_DEFINES)
-
 install:
 	cp -f $(NAME)_$(ARCH).$(SHLIBEXT) $(GAME_DIR)/bin/$(NAME)_$(ARCH).$(SHLIBEXT)
 
@@ -207,5 +202,3 @@ clean:
 	$(MAKE) -f $(MAKE_MATH) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_IFACE) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_CHOREO) $(BASE_DEFINES) clean
-	$(MAKE) -f $(MAKE_APPFRMWRK) $(BASE_DEFINES) clean
-	$(MAKE) -f $(MAKE_DEDICATED) $(BASE_DEFINES) clean
