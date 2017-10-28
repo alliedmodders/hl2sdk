@@ -193,7 +193,14 @@ public:
 	{
 		GetStringInternal( pString, maxLenInChars );
 	}
-
+	
+	// BAD AlliedModders shim for compat with other SDKs
+	void GetString( char *pString, size_t maxLenInChars )
+	{
+		GetStringManualCharCount( pString, maxLenInChars );
+	}
+	//
+	
 	void GetStringManualCharCount( char *pString, size_t maxLenInChars )
 	{
 		GetStringInternal( pString, maxLenInChars );
