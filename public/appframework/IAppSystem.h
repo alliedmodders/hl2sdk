@@ -76,9 +76,6 @@ public:
 
 	// Reconnect to a particular interface
 	virtual void Reconnect( CreateInterfaceFn factory, const char *pInterfaceName ) = 0;
-	
-	// Returns whether or not the app system is a singleton
-	virtual bool IsSingleton() = 0;
 };
 
 
@@ -108,8 +105,6 @@ public:
 	{
 		ReconnectInterface( factory, pInterfaceName );
 	}
-	
-	virtual bool IsSingleton() { return true; }
 };
 
 
