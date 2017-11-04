@@ -222,7 +222,7 @@ DBG_INTERFACE void SetAssertFailedNotifyFunc( AssertFailedNotifyFunc_t func );
 DBG_INTERFACE void CallAssertFailedNotifyFunc( const char *pchFile, int nLine, const char *pchMessage );
 
 /* True if -hushasserts was passed on command line. */
-DBG_INTERFACE bool HushAsserts();
+//DBG_INTERFACE bool HushAsserts();
 
 #if defined( USE_SDL )
 DBG_INTERFACE void SetAssertDialogParent( struct SDL_Window *window );
