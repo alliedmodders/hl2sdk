@@ -45,6 +45,30 @@ void KVStringDelete(void* pMem)
 	MemAlloc_Free(pMem);
 }
 
+static bool BKeyValuesSystemSupportsCache()
+{
+	static bool s_bSupportsCache = false;
+	static bool s_bCheckedForCacheSupport = false;
+
+	if (!s_bCheckedForCacheSupport)
+	{
+		// Use Sys_LoadModule to resolve actual bin name.
+		CSysModule *pTier0 = Sys_LoadModule("tier0");
+		if (pTier0)
+		{
+#ifdef _WIN32
+			s_bSupportsCache = !!GetProcAddress(reinterpret_cast<HMODULE>(pTier0), "HushAsserts");
+#elif defined(POSIX)
+			s_bSupportsCache = !!dlsym(reinterpret_cast<void *>(pTier0), "HushAsserts");
+#endif
+		}
+
+		s_bCheckedForCacheSupport = true;
+	}
+
+	return s_bSupportsCache;
+}
+
 static const char * s_LastFileLoadingFrom = "unknown"; // just needed for error messages
 
 // Statics for the growable string table
@@ -766,8 +790,13 @@ bool KeyValues::SaveToFile( IBaseFileSystem *filesystem, const char *resourceNam
 		return false;
 	}
 
-	KeyValuesSystem()->InvalidateCacheForFile( resourceName, pathID );
-	if ( bCacheResult ) {
+	bool bSupportsCache = BKeyValuesSystemSupportsCache();
+	if (bSupportsCache)
+	{
+		KeyValuesSystem()->InvalidateCacheForFile(resourceName, pathID);
+	}
+
+	if ( bCacheResult && bSupportsCache ) {
 		KeyValuesSystem()->AddFileKeyValuesToCache( this, resourceName, pathID );
 	}
 	RecursiveSaveToFile(filesystem, f, NULL, 0, sortKeys, bAllowEmptyString );
