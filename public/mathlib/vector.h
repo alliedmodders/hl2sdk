@@ -237,7 +237,11 @@ private:
 
 
 
-#define USE_M64S ( ( !defined( _X360 ) ) )
+#ifdef _X360
+#define USE_M64S 1
+#else
+#define USE_M64S 0
+#endif
 
 
 
