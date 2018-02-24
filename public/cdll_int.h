@@ -204,7 +204,7 @@ typedef void (*pfnDemoCustomDataCallback)( uint8 *pData, size_t iSize );
 #define VENGINE_CLIENT_RANDOM_INTERFACE_VERSION	"VEngineRandom001"
 
 // change this when the new version is incompatable with the old
-#define VENGINE_CLIENT_INTERFACE_VERSION		"VEngineClient013"
+#define VENGINE_CLIENT_INTERFACE_VERSION		"VEngineClient015"
 
 //-----------------------------------------------------------------------------
 // Purpose: Interface exposed from the engine to the client .dll
