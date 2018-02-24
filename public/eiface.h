@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -138,6 +138,10 @@ public:
 
 	// Return the current number of used edict slots
 	virtual int			GetEntityCount( void ) = 0;
+	// Given an edict, returns the entity index
+	virtual int			IndexOfEdict(const edict_t *pEdict) = 0;
+	// Given and entity index, returns the corresponding edict pointer
+	virtual edict_t		*PEntityOfEntIndex(int iEntIndex) = 0;
 	
 	// Get stats info interface for a client netchannel
 	virtual INetChannelInfo* GetPlayerNetInfo( int playerIndex ) = 0;
