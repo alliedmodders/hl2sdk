@@ -133,7 +133,7 @@ class ConCommandBase
 public:
 								ConCommandBase( void );
 								ConCommandBase( const char *pName, const char *pHelpString = 0, 
-									int flags = 0 );
+									int64 flags = 0 );
 
 	virtual						~ConCommandBase( void );
 
@@ -167,7 +167,7 @@ public:
 
 protected:
 	virtual void				Create( const char *pName, const char *pHelpString = 0, 
-									int flags = 0 );
+									int64 flags = 0 );
 
 	// Used internally by OneTimeInit to initialize/shutdown
 	virtual void				Init();
@@ -295,13 +295,13 @@ public:
 	typedef ConCommandBase BaseClass;
 
 	ConCommand( const char *pName, FnCommandCallback_t callback, 
-		const char *pHelpString = 0, int flags = 0, FnCommandCompletionCallback completionFunc = 0 );
+		const char *pHelpString = 0, int64 flags = 0, FnCommandCompletionCallback completionFunc = 0 );
 	ConCommand(const char *pName, FnCommandCallbackV1_t callback,
-		const char *pHelpString = 0, int flags = 0, FnCommandCompletionCallback completionFunc = 0);
+		const char *pHelpString = 0, int64 flags = 0, FnCommandCompletionCallback completionFunc = 0);
 	ConCommand(const char *pName, FnCommandCallbackV2_t callback,
-		const char *pHelpString = 0, int flags = 0, FnCommandCompletionCallback completionFunc = 0);
+		const char *pHelpString = 0, int64 flags = 0, FnCommandCompletionCallback completionFunc = 0);
 	ConCommand( const char *pName, ICommandCallback *pCallback, 
-		const char *pHelpString = 0, int flags = 0, ICommandCompletionCallback *pCommandCompletionCallback = 0 );
+		const char *pHelpString = 0, int64 flags = 0, ICommandCompletionCallback *pCommandCompletionCallback = 0 );
 
 	virtual ~ConCommand( void );
 
@@ -367,15 +367,15 @@ friend class SplitScreenConVarRef;
 public:
 	typedef ConCommandBase BaseClass;
 
-								ConVar( const char *pName, const char *pDefaultValue, int flags = 0);
+								ConVar( const char *pName, const char *pDefaultValue, int64 flags = 0);
 
-								ConVar( const char *pName, const char *pDefaultValue, int flags, 
+								ConVar( const char *pName, const char *pDefaultValue, int64 flags, 
 									const char *pHelpString );
-								ConVar( const char *pName, const char *pDefaultValue, int flags, 
+								ConVar( const char *pName, const char *pDefaultValue, int64 flags, 
 									const char *pHelpString, bool bMin, float fMin, bool bMax, float fMax );
-								ConVar( const char *pName, const char *pDefaultValue, int flags, 
+								ConVar( const char *pName, const char *pDefaultValue, int64 flags, 
 									const char *pHelpString, FnChangeCallback_t callback );
-								ConVar( const char *pName, const char *pDefaultValue, int flags, 
+								ConVar( const char *pName, const char *pDefaultValue, int64 flags, 
 									const char *pHelpString, bool bMin, float fMin, bool bMax, float fMax,
 									FnChangeCallback_t callback );
 
@@ -470,7 +470,7 @@ private:
 	virtual bool				ClampValue( float& value );
 	virtual void				ChangeStringValue( const char *tempVal, float flOldValue );
 
-	virtual void				Create( const char *pName, const char *pDefaultValue, int flags = 0,
+	virtual void				Create( const char *pName, const char *pDefaultValue, int64 flags = 0,
 									const char *pHelpString = 0, bool bMin = false, float fMin = 0.0,
 									bool bMax = false, float fMax = false, FnChangeCallback_t callback = 0 );
 
@@ -920,7 +920,7 @@ class CConCommandMemberAccessor : public ConCommand, public ICommandCallback, pu
 
 public:
 	CConCommandMemberAccessor( T* pOwner, const char *pName, FnMemberCommandCallback_t callback, const char *pHelpString = 0,
-		int flags = 0, FnMemberCommandCompletionCallback_t completionFunc = 0 ) :
+		int64 flags = 0, FnMemberCommandCompletionCallback_t completionFunc = 0 ) :
 		BaseClass( pName, this, pHelpString, flags, ( completionFunc != 0 ) ? this : NULL )
 	{
 		m_pOwner = pOwner;
