@@ -25,8 +25,7 @@ struct GameEventHandle_t__
 	const char* m_szMessageType;
 	int m_iUnknown2;
 	void *m_pUnknown3;
-	void *m_pUnknown4;
-	void *m_pUnknown5;
+	CUtlString m_sGroup;
 	unsigned short m_MessageID;
 };
 
