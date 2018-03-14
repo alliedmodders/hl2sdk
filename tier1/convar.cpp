@@ -37,7 +37,7 @@
 //-----------------------------------------------------------------------------
 ConCommandBase			*ConCommandBase::s_pConCommandBases = NULL;
 IConCommandBaseAccessor	*ConCommandBase::s_pAccessor = NULL;
-static int s_nCVarFlag = 0;
+static int64 s_nCVarFlag = 0;
 static int s_nDLLIdentifier = -1;	// A unique identifier indicating which DLL this convar came from
 static bool s_bRegistered = false;
 
@@ -57,7 +57,7 @@ static CDefaultAccessor s_DefaultAccessor;
 //-----------------------------------------------------------------------------
 // Called by the framework to register ConCommandBases with the ICVar
 //-----------------------------------------------------------------------------
-void ConVar_Register( int nCVarFlag, IConCommandBaseAccessor *pAccessor )
+void ConVar_Register( int64 nCVarFlag, IConCommandBaseAccessor *pAccessor )
 {
 	if ( !g_pCVar || s_bRegistered )
 		return;

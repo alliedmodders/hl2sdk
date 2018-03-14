@@ -124,7 +124,7 @@ class ConCommandBase
 	friend class CCvar;
 	friend class ConVar;
 	friend class ConCommand;
-	friend void ConVar_Register( int nCVarFlag, IConCommandBaseAccessor *pAccessor );
+	friend void ConVar_Register( int64 nCVarFlag, IConCommandBaseAccessor *pAccessor );
 	friend void ConVar_PublishToVXConsole();
 
 	// FIXME: Remove when ConVar changes are done
@@ -894,7 +894,7 @@ FORCEINLINE_CVAR const char *SplitScreenConVarRef::GetDefault() const
 //-----------------------------------------------------------------------------
 // Called by the framework to register ConCommands with the ICVar
 //-----------------------------------------------------------------------------
-void ConVar_Register( int nCVarFlag = 0, IConCommandBaseAccessor *pAccessor = NULL );
+void ConVar_Register( int64 nCVarFlag = 0, IConCommandBaseAccessor *pAccessor = NULL );
 void ConVar_Unregister( );
 
 
