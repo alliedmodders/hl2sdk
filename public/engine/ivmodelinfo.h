@@ -67,6 +67,8 @@ public:
 	virtual const char				*GetModelName( const model_t *model ) const = 0;
 	virtual vcollide_t				*GetVCollide( const model_t *model ) const = 0;
 	virtual vcollide_t				*GetVCollide( int modelindex ) const = 0;
+	virtual vcollide_t				*GetVCollide( const model_t *model, float flScale ) const = 0;
+	virtual vcollide_t				*GetVCollide( int modelindex, float flScale ) const = 0;
 	virtual void					GetModelBounds( const model_t *model, Vector& mins, Vector& maxs ) const = 0;
 	virtual	void					GetModelRenderBounds( const model_t *model, Vector& mins, Vector& maxs ) const = 0;
 	virtual int						GetModelFrameCount( const model_t *model ) const = 0;
