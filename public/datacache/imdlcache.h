@@ -132,6 +132,7 @@ public:
 	// Gets at the various data associated with a MDL
 	virtual studiohdr_t *GetStudioHdr( MDLHandle_t handle ) = 0;
 	virtual studiohwdata_t *GetHardwareData( MDLHandle_t handle ) = 0;
+	virtual vcollide_t *GetVCollideScaled( MDLHandle_t handle, float flScale ) = 0;
 	virtual vcollide_t *GetVCollide( MDLHandle_t handle ) = 0;
 	virtual unsigned char *GetAnimBlock( MDLHandle_t handle, int nBlock ) = 0;
 
