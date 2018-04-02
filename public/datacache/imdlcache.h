@@ -133,6 +133,7 @@ public:
 	virtual studiohdr_t *GetStudioHdr( MDLHandle_t handle ) = 0;
 	virtual studiohwdata_t *GetHardwareData( MDLHandle_t handle ) = 0;
 	virtual vcollide_t *GetVCollide( MDLHandle_t handle ) = 0;
+	virtual vcollide_t *GetVCollide( MDLHandle_t handle, float flScale ) = 0;
 	virtual unsigned char *GetAnimBlock( MDLHandle_t handle, int nBlock ) = 0;
 
 	virtual bool HasAnimBlockBeenPreloaded( MDLHandle_t handle, int iAnim) = 0;
