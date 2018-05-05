@@ -353,8 +353,9 @@ public:
 	void InstallChangeCallback( FnChangeCallback_t callback );
 
 	// Retrieve value
-	FORCEINLINE_CVAR float			GetFloat( void ) const;
-	FORCEINLINE_CVAR int			GetInt( void ) const;
+	virtual float			GetFloat( void ) const;
+	virtual int				GetInt( void ) const;
+	virtual Vector			GetVector( void ) const;
 	FORCEINLINE_CVAR bool			GetBool() const {  return !!GetInt(); }
 	FORCEINLINE_CVAR char const	   *GetString( void ) const;
 
@@ -365,6 +366,7 @@ public:
 	virtual void				SetValue( const char *value );
 	virtual void				SetValue( float value );
 	virtual void				SetValue( int value );
+	virtual void				SetValue( const Vector &value );
 	
 	// Reset to default value
 	void						Revert( void );
@@ -379,8 +381,9 @@ private:
 	// Called by CCvar when the value of a var is changing.
 	virtual void				InternalSetValue(const char *value);
 	// For CVARs marked FCVAR_NEVER_AS_STRING
-	virtual void				InternalSetFloatValue( float fNewValue );
+	virtual void				InternalSetFloatValue( float fNewValue, bool bForce = false );
 	virtual void				InternalSetIntValue( int nValue );
+	virtual void				InternalSetVectorValue( const Vector &vecValue );
 
 	virtual bool				ClampValue( float& value );
 	virtual void				ChangeStringValue( const char *tempVal, float flOldValue );
@@ -410,12 +413,20 @@ private:
 	// Values
 	float						m_fValue;
 	int							m_nValue;
+	Vector						m_vecValue;
 
 	// Min/Max values
 	bool						m_bHasMin;
 	float						m_fMinVal;
 	bool						m_bHasMax;
 	float						m_fMaxVal;
+
+	bool						m_bHasCompMin;
+	float						m_fCompMinVal;
+	bool						m_bHasCompMax;
+	float						m_fCompMaxVal;
+	bool						m_bCompetitiveRestrictions;
+
 	
 	// Call this function when ConVar changes
 	FnChangeCallback_t			m_fnChangeCallback;
@@ -438,6 +449,15 @@ FORCEINLINE_CVAR float ConVar::GetFloat( void ) const
 FORCEINLINE_CVAR int ConVar::GetInt( void ) const 
 {
 	return m_pParent->m_nValue;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Return ConVar value as an int
+// Output : int
+//-----------------------------------------------------------------------------
+FORCEINLINE_CVAR Vector ConVar::GetVector(void) const
+{
+	return m_pParent->m_vecValue;
 }
 
 

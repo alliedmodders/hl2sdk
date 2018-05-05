@@ -821,13 +821,17 @@ void ConVar::ChangeStringValue( const char *tempVal, float flOldValue )
 		*m_pszString = 0;
 	}
 
-	// Invoke any necessary callback function
-	if ( m_fnChangeCallback )
+	// If nothing has changed, don't do the callbacks.
+	if (V_strcmp(pszOldValue, m_pszString) != 0)
 	{
-		m_fnChangeCallback( this, pszOldValue, flOldValue );
-	}
+		// Invoke any necessary callback function
+		if ( m_fnChangeCallback )
+		{
+			m_fnChangeCallback( this, pszOldValue, flOldValue );
+		}
 
-	g_pCVar->CallGlobalChangeCallbacks( this, pszOldValue, flOldValue );
+		g_pCVar->CallGlobalChangeCallbacks( this, pszOldValue, flOldValue );
+	}
 
 	stackfree( pszOldValue );
 }
@@ -858,9 +862,9 @@ bool ConVar::ClampValue( float& value )
 // Purpose: 
 // Input  : *value - 
 //-----------------------------------------------------------------------------
-void ConVar::InternalSetFloatValue( float fNewValue )
+void ConVar::InternalSetFloatValue( float fNewValue, bool bForce /*= false */ )
 {
-	if ( fNewValue == m_fValue )
+	if ( fNewValue == m_fValue && !bForce )
 		return;
 
 	if ( IsFlagSet( FCVAR_MATERIAL_THREAD_MASK ) )
@@ -938,6 +942,14 @@ void ConVar::InternalSetIntValue( int nValue )
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : *value - 
+//-----------------------------------------------------------------------------
+void ConVar::InternalSetVectorValue( const Vector &vecNewValue )
+{
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: Private creation
 //-----------------------------------------------------------------------------
 void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*= 0*/,
@@ -957,6 +969,15 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 	m_fMinVal = fMin;
 	m_bHasMax = bMax;
 	m_fMaxVal = fMax;
+
+	// AM stubbed out just enough for ABI compat
+	m_vecValue = vec3_origin;
+	m_bHasCompMin = false;
+	m_fCompMinVal = 0.0;
+	m_bHasCompMax = false;
+	m_fCompMaxVal = 0.0;
+	m_bCompetitiveRestrictions = false;
+	//
 	
 	m_fnChangeCallback = callback;
 
@@ -1005,6 +1026,16 @@ void ConVar::SetValue( int value )
 {
 	ConVar *var = ( ConVar * )m_pParent;
 	var->InternalSetIntValue( value );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : value - 
+//-----------------------------------------------------------------------------
+void ConVar::SetValue( const Vector &value )
+{
+	ConVar *var = (ConVar *)m_pParent;
+	var->InternalSetVectorValue( value );
 }
 
 //-----------------------------------------------------------------------------

@@ -16,6 +16,7 @@
 #pragma once
 #endif
 
+#include "mathlib/vector.h"
 #include "tier0/dbg.h"
 #include "tier0/platform.h"
 #include "tier1/strtools.h"
@@ -105,6 +106,7 @@ public:
 	virtual void SetValue( const char *pValue ) = 0;
 	virtual void SetValue( float flValue ) = 0;
 	virtual void SetValue( int nValue ) = 0;
+	virtual void SetValue( const Vector &value ) = 0;
 
 	// Return name of command
 	virtual const char *GetName( void ) const = 0;
