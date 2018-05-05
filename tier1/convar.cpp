@@ -24,9 +24,10 @@
 #endif
 #include "tier0/memdbgon.h"
 
-
+#ifndef NDEBUG
 // Comment this out when we release.
-//#define ALLOW_DEVELOPMENT_CVARS
+#define ALLOW_DEVELOPMENT_CVARS
+#endif
 
 
 
@@ -78,6 +79,7 @@ void ConVar_Register( int nCVarFlag, IConCommandBaseAccessor *pAccessor )
 		pCur = pNext;
 	}
 
+	g_pCVar->ProcessQueuedMaterialThreadConVarSets();
 	ConCommandBase::s_pConCommandBases = NULL;
 }
 
@@ -114,7 +116,7 @@ ConCommandBase::ConCommandBase( void )
 //-----------------------------------------------------------------------------
 ConCommandBase::ConCommandBase( const char *pName, const char *pHelpString /*=0*/, int flags /*= 0*/ )
 {
-	Create( pName, pHelpString, flags );
+	CreateBase( pName, pHelpString, flags );
 }
 
 //-----------------------------------------------------------------------------
@@ -151,16 +153,14 @@ CVarDLLIdentifier_t ConCommandBase::GetDLLIdentifier() const
 //			*pHelpString - 
 //			flags - 
 //-----------------------------------------------------------------------------
-void ConCommandBase::Create( const char *pName, const char *pHelpString /*= 0*/, int flags /*= 0*/ )
+void ConCommandBase::CreateBase( const char *pName, const char *pHelpString /*= 0*/, int flags /*= 0*/ )
 {
-	static const char *empty_string = "";
-
 	m_bRegistered = false;
 
 	// Name should be static data
 	Assert( pName );
 	m_pszName = pName;
-	m_pszHelpString = pHelpString ? pHelpString : empty_string;
+	m_pszHelpString = pHelpString ? pHelpString : "";
 
 	m_nFlags = flags;
 
@@ -267,7 +267,7 @@ char *ConCommandBase::CopyString( const char *from )
 	int		len;
 	char	*to;
 
-	len = strlen( from );
+	len = V_strlen( from );
 	if ( len <= 0 )
 	{
 		to = new char[1];
@@ -505,7 +505,7 @@ int DefaultCompletionFunc( const char *partial, char commands[ COMMAND_COMPLETIO
 //	m_bIsNewConCommand = true;
 //}
 
-ConCommand::ConCommand( const char *pName, FnCommandCallbackV1_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
+ConCommand::ConCommand( const char *pName, FnCommandCallbackVoid_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
 	// Set the callback
 	m_fnCommandCallbackV1 = callback;
@@ -515,7 +515,7 @@ ConCommand::ConCommand( const char *pName, FnCommandCallbackV1_t callback, const
 	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
 
 	// Setup the rest
-	BaseClass::Create( pName, pHelpString, flags );
+	BaseClass::CreateBase( pName, pHelpString, flags );
 }
 
 ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
@@ -528,7 +528,7 @@ ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const c
 	m_bUsingCommandCallbackInterface = false;
 
 	// Setup the rest
-	BaseClass::Create( pName, pHelpString, flags );
+	BaseClass::CreateBase( pName, pHelpString, flags );
 }
 
 ConCommand::ConCommand( const char *pName, ICommandCallback *pCallback, const char *pHelpString /*= 0*/, int flags /*= 0*/, ICommandCompletionCallback *pCompletionCallback /*= 0*/ )
@@ -541,7 +541,7 @@ ConCommand::ConCommand( const char *pName, ICommandCallback *pCallback, const ch
 	m_bUsingCommandCallbackInterface = true;
 
 	// Setup the rest
-	BaseClass::Create( pName, pHelpString, flags );
+	BaseClass::CreateBase( pName, pHelpString, flags );
 }
 
 //-----------------------------------------------------------------------------
@@ -592,7 +592,7 @@ void ConCommand::Dispatch( const CCommand &command )
 	}
 
 	// Command without callback!!!
-	AssertMsg( 0, ( "Encountered ConCommand without a callback!\n" ) );
+	AssertMsg( 0, "Encountered ConCommand '%s' without a callback!\n", GetName() );
 }
 
 
@@ -749,6 +749,15 @@ void ConVar::Init()
 //-----------------------------------------------------------------------------
 void ConVar::InternalSetValue( const char *value )
 {
+	if ( IsFlagSet( FCVAR_MATERIAL_THREAD_MASK ) )
+	{
+		if ( g_pCVar && !g_pCVar->IsMaterialThreadSetAllowed() )
+		{
+			g_pCVar->QueueMaterialThreadSetValue( this, value );
+			return;
+		}
+	}
+
 	float fNewValue;
 	char  tempVal[ 32 ];
 	char  *val;
@@ -758,17 +767,20 @@ void ConVar::InternalSetValue( const char *value )
 	float flOldValue = m_fValue;
 
 	val = (char *)value;
-	fNewValue = ( float )atof( value );
+	if ( !value )
+		fNewValue = 0.0f;
+	else
+		fNewValue = ( float )atof( value );
 
 	if ( ClampValue( fNewValue ) )
 	{
 		Q_snprintf( tempVal,sizeof(tempVal), "%f", fNewValue );
 		val = tempVal;
 	}
-	
+
 	// Redetermine value
 	m_fValue		= fNewValue;
-	m_nValue		= ( int )( m_fValue );
+	m_nValue		= ( int )( fNewValue );
 
 	if ( !( m_nFlags & FCVAR_NEVER_AS_STRING ) )
 	{
@@ -787,28 +799,39 @@ void ConVar::ChangeStringValue( const char *tempVal, float flOldValue )
  	char* pszOldValue = (char*)stackalloc( m_StringLength );
 	memcpy( pszOldValue, m_pszString, m_StringLength );
 	
-	int len = Q_strlen(tempVal) + 1;
-
-	if ( len > m_StringLength)
+	if ( tempVal )
 	{
-		if (m_pszString)
+		int len = Q_strlen(tempVal) + 1;
+
+		if ( len > m_StringLength)
 		{
-			delete[] m_pszString;
+			if (m_pszString)
+			{
+				delete[] m_pszString;
+			}
+
+			m_pszString	= new char[len];
+			m_StringLength = len;
 		}
 
-		m_pszString	= new char[len];
-		m_StringLength = len;
+		memcpy( m_pszString, tempVal, len );
 	}
-
-	memcpy( m_pszString, tempVal, len );
-
-	// Invoke any necessary callback function
-	if ( m_fnChangeCallback )
+	else 
 	{
-		m_fnChangeCallback( this, pszOldValue, flOldValue );
+		*m_pszString = 0;
 	}
 
-	g_pCVar->CallGlobalChangeCallbacks( this, pszOldValue, flOldValue );
+	// If nothing has changed, don't do the callbacks.
+	if (V_strcmp(pszOldValue, m_pszString) != 0)
+	{
+		// Invoke any necessary callback function
+		if ( m_fnChangeCallback )
+		{
+			m_fnChangeCallback( this, pszOldValue, flOldValue );
+		}
+
+		g_pCVar->CallGlobalChangeCallbacks( this, pszOldValue, flOldValue );
+	}
 
 	stackfree( pszOldValue );
 }
@@ -844,6 +867,15 @@ void ConVar::InternalSetFloatValue( float fNewValue )
 	if ( fNewValue == m_fValue )
 		return;
 
+	if ( IsFlagSet( FCVAR_MATERIAL_THREAD_MASK ) )
+	{
+		if ( g_pCVar && !g_pCVar->IsMaterialThreadSetAllowed() )
+		{
+			g_pCVar->QueueMaterialThreadSetValue( this, fNewValue );
+			return;
+		}
+	}
+
 	Assert( m_pParent == this ); // Only valid for root convars.
 
 	// Check bounds
@@ -874,6 +906,15 @@ void ConVar::InternalSetIntValue( int nValue )
 {
 	if ( nValue == m_nValue )
 		return;
+
+	if ( IsFlagSet( FCVAR_MATERIAL_THREAD_MASK ) )
+	{
+		if ( g_pCVar && !g_pCVar->IsMaterialThreadSetAllowed() )
+		{
+			g_pCVar->QueueMaterialThreadSetValue( this, nValue );
+			return;
+		}
+	}
 
 	Assert( m_pParent == this ); // Only valid for root convars.
 
@@ -907,15 +948,12 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 	const char *pHelpString /*= NULL*/, bool bMin /*= false*/, float fMin /*= 0.0*/,
 	bool bMax /*= false*/, float fMax /*= false*/, FnChangeCallback_t callback /*= NULL*/ )
 {
-	static const char *empty_string = "";
-
 	m_pParent = this;
 
 	// Name should be static data
-	m_pszDefaultValue = pDefaultValue ? pDefaultValue : empty_string;
-	Assert( m_pszDefaultValue );
+	SetDefault( pDefaultValue );
 
-	m_StringLength = strlen( m_pszDefaultValue ) + 1;
+	m_StringLength = V_strlen( m_pszDefaultValue ) + 1;
 	m_pszString = new char[m_StringLength];
 	memcpy( m_pszString, m_pszDefaultValue, m_StringLength );
 	
@@ -927,6 +965,7 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 	m_fnChangeCallback = callback;
 
 	m_fValue = ( float )atof( m_pszString );
+	m_nValue = atoi( m_pszString ); // dont convert from float to int and lose bits
 
 	// Bounds Check, should never happen, if it does, no big deal
 	if ( m_bHasMin && ( m_fValue < m_fMinVal ) )
@@ -939,9 +978,7 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 		Assert( 0 );
 	}
 
-	m_nValue = ( int )m_fValue;
-
-	BaseClass::Create( pName, pHelpString, flags );
+	BaseClass::CreateBase( pName, pHelpString, flags );
 }
 
 //-----------------------------------------------------------------------------
@@ -1014,6 +1051,11 @@ const char *ConVar::GetDefault( void ) const
 	return m_pParent->m_pszDefaultValue;
 }
 
+void ConVar::SetDefault( const char *pszDefault ) 
+{ 
+	m_pszDefaultValue = pszDefault ? pszDefault : "";
+	Assert( m_pszDefaultValue );
+}
 
 //-----------------------------------------------------------------------------
 // This version is simply used to make reading convars simpler.

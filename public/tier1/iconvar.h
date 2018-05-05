@@ -62,10 +62,14 @@ class CCommand;
 #define FCVAR_REPLICATED		(1<<13)	// server setting enforced on clients, TODO rename to FCAR_SERVER at some time
 #define FCVAR_DEMO				(1<<16)  // record this cvar when starting a demo file
 #define FCVAR_DONTRECORD		(1<<17)  // don't record these command in demofiles
+#define FCVAR_RELOAD_MATERIALS	(1<<20)	// If this cvar changes, it forces a material reload
+#define FCVAR_RELOAD_TEXTURES	(1<<21)	// If this cvar changes, if forces a texture reload
 
 #define FCVAR_NOT_CONNECTED		(1<<22)	// cvar cannot be changed by a client that is connected to a server
-
+#define FCVAR_MATERIAL_SYSTEM_THREAD (1<<23)	// Indicates this cvar is read from the material system thread
 #define FCVAR_ARCHIVE_XBOX		(1<<24) // cvar written to config.cfg on the Xbox
+
+#define FCVAR_ACCESSIBLE_FROM_THREADS	(1<<25)	// used as a debugging tool necessary to check material system thread convars
 
 #define FCVAR_SERVER_CAN_EXECUTE	(1<<28)// the server is allowed to execute this command on clients via ClientCommand/NET_StringCmd/CBaseClientState::ProcessStringCmd.
 #define FCVAR_SERVER_CANNOT_QUERY	(1<<29)// If this is set, then the server is not allowed to query this cvar's value (via IServerPluginHelpers::StartQueryCvarValue).
@@ -78,11 +82,11 @@ class CCommand;
 // #define FCVAR_AVAILABLE			(1<<20)
 // #define FCVAR_AVAILABLE			(1<<21)
 // #define FCVAR_AVAILABLE			(1<<23)
-// #define FCVAR_AVAILABLE			(1<<25)
 // #define FCVAR_AVAILABLE			(1<<26)
 // #define FCVAR_AVAILABLE			(1<<27)
 // #define FCVAR_AVAILABLE			(1<<31)
 
+#define FCVAR_MATERIAL_THREAD_MASK ( FCVAR_RELOAD_MATERIALS | FCVAR_RELOAD_TEXTURES | FCVAR_MATERIAL_SYSTEM_THREAD )	
 
 //-----------------------------------------------------------------------------
 // Called when a ConVar changes value

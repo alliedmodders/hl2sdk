@@ -32,7 +32,7 @@ class IProcessUtils;
 
 // These are marked DLL_EXPORT for Linux.
 DLL_EXPORT ICvar *cvar;
-DLL_EXPORT ICvar *g_pCVar;
+extern ICvar *g_pCVar;
 extern IProcessUtils *g_pProcessUtils;
 
 

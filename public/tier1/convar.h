@@ -66,7 +66,7 @@ void ConVar_PublishToVXConsole();
 //-----------------------------------------------------------------------------
 // Called when a ConCommand needs to execute
 //-----------------------------------------------------------------------------
-typedef void ( *FnCommandCallbackV1_t )( void );
+typedef void ( *FnCommandCallbackVoid_t )( void );
 typedef void ( *FnCommandCallback_t )( const CCommand &command );
 
 #define COMMAND_COMPLETION_MAXITEMS		64
@@ -142,7 +142,7 @@ public:
 	virtual CVarDLLIdentifier_t	GetDLLIdentifier() const;
 
 protected:
-	virtual void				Create( const char *pName, const char *pHelpString = 0, 
+	virtual void				CreateBase( const char *pName, const char *pHelpString = 0, 
 									int flags = 0 );
 
 	// Used internally by OneTimeInit to initialize/shutdown
@@ -270,7 +270,7 @@ friend class CCvar;
 public:
 	typedef ConCommandBase BaseClass;
 
-	ConCommand( const char *pName, FnCommandCallbackV1_t callback, 
+	ConCommand( const char *pName, FnCommandCallbackVoid_t callback, 
 		const char *pHelpString = 0, int flags = 0, FnCommandCompletionCallback completionFunc = 0 );
 	ConCommand( const char *pName, FnCommandCallback_t callback, 
 		const char *pHelpString = 0, int flags = 0, FnCommandCompletionCallback completionFunc = 0 );
@@ -300,7 +300,7 @@ private:
 	// Call this function when executing the command
 	union
 	{
-		FnCommandCallbackV1_t m_fnCommandCallbackV1;
+		FnCommandCallbackVoid_t m_fnCommandCallbackV1;
 		FnCommandCallback_t m_fnCommandCallback;
 		ICommandCallback *m_pCommandCallback; 
 	};
@@ -373,6 +373,7 @@ public:
 	bool						GetMin( float& minVal ) const;
 	bool						GetMax( float& maxVal ) const;
 	const char					*GetDefault( void ) const;
+	void						SetDefault( const char *pszDefault );
 
 private:
 	// Called by CCvar when the value of a var is changing.
@@ -390,7 +391,7 @@ private:
 
 	// Used internally by OneTimeInit to initialize.
 	virtual void				Init();
-
+	int GetFlags() { return m_pParent->m_nFlags; }
 private:
 
 	// This either points to "this" or it points to the original declaration of a ConVar.

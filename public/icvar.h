@@ -102,7 +102,90 @@ public:
 #if defined( _X360 )
 	virtual void			PublishToVXConsole( ) = 0;
 #endif
+	virtual bool			IsMaterialThreadSetAllowed( ) const = 0;
+	virtual void			QueueMaterialThreadSetValue( ConVar *pConVar, const char *pValue ) = 0;
+	virtual void			QueueMaterialThreadSetValue( ConVar *pConVar, int nValue ) = 0;
+	virtual void			QueueMaterialThreadSetValue( ConVar *pConVar, float flValue ) = 0;
+	virtual bool			HasQueuedMaterialThreadConVarSets() const = 0;
+	virtual int				ProcessQueuedMaterialThreadConVarSets() = 0;
+
+protected:	class ICVarIteratorInternal;
+public:
+	/// Iteration over all cvars. 
+	/// (THIS IS A SLOW OPERATION AND YOU SHOULD AVOID IT.)
+	/// usage: 
+	/// { ICVar::Iterator iter(g_pCVar); 
+	///   for ( iter.SetFirst() ; iter.IsValid() ; iter.Next() )
+	///   {  
+	///       ConCommandBase *cmd = iter.Get();
+	///   } 
+	/// }
+	/// The Iterator class actually wraps the internal factory methods
+	/// so you don't need to worry about new/delete -- scope takes care
+	//  of it.
+	/// We need an iterator like this because we can't simply return a 
+	/// pointer to the internal data type that contains the cvars -- 
+	/// it's a custom, protected class with unusual semantics and is
+	/// prone to change.
+	class Iterator
+	{
+	public:
+		inline Iterator(ICvar *icvar);
+		inline ~Iterator(void);
+		inline void		SetFirst( void );
+		inline void		Next( void );
+		inline bool		IsValid( void );
+		inline ConCommandBase *Get( void );
+	private:
+		ICVarIteratorInternal *m_pIter;
+	};
+
+protected:
+	// internals for  ICVarIterator
+	class ICVarIteratorInternal
+	{
+	public:
+		// warning: delete called on 'ICvar::ICVarIteratorInternal' that is abstract but has non-virtual destructor [-Wdelete-non-virtual-dtor]
+		virtual ~ICVarIteratorInternal() {}
+		virtual void		SetFirst( void ) = 0;
+		virtual void		Next( void ) = 0;
+		virtual	bool		IsValid( void ) = 0;
+		virtual ConCommandBase *Get( void ) = 0;
+	};
+
+	virtual ICVarIteratorInternal	*FactoryInternalIterator( void ) = 0;
+	friend class Iterator;
 };
+
+inline ICvar::Iterator::Iterator(ICvar *icvar)
+{
+	m_pIter = icvar->FactoryInternalIterator();
+}
+
+inline ICvar::Iterator::~Iterator( void )
+{
+	delete m_pIter;
+}
+
+inline void ICvar::Iterator::SetFirst( void )
+{
+	m_pIter->SetFirst();
+}
+
+inline void ICvar::Iterator::Next( void )
+{
+	m_pIter->Next();
+}
+
+inline bool ICvar::Iterator::IsValid( void )
+{
+	return m_pIter->IsValid();
+}
+
+inline ConCommandBase * ICvar::Iterator::Get( void )
+{
+	return m_pIter->Get();
+}
 
 #define CVAR_INTERFACE_VERSION "VEngineCvar004"
 
@@ -114,7 +197,7 @@ public:
 
 // These are marked DLL_EXPORT for Linux.
 DLL_EXPORT ICvar *cvar;
-DLL_EXPORT ICvar *g_pCVar;
+extern ICvar *g_pCVar;
 
 
 #endif // ICVAR_H
