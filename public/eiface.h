@@ -476,6 +476,12 @@ public:
 	virtual int GetServerVersion() = 0;
 	virtual float GetServerTime() = 0;
 	virtual IServer *GetIServer() = 0;
+
+	
+	virtual void AddSoundCacheForSearchPath( const char *pszPath ) = 0;
+	
+	virtual bool IsPlayerNameLocked( const edict_t *pEdict ) = 0;
+	virtual bool CanPlayerChangeName( const edict_t *pEdict ) = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
