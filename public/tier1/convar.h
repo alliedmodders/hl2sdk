@@ -379,7 +379,7 @@ private:
 	// Called by CCvar when the value of a var is changing.
 	virtual void				InternalSetValue(const char *value);
 	// For CVARs marked FCVAR_NEVER_AS_STRING
-	virtual void				InternalSetFloatValue( float fNewValue );
+	virtual void				InternalSetFloatValue( float fNewValue, bool bForce = false );
 	virtual void				InternalSetIntValue( int nValue );
 
 	virtual bool				ClampValue( float& value );
@@ -416,6 +416,13 @@ private:
 	float						m_fMinVal;
 	bool						m_bHasMax;
 	float						m_fMaxVal;
+
+	bool						m_bHasCompMin;
+	float						m_fCompMinVal;
+	bool						m_bHasCompMax;
+	float						m_fCompMaxVal;
+	bool						m_bCompetitiveRestrictions;
+
 	
 	// Call this function when ConVar changes
 	FnChangeCallback_t			m_fnChangeCallback;

@@ -862,9 +862,9 @@ bool ConVar::ClampValue( float& value )
 // Purpose: 
 // Input  : *value - 
 //-----------------------------------------------------------------------------
-void ConVar::InternalSetFloatValue( float fNewValue )
+void ConVar::InternalSetFloatValue( float fNewValue, bool bForce /*= false */ )
 {
-	if ( fNewValue == m_fValue )
+	if ( fNewValue == m_fValue && !bForce )
 		return;
 
 	if ( IsFlagSet( FCVAR_MATERIAL_THREAD_MASK ) )
@@ -961,6 +961,14 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 	m_fMinVal = fMin;
 	m_bHasMax = bMax;
 	m_fMaxVal = fMax;
+
+	// AM stubbed out just enough for ABI compat
+	m_bHasCompMin = false;
+	m_fCompMinVal = 0.0;
+	m_bHasCompMax = false;
+	m_fCompMaxVal = 0.0;
+	m_bCompetitiveRestrictions = false;
+	//
 	
 	m_fnChangeCallback = callback;
 
