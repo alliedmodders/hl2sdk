@@ -25,6 +25,7 @@ public:
 
 	// Check whether a particular parameter exists
 	virtual	const char	*CheckParm( const char *psz, const char **ppszValue = 0 ) const = 0;
+	virtual bool		HasParm( const char *parm ) const = 0;
 	virtual void		RemoveParm( const char *parm ) = 0;
 	virtual void		AppendParm( const char *pszParm, const char *pszValues ) = 0;
 
@@ -40,6 +41,8 @@ public:
 	
 	// copies the string passwed
 	virtual void SetParm( int nIndex, char const *pNewParm ) =0;
+
+	virtual const char** GetParms() const = 0;
 };
 
 //-----------------------------------------------------------------------------
