@@ -306,7 +306,7 @@ DBG_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const tchar 
 #ifdef DBGFLAG_ASSERT
 
 #define  Assert( _exp )           							_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), ((void)0), false )
-#define  AssertMsg( _exp, _msg )  							_AssertMsg( _exp, _msg, ((void)0), false )
+#define  AssertMsg( _exp, _msg, ... )  						_AssertMsg( _exp, (const tchar *)CDbgFmtMsg( _msg, ##__VA_ARGS__ ), ((void)0), false )
 #define  AssertOnce( _exp )       							_AssertMsgOnce( _exp, _T("Assertion Failed: ") _T(#_exp), false )
 #define  AssertMsgOnce( _exp, _msg )  						_AssertMsgOnce( _exp, _msg, false )
 #define  AssertFunc( _exp, _f )   							_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), _f, false )
@@ -329,7 +329,7 @@ DBG_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const tchar 
 
 #define  Assert( _exp )										((void)0)
 #define  AssertOnce( _exp )									((void)0)
-#define  AssertMsg( _exp, _msg )							((void)0)
+#define  AssertMsg( _exp, _msg, ... )						((void)0)
 #define  AssertMsgOnce( _exp, _msg )						((void)0)
 #define  AssertFunc( _exp, _f )								((void)0)
 #define  AssertEquals( _exp, _expectedValue )				((void)0)
