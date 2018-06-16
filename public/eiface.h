@@ -180,6 +180,8 @@ public:
 abstract_class IVEngineServer2 : public ISource2Engine
 {
 public:
+	virtual EUniverse	GetSteamUniverse() const = 0;
+
 	// Tell engine to change level ( "changelevel s1\n" or "changelevel2 s1 s2\n" )
 	virtual void		ChangeLevel( const char *s1, const char *s2 ) = 0;
 	
