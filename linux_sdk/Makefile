@@ -38,7 +38,7 @@ endif
 USER_CFLAGS =
 
 # link flags for your mod, make sure to include any special libraries here
-LDFLAGS = "-lm -ldl $(LIB_DIR)/particles_i486.a $(LIB_DIR)/dmxloader_i486.a $(LIB_DIR)/mathlib_i486.a tier0_i486.so vstdlib_i486.so $(LIB_DIR)/tier1_i486.a $(LIB_DIR)/tier2_i486.a $(LIB_DIR)/tier3_i486.a $(LIB_DIR)/choreoobjects_i486.a steam_api_i486.so"
+LDFLAGS = "-lm -ldl $(LIB_DIR)/particles.a $(LIB_DIR)/dmxloader.a $(LIB_DIR)/mathlib.a libtier0.so libvstdlib.so $(LIB_DIR)/tier1.a $(LIB_DIR)/tier2.a $(LIB_DIR)/tier3.a $(LIB_DIR)/choreoobjects.a libsteam_api64.so"
 
 # XERCES 2.6.0 or above ( http://xml.apache.org/xerces-c/ ) is used by the vcproj to makefile converter
 # it must be installed before being able to run this makefile
@@ -147,12 +147,12 @@ check:
 	if [ -z "$(CC)" ]; then echo "Compiler not defined."; exit; fi
 	if [ ! -d $(BUILD_DIR) ];then mkdir -p $(BUILD_DIR);fi
 	cd $(BUILD_DIR)
-	if [ ! -e "$(LIB_DIR)/tier1_i486.a" ]; then $(MAKE) tier1;fi
-	if [ ! -e "$(LIB_DIR)/mathlib_i486.a" ]; then $(MAKE) mathlib;fi
-	if [ ! -e "$(LIB_DIR)/interfaces_i486.a" ]; then $(MAKE) interfaces;fi
+	if [ ! -e "$(LIB_DIR)/tier1.a" ]; then $(MAKE) tier1;fi
+	if [ ! -e "$(LIB_DIR)/mathlib.a" ]; then $(MAKE) mathlib;fi
+	if [ ! -e "$(LIB_DIR)/interfaces.a" ]; then $(MAKE) interfaces;fi
 	if [ ! -f "libtier0$(SHLIBSUFFIX).$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libtier0$(SHLIBSUFFIX).$(SHLIBEXT) .; fi
 	if [ ! -f "libvstdlib$(SHLIBSUFFIX).$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libvstdlib$(SHLIBSUFFIX).$(SHLIBEXT) .; fi
-	if [ ! -f "libsteam_api.$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libsteam_api.$(SHLIBEXT) .; fi
+	if [ ! -f "libsteam_api64.$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libsteam64_api.$(SHLIBEXT) .; fi
 
 vcpm: check
 	if [ ! -e "vcpm" ]; then $(MAKE) -f $(MAKE_VCPM) $(BASE_DEFINES);fi
@@ -180,11 +180,11 @@ choreo:
 	$(MAKE) -f $(MAKE_CHOREO) $(BASE_DEFINES)
 
 install:
-	cp -f $(NAME)_$(ARCH).$(SHLIBEXT) $(GAME_DIR)/bin/$(NAME)_$(ARCH).$(SHLIBEXT)
+	cp -f $(NAME).$(SHLIBEXT) $(GAME_DIR)/bin/$(NAME).$(SHLIBEXT)
 
 installrelease:
-	cp -f $(NAME)_$(ARCH).$(SHLIBEXT) $(GAME_DIR)/bin/$(NAME)_$(ARCH).$(SHLIBEXT)
-	strip $(GAME_DIR)/bin/$(NAME)_$(ARCH).$(SHLIBEXT)
+	cp -f $(NAME).$(SHLIBEXT) $(GAME_DIR)/bin/$(NAME).$(SHLIBEXT)
+	strip $(GAME_DIR)/bin/$(NAME).$(SHLIBEXT)
 
 clean:
 	$(MAKE) -f $(MAKE_VCPM) $(BASE_DEFINES) clean

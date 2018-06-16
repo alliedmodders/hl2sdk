@@ -10,7 +10,7 @@ TIER0_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier0
 TIER1_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier1
 MATHLIB_PUBLIC_SRC_DIR = $(SRC_DIR)/public/mathlib
 
-LIB_OBJ_DIR = $(BUILD_OBJ_DIR)/$(NAME)_$(ARCH)
+LIB_OBJ_DIR = $(BUILD_OBJ_DIR)/$(NAME)
 
 # Extension of linux static library
 override SHLIBEXT = a
@@ -50,20 +50,20 @@ LIB_OBJS= \
 	$(LIB_OBJ_DIR)/vector.o \
 	$(LIB_OBJ_DIR)/vmatrix.o \
 
-all: dirs $(NAME)_$(ARCH).$(SHLIBEXT)
+all: dirs $(NAME).$(SHLIBEXT)
 
 dirs:
 	-mkdir -p $(BUILD_OBJ_DIR)
 	-mkdir -p $(LIB_OBJ_DIR)
 
-$(NAME)_$(ARCH).$(SHLIBEXT): $(LIB_OBJS)
+$(NAME).$(SHLIBEXT): $(LIB_OBJS)
 	$(AR) $(LIB_DIR)/$@ $(LIB_OBJS)
 
 $(LIB_OBJ_DIR)/%.o: $(LIB_SRC_DIR)/%.cpp
 	$(DO_CC)
 
 install:
-	cp -f $(NAME)_$(ARCH).$(SHLIBEXT) $(LIB_DIR)/$(NAME)_$(ARCH).$(SHLIBEXT)
+	cp -f $(NAME).$(SHLIBEXT) $(LIB_DIR)/$(NAME).$(SHLIBEXT)
 
 clean:
 	-rm -rf $(LIB_OBJ_DIR)
