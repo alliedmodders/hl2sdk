@@ -78,7 +78,7 @@ SRC_DIR = ..
 ifeq "$(OS)" "Darwin"
 LIB_DIR = $(SRC_DIR)/lib/mac
 else
-LIB_DIR = $(SRC_DIR)/lib/linux
+LIB_DIR = $(SRC_DIR)/lib/linux64
 endif
 
 # the CPU target for the build, must be i486 for now
