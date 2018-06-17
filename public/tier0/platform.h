@@ -1646,9 +1646,11 @@ FORCEINLINE uint64 RotateBitsRight64( uint64 nValue, int nRotateBits )
 #define HMODULE void *
 #endif
 
-PLATFORM_INTERFACE void *Plat_LoadModule( const char *pModuleName );
-PLATFORM_INTERFACE void *Plat_FindModuleByAddress( void *pAddress );
-
+typedef void* (*CreateInterfaceFn)(const char *pName, int *pReturnCode);
+PLATFORM_INTERFACE HMODULE Plat_LoadModule( const char *pModuleName );
+PLATFORM_INTERFACE void Plat_UnloadModule( HMODULE module );
+PLATFORM_INTERFACE HMODULE Plat_FindModuleByAddress( void *pAddress );
+PLATFORM_INTERFACE CreateInterfaceFn Plat_GetModuleInterfaceFactory( HMODULE module, int *pReturnCode = NULL );
 
 #include "tier0/valve_on.h"
 

@@ -116,22 +116,6 @@ void *GetModuleHandle(const char *name)
 #include "windows.h"
 #endif
 
-//-----------------------------------------------------------------------------
-// Purpose: returns a pointer to a function, given a module
-// Input  : pModuleName - module name
-//			*pName - proc name
-//-----------------------------------------------------------------------------
-static void *Sys_GetProcAddress( const char *pModuleName, const char *pName )
-{
-	HMODULE hModule = GetModuleHandle( pModuleName );
-	return GetProcAddress( hModule, pName );
-}
-
-static void *Sys_GetProcAddress( HMODULE hModule, const char *pName )
-{
-	return GetProcAddress( hModule, pName );
-}
-
 bool Sys_IsDebuggerPresent()
 {
 	return Plat_IsInDebugSession();
@@ -144,56 +128,6 @@ struct ThreadedLoadLibaryContext_t
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: returns a pointer to a function, given a module
-// Input  : module - windows HMODULE from Sys_LoadModule() 
-//			*pName - proc name
-// Output : factory for this module
-//-----------------------------------------------------------------------------
-CreateInterfaceFn Sys_GetFactory( CSysModule *pModule )
-{
-	if ( !pModule )
-		return NULL;
-
-	HMODULE	hDLL = reinterpret_cast<HMODULE>(pModule);
-#ifdef _WIN32
-	return reinterpret_cast<CreateInterfaceFn>(GetProcAddress( hDLL, CREATEINTERFACE_PROCNAME ));
-#elif defined(_LINUX) || defined(__APPLE__)
-	// Linux gives this error:
-	//../public/interface.cpp: In function `IBaseInterface *(*Sys_GetFactory
-	//(CSysModule *)) (const char *, int *)':
-	//../public/interface.cpp:154: ISO C++ forbids casting between
-	//pointer-to-function and pointer-to-object
-	//
-	// so lets get around it :)
-	return (CreateInterfaceFn)(GetProcAddress( hDLL, CREATEINTERFACE_PROCNAME ));
-#endif
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: returns the instance of this module
-// Output : interface_instance_t
-//-----------------------------------------------------------------------------
-CreateInterfaceFn Sys_GetFactoryThis( void )
-{
-	return CreateInterface;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: returns the instance of the named module
-// Input  : *pModuleName - name of the module
-// Output : interface_instance_t - instance of that module
-//-----------------------------------------------------------------------------
-CreateInterfaceFn Sys_GetFactory( const char *pModuleName )
-{
-#ifdef _WIN32
-	return static_cast<CreateInterfaceFn>( Sys_GetProcAddress( pModuleName, CREATEINTERFACE_PROCNAME ) );
-#elif defined(_LINUX) || defined(__APPLE__)
-	// see Sys_GetFactory( CSysModule *pModule ) for an explanation
-	return (CreateInterfaceFn)( Sys_GetProcAddress( pModuleName, CREATEINTERFACE_PROCNAME ) );
-#endif
-}
-
-//-----------------------------------------------------------------------------
 // Purpose: get the interface for the specified module and version
 // Input  : 
 // Output : 
@@ -201,24 +135,24 @@ CreateInterfaceFn Sys_GetFactory( const char *pModuleName )
 bool Sys_LoadInterface(
 	const char *pModuleName,
 	const char *pInterfaceVersionName,
-	CSysModule **pOutModule,
+	HMODULE *pOutModule,
 	void **pOutInterface )
 {
-	CSysModule *pMod = Sys_LoadModule( pModuleName );
+	HMODULE pMod = Plat_LoadModule( pModuleName );
 	if ( !pMod )
 		return false;
 
-	CreateInterfaceFn fn = Sys_GetFactory( pMod );
+	CreateInterfaceFn fn = Plat_GetModuleInterfaceFactory( pMod );
 	if ( !fn )
 	{
-		Sys_UnloadModule( pMod );
+		Plat_UnloadModule( pMod );
 		return false;
 	}
 
 	*pOutInterface = fn( pInterfaceVersionName, NULL );
 	if ( !( *pOutInterface ) )
 	{
-		Sys_UnloadModule( pMod );
+		Plat_UnloadModule( pMod );
 		return false;
 	}
 
@@ -252,7 +186,7 @@ CreateInterfaceFn CDllDemandLoader::GetFactory()
 	if ( !m_hModule && !m_bLoadAttempted )
 	{
 		m_bLoadAttempted = true;
-		m_hModule = Sys_LoadModule( m_pchModuleName );
+		m_hModule = Plat_LoadModule( m_pchModuleName );
 	}
 
 	if ( !m_hModule )
@@ -260,14 +194,14 @@ CreateInterfaceFn CDllDemandLoader::GetFactory()
 		return NULL;
 	}
 
-	return Sys_GetFactory( m_hModule );
+	return Plat_GetModuleInterfaceFactory( m_hModule );
 }
 
 void CDllDemandLoader::Unload()
 {
 	if ( m_hModule )
 	{
-		Sys_UnloadModule( m_hModule );
+		Plat_UnloadModule( m_hModule );
 		m_hModule = 0;
 	}
 }

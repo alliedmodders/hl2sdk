@@ -54,14 +54,6 @@ public:
 	virtual	~IBaseInterface() {}
 };
 
-#if !defined( _X360 )
-#define CREATEINTERFACE_PROCNAME	"CreateInterface"
-#else
-// x360 only allows ordinal exports, .def files export "CreateInterface" at 1
-#define CREATEINTERFACE_PROCNAME	((const char*)1)
-#endif
-
-typedef void* (*CreateInterfaceFn)(const char *pName, int *pReturnCode);
 typedef void* (*InstantiateInterfaceFn)();
 
 // Used internally to register classes.
@@ -162,21 +154,6 @@ DLL_EXPORT void* CreateInterface(const char *pName, int *pReturnCode);
 DLL_EXPORT void *CreateInterfaceThunk( const char *pName, int *pReturnCode );
 #endif
 
-//-----------------------------------------------------------------------------
-// UNDONE: This is obsolete, use the module load/unload/get instead!!!
-//-----------------------------------------------------------------------------
-extern CreateInterfaceFn	Sys_GetFactory( CSysModule *pModule );
-extern CreateInterfaceFn	Sys_GetFactory( const char *pModuleName );
-extern CreateInterfaceFn	Sys_GetFactoryThis( void );
-
-//-----------------------------------------------------------------------------
-// Load & Unload should be called in exactly one place for each module
-// The factory for that module should be passed on to dependent components for
-// proper versioning.
-//-----------------------------------------------------------------------------
-extern CSysModule			*Sys_LoadModule( const char *pModuleName );
-extern void					Sys_UnloadModule( CSysModule *pModule );
-
 // Determines if current process is running with any debug modules
 extern bool					Sys_RunningWithDebugModules();
 
@@ -186,7 +163,7 @@ extern bool					Sys_RunningWithDebugModules();
 bool Sys_LoadInterface(
 	const char *pModuleName,
 	const char *pInterfaceVersionName,
-	CSysModule **pOutModule,
+	HMODULE *pOutModule,
 	void **pOutInterface );
 
 bool Sys_IsDebuggerPresent();
@@ -209,7 +186,7 @@ public:
 private:
 
 	char const	*m_pchModuleName;
-	CSysModule	*m_hModule;
+	HMODULE		m_hModule;
 	bool		m_bLoadAttempted;
 };
 
