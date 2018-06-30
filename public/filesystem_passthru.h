@@ -126,8 +126,8 @@ public:
 		va_end( marker );
 		return m_pFileSystemPassThru->FPrintf( file, "%s", str );
 	}
-	virtual CSysModule 		*LoadModule( const char *pFileName, const char *pPathID, bool bValidatedDllOnly )	{ return m_pFileSystemPassThru->LoadModule( pFileName, pPathID, bValidatedDllOnly ); }
-	virtual void			UnloadModule( CSysModule *pModule )													{ m_pFileSystemPassThru->UnloadModule( pModule ); }
+	virtual HMODULE 		*LoadModule( const char *pFileName, const char *pPathID, bool bValidatedDllOnly )	{ return m_pFileSystemPassThru->LoadModule( pFileName, pPathID, bValidatedDllOnly ); }
+	virtual void			UnloadModule( HMODULE *pModule )													{ m_pFileSystemPassThru->UnloadModule( pModule ); }
 	virtual const char		*FindFirst( const char *pWildCard, FileFindHandle_t *pHandle )						{ return m_pFileSystemPassThru->FindFirst( pWildCard, pHandle ); }
 	virtual const char		*FindNext( FileFindHandle_t handle )												{ return m_pFileSystemPassThru->FindNext( handle ); }
 	virtual bool			FindIsDirectory( FileFindHandle_t handle )											{ return m_pFileSystemPassThru->FindIsDirectory( handle ); }
