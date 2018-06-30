@@ -17,7 +17,7 @@
 #include "tier0/threadtools.h"
 #include "tier0/memalloc.h"
 #include "tier0/tslist.h"
-#include "tier1/interface.h"
+#include "tier0/interface.h"
 #include "tier1/utlsymbol.h"
 #include "tier1/utlstring.h"
 //#include "tier1/functors.h" 
@@ -537,8 +537,8 @@ public:
 	//--------------------------------------------------------
 
 	// load/unload modules
-	virtual CSysModule 		*LoadModule( const char *pFileName, const char *pPathID = 0, bool bValidatedDllOnly = true ) = 0;
-	virtual void			UnloadModule( CSysModule *pModule ) = 0;
+	virtual HMODULE 		*LoadModule( const char *pFileName, const char *pPathID = 0, bool bValidatedDllOnly = true ) = 0;
+	virtual void			UnloadModule( HMODULE *pModule ) = 0;
 
 	//--------------------------------------------------------
 	// File searching operations

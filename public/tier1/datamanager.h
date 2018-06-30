@@ -18,6 +18,10 @@ DECLARE_HANDLE_32BIT( datamanhandle_t );
 
 #define INVALID_MEMHANDLE (datamanhandle_t::MakeHandle(~0))
 
+#ifdef _WIN32
+#undef UnlockResource
+#endif
+
 class CDataManagerBase
 {
 public:

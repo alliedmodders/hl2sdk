@@ -327,7 +327,6 @@
     <ClCompile Include="datamanager.cpp" />
     <ClCompile Include="diff.cpp" />
     <ClCompile Include="generichash.cpp" />
-    <ClCompile Include="interface.cpp" />
     <ClCompile Include="KeyValues.cpp" />
     <ClCompile Include="mempool.cpp" />
     <ClCompile Include="memstack.cpp" />
@@ -366,7 +365,6 @@
     <ClInclude Include="..\public\tier1\functors.h" />
     <ClInclude Include="..\public\tier1\generichash.h" />
     <ClInclude Include="..\public\tier1\iconvar.h" />
-    <ClInclude Include="..\public\tier1\interface.h" />
     <ClInclude Include="..\public\tier1\KeyValues.h" />
     <ClInclude Include="..\public\tier1\lzmaDecoder.h" />
     <ClInclude Include="..\public\tier1\lzss.h" />

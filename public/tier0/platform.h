@@ -11,6 +11,8 @@
 
 #ifdef COMPILER_MSVC
 #pragma once
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 #endif
 
 #if defined( _X360 )
@@ -1641,16 +1643,6 @@ FORCEINLINE uint64 RotateBitsRight64( uint64 nValue, int nRotateBits )
 	return ( nValue >> nRotateBits ) | ( nValue << ( ( - nRotateBits ) & 63 ) );
 }
 #endif
-
-#if !defined COMPILER_MSVC && !defined HMODULE
-#define HMODULE void *
-#endif
-
-typedef void* (*CreateInterfaceFn)(const char *pName, int *pReturnCode);
-PLATFORM_INTERFACE HMODULE Plat_LoadModule( const char *pModuleName );
-PLATFORM_INTERFACE void Plat_UnloadModule( HMODULE module );
-PLATFORM_INTERFACE HMODULE Plat_FindModuleByAddress( void *pAddress );
-PLATFORM_INTERFACE CreateInterfaceFn Plat_GetModuleInterfaceFactory( HMODULE module, int *pReturnCode = NULL );
 
 #include "tier0/valve_on.h"
 
