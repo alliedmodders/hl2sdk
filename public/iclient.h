@@ -40,6 +40,9 @@ public:
 
 	// set the client in a pending state waiting for a new game
 	virtual void	Inactivate( void ) = 0;
+	
+	// Reconnect without dropiing the netchannel
+	virtual	void	Reconnect( void ) = 0;				// froce reconnect
 
 	// disconnects a client with a given reason
 	virtual void	Disconnect( const char *reason ) = 0;
