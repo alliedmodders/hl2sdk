@@ -56,6 +56,7 @@ public:
 	virtual void	Shutdown(const char *reason) = 0;
 	
 	virtual void	ProcessPlayback( void ) = 0;
+    virtual bool    ProcessStream( void ) = 0;
 	virtual void	ProcessPacket( struct netpacket_s* packet, bool bHasHeader ) = 0;
 			
 	virtual bool	SendNetMsg(INetMessage &msg, bool bForceReliable = false, bool bVoice = false ) = 0;
