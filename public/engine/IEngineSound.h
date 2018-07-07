@@ -74,15 +74,15 @@ public:
 	// player (client-side only)
 	virtual int EmitSound( IRecipientFilter& filter, int iEntIndex, int iChannel, const char *pSoundEntry, unsigned int nSoundEntryHash, const char *pSample, 
 		float flVolume, float flAttenuation, int nSeed, int iFlags = 0, int iPitch = PITCH_NORM, 
-		const Vector *pOrigin = NULL, const Vector *pDirection = NULL, CUtlVector< Vector >* pUtlVecOrigins = NULL, bool bUpdatePositions = true, float soundtime = 0.0f, int speakerentity = -1 ) = 0;
+		const Vector *pOrigin = NULL, const Vector *pDirection = NULL, CUtlVector< Vector >* pUtlVecOrigins = NULL, bool bUpdatePositions = true, float soundtime = 0.0f, int speakerentity = -1, void *pUnknown = NULL /* (client only) */ ) = 0;
 
 	virtual int EmitSound( IRecipientFilter& filter, int iEntIndex, int iChannel, const char *pSoundEntry, unsigned int nSoundEntryHash, const char *pSample, 
 		float flVolume, soundlevel_t iSoundlevel, int nSeed, int iFlags = 0, int iPitch = PITCH_NORM, 
-		const Vector *pOrigin = NULL, const Vector *pDirection = NULL, CUtlVector< Vector >* pUtlVecOrigins = NULL, bool bUpdatePositions = true, float soundtime = 0.0f, int speakerentity = -1 ) = 0;
+		const Vector *pOrigin = NULL, const Vector *pDirection = NULL, CUtlVector< Vector >* pUtlVecOrigins = NULL, bool bUpdatePositions = true, float soundtime = 0.0f, int speakerentity = -1, void *pUnknown = NULL /* (client only) */ ) = 0;
 
 	virtual void EmitSentenceByIndex( IRecipientFilter& filter, int iEntIndex, int iChannel, int iSentenceIndex, 
 		float flVolume, soundlevel_t iSoundlevel, int nSeed, int iFlags = 0, int iPitch = PITCH_NORM,
-		const Vector *pOrigin = NULL, const Vector *pDirection = NULL, CUtlVector< Vector >* pUtlVecOrigins = NULL, bool bUpdatePositions = true, float soundtime = 0.0f, int speakerentity = -1 ) = 0;
+		const Vector *pOrigin = NULL, const Vector *pDirection = NULL, CUtlVector< Vector >* pUtlVecOrigins = NULL, bool bUpdatePositions = true, float soundtime = 0.0f, int speakerentity = -1, void *pUnknown = NULL /* (client only) */ ) = 0;
 
 	virtual void StopSound( int iEntIndex, int iChannel, const char *pSample, unsigned int nSoundEntryHash ) = 0;
 
@@ -117,11 +117,16 @@ public:
 	virtual void	PrecacheSentenceGroup( const char *pGroupName ) = 0;
 	virtual void	NotifyBeginMoviePlayback() = 0;
 	virtual void	NotifyEndMoviePlayback() = 0;
+	virtual bool	IsMoviePlaying() = 0;
 
 	virtual bool	GetSoundChannelVolume( const char* sound, float &flVolumeLeft, float &flVolumeRight ) = 0;
 	
 	virtual float	GetElapsedTimeByGuid( int guid ) = 0;
 
+	virtual bool	GetPreventSound() = 0;
+	
+	virtual void	SetReplaySoundFade( float flFade ) = 0;
+	virtual float	GetReplaySoundFade() = 0;
 };
 
 
