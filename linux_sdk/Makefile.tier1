@@ -39,7 +39,6 @@ LIB_OBJS= \
 	$(LIB_OBJ_DIR)/datamanager.o \
 	$(LIB_OBJ_DIR)/diff.o \
 	$(LIB_OBJ_DIR)/generichash.o \
-	$(LIB_OBJ_DIR)/interface.o \
 	$(LIB_OBJ_DIR)/KeyValues.o \
 	$(LIB_OBJ_DIR)/mempool.o \
 	$(LIB_OBJ_DIR)/memstack.o \
