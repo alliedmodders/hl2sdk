@@ -329,7 +329,7 @@ void inline SinCos( float radians, float *sine, float *cosine )
 		fstp DWORD PTR [eax]
 	}
 #elif defined( GNUC )
-	register double __cosr, __sinr;
+	double __cosr, __sinr;
  	__asm __volatile__ ("fsincos" : "=t" (__cosr), "=u" (__sinr) : "0" (radians));
 
   	*sine = __sinr;
