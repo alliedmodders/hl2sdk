@@ -16,7 +16,7 @@
 #pragma once
 #endif
 
-#include <interfaces/interfaces.h>
+#include "interfaces/interfaces.h"
 #include "tier1/bitbuf.h"
 
 class CSVCMsg_GameEvent;
