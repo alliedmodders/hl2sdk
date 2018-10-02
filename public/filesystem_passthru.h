@@ -181,8 +181,14 @@ public:
 		const char *pPathID
 		)																										{ m_pFileSystemPassThru->FindFileAbsoluteList( output, pWildCard, pPathID ); }
 	virtual void			MarkPathIDByRequestOnly( const char *pPathID, bool bRequestOnly )					{ m_pFileSystemPassThru->MarkPathIDByRequestOnly( pPathID, bRequestOnly ); }
-	virtual bool			IsFileInReadOnlySearchPath ( const char *pPathID, const char *pFileName )			{ return m_pFileSystemPassThru->IsFileInReadOnlySearchPath( pPathID, pFileName ); }
-	virtual void			SetSearchPathReadOnly( const char *pPathID, const char *pUnknown, bool bReadOnly )			{ m_pFileSystemPassThru->SetSearchPathReadOnly( pPathID, pUnknown, bReadOnly ); }
+	virtual void			Unknown1(const char *a1, void *a2) {};
+	virtual void			Unknown2(void *a1, void *a2, void *a3, char *a4) {};
+	virtual const char		*Unknown3(void *a1, void *a2, void *a3, int a4, char *a5, double a6) {};
+	virtual void			Unknown4() {};
+	virtual void			Unknown5(void *a1, int a2, int *a3) {};
+	virtual void			Unknown6() {};
+	//virtual bool			IsFileInReadOnlySearchPath ( const char *pPathID, const char *pFileName )			{ return m_pFileSystemPassThru->IsFileInReadOnlySearchPath( pPathID, pFileName ); }
+	//virtual void			SetSearchPathReadOnly( const char *pPathID, const char *pUnknown, bool bReadOnly )			{ m_pFileSystemPassThru->SetSearchPathReadOnly( pPathID, pUnknown, bReadOnly ); }
 	virtual FSAsyncStatus_t	AsyncAppend(const char *pFileName, const void *pSrc, int nSrcBytes, bool bFreeMemory, FSAsyncControl_t *pControl ) { return m_pFileSystemPassThru->AsyncAppend( pFileName, pSrc, nSrcBytes, bFreeMemory, pControl); }
 	virtual FSAsyncStatus_t	AsyncWrite(const char *pFileName, const void *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend, FSAsyncControl_t *pControl ) { return m_pFileSystemPassThru->AsyncWrite( pFileName, pSrc, nSrcBytes, bFreeMemory, bAppend, pControl); }
 	virtual FSAsyncStatus_t	AsyncWriteFile(const char *pFileName, const CUtlBuffer *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend, FSAsyncControl_t *pControl ) { return m_pFileSystemPassThru->AsyncWriteFile( pFileName, pSrc, nSrcBytes, bFreeMemory, bAppend, pControl); }
@@ -192,10 +198,10 @@ public:
 	virtual FSAsyncStatus_t	AsyncSetPriority(FSAsyncControl_t hControl, int newPriority)						{ return m_pFileSystemPassThru->AsyncSetPriority(hControl, newPriority); }
 	virtual bool			AsyncSuspend()																		{ return m_pFileSystemPassThru->AsyncSuspend(); }
 	virtual bool			AsyncResume()																		{ return m_pFileSystemPassThru->AsyncResume(); }
-	virtual const char		*RelativePathToFullPath( const char *pFileName, const char *pPathID, char *pLocalPath, int localPathBufferSize, PathTypeFilter_t pathFilter = FILTER_NONE, PathTypeQuery_t *pPathType = NULL ) { return m_pFileSystemPassThru->RelativePathToFullPath( pFileName, pPathID, pLocalPath, localPathBufferSize, pathFilter, pPathType ); }
-	virtual int				GetSearchPath( const char *pathID, GetSearchPathTypes_t type, char *pPath, int nMaxLen	)	{ return m_pFileSystemPassThru->GetSearchPath( pathID, type, pPath, nMaxLen ); }
+	//virtual const char		*RelativePathToFullPath( const char *pFileName, const char *pPathID, char *pLocalPath, int localPathBufferSize, PathTypeFilter_t pathFilter = FILTER_NONE, PathTypeQuery_t *pPathType = NULL ) { return m_pFileSystemPassThru->RelativePathToFullPath( pFileName, pPathID, pLocalPath, localPathBufferSize, pathFilter, pPathType ); }
+	//virtual int				GetSearchPath( const char *pathID, GetSearchPathTypes_t type, char *pPath, int nMaxLen	)	{ return m_pFileSystemPassThru->GetSearchPath( pathID, type, pPath, nMaxLen ); }
 
-	virtual FileHandle_t	OpenEx( const char *pFileName, const char *pOptions, unsigned flags = 0, const char *pathID = 0 ) { return m_pFileSystemPassThru->OpenEx( pFileName, pOptions, flags, pathID );}
+	virtual FileHandle_t	OpenEx( const char *pFileName, const char *pOptions, unsigned flags = 0, const char *pathID = 0, double unknown1 = 0 ) { return m_pFileSystemPassThru->OpenEx( pFileName, pOptions, flags, pathID, unknown1);}
 	virtual int				ReadEx( void* pOutput, int destSize, int size, FileHandle_t file )					{ return m_pFileSystemPassThru->ReadEx( pOutput, destSize, size, file ); }
 	virtual int				ReadFileEx( const char *pFileName, const char *pPath, void **ppBuf, bool bNullTerminate, bool bOptimalAlloc, int nMaxBytes = 0, int nStartingByte = 0, FSAllocFunc_t pfnAlloc = NULL ) { return m_pFileSystemPassThru->ReadFileEx( pFileName, pPath, ppBuf, bNullTerminate, bOptimalAlloc, nMaxBytes, nStartingByte, pfnAlloc ); }
 

@@ -491,7 +491,15 @@ public:
 	// If there are currently no search paths with the specified path ID, then it will still
 	// remember it in case you add search paths with this path ID.
 	virtual void			MarkPathIDByRequestOnly( const char *pPathID, bool bRequestOnly ) = 0;
-	
+
+	virtual void			Unknown1(const char *a1, void *a2) = 0;
+	virtual void			Unknown2(void *a1, void *a2, void *a3, char *a4) = 0;
+	virtual const char		*Unknown3(void *a1, void *a2, void *a3, int a4, char *a5, double a6) = 0;
+	virtual void			Unknown4() = 0;
+	virtual void			Unknown5(void *a1, int a2, int *a3) = 0;
+	virtual void			Unknown6() = 0;
+
+	/*
 	virtual bool			IsFileInReadOnlySearchPath ( const char *pPathID, const char *pFileName ) = 0;
 	virtual void			SetSearchPathReadOnly( const char *pPathID, const char *, bool bReadOnly ) = 0;
 
@@ -500,7 +508,7 @@ public:
 
 	// Returns the search path, each path is separated by ;s. Returns the length of the string returned
 	virtual int				GetSearchPath( const char *pathID, GetSearchPathTypes_t pathType, char *pPath, int nMaxLen ) = 0;
-
+	*/
 	//--------------------------------------------------------
 	// File manipulation operations
 	//--------------------------------------------------------
@@ -665,7 +673,7 @@ public:
 	// Start of new functions after Lost Coast release (7/05)
 	//--------------------------------------------------------
 
-	virtual FileHandle_t	OpenEx( const char *pFileName, const char *pOptions, unsigned flags = 0, const char *pathID = 0 ) = 0;
+	virtual FileHandle_t	OpenEx( const char *pFileName, const char *pOptions, unsigned flags = 0, const char *pathID = 0, double unknown1 = 0 ) = 0;
 
 	// Extended version of read provides more context to allow for more optimal reading
 	virtual int				ReadEx( void* pOutput, int sizeDest, int size, FileHandle_t file ) = 0;
