@@ -673,7 +673,7 @@ public:
 	// Start of new functions after Lost Coast release (7/05)
 	//--------------------------------------------------------
 
-	virtual FileHandle_t	OpenEx( const char *pFileName, const char *pOptions, unsigned flags = 0, const char *pathID = 0, double unknown1 = 0 ) = 0;
+	virtual FileHandle_t	OpenEx( const char *pFileName, const char *pOptions, unsigned flags = 0, const char *pathID = 0 ) = 0;
 
 	// Extended version of read provides more context to allow for more optimal reading
 	virtual int				ReadEx( void* pOutput, int sizeDest, int size, FileHandle_t file ) = 0;
