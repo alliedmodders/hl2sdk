@@ -167,8 +167,6 @@ public:
 	virtual bool				String( const FileNameHandle_t& handle, char *buf, int buflen )					{ return m_pFileSystemPassThru->String( handle, buf, buflen ); }
 	virtual bool			IsOk2( FileHandle_t file )															{ return IsOk(file); }
 	virtual void			RemoveSearchPaths( const char *szPathID )											{ m_pFileSystemPassThru->RemoveSearchPaths( szPathID ); }
-	//virtual bool			IsSteam() const																		{ return m_pFileSystemPassThru->IsSteam(); }
-	//virtual	FilesystemMountRetval_t MountSteamContent( int nExtraAppId = -1 )									{ return m_pFileSystemPassThru->MountSteamContent( nExtraAppId ); }
 	
 	virtual const char		*FindFirstEx( 
 		const char *pWildCard, 
