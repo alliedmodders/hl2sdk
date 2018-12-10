@@ -452,7 +452,7 @@ public:
 	// Steam operations
 	//--------------------------------------------------------
 
-	virtual bool			IsSteam() const = 0;
+	//virtual bool			IsSteam() const = 0;
 
 	// Supplying an extra app id will mount this app in addition 
 	// to the one specified in the environment variable "steamappid"
@@ -460,7 +460,7 @@ public:
 	// If nExtraAppId is < -1, then it will mount that app ID only.
 	// (Was needed by the dedicated server b/c the "SteamAppId" env var only gets passed to steam.dll
 	// at load time, so the dedicated couldn't pass it in that way).
-	virtual	FilesystemMountRetval_t MountSteamContent( int nExtraAppId = -1 ) = 0;
+	//virtual	FilesystemMountRetval_t MountSteamContent( int nExtraAppId = -1 ) = 0;
 
 	//--------------------------------------------------------
 	// Search path manipulation
