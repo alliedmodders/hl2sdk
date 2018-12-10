@@ -167,8 +167,6 @@ public:
 	virtual bool				String( const FileNameHandle_t& handle, char *buf, int buflen )					{ return m_pFileSystemPassThru->String( handle, buf, buflen ); }
 	virtual bool			IsOk2( FileHandle_t file )															{ return IsOk(file); }
 	virtual void			RemoveSearchPaths( const char *szPathID )											{ m_pFileSystemPassThru->RemoveSearchPaths( szPathID ); }
-	virtual bool			IsSteam() const																		{ return m_pFileSystemPassThru->IsSteam(); }
-	virtual	FilesystemMountRetval_t MountSteamContent( int nExtraAppId = -1 )									{ return m_pFileSystemPassThru->MountSteamContent( nExtraAppId ); }
 	
 	virtual const char		*FindFirstEx( 
 		const char *pWildCard, 
@@ -183,7 +181,7 @@ public:
 	virtual void			MarkPathIDByRequestOnly( const char *pPathID, bool bRequestOnly )					{ m_pFileSystemPassThru->MarkPathIDByRequestOnly( pPathID, bRequestOnly ); }
 	virtual void			Unknown1(const char *a1, void *a2) {};
 	virtual void			Unknown2(void *a1, void *a2, void *a3, char *a4) {};
-	virtual const char		*Unknown3(void *a1, void *a2, void *a3, int a4, char *a5, double a6) {};
+	virtual const char		*Unknown3(void *a1, void *a2, void *a3, int a4, char *a5, double a6) { return NULL; };
 	virtual void			Unknown4() {};
 	virtual void			Unknown5(void *a1, int a2, int *a3) {};
 	virtual void			Unknown6() {};
