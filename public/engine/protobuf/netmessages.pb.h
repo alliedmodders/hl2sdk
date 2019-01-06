@@ -47,6 +47,7 @@ class CNETMsg_NOP;
 class CNETMsg_Disconnect;
 class CNETMsg_File;
 class CNETMsg_SplitScreenUser;
+class CNETMsg_PlayerAvatarData;
 class CCLCMsg_ClientInfo;
 class CCLCMsg_Move;
 class CCLCMsg_VoiceData;
@@ -90,6 +91,9 @@ class CSVCMsg_Sounds_sounddata_t;
 class CSVCMsg_EntityMsg;
 class CSVCMsg_CmdKeyValues;
 class CSVCMsg_EncryptedData;
+class CSVCMsg_HltvReplay;
+class CCLCMsg_HltvReplay;
+class CSVCMsg_Broadcast_Command;
 
 enum NET_Messages {
   net_NOP = 0,
@@ -99,11 +103,12 @@ enum NET_Messages {
   net_Tick = 4,
   net_StringCmd = 5,
   net_SetConVar = 6,
-  net_SignonState = 7
+  net_SignonState = 7,
+  net_PlayerAvatarData = 100
 };
 bool NET_Messages_IsValid(int value);
 const NET_Messages NET_Messages_MIN = net_NOP;
-const NET_Messages NET_Messages_MAX = net_SignonState;
+const NET_Messages NET_Messages_MAX = net_PlayerAvatarData;
 const int NET_Messages_ARRAYSIZE = NET_Messages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* NET_Messages_descriptor();
@@ -127,11 +132,12 @@ enum CLC_Messages {
   clc_LoadingProgress = 15,
   clc_SplitPlayerConnect = 16,
   clc_ClientMessage = 17,
-  clc_CmdKeyValues = 18
+  clc_CmdKeyValues = 18,
+  clc_HltvReplay = 20
 };
 bool CLC_Messages_IsValid(int value);
 const CLC_Messages CLC_Messages_MIN = clc_ClientInfo;
-const CLC_Messages CLC_Messages_MAX = clc_CmdKeyValues;
+const CLC_Messages CLC_Messages_MAX = clc_HltvReplay;
 const int CLC_Messages_ARRAYSIZE = CLC_Messages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CLC_Messages_descriptor();
@@ -143,6 +149,25 @@ inline bool CLC_Messages_Parse(
     const ::std::string& name, CLC_Messages* value) {
   return ::google::protobuf::internal::ParseNamedEnum<CLC_Messages>(
     CLC_Messages_descriptor(), name, value);
+}
+enum VoiceDataFormat_t {
+  VOICEDATA_FORMAT_STEAM = 0,
+  VOICEDATA_FORMAT_ENGINE = 1
+};
+bool VoiceDataFormat_t_IsValid(int value);
+const VoiceDataFormat_t VoiceDataFormat_t_MIN = VOICEDATA_FORMAT_STEAM;
+const VoiceDataFormat_t VoiceDataFormat_t_MAX = VOICEDATA_FORMAT_ENGINE;
+const int VoiceDataFormat_t_ARRAYSIZE = VoiceDataFormat_t_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* VoiceDataFormat_t_descriptor();
+inline const ::std::string& VoiceDataFormat_t_Name(VoiceDataFormat_t value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    VoiceDataFormat_t_descriptor(), value);
+}
+inline bool VoiceDataFormat_t_Parse(
+    const ::std::string& name, VoiceDataFormat_t* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<VoiceDataFormat_t>(
+    VoiceDataFormat_t_descriptor(), name, value);
 }
 enum ESplitScreenMessageType {
   MSG_SPLITSCREEN_ADDUSER = 0,
@@ -163,6 +188,27 @@ inline bool ESplitScreenMessageType_Parse(
     const ::std::string& name, ESplitScreenMessageType* value) {
   return ::google::protobuf::internal::ParseNamedEnum<ESplitScreenMessageType>(
     ESplitScreenMessageType_descriptor(), name, value);
+}
+enum ReplayEventType_t {
+  REPLAY_EVENT_CANCEL = 0,
+  REPLAY_EVENT_DEATH = 1,
+  REPLAY_EVENT_GENERIC = 2,
+  REPLAY_EVENT_STUCK_NEED_FULL_UPDATE = 3
+};
+bool ReplayEventType_t_IsValid(int value);
+const ReplayEventType_t ReplayEventType_t_MIN = REPLAY_EVENT_CANCEL;
+const ReplayEventType_t ReplayEventType_t_MAX = REPLAY_EVENT_STUCK_NEED_FULL_UPDATE;
+const int ReplayEventType_t_ARRAYSIZE = ReplayEventType_t_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ReplayEventType_t_descriptor();
+inline const ::std::string& ReplayEventType_t_Name(ReplayEventType_t value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ReplayEventType_t_descriptor(), value);
+}
+inline bool ReplayEventType_t_Parse(
+    const ::std::string& name, ReplayEventType_t* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ReplayEventType_t>(
+    ReplayEventType_t_descriptor(), name, value);
 }
 enum SVC_Messages {
   svc_ServerInfo = 8,
@@ -191,11 +237,13 @@ enum SVC_Messages {
   svc_GetCvarValue = 31,
   svc_PaintmapData = 33,
   svc_CmdKeyValues = 34,
-  svc_EncryptedData = 35
+  svc_EncryptedData = 35,
+  svc_HltvReplay = 36,
+  svc_Broadcast_Command = 38
 };
 bool SVC_Messages_IsValid(int value);
 const SVC_Messages SVC_Messages_MIN = svc_ServerInfo;
-const SVC_Messages SVC_Messages_MAX = svc_EncryptedData;
+const SVC_Messages SVC_Messages_MAX = svc_Broadcast_Command;
 const int SVC_Messages_ARRAYSIZE = SVC_Messages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* SVC_Messages_descriptor();
@@ -700,6 +748,13 @@ class CNETMsg_Tick : public ::google::protobuf::Message {
   inline ::google::protobuf::uint32 host_framestarttime_std_deviation() const;
   inline void set_host_framestarttime_std_deviation(::google::protobuf::uint32 value);
 
+  // optional uint32 hltv_replay_flags = 7;
+  inline bool has_hltv_replay_flags() const;
+  inline void clear_hltv_replay_flags();
+  static const int kHltvReplayFlagsFieldNumber = 7;
+  inline ::google::protobuf::uint32 hltv_replay_flags() const;
+  inline void set_hltv_replay_flags(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:CNETMsg_Tick)
  private:
   inline void set_has_tick();
@@ -710,6 +765,8 @@ class CNETMsg_Tick : public ::google::protobuf::Message {
   inline void clear_has_host_computationtime_std_deviation();
   inline void set_has_host_framestarttime_std_deviation();
   inline void clear_has_host_framestarttime_std_deviation();
+  inline void set_has_hltv_replay_flags();
+  inline void clear_has_hltv_replay_flags();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -717,9 +774,10 @@ class CNETMsg_Tick : public ::google::protobuf::Message {
   ::google::protobuf::uint32 host_computationtime_;
   ::google::protobuf::uint32 host_computationtime_std_deviation_;
   ::google::protobuf::uint32 host_framestarttime_std_deviation_;
+  ::google::protobuf::uint32 hltv_replay_flags_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
 
   friend void  protobuf_AddDesc_netmessages_2eproto();
   friend void protobuf_AssignDesc_netmessages_2eproto();
@@ -1592,6 +1650,103 @@ class CNETMsg_SplitScreenUser : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class CNETMsg_PlayerAvatarData : public ::google::protobuf::Message {
+ public:
+  CNETMsg_PlayerAvatarData();
+  virtual ~CNETMsg_PlayerAvatarData();
+
+  CNETMsg_PlayerAvatarData(const CNETMsg_PlayerAvatarData& from);
+
+  inline CNETMsg_PlayerAvatarData& operator=(const CNETMsg_PlayerAvatarData& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CNETMsg_PlayerAvatarData& default_instance();
+
+  void Swap(CNETMsg_PlayerAvatarData* other);
+
+  // implements Message ----------------------------------------------
+
+  CNETMsg_PlayerAvatarData* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CNETMsg_PlayerAvatarData& from);
+  void MergeFrom(const CNETMsg_PlayerAvatarData& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 accountid = 1;
+  inline bool has_accountid() const;
+  inline void clear_accountid();
+  static const int kAccountidFieldNumber = 1;
+  inline ::google::protobuf::uint32 accountid() const;
+  inline void set_accountid(::google::protobuf::uint32 value);
+
+  // optional bytes rgb = 2;
+  inline bool has_rgb() const;
+  inline void clear_rgb();
+  static const int kRgbFieldNumber = 2;
+  inline const ::std::string& rgb() const;
+  inline void set_rgb(const ::std::string& value);
+  inline void set_rgb(const char* value);
+  inline void set_rgb(const void* value, size_t size);
+  inline ::std::string* mutable_rgb();
+  inline ::std::string* release_rgb();
+  inline void set_allocated_rgb(::std::string* rgb);
+
+  // @@protoc_insertion_point(class_scope:CNETMsg_PlayerAvatarData)
+ private:
+  inline void set_has_accountid();
+  inline void clear_has_accountid();
+  inline void set_has_rgb();
+  inline void clear_has_rgb();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* rgb_;
+  ::google::protobuf::uint32 accountid_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_netmessages_2eproto();
+  friend void protobuf_AssignDesc_netmessages_2eproto();
+  friend void protobuf_ShutdownFile_netmessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CNETMsg_PlayerAvatarData* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class CCLCMsg_ClientInfo : public ::google::protobuf::Message {
  public:
   CCLCMsg_ClientInfo();
@@ -1922,20 +2077,60 @@ class CCLCMsg_VoiceData : public ::google::protobuf::Message {
   inline ::google::protobuf::uint64 xuid() const;
   inline void set_xuid(::google::protobuf::uint64 value);
 
+  // optional .VoiceDataFormat_t format = 3 [default = VOICEDATA_FORMAT_ENGINE];
+  inline bool has_format() const;
+  inline void clear_format();
+  static const int kFormatFieldNumber = 3;
+  inline ::VoiceDataFormat_t format() const;
+  inline void set_format(::VoiceDataFormat_t value);
+
+  // optional int32 sequence_bytes = 4;
+  inline bool has_sequence_bytes() const;
+  inline void clear_sequence_bytes();
+  static const int kSequenceBytesFieldNumber = 4;
+  inline ::google::protobuf::int32 sequence_bytes() const;
+  inline void set_sequence_bytes(::google::protobuf::int32 value);
+
+  // optional uint32 section_number = 5;
+  inline bool has_section_number() const;
+  inline void clear_section_number();
+  static const int kSectionNumberFieldNumber = 5;
+  inline ::google::protobuf::uint32 section_number() const;
+  inline void set_section_number(::google::protobuf::uint32 value);
+
+  // optional uint32 uncompressed_sample_offset = 6;
+  inline bool has_uncompressed_sample_offset() const;
+  inline void clear_uncompressed_sample_offset();
+  static const int kUncompressedSampleOffsetFieldNumber = 6;
+  inline ::google::protobuf::uint32 uncompressed_sample_offset() const;
+  inline void set_uncompressed_sample_offset(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:CCLCMsg_VoiceData)
  private:
   inline void set_has_data();
   inline void clear_has_data();
   inline void set_has_xuid();
   inline void clear_has_xuid();
+  inline void set_has_format();
+  inline void clear_has_format();
+  inline void set_has_sequence_bytes();
+  inline void clear_has_sequence_bytes();
+  inline void set_has_section_number();
+  inline void clear_has_section_number();
+  inline void set_has_uncompressed_sample_offset();
+  inline void clear_has_uncompressed_sample_offset();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* data_;
   ::google::protobuf::uint64 xuid_;
+  int format_;
+  ::google::protobuf::int32 sequence_bytes_;
+  ::google::protobuf::uint32 section_number_;
+  ::google::protobuf::uint32 uncompressed_sample_offset_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
 
   friend void  protobuf_AddDesc_netmessages_2eproto();
   friend void protobuf_AssignDesc_netmessages_2eproto();
@@ -4108,20 +4303,30 @@ class CSVCMsg_VoiceInit : public ::google::protobuf::Message {
   inline ::std::string* release_codec();
   inline void set_allocated_codec(::std::string* codec);
 
+  // optional int32 version = 3 [default = 0];
+  inline bool has_version() const;
+  inline void clear_version();
+  static const int kVersionFieldNumber = 3;
+  inline ::google::protobuf::int32 version() const;
+  inline void set_version(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:CSVCMsg_VoiceInit)
  private:
   inline void set_has_quality();
   inline void clear_has_quality();
   inline void set_has_codec();
   inline void clear_has_codec();
+  inline void set_has_version();
+  inline void clear_has_version();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* codec_;
   ::google::protobuf::int32 quality_;
+  ::google::protobuf::int32 version_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
 
   friend void  protobuf_AddDesc_netmessages_2eproto();
   friend void protobuf_AssignDesc_netmessages_2eproto();
@@ -4233,6 +4438,34 @@ class CSVCMsg_VoiceData : public ::google::protobuf::Message {
   inline bool caster() const;
   inline void set_caster(bool value);
 
+  // optional .VoiceDataFormat_t format = 7 [default = VOICEDATA_FORMAT_ENGINE];
+  inline bool has_format() const;
+  inline void clear_format();
+  static const int kFormatFieldNumber = 7;
+  inline ::VoiceDataFormat_t format() const;
+  inline void set_format(::VoiceDataFormat_t value);
+
+  // optional int32 sequence_bytes = 8;
+  inline bool has_sequence_bytes() const;
+  inline void clear_sequence_bytes();
+  static const int kSequenceBytesFieldNumber = 8;
+  inline ::google::protobuf::int32 sequence_bytes() const;
+  inline void set_sequence_bytes(::google::protobuf::int32 value);
+
+  // optional uint32 section_number = 9;
+  inline bool has_section_number() const;
+  inline void clear_section_number();
+  static const int kSectionNumberFieldNumber = 9;
+  inline ::google::protobuf::uint32 section_number() const;
+  inline void set_section_number(::google::protobuf::uint32 value);
+
+  // optional uint32 uncompressed_sample_offset = 10;
+  inline bool has_uncompressed_sample_offset() const;
+  inline void clear_uncompressed_sample_offset();
+  static const int kUncompressedSampleOffsetFieldNumber = 10;
+  inline ::google::protobuf::uint32 uncompressed_sample_offset() const;
+  inline void set_uncompressed_sample_offset(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:CSVCMsg_VoiceData)
  private:
   inline void set_has_client();
@@ -4247,6 +4480,14 @@ class CSVCMsg_VoiceData : public ::google::protobuf::Message {
   inline void clear_has_voice_data();
   inline void set_has_caster();
   inline void clear_has_caster();
+  inline void set_has_format();
+  inline void clear_has_format();
+  inline void set_has_sequence_bytes();
+  inline void clear_has_sequence_bytes();
+  inline void set_has_section_number();
+  inline void clear_has_section_number();
+  inline void set_has_uncompressed_sample_offset();
+  inline void clear_has_uncompressed_sample_offset();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -4256,9 +4497,13 @@ class CSVCMsg_VoiceData : public ::google::protobuf::Message {
   ::std::string* voice_data_;
   bool proximity_;
   bool caster_;
+  int format_;
+  ::google::protobuf::int32 sequence_bytes_;
+  ::google::protobuf::uint32 section_number_;
+  ::google::protobuf::uint32 uncompressed_sample_offset_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(10 + 31) / 32];
 
   friend void  protobuf_AddDesc_netmessages_2eproto();
   friend void protobuf_AssignDesc_netmessages_2eproto();
@@ -5022,20 +5267,30 @@ class CSVCMsg_UserMessage : public ::google::protobuf::Message {
   inline ::std::string* release_msg_data();
   inline void set_allocated_msg_data(::std::string* msg_data);
 
+  // optional int32 passthrough = 3;
+  inline bool has_passthrough() const;
+  inline void clear_passthrough();
+  static const int kPassthroughFieldNumber = 3;
+  inline ::google::protobuf::int32 passthrough() const;
+  inline void set_passthrough(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:CSVCMsg_UserMessage)
  private:
   inline void set_has_msg_type();
   inline void clear_has_msg_type();
   inline void set_has_msg_data();
   inline void clear_has_msg_data();
+  inline void set_has_passthrough();
+  inline void clear_has_passthrough();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* msg_data_;
   ::google::protobuf::int32 msg_type_;
+  ::google::protobuf::int32 passthrough_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
 
   friend void  protobuf_AddDesc_netmessages_2eproto();
   friend void protobuf_AssignDesc_netmessages_2eproto();
@@ -5392,21 +5647,31 @@ class CSVCMsg_GameEvent : public ::google::protobuf::Message {
   inline ::google::protobuf::RepeatedPtrField< ::CSVCMsg_GameEvent_key_t >*
       mutable_keys();
 
+  // optional int32 passthrough = 4;
+  inline bool has_passthrough() const;
+  inline void clear_passthrough();
+  static const int kPassthroughFieldNumber = 4;
+  inline ::google::protobuf::int32 passthrough() const;
+  inline void set_passthrough(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:CSVCMsg_GameEvent)
  private:
   inline void set_has_event_name();
   inline void clear_has_event_name();
   inline void set_has_eventid();
   inline void clear_has_eventid();
+  inline void set_has_passthrough();
+  inline void clear_has_passthrough();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* event_name_;
   ::google::protobuf::RepeatedPtrField< ::CSVCMsg_GameEvent_key_t > keys_;
   ::google::protobuf::int32 eventid_;
+  ::google::protobuf::int32 passthrough_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
 
   friend void  protobuf_AddDesc_netmessages_2eproto();
   friend void protobuf_AssignDesc_netmessages_2eproto();
@@ -6594,6 +6859,357 @@ class CSVCMsg_EncryptedData : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static CSVCMsg_EncryptedData* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class CSVCMsg_HltvReplay : public ::google::protobuf::Message {
+ public:
+  CSVCMsg_HltvReplay();
+  virtual ~CSVCMsg_HltvReplay();
+
+  CSVCMsg_HltvReplay(const CSVCMsg_HltvReplay& from);
+
+  inline CSVCMsg_HltvReplay& operator=(const CSVCMsg_HltvReplay& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CSVCMsg_HltvReplay& default_instance();
+
+  void Swap(CSVCMsg_HltvReplay* other);
+
+  // implements Message ----------------------------------------------
+
+  CSVCMsg_HltvReplay* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CSVCMsg_HltvReplay& from);
+  void MergeFrom(const CSVCMsg_HltvReplay& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 delay = 1;
+  inline bool has_delay() const;
+  inline void clear_delay();
+  static const int kDelayFieldNumber = 1;
+  inline ::google::protobuf::int32 delay() const;
+  inline void set_delay(::google::protobuf::int32 value);
+
+  // optional int32 primary_target = 2;
+  inline bool has_primary_target() const;
+  inline void clear_primary_target();
+  static const int kPrimaryTargetFieldNumber = 2;
+  inline ::google::protobuf::int32 primary_target() const;
+  inline void set_primary_target(::google::protobuf::int32 value);
+
+  // optional int32 replay_stop_at = 3;
+  inline bool has_replay_stop_at() const;
+  inline void clear_replay_stop_at();
+  static const int kReplayStopAtFieldNumber = 3;
+  inline ::google::protobuf::int32 replay_stop_at() const;
+  inline void set_replay_stop_at(::google::protobuf::int32 value);
+
+  // optional int32 replay_start_at = 4;
+  inline bool has_replay_start_at() const;
+  inline void clear_replay_start_at();
+  static const int kReplayStartAtFieldNumber = 4;
+  inline ::google::protobuf::int32 replay_start_at() const;
+  inline void set_replay_start_at(::google::protobuf::int32 value);
+
+  // optional int32 replay_slowdown_begin = 5;
+  inline bool has_replay_slowdown_begin() const;
+  inline void clear_replay_slowdown_begin();
+  static const int kReplaySlowdownBeginFieldNumber = 5;
+  inline ::google::protobuf::int32 replay_slowdown_begin() const;
+  inline void set_replay_slowdown_begin(::google::protobuf::int32 value);
+
+  // optional int32 replay_slowdown_end = 6;
+  inline bool has_replay_slowdown_end() const;
+  inline void clear_replay_slowdown_end();
+  static const int kReplaySlowdownEndFieldNumber = 6;
+  inline ::google::protobuf::int32 replay_slowdown_end() const;
+  inline void set_replay_slowdown_end(::google::protobuf::int32 value);
+
+  // optional float replay_slowdown_rate = 7;
+  inline bool has_replay_slowdown_rate() const;
+  inline void clear_replay_slowdown_rate();
+  static const int kReplaySlowdownRateFieldNumber = 7;
+  inline float replay_slowdown_rate() const;
+  inline void set_replay_slowdown_rate(float value);
+
+  // @@protoc_insertion_point(class_scope:CSVCMsg_HltvReplay)
+ private:
+  inline void set_has_delay();
+  inline void clear_has_delay();
+  inline void set_has_primary_target();
+  inline void clear_has_primary_target();
+  inline void set_has_replay_stop_at();
+  inline void clear_has_replay_stop_at();
+  inline void set_has_replay_start_at();
+  inline void clear_has_replay_start_at();
+  inline void set_has_replay_slowdown_begin();
+  inline void clear_has_replay_slowdown_begin();
+  inline void set_has_replay_slowdown_end();
+  inline void clear_has_replay_slowdown_end();
+  inline void set_has_replay_slowdown_rate();
+  inline void clear_has_replay_slowdown_rate();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 delay_;
+  ::google::protobuf::int32 primary_target_;
+  ::google::protobuf::int32 replay_stop_at_;
+  ::google::protobuf::int32 replay_start_at_;
+  ::google::protobuf::int32 replay_slowdown_begin_;
+  ::google::protobuf::int32 replay_slowdown_end_;
+  float replay_slowdown_rate_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+
+  friend void  protobuf_AddDesc_netmessages_2eproto();
+  friend void protobuf_AssignDesc_netmessages_2eproto();
+  friend void protobuf_ShutdownFile_netmessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CSVCMsg_HltvReplay* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCLCMsg_HltvReplay : public ::google::protobuf::Message {
+ public:
+  CCLCMsg_HltvReplay();
+  virtual ~CCLCMsg_HltvReplay();
+
+  CCLCMsg_HltvReplay(const CCLCMsg_HltvReplay& from);
+
+  inline CCLCMsg_HltvReplay& operator=(const CCLCMsg_HltvReplay& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCLCMsg_HltvReplay& default_instance();
+
+  void Swap(CCLCMsg_HltvReplay* other);
+
+  // implements Message ----------------------------------------------
+
+  CCLCMsg_HltvReplay* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCLCMsg_HltvReplay& from);
+  void MergeFrom(const CCLCMsg_HltvReplay& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 request = 1;
+  inline bool has_request() const;
+  inline void clear_request();
+  static const int kRequestFieldNumber = 1;
+  inline ::google::protobuf::int32 request() const;
+  inline void set_request(::google::protobuf::int32 value);
+
+  // optional float slowdown_length = 2;
+  inline bool has_slowdown_length() const;
+  inline void clear_slowdown_length();
+  static const int kSlowdownLengthFieldNumber = 2;
+  inline float slowdown_length() const;
+  inline void set_slowdown_length(float value);
+
+  // optional float slowdown_rate = 3;
+  inline bool has_slowdown_rate() const;
+  inline void clear_slowdown_rate();
+  static const int kSlowdownRateFieldNumber = 3;
+  inline float slowdown_rate() const;
+  inline void set_slowdown_rate(float value);
+
+  // optional int32 primary_target_ent_index = 4;
+  inline bool has_primary_target_ent_index() const;
+  inline void clear_primary_target_ent_index();
+  static const int kPrimaryTargetEntIndexFieldNumber = 4;
+  inline ::google::protobuf::int32 primary_target_ent_index() const;
+  inline void set_primary_target_ent_index(::google::protobuf::int32 value);
+
+  // optional float event_time = 5;
+  inline bool has_event_time() const;
+  inline void clear_event_time();
+  static const int kEventTimeFieldNumber = 5;
+  inline float event_time() const;
+  inline void set_event_time(float value);
+
+  // @@protoc_insertion_point(class_scope:CCLCMsg_HltvReplay)
+ private:
+  inline void set_has_request();
+  inline void clear_has_request();
+  inline void set_has_slowdown_length();
+  inline void clear_has_slowdown_length();
+  inline void set_has_slowdown_rate();
+  inline void clear_has_slowdown_rate();
+  inline void set_has_primary_target_ent_index();
+  inline void clear_has_primary_target_ent_index();
+  inline void set_has_event_time();
+  inline void clear_has_event_time();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 request_;
+  float slowdown_length_;
+  float slowdown_rate_;
+  ::google::protobuf::int32 primary_target_ent_index_;
+  float event_time_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+
+  friend void  protobuf_AddDesc_netmessages_2eproto();
+  friend void protobuf_AssignDesc_netmessages_2eproto();
+  friend void protobuf_ShutdownFile_netmessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCLCMsg_HltvReplay* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CSVCMsg_Broadcast_Command : public ::google::protobuf::Message {
+ public:
+  CSVCMsg_Broadcast_Command();
+  virtual ~CSVCMsg_Broadcast_Command();
+
+  CSVCMsg_Broadcast_Command(const CSVCMsg_Broadcast_Command& from);
+
+  inline CSVCMsg_Broadcast_Command& operator=(const CSVCMsg_Broadcast_Command& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CSVCMsg_Broadcast_Command& default_instance();
+
+  void Swap(CSVCMsg_Broadcast_Command* other);
+
+  // implements Message ----------------------------------------------
+
+  CSVCMsg_Broadcast_Command* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CSVCMsg_Broadcast_Command& from);
+  void MergeFrom(const CSVCMsg_Broadcast_Command& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string cmd = 1;
+  inline bool has_cmd() const;
+  inline void clear_cmd();
+  static const int kCmdFieldNumber = 1;
+  inline const ::std::string& cmd() const;
+  inline void set_cmd(const ::std::string& value);
+  inline void set_cmd(const char* value);
+  inline void set_cmd(const char* value, size_t size);
+  inline ::std::string* mutable_cmd();
+  inline ::std::string* release_cmd();
+  inline void set_allocated_cmd(::std::string* cmd);
+
+  // @@protoc_insertion_point(class_scope:CSVCMsg_Broadcast_Command)
+ private:
+  inline void set_has_cmd();
+  inline void clear_has_cmd();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* cmd_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+  friend void  protobuf_AddDesc_netmessages_2eproto();
+  friend void protobuf_AssignDesc_netmessages_2eproto();
+  friend void protobuf_ShutdownFile_netmessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CSVCMsg_Broadcast_Command* default_instance_;
+};
 // ===================================================================
 
 
@@ -6967,6 +7583,28 @@ inline ::google::protobuf::uint32 CNETMsg_Tick::host_framestarttime_std_deviatio
 inline void CNETMsg_Tick::set_host_framestarttime_std_deviation(::google::protobuf::uint32 value) {
   set_has_host_framestarttime_std_deviation();
   host_framestarttime_std_deviation_ = value;
+}
+
+// optional uint32 hltv_replay_flags = 7;
+inline bool CNETMsg_Tick::has_hltv_replay_flags() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CNETMsg_Tick::set_has_hltv_replay_flags() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CNETMsg_Tick::clear_has_hltv_replay_flags() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CNETMsg_Tick::clear_hltv_replay_flags() {
+  hltv_replay_flags_ = 0u;
+  clear_has_hltv_replay_flags();
+}
+inline ::google::protobuf::uint32 CNETMsg_Tick::hltv_replay_flags() const {
+  return hltv_replay_flags_;
+}
+inline void CNETMsg_Tick::set_hltv_replay_flags(::google::protobuf::uint32 value) {
+  set_has_hltv_replay_flags();
+  hltv_replay_flags_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -7710,6 +8348,102 @@ inline void CNETMsg_SplitScreenUser::set_slot(::google::protobuf::int32 value) {
 
 // -------------------------------------------------------------------
 
+// CNETMsg_PlayerAvatarData
+
+// optional uint32 accountid = 1;
+inline bool CNETMsg_PlayerAvatarData::has_accountid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CNETMsg_PlayerAvatarData::set_has_accountid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CNETMsg_PlayerAvatarData::clear_has_accountid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CNETMsg_PlayerAvatarData::clear_accountid() {
+  accountid_ = 0u;
+  clear_has_accountid();
+}
+inline ::google::protobuf::uint32 CNETMsg_PlayerAvatarData::accountid() const {
+  return accountid_;
+}
+inline void CNETMsg_PlayerAvatarData::set_accountid(::google::protobuf::uint32 value) {
+  set_has_accountid();
+  accountid_ = value;
+}
+
+// optional bytes rgb = 2;
+inline bool CNETMsg_PlayerAvatarData::has_rgb() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CNETMsg_PlayerAvatarData::set_has_rgb() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CNETMsg_PlayerAvatarData::clear_has_rgb() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CNETMsg_PlayerAvatarData::clear_rgb() {
+  if (rgb_ != &::google::protobuf::internal::kEmptyString) {
+    rgb_->clear();
+  }
+  clear_has_rgb();
+}
+inline const ::std::string& CNETMsg_PlayerAvatarData::rgb() const {
+  return *rgb_;
+}
+inline void CNETMsg_PlayerAvatarData::set_rgb(const ::std::string& value) {
+  set_has_rgb();
+  if (rgb_ == &::google::protobuf::internal::kEmptyString) {
+    rgb_ = new ::std::string;
+  }
+  rgb_->assign(value);
+}
+inline void CNETMsg_PlayerAvatarData::set_rgb(const char* value) {
+  set_has_rgb();
+  if (rgb_ == &::google::protobuf::internal::kEmptyString) {
+    rgb_ = new ::std::string;
+  }
+  rgb_->assign(value);
+}
+inline void CNETMsg_PlayerAvatarData::set_rgb(const void* value, size_t size) {
+  set_has_rgb();
+  if (rgb_ == &::google::protobuf::internal::kEmptyString) {
+    rgb_ = new ::std::string;
+  }
+  rgb_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CNETMsg_PlayerAvatarData::mutable_rgb() {
+  set_has_rgb();
+  if (rgb_ == &::google::protobuf::internal::kEmptyString) {
+    rgb_ = new ::std::string;
+  }
+  return rgb_;
+}
+inline ::std::string* CNETMsg_PlayerAvatarData::release_rgb() {
+  clear_has_rgb();
+  if (rgb_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = rgb_;
+    rgb_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CNETMsg_PlayerAvatarData::set_allocated_rgb(::std::string* rgb) {
+  if (rgb_ != &::google::protobuf::internal::kEmptyString) {
+    delete rgb_;
+  }
+  if (rgb) {
+    set_has_rgb();
+    rgb_ = rgb;
+  } else {
+    clear_has_rgb();
+    rgb_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// -------------------------------------------------------------------
+
 // CCLCMsg_ClientInfo
 
 // optional fixed32 send_table_crc = 1;
@@ -8129,6 +8863,95 @@ inline ::google::protobuf::uint64 CCLCMsg_VoiceData::xuid() const {
 inline void CCLCMsg_VoiceData::set_xuid(::google::protobuf::uint64 value) {
   set_has_xuid();
   xuid_ = value;
+}
+
+// optional .VoiceDataFormat_t format = 3 [default = VOICEDATA_FORMAT_ENGINE];
+inline bool CCLCMsg_VoiceData::has_format() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCLCMsg_VoiceData::set_has_format() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCLCMsg_VoiceData::clear_has_format() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCLCMsg_VoiceData::clear_format() {
+  format_ = 1;
+  clear_has_format();
+}
+inline ::VoiceDataFormat_t CCLCMsg_VoiceData::format() const {
+  return static_cast< ::VoiceDataFormat_t >(format_);
+}
+inline void CCLCMsg_VoiceData::set_format(::VoiceDataFormat_t value) {
+  assert(::VoiceDataFormat_t_IsValid(value));
+  set_has_format();
+  format_ = value;
+}
+
+// optional int32 sequence_bytes = 4;
+inline bool CCLCMsg_VoiceData::has_sequence_bytes() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCLCMsg_VoiceData::set_has_sequence_bytes() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCLCMsg_VoiceData::clear_has_sequence_bytes() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCLCMsg_VoiceData::clear_sequence_bytes() {
+  sequence_bytes_ = 0;
+  clear_has_sequence_bytes();
+}
+inline ::google::protobuf::int32 CCLCMsg_VoiceData::sequence_bytes() const {
+  return sequence_bytes_;
+}
+inline void CCLCMsg_VoiceData::set_sequence_bytes(::google::protobuf::int32 value) {
+  set_has_sequence_bytes();
+  sequence_bytes_ = value;
+}
+
+// optional uint32 section_number = 5;
+inline bool CCLCMsg_VoiceData::has_section_number() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CCLCMsg_VoiceData::set_has_section_number() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CCLCMsg_VoiceData::clear_has_section_number() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CCLCMsg_VoiceData::clear_section_number() {
+  section_number_ = 0u;
+  clear_has_section_number();
+}
+inline ::google::protobuf::uint32 CCLCMsg_VoiceData::section_number() const {
+  return section_number_;
+}
+inline void CCLCMsg_VoiceData::set_section_number(::google::protobuf::uint32 value) {
+  set_has_section_number();
+  section_number_ = value;
+}
+
+// optional uint32 uncompressed_sample_offset = 6;
+inline bool CCLCMsg_VoiceData::has_uncompressed_sample_offset() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CCLCMsg_VoiceData::set_has_uncompressed_sample_offset() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CCLCMsg_VoiceData::clear_has_uncompressed_sample_offset() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CCLCMsg_VoiceData::clear_uncompressed_sample_offset() {
+  uncompressed_sample_offset_ = 0u;
+  clear_has_uncompressed_sample_offset();
+}
+inline ::google::protobuf::uint32 CCLCMsg_VoiceData::uncompressed_sample_offset() const {
+  return uncompressed_sample_offset_;
+}
+inline void CCLCMsg_VoiceData::set_uncompressed_sample_offset(::google::protobuf::uint32 value) {
+  set_has_uncompressed_sample_offset();
+  uncompressed_sample_offset_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -10930,6 +11753,28 @@ inline void CSVCMsg_VoiceInit::set_allocated_codec(::std::string* codec) {
   }
 }
 
+// optional int32 version = 3 [default = 0];
+inline bool CSVCMsg_VoiceInit::has_version() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CSVCMsg_VoiceInit::set_has_version() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CSVCMsg_VoiceInit::clear_has_version() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CSVCMsg_VoiceInit::clear_version() {
+  version_ = 0;
+  clear_has_version();
+}
+inline ::google::protobuf::int32 CSVCMsg_VoiceInit::version() const {
+  return version_;
+}
+inline void CSVCMsg_VoiceInit::set_version(::google::protobuf::int32 value) {
+  set_has_version();
+  version_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // CSVCMsg_VoiceData
@@ -11112,6 +11957,95 @@ inline bool CSVCMsg_VoiceData::caster() const {
 inline void CSVCMsg_VoiceData::set_caster(bool value) {
   set_has_caster();
   caster_ = value;
+}
+
+// optional .VoiceDataFormat_t format = 7 [default = VOICEDATA_FORMAT_ENGINE];
+inline bool CSVCMsg_VoiceData::has_format() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void CSVCMsg_VoiceData::set_has_format() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void CSVCMsg_VoiceData::clear_has_format() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void CSVCMsg_VoiceData::clear_format() {
+  format_ = 1;
+  clear_has_format();
+}
+inline ::VoiceDataFormat_t CSVCMsg_VoiceData::format() const {
+  return static_cast< ::VoiceDataFormat_t >(format_);
+}
+inline void CSVCMsg_VoiceData::set_format(::VoiceDataFormat_t value) {
+  assert(::VoiceDataFormat_t_IsValid(value));
+  set_has_format();
+  format_ = value;
+}
+
+// optional int32 sequence_bytes = 8;
+inline bool CSVCMsg_VoiceData::has_sequence_bytes() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void CSVCMsg_VoiceData::set_has_sequence_bytes() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void CSVCMsg_VoiceData::clear_has_sequence_bytes() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void CSVCMsg_VoiceData::clear_sequence_bytes() {
+  sequence_bytes_ = 0;
+  clear_has_sequence_bytes();
+}
+inline ::google::protobuf::int32 CSVCMsg_VoiceData::sequence_bytes() const {
+  return sequence_bytes_;
+}
+inline void CSVCMsg_VoiceData::set_sequence_bytes(::google::protobuf::int32 value) {
+  set_has_sequence_bytes();
+  sequence_bytes_ = value;
+}
+
+// optional uint32 section_number = 9;
+inline bool CSVCMsg_VoiceData::has_section_number() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void CSVCMsg_VoiceData::set_has_section_number() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void CSVCMsg_VoiceData::clear_has_section_number() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void CSVCMsg_VoiceData::clear_section_number() {
+  section_number_ = 0u;
+  clear_has_section_number();
+}
+inline ::google::protobuf::uint32 CSVCMsg_VoiceData::section_number() const {
+  return section_number_;
+}
+inline void CSVCMsg_VoiceData::set_section_number(::google::protobuf::uint32 value) {
+  set_has_section_number();
+  section_number_ = value;
+}
+
+// optional uint32 uncompressed_sample_offset = 10;
+inline bool CSVCMsg_VoiceData::has_uncompressed_sample_offset() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+inline void CSVCMsg_VoiceData::set_has_uncompressed_sample_offset() {
+  _has_bits_[0] |= 0x00000200u;
+}
+inline void CSVCMsg_VoiceData::clear_has_uncompressed_sample_offset() {
+  _has_bits_[0] &= ~0x00000200u;
+}
+inline void CSVCMsg_VoiceData::clear_uncompressed_sample_offset() {
+  uncompressed_sample_offset_ = 0u;
+  clear_has_uncompressed_sample_offset();
+}
+inline ::google::protobuf::uint32 CSVCMsg_VoiceData::uncompressed_sample_offset() const {
+  return uncompressed_sample_offset_;
+}
+inline void CSVCMsg_VoiceData::set_uncompressed_sample_offset(::google::protobuf::uint32 value) {
+  set_has_uncompressed_sample_offset();
+  uncompressed_sample_offset_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -11735,6 +12669,28 @@ inline void CSVCMsg_UserMessage::set_allocated_msg_data(::std::string* msg_data)
   }
 }
 
+// optional int32 passthrough = 3;
+inline bool CSVCMsg_UserMessage::has_passthrough() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CSVCMsg_UserMessage::set_has_passthrough() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CSVCMsg_UserMessage::clear_has_passthrough() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CSVCMsg_UserMessage::clear_passthrough() {
+  passthrough_ = 0;
+  clear_has_passthrough();
+}
+inline ::google::protobuf::int32 CSVCMsg_UserMessage::passthrough() const {
+  return passthrough_;
+}
+inline void CSVCMsg_UserMessage::set_passthrough(::google::protobuf::int32 value) {
+  set_has_passthrough();
+  passthrough_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // CSVCMsg_PaintmapData
@@ -12226,6 +13182,28 @@ CSVCMsg_GameEvent::keys() const {
 inline ::google::protobuf::RepeatedPtrField< ::CSVCMsg_GameEvent_key_t >*
 CSVCMsg_GameEvent::mutable_keys() {
   return &keys_;
+}
+
+// optional int32 passthrough = 4;
+inline bool CSVCMsg_GameEvent::has_passthrough() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CSVCMsg_GameEvent::set_has_passthrough() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CSVCMsg_GameEvent::clear_has_passthrough() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CSVCMsg_GameEvent::clear_passthrough() {
+  passthrough_ = 0;
+  clear_has_passthrough();
+}
+inline ::google::protobuf::int32 CSVCMsg_GameEvent::passthrough() const {
+  return passthrough_;
+}
+inline void CSVCMsg_GameEvent::set_passthrough(::google::protobuf::int32 value) {
+  set_has_passthrough();
+  passthrough_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -13515,6 +14493,352 @@ inline void CSVCMsg_EncryptedData::set_key_type(::google::protobuf::int32 value)
   key_type_ = value;
 }
 
+// -------------------------------------------------------------------
+
+// CSVCMsg_HltvReplay
+
+// optional int32 delay = 1;
+inline bool CSVCMsg_HltvReplay::has_delay() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CSVCMsg_HltvReplay::set_has_delay() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CSVCMsg_HltvReplay::clear_has_delay() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CSVCMsg_HltvReplay::clear_delay() {
+  delay_ = 0;
+  clear_has_delay();
+}
+inline ::google::protobuf::int32 CSVCMsg_HltvReplay::delay() const {
+  return delay_;
+}
+inline void CSVCMsg_HltvReplay::set_delay(::google::protobuf::int32 value) {
+  set_has_delay();
+  delay_ = value;
+}
+
+// optional int32 primary_target = 2;
+inline bool CSVCMsg_HltvReplay::has_primary_target() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CSVCMsg_HltvReplay::set_has_primary_target() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CSVCMsg_HltvReplay::clear_has_primary_target() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CSVCMsg_HltvReplay::clear_primary_target() {
+  primary_target_ = 0;
+  clear_has_primary_target();
+}
+inline ::google::protobuf::int32 CSVCMsg_HltvReplay::primary_target() const {
+  return primary_target_;
+}
+inline void CSVCMsg_HltvReplay::set_primary_target(::google::protobuf::int32 value) {
+  set_has_primary_target();
+  primary_target_ = value;
+}
+
+// optional int32 replay_stop_at = 3;
+inline bool CSVCMsg_HltvReplay::has_replay_stop_at() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CSVCMsg_HltvReplay::set_has_replay_stop_at() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CSVCMsg_HltvReplay::clear_has_replay_stop_at() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CSVCMsg_HltvReplay::clear_replay_stop_at() {
+  replay_stop_at_ = 0;
+  clear_has_replay_stop_at();
+}
+inline ::google::protobuf::int32 CSVCMsg_HltvReplay::replay_stop_at() const {
+  return replay_stop_at_;
+}
+inline void CSVCMsg_HltvReplay::set_replay_stop_at(::google::protobuf::int32 value) {
+  set_has_replay_stop_at();
+  replay_stop_at_ = value;
+}
+
+// optional int32 replay_start_at = 4;
+inline bool CSVCMsg_HltvReplay::has_replay_start_at() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CSVCMsg_HltvReplay::set_has_replay_start_at() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CSVCMsg_HltvReplay::clear_has_replay_start_at() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CSVCMsg_HltvReplay::clear_replay_start_at() {
+  replay_start_at_ = 0;
+  clear_has_replay_start_at();
+}
+inline ::google::protobuf::int32 CSVCMsg_HltvReplay::replay_start_at() const {
+  return replay_start_at_;
+}
+inline void CSVCMsg_HltvReplay::set_replay_start_at(::google::protobuf::int32 value) {
+  set_has_replay_start_at();
+  replay_start_at_ = value;
+}
+
+// optional int32 replay_slowdown_begin = 5;
+inline bool CSVCMsg_HltvReplay::has_replay_slowdown_begin() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CSVCMsg_HltvReplay::set_has_replay_slowdown_begin() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CSVCMsg_HltvReplay::clear_has_replay_slowdown_begin() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CSVCMsg_HltvReplay::clear_replay_slowdown_begin() {
+  replay_slowdown_begin_ = 0;
+  clear_has_replay_slowdown_begin();
+}
+inline ::google::protobuf::int32 CSVCMsg_HltvReplay::replay_slowdown_begin() const {
+  return replay_slowdown_begin_;
+}
+inline void CSVCMsg_HltvReplay::set_replay_slowdown_begin(::google::protobuf::int32 value) {
+  set_has_replay_slowdown_begin();
+  replay_slowdown_begin_ = value;
+}
+
+// optional int32 replay_slowdown_end = 6;
+inline bool CSVCMsg_HltvReplay::has_replay_slowdown_end() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CSVCMsg_HltvReplay::set_has_replay_slowdown_end() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CSVCMsg_HltvReplay::clear_has_replay_slowdown_end() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CSVCMsg_HltvReplay::clear_replay_slowdown_end() {
+  replay_slowdown_end_ = 0;
+  clear_has_replay_slowdown_end();
+}
+inline ::google::protobuf::int32 CSVCMsg_HltvReplay::replay_slowdown_end() const {
+  return replay_slowdown_end_;
+}
+inline void CSVCMsg_HltvReplay::set_replay_slowdown_end(::google::protobuf::int32 value) {
+  set_has_replay_slowdown_end();
+  replay_slowdown_end_ = value;
+}
+
+// optional float replay_slowdown_rate = 7;
+inline bool CSVCMsg_HltvReplay::has_replay_slowdown_rate() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void CSVCMsg_HltvReplay::set_has_replay_slowdown_rate() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void CSVCMsg_HltvReplay::clear_has_replay_slowdown_rate() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void CSVCMsg_HltvReplay::clear_replay_slowdown_rate() {
+  replay_slowdown_rate_ = 0;
+  clear_has_replay_slowdown_rate();
+}
+inline float CSVCMsg_HltvReplay::replay_slowdown_rate() const {
+  return replay_slowdown_rate_;
+}
+inline void CSVCMsg_HltvReplay::set_replay_slowdown_rate(float value) {
+  set_has_replay_slowdown_rate();
+  replay_slowdown_rate_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCLCMsg_HltvReplay
+
+// optional int32 request = 1;
+inline bool CCLCMsg_HltvReplay::has_request() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCLCMsg_HltvReplay::set_has_request() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCLCMsg_HltvReplay::clear_has_request() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCLCMsg_HltvReplay::clear_request() {
+  request_ = 0;
+  clear_has_request();
+}
+inline ::google::protobuf::int32 CCLCMsg_HltvReplay::request() const {
+  return request_;
+}
+inline void CCLCMsg_HltvReplay::set_request(::google::protobuf::int32 value) {
+  set_has_request();
+  request_ = value;
+}
+
+// optional float slowdown_length = 2;
+inline bool CCLCMsg_HltvReplay::has_slowdown_length() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCLCMsg_HltvReplay::set_has_slowdown_length() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCLCMsg_HltvReplay::clear_has_slowdown_length() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCLCMsg_HltvReplay::clear_slowdown_length() {
+  slowdown_length_ = 0;
+  clear_has_slowdown_length();
+}
+inline float CCLCMsg_HltvReplay::slowdown_length() const {
+  return slowdown_length_;
+}
+inline void CCLCMsg_HltvReplay::set_slowdown_length(float value) {
+  set_has_slowdown_length();
+  slowdown_length_ = value;
+}
+
+// optional float slowdown_rate = 3;
+inline bool CCLCMsg_HltvReplay::has_slowdown_rate() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCLCMsg_HltvReplay::set_has_slowdown_rate() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCLCMsg_HltvReplay::clear_has_slowdown_rate() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCLCMsg_HltvReplay::clear_slowdown_rate() {
+  slowdown_rate_ = 0;
+  clear_has_slowdown_rate();
+}
+inline float CCLCMsg_HltvReplay::slowdown_rate() const {
+  return slowdown_rate_;
+}
+inline void CCLCMsg_HltvReplay::set_slowdown_rate(float value) {
+  set_has_slowdown_rate();
+  slowdown_rate_ = value;
+}
+
+// optional int32 primary_target_ent_index = 4;
+inline bool CCLCMsg_HltvReplay::has_primary_target_ent_index() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCLCMsg_HltvReplay::set_has_primary_target_ent_index() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCLCMsg_HltvReplay::clear_has_primary_target_ent_index() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCLCMsg_HltvReplay::clear_primary_target_ent_index() {
+  primary_target_ent_index_ = 0;
+  clear_has_primary_target_ent_index();
+}
+inline ::google::protobuf::int32 CCLCMsg_HltvReplay::primary_target_ent_index() const {
+  return primary_target_ent_index_;
+}
+inline void CCLCMsg_HltvReplay::set_primary_target_ent_index(::google::protobuf::int32 value) {
+  set_has_primary_target_ent_index();
+  primary_target_ent_index_ = value;
+}
+
+// optional float event_time = 5;
+inline bool CCLCMsg_HltvReplay::has_event_time() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CCLCMsg_HltvReplay::set_has_event_time() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CCLCMsg_HltvReplay::clear_has_event_time() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CCLCMsg_HltvReplay::clear_event_time() {
+  event_time_ = 0;
+  clear_has_event_time();
+}
+inline float CCLCMsg_HltvReplay::event_time() const {
+  return event_time_;
+}
+inline void CCLCMsg_HltvReplay::set_event_time(float value) {
+  set_has_event_time();
+  event_time_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CSVCMsg_Broadcast_Command
+
+// optional string cmd = 1;
+inline bool CSVCMsg_Broadcast_Command::has_cmd() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CSVCMsg_Broadcast_Command::set_has_cmd() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CSVCMsg_Broadcast_Command::clear_has_cmd() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CSVCMsg_Broadcast_Command::clear_cmd() {
+  if (cmd_ != &::google::protobuf::internal::kEmptyString) {
+    cmd_->clear();
+  }
+  clear_has_cmd();
+}
+inline const ::std::string& CSVCMsg_Broadcast_Command::cmd() const {
+  return *cmd_;
+}
+inline void CSVCMsg_Broadcast_Command::set_cmd(const ::std::string& value) {
+  set_has_cmd();
+  if (cmd_ == &::google::protobuf::internal::kEmptyString) {
+    cmd_ = new ::std::string;
+  }
+  cmd_->assign(value);
+}
+inline void CSVCMsg_Broadcast_Command::set_cmd(const char* value) {
+  set_has_cmd();
+  if (cmd_ == &::google::protobuf::internal::kEmptyString) {
+    cmd_ = new ::std::string;
+  }
+  cmd_->assign(value);
+}
+inline void CSVCMsg_Broadcast_Command::set_cmd(const char* value, size_t size) {
+  set_has_cmd();
+  if (cmd_ == &::google::protobuf::internal::kEmptyString) {
+    cmd_ = new ::std::string;
+  }
+  cmd_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CSVCMsg_Broadcast_Command::mutable_cmd() {
+  set_has_cmd();
+  if (cmd_ == &::google::protobuf::internal::kEmptyString) {
+    cmd_ = new ::std::string;
+  }
+  return cmd_;
+}
+inline ::std::string* CSVCMsg_Broadcast_Command::release_cmd() {
+  clear_has_cmd();
+  if (cmd_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = cmd_;
+    cmd_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CSVCMsg_Broadcast_Command::set_allocated_cmd(::std::string* cmd) {
+  if (cmd_ != &::google::protobuf::internal::kEmptyString) {
+    delete cmd_;
+  }
+  if (cmd) {
+    set_has_cmd();
+    cmd_ = cmd;
+  } else {
+    clear_has_cmd();
+    cmd_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -13531,8 +14855,16 @@ inline const EnumDescriptor* GetEnumDescriptor< ::CLC_Messages>() {
   return ::CLC_Messages_descriptor();
 }
 template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::VoiceDataFormat_t>() {
+  return ::VoiceDataFormat_t_descriptor();
+}
+template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::ESplitScreenMessageType>() {
   return ::ESplitScreenMessageType_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::ReplayEventType_t>() {
+  return ::ReplayEventType_t_descriptor();
 }
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::SVC_Messages>() {

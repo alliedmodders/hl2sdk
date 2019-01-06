@@ -74,6 +74,16 @@ CCstrike15UsermessageHelpers::CCstrike15UsermessageHelpers()
 	SETUP_MESSAGE( RoundBackupFilenames );
 	SETUP_MESSAGE( SendPlayerItemFound );
 	SETUP_MESSAGE( ReportHit );
+	SETUP_MESSAGE( XpUpdate );
+	SETUP_MESSAGE( QuestProgress );
+	SETUP_MESSAGE( ScoreLeaderboardData );
+	SETUP_MESSAGE( PlayerDecalDigitalSignature );
+	SETUP_MESSAGE( WeaponSound );
+	SETUP_MESSAGE( UpdateScreenHealthBar );
+	SETUP_MESSAGE( EntityOutlineHighlight );
+	SETUP_MESSAGE( SSUI );
+	SETUP_MESSAGE( SurvivalStats );
+	//SETUP_MESSAGE( DisconnectToLobby2 );
 }
 
 const google::protobuf::Message *CCstrike15UsermessageHelpers::GetPrototype( int index ) const

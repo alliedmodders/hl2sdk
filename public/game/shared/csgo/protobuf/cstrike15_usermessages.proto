@@ -127,6 +127,21 @@ enum ECstrike15UserMessages
 	CS_UM_RoundBackupFilenames = 62;
 	CS_UM_SendPlayerItemFound = 63;
 	CS_UM_ReportHit = 64;
+	CS_UM_XpUpdate = 65;
+	CS_UM_QuestProgress = 66;
+	CS_UM_ScoreLeaderboardData = 67;
+	CS_UM_PlayerDecalDigitalSignature = 68;
+	CS_UM_WeaponSound = 69;
+	CS_UM_UpdateScreenHealthBar = 70;
+	CS_UM_EntityOutlineHighlight = 71;
+	CS_UM_SSUI = 72;
+	CS_UM_SurvivalStats = 73;
+	CS_UM_DisconnectToLobby2 = 74;
+}
+
+enum ECSUsrMsg_DisconnectToLobby_Action {
+	k_ECSUsrMsg_DisconnectToLobby_Action_Default = 0;
+	k_ECSUsrMsg_DisconnectToLobby_Action_GoQueue = 1;
 }
 
 //=============================================================================
@@ -263,6 +278,7 @@ message CCSUsrMsg_Damage
 {
 	optional int32 amount = 1;
 	optional CMsgVector inflictor_world_pos = 2;
+	optional int32 victim_entindex = 3;
 }
 
 message CCSUsrMsg_RadioText
@@ -326,12 +342,16 @@ message CEconItemPreviewDataBlock
 		optional float wear = 3;
 		optional float scale = 4;
 		optional float rotation = 5;
+		optional uint32 tint_id = 6;
 	}
 	
 	repeated Sticker stickers = 12;
 	optional uint32 inventory = 13;
 	optional uint32 origin = 14;
 	optional uint32 questid = 15;
+	optional uint32 dropreason = 16;
+	optional uint32 musicindex = 17;
+	optional int32 entindex = 18;
 }
 
 message CCSUsrMsg_SendPlayerItemDrops
@@ -459,7 +479,7 @@ message CCSUsrMsg_VotePass
 {
 	optional int32 team = 1;
 	optional int32 vote_type = 2;
-	optional string disp_str= 3;
+	optional string disp_str = 3;
 	optional string details_str = 4;
 }
 
@@ -491,6 +511,7 @@ message CCSUsrMsg_ServerRankUpdate
 		optional int32 rank_new = 3;
 		optional int32 num_wins = 4;
 		optional float rank_change = 5;
+		optional int32 rank_type_id = 6;
 	}
 
 	repeated RankUpdate rank_update = 1;
@@ -546,6 +567,125 @@ message CCSUsrMsg_RoundBackupFilenames {
 	optional string nicename = 4;
 }
 
+message XpProgressData {
+	optional uint32 xp_points = 1;
+	optional int32 xp_category = 2;
+}
+
+message CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded {
+	repeated XpProgressData xp_progress_data = 1;
+	optional uint32 account_id = 2;
+	optional uint32 current_xp = 3;
+	optional uint32 current_level = 4;
+	optional uint32 upgraded_defidx = 5;
+	optional uint32 operation_points_awarded = 6;
+}
+
+message CCSUsrMsg_XpUpdate {
+	optional CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded data = 1;
+}
+
+message CCSUsrMsg_QuestProgress {
+	optional uint32 quest_id = 1;
+	optional uint32 normal_points = 2;
+	optional uint32 bonus_points = 3;
+	optional bool is_event_quest = 4;
+}
+
+message ScoreLeaderboardData {
+	message Entry {
+		optional uint32 tag = 1;
+		optional uint32 val = 2;
+	}
+
+	message AccountEntries {
+		optional uint32 accountid = 1;
+		repeated Entry entries = 2;
+	}
+
+	optional uint64 quest_id = 1;
+	optional uint32 score = 2;
+	repeated AccountEntries accountentries = 3;
+	repeated Entry matchentries = 5;
+}
+
+message CCSUsrMsg_ScoreLeaderboardData {
+	optional ScoreLeaderboardData data = 1;
+}
+
+message PlayerDecalDigitalSignature {
+	optional bytes signature = 1;
+	optional uint32 accountid = 2;
+	optional uint32 rtime = 3;
+	repeated float endpos = 4;
+	repeated float startpos = 5;
+	repeated float right = 6;
+	optional uint32 tx_defidx = 7;
+	optional int32 entindex = 8;
+	optional uint32 hitbox = 9;
+	optional float creationtime = 10;
+	optional uint32 equipslot = 11;
+	optional uint32 trace_id = 12;
+	repeated float normal = 13;
+	optional uint32 tint_id = 14;
+}
+
+message CCSUsrMsg_PlayerDecalDigitalSignature {
+	optional PlayerDecalDigitalSignature data = 1;
+}
+
+message CCSUsrMsg_WeaponSound {
+	optional int32 entidx = 1;
+	optional float origin_x = 2;
+	optional float origin_y = 3;
+	optional float origin_z = 4;
+	optional string sound = 5;
+	optional float timestamp = 6;
+}
+
+message CCSUsrMsg_UpdateScreenHealthBar {
+	optional int32 entidx = 1;
+	optional float healthratio_old = 2;
+	optional float healthratio_new = 3;
+	optional int32 style = 4;
+}
+
+message CCSUsrMsg_EntityOutlineHighlight {
+	optional int32 entidx = 1;
+}
+
+message CCSUsrMsg_SSUI {
+	optional bool show = 1;
+}
+
+message CCSUsrMsg_SurvivalStats {
+	message Fact {
+		optional int32 type = 1;
+		optional int32 display = 2;
+		optional int32 value = 3;
+		optional float interestingness = 4;
+	}
+
+	message Placement {
+		optional uint64 xuid = 1;
+		optional int32 teamnumber = 2;
+		optional int32 placement = 3;
+	}
+
+	message Damage {
+		optional uint64 xuid = 1;
+		optional int32 to = 2;
+		optional int32 to_hits = 3;
+		optional int32 from = 4;
+		optional int32 from_hits = 5;
+	}
+
+	optional uint64 xuid = 1;
+	repeated Fact facts = 2;
+	repeated Placement users = 3;
+	repeated Damage damages = 5;
+	optional int32 ticknumber = 4;
+}
 
 //=============================================================================
 // Messages where the data seems to be irrelevant

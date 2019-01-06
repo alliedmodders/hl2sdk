@@ -92,6 +92,24 @@ class CCSUsrMsg_MatchStatsUpdate;
 class CCSUsrMsg_ItemDrop;
 class CCSUsrMsg_GlowPropTurnOff;
 class CCSUsrMsg_RoundBackupFilenames;
+class XpProgressData;
+class CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded;
+class CCSUsrMsg_XpUpdate;
+class CCSUsrMsg_QuestProgress;
+class ScoreLeaderboardData;
+class ScoreLeaderboardData_Entry;
+class ScoreLeaderboardData_AccountEntries;
+class CCSUsrMsg_ScoreLeaderboardData;
+class PlayerDecalDigitalSignature;
+class CCSUsrMsg_PlayerDecalDigitalSignature;
+class CCSUsrMsg_WeaponSound;
+class CCSUsrMsg_UpdateScreenHealthBar;
+class CCSUsrMsg_EntityOutlineHighlight;
+class CCSUsrMsg_SSUI;
+class CCSUsrMsg_SurvivalStats;
+class CCSUsrMsg_SurvivalStats_Fact;
+class CCSUsrMsg_SurvivalStats_Placement;
+class CCSUsrMsg_SurvivalStats_Damage;
 class CCSUsrMsg_ResetHud;
 class CCSUsrMsg_GameTitle;
 class CCSUsrMsg_RequestState;
@@ -161,11 +179,21 @@ enum ECstrike15UserMessages {
   CS_UM_SendPlayerItemDrops = 61,
   CS_UM_RoundBackupFilenames = 62,
   CS_UM_SendPlayerItemFound = 63,
-  CS_UM_ReportHit = 64
+  CS_UM_ReportHit = 64,
+  CS_UM_XpUpdate = 65,
+  CS_UM_QuestProgress = 66,
+  CS_UM_ScoreLeaderboardData = 67,
+  CS_UM_PlayerDecalDigitalSignature = 68,
+  CS_UM_WeaponSound = 69,
+  CS_UM_UpdateScreenHealthBar = 70,
+  CS_UM_EntityOutlineHighlight = 71,
+  CS_UM_SSUI = 72,
+  CS_UM_SurvivalStats = 73,
+  CS_UM_DisconnectToLobby2 = 74
 };
 bool ECstrike15UserMessages_IsValid(int value);
 const ECstrike15UserMessages ECstrike15UserMessages_MIN = CS_UM_VGUIMenu;
-const ECstrike15UserMessages ECstrike15UserMessages_MAX = CS_UM_ReportHit;
+const ECstrike15UserMessages ECstrike15UserMessages_MAX = CS_UM_DisconnectToLobby2;
 const int ECstrike15UserMessages_ARRAYSIZE = ECstrike15UserMessages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ECstrike15UserMessages_descriptor();
@@ -177,6 +205,25 @@ inline bool ECstrike15UserMessages_Parse(
     const ::std::string& name, ECstrike15UserMessages* value) {
   return ::google::protobuf::internal::ParseNamedEnum<ECstrike15UserMessages>(
     ECstrike15UserMessages_descriptor(), name, value);
+}
+enum ECSUsrMsg_DisconnectToLobby_Action {
+  k_ECSUsrMsg_DisconnectToLobby_Action_Default = 0,
+  k_ECSUsrMsg_DisconnectToLobby_Action_GoQueue = 1
+};
+bool ECSUsrMsg_DisconnectToLobby_Action_IsValid(int value);
+const ECSUsrMsg_DisconnectToLobby_Action ECSUsrMsg_DisconnectToLobby_Action_MIN = k_ECSUsrMsg_DisconnectToLobby_Action_Default;
+const ECSUsrMsg_DisconnectToLobby_Action ECSUsrMsg_DisconnectToLobby_Action_MAX = k_ECSUsrMsg_DisconnectToLobby_Action_GoQueue;
+const int ECSUsrMsg_DisconnectToLobby_Action_ARRAYSIZE = ECSUsrMsg_DisconnectToLobby_Action_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ECSUsrMsg_DisconnectToLobby_Action_descriptor();
+inline const ::std::string& ECSUsrMsg_DisconnectToLobby_Action_Name(ECSUsrMsg_DisconnectToLobby_Action value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ECSUsrMsg_DisconnectToLobby_Action_descriptor(), value);
+}
+inline bool ECSUsrMsg_DisconnectToLobby_Action_Parse(
+    const ::std::string& name, ECSUsrMsg_DisconnectToLobby_Action* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ECSUsrMsg_DisconnectToLobby_Action>(
+    ECSUsrMsg_DisconnectToLobby_Action_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -2173,20 +2220,30 @@ class CCSUsrMsg_Damage : public ::google::protobuf::Message {
   inline ::CMsgVector* release_inflictor_world_pos();
   inline void set_allocated_inflictor_world_pos(::CMsgVector* inflictor_world_pos);
 
+  // optional int32 victim_entindex = 3;
+  inline bool has_victim_entindex() const;
+  inline void clear_victim_entindex();
+  static const int kVictimEntindexFieldNumber = 3;
+  inline ::google::protobuf::int32 victim_entindex() const;
+  inline void set_victim_entindex(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:CCSUsrMsg_Damage)
  private:
   inline void set_has_amount();
   inline void clear_has_amount();
   inline void set_has_inflictor_world_pos();
   inline void clear_has_inflictor_world_pos();
+  inline void set_has_victim_entindex();
+  inline void clear_has_victim_entindex();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::CMsgVector* inflictor_world_pos_;
   ::google::protobuf::int32 amount_;
+  ::google::protobuf::int32 victim_entindex_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
 
   friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
@@ -2845,6 +2902,13 @@ class CEconItemPreviewDataBlock_Sticker : public ::google::protobuf::Message {
   inline float rotation() const;
   inline void set_rotation(float value);
 
+  // optional uint32 tint_id = 6;
+  inline bool has_tint_id() const;
+  inline void clear_tint_id();
+  static const int kTintIdFieldNumber = 6;
+  inline ::google::protobuf::uint32 tint_id() const;
+  inline void set_tint_id(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:CEconItemPreviewDataBlock.Sticker)
  private:
   inline void set_has_slot();
@@ -2857,6 +2921,8 @@ class CEconItemPreviewDataBlock_Sticker : public ::google::protobuf::Message {
   inline void clear_has_scale();
   inline void set_has_rotation();
   inline void clear_has_rotation();
+  inline void set_has_tint_id();
+  inline void clear_has_tint_id();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -2865,9 +2931,10 @@ class CEconItemPreviewDataBlock_Sticker : public ::google::protobuf::Message {
   float wear_;
   float scale_;
   float rotation_;
+  ::google::protobuf::uint32 tint_id_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
 
   friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
@@ -3049,6 +3116,27 @@ class CEconItemPreviewDataBlock : public ::google::protobuf::Message {
   inline ::google::protobuf::uint32 questid() const;
   inline void set_questid(::google::protobuf::uint32 value);
 
+  // optional uint32 dropreason = 16;
+  inline bool has_dropreason() const;
+  inline void clear_dropreason();
+  static const int kDropreasonFieldNumber = 16;
+  inline ::google::protobuf::uint32 dropreason() const;
+  inline void set_dropreason(::google::protobuf::uint32 value);
+
+  // optional uint32 musicindex = 17;
+  inline bool has_musicindex() const;
+  inline void clear_musicindex();
+  static const int kMusicindexFieldNumber = 17;
+  inline ::google::protobuf::uint32 musicindex() const;
+  inline void set_musicindex(::google::protobuf::uint32 value);
+
+  // optional int32 entindex = 18;
+  inline bool has_entindex() const;
+  inline void clear_entindex();
+  static const int kEntindexFieldNumber = 18;
+  inline ::google::protobuf::int32 entindex() const;
+  inline void set_entindex(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:CEconItemPreviewDataBlock)
  private:
   inline void set_has_accountid();
@@ -3079,6 +3167,12 @@ class CEconItemPreviewDataBlock : public ::google::protobuf::Message {
   inline void clear_has_origin();
   inline void set_has_questid();
   inline void clear_has_questid();
+  inline void set_has_dropreason();
+  inline void clear_has_dropreason();
+  inline void set_has_musicindex();
+  inline void clear_has_musicindex();
+  inline void set_has_entindex();
+  inline void clear_has_entindex();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -3097,9 +3191,12 @@ class CEconItemPreviewDataBlock : public ::google::protobuf::Message {
   ::google::protobuf::RepeatedPtrField< ::CEconItemPreviewDataBlock_Sticker > stickers_;
   ::google::protobuf::uint32 origin_;
   ::google::protobuf::uint32 questid_;
+  ::google::protobuf::uint32 dropreason_;
+  ::google::protobuf::uint32 musicindex_;
+  ::google::protobuf::int32 entindex_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(15 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(18 + 31) / 32];
 
   friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
@@ -5363,6 +5460,13 @@ class CCSUsrMsg_ServerRankUpdate_RankUpdate : public ::google::protobuf::Message
   inline float rank_change() const;
   inline void set_rank_change(float value);
 
+  // optional int32 rank_type_id = 6;
+  inline bool has_rank_type_id() const;
+  inline void clear_rank_type_id();
+  static const int kRankTypeIdFieldNumber = 6;
+  inline ::google::protobuf::int32 rank_type_id() const;
+  inline void set_rank_type_id(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:CCSUsrMsg_ServerRankUpdate.RankUpdate)
  private:
   inline void set_has_account_id();
@@ -5375,6 +5479,8 @@ class CCSUsrMsg_ServerRankUpdate_RankUpdate : public ::google::protobuf::Message
   inline void clear_has_num_wins();
   inline void set_has_rank_change();
   inline void clear_has_rank_change();
+  inline void set_has_rank_type_id();
+  inline void clear_has_rank_type_id();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -5383,9 +5489,10 @@ class CCSUsrMsg_ServerRankUpdate_RankUpdate : public ::google::protobuf::Message
   ::google::protobuf::int32 rank_new_;
   ::google::protobuf::int32 num_wins_;
   float rank_change_;
+  ::google::protobuf::int32 rank_type_id_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
 
   friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
   friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
@@ -6313,6 +6420,2018 @@ class CCSUsrMsg_RoundBackupFilenames : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static CCSUsrMsg_RoundBackupFilenames* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class XpProgressData : public ::google::protobuf::Message {
+ public:
+  XpProgressData();
+  virtual ~XpProgressData();
+
+  XpProgressData(const XpProgressData& from);
+
+  inline XpProgressData& operator=(const XpProgressData& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const XpProgressData& default_instance();
+
+  void Swap(XpProgressData* other);
+
+  // implements Message ----------------------------------------------
+
+  XpProgressData* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const XpProgressData& from);
+  void MergeFrom(const XpProgressData& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 xp_points = 1;
+  inline bool has_xp_points() const;
+  inline void clear_xp_points();
+  static const int kXpPointsFieldNumber = 1;
+  inline ::google::protobuf::uint32 xp_points() const;
+  inline void set_xp_points(::google::protobuf::uint32 value);
+
+  // optional int32 xp_category = 2;
+  inline bool has_xp_category() const;
+  inline void clear_xp_category();
+  static const int kXpCategoryFieldNumber = 2;
+  inline ::google::protobuf::int32 xp_category() const;
+  inline void set_xp_category(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:XpProgressData)
+ private:
+  inline void set_has_xp_points();
+  inline void clear_has_xp_points();
+  inline void set_has_xp_category();
+  inline void clear_has_xp_category();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 xp_points_;
+  ::google::protobuf::int32 xp_category_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static XpProgressData* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded : public ::google::protobuf::Message {
+ public:
+  CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded();
+  virtual ~CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded();
+
+  CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded(const CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded& from);
+
+  inline CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded& operator=(const CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded& default_instance();
+
+  void Swap(CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded* other);
+
+  // implements Message ----------------------------------------------
+
+  CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded& from);
+  void MergeFrom(const CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .XpProgressData xp_progress_data = 1;
+  inline int xp_progress_data_size() const;
+  inline void clear_xp_progress_data();
+  static const int kXpProgressDataFieldNumber = 1;
+  inline const ::XpProgressData& xp_progress_data(int index) const;
+  inline ::XpProgressData* mutable_xp_progress_data(int index);
+  inline ::XpProgressData* add_xp_progress_data();
+  inline const ::google::protobuf::RepeatedPtrField< ::XpProgressData >&
+      xp_progress_data() const;
+  inline ::google::protobuf::RepeatedPtrField< ::XpProgressData >*
+      mutable_xp_progress_data();
+
+  // optional uint32 account_id = 2;
+  inline bool has_account_id() const;
+  inline void clear_account_id();
+  static const int kAccountIdFieldNumber = 2;
+  inline ::google::protobuf::uint32 account_id() const;
+  inline void set_account_id(::google::protobuf::uint32 value);
+
+  // optional uint32 current_xp = 3;
+  inline bool has_current_xp() const;
+  inline void clear_current_xp();
+  static const int kCurrentXpFieldNumber = 3;
+  inline ::google::protobuf::uint32 current_xp() const;
+  inline void set_current_xp(::google::protobuf::uint32 value);
+
+  // optional uint32 current_level = 4;
+  inline bool has_current_level() const;
+  inline void clear_current_level();
+  static const int kCurrentLevelFieldNumber = 4;
+  inline ::google::protobuf::uint32 current_level() const;
+  inline void set_current_level(::google::protobuf::uint32 value);
+
+  // optional uint32 upgraded_defidx = 5;
+  inline bool has_upgraded_defidx() const;
+  inline void clear_upgraded_defidx();
+  static const int kUpgradedDefidxFieldNumber = 5;
+  inline ::google::protobuf::uint32 upgraded_defidx() const;
+  inline void set_upgraded_defidx(::google::protobuf::uint32 value);
+
+  // optional uint32 operation_points_awarded = 6;
+  inline bool has_operation_points_awarded() const;
+  inline void clear_operation_points_awarded();
+  static const int kOperationPointsAwardedFieldNumber = 6;
+  inline ::google::protobuf::uint32 operation_points_awarded() const;
+  inline void set_operation_points_awarded(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded)
+ private:
+  inline void set_has_account_id();
+  inline void clear_has_account_id();
+  inline void set_has_current_xp();
+  inline void clear_has_current_xp();
+  inline void set_has_current_level();
+  inline void clear_has_current_level();
+  inline void set_has_upgraded_defidx();
+  inline void clear_has_upgraded_defidx();
+  inline void set_has_operation_points_awarded();
+  inline void clear_has_operation_points_awarded();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::RepeatedPtrField< ::XpProgressData > xp_progress_data_;
+  ::google::protobuf::uint32 account_id_;
+  ::google::protobuf::uint32 current_xp_;
+  ::google::protobuf::uint32 current_level_;
+  ::google::protobuf::uint32 upgraded_defidx_;
+  ::google::protobuf::uint32 operation_points_awarded_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_XpUpdate : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_XpUpdate();
+  virtual ~CCSUsrMsg_XpUpdate();
+
+  CCSUsrMsg_XpUpdate(const CCSUsrMsg_XpUpdate& from);
+
+  inline CCSUsrMsg_XpUpdate& operator=(const CCSUsrMsg_XpUpdate& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_XpUpdate& default_instance();
+
+  void Swap(CCSUsrMsg_XpUpdate* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_XpUpdate* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_XpUpdate& from);
+  void MergeFrom(const CCSUsrMsg_XpUpdate& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded data = 1;
+  inline bool has_data() const;
+  inline void clear_data();
+  static const int kDataFieldNumber = 1;
+  inline const ::CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded& data() const;
+  inline ::CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded* mutable_data();
+  inline ::CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded* release_data();
+  inline void set_allocated_data(::CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded* data);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_XpUpdate)
+ private:
+  inline void set_has_data();
+  inline void clear_has_data();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded* data_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_XpUpdate* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_QuestProgress : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_QuestProgress();
+  virtual ~CCSUsrMsg_QuestProgress();
+
+  CCSUsrMsg_QuestProgress(const CCSUsrMsg_QuestProgress& from);
+
+  inline CCSUsrMsg_QuestProgress& operator=(const CCSUsrMsg_QuestProgress& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_QuestProgress& default_instance();
+
+  void Swap(CCSUsrMsg_QuestProgress* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_QuestProgress* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_QuestProgress& from);
+  void MergeFrom(const CCSUsrMsg_QuestProgress& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 quest_id = 1;
+  inline bool has_quest_id() const;
+  inline void clear_quest_id();
+  static const int kQuestIdFieldNumber = 1;
+  inline ::google::protobuf::uint32 quest_id() const;
+  inline void set_quest_id(::google::protobuf::uint32 value);
+
+  // optional uint32 normal_points = 2;
+  inline bool has_normal_points() const;
+  inline void clear_normal_points();
+  static const int kNormalPointsFieldNumber = 2;
+  inline ::google::protobuf::uint32 normal_points() const;
+  inline void set_normal_points(::google::protobuf::uint32 value);
+
+  // optional uint32 bonus_points = 3;
+  inline bool has_bonus_points() const;
+  inline void clear_bonus_points();
+  static const int kBonusPointsFieldNumber = 3;
+  inline ::google::protobuf::uint32 bonus_points() const;
+  inline void set_bonus_points(::google::protobuf::uint32 value);
+
+  // optional bool is_event_quest = 4;
+  inline bool has_is_event_quest() const;
+  inline void clear_is_event_quest();
+  static const int kIsEventQuestFieldNumber = 4;
+  inline bool is_event_quest() const;
+  inline void set_is_event_quest(bool value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_QuestProgress)
+ private:
+  inline void set_has_quest_id();
+  inline void clear_has_quest_id();
+  inline void set_has_normal_points();
+  inline void clear_has_normal_points();
+  inline void set_has_bonus_points();
+  inline void clear_has_bonus_points();
+  inline void set_has_is_event_quest();
+  inline void clear_has_is_event_quest();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 quest_id_;
+  ::google::protobuf::uint32 normal_points_;
+  ::google::protobuf::uint32 bonus_points_;
+  bool is_event_quest_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_QuestProgress* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ScoreLeaderboardData_Entry : public ::google::protobuf::Message {
+ public:
+  ScoreLeaderboardData_Entry();
+  virtual ~ScoreLeaderboardData_Entry();
+
+  ScoreLeaderboardData_Entry(const ScoreLeaderboardData_Entry& from);
+
+  inline ScoreLeaderboardData_Entry& operator=(const ScoreLeaderboardData_Entry& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ScoreLeaderboardData_Entry& default_instance();
+
+  void Swap(ScoreLeaderboardData_Entry* other);
+
+  // implements Message ----------------------------------------------
+
+  ScoreLeaderboardData_Entry* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ScoreLeaderboardData_Entry& from);
+  void MergeFrom(const ScoreLeaderboardData_Entry& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 tag = 1;
+  inline bool has_tag() const;
+  inline void clear_tag();
+  static const int kTagFieldNumber = 1;
+  inline ::google::protobuf::uint32 tag() const;
+  inline void set_tag(::google::protobuf::uint32 value);
+
+  // optional uint32 val = 2;
+  inline bool has_val() const;
+  inline void clear_val();
+  static const int kValFieldNumber = 2;
+  inline ::google::protobuf::uint32 val() const;
+  inline void set_val(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:ScoreLeaderboardData.Entry)
+ private:
+  inline void set_has_tag();
+  inline void clear_has_tag();
+  inline void set_has_val();
+  inline void clear_has_val();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 tag_;
+  ::google::protobuf::uint32 val_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static ScoreLeaderboardData_Entry* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ScoreLeaderboardData_AccountEntries : public ::google::protobuf::Message {
+ public:
+  ScoreLeaderboardData_AccountEntries();
+  virtual ~ScoreLeaderboardData_AccountEntries();
+
+  ScoreLeaderboardData_AccountEntries(const ScoreLeaderboardData_AccountEntries& from);
+
+  inline ScoreLeaderboardData_AccountEntries& operator=(const ScoreLeaderboardData_AccountEntries& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ScoreLeaderboardData_AccountEntries& default_instance();
+
+  void Swap(ScoreLeaderboardData_AccountEntries* other);
+
+  // implements Message ----------------------------------------------
+
+  ScoreLeaderboardData_AccountEntries* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ScoreLeaderboardData_AccountEntries& from);
+  void MergeFrom(const ScoreLeaderboardData_AccountEntries& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 accountid = 1;
+  inline bool has_accountid() const;
+  inline void clear_accountid();
+  static const int kAccountidFieldNumber = 1;
+  inline ::google::protobuf::uint32 accountid() const;
+  inline void set_accountid(::google::protobuf::uint32 value);
+
+  // repeated .ScoreLeaderboardData.Entry entries = 2;
+  inline int entries_size() const;
+  inline void clear_entries();
+  static const int kEntriesFieldNumber = 2;
+  inline const ::ScoreLeaderboardData_Entry& entries(int index) const;
+  inline ::ScoreLeaderboardData_Entry* mutable_entries(int index);
+  inline ::ScoreLeaderboardData_Entry* add_entries();
+  inline const ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_Entry >&
+      entries() const;
+  inline ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_Entry >*
+      mutable_entries();
+
+  // @@protoc_insertion_point(class_scope:ScoreLeaderboardData.AccountEntries)
+ private:
+  inline void set_has_accountid();
+  inline void clear_has_accountid();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_Entry > entries_;
+  ::google::protobuf::uint32 accountid_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static ScoreLeaderboardData_AccountEntries* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ScoreLeaderboardData : public ::google::protobuf::Message {
+ public:
+  ScoreLeaderboardData();
+  virtual ~ScoreLeaderboardData();
+
+  ScoreLeaderboardData(const ScoreLeaderboardData& from);
+
+  inline ScoreLeaderboardData& operator=(const ScoreLeaderboardData& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ScoreLeaderboardData& default_instance();
+
+  void Swap(ScoreLeaderboardData* other);
+
+  // implements Message ----------------------------------------------
+
+  ScoreLeaderboardData* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ScoreLeaderboardData& from);
+  void MergeFrom(const ScoreLeaderboardData& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  typedef ScoreLeaderboardData_Entry Entry;
+  typedef ScoreLeaderboardData_AccountEntries AccountEntries;
+
+  // accessors -------------------------------------------------------
+
+  // optional uint64 quest_id = 1;
+  inline bool has_quest_id() const;
+  inline void clear_quest_id();
+  static const int kQuestIdFieldNumber = 1;
+  inline ::google::protobuf::uint64 quest_id() const;
+  inline void set_quest_id(::google::protobuf::uint64 value);
+
+  // optional uint32 score = 2;
+  inline bool has_score() const;
+  inline void clear_score();
+  static const int kScoreFieldNumber = 2;
+  inline ::google::protobuf::uint32 score() const;
+  inline void set_score(::google::protobuf::uint32 value);
+
+  // repeated .ScoreLeaderboardData.AccountEntries accountentries = 3;
+  inline int accountentries_size() const;
+  inline void clear_accountentries();
+  static const int kAccountentriesFieldNumber = 3;
+  inline const ::ScoreLeaderboardData_AccountEntries& accountentries(int index) const;
+  inline ::ScoreLeaderboardData_AccountEntries* mutable_accountentries(int index);
+  inline ::ScoreLeaderboardData_AccountEntries* add_accountentries();
+  inline const ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_AccountEntries >&
+      accountentries() const;
+  inline ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_AccountEntries >*
+      mutable_accountentries();
+
+  // repeated .ScoreLeaderboardData.Entry matchentries = 5;
+  inline int matchentries_size() const;
+  inline void clear_matchentries();
+  static const int kMatchentriesFieldNumber = 5;
+  inline const ::ScoreLeaderboardData_Entry& matchentries(int index) const;
+  inline ::ScoreLeaderboardData_Entry* mutable_matchentries(int index);
+  inline ::ScoreLeaderboardData_Entry* add_matchentries();
+  inline const ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_Entry >&
+      matchentries() const;
+  inline ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_Entry >*
+      mutable_matchentries();
+
+  // @@protoc_insertion_point(class_scope:ScoreLeaderboardData)
+ private:
+  inline void set_has_quest_id();
+  inline void clear_has_quest_id();
+  inline void set_has_score();
+  inline void clear_has_score();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint64 quest_id_;
+  ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_AccountEntries > accountentries_;
+  ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_Entry > matchentries_;
+  ::google::protobuf::uint32 score_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static ScoreLeaderboardData* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_ScoreLeaderboardData : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_ScoreLeaderboardData();
+  virtual ~CCSUsrMsg_ScoreLeaderboardData();
+
+  CCSUsrMsg_ScoreLeaderboardData(const CCSUsrMsg_ScoreLeaderboardData& from);
+
+  inline CCSUsrMsg_ScoreLeaderboardData& operator=(const CCSUsrMsg_ScoreLeaderboardData& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_ScoreLeaderboardData& default_instance();
+
+  void Swap(CCSUsrMsg_ScoreLeaderboardData* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_ScoreLeaderboardData* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_ScoreLeaderboardData& from);
+  void MergeFrom(const CCSUsrMsg_ScoreLeaderboardData& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .ScoreLeaderboardData data = 1;
+  inline bool has_data() const;
+  inline void clear_data();
+  static const int kDataFieldNumber = 1;
+  inline const ::ScoreLeaderboardData& data() const;
+  inline ::ScoreLeaderboardData* mutable_data();
+  inline ::ScoreLeaderboardData* release_data();
+  inline void set_allocated_data(::ScoreLeaderboardData* data);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_ScoreLeaderboardData)
+ private:
+  inline void set_has_data();
+  inline void clear_has_data();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::ScoreLeaderboardData* data_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_ScoreLeaderboardData* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class PlayerDecalDigitalSignature : public ::google::protobuf::Message {
+ public:
+  PlayerDecalDigitalSignature();
+  virtual ~PlayerDecalDigitalSignature();
+
+  PlayerDecalDigitalSignature(const PlayerDecalDigitalSignature& from);
+
+  inline PlayerDecalDigitalSignature& operator=(const PlayerDecalDigitalSignature& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const PlayerDecalDigitalSignature& default_instance();
+
+  void Swap(PlayerDecalDigitalSignature* other);
+
+  // implements Message ----------------------------------------------
+
+  PlayerDecalDigitalSignature* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const PlayerDecalDigitalSignature& from);
+  void MergeFrom(const PlayerDecalDigitalSignature& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional bytes signature = 1;
+  inline bool has_signature() const;
+  inline void clear_signature();
+  static const int kSignatureFieldNumber = 1;
+  inline const ::std::string& signature() const;
+  inline void set_signature(const ::std::string& value);
+  inline void set_signature(const char* value);
+  inline void set_signature(const void* value, size_t size);
+  inline ::std::string* mutable_signature();
+  inline ::std::string* release_signature();
+  inline void set_allocated_signature(::std::string* signature);
+
+  // optional uint32 accountid = 2;
+  inline bool has_accountid() const;
+  inline void clear_accountid();
+  static const int kAccountidFieldNumber = 2;
+  inline ::google::protobuf::uint32 accountid() const;
+  inline void set_accountid(::google::protobuf::uint32 value);
+
+  // optional uint32 rtime = 3;
+  inline bool has_rtime() const;
+  inline void clear_rtime();
+  static const int kRtimeFieldNumber = 3;
+  inline ::google::protobuf::uint32 rtime() const;
+  inline void set_rtime(::google::protobuf::uint32 value);
+
+  // repeated float endpos = 4;
+  inline int endpos_size() const;
+  inline void clear_endpos();
+  static const int kEndposFieldNumber = 4;
+  inline float endpos(int index) const;
+  inline void set_endpos(int index, float value);
+  inline void add_endpos(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      endpos() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_endpos();
+
+  // repeated float startpos = 5;
+  inline int startpos_size() const;
+  inline void clear_startpos();
+  static const int kStartposFieldNumber = 5;
+  inline float startpos(int index) const;
+  inline void set_startpos(int index, float value);
+  inline void add_startpos(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      startpos() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_startpos();
+
+  // repeated float right = 6;
+  inline int right_size() const;
+  inline void clear_right();
+  static const int kRightFieldNumber = 6;
+  inline float right(int index) const;
+  inline void set_right(int index, float value);
+  inline void add_right(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      right() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_right();
+
+  // optional uint32 tx_defidx = 7;
+  inline bool has_tx_defidx() const;
+  inline void clear_tx_defidx();
+  static const int kTxDefidxFieldNumber = 7;
+  inline ::google::protobuf::uint32 tx_defidx() const;
+  inline void set_tx_defidx(::google::protobuf::uint32 value);
+
+  // optional int32 entindex = 8;
+  inline bool has_entindex() const;
+  inline void clear_entindex();
+  static const int kEntindexFieldNumber = 8;
+  inline ::google::protobuf::int32 entindex() const;
+  inline void set_entindex(::google::protobuf::int32 value);
+
+  // optional uint32 hitbox = 9;
+  inline bool has_hitbox() const;
+  inline void clear_hitbox();
+  static const int kHitboxFieldNumber = 9;
+  inline ::google::protobuf::uint32 hitbox() const;
+  inline void set_hitbox(::google::protobuf::uint32 value);
+
+  // optional float creationtime = 10;
+  inline bool has_creationtime() const;
+  inline void clear_creationtime();
+  static const int kCreationtimeFieldNumber = 10;
+  inline float creationtime() const;
+  inline void set_creationtime(float value);
+
+  // optional uint32 equipslot = 11;
+  inline bool has_equipslot() const;
+  inline void clear_equipslot();
+  static const int kEquipslotFieldNumber = 11;
+  inline ::google::protobuf::uint32 equipslot() const;
+  inline void set_equipslot(::google::protobuf::uint32 value);
+
+  // optional uint32 trace_id = 12;
+  inline bool has_trace_id() const;
+  inline void clear_trace_id();
+  static const int kTraceIdFieldNumber = 12;
+  inline ::google::protobuf::uint32 trace_id() const;
+  inline void set_trace_id(::google::protobuf::uint32 value);
+
+  // repeated float normal = 13;
+  inline int normal_size() const;
+  inline void clear_normal();
+  static const int kNormalFieldNumber = 13;
+  inline float normal(int index) const;
+  inline void set_normal(int index, float value);
+  inline void add_normal(float value);
+  inline const ::google::protobuf::RepeatedField< float >&
+      normal() const;
+  inline ::google::protobuf::RepeatedField< float >*
+      mutable_normal();
+
+  // optional uint32 tint_id = 14;
+  inline bool has_tint_id() const;
+  inline void clear_tint_id();
+  static const int kTintIdFieldNumber = 14;
+  inline ::google::protobuf::uint32 tint_id() const;
+  inline void set_tint_id(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:PlayerDecalDigitalSignature)
+ private:
+  inline void set_has_signature();
+  inline void clear_has_signature();
+  inline void set_has_accountid();
+  inline void clear_has_accountid();
+  inline void set_has_rtime();
+  inline void clear_has_rtime();
+  inline void set_has_tx_defidx();
+  inline void clear_has_tx_defidx();
+  inline void set_has_entindex();
+  inline void clear_has_entindex();
+  inline void set_has_hitbox();
+  inline void clear_has_hitbox();
+  inline void set_has_creationtime();
+  inline void clear_has_creationtime();
+  inline void set_has_equipslot();
+  inline void clear_has_equipslot();
+  inline void set_has_trace_id();
+  inline void clear_has_trace_id();
+  inline void set_has_tint_id();
+  inline void clear_has_tint_id();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* signature_;
+  ::google::protobuf::uint32 accountid_;
+  ::google::protobuf::uint32 rtime_;
+  ::google::protobuf::RepeatedField< float > endpos_;
+  ::google::protobuf::RepeatedField< float > startpos_;
+  ::google::protobuf::RepeatedField< float > right_;
+  ::google::protobuf::uint32 tx_defidx_;
+  ::google::protobuf::int32 entindex_;
+  ::google::protobuf::uint32 hitbox_;
+  float creationtime_;
+  ::google::protobuf::uint32 equipslot_;
+  ::google::protobuf::uint32 trace_id_;
+  ::google::protobuf::RepeatedField< float > normal_;
+  ::google::protobuf::uint32 tint_id_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(14 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static PlayerDecalDigitalSignature* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_PlayerDecalDigitalSignature : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_PlayerDecalDigitalSignature();
+  virtual ~CCSUsrMsg_PlayerDecalDigitalSignature();
+
+  CCSUsrMsg_PlayerDecalDigitalSignature(const CCSUsrMsg_PlayerDecalDigitalSignature& from);
+
+  inline CCSUsrMsg_PlayerDecalDigitalSignature& operator=(const CCSUsrMsg_PlayerDecalDigitalSignature& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_PlayerDecalDigitalSignature& default_instance();
+
+  void Swap(CCSUsrMsg_PlayerDecalDigitalSignature* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_PlayerDecalDigitalSignature* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_PlayerDecalDigitalSignature& from);
+  void MergeFrom(const CCSUsrMsg_PlayerDecalDigitalSignature& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .PlayerDecalDigitalSignature data = 1;
+  inline bool has_data() const;
+  inline void clear_data();
+  static const int kDataFieldNumber = 1;
+  inline const ::PlayerDecalDigitalSignature& data() const;
+  inline ::PlayerDecalDigitalSignature* mutable_data();
+  inline ::PlayerDecalDigitalSignature* release_data();
+  inline void set_allocated_data(::PlayerDecalDigitalSignature* data);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_PlayerDecalDigitalSignature)
+ private:
+  inline void set_has_data();
+  inline void clear_has_data();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::PlayerDecalDigitalSignature* data_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_PlayerDecalDigitalSignature* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_WeaponSound : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_WeaponSound();
+  virtual ~CCSUsrMsg_WeaponSound();
+
+  CCSUsrMsg_WeaponSound(const CCSUsrMsg_WeaponSound& from);
+
+  inline CCSUsrMsg_WeaponSound& operator=(const CCSUsrMsg_WeaponSound& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_WeaponSound& default_instance();
+
+  void Swap(CCSUsrMsg_WeaponSound* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_WeaponSound* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_WeaponSound& from);
+  void MergeFrom(const CCSUsrMsg_WeaponSound& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 entidx = 1;
+  inline bool has_entidx() const;
+  inline void clear_entidx();
+  static const int kEntidxFieldNumber = 1;
+  inline ::google::protobuf::int32 entidx() const;
+  inline void set_entidx(::google::protobuf::int32 value);
+
+  // optional float origin_x = 2;
+  inline bool has_origin_x() const;
+  inline void clear_origin_x();
+  static const int kOriginXFieldNumber = 2;
+  inline float origin_x() const;
+  inline void set_origin_x(float value);
+
+  // optional float origin_y = 3;
+  inline bool has_origin_y() const;
+  inline void clear_origin_y();
+  static const int kOriginYFieldNumber = 3;
+  inline float origin_y() const;
+  inline void set_origin_y(float value);
+
+  // optional float origin_z = 4;
+  inline bool has_origin_z() const;
+  inline void clear_origin_z();
+  static const int kOriginZFieldNumber = 4;
+  inline float origin_z() const;
+  inline void set_origin_z(float value);
+
+  // optional string sound = 5;
+  inline bool has_sound() const;
+  inline void clear_sound();
+  static const int kSoundFieldNumber = 5;
+  inline const ::std::string& sound() const;
+  inline void set_sound(const ::std::string& value);
+  inline void set_sound(const char* value);
+  inline void set_sound(const char* value, size_t size);
+  inline ::std::string* mutable_sound();
+  inline ::std::string* release_sound();
+  inline void set_allocated_sound(::std::string* sound);
+
+  // optional float timestamp = 6;
+  inline bool has_timestamp() const;
+  inline void clear_timestamp();
+  static const int kTimestampFieldNumber = 6;
+  inline float timestamp() const;
+  inline void set_timestamp(float value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_WeaponSound)
+ private:
+  inline void set_has_entidx();
+  inline void clear_has_entidx();
+  inline void set_has_origin_x();
+  inline void clear_has_origin_x();
+  inline void set_has_origin_y();
+  inline void clear_has_origin_y();
+  inline void set_has_origin_z();
+  inline void clear_has_origin_z();
+  inline void set_has_sound();
+  inline void clear_has_sound();
+  inline void set_has_timestamp();
+  inline void clear_has_timestamp();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 entidx_;
+  float origin_x_;
+  float origin_y_;
+  float origin_z_;
+  ::std::string* sound_;
+  float timestamp_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_WeaponSound* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_UpdateScreenHealthBar : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_UpdateScreenHealthBar();
+  virtual ~CCSUsrMsg_UpdateScreenHealthBar();
+
+  CCSUsrMsg_UpdateScreenHealthBar(const CCSUsrMsg_UpdateScreenHealthBar& from);
+
+  inline CCSUsrMsg_UpdateScreenHealthBar& operator=(const CCSUsrMsg_UpdateScreenHealthBar& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_UpdateScreenHealthBar& default_instance();
+
+  void Swap(CCSUsrMsg_UpdateScreenHealthBar* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_UpdateScreenHealthBar* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_UpdateScreenHealthBar& from);
+  void MergeFrom(const CCSUsrMsg_UpdateScreenHealthBar& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 entidx = 1;
+  inline bool has_entidx() const;
+  inline void clear_entidx();
+  static const int kEntidxFieldNumber = 1;
+  inline ::google::protobuf::int32 entidx() const;
+  inline void set_entidx(::google::protobuf::int32 value);
+
+  // optional float healthratio_old = 2;
+  inline bool has_healthratio_old() const;
+  inline void clear_healthratio_old();
+  static const int kHealthratioOldFieldNumber = 2;
+  inline float healthratio_old() const;
+  inline void set_healthratio_old(float value);
+
+  // optional float healthratio_new = 3;
+  inline bool has_healthratio_new() const;
+  inline void clear_healthratio_new();
+  static const int kHealthratioNewFieldNumber = 3;
+  inline float healthratio_new() const;
+  inline void set_healthratio_new(float value);
+
+  // optional int32 style = 4;
+  inline bool has_style() const;
+  inline void clear_style();
+  static const int kStyleFieldNumber = 4;
+  inline ::google::protobuf::int32 style() const;
+  inline void set_style(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_UpdateScreenHealthBar)
+ private:
+  inline void set_has_entidx();
+  inline void clear_has_entidx();
+  inline void set_has_healthratio_old();
+  inline void clear_has_healthratio_old();
+  inline void set_has_healthratio_new();
+  inline void clear_has_healthratio_new();
+  inline void set_has_style();
+  inline void clear_has_style();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 entidx_;
+  float healthratio_old_;
+  float healthratio_new_;
+  ::google::protobuf::int32 style_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_UpdateScreenHealthBar* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_EntityOutlineHighlight : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_EntityOutlineHighlight();
+  virtual ~CCSUsrMsg_EntityOutlineHighlight();
+
+  CCSUsrMsg_EntityOutlineHighlight(const CCSUsrMsg_EntityOutlineHighlight& from);
+
+  inline CCSUsrMsg_EntityOutlineHighlight& operator=(const CCSUsrMsg_EntityOutlineHighlight& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_EntityOutlineHighlight& default_instance();
+
+  void Swap(CCSUsrMsg_EntityOutlineHighlight* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_EntityOutlineHighlight* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_EntityOutlineHighlight& from);
+  void MergeFrom(const CCSUsrMsg_EntityOutlineHighlight& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 entidx = 1;
+  inline bool has_entidx() const;
+  inline void clear_entidx();
+  static const int kEntidxFieldNumber = 1;
+  inline ::google::protobuf::int32 entidx() const;
+  inline void set_entidx(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_EntityOutlineHighlight)
+ private:
+  inline void set_has_entidx();
+  inline void clear_has_entidx();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 entidx_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_EntityOutlineHighlight* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_SSUI : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_SSUI();
+  virtual ~CCSUsrMsg_SSUI();
+
+  CCSUsrMsg_SSUI(const CCSUsrMsg_SSUI& from);
+
+  inline CCSUsrMsg_SSUI& operator=(const CCSUsrMsg_SSUI& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_SSUI& default_instance();
+
+  void Swap(CCSUsrMsg_SSUI* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_SSUI* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_SSUI& from);
+  void MergeFrom(const CCSUsrMsg_SSUI& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional bool show = 1;
+  inline bool has_show() const;
+  inline void clear_show();
+  static const int kShowFieldNumber = 1;
+  inline bool show() const;
+  inline void set_show(bool value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_SSUI)
+ private:
+  inline void set_has_show();
+  inline void clear_has_show();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  bool show_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_SSUI* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_SurvivalStats_Fact : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_SurvivalStats_Fact();
+  virtual ~CCSUsrMsg_SurvivalStats_Fact();
+
+  CCSUsrMsg_SurvivalStats_Fact(const CCSUsrMsg_SurvivalStats_Fact& from);
+
+  inline CCSUsrMsg_SurvivalStats_Fact& operator=(const CCSUsrMsg_SurvivalStats_Fact& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_SurvivalStats_Fact& default_instance();
+
+  void Swap(CCSUsrMsg_SurvivalStats_Fact* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_SurvivalStats_Fact* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_SurvivalStats_Fact& from);
+  void MergeFrom(const CCSUsrMsg_SurvivalStats_Fact& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 type = 1;
+  inline bool has_type() const;
+  inline void clear_type();
+  static const int kTypeFieldNumber = 1;
+  inline ::google::protobuf::int32 type() const;
+  inline void set_type(::google::protobuf::int32 value);
+
+  // optional int32 display = 2;
+  inline bool has_display() const;
+  inline void clear_display();
+  static const int kDisplayFieldNumber = 2;
+  inline ::google::protobuf::int32 display() const;
+  inline void set_display(::google::protobuf::int32 value);
+
+  // optional int32 value = 3;
+  inline bool has_value() const;
+  inline void clear_value();
+  static const int kValueFieldNumber = 3;
+  inline ::google::protobuf::int32 value() const;
+  inline void set_value(::google::protobuf::int32 value);
+
+  // optional float interestingness = 4;
+  inline bool has_interestingness() const;
+  inline void clear_interestingness();
+  static const int kInterestingnessFieldNumber = 4;
+  inline float interestingness() const;
+  inline void set_interestingness(float value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_SurvivalStats.Fact)
+ private:
+  inline void set_has_type();
+  inline void clear_has_type();
+  inline void set_has_display();
+  inline void clear_has_display();
+  inline void set_has_value();
+  inline void clear_has_value();
+  inline void set_has_interestingness();
+  inline void clear_has_interestingness();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 type_;
+  ::google::protobuf::int32 display_;
+  ::google::protobuf::int32 value_;
+  float interestingness_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_SurvivalStats_Fact* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_SurvivalStats_Placement : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_SurvivalStats_Placement();
+  virtual ~CCSUsrMsg_SurvivalStats_Placement();
+
+  CCSUsrMsg_SurvivalStats_Placement(const CCSUsrMsg_SurvivalStats_Placement& from);
+
+  inline CCSUsrMsg_SurvivalStats_Placement& operator=(const CCSUsrMsg_SurvivalStats_Placement& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_SurvivalStats_Placement& default_instance();
+
+  void Swap(CCSUsrMsg_SurvivalStats_Placement* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_SurvivalStats_Placement* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_SurvivalStats_Placement& from);
+  void MergeFrom(const CCSUsrMsg_SurvivalStats_Placement& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint64 xuid = 1;
+  inline bool has_xuid() const;
+  inline void clear_xuid();
+  static const int kXuidFieldNumber = 1;
+  inline ::google::protobuf::uint64 xuid() const;
+  inline void set_xuid(::google::protobuf::uint64 value);
+
+  // optional int32 teamnumber = 2;
+  inline bool has_teamnumber() const;
+  inline void clear_teamnumber();
+  static const int kTeamnumberFieldNumber = 2;
+  inline ::google::protobuf::int32 teamnumber() const;
+  inline void set_teamnumber(::google::protobuf::int32 value);
+
+  // optional int32 placement = 3;
+  inline bool has_placement() const;
+  inline void clear_placement();
+  static const int kPlacementFieldNumber = 3;
+  inline ::google::protobuf::int32 placement() const;
+  inline void set_placement(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_SurvivalStats.Placement)
+ private:
+  inline void set_has_xuid();
+  inline void clear_has_xuid();
+  inline void set_has_teamnumber();
+  inline void clear_has_teamnumber();
+  inline void set_has_placement();
+  inline void clear_has_placement();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint64 xuid_;
+  ::google::protobuf::int32 teamnumber_;
+  ::google::protobuf::int32 placement_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_SurvivalStats_Placement* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_SurvivalStats_Damage : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_SurvivalStats_Damage();
+  virtual ~CCSUsrMsg_SurvivalStats_Damage();
+
+  CCSUsrMsg_SurvivalStats_Damage(const CCSUsrMsg_SurvivalStats_Damage& from);
+
+  inline CCSUsrMsg_SurvivalStats_Damage& operator=(const CCSUsrMsg_SurvivalStats_Damage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_SurvivalStats_Damage& default_instance();
+
+  void Swap(CCSUsrMsg_SurvivalStats_Damage* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_SurvivalStats_Damage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_SurvivalStats_Damage& from);
+  void MergeFrom(const CCSUsrMsg_SurvivalStats_Damage& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint64 xuid = 1;
+  inline bool has_xuid() const;
+  inline void clear_xuid();
+  static const int kXuidFieldNumber = 1;
+  inline ::google::protobuf::uint64 xuid() const;
+  inline void set_xuid(::google::protobuf::uint64 value);
+
+  // optional int32 to = 2;
+  inline bool has_to() const;
+  inline void clear_to();
+  static const int kToFieldNumber = 2;
+  inline ::google::protobuf::int32 to() const;
+  inline void set_to(::google::protobuf::int32 value);
+
+  // optional int32 to_hits = 3;
+  inline bool has_to_hits() const;
+  inline void clear_to_hits();
+  static const int kToHitsFieldNumber = 3;
+  inline ::google::protobuf::int32 to_hits() const;
+  inline void set_to_hits(::google::protobuf::int32 value);
+
+  // optional int32 from = 4;
+  inline bool has_from() const;
+  inline void clear_from();
+  static const int kFromFieldNumber = 4;
+  inline ::google::protobuf::int32 from() const;
+  inline void set_from(::google::protobuf::int32 value);
+
+  // optional int32 from_hits = 5;
+  inline bool has_from_hits() const;
+  inline void clear_from_hits();
+  static const int kFromHitsFieldNumber = 5;
+  inline ::google::protobuf::int32 from_hits() const;
+  inline void set_from_hits(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_SurvivalStats.Damage)
+ private:
+  inline void set_has_xuid();
+  inline void clear_has_xuid();
+  inline void set_has_to();
+  inline void clear_has_to();
+  inline void set_has_to_hits();
+  inline void clear_has_to_hits();
+  inline void set_has_from();
+  inline void clear_has_from();
+  inline void set_has_from_hits();
+  inline void clear_has_from_hits();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint64 xuid_;
+  ::google::protobuf::int32 to_;
+  ::google::protobuf::int32 to_hits_;
+  ::google::protobuf::int32 from_;
+  ::google::protobuf::int32 from_hits_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_SurvivalStats_Damage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_SurvivalStats : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_SurvivalStats();
+  virtual ~CCSUsrMsg_SurvivalStats();
+
+  CCSUsrMsg_SurvivalStats(const CCSUsrMsg_SurvivalStats& from);
+
+  inline CCSUsrMsg_SurvivalStats& operator=(const CCSUsrMsg_SurvivalStats& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_SurvivalStats& default_instance();
+
+  void Swap(CCSUsrMsg_SurvivalStats* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_SurvivalStats* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_SurvivalStats& from);
+  void MergeFrom(const CCSUsrMsg_SurvivalStats& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  typedef CCSUsrMsg_SurvivalStats_Fact Fact;
+  typedef CCSUsrMsg_SurvivalStats_Placement Placement;
+  typedef CCSUsrMsg_SurvivalStats_Damage Damage;
+
+  // accessors -------------------------------------------------------
+
+  // optional uint64 xuid = 1;
+  inline bool has_xuid() const;
+  inline void clear_xuid();
+  static const int kXuidFieldNumber = 1;
+  inline ::google::protobuf::uint64 xuid() const;
+  inline void set_xuid(::google::protobuf::uint64 value);
+
+  // repeated .CCSUsrMsg_SurvivalStats.Fact facts = 2;
+  inline int facts_size() const;
+  inline void clear_facts();
+  static const int kFactsFieldNumber = 2;
+  inline const ::CCSUsrMsg_SurvivalStats_Fact& facts(int index) const;
+  inline ::CCSUsrMsg_SurvivalStats_Fact* mutable_facts(int index);
+  inline ::CCSUsrMsg_SurvivalStats_Fact* add_facts();
+  inline const ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Fact >&
+      facts() const;
+  inline ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Fact >*
+      mutable_facts();
+
+  // repeated .CCSUsrMsg_SurvivalStats.Placement users = 3;
+  inline int users_size() const;
+  inline void clear_users();
+  static const int kUsersFieldNumber = 3;
+  inline const ::CCSUsrMsg_SurvivalStats_Placement& users(int index) const;
+  inline ::CCSUsrMsg_SurvivalStats_Placement* mutable_users(int index);
+  inline ::CCSUsrMsg_SurvivalStats_Placement* add_users();
+  inline const ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Placement >&
+      users() const;
+  inline ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Placement >*
+      mutable_users();
+
+  // repeated .CCSUsrMsg_SurvivalStats.Damage damages = 5;
+  inline int damages_size() const;
+  inline void clear_damages();
+  static const int kDamagesFieldNumber = 5;
+  inline const ::CCSUsrMsg_SurvivalStats_Damage& damages(int index) const;
+  inline ::CCSUsrMsg_SurvivalStats_Damage* mutable_damages(int index);
+  inline ::CCSUsrMsg_SurvivalStats_Damage* add_damages();
+  inline const ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Damage >&
+      damages() const;
+  inline ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Damage >*
+      mutable_damages();
+
+  // optional int32 ticknumber = 4;
+  inline bool has_ticknumber() const;
+  inline void clear_ticknumber();
+  static const int kTicknumberFieldNumber = 4;
+  inline ::google::protobuf::int32 ticknumber() const;
+  inline void set_ticknumber(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_SurvivalStats)
+ private:
+  inline void set_has_xuid();
+  inline void clear_has_xuid();
+  inline void set_has_ticknumber();
+  inline void clear_has_ticknumber();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint64 xuid_;
+  ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Fact > facts_;
+  ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Placement > users_;
+  ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Damage > damages_;
+  ::google::protobuf::int32 ticknumber_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_SurvivalStats* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -8865,6 +10984,28 @@ inline void CCSUsrMsg_Damage::set_allocated_inflictor_world_pos(::CMsgVector* in
   }
 }
 
+// optional int32 victim_entindex = 3;
+inline bool CCSUsrMsg_Damage::has_victim_entindex() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_Damage::set_has_victim_entindex() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_Damage::clear_has_victim_entindex() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_Damage::clear_victim_entindex() {
+  victim_entindex_ = 0;
+  clear_has_victim_entindex();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_Damage::victim_entindex() const {
+  return victim_entindex_;
+}
+inline void CCSUsrMsg_Damage::set_victim_entindex(::google::protobuf::int32 value) {
+  set_has_victim_entindex();
+  victim_entindex_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // CCSUsrMsg_RadioText
@@ -9516,6 +11657,28 @@ inline void CEconItemPreviewDataBlock_Sticker::set_rotation(float value) {
   rotation_ = value;
 }
 
+// optional uint32 tint_id = 6;
+inline bool CEconItemPreviewDataBlock_Sticker::has_tint_id() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CEconItemPreviewDataBlock_Sticker::set_has_tint_id() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CEconItemPreviewDataBlock_Sticker::clear_has_tint_id() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CEconItemPreviewDataBlock_Sticker::clear_tint_id() {
+  tint_id_ = 0u;
+  clear_has_tint_id();
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock_Sticker::tint_id() const {
+  return tint_id_;
+}
+inline void CEconItemPreviewDataBlock_Sticker::set_tint_id(::google::protobuf::uint32 value) {
+  set_has_tint_id();
+  tint_id_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // CEconItemPreviewDataBlock
@@ -9899,6 +12062,72 @@ inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::questid() const {
 inline void CEconItemPreviewDataBlock::set_questid(::google::protobuf::uint32 value) {
   set_has_questid();
   questid_ = value;
+}
+
+// optional uint32 dropreason = 16;
+inline bool CEconItemPreviewDataBlock::has_dropreason() const {
+  return (_has_bits_[0] & 0x00008000u) != 0;
+}
+inline void CEconItemPreviewDataBlock::set_has_dropreason() {
+  _has_bits_[0] |= 0x00008000u;
+}
+inline void CEconItemPreviewDataBlock::clear_has_dropreason() {
+  _has_bits_[0] &= ~0x00008000u;
+}
+inline void CEconItemPreviewDataBlock::clear_dropreason() {
+  dropreason_ = 0u;
+  clear_has_dropreason();
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::dropreason() const {
+  return dropreason_;
+}
+inline void CEconItemPreviewDataBlock::set_dropreason(::google::protobuf::uint32 value) {
+  set_has_dropreason();
+  dropreason_ = value;
+}
+
+// optional uint32 musicindex = 17;
+inline bool CEconItemPreviewDataBlock::has_musicindex() const {
+  return (_has_bits_[0] & 0x00010000u) != 0;
+}
+inline void CEconItemPreviewDataBlock::set_has_musicindex() {
+  _has_bits_[0] |= 0x00010000u;
+}
+inline void CEconItemPreviewDataBlock::clear_has_musicindex() {
+  _has_bits_[0] &= ~0x00010000u;
+}
+inline void CEconItemPreviewDataBlock::clear_musicindex() {
+  musicindex_ = 0u;
+  clear_has_musicindex();
+}
+inline ::google::protobuf::uint32 CEconItemPreviewDataBlock::musicindex() const {
+  return musicindex_;
+}
+inline void CEconItemPreviewDataBlock::set_musicindex(::google::protobuf::uint32 value) {
+  set_has_musicindex();
+  musicindex_ = value;
+}
+
+// optional int32 entindex = 18;
+inline bool CEconItemPreviewDataBlock::has_entindex() const {
+  return (_has_bits_[0] & 0x00020000u) != 0;
+}
+inline void CEconItemPreviewDataBlock::set_has_entindex() {
+  _has_bits_[0] |= 0x00020000u;
+}
+inline void CEconItemPreviewDataBlock::clear_has_entindex() {
+  _has_bits_[0] &= ~0x00020000u;
+}
+inline void CEconItemPreviewDataBlock::clear_entindex() {
+  entindex_ = 0;
+  clear_has_entindex();
+}
+inline ::google::protobuf::int32 CEconItemPreviewDataBlock::entindex() const {
+  return entindex_;
+}
+inline void CEconItemPreviewDataBlock::set_entindex(::google::protobuf::int32 value) {
+  set_has_entindex();
+  entindex_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -11725,6 +13954,28 @@ inline void CCSUsrMsg_ServerRankUpdate_RankUpdate::set_rank_change(float value) 
   rank_change_ = value;
 }
 
+// optional int32 rank_type_id = 6;
+inline bool CCSUsrMsg_ServerRankUpdate_RankUpdate::has_rank_type_id() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CCSUsrMsg_ServerRankUpdate_RankUpdate::set_has_rank_type_id() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CCSUsrMsg_ServerRankUpdate_RankUpdate::clear_has_rank_type_id() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CCSUsrMsg_ServerRankUpdate_RankUpdate::clear_rank_type_id() {
+  rank_type_id_ = 0;
+  clear_has_rank_type_id();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_ServerRankUpdate_RankUpdate::rank_type_id() const {
+  return rank_type_id_;
+}
+inline void CCSUsrMsg_ServerRankUpdate_RankUpdate::set_rank_type_id(::google::protobuf::int32 value) {
+  set_has_rank_type_id();
+  rank_type_id_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // CCSUsrMsg_ServerRankUpdate
@@ -12458,6 +14709,1707 @@ inline void CCSUsrMsg_RoundBackupFilenames::set_allocated_nicename(::std::string
 
 // -------------------------------------------------------------------
 
+// XpProgressData
+
+// optional uint32 xp_points = 1;
+inline bool XpProgressData::has_xp_points() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void XpProgressData::set_has_xp_points() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void XpProgressData::clear_has_xp_points() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void XpProgressData::clear_xp_points() {
+  xp_points_ = 0u;
+  clear_has_xp_points();
+}
+inline ::google::protobuf::uint32 XpProgressData::xp_points() const {
+  return xp_points_;
+}
+inline void XpProgressData::set_xp_points(::google::protobuf::uint32 value) {
+  set_has_xp_points();
+  xp_points_ = value;
+}
+
+// optional int32 xp_category = 2;
+inline bool XpProgressData::has_xp_category() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void XpProgressData::set_has_xp_category() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void XpProgressData::clear_has_xp_category() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void XpProgressData::clear_xp_category() {
+  xp_category_ = 0;
+  clear_has_xp_category();
+}
+inline ::google::protobuf::int32 XpProgressData::xp_category() const {
+  return xp_category_;
+}
+inline void XpProgressData::set_xp_category(::google::protobuf::int32 value) {
+  set_has_xp_category();
+  xp_category_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded
+
+// repeated .XpProgressData xp_progress_data = 1;
+inline int CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::xp_progress_data_size() const {
+  return xp_progress_data_.size();
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::clear_xp_progress_data() {
+  xp_progress_data_.Clear();
+}
+inline const ::XpProgressData& CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::xp_progress_data(int index) const {
+  return xp_progress_data_.Get(index);
+}
+inline ::XpProgressData* CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::mutable_xp_progress_data(int index) {
+  return xp_progress_data_.Mutable(index);
+}
+inline ::XpProgressData* CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::add_xp_progress_data() {
+  return xp_progress_data_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::XpProgressData >&
+CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::xp_progress_data() const {
+  return xp_progress_data_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::XpProgressData >*
+CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::mutable_xp_progress_data() {
+  return &xp_progress_data_;
+}
+
+// optional uint32 account_id = 2;
+inline bool CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::has_account_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::set_has_account_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::clear_has_account_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::clear_account_id() {
+  account_id_ = 0u;
+  clear_has_account_id();
+}
+inline ::google::protobuf::uint32 CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::account_id() const {
+  return account_id_;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::set_account_id(::google::protobuf::uint32 value) {
+  set_has_account_id();
+  account_id_ = value;
+}
+
+// optional uint32 current_xp = 3;
+inline bool CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::has_current_xp() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::set_has_current_xp() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::clear_has_current_xp() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::clear_current_xp() {
+  current_xp_ = 0u;
+  clear_has_current_xp();
+}
+inline ::google::protobuf::uint32 CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::current_xp() const {
+  return current_xp_;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::set_current_xp(::google::protobuf::uint32 value) {
+  set_has_current_xp();
+  current_xp_ = value;
+}
+
+// optional uint32 current_level = 4;
+inline bool CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::has_current_level() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::set_has_current_level() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::clear_has_current_level() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::clear_current_level() {
+  current_level_ = 0u;
+  clear_has_current_level();
+}
+inline ::google::protobuf::uint32 CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::current_level() const {
+  return current_level_;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::set_current_level(::google::protobuf::uint32 value) {
+  set_has_current_level();
+  current_level_ = value;
+}
+
+// optional uint32 upgraded_defidx = 5;
+inline bool CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::has_upgraded_defidx() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::set_has_upgraded_defidx() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::clear_has_upgraded_defidx() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::clear_upgraded_defidx() {
+  upgraded_defidx_ = 0u;
+  clear_has_upgraded_defidx();
+}
+inline ::google::protobuf::uint32 CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::upgraded_defidx() const {
+  return upgraded_defidx_;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::set_upgraded_defidx(::google::protobuf::uint32 value) {
+  set_has_upgraded_defidx();
+  upgraded_defidx_ = value;
+}
+
+// optional uint32 operation_points_awarded = 6;
+inline bool CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::has_operation_points_awarded() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::set_has_operation_points_awarded() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::clear_has_operation_points_awarded() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::clear_operation_points_awarded() {
+  operation_points_awarded_ = 0u;
+  clear_has_operation_points_awarded();
+}
+inline ::google::protobuf::uint32 CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::operation_points_awarded() const {
+  return operation_points_awarded_;
+}
+inline void CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::set_operation_points_awarded(::google::protobuf::uint32 value) {
+  set_has_operation_points_awarded();
+  operation_points_awarded_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_XpUpdate
+
+// optional .CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded data = 1;
+inline bool CCSUsrMsg_XpUpdate::has_data() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_XpUpdate::set_has_data() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_XpUpdate::clear_has_data() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_XpUpdate::clear_data() {
+  if (data_ != NULL) data_->::CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded::Clear();
+  clear_has_data();
+}
+inline const ::CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded& CCSUsrMsg_XpUpdate::data() const {
+  return data_ != NULL ? *data_ : *default_instance_->data_;
+}
+inline ::CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded* CCSUsrMsg_XpUpdate::mutable_data() {
+  set_has_data();
+  if (data_ == NULL) data_ = new ::CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded;
+  return data_;
+}
+inline ::CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded* CCSUsrMsg_XpUpdate::release_data() {
+  clear_has_data();
+  ::CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded* temp = data_;
+  data_ = NULL;
+  return temp;
+}
+inline void CCSUsrMsg_XpUpdate::set_allocated_data(::CMsgGCCstrike15_v2_GC2ServerNotifyXPRewarded* data) {
+  delete data_;
+  data_ = data;
+  if (data) {
+    set_has_data();
+  } else {
+    clear_has_data();
+  }
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_QuestProgress
+
+// optional uint32 quest_id = 1;
+inline bool CCSUsrMsg_QuestProgress::has_quest_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_QuestProgress::set_has_quest_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_QuestProgress::clear_has_quest_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_QuestProgress::clear_quest_id() {
+  quest_id_ = 0u;
+  clear_has_quest_id();
+}
+inline ::google::protobuf::uint32 CCSUsrMsg_QuestProgress::quest_id() const {
+  return quest_id_;
+}
+inline void CCSUsrMsg_QuestProgress::set_quest_id(::google::protobuf::uint32 value) {
+  set_has_quest_id();
+  quest_id_ = value;
+}
+
+// optional uint32 normal_points = 2;
+inline bool CCSUsrMsg_QuestProgress::has_normal_points() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCSUsrMsg_QuestProgress::set_has_normal_points() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCSUsrMsg_QuestProgress::clear_has_normal_points() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCSUsrMsg_QuestProgress::clear_normal_points() {
+  normal_points_ = 0u;
+  clear_has_normal_points();
+}
+inline ::google::protobuf::uint32 CCSUsrMsg_QuestProgress::normal_points() const {
+  return normal_points_;
+}
+inline void CCSUsrMsg_QuestProgress::set_normal_points(::google::protobuf::uint32 value) {
+  set_has_normal_points();
+  normal_points_ = value;
+}
+
+// optional uint32 bonus_points = 3;
+inline bool CCSUsrMsg_QuestProgress::has_bonus_points() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_QuestProgress::set_has_bonus_points() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_QuestProgress::clear_has_bonus_points() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_QuestProgress::clear_bonus_points() {
+  bonus_points_ = 0u;
+  clear_has_bonus_points();
+}
+inline ::google::protobuf::uint32 CCSUsrMsg_QuestProgress::bonus_points() const {
+  return bonus_points_;
+}
+inline void CCSUsrMsg_QuestProgress::set_bonus_points(::google::protobuf::uint32 value) {
+  set_has_bonus_points();
+  bonus_points_ = value;
+}
+
+// optional bool is_event_quest = 4;
+inline bool CCSUsrMsg_QuestProgress::has_is_event_quest() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCSUsrMsg_QuestProgress::set_has_is_event_quest() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCSUsrMsg_QuestProgress::clear_has_is_event_quest() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCSUsrMsg_QuestProgress::clear_is_event_quest() {
+  is_event_quest_ = false;
+  clear_has_is_event_quest();
+}
+inline bool CCSUsrMsg_QuestProgress::is_event_quest() const {
+  return is_event_quest_;
+}
+inline void CCSUsrMsg_QuestProgress::set_is_event_quest(bool value) {
+  set_has_is_event_quest();
+  is_event_quest_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ScoreLeaderboardData_Entry
+
+// optional uint32 tag = 1;
+inline bool ScoreLeaderboardData_Entry::has_tag() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void ScoreLeaderboardData_Entry::set_has_tag() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void ScoreLeaderboardData_Entry::clear_has_tag() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void ScoreLeaderboardData_Entry::clear_tag() {
+  tag_ = 0u;
+  clear_has_tag();
+}
+inline ::google::protobuf::uint32 ScoreLeaderboardData_Entry::tag() const {
+  return tag_;
+}
+inline void ScoreLeaderboardData_Entry::set_tag(::google::protobuf::uint32 value) {
+  set_has_tag();
+  tag_ = value;
+}
+
+// optional uint32 val = 2;
+inline bool ScoreLeaderboardData_Entry::has_val() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void ScoreLeaderboardData_Entry::set_has_val() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void ScoreLeaderboardData_Entry::clear_has_val() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void ScoreLeaderboardData_Entry::clear_val() {
+  val_ = 0u;
+  clear_has_val();
+}
+inline ::google::protobuf::uint32 ScoreLeaderboardData_Entry::val() const {
+  return val_;
+}
+inline void ScoreLeaderboardData_Entry::set_val(::google::protobuf::uint32 value) {
+  set_has_val();
+  val_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ScoreLeaderboardData_AccountEntries
+
+// optional uint32 accountid = 1;
+inline bool ScoreLeaderboardData_AccountEntries::has_accountid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void ScoreLeaderboardData_AccountEntries::set_has_accountid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void ScoreLeaderboardData_AccountEntries::clear_has_accountid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void ScoreLeaderboardData_AccountEntries::clear_accountid() {
+  accountid_ = 0u;
+  clear_has_accountid();
+}
+inline ::google::protobuf::uint32 ScoreLeaderboardData_AccountEntries::accountid() const {
+  return accountid_;
+}
+inline void ScoreLeaderboardData_AccountEntries::set_accountid(::google::protobuf::uint32 value) {
+  set_has_accountid();
+  accountid_ = value;
+}
+
+// repeated .ScoreLeaderboardData.Entry entries = 2;
+inline int ScoreLeaderboardData_AccountEntries::entries_size() const {
+  return entries_.size();
+}
+inline void ScoreLeaderboardData_AccountEntries::clear_entries() {
+  entries_.Clear();
+}
+inline const ::ScoreLeaderboardData_Entry& ScoreLeaderboardData_AccountEntries::entries(int index) const {
+  return entries_.Get(index);
+}
+inline ::ScoreLeaderboardData_Entry* ScoreLeaderboardData_AccountEntries::mutable_entries(int index) {
+  return entries_.Mutable(index);
+}
+inline ::ScoreLeaderboardData_Entry* ScoreLeaderboardData_AccountEntries::add_entries() {
+  return entries_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_Entry >&
+ScoreLeaderboardData_AccountEntries::entries() const {
+  return entries_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_Entry >*
+ScoreLeaderboardData_AccountEntries::mutable_entries() {
+  return &entries_;
+}
+
+// -------------------------------------------------------------------
+
+// ScoreLeaderboardData
+
+// optional uint64 quest_id = 1;
+inline bool ScoreLeaderboardData::has_quest_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void ScoreLeaderboardData::set_has_quest_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void ScoreLeaderboardData::clear_has_quest_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void ScoreLeaderboardData::clear_quest_id() {
+  quest_id_ = GOOGLE_ULONGLONG(0);
+  clear_has_quest_id();
+}
+inline ::google::protobuf::uint64 ScoreLeaderboardData::quest_id() const {
+  return quest_id_;
+}
+inline void ScoreLeaderboardData::set_quest_id(::google::protobuf::uint64 value) {
+  set_has_quest_id();
+  quest_id_ = value;
+}
+
+// optional uint32 score = 2;
+inline bool ScoreLeaderboardData::has_score() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void ScoreLeaderboardData::set_has_score() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void ScoreLeaderboardData::clear_has_score() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void ScoreLeaderboardData::clear_score() {
+  score_ = 0u;
+  clear_has_score();
+}
+inline ::google::protobuf::uint32 ScoreLeaderboardData::score() const {
+  return score_;
+}
+inline void ScoreLeaderboardData::set_score(::google::protobuf::uint32 value) {
+  set_has_score();
+  score_ = value;
+}
+
+// repeated .ScoreLeaderboardData.AccountEntries accountentries = 3;
+inline int ScoreLeaderboardData::accountentries_size() const {
+  return accountentries_.size();
+}
+inline void ScoreLeaderboardData::clear_accountentries() {
+  accountentries_.Clear();
+}
+inline const ::ScoreLeaderboardData_AccountEntries& ScoreLeaderboardData::accountentries(int index) const {
+  return accountentries_.Get(index);
+}
+inline ::ScoreLeaderboardData_AccountEntries* ScoreLeaderboardData::mutable_accountentries(int index) {
+  return accountentries_.Mutable(index);
+}
+inline ::ScoreLeaderboardData_AccountEntries* ScoreLeaderboardData::add_accountentries() {
+  return accountentries_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_AccountEntries >&
+ScoreLeaderboardData::accountentries() const {
+  return accountentries_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_AccountEntries >*
+ScoreLeaderboardData::mutable_accountentries() {
+  return &accountentries_;
+}
+
+// repeated .ScoreLeaderboardData.Entry matchentries = 5;
+inline int ScoreLeaderboardData::matchentries_size() const {
+  return matchentries_.size();
+}
+inline void ScoreLeaderboardData::clear_matchentries() {
+  matchentries_.Clear();
+}
+inline const ::ScoreLeaderboardData_Entry& ScoreLeaderboardData::matchentries(int index) const {
+  return matchentries_.Get(index);
+}
+inline ::ScoreLeaderboardData_Entry* ScoreLeaderboardData::mutable_matchentries(int index) {
+  return matchentries_.Mutable(index);
+}
+inline ::ScoreLeaderboardData_Entry* ScoreLeaderboardData::add_matchentries() {
+  return matchentries_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_Entry >&
+ScoreLeaderboardData::matchentries() const {
+  return matchentries_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::ScoreLeaderboardData_Entry >*
+ScoreLeaderboardData::mutable_matchentries() {
+  return &matchentries_;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_ScoreLeaderboardData
+
+// optional .ScoreLeaderboardData data = 1;
+inline bool CCSUsrMsg_ScoreLeaderboardData::has_data() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_ScoreLeaderboardData::set_has_data() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_ScoreLeaderboardData::clear_has_data() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_ScoreLeaderboardData::clear_data() {
+  if (data_ != NULL) data_->::ScoreLeaderboardData::Clear();
+  clear_has_data();
+}
+inline const ::ScoreLeaderboardData& CCSUsrMsg_ScoreLeaderboardData::data() const {
+  return data_ != NULL ? *data_ : *default_instance_->data_;
+}
+inline ::ScoreLeaderboardData* CCSUsrMsg_ScoreLeaderboardData::mutable_data() {
+  set_has_data();
+  if (data_ == NULL) data_ = new ::ScoreLeaderboardData;
+  return data_;
+}
+inline ::ScoreLeaderboardData* CCSUsrMsg_ScoreLeaderboardData::release_data() {
+  clear_has_data();
+  ::ScoreLeaderboardData* temp = data_;
+  data_ = NULL;
+  return temp;
+}
+inline void CCSUsrMsg_ScoreLeaderboardData::set_allocated_data(::ScoreLeaderboardData* data) {
+  delete data_;
+  data_ = data;
+  if (data) {
+    set_has_data();
+  } else {
+    clear_has_data();
+  }
+}
+
+// -------------------------------------------------------------------
+
+// PlayerDecalDigitalSignature
+
+// optional bytes signature = 1;
+inline bool PlayerDecalDigitalSignature::has_signature() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void PlayerDecalDigitalSignature::set_has_signature() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void PlayerDecalDigitalSignature::clear_has_signature() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void PlayerDecalDigitalSignature::clear_signature() {
+  if (signature_ != &::google::protobuf::internal::kEmptyString) {
+    signature_->clear();
+  }
+  clear_has_signature();
+}
+inline const ::std::string& PlayerDecalDigitalSignature::signature() const {
+  return *signature_;
+}
+inline void PlayerDecalDigitalSignature::set_signature(const ::std::string& value) {
+  set_has_signature();
+  if (signature_ == &::google::protobuf::internal::kEmptyString) {
+    signature_ = new ::std::string;
+  }
+  signature_->assign(value);
+}
+inline void PlayerDecalDigitalSignature::set_signature(const char* value) {
+  set_has_signature();
+  if (signature_ == &::google::protobuf::internal::kEmptyString) {
+    signature_ = new ::std::string;
+  }
+  signature_->assign(value);
+}
+inline void PlayerDecalDigitalSignature::set_signature(const void* value, size_t size) {
+  set_has_signature();
+  if (signature_ == &::google::protobuf::internal::kEmptyString) {
+    signature_ = new ::std::string;
+  }
+  signature_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* PlayerDecalDigitalSignature::mutable_signature() {
+  set_has_signature();
+  if (signature_ == &::google::protobuf::internal::kEmptyString) {
+    signature_ = new ::std::string;
+  }
+  return signature_;
+}
+inline ::std::string* PlayerDecalDigitalSignature::release_signature() {
+  clear_has_signature();
+  if (signature_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = signature_;
+    signature_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void PlayerDecalDigitalSignature::set_allocated_signature(::std::string* signature) {
+  if (signature_ != &::google::protobuf::internal::kEmptyString) {
+    delete signature_;
+  }
+  if (signature) {
+    set_has_signature();
+    signature_ = signature;
+  } else {
+    clear_has_signature();
+    signature_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional uint32 accountid = 2;
+inline bool PlayerDecalDigitalSignature::has_accountid() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void PlayerDecalDigitalSignature::set_has_accountid() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void PlayerDecalDigitalSignature::clear_has_accountid() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void PlayerDecalDigitalSignature::clear_accountid() {
+  accountid_ = 0u;
+  clear_has_accountid();
+}
+inline ::google::protobuf::uint32 PlayerDecalDigitalSignature::accountid() const {
+  return accountid_;
+}
+inline void PlayerDecalDigitalSignature::set_accountid(::google::protobuf::uint32 value) {
+  set_has_accountid();
+  accountid_ = value;
+}
+
+// optional uint32 rtime = 3;
+inline bool PlayerDecalDigitalSignature::has_rtime() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void PlayerDecalDigitalSignature::set_has_rtime() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void PlayerDecalDigitalSignature::clear_has_rtime() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void PlayerDecalDigitalSignature::clear_rtime() {
+  rtime_ = 0u;
+  clear_has_rtime();
+}
+inline ::google::protobuf::uint32 PlayerDecalDigitalSignature::rtime() const {
+  return rtime_;
+}
+inline void PlayerDecalDigitalSignature::set_rtime(::google::protobuf::uint32 value) {
+  set_has_rtime();
+  rtime_ = value;
+}
+
+// repeated float endpos = 4;
+inline int PlayerDecalDigitalSignature::endpos_size() const {
+  return endpos_.size();
+}
+inline void PlayerDecalDigitalSignature::clear_endpos() {
+  endpos_.Clear();
+}
+inline float PlayerDecalDigitalSignature::endpos(int index) const {
+  return endpos_.Get(index);
+}
+inline void PlayerDecalDigitalSignature::set_endpos(int index, float value) {
+  endpos_.Set(index, value);
+}
+inline void PlayerDecalDigitalSignature::add_endpos(float value) {
+  endpos_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+PlayerDecalDigitalSignature::endpos() const {
+  return endpos_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+PlayerDecalDigitalSignature::mutable_endpos() {
+  return &endpos_;
+}
+
+// repeated float startpos = 5;
+inline int PlayerDecalDigitalSignature::startpos_size() const {
+  return startpos_.size();
+}
+inline void PlayerDecalDigitalSignature::clear_startpos() {
+  startpos_.Clear();
+}
+inline float PlayerDecalDigitalSignature::startpos(int index) const {
+  return startpos_.Get(index);
+}
+inline void PlayerDecalDigitalSignature::set_startpos(int index, float value) {
+  startpos_.Set(index, value);
+}
+inline void PlayerDecalDigitalSignature::add_startpos(float value) {
+  startpos_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+PlayerDecalDigitalSignature::startpos() const {
+  return startpos_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+PlayerDecalDigitalSignature::mutable_startpos() {
+  return &startpos_;
+}
+
+// repeated float right = 6;
+inline int PlayerDecalDigitalSignature::right_size() const {
+  return right_.size();
+}
+inline void PlayerDecalDigitalSignature::clear_right() {
+  right_.Clear();
+}
+inline float PlayerDecalDigitalSignature::right(int index) const {
+  return right_.Get(index);
+}
+inline void PlayerDecalDigitalSignature::set_right(int index, float value) {
+  right_.Set(index, value);
+}
+inline void PlayerDecalDigitalSignature::add_right(float value) {
+  right_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+PlayerDecalDigitalSignature::right() const {
+  return right_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+PlayerDecalDigitalSignature::mutable_right() {
+  return &right_;
+}
+
+// optional uint32 tx_defidx = 7;
+inline bool PlayerDecalDigitalSignature::has_tx_defidx() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void PlayerDecalDigitalSignature::set_has_tx_defidx() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void PlayerDecalDigitalSignature::clear_has_tx_defidx() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void PlayerDecalDigitalSignature::clear_tx_defidx() {
+  tx_defidx_ = 0u;
+  clear_has_tx_defidx();
+}
+inline ::google::protobuf::uint32 PlayerDecalDigitalSignature::tx_defidx() const {
+  return tx_defidx_;
+}
+inline void PlayerDecalDigitalSignature::set_tx_defidx(::google::protobuf::uint32 value) {
+  set_has_tx_defidx();
+  tx_defidx_ = value;
+}
+
+// optional int32 entindex = 8;
+inline bool PlayerDecalDigitalSignature::has_entindex() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void PlayerDecalDigitalSignature::set_has_entindex() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void PlayerDecalDigitalSignature::clear_has_entindex() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void PlayerDecalDigitalSignature::clear_entindex() {
+  entindex_ = 0;
+  clear_has_entindex();
+}
+inline ::google::protobuf::int32 PlayerDecalDigitalSignature::entindex() const {
+  return entindex_;
+}
+inline void PlayerDecalDigitalSignature::set_entindex(::google::protobuf::int32 value) {
+  set_has_entindex();
+  entindex_ = value;
+}
+
+// optional uint32 hitbox = 9;
+inline bool PlayerDecalDigitalSignature::has_hitbox() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void PlayerDecalDigitalSignature::set_has_hitbox() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void PlayerDecalDigitalSignature::clear_has_hitbox() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void PlayerDecalDigitalSignature::clear_hitbox() {
+  hitbox_ = 0u;
+  clear_has_hitbox();
+}
+inline ::google::protobuf::uint32 PlayerDecalDigitalSignature::hitbox() const {
+  return hitbox_;
+}
+inline void PlayerDecalDigitalSignature::set_hitbox(::google::protobuf::uint32 value) {
+  set_has_hitbox();
+  hitbox_ = value;
+}
+
+// optional float creationtime = 10;
+inline bool PlayerDecalDigitalSignature::has_creationtime() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+inline void PlayerDecalDigitalSignature::set_has_creationtime() {
+  _has_bits_[0] |= 0x00000200u;
+}
+inline void PlayerDecalDigitalSignature::clear_has_creationtime() {
+  _has_bits_[0] &= ~0x00000200u;
+}
+inline void PlayerDecalDigitalSignature::clear_creationtime() {
+  creationtime_ = 0;
+  clear_has_creationtime();
+}
+inline float PlayerDecalDigitalSignature::creationtime() const {
+  return creationtime_;
+}
+inline void PlayerDecalDigitalSignature::set_creationtime(float value) {
+  set_has_creationtime();
+  creationtime_ = value;
+}
+
+// optional uint32 equipslot = 11;
+inline bool PlayerDecalDigitalSignature::has_equipslot() const {
+  return (_has_bits_[0] & 0x00000400u) != 0;
+}
+inline void PlayerDecalDigitalSignature::set_has_equipslot() {
+  _has_bits_[0] |= 0x00000400u;
+}
+inline void PlayerDecalDigitalSignature::clear_has_equipslot() {
+  _has_bits_[0] &= ~0x00000400u;
+}
+inline void PlayerDecalDigitalSignature::clear_equipslot() {
+  equipslot_ = 0u;
+  clear_has_equipslot();
+}
+inline ::google::protobuf::uint32 PlayerDecalDigitalSignature::equipslot() const {
+  return equipslot_;
+}
+inline void PlayerDecalDigitalSignature::set_equipslot(::google::protobuf::uint32 value) {
+  set_has_equipslot();
+  equipslot_ = value;
+}
+
+// optional uint32 trace_id = 12;
+inline bool PlayerDecalDigitalSignature::has_trace_id() const {
+  return (_has_bits_[0] & 0x00000800u) != 0;
+}
+inline void PlayerDecalDigitalSignature::set_has_trace_id() {
+  _has_bits_[0] |= 0x00000800u;
+}
+inline void PlayerDecalDigitalSignature::clear_has_trace_id() {
+  _has_bits_[0] &= ~0x00000800u;
+}
+inline void PlayerDecalDigitalSignature::clear_trace_id() {
+  trace_id_ = 0u;
+  clear_has_trace_id();
+}
+inline ::google::protobuf::uint32 PlayerDecalDigitalSignature::trace_id() const {
+  return trace_id_;
+}
+inline void PlayerDecalDigitalSignature::set_trace_id(::google::protobuf::uint32 value) {
+  set_has_trace_id();
+  trace_id_ = value;
+}
+
+// repeated float normal = 13;
+inline int PlayerDecalDigitalSignature::normal_size() const {
+  return normal_.size();
+}
+inline void PlayerDecalDigitalSignature::clear_normal() {
+  normal_.Clear();
+}
+inline float PlayerDecalDigitalSignature::normal(int index) const {
+  return normal_.Get(index);
+}
+inline void PlayerDecalDigitalSignature::set_normal(int index, float value) {
+  normal_.Set(index, value);
+}
+inline void PlayerDecalDigitalSignature::add_normal(float value) {
+  normal_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< float >&
+PlayerDecalDigitalSignature::normal() const {
+  return normal_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+PlayerDecalDigitalSignature::mutable_normal() {
+  return &normal_;
+}
+
+// optional uint32 tint_id = 14;
+inline bool PlayerDecalDigitalSignature::has_tint_id() const {
+  return (_has_bits_[0] & 0x00002000u) != 0;
+}
+inline void PlayerDecalDigitalSignature::set_has_tint_id() {
+  _has_bits_[0] |= 0x00002000u;
+}
+inline void PlayerDecalDigitalSignature::clear_has_tint_id() {
+  _has_bits_[0] &= ~0x00002000u;
+}
+inline void PlayerDecalDigitalSignature::clear_tint_id() {
+  tint_id_ = 0u;
+  clear_has_tint_id();
+}
+inline ::google::protobuf::uint32 PlayerDecalDigitalSignature::tint_id() const {
+  return tint_id_;
+}
+inline void PlayerDecalDigitalSignature::set_tint_id(::google::protobuf::uint32 value) {
+  set_has_tint_id();
+  tint_id_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_PlayerDecalDigitalSignature
+
+// optional .PlayerDecalDigitalSignature data = 1;
+inline bool CCSUsrMsg_PlayerDecalDigitalSignature::has_data() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_PlayerDecalDigitalSignature::set_has_data() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_PlayerDecalDigitalSignature::clear_has_data() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_PlayerDecalDigitalSignature::clear_data() {
+  if (data_ != NULL) data_->::PlayerDecalDigitalSignature::Clear();
+  clear_has_data();
+}
+inline const ::PlayerDecalDigitalSignature& CCSUsrMsg_PlayerDecalDigitalSignature::data() const {
+  return data_ != NULL ? *data_ : *default_instance_->data_;
+}
+inline ::PlayerDecalDigitalSignature* CCSUsrMsg_PlayerDecalDigitalSignature::mutable_data() {
+  set_has_data();
+  if (data_ == NULL) data_ = new ::PlayerDecalDigitalSignature;
+  return data_;
+}
+inline ::PlayerDecalDigitalSignature* CCSUsrMsg_PlayerDecalDigitalSignature::release_data() {
+  clear_has_data();
+  ::PlayerDecalDigitalSignature* temp = data_;
+  data_ = NULL;
+  return temp;
+}
+inline void CCSUsrMsg_PlayerDecalDigitalSignature::set_allocated_data(::PlayerDecalDigitalSignature* data) {
+  delete data_;
+  data_ = data;
+  if (data) {
+    set_has_data();
+  } else {
+    clear_has_data();
+  }
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_WeaponSound
+
+// optional int32 entidx = 1;
+inline bool CCSUsrMsg_WeaponSound::has_entidx() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_WeaponSound::set_has_entidx() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_WeaponSound::clear_has_entidx() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_WeaponSound::clear_entidx() {
+  entidx_ = 0;
+  clear_has_entidx();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_WeaponSound::entidx() const {
+  return entidx_;
+}
+inline void CCSUsrMsg_WeaponSound::set_entidx(::google::protobuf::int32 value) {
+  set_has_entidx();
+  entidx_ = value;
+}
+
+// optional float origin_x = 2;
+inline bool CCSUsrMsg_WeaponSound::has_origin_x() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCSUsrMsg_WeaponSound::set_has_origin_x() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCSUsrMsg_WeaponSound::clear_has_origin_x() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCSUsrMsg_WeaponSound::clear_origin_x() {
+  origin_x_ = 0;
+  clear_has_origin_x();
+}
+inline float CCSUsrMsg_WeaponSound::origin_x() const {
+  return origin_x_;
+}
+inline void CCSUsrMsg_WeaponSound::set_origin_x(float value) {
+  set_has_origin_x();
+  origin_x_ = value;
+}
+
+// optional float origin_y = 3;
+inline bool CCSUsrMsg_WeaponSound::has_origin_y() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_WeaponSound::set_has_origin_y() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_WeaponSound::clear_has_origin_y() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_WeaponSound::clear_origin_y() {
+  origin_y_ = 0;
+  clear_has_origin_y();
+}
+inline float CCSUsrMsg_WeaponSound::origin_y() const {
+  return origin_y_;
+}
+inline void CCSUsrMsg_WeaponSound::set_origin_y(float value) {
+  set_has_origin_y();
+  origin_y_ = value;
+}
+
+// optional float origin_z = 4;
+inline bool CCSUsrMsg_WeaponSound::has_origin_z() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCSUsrMsg_WeaponSound::set_has_origin_z() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCSUsrMsg_WeaponSound::clear_has_origin_z() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCSUsrMsg_WeaponSound::clear_origin_z() {
+  origin_z_ = 0;
+  clear_has_origin_z();
+}
+inline float CCSUsrMsg_WeaponSound::origin_z() const {
+  return origin_z_;
+}
+inline void CCSUsrMsg_WeaponSound::set_origin_z(float value) {
+  set_has_origin_z();
+  origin_z_ = value;
+}
+
+// optional string sound = 5;
+inline bool CCSUsrMsg_WeaponSound::has_sound() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CCSUsrMsg_WeaponSound::set_has_sound() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CCSUsrMsg_WeaponSound::clear_has_sound() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CCSUsrMsg_WeaponSound::clear_sound() {
+  if (sound_ != &::google::protobuf::internal::kEmptyString) {
+    sound_->clear();
+  }
+  clear_has_sound();
+}
+inline const ::std::string& CCSUsrMsg_WeaponSound::sound() const {
+  return *sound_;
+}
+inline void CCSUsrMsg_WeaponSound::set_sound(const ::std::string& value) {
+  set_has_sound();
+  if (sound_ == &::google::protobuf::internal::kEmptyString) {
+    sound_ = new ::std::string;
+  }
+  sound_->assign(value);
+}
+inline void CCSUsrMsg_WeaponSound::set_sound(const char* value) {
+  set_has_sound();
+  if (sound_ == &::google::protobuf::internal::kEmptyString) {
+    sound_ = new ::std::string;
+  }
+  sound_->assign(value);
+}
+inline void CCSUsrMsg_WeaponSound::set_sound(const char* value, size_t size) {
+  set_has_sound();
+  if (sound_ == &::google::protobuf::internal::kEmptyString) {
+    sound_ = new ::std::string;
+  }
+  sound_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CCSUsrMsg_WeaponSound::mutable_sound() {
+  set_has_sound();
+  if (sound_ == &::google::protobuf::internal::kEmptyString) {
+    sound_ = new ::std::string;
+  }
+  return sound_;
+}
+inline ::std::string* CCSUsrMsg_WeaponSound::release_sound() {
+  clear_has_sound();
+  if (sound_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = sound_;
+    sound_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CCSUsrMsg_WeaponSound::set_allocated_sound(::std::string* sound) {
+  if (sound_ != &::google::protobuf::internal::kEmptyString) {
+    delete sound_;
+  }
+  if (sound) {
+    set_has_sound();
+    sound_ = sound;
+  } else {
+    clear_has_sound();
+    sound_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional float timestamp = 6;
+inline bool CCSUsrMsg_WeaponSound::has_timestamp() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CCSUsrMsg_WeaponSound::set_has_timestamp() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CCSUsrMsg_WeaponSound::clear_has_timestamp() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CCSUsrMsg_WeaponSound::clear_timestamp() {
+  timestamp_ = 0;
+  clear_has_timestamp();
+}
+inline float CCSUsrMsg_WeaponSound::timestamp() const {
+  return timestamp_;
+}
+inline void CCSUsrMsg_WeaponSound::set_timestamp(float value) {
+  set_has_timestamp();
+  timestamp_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_UpdateScreenHealthBar
+
+// optional int32 entidx = 1;
+inline bool CCSUsrMsg_UpdateScreenHealthBar::has_entidx() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::set_has_entidx() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::clear_has_entidx() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::clear_entidx() {
+  entidx_ = 0;
+  clear_has_entidx();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_UpdateScreenHealthBar::entidx() const {
+  return entidx_;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::set_entidx(::google::protobuf::int32 value) {
+  set_has_entidx();
+  entidx_ = value;
+}
+
+// optional float healthratio_old = 2;
+inline bool CCSUsrMsg_UpdateScreenHealthBar::has_healthratio_old() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::set_has_healthratio_old() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::clear_has_healthratio_old() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::clear_healthratio_old() {
+  healthratio_old_ = 0;
+  clear_has_healthratio_old();
+}
+inline float CCSUsrMsg_UpdateScreenHealthBar::healthratio_old() const {
+  return healthratio_old_;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::set_healthratio_old(float value) {
+  set_has_healthratio_old();
+  healthratio_old_ = value;
+}
+
+// optional float healthratio_new = 3;
+inline bool CCSUsrMsg_UpdateScreenHealthBar::has_healthratio_new() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::set_has_healthratio_new() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::clear_has_healthratio_new() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::clear_healthratio_new() {
+  healthratio_new_ = 0;
+  clear_has_healthratio_new();
+}
+inline float CCSUsrMsg_UpdateScreenHealthBar::healthratio_new() const {
+  return healthratio_new_;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::set_healthratio_new(float value) {
+  set_has_healthratio_new();
+  healthratio_new_ = value;
+}
+
+// optional int32 style = 4;
+inline bool CCSUsrMsg_UpdateScreenHealthBar::has_style() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::set_has_style() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::clear_has_style() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::clear_style() {
+  style_ = 0;
+  clear_has_style();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_UpdateScreenHealthBar::style() const {
+  return style_;
+}
+inline void CCSUsrMsg_UpdateScreenHealthBar::set_style(::google::protobuf::int32 value) {
+  set_has_style();
+  style_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_EntityOutlineHighlight
+
+// optional int32 entidx = 1;
+inline bool CCSUsrMsg_EntityOutlineHighlight::has_entidx() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_EntityOutlineHighlight::set_has_entidx() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_EntityOutlineHighlight::clear_has_entidx() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_EntityOutlineHighlight::clear_entidx() {
+  entidx_ = 0;
+  clear_has_entidx();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_EntityOutlineHighlight::entidx() const {
+  return entidx_;
+}
+inline void CCSUsrMsg_EntityOutlineHighlight::set_entidx(::google::protobuf::int32 value) {
+  set_has_entidx();
+  entidx_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_SSUI
+
+// optional bool show = 1;
+inline bool CCSUsrMsg_SSUI::has_show() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_SSUI::set_has_show() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_SSUI::clear_has_show() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_SSUI::clear_show() {
+  show_ = false;
+  clear_has_show();
+}
+inline bool CCSUsrMsg_SSUI::show() const {
+  return show_;
+}
+inline void CCSUsrMsg_SSUI::set_show(bool value) {
+  set_has_show();
+  show_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_SurvivalStats_Fact
+
+// optional int32 type = 1;
+inline bool CCSUsrMsg_SurvivalStats_Fact::has_type() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::set_has_type() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::clear_has_type() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::clear_type() {
+  type_ = 0;
+  clear_has_type();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_SurvivalStats_Fact::type() const {
+  return type_;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::set_type(::google::protobuf::int32 value) {
+  set_has_type();
+  type_ = value;
+}
+
+// optional int32 display = 2;
+inline bool CCSUsrMsg_SurvivalStats_Fact::has_display() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::set_has_display() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::clear_has_display() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::clear_display() {
+  display_ = 0;
+  clear_has_display();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_SurvivalStats_Fact::display() const {
+  return display_;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::set_display(::google::protobuf::int32 value) {
+  set_has_display();
+  display_ = value;
+}
+
+// optional int32 value = 3;
+inline bool CCSUsrMsg_SurvivalStats_Fact::has_value() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::set_has_value() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::clear_has_value() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::clear_value() {
+  value_ = 0;
+  clear_has_value();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_SurvivalStats_Fact::value() const {
+  return value_;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::set_value(::google::protobuf::int32 value) {
+  set_has_value();
+  value_ = value;
+}
+
+// optional float interestingness = 4;
+inline bool CCSUsrMsg_SurvivalStats_Fact::has_interestingness() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::set_has_interestingness() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::clear_has_interestingness() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::clear_interestingness() {
+  interestingness_ = 0;
+  clear_has_interestingness();
+}
+inline float CCSUsrMsg_SurvivalStats_Fact::interestingness() const {
+  return interestingness_;
+}
+inline void CCSUsrMsg_SurvivalStats_Fact::set_interestingness(float value) {
+  set_has_interestingness();
+  interestingness_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_SurvivalStats_Placement
+
+// optional uint64 xuid = 1;
+inline bool CCSUsrMsg_SurvivalStats_Placement::has_xuid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats_Placement::set_has_xuid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_SurvivalStats_Placement::clear_has_xuid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_SurvivalStats_Placement::clear_xuid() {
+  xuid_ = GOOGLE_ULONGLONG(0);
+  clear_has_xuid();
+}
+inline ::google::protobuf::uint64 CCSUsrMsg_SurvivalStats_Placement::xuid() const {
+  return xuid_;
+}
+inline void CCSUsrMsg_SurvivalStats_Placement::set_xuid(::google::protobuf::uint64 value) {
+  set_has_xuid();
+  xuid_ = value;
+}
+
+// optional int32 teamnumber = 2;
+inline bool CCSUsrMsg_SurvivalStats_Placement::has_teamnumber() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats_Placement::set_has_teamnumber() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCSUsrMsg_SurvivalStats_Placement::clear_has_teamnumber() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCSUsrMsg_SurvivalStats_Placement::clear_teamnumber() {
+  teamnumber_ = 0;
+  clear_has_teamnumber();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_SurvivalStats_Placement::teamnumber() const {
+  return teamnumber_;
+}
+inline void CCSUsrMsg_SurvivalStats_Placement::set_teamnumber(::google::protobuf::int32 value) {
+  set_has_teamnumber();
+  teamnumber_ = value;
+}
+
+// optional int32 placement = 3;
+inline bool CCSUsrMsg_SurvivalStats_Placement::has_placement() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats_Placement::set_has_placement() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_SurvivalStats_Placement::clear_has_placement() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_SurvivalStats_Placement::clear_placement() {
+  placement_ = 0;
+  clear_has_placement();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_SurvivalStats_Placement::placement() const {
+  return placement_;
+}
+inline void CCSUsrMsg_SurvivalStats_Placement::set_placement(::google::protobuf::int32 value) {
+  set_has_placement();
+  placement_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_SurvivalStats_Damage
+
+// optional uint64 xuid = 1;
+inline bool CCSUsrMsg_SurvivalStats_Damage::has_xuid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::set_has_xuid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::clear_has_xuid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::clear_xuid() {
+  xuid_ = GOOGLE_ULONGLONG(0);
+  clear_has_xuid();
+}
+inline ::google::protobuf::uint64 CCSUsrMsg_SurvivalStats_Damage::xuid() const {
+  return xuid_;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::set_xuid(::google::protobuf::uint64 value) {
+  set_has_xuid();
+  xuid_ = value;
+}
+
+// optional int32 to = 2;
+inline bool CCSUsrMsg_SurvivalStats_Damage::has_to() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::set_has_to() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::clear_has_to() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::clear_to() {
+  to_ = 0;
+  clear_has_to();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_SurvivalStats_Damage::to() const {
+  return to_;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::set_to(::google::protobuf::int32 value) {
+  set_has_to();
+  to_ = value;
+}
+
+// optional int32 to_hits = 3;
+inline bool CCSUsrMsg_SurvivalStats_Damage::has_to_hits() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::set_has_to_hits() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::clear_has_to_hits() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::clear_to_hits() {
+  to_hits_ = 0;
+  clear_has_to_hits();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_SurvivalStats_Damage::to_hits() const {
+  return to_hits_;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::set_to_hits(::google::protobuf::int32 value) {
+  set_has_to_hits();
+  to_hits_ = value;
+}
+
+// optional int32 from = 4;
+inline bool CCSUsrMsg_SurvivalStats_Damage::has_from() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::set_has_from() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::clear_has_from() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::clear_from() {
+  from_ = 0;
+  clear_has_from();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_SurvivalStats_Damage::from() const {
+  return from_;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::set_from(::google::protobuf::int32 value) {
+  set_has_from();
+  from_ = value;
+}
+
+// optional int32 from_hits = 5;
+inline bool CCSUsrMsg_SurvivalStats_Damage::has_from_hits() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::set_has_from_hits() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::clear_has_from_hits() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::clear_from_hits() {
+  from_hits_ = 0;
+  clear_has_from_hits();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_SurvivalStats_Damage::from_hits() const {
+  return from_hits_;
+}
+inline void CCSUsrMsg_SurvivalStats_Damage::set_from_hits(::google::protobuf::int32 value) {
+  set_has_from_hits();
+  from_hits_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_SurvivalStats
+
+// optional uint64 xuid = 1;
+inline bool CCSUsrMsg_SurvivalStats::has_xuid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats::set_has_xuid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_SurvivalStats::clear_has_xuid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_SurvivalStats::clear_xuid() {
+  xuid_ = GOOGLE_ULONGLONG(0);
+  clear_has_xuid();
+}
+inline ::google::protobuf::uint64 CCSUsrMsg_SurvivalStats::xuid() const {
+  return xuid_;
+}
+inline void CCSUsrMsg_SurvivalStats::set_xuid(::google::protobuf::uint64 value) {
+  set_has_xuid();
+  xuid_ = value;
+}
+
+// repeated .CCSUsrMsg_SurvivalStats.Fact facts = 2;
+inline int CCSUsrMsg_SurvivalStats::facts_size() const {
+  return facts_.size();
+}
+inline void CCSUsrMsg_SurvivalStats::clear_facts() {
+  facts_.Clear();
+}
+inline const ::CCSUsrMsg_SurvivalStats_Fact& CCSUsrMsg_SurvivalStats::facts(int index) const {
+  return facts_.Get(index);
+}
+inline ::CCSUsrMsg_SurvivalStats_Fact* CCSUsrMsg_SurvivalStats::mutable_facts(int index) {
+  return facts_.Mutable(index);
+}
+inline ::CCSUsrMsg_SurvivalStats_Fact* CCSUsrMsg_SurvivalStats::add_facts() {
+  return facts_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Fact >&
+CCSUsrMsg_SurvivalStats::facts() const {
+  return facts_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Fact >*
+CCSUsrMsg_SurvivalStats::mutable_facts() {
+  return &facts_;
+}
+
+// repeated .CCSUsrMsg_SurvivalStats.Placement users = 3;
+inline int CCSUsrMsg_SurvivalStats::users_size() const {
+  return users_.size();
+}
+inline void CCSUsrMsg_SurvivalStats::clear_users() {
+  users_.Clear();
+}
+inline const ::CCSUsrMsg_SurvivalStats_Placement& CCSUsrMsg_SurvivalStats::users(int index) const {
+  return users_.Get(index);
+}
+inline ::CCSUsrMsg_SurvivalStats_Placement* CCSUsrMsg_SurvivalStats::mutable_users(int index) {
+  return users_.Mutable(index);
+}
+inline ::CCSUsrMsg_SurvivalStats_Placement* CCSUsrMsg_SurvivalStats::add_users() {
+  return users_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Placement >&
+CCSUsrMsg_SurvivalStats::users() const {
+  return users_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Placement >*
+CCSUsrMsg_SurvivalStats::mutable_users() {
+  return &users_;
+}
+
+// repeated .CCSUsrMsg_SurvivalStats.Damage damages = 5;
+inline int CCSUsrMsg_SurvivalStats::damages_size() const {
+  return damages_.size();
+}
+inline void CCSUsrMsg_SurvivalStats::clear_damages() {
+  damages_.Clear();
+}
+inline const ::CCSUsrMsg_SurvivalStats_Damage& CCSUsrMsg_SurvivalStats::damages(int index) const {
+  return damages_.Get(index);
+}
+inline ::CCSUsrMsg_SurvivalStats_Damage* CCSUsrMsg_SurvivalStats::mutable_damages(int index) {
+  return damages_.Mutable(index);
+}
+inline ::CCSUsrMsg_SurvivalStats_Damage* CCSUsrMsg_SurvivalStats::add_damages() {
+  return damages_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Damage >&
+CCSUsrMsg_SurvivalStats::damages() const {
+  return damages_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_SurvivalStats_Damage >*
+CCSUsrMsg_SurvivalStats::mutable_damages() {
+  return &damages_;
+}
+
+// optional int32 ticknumber = 4;
+inline bool CCSUsrMsg_SurvivalStats::has_ticknumber() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CCSUsrMsg_SurvivalStats::set_has_ticknumber() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CCSUsrMsg_SurvivalStats::clear_has_ticknumber() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CCSUsrMsg_SurvivalStats::clear_ticknumber() {
+  ticknumber_ = 0;
+  clear_has_ticknumber();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_SurvivalStats::ticknumber() const {
+  return ticknumber_;
+}
+inline void CCSUsrMsg_SurvivalStats::set_ticknumber(::google::protobuf::int32 value) {
+  set_has_ticknumber();
+  ticknumber_ = value;
+}
+
+// -------------------------------------------------------------------
+
 // CCSUsrMsg_ResetHud
 
 // optional bool reset = 1;
@@ -12674,6 +16626,10 @@ namespace protobuf {
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::ECstrike15UserMessages>() {
   return ::ECstrike15UserMessages_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::ECSUsrMsg_DisconnectToLobby_Action>() {
+  return ::ECSUsrMsg_DisconnectToLobby_Action_descriptor();
 }
 
 }  // namespace google
