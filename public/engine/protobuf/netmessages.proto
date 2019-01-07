@@ -117,6 +117,7 @@ enum NET_Messages
 	net_StringCmd = 5; 				// a string command
 	net_SetConVar = 6;				// sends one/multiple convar/userinfo settings
 	net_SignonState = 7;			// signals or acks current signon state
+	net_PlayerAvatarData = 100;
 }
 
 message CNETMsg_Tick
@@ -125,6 +126,7 @@ message CNETMsg_Tick
 	optional uint32 host_computationtime = 4;
 	optional uint32 host_computationtime_std_deviation = 5;
 	optional uint32 host_framestarttime_std_deviation = 6;
+	optional uint32 hltv_replay_flags = 7;
 }
 
 message CNETMsg_StringCmd
@@ -180,6 +182,11 @@ message CNETMsg_SplitScreenUser
 	optional int32 slot = 1;
 }
 
+message CNETMsg_PlayerAvatarData {
+	optional uint32 accountid = 1;
+	optional bytes rgb = 2;
+}
+
 //=============================================================================
 // Client messages
 //=============================================================================
@@ -197,6 +204,7 @@ enum CLC_Messages
 	clc_SplitPlayerConnect 		= 16;
 	clc_ClientMessage 			= 17; 
 	clc_CmdKeyValues			= 18;
+	clc_HltvReplay 				= 20;
 }
 
 message CCLCMsg_ClientInfo
@@ -221,6 +229,10 @@ message CCLCMsg_VoiceData
 {
 	optional bytes data = 1;
 	optional fixed64 xuid = 2;
+	optional VoiceDataFormat_t format = 3 [default = VOICEDATA_FORMAT_ENGINE];
+	optional int32 sequence_bytes = 4;
+	optional uint32 section_number = 5;
+	optional uint32 uncompressed_sample_offset = 6;
 }
 
 message CCLCMsg_BaselineAck
@@ -290,6 +302,11 @@ message CCLCMsg_CmdKeyValues
 // Server messages
 //=============================================================================
 
+enum VoiceDataFormat_t {
+	VOICEDATA_FORMAT_STEAM = 0;
+	VOICEDATA_FORMAT_ENGINE = 1;
+}
+
 enum ESplitScreenMessageType 
 {
 	option allow_alias = true;
@@ -297,6 +314,13 @@ enum ESplitScreenMessageType
 	MSG_SPLITSCREEN_REMOVEUSER = 1;
 	MSG_SPLITSCREEN_TYPE_BITS = 1;
 };
+
+enum ReplayEventType_t {
+	REPLAY_EVENT_CANCEL = 0;
+	REPLAY_EVENT_DEATH = 1;
+	REPLAY_EVENT_GENERIC = 2;
+	REPLAY_EVENT_STUCK_NEED_FULL_UPDATE = 3;
+}
 
 enum SVC_Messages
 {
@@ -327,6 +351,8 @@ enum SVC_Messages
 	svc_PaintmapData		= 33;
 	svc_CmdKeyValues		= 34;		// Server submits KeyValues command for the client
 	svc_EncryptedData		= 35;
+	svc_HltvReplay 			= 36;
+	svc_Broadcast_Command 	= 38;
 }
 
 message CSVCMsg_ServerInfo
@@ -427,6 +453,7 @@ message CSVCMsg_VoiceInit
 {
 	optional int32 quality = 1;
 	optional string codec = 2;
+	optional int32 version = 3 [default = 0];
 }
 
 message CSVCMsg_VoiceData
@@ -437,6 +464,10 @@ message CSVCMsg_VoiceData
 	optional int32 audible_mask = 4;
 	optional bytes voice_data = 5;
 	optional bool caster = 6;
+	optional VoiceDataFormat_t format = 7 [default = VOICEDATA_FORMAT_ENGINE];
+	optional int32 sequence_bytes = 8;
+	optional uint32 section_number = 9;
+	optional uint32 uncompressed_sample_offset = 10;
 }
 
 message CSVCMsg_FixAngle
@@ -486,7 +517,8 @@ message CSVCMsg_Menu
 message CSVCMsg_UserMessage
 {
 	optional int32 msg_type = 1;
-	optional bytes msg_data = 2;	
+	optional bytes msg_data = 2;
+	optional int32 passthrough = 3;
 }
 
 message CSVCMsg_PaintmapData
@@ -512,6 +544,7 @@ message CSVCMsg_GameEvent
 	optional string event_name = 1;
 	optional int32 eventid = 2;
 	repeated key_t keys = 3;
+	optional int32 passthrough = 4;
 }
 
 message CSVCMsg_GameEventList
@@ -593,4 +626,26 @@ message CSVCMsg_EncryptedData
 {
 	optional bytes encrypted = 1;
 	optional int32 key_type = 2;
+}
+
+message CSVCMsg_HltvReplay {
+	optional int32 delay = 1;
+	optional int32 primary_target = 2;
+	optional int32 replay_stop_at = 3;
+	optional int32 replay_start_at = 4;
+	optional int32 replay_slowdown_begin = 5;
+	optional int32 replay_slowdown_end = 6;
+	optional float replay_slowdown_rate = 7;
+}
+
+message CCLCMsg_HltvReplay {
+	optional int32 request = 1;
+	optional float slowdown_length = 2;
+	optional float slowdown_rate = 3;
+	optional int32 primary_target_ent_index = 4;
+	optional float event_time = 5;
+}
+
+message CSVCMsg_Broadcast_Command {
+	optional string cmd = 1;
 }
