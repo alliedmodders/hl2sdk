@@ -33,7 +33,11 @@
 #include <wchar.h>
 #endif
 #include <string.h>
+#if defined __APPLE__
+#include <stdlib.h>
+#else
 #include <malloc.h>
+#endif
 #include "commonmacros.h"
 #include "memalloc.h"
 
