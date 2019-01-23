@@ -427,7 +427,7 @@ typedef void * HINSTANCE;
 	// On OSX, SIGTRAP doesn't really stop the thread cold when debugging.
 	// So if being debugged, use INT3 which is precise.
 #ifdef OSX
-#define DebuggerBreak()  if ( Plat_IsInDebugSession() ) { __asm ( "int $3" ); } else { raise(SIGTRAP); }
+#define DebuggerBreak()  do { if ( Plat_IsInDebugSession() ) { __asm ( "int $3" ); } else { raise(SIGTRAP); } } while (0)
 #else
 #define DebuggerBreak()  raise(SIGTRAP)
 #endif
