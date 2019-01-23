@@ -16,6 +16,8 @@
 #include "limits.h"
 
 #if defined( OSX )
+
+#if !defined( wcsdup )
 inline wchar_t *wcsdup(const wchar_t *pString)
 {
 	wchar_t *pMemory;
@@ -31,6 +33,7 @@ inline wchar_t *wcsdup(const wchar_t *pString)
 
 	return NULL;
 }
+#endif
 
 inline size_t strnlen(const char *s, size_t n)
 {
