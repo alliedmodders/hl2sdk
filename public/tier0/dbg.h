@@ -567,7 +567,7 @@ public:
 // of our complicated templates properly.  Use some preprocessor trickery
 // to workaround this
 #ifdef __GNUC__
-	#define COMPILE_TIME_ASSERT( pred ) typedef int UNIQUE_ID[ (pred) ? 1 : -1 ]
+	#define COMPILE_TIME_ASSERT( pred ) typedef int UNIQUE_ID[ (pred) ? 1 : -1 ] __attribute__((unused))
 #else
 	#if _MSC_VER >= 1600
 	// If available use static_assert instead of weird language tricks. This
