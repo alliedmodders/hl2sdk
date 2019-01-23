@@ -566,7 +566,15 @@ public:
 // We're using an ancient version of GCC that can't quite handle some
 // of our complicated templates properly.  Use some preprocessor trickery
 // to workaround this
-#ifdef __GNUC__
+#ifndef __has_feature
+  #define __has_feature(x) 0 // Compatibility with non-clang compilers.
+#endif
+#if __has_feature(cxx_static_assert)
+	// If available use static_assert instead of weird language tricks. This
+	// leads to much more readable messages when compile time assert constraints
+	// are violated.
+	#define COMPILE_TIME_ASSERT( pred ) static_assert( pred, "Compile time assert constraint is not true: " #pred )
+#elif defined __GNUC__
 	#define COMPILE_TIME_ASSERT( pred ) typedef int UNIQUE_ID[ (pred) ? 1 : -1 ] __attribute__((unused))
 #else
 	#if _MSC_VER >= 1600
