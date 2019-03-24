@@ -143,6 +143,8 @@ public:
 	virtual bool		CheckOriginInPVS( const Vector &org, const unsigned char *checkpvs, int checkpvssize ) = 0;
 	// Check whether the specified worldspace bounding box is inside the specified PVS
 	virtual bool		CheckBoxInPVS( const Vector &mins, const Vector &maxs, const unsigned char *checkpvs, int checkpvssize ) = 0;
+	// Check whether the specified worldspace bounding box is partially inside the specified PVS
+	virtual bool		CheckBoxPartiallyInPVS( const Vector &mins, const Vector &maxs, const unsigned char *checkpvs, int checkpvssize ) = 0;
 
 	// Returns the server assigned userid for this player.  Useful for logging frags, etc.  
 	//  returns -1 if the edict couldn't be found in the list of players.
