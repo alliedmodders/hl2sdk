@@ -52,7 +52,7 @@ typedef int	string_t;
 struct string_t
 {
 public:
-	bool operator!() const							{ return ( pszValue == NULL );			}
+	bool operator!() const							{ return ( pszValue == nullptr );			}
 	bool operator==( const string_t &rhs ) const	{ return ( pszValue == rhs.pszValue );	}
 	bool operator!=( const string_t &rhs ) const	{ return ( pszValue != rhs.pszValue );	}
 	bool operator<( const string_t &rhs ) const		{ return ((void *)pszValue < (void *)rhs.pszValue ); }
@@ -67,7 +67,7 @@ protected:
 
 struct castable_string_t : public string_t // string_t is used in unions, hence, no constructor allowed
 {
-	castable_string_t()							{ pszValue = NULL; }
+	castable_string_t()							{ pszValue = nullptr; }
 	castable_string_t( const char *pszFrom )	{ pszValue = (pszFrom && *pszFrom) ? pszFrom : 0; }
 };
 
