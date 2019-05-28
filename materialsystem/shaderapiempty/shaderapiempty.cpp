@@ -144,6 +144,7 @@ public:
 	void RefreshFrontBufferNonInteractive();
 	void HandleThreadEvent( uint32 threadEvent );
 	void DoStartupShaderPreloading();
+	const char *GetDeviceName();
 private:
 	CEmptyMesh m_Mesh;
 	CEmptyMesh m_DynamicMesh;
@@ -257,6 +258,7 @@ public:
 	virtual void SetAmbientLightCube( Vector4D cube[6] );
 	virtual void CopyRenderTargetToTexture( ShaderAPITextureHandle_t textureHandle );
 	virtual void CopyRenderTargetToTextureEx( ShaderAPITextureHandle_t textureHandle, int nRenderTargetID, Rect_t *pSrcRect, Rect_t *pDstRect );
+	virtual void CopyTextureToRenderTargetEx( int nRenderTargetID, ShaderAPITextureHandle_t textureHandle, Rect_t *pSrcRect, Rect_t *pDstRect );
 	virtual void SetNumBoneWeights( int numBones );
 	virtual void EnableHWMorphing( bool bEnable );
 	virtual IMesh *GetDynamicMesh( IMaterial *pMaterial, int nHWSkinBoneCount, bool bBuffered, IMesh *pVertexOverride, IMesh *pIndexOverride);
@@ -578,6 +580,15 @@ public:
 	virtual bool HasFullResolutionDepthTexture() const;
 	virtual int NumBooleanPixelShaderConstants() const;
 	virtual int NumIntegerPixelShaderConstants() const;
+	virtual ShaderAPITextureHandle_t GetStandardTextureHandle( StandardTextureId_t nID );
+	virtual bool IsStandardTextureHandleValid( StandardTextureId_t nId ); 
+	virtual int Unknown0( int a1, void **a2, int *a3 );
+	virtual void Unknown1();
+	virtual void Unknown2( int a1, void *a2, int a3 );
+	virtual void *Unknown3( void *a1, int a2 );
+	virtual void *Unknown4( void *a1, int a2 );
+	virtual void Unknown5( void **a1, void **a2, char *a3 );
+	virtual void Unknown6( void *a1, int a2 );
 private:
 	enum
 	{
@@ -1178,6 +1189,11 @@ void CShaderDeviceEmpty::DoStartupShaderPreloading()
 
 }
 
+const char *CShaderDeviceEmpty::GetDeviceName()
+{
+	return "";
+}
+
 //-----------------------------------------------------------------------------
 // Empty shader shadow
 //-----------------------------------------------------------------------------
@@ -1632,6 +1648,11 @@ void CShaderAPIEmpty::CopyRenderTargetToTexture( ShaderAPITextureHandle_t textur
 }
 
 void CShaderAPIEmpty::CopyRenderTargetToTextureEx( ShaderAPITextureHandle_t textureHandle, int nRenderTargetID, Rect_t *pSrcRect, Rect_t *pDstRect )
+{
+
+}
+
+void CShaderAPIEmpty::CopyTextureToRenderTargetEx( int nRenderTargetID, ShaderAPITextureHandle_t textureHandle, Rect_t *pSrcRect, Rect_t *pDstRect )
 {
 
 }
@@ -3254,3 +3275,49 @@ int CShaderAPIEmpty::NumIntegerPixelShaderConstants() const
 	return 0;
 }
 
+ShaderAPITextureHandle_t CShaderAPIEmpty::GetStandardTextureHandle(StandardTextureId_t nID)
+{
+	return 0;
+}
+
+bool CShaderAPIEmpty::IsStandardTextureHandleValid( StandardTextureId_t nId )
+{
+	return false;
+}
+
+int CShaderAPIEmpty::Unknown0( int a1, void **a2, int *a3 )
+{
+	*a2 = nullptr;
+	*a3 = 0;
+	return 0;
+}
+
+void CShaderAPIEmpty::Unknown1()
+{
+
+}
+
+void CShaderAPIEmpty::Unknown2( int a1, void *a2, int a3 )
+{
+
+}
+
+void *CShaderAPIEmpty::Unknown3( void *a1, int a2 )
+{
+	return nullptr;
+}
+
+void *CShaderAPIEmpty::Unknown4( void *a1, int a2 )
+{
+	return nullptr;
+}
+
+void CShaderAPIEmpty::Unknown5( void **a1, void **a2, char *a3 )
+{
+
+}
+
+void CShaderAPIEmpty::Unknown6( void *a1, int a2 )
+{
+
+}

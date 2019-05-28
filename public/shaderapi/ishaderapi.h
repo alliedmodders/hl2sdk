@@ -289,6 +289,9 @@ public:
 	virtual bool IsRenderingPaint() const = 0;
 	virtual bool IsStereoActiveThisFrame() const = 0;
 
+	virtual bool IsStandardTextureHandleValid( StandardTextureId_t nId ) = 0;
+	virtual int Unknown0( int a1, void **a2, int *a3 ) = 0;
+
 	// Viewport methods
 	virtual void SetViewports( int nCount, const ShaderViewport_t* pViewports, bool setImmediately ) = 0;
 	virtual int GetViewports( ShaderViewport_t* pViewports, int nMax ) const = 0;
@@ -590,6 +593,7 @@ public:
 		ShaderAPITextureHandle_t depthTextureHandle = SHADER_RENDERTARGET_DEPTHBUFFER ) = 0;
 
 	virtual void CopyRenderTargetToTextureEx( ShaderAPITextureHandle_t textureHandle, int nRenderTargetID, Rect_t *pSrcRect = NULL, Rect_t *pDstRect = NULL ) = 0;
+	virtual void CopyTextureToRenderTargetEx( int nRenderTargetID, ShaderAPITextureHandle_t textureHandle, Rect_t *pSrcRect = NULL, Rect_t *pDstRect = NULL ) = 0;
 
 	// For dealing with device lost in cases where SwapBuffers isn't called all the time (Hammer)
 	virtual void HandleDeviceLost() = 0;
@@ -704,6 +708,8 @@ public:
 
 	virtual void SetScissorRect( int nLeft, int nTop, int nRight, int nBottom, bool bEnableScissor ) = 0;
 
+	virtual void Unknown1() = 0;
+
 	// nVidia CSAA modes, different from SupportsMSAAMode()
 	virtual bool SupportsCSAAMode( int nNumSamples, int nQualityLevel ) = 0;
 
@@ -806,6 +812,13 @@ public:
 	virtual float GetLightMapScaleFactor( void ) const = 0;
 	virtual ShaderAPITextureHandle_t FindTexture( const char * pDebugName ) = 0;
 	virtual void GetTextureDimensions(ShaderAPITextureHandle_t hTexture, int &nWidth, int &nHeight, int &nDepth) = 0;
+	virtual ShaderAPITextureHandle_t GetStandardTextureHandle(StandardTextureId_t nID) = 0;
+
+	virtual void Unknown2( int a1, void *a2, int a3 ) = 0;
+	virtual void *Unknown3( void *a1, int a2 ) = 0;
+	virtual void *Unknown4( void *a1, int a2 ) = 0;
+	virtual void Unknown5( void **a1, void **a2, char *a3 ) = 0;
+	virtual void Unknown6( void *a1, int a2 ) = 0;
 };
 
 

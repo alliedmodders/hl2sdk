@@ -280,6 +280,8 @@ public:
 #endif
 
 	virtual void OnDebugEvent( const char *pEvent ) {};
+
+	virtual const char *GetDeviceName() = 0;
 };
 
 
