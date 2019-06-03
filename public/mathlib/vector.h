@@ -204,7 +204,9 @@ private:
 
 
 
-#define USE_M64S ( ( !defined( _X360 ) ) && ( ! defined( _LINUX) ) )
+#if ( !defined( _X360 ) ) && ( ! defined( _LINUX) )
+#define USE_M64S 1
+#endif
 
 
 
