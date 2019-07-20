@@ -28,6 +28,7 @@ class ITraceListData;
 class CPhysCollide;
 struct cplane_t;
 struct virtualmeshlist_t;
+class CBrushQuery;
 
 //-----------------------------------------------------------------------------
 // The standard trace filter... NOTE: Most normal traces inherit from CTraceFilter!!!
@@ -130,7 +131,7 @@ public:
 
 struct BrushSideInfo_t
 {
-	Vector4D plane;			// The plane of the brush side
+	cplane_t plane;		// The plane of the brush side
 	unsigned short bevel;	// Bevel plane?
 	unsigned short thin;	// Thin?
 };
@@ -191,7 +192,7 @@ public:
 
 
 	//finds brushes in an AABB, prone to some false positives
-	virtual void GetBrushesInAABB( const Vector &vMins, const Vector &vMaxs, CUtlVector<int> *pOutput, int iContentsMask = 0xFFFFFFFF ) = 0;
+	virtual void GetBrushesInAABB( const Vector &vMins, const Vector &vMaxs, CBrushQuery *pQuery, int iContentsMask = 0xFFFFFFFF, int unknown ) = 0;
 
 	//Creates a CPhysCollide out of all displacements wholly or partially contained in the specified AABB
 	virtual CPhysCollide* GetCollidableFromDisplacementsInAABB( const Vector& vMins, const Vector& vMaxs ) = 0;
@@ -202,8 +203,9 @@ public:
 	// gets a specific diplacement mesh
 	virtual void GetDisplacementMesh( int nIndex, virtualmeshlist_t *pMeshTriList ) = 0;
 	
-	//retrieve brush planes and contents, returns true if data is being returned in the output pointers, false if the brush doesn't exist
-	virtual bool GetBrushInfo( int iBrush, CUtlVector<BrushSideInfo_t> *pBrushSideInfoOut, int *pContentsOut ) = 0;
+	// Retrieve brush planes and contents, returns 0 if the brush doesn't exist
+	// Returns number of sides filled out if there is space, negative number of required elements if not or null is given
+	virtual int GetBrushInfo( int iBrush, int *pContentsOut, BrushSideInfo_t *pBrushSideInfoOut, int iBrushSideInfoOutSize ) = 0;
 
 	virtual bool PointOutsideWorld( const Vector &ptTest ) = 0; //Tests a point to see if it's outside any playable area
 
