@@ -62,13 +62,11 @@ public:
 	virtual CVarDLLIdentifier_t AllocateDLLIdentifier() = 0;
 
 	// Register, unregister commands
-	virtual void			RegisterConCommand( ConCommandBase *pCommandBase, bool unknown=true ) = 0;
+	virtual void			RegisterConCommand( ConCommandBase *pCommandBase, bool cmdline=true ) = 0;
 	virtual void			UnregisterConCommand( ConCommandBase *pCommandBase ) = 0;
 	virtual void			UnregisterConCommands( CVarDLLIdentifier_t id ) = 0;
 
-	// If there is a +<varname> <value> on the command line, this returns the value.
-	// Otherwise, it returns NULL.
-	virtual const char*		GetCommandLineValue( const char *pVariableName ) = 0;
+	virtual bool			HasCommandLineValue( const char *pVariableName ) = 0;
 
 	// Try to find the cvar pointer by name
 	virtual ConCommandBase *FindCommandBase( const char *name ) = 0;
