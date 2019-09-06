@@ -142,7 +142,7 @@ public:
 	virtual void * AllocateVirtualMemorySection( unsigned int ) = 0;
 	virtual int GetGenericMemoryStats( void ** ) = 0;
 
-	virtual ~IMemAlloc() { };
+	virtual ~IMemAlloc() = 0;
 
 	virtual unsigned int GetDebugInfoSize() = 0;
 	virtual void SaveDebugInfo( void * ) = 0;
