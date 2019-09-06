@@ -169,6 +169,9 @@ class CSendTablePrecalc;
 #define SENDPROP_DEFAULT_PRIORITY ((byte)128)
 #define SENDPROP_CHANGES_OFTEN_PRIORITY ((byte)64)
 
+#define SENDPROP_NETWORKVAR_FLAGS_SHIFT 20
+#define SENDPROP_OFFSET_MASK			( ( 1 << SENDPROP_NETWORKVAR_FLAGS_SHIFT ) - 1 )
+
 class SendProp
 {
 public:
@@ -277,7 +280,7 @@ private:
 
 inline int SendProp::GetOffset() const
 {
-	return m_Offset; 
+	return m_Offset & SENDPROP_OFFSET_MASK;
 }
 
 inline void SendProp::SetOffset( int i )

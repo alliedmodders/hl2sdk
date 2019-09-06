@@ -264,6 +264,9 @@ public:
 	virtual bool			IsSpecificDLCPresent( unsigned int nDLCPackage ) { return m_pFileSystemPassThru->IsSpecificDLCPresent( nDLCPackage ); }
 	virtual void            SetIODelayAlarm( float flThreshhold ) { m_pFileSystemPassThru->SetIODelayAlarm( flThreshhold ); }
 
+	virtual bool			AddXLSPUpdateSearchPath( const void *unknown1, int unknown2 ) { return m_pFileSystemPassThru->AddXLSPUpdateSearchPath(unknown1, unknown2); }
+	virtual void		*GetIoStats() { return m_pFileSystemPassThru->GetIoStats(); }
+
 protected:
 	IFileSystem *m_pFileSystemPassThru;
 };

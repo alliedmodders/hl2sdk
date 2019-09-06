@@ -800,6 +800,9 @@ public:
 	// 0.0 will turn off the functionality.
 	virtual void            SetIODelayAlarm( float flThreshhold ) = 0;
 
+	virtual bool			AddXLSPUpdateSearchPath( const void *, int ) = 0;
+	
+	virtual void		*GetIoStats() = 0;
 };
 
 //-----------------------------------------------------------------------------

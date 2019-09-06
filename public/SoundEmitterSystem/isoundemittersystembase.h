@@ -192,16 +192,20 @@ private:
 	pitch_interval_t		pitch;					// 22
 	uint16					channel;				// 24
 	uint16					delay_msec;				// 26
+	unsigned short			unknown1;
 	
 	bool			play_to_owner_only:1; // For weapon sounds...	// 27
 	// Internal use, for warning about missing .wav files
 	bool			had_missing_wave_files:1;
 	bool			uses_gender_token:1;
 	bool			m_bShouldPreload:1;
+	bool			unknown2:1;
+	bool			unknown3:1;
 
 	byte			reserved;						// 28
 
 	KeyValues *				m_pGameData;			// 32
+	KeyValues *				unknown4;
 };
 #pragma pack()
 

@@ -123,9 +123,7 @@ public:
 
 	virtual void DumpBlockStats( void * ) = 0;
 
-#if defined( _MEMTEST )	
 	virtual void SetStatsExtraInfo( const char *pMapName, const char *pComment ) = 0;
-#endif
 
 	// Returns 0 if no failure, otherwise the size_t of the last requested chunk
 	virtual size_t MemoryAllocFailed() = 0;
@@ -140,6 +138,16 @@ public:
 
 	// Replacement for ::GlobalMemoryStatus which accounts for unused memory in our system
 	virtual void GlobalMemoryStatus( size_t *pUsedMemory, size_t *pFreeMemory ) = 0;
+
+	virtual void * AllocateVirtualMemorySection( unsigned int ) = 0;
+	virtual int GetGenericMemoryStats( void ** ) = 0;
+
+	virtual ~IMemAlloc() { };
+
+	virtual unsigned int GetDebugInfoSize() = 0;
+	virtual void SaveDebugInfo( void * ) = 0;
+	virtual void RestoreDebugInfo( const void * ) = 0;	
+	virtual void InitDebugInfo( void *, const char *, int ) = 0;
 };
 
 //-----------------------------------------------------------------------------

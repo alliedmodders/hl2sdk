@@ -21,6 +21,7 @@ class QAngle;
 class CGameTrace;
 typedef CGameTrace trace_t;
 class IClientUnknown;
+class IPhysicsObject;
 
 
 abstract_class ICollideable
@@ -72,10 +73,12 @@ public:
 	// It may or may not be a tight-fitting box and its volume may suddenly change
 	virtual void			WorldSpaceSurroundingBounds( Vector *pVecMins, Vector *pVecMaxs ) = 0;
 
-	virtual bool			ShouldTouchTrigger( int triggerSolidFlags ) const = 0;
+	virtual unsigned int	GetRequiredTriggerFlags() const = 0;
 
 	// returns NULL unless this collideable has specified FSOLID_ROOT_PARENT_ALIGNED
 	virtual const matrix3x4_t	*GetRootParentToWorldTransform() const = 0;
+
+	virtual IPhysicsObject	*GetVPhysicsObject() const = 0;
 };
 
 

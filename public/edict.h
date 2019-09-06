@@ -127,10 +127,8 @@ public:
 	// change info is valid.
 	unsigned short m_iSerialNumber;
 	
-#ifdef NETWORK_VARS_ENABLED
 	CEdictChangeInfo m_ChangeInfos[MAX_EDICT_CHANGE_INFOS];
 	unsigned short m_nChangeInfos;	// How many are in use this frame.
-#endif
 };
 extern CSharedEdictChangeInfo *g_pSharedChangeInfo;
 

@@ -191,7 +191,7 @@ public:
 
 
 	//finds brushes in an AABB, prone to some false positives
-	virtual void GetBrushesInAABB( const Vector &vMins, const Vector &vMaxs, CUtlVector<int> *pOutput, int iContentsMask = 0xFFFFFFFF ) = 0;
+	virtual void GetBrushesInAABB( const Vector &vMins, const Vector &vMaxs, class CBrushQuery &pOutput, int iContentsMask = 0xFFFFFFFF, int unknown = 0 ) = 0;
 
 	//Creates a CPhysCollide out of all displacements wholly or partially contained in the specified AABB
 	virtual CPhysCollide* GetCollidableFromDisplacementsInAABB( const Vector& vMins, const Vector& vMaxs ) = 0;
@@ -215,6 +215,10 @@ public:
 
 	/// Used only in debugging: get/set/clear/increment the trace debug counter. See comment below for details.
 	virtual int GetSetDebugTraceCounter( int value, DebugTraceCounterBehavior_t behavior ) = 0;
+
+	virtual int GetMeshesFromDisplacementsInAABB( const Vector &, const Vector &, virtualmeshlist_t *, int ) = 0;
+
+	virtual void GetBrushesInCollideable( ICollideable *, class CBrushQuery & ) = 0;
 };
 
 /// IEngineTrace::GetSetDebugTraceCounter

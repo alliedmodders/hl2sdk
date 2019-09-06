@@ -345,6 +345,8 @@ private:
 	KeyValues *m_pPeer;	// pointer to next key in list
 	KeyValues *m_pSub;	// pointer to Start of a new sub key list
 	KeyValues *m_pChain;// Search here if it's not in our list
+
+	void *unknown1;
 };
 
 typedef KeyValues::AutoDelete KeyValuesAD;
