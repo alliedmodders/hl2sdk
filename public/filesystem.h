@@ -539,7 +539,7 @@ public:
 		) = 0;
 
 	virtual void			FindFileAbsoluteList(
-		CUtlVector<CUtlString, CUtlMemory<CUtlString, int>> &output,
+		CUtlVector<CUtlString> &output,
 		const char *pWildCard,
 		const char *pPathID
 		) = 0;
