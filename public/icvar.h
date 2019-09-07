@@ -66,6 +66,9 @@ public:
 	virtual void			UnregisterConCommand( ConCommandBase *pCommandBase ) = 0;
 	virtual void			UnregisterConCommands( CVarDLLIdentifier_t id ) = 0;
 
+	// If there is a +<varname> <value> on the command line, this returns the value.
+	// Otherwise, it returns NULL.
+	inline static const char *GetCommandLineValue( const char *pVariableName );
 	virtual bool			HasCommandLineValue( const char *pVariableName ) = 0;
 
 	// Try to find the cvar pointer by name
@@ -193,6 +196,19 @@ inline bool ICvar::Iterator::IsValid( void )
 inline ConCommandBase * ICvar::Iterator::Get( void )
 {
 	return m_pIter->Get();
+}
+
+inline const char *ICvar::GetCommandLineValue( const char *pVariableName )
+{
+	if (pVariableName[0] == '\0')
+		return NULL;
+	size_t len = strlen(pVariableName);
+	char *search = new char[len + 2];
+	search[0] = '+';
+	memcpy(&search[1], pVariableName, len + 1);
+	const char *value = CommandLine()->ParmValue(search);
+	delete[] search;
+	return value;
 }
 
 
