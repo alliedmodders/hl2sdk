@@ -68,7 +68,7 @@ public:
 
 	// If there is a +<varname> <value> on the command line, this returns the value.
 	// Otherwise, it returns NULL.
-	inline static const char *GetCommandLineValue( const char *pVariableName );
+	inline const char*		GetCommandLineValue( const char *pVariableName );
 	virtual bool			HasCommandLineValue( const char *pVariableName ) = 0;
 
 	// Try to find the cvar pointer by name
