@@ -32,7 +32,17 @@
 //
 //=============================================================================
 
-#if !defined FUNCTORS_H && 0
+#ifdef _WIN32
+#if defined _CPPRTTI || 1
+#define __RTTI_ENABLED
+#endif
+#else
+#ifdef __GXX_RTTI
+#define __RTTI_ENABLED
+#endif
+#endif
+
+#if !defined FUNCTORS_H && defined __RTTI_ENABLED
 #define FUNCTORS_H
 
 #if defined( _WIN32 )
