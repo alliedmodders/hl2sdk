@@ -30,19 +30,18 @@ ifeq "$(OS)" "Darwin"
 CC = /usr/bin/clang
 CPLUS = /usr/bin/clang++
 CLINK = /usr/bin/clang
-CPP_LIB =
 else
 CC = /usr/bin/gcc
 CPLUS = /usr/bin/g++
 CLINK = /usr/bin/gcc
-CPP_LIB = $(SRCDS_DIR)/bin/libstdc++.so.6
 endif
+CPP_LIB = "libstdc++.a libgcc_eh.a"
 
 # put any compiler flags you want passed here
 USER_CFLAGS =
 
 # link flags for your mod, make sure to include any special libraries here
-LDFLAGS = "-lm -ldl $(LIB_DIR)/particles_i486.a $(LIB_DIR)/dmxloader_i486.a $(LIB_DIR)/mathlib_i486.a libtier0_srv.so libvsdlib_srv.so $(LIB_DIR)/tier1_i486.a $(LIB_DIR)/tier2_i486.a $(LIB_DIR)/tier3_i486.a $(LIB_DIR)/choreoobjects_i486.a libsteam_api.so"
+LDFLAGS = "-lm -ldl $(LIB_DIR)/particles_i486.a $(LIB_DIR)/dmxloader_i486.a $(LIB_DIR)/mathlib_i486.a tier0_i486.so vstdlib_i486.so $(LIB_DIR)/tier1_i486.a $(LIB_DIR)/tier2_i486.a $(LIB_DIR)/tier3_i486.a $(LIB_DIR)/choreoobjects_i486.a steam_api_i486.so"
 
 # XERCES 2.6.0 or above ( http://xml.apache.org/xerces-c/ ) is used by the vcproj to makefile converter
 # it must be installed before being able to run this makefile
@@ -57,6 +56,7 @@ DEBUG = false
 #############################################################################
 # Things below here shouldn't need to be altered
 #############################################################################
+OS := $(shell uname -s)
 MAKE = make
 AR = "ar rvs"
 
@@ -77,27 +77,22 @@ endif
 
 # the CPU target for the build, must be i486 for now
 ARCH = i486
-ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -m32
+ARCH_CFLAGS = -mtune=i686 -march=pentium3 -mmmx -msse -msse2 -m32
 
 ifeq "$(OS)" "Darwin"
 DEFINES = -D_OSX -DOSX
-SHLIBEXT = dylib
-SHLIBLDFLAGS = -dynamiclib -mmacosx-version-min=10.5
-SHLIBSUFFIX = 
 else
 DEFINES = -D_LINUX -DLINUX
-SHLIBEXT = so
-SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt -Wl
-SHLIBSUFFIX = 
 endif
 
-DEFINES +=-DGNUC -DPOSIX -D_POSIX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp -D_strnicmp=strncasecmp \
-	-Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
+DEFINES += -DCOMPILER_GCC -DPOSIX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricmp=strcasecmp \
+	-D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
-BASE_CFLAGS = -fno-strict-aliasing -Wall -Wsign-compare -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
-	      -Wno-delete-non-virtual-dtor
+BASE_CFLAGS = -fno-strict-aliasing -Wall -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof
+SHLIBEXT = so
 SHLIBCFLAGS = -fPIC
+SHLIBLDFLAGS = -shared -Wl,-Map,$@_map.txt -Wl
 
 # Flags passed to the c compiler
 CFLAGS = $(DEFINES) $(ARCH_CFLAGS) -O3 $(BASE_CFLAGS)
@@ -113,7 +108,7 @@ DBG_CFLAGS = "$(DEFINES) $(ARCH_CFLAGS) -g -ggdb $(BASE_CFLAGS) $(UNDEF)"
 # define list passed to make for the sub makefile
 BASE_DEFINES = CC=$(CC) AR=$(AR) CPLUS=$(CPLUS) CPP_LIB=$(CPP_LIB) DEBUG=$(DEBUG) \
 	BUILD_DIR=$(BUILD_DIR) BUILD_OBJ_DIR=$(BUILD_OBJ_DIR) SRC_DIR=$(SRC_DIR) \
-	LIB_DIR=$(LIB_DIR) SHLIBLDFLAGS="$(SHLIBLDFLAGS)" SHLIBEXT=$(SHLIBEXT) SHLIBSUFFIX=$(SHLIBSUFFIX) \
+	LIB_DIR=$(LIB_DIR) SHLIBLDFLAGS=$(SHLIBLDFLAGS) SHLIBEXT=$(SHLIBEXT) \
 	CLINK=$(CLINK) CFLAGS="$(CFLAGS)" DBG_CFLAGS=$(DBG_CFLAGS) LDFLAGS=$(LDFLAGS) \
 	DEFINES="$(DEFINES)" DBG_DEFINES=$(DBG_DEFINES) \
 	ARCH=$(ARCH) SRCDS_DIR=$(SRCDS_DIR) MOD_CONFIG=$(MOD_CONFIG) NAME=$(NAME) \
@@ -125,6 +120,7 @@ MAKE_VCPM = Makefile.vcpm
 MAKE_PLUGIN = Makefile.plugin
 MAKE_TIER1 = Makefile.tier1
 MAKE_MATH = Makefile.mathlib
+MAKE_IFACE = Makefile.interfaces
 MAKE_CHOREO = Makefile.choreo
 
 all: check vcpm mod
@@ -136,9 +132,9 @@ check:
 	if [ ! -e "$(LIB_DIR)/tier1_i486.a" ]; then $(MAKE) tier1;fi
 	if [ ! -e "$(LIB_DIR)/mathlib_i486.a" ]; then $(MAKE) mathlib;fi
 	if [ ! -e "$(LIB_DIR)/choreoobjects_i486.a" ]; then $(MAKE) choreo;fi
-	if [ ! -f "libtier0$(SHLIBSUFFIX).$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libtier0$(SHLIBSUFFIX).$(SHLIBEXT) .; fi
-	if [ ! -f "libvstdlib$(SHLIBSUFFIX).$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libvstdlib$(SHLIBSUFFIX).$(SHLIBEXT) .; fi
-	if [ ! -f "libsteam_api.$(SHLIBEXT)" ]; then ln -fs $(LIB_DIR)/libsteam_api.$(SHLIBEXT) .; fi
+	if [ ! -f "tier0_i486.so" ]; then ln -s $(SRCDS_DIR)/bin/tier0_i486.so .; fi
+	if [ ! -f "vstdlib_i486.so" ]; then ln -s $(SRCDS_DIR)/bin/vstdlib_i486.so .; fi
+	if [ ! -f "steam_api_i486.so" ]; then ln -s $(SRCDS_DIR)/bin/steam_api_i486.so .; fi
 
 vcpm: check
 	if [ ! -e "vcpm" ]; then $(MAKE) -f $(MAKE_VCPM) $(BASE_DEFINES);fi
@@ -156,6 +152,9 @@ tier1:
 mathlib:
 	$(MAKE) -f $(MAKE_MATH) $(BASE_DEFINES)
 
+interfaces:
+	$(MAKE) -f $(MAKE_IFACE) $(BASE_DEFINES)
+
 choreo:
 	$(MAKE) -f $(MAKE_CHOREO) $(BASE_DEFINES)
 
@@ -172,4 +171,5 @@ clean:
 	$(MAKE) -f $(MAKE_SERVER) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_TIER1) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_MATH) $(BASE_DEFINES) clean
+	$(MAKE) -f $(MAKE_IFACE) $(BASE_DEFINES) clean
 	$(MAKE) -f $(MAKE_CHOREO) $(BASE_DEFINES) clean
