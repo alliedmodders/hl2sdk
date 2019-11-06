@@ -13,7 +13,7 @@
 #include "appframework/IAppSystem.h"
 #include "tier1/iconvar.h"
 #include "tier1/utlvector.h"
-
+#include "tier0/memalloc.h"
 
 class ConCommandBase;
 class ConCommand;
@@ -174,7 +174,7 @@ inline ICvar::Iterator::Iterator(ICvar *icvar)
 
 inline ICvar::Iterator::~Iterator( void )
 {
-	g_pMemAlloc->Free(m_pIter);
+	MemAlloc_Free(m_pIter);
 }
 
 inline void ICvar::Iterator::SetFirst( void )

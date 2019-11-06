@@ -21,7 +21,7 @@
 #include "string_t.h"
 #include "toolframework/itoolentity.h"
 
-#if !defined( _X360 )
+#if !defined( _X360 ) && defined _WIN32
 #include "xbox/xboxstubs.h"
 #endif
 

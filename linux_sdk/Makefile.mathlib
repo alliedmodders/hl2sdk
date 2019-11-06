@@ -1,0 +1,70 @@
+#
+# Mathlin Static Library Makefile
+#
+
+override NAME = mathlib
+
+LIB_SRC_DIR = $(SRC_DIR)/$(NAME)
+PUBLIC_SRC_DIR = $(SRC_DIR)/public
+TIER0_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier0
+TIER1_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier1
+MATHLIB_PUBLIC_SRC_DIR = $(SRC_DIR)/public/mathlib
+
+LIB_OBJ_DIR = $(BUILD_OBJ_DIR)/$(NAME)_$(ARCH)
+
+# Extension of linux static library
+override SHLIBEXT = a
+
+INCLUDEDIRS = -I$(PUBLIC_SRC_DIR) -I$(TIER0_PUBLIC_SRC_DIR) -I$(TIER1_PUBLIC_SRC_DIR) -I$(MATHLIB_PUBLIC_SRC_DIR) -D_LIB
+
+DO_CC = $(CPLUS) $(INCLUDEDIRS) -DARCH=$(ARCH)
+
+ifeq "$(DEBUG)" "true"
+	DO_CC += $(DBG_DEFINES) $(DBG_CFLAGS)
+else
+	DO_CC += -DNDEBUG $(CFLAGS)
+endif
+
+DO_CC += -o $@ -c $<
+
+#####################################################################
+
+LIB_OBJS= \
+	$(LIB_OBJ_DIR)/anorms.o \
+	$(LIB_OBJ_DIR)/bumpvects.o \
+	$(LIB_OBJ_DIR)/color_conversion.o \
+	$(LIB_OBJ_DIR)/halton.o \
+	$(LIB_OBJ_DIR)/IceKey.o \
+	$(LIB_OBJ_DIR)/imagequant.o \
+	$(LIB_OBJ_DIR)/lightdesc.o \
+	$(LIB_OBJ_DIR)/mathlib_base.o \
+	$(LIB_OBJ_DIR)/polyhedron.o \
+	$(LIB_OBJ_DIR)/powsse.o \
+	$(LIB_OBJ_DIR)/quantize.o \
+	$(LIB_OBJ_DIR)/randsse.o \
+	$(LIB_OBJ_DIR)/simdvectormatrix.o \
+	$(LIB_OBJ_DIR)/sparse_convolution_noise.o \
+	$(LIB_OBJ_DIR)/sse.o \
+	$(LIB_OBJ_DIR)/sseconst.o \
+	$(LIB_OBJ_DIR)/ssenoise.o \
+	$(LIB_OBJ_DIR)/vector.o \
+	$(LIB_OBJ_DIR)/vmatrix.o \
+
+all: dirs $(NAME)_$(ARCH).$(SHLIBEXT)
+
+dirs:
+	-mkdir -p $(BUILD_OBJ_DIR)
+	-mkdir -p $(LIB_OBJ_DIR)
+
+$(NAME)_$(ARCH).$(SHLIBEXT): $(LIB_OBJS)
+	$(AR) $(LIB_DIR)/$@ $(LIB_OBJS)
+
+$(LIB_OBJ_DIR)/%.o: $(LIB_SRC_DIR)/%.cpp
+	$(DO_CC)
+
+install:
+	cp -f $(NAME)_$(ARCH).$(SHLIBEXT) $(LIB_DIR)/$(NAME)_$(ARCH).$(SHLIBEXT)
+
+clean:
+	-rm -rf $(LIB_OBJ_DIR)
+

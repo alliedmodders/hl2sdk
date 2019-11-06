@@ -32,7 +32,7 @@
 //
 //=============================================================================
 
-#ifndef FUNCTORS_H
+#if !defined FUNCTORS_H && 0
 #define FUNCTORS_H
 
 #if defined( _WIN32 )

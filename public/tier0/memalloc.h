@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: This header should never be used directly from leaf code!!!
 // Instead, just add the file memoverride.cpp into your project and all this
@@ -515,26 +515,64 @@ struct MemAllocFileLine_t
 #define MemAlloc_RegisterExternalAllocation( tag, p, size ) ((void)0)
 #define MemAlloc_RegisterExternalDeallocation( tag, p, size ) ((void)0)
 
+#define MemAlloc_AllocAlignedFileLine MemAlloc_AllocAligned
+
+inline void *MemAlloc_Alloc( size_t size )
+{
+	return (void *)malloc( size );
+}
+
+inline void *MemAlloc_Alloc( size_t size, const char *pszFile, int nLine )
+{
+	return (void *)malloc( size );
+}
+
+inline void MemAlloc_Free( void *pMemBlock )
+{
+	free( pMemBlock );
+}
+
+inline void MemAlloc_Free( void *pMemBlock, const char *pszFile, int nLine )
+{
+	free( pMemBlock );
+}
+
 inline void *MemAlloc_AllocAligned( size_t size, size_t align )
 {
+#ifdef _WIN32
 	return (void *)_aligned_malloc( size, align );
+#else
+	return (void *)aligned_alloc( align, size );
+#endif
 }
 inline void *MemAlloc_AllocAligned( size_t size, size_t align, const char *pszFile, int nLine )
 {
 	pszFile = pszFile;
 	nLine = nLine;
+#ifdef _WIN32
 	return (void *)_aligned_malloc( size, align );
+#else
+	return (void *)aligned_alloc( align, size );
+#endif
 }
 
 inline void MemAlloc_FreeAligned( void *pMemBlock )
 {
+#ifdef _WIN32
 	_aligned_free( pMemBlock );
+#else
+	free( pMemBlock );
+#endif
 }
 inline void MemAlloc_FreeAligned( void *pMemBlock, const char *pszFile, int nLine )
 {
 	pszFile = pszFile;
 	nLine = nLine;
+#ifdef _WIN32
 	_aligned_free( pMemBlock );
+#else
+	free( pMemBlock );
+#endif
 }
 
 #endif // !STEAM && NO_MALLOC_OVERRIDE

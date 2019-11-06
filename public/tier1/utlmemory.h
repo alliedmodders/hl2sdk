@@ -19,6 +19,8 @@
 #include "tier0/platform.h"
 
 #include "tier0/memalloc.h"
+#include "mathlib/mathlib.h"
+
 #include "tier0/memdbgon.h"
 
 #pragma warning (disable:4100)
@@ -925,7 +927,11 @@ CUtlMemoryAligned<T, nAlignment>::CUtlMemoryAligned( int nGrowSize, int nInitAll
 	{
 		UTLMEMORY_TRACK_ALLOC();
 		MEM_ALLOC_CREDIT_CLASS();
+	#ifdef _WIN32
 		CUtlMemory<T>::m_pMemory = (T*)_aligned_malloc( nInitAllocationCount * sizeof(T), nAlignment );
+	#else
+		CUtlMemory<T>::m_pMemory = (T*)aligned_alloc( nAlignment, nInitAllocationCount * sizeof(T) );
+	#endif
 	}
 }
 

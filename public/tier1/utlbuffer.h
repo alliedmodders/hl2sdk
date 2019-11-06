@@ -778,7 +778,11 @@ inline uint32 StringToNumber( char *pString, char **ppEnd, int nRadix )
 template <>
 inline int64 StringToNumber( char *pString, char **ppEnd, int nRadix )
 {
+#ifdef _WIN32
 	return ( int64 )_strtoi64( pString, ppEnd, nRadix );
+#else
+	return ( int64 )strtoll( pString, ppEnd, nRadix );
+#endif
 }
 
 template <>

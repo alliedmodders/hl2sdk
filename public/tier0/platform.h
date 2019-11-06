@@ -283,24 +283,40 @@ typedef unsigned int		uint;
 // Maximum and minimum representable values
 #ifndef PLATFORM_OSX
 
+#undef INT8_MAX
 #define  INT8_MAX			SCHAR_MAX
+#undef INT16_MAX
 #define  INT16_MAX			SHRT_MAX
+#undef INT32_MAX
 #define  INT32_MAX			LONG_MAX
+#undef INT64_MAX
 #define  INT64_MAX			(((int64)~0) >> 1)
 
+#undef INT8_MIN
 #define  INT8_MIN			SCHAR_MIN
+#undef INT16_MIN
 #define  INT16_MIN			SHRT_MIN
+#undef INT32_MIN
 #define  INT32_MIN			LONG_MIN
+#undef INT64_MIN
 #define  INT64_MIN			(((int64)1) << 63)
 
+#undef UINT8_MAX
 #define  UINT8_MAX			((uint8)~0)
+#undef UINT16_MAX
 #define  UINT16_MAX			((uint16)~0)
+#undef UINT32_MAX
 #define  UINT32_MAX			((uint32)~0)
+#undef UINT64_MAX
 #define  UINT64_MAX			((uint64)~0)
 
+#undef UINT8_MIN
 #define  UINT8_MIN			0
+#undef UINT16_MIN
 #define  UINT16_MIN			0
+#undef UINT32_MIN
 #define  UINT32_MIN			0
+#undef UINT64_MIN
 #define  UINT64_MIN			0
 
 #endif // PLATFORM_OSX
@@ -1596,8 +1612,10 @@ int	V_strncasecmp (const char *s1, const char *s2, int n);
 //   returns <0 if strings do not match even in a case-insensitive way
 int	_V_stricmp_NegativeForUnequal	  ( const char *s1, const char *s2 );
 
+#undef stricmp
 #define stricmp(s1,s2) _V_stricmp(s1, s2)
 #define strcmpi(s1,s2) _V_stricmp(s1, s2)
+#undef strnicmp
 #define strnicmp V_strncasecmp 
 #endif
 

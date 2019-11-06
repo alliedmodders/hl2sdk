@@ -12,6 +12,8 @@
 
 
 #include "tier0/dbg.h"
+#include "tier0/memalloc.h"
+#include "tier0/mem.h"
 #include "convar.h"
 
 #if defined( CLIENT_DLL ) || defined( GAME_DLL )
@@ -57,7 +59,7 @@ public:
 	{
 		if ( pData )
 		{
-			g_pMemAlloc->Free(pData);
+			MemAlloc_Free(pData);
 		}
 	}
 
@@ -65,7 +67,7 @@ public:
 	{
 		if ( pData )
 		{
-			g_pMemAlloc->Free(pData, pFileName, nLine );
+			MemAlloc_Free(pData, pFileName, nLine );
 		}
 	}
 };

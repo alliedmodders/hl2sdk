@@ -12,7 +12,7 @@
 #pragma once
 #endif
 
-#include "appframework/iappsystem.h"
+#include "appframework/IAppSystem.h"
 #include "tier1/convar.h"
 
 //-----------------------------------------------------------------------------
