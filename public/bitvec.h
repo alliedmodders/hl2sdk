@@ -764,7 +764,7 @@ inline void CBitVecT<BASE_OPS>::CopyTo(CBitVecT *out) const
 {
 	out->Resize( this->GetNumBits() );
 
-	ValidateOperand( *out );
+	this->ValidateOperand( *out );
 	Assert( out != this );
 	
 	memcpy( out->Base(), this->Base(), this->GetNumDWords() * sizeof( int ) );
