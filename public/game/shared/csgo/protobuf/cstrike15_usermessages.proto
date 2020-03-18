@@ -137,6 +137,7 @@ enum ECstrike15UserMessages
 	CS_UM_SSUI = 72;
 	CS_UM_SurvivalStats = 73;
 	CS_UM_DisconnectToLobby2 = 74;
+	CS_UM_EndOfMatchAllPlayersData = 75;
 }
 
 enum ECSUsrMsg_DisconnectToLobby_Action {
@@ -240,6 +241,7 @@ message CCSUsrMsg_CloseCaption
 	optional uint32 hash = 1;
 	optional int32 duration = 2;
 	optional bool from_player = 3;
+	optional string cctoken = 4;
 }
 
 message CCSUsrMsg_CloseCaptionDirect
@@ -472,7 +474,7 @@ message CCSUsrMsg_VoteStart
 	optional string details_str = 5;
 	optional string other_team_str = 6;
 	optional bool is_yes_no_vote = 7;
-
+	optional int32 entidx_target = 8;
 }
 
 message CCSUsrMsg_VotePass
@@ -652,10 +654,13 @@ message CCSUsrMsg_UpdateScreenHealthBar {
 
 message CCSUsrMsg_EntityOutlineHighlight {
 	optional int32 entidx = 1;
+	optional bool removehighlight = 2;
 }
 
 message CCSUsrMsg_SSUI {
 	optional bool show = 1;
+	optional float start_time = 2;
+	optional float end_time = 3;
 }
 
 message CCSUsrMsg_SurvivalStats {
@@ -685,6 +690,28 @@ message CCSUsrMsg_SurvivalStats {
 	repeated Placement users = 3;
 	repeated Damage damages = 5;
 	optional int32 ticknumber = 4;
+}
+
+message CCSUsrMsg_EndOfMatchAllPlayersData {
+	message Accolade {
+		optional int32 eaccolade = 1;
+		optional float value = 2;
+		optional int32 position = 3;
+	}
+
+	message PlayerData {
+		optional int32 entindex = 1;
+		optional uint64 xuid = 2;
+		optional string name = 3;
+		optional int32 teamnumber = 4;
+		optional Accolade nomination = 5;
+		repeated CEconItemPreviewDataBlock items = 6;
+		optional int32 playercolor = 7;
+		optional bool isbot = 8;
+	}
+
+	repeated PlayerData allplayerdata = 1;
+	optional int32 scene = 2;
 }
 
 //=============================================================================

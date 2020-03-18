@@ -84,6 +84,7 @@ CCstrike15UsermessageHelpers::CCstrike15UsermessageHelpers()
 	SETUP_MESSAGE( SSUI );
 	SETUP_MESSAGE( SurvivalStats );
 	//SETUP_MESSAGE( DisconnectToLobby2 );
+	SETUP_MESSAGE( EndOfMatchAllPlayersData );
 }
 
 const google::protobuf::Message *CCstrike15UsermessageHelpers::GetPrototype( int index ) const
