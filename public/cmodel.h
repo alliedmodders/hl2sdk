@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -57,15 +57,17 @@ struct csurface_t
 //-----------------------------------------------------------------------------
 // A ray...
 //-----------------------------------------------------------------------------
-
 struct Ray_t
 {
 	VectorAligned  m_Start;	// starting point, centered within the extents
 	VectorAligned  m_Delta;	// direction + length of the ray
 	VectorAligned  m_StartOffset;	// Add this to m_Start to get the actual ray start
 	VectorAligned  m_Extents;	// Describes an axis aligned box extruded along a ray
+	const matrix3x4_t *m_pWorldAxisTransform;
 	bool	m_IsRay;	// are the extents zero?
 	bool	m_IsSwept;	// is delta != 0?
+
+	Ray_t() : m_pWorldAxisTransform( NULL )	{}
 
 	void Init( Vector const& start, Vector const& end )
 	{
@@ -75,6 +77,7 @@ struct Ray_t
 		m_IsSwept = (m_Delta.LengthSqr() != 0);
 
 		VectorClear( m_Extents );
+		m_pWorldAxisTransform = NULL;
 		m_IsRay = true;
 
 		// Offset m_Start to be in the center of the box...
@@ -87,6 +90,7 @@ struct Ray_t
 		Assert( &end );
 		VectorSubtract( end, start, m_Delta );
 
+		m_pWorldAxisTransform = NULL;
 		m_IsSwept = (m_Delta.LengthSqr() != 0);
 
 		VectorSubtract( maxs, mins, m_Extents );
