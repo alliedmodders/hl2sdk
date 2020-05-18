@@ -1400,12 +1400,12 @@ template <class T, class I, typename L>
 void CUtlRBTree<T, I, L>::Swap( CUtlRBTree< T, I, L > &that )
 {
 	m_Elements.Swap( that.m_Elements );
-	swap( m_LessFunc, that.m_LessFunc );
-	swap( m_Root, that.m_Root );
-	swap( m_NumElements, that.m_NumElements );
-	swap( m_FirstFree, that.m_FirstFree );
-	swap( m_TotalElements, that.m_TotalElements );
-	swap( m_pElements, that.m_pElements );
+	valve_swap( m_LessFunc, that.m_LessFunc );
+	valve_swap( m_Root, that.m_Root );
+	valve_swap( m_NumElements, that.m_NumElements );
+	valve_swap( m_FirstFree, that.m_FirstFree );
+	valve_swap( m_TotalElements, that.m_TotalElements );
+	valve_swap( m_pElements, that.m_pElements );
 }
 
 

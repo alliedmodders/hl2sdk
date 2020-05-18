@@ -1658,9 +1658,9 @@ void MatrixInvert( const matrix3x4_t& in, matrix3x4_t& out )
 	Assert( s_bMathlibInitialized );
 	if ( &in == &out )
 	{
-		swap(out[0][1],out[1][0]);
-		swap(out[0][2],out[2][0]);
-		swap(out[1][2],out[2][1]);
+		valve_swap(out[0][1],out[1][0]);
+		valve_swap(out[0][2],out[2][0]);
+		valve_swap(out[1][2],out[2][1]);
 	}
 	else
 	{
@@ -3282,18 +3282,18 @@ bool SolveInverseQuadraticMonotonic( float x1, float y1, float x2, float y2, flo
 	// first, sort parameters
 	if (x1>x2)
 	{
-		swap(x1,x2);
-		swap(y1,y2);
+		valve_swap(x1,x2);
+		valve_swap(y1,y2);
 	}
 	if (x2>x3)
 	{
-		swap(x2,x3);
-		swap(y2,y3);
+		valve_swap(x2,x3);
+		valve_swap(y2,y3);
 	}
 	if (x1>x2)
 	{
-		swap(x1,x2);
-		swap(y1,y2);
+		valve_swap(x1,x2);
+		valve_swap(y1,y2);
 	}
 	// this code is not fast. what it does is when the curve would be non-monotonic, slowly shifts
 	// the center point closer to the linear line between the endpoints. Should anyone need htis

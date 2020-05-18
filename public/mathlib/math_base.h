@@ -581,7 +581,7 @@ template<> FORCEINLINE_TEMPLATE QAngleByValue Lerp<QAngleByValue>( float flPerce
 
 // Swap two of anything.
 template <class T> 
-FORCEINLINE_TEMPLATE void swap( T& x, T& y )
+FORCEINLINE_TEMPLATE void valve_swap( T& x, T& y )
 {
 	T temp = x;
 	x = y;
