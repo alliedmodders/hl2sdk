@@ -503,7 +503,7 @@ bool CFilterEnemy::PassesProximityFilter( CBaseEntity *pCaller, CBaseEntity *pEn
 	float flSmallerRadius = m_flRadius;
 	if ( flSmallerRadius > flLargerRadius )
 	{
-		swap( flLargerRadius, flSmallerRadius );
+		V_swap( flLargerRadius, flSmallerRadius );
 	}
 
 	float flDist;	
