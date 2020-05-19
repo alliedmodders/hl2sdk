@@ -603,7 +603,7 @@ template<> FORCEINLINE QAngleByValue Lerp<QAngleByValue>( float flPercent, const
 
 // Swap two of anything.
 template <class T> 
-FORCEINLINE void swap( T& x, T& y )
+FORCEINLINE void V_swap( T& x, T& y )
 {
 	T temp = x;
 	x = y;

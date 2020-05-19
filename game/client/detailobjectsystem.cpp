@@ -1613,7 +1613,7 @@ void CDetailObjectSystem::UnserializeDetailSprites( CUtlBuffer& buf )
 		buf.Get( &m_DetailSpriteDict[i], sizeof(DetailSpriteDictLump_t) );
 		int flipi = m_DetailSpriteDictFlipped.AddToTail();
 		m_DetailSpriteDictFlipped[flipi] = m_DetailSpriteDict[i];
-		swap( m_DetailSpriteDictFlipped[flipi].m_TexUL.x, m_DetailSpriteDictFlipped[flipi].m_TexLR.x );
+		V_swap( m_DetailSpriteDictFlipped[flipi].m_TexUL.x, m_DetailSpriteDictFlipped[flipi].m_TexLR.x );
 	}
 }
 

@@ -1547,12 +1547,12 @@ template < class T, class I, typename L, class M >
 void CUtlRBTree<T, I, L, M>::Swap( CUtlRBTree< T, I, L > &that )
 {
 	m_Elements.Swap( that.m_Elements );
-	swap( m_LessFunc, that.m_LessFunc );
-	swap( m_Root, that.m_Root );
-	swap( m_NumElements, that.m_NumElements );
-	swap( m_FirstFree, that.m_FirstFree );
-	swap( m_pElements, that.m_pElements );
-	swap( m_LastAlloc, that.m_LastAlloc );
+	V_swap( m_LessFunc, that.m_LessFunc );
+	V_swap( m_Root, that.m_Root );
+	V_swap( m_NumElements, that.m_NumElements );
+	V_swap( m_FirstFree, that.m_FirstFree );
+	V_swap( m_pElements, that.m_pElements );
+	V_swap( m_LastAlloc, that.m_LastAlloc );
 	Assert( IsValid() );
 	Assert( m_Elements.IsValidIterator( m_LastAlloc ) || ( m_NumElements == 0 && m_FirstFree == InvalidIndex() ) );
 }
