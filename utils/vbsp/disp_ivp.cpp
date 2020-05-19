@@ -207,7 +207,7 @@ CDispMeshEvent::CDispMeshEvent( unsigned short *pIndices, int indexCount, CCoreD
 	}
 	for ( int i = 0; i < indexCount/2; i++ )
 	{
-		swap( pIndices[i], pIndices[(indexCount-i)-1] );
+		V_swap( pIndices[i], pIndices[(indexCount-i)-1] );
 	}
 	int count = maxIndex + 1;
 	m_verts.SetCount( count );
