@@ -350,12 +350,12 @@ FORCEINLINE void VectorClear(vec_t *a)
 
 FORCEINLINE float VectorMaximum(const vec_t *v)
 {
-	return max( v[0], max( v[1], v[2] ) );
+	return V_max( v[0], V_max( v[1], v[2] ) );
 }
 
 FORCEINLINE float VectorMaximum(const Vector& v)
 {
-	return max( v.x, max( v.y, v.z ) );
+	return V_max( v.x, V_max( v.y, v.z ) );
 }
 
 FORCEINLINE void VectorScale (const float* in, vec_t scale, float* out)
@@ -380,7 +380,7 @@ inline void VectorNegate(vec_t *a)
 }
 
 
-//#define VectorMaximum(a)		( max( (a)[0], max( (a)[1], (a)[2] ) ) )
+//#define VectorMaximum(a)		( V_max( (a)[0], V_max( (a)[1], (a)[2] ) ) )
 #define Vector2Clear(x)			{(x)[0]=(x)[1]=0;}
 #define Vector2Negate(x)		{(x)[0]=-((x)[0]);(x)[1]=-((x)[1]);}
 #define Vector2Copy(a,b)		{(b)[0]=(a)[0];(b)[1]=(a)[1];}
@@ -1491,7 +1491,7 @@ FORCEINLINE unsigned char LinearToLightmap( float f )
 
 FORCEINLINE void ColorClamp( Vector& color )
 {
-	float maxc = max( color.x, max( color.y, color.z ) );
+	float maxc = V_max( color.x, V_max( color.y, color.z ) );
 	if ( maxc > 1.0f )
 	{
 		float ooMax = 1.0f / maxc;
@@ -1987,10 +1987,10 @@ FORCEINLINE unsigned int * PackNormal_SHORT2( float nx, float ny, float nz, unsi
 	ny *= 16384.0f;
 
 	// '0' and '32768' values are invalid encodings
-	nx = max( nx, 1.0f );		// Make sure there are no zero values
-	ny = max( ny, 1.0f );
-	nx = min( nx, 32767.0f );	// Make sure there are no 32768 values
-	ny = min( ny, 32767.0f );
+	nx = V_max( nx, 1.0f );		// Make sure there are no zero values
+	ny = V_max( ny, 1.0f );
+	nx = V_min( nx, 32767.0f );	// Make sure there are no 32768 values
+	ny = V_min( ny, 32767.0f );
 
 	if ( nz < 0.0f )
 		nx = -nx;				// Set the sign bit for z
@@ -2180,7 +2180,6 @@ inline bool AlmostEqual( const Vector &a, const Vector &b, int maxUlps = 10)
 		AlmostEqual( a.y, b.y, maxUlps ) &&
 		AlmostEqual( a.z, b.z, maxUlps );
 }
-
 
 #endif	// MATH_BASE_H
 
