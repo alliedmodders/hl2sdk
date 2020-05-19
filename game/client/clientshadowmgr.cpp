@@ -1138,7 +1138,7 @@ void CVisibleShadowList::PrioritySort()
 				flLargestArea = m_ShadowsInView[nIndex].m_flArea;
 			}
 		}
-		swap( m_PriorityIndex[i], m_PriorityIndex[nLargestInd] );
+		V_swap( m_PriorityIndex[i], m_PriorityIndex[nLargestInd] );
 	}
 }
 

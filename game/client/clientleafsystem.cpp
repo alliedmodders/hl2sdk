@@ -1722,8 +1722,8 @@ void CClientLeafSystem::SortEntities( const Vector &vecRenderOrigin, const Vecto
 		{
 			if( dists[i] > dists[i+stepSize] )
 			{
-				swap( pEntities[i], pEntities[i+stepSize] );
-				swap( dists[i], dists[i+stepSize] );
+				V_swap( pEntities[i], pEntities[i+stepSize] );
+				V_swap( dists[i], dists[i+stepSize] );
 
 				if( i == 0 )
 				{

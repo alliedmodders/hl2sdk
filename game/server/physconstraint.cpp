@@ -1280,7 +1280,7 @@ IPhysicsConstraint *CPhysSlideConstraint::CreateConstraint( IPhysicsConstraintGr
 		sliding.limitMax = DotProduct( axisDirection, m_axisEnd );
 		if ( sliding.limitMax < sliding.limitMin )
 		{
-			swap( sliding.limitMin, sliding.limitMax );
+			V_swap( sliding.limitMin, sliding.limitMax );
 		}
 
 		// expand limits to make initial position of the attached object valid
