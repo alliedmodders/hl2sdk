@@ -1843,7 +1843,7 @@ void CNPC_AttackHelicopter::ShootAtPlayer( const Vector &vBasePos, const Vector 
 	for ( i = 0; i < nActualTargets; ++i )
 	{
 		int nSwap = random->RandomInt( 0, nActualTargets - 1 ); 
-		swap( ppNearbyTargets[i], ppNearbyTargets[nSwap] );
+		V_swap( ppNearbyTargets[i], ppNearbyTargets[nSwap] );
 	}
 
 	// Just shoot where we're facing
@@ -2120,7 +2120,7 @@ void CNPC_AttackHelicopter::ShootAtVehicle( const Vector &vBasePos, const Vector
 	for ( i = 0; i < nActualTargets; ++i )
 	{
 		int nSwap = random->RandomInt( 0, nActualTargets - 1 ); 
-		swap( ppNearbyTargets[i], ppNearbyTargets[nSwap] );
+		V_swap( ppNearbyTargets[i], ppNearbyTargets[nSwap] );
 	}
 
 	// Just shoot where we're facing

@@ -1,0 +1,25 @@
+--- mathlib/mathlib_base.cpp
++++ mathlib/mathlib_base.cpp
+@@ -1653,19 +1653,19 @@ void MatrixCopy( const matrix3x4_t& in, matrix3x4_t& out )
+ 	memcpy( out.Base(), in.Base(), sizeof( float ) * 3 * 4 );
+ }
+ 
+ void MatrixInvert( const matrix3x4_t& in, matrix3x4_t& out )
+ {
+ 	Assert( s_bMathlibInitialized );
+ 	if ( &in == &out )
+ 	{
+-		V_swap(out[0][1],out[1][0]);
+-		V_swap(out[0][2],out[2][0]);
+-		V_swap(out[1][2],out[2][1]);
++		V_swap(out[0][1],out[1][0]);
++		V_swap(out[0][2],out[2][0]);
++		V_swap(out[1][2],out[2][1]);
+ 	}
+ 	else
+ 	{
+ 		// I'm guessing this only works on a 3x4 orthonormal matrix
+ 		out[0][0] = in[0][0];
+ 		out[0][1] = in[1][0];
+ 		out[0][2] = in[2][0];
+ 

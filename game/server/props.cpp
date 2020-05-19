@@ -4789,7 +4789,7 @@ void CPropDoorRotating::Spawn()
 	// that the model already be set.
 	if ( IsHingeOnLeft() )
 	{
-		swap( m_angRotationOpenForward, m_angRotationOpenBack );
+		V_swap( m_angRotationOpenForward, m_angRotationOpenBack );
 	}
 
 	// Figure out our volumes of movement as this door opens
