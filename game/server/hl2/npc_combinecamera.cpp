@@ -355,7 +355,7 @@ void CNPC_CombineCamera::Spawn()
 
 	if (m_nOuterRadius < m_nInnerRadius)
 	{
-		swap(m_nOuterRadius, m_nInnerRadius);
+		V_swap(m_nOuterRadius, m_nInnerRadius);
 	}
 
 	// Do we start active?
@@ -1117,17 +1117,17 @@ void CNPC_CombineCamera::SetHeight(float height)
 
 	if (mins.x > maxs.x)
 	{
-		swap(mins.x, maxs.x);
+		V_swap(mins.x, maxs.x);
 	}
 
 	if (mins.y > maxs.y)
 	{
-		swap(mins.y, maxs.y);
+		V_swap(mins.y, maxs.y);
 	}
 
 	if (mins.z > maxs.z)
 	{
-		swap(mins.z, maxs.z);
+		V_swap(mins.z, maxs.z);
 	}
 
 	SetCollisionBounds(mins, maxs);

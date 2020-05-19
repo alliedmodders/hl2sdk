@@ -562,7 +562,7 @@ void CHLTVDirector::CreateShotFromEvent( CGameEvent *event )
 			// if we show ineye view, show it more likely from killer
 			if ( RandomFloat(0,1) > (bInEye?0.3f:0.7f)  )
 			{
-				swap( attacker, victim );
+				V_swap( attacker, victim );
 			}
 						
 			// hurting a victim is shown as chase more often
