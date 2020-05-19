@@ -1093,17 +1093,17 @@ void CNPC_CeilingTurret::SetHeight( float height )
 
 	if ( mins.x > maxs.x )
 	{
-		swap( mins.x, maxs.x );
+		V_swap( mins.x, maxs.x );
 	}
 
 	if ( mins.y > maxs.y )
 	{
-		swap( mins.y, maxs.y );
+		V_swap( mins.y, maxs.y );
 	}
 
 	if ( mins.z > maxs.z )
 	{
-		swap( mins.z, maxs.z );
+		V_swap( mins.z, maxs.z );
 	}
 
 	SetCollisionBounds( mins, maxs );
