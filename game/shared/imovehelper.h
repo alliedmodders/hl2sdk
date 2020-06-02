@@ -12,6 +12,7 @@
 #pragma once
 #endif
 
+#include "shareddefs.h"
 
 //-----------------------------------------------------------------------------
 // Forward declarations
