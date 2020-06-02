@@ -133,7 +133,7 @@ public:
 	void Purge();
 
 protected:
-	// Fast swap - WARNING: Swap invalidates all ptr-based indices!!!
+	// Fast V_swap - WARNING: Swap invalidates all ptr-based indices!!!
 	void Swap( CUtlFixedMemory< T > &mem );
 
 	bool IsInBlock( int i, BlockHeader_t *pBlockHeader ) const
@@ -181,9 +181,9 @@ CUtlFixedMemory<T>::~CUtlFixedMemory()
 template< class T >
 void CUtlFixedMemory<T>::Swap( CUtlFixedMemory< T > &mem )
 {
-	swap( m_pBlocks, mem.m_pBlocks );
-	swap( m_nAllocationCount, mem.m_nAllocationCount );
-	swap( m_nGrowSize, mem.m_nGrowSize );
+	V_swap( m_pBlocks, mem.m_pBlocks );
+	V_swap( m_nAllocationCount, mem.m_nAllocationCount );
+	V_swap( m_nGrowSize, mem.m_nGrowSize );
 }
 
 
