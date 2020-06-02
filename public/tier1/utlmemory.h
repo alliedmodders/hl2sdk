@@ -228,9 +228,9 @@ CUtlMemory<T>::~CUtlMemory()
 template< class T >
 void CUtlMemory<T>::Swap( CUtlMemory< T > &mem )
 {
-	swap( m_nGrowSize, mem.m_nGrowSize );
-	swap( m_pMemory, mem.m_pMemory );
-	swap( m_nAllocationCount, mem.m_nAllocationCount );
+	V_swap( m_nGrowSize, mem.m_nGrowSize );
+	V_swap( m_pMemory, mem.m_pMemory );
+	V_swap( m_nAllocationCount, mem.m_nAllocationCount );
 }
 
 

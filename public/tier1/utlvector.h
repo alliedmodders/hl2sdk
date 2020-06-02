@@ -508,8 +508,8 @@ template< typename T, class A >
 void CUtlVector<T, A>::Swap( CUtlVector< T, A > &vec )
 {
 	m_Memory.Swap( vec.m_Memory );
-	swap( m_Size, vec.m_Size );
-	swap( m_pElements, vec.m_pElements );
+	V_swap( m_Size, vec.m_Size );
+	V_swap( m_pElements, vec.m_pElements );
 }
 
 template< typename T, class A >
