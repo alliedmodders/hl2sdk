@@ -16,6 +16,9 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#ifndef COMPILER_MSVC64
+// Implement for 64-bit Windows if needed.
+
 static const uint32 _sincos_masks[]	  = { (uint32)0x0,  (uint32)~0x0 };
 static const uint32 _sincos_inv_masks[] = { (uint32)~0x0, (uint32)0x0 };
 
@@ -843,3 +846,4 @@ vec_t DotProduct (const vec_t *a, const vec_t *c)
 }
 */
 
+#endif // COMPILER_MSVC64 
