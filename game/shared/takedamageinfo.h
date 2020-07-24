@@ -21,6 +21,30 @@
 class CBaseEntity;
 
 
+struct CSGOAttackerInfo
+{
+	CSGOAttackerInfo() {
+		m_bNeedInit = true;
+		m_bIsPlayer = false;
+		m_bIsWorld = false;
+		m_iClientIndex = 0;
+		m_nSurvivalTeam = -1;
+		m_iTeamChecked = -1;
+		m_iTeamNum = -1;
+		m_iUserId = -1;
+	}
+
+	bool m_bNeedInit;
+	EHANDLE m_hHndl;
+	bool m_bIsPlayer;
+	bool m_bIsWorld;
+	int m_iClientIndex;
+	int m_nSurvivalTeam;
+	int m_iTeamChecked; // If team index is spectator, switch to m_iCoachingTeam
+	int m_iTeamNum;
+	int m_iUserId;
+};
+
 class CTakeDamageInfo
 {
 public:
@@ -106,7 +130,7 @@ protected:
 	Vector			m_vecDamagePosition;
 	Vector			m_vecReportedPosition;	// Position players are told damage is coming from
 	EHANDLE			m_hInflictor;
-	EHANDLE			m_hUnkHandle;
+	EHANDLE			m_hAttacker;
 	EHANDLE			m_hWeapon;
 	float			m_flDamage;
 	float			m_flMaxDamage;
@@ -120,10 +144,7 @@ protected:
 	int				m_iObjectsPenetrated;	// Number of objects penetrated
 	uint32			m_uiBulletID;
 	uint8			m_uiRecoilIndex;
-	uint32			m_iUnk1;
-	EHANDLE			m_hAttacker;
-	uint32			m_iUnk2;
-	uint32			m_iAttacker;
+	CSGOAttackerInfo	m_CSGOAttacker;
 
 	DECLARE_SIMPLE_DATADESC();
 };
