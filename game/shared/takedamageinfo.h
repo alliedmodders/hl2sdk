@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -106,7 +106,7 @@ protected:
 	Vector			m_vecDamagePosition;
 	Vector			m_vecReportedPosition;	// Position players are told damage is coming from
 	EHANDLE			m_hInflictor;
-	EHANDLE			m_hAttacker;
+	EHANDLE			m_hUnkHandle;
 	EHANDLE			m_hWeapon;
 	float			m_flDamage;
 	float			m_flMaxDamage;
@@ -116,12 +116,14 @@ protected:
 	int				m_iDamageStats;
 	int				m_iAmmoType;			// AmmoType of the weapon used to cause this damage, if any
 	float			m_flRadius;
-	
-	// CS:GO
 	int				m_iDamagedOtherPlayers;
-	int				m_iObjectsPenetrated;
+	int				m_iObjectsPenetrated;	// Number of objects penetrated
 	uint32			m_uiBulletID;
 	uint8			m_uiRecoilIndex;
+	uint32			m_iUnk1;
+	EHANDLE			m_hAttacker;
+	uint32			m_iUnk2;
+	uint32			m_iAttacker;
 
 	DECLARE_SIMPLE_DATADESC();
 };
