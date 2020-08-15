@@ -189,9 +189,9 @@ private:
 	bool			uses_gender_token:1;
 	bool			m_bShouldPreload:1;
 
-	byte			reserved;						// 28
-
-
+	float			m_fBPM;							// 28
+	float			m_fSignature;					// 32
+	float			m_fFadeTime;					// 36
 };
 #pragma pack()
 
@@ -264,6 +264,9 @@ public:
 	virtual soundlevel_t	LookupSoundLevelByHandle( char const *soundname, HSOUNDSCRIPTHANDLE& handle ) = 0;
 
 	virtual void			ReloadSoundEntriesInList( IFileList *pFilesToReload ) = 0;
+
+	// Flush and reload
+	virtual void			Flush() = 0;
 };
 
 #endif // ISOUNDEMITTERSYSTEMBASE_H
