@@ -682,7 +682,7 @@ typedef void * HINSTANCE;
 #define VALVE_RAND_MAX 0x7fff
 
 // Maximum and minimum representable values
-#ifndef PLATFORM_OSX
+#ifndef PLATFORM_POSIX
 
 #if _MSC_VER >= 1800 // VS 2013 or higher
 	// Copied from stdint.h
@@ -720,7 +720,7 @@ typedef void * HINSTANCE;
 #define  UINT32_MIN			0
 #define  UINT64_MIN			0
 
-#endif // PLATFORM_OSX
+#endif // PLATFORM_POSIX
 
 #ifndef  UINT_MIN
 #define  UINT_MIN			UINT32_MIN
@@ -2048,7 +2048,7 @@ class CReuseVaList
 public:
 	CReuseVaList( va_list List )
 	{
-#if defined(LINUX) || defined(OSX)
+#if defined(POSIX) || defined(OSX)
 		va_copy( m_ReuseList, List );
 #else
 		m_ReuseList = List;
@@ -2056,7 +2056,7 @@ public:
 	}
 	~CReuseVaList()
 	{
-#if defined(LINUX) || defined(OSX)
+#if defined(POSIX) || defined(OSX)
 		va_end( m_ReuseList );
 #endif
 	}
