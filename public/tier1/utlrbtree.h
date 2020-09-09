@@ -1,4 +1,4 @@
-//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright (c) 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -16,7 +16,7 @@
 
 // This is a useful macro to iterate from start to end in order in a map
 #define FOR_EACH_UTLRBTREE( treeName, iteratorName ) \
-	for ( int iteratorName = treeName.FirstInorder(); iteratorName != treeName.InvalidIndex(); iteratorName = treeName.NextInorder( iteratorName ) )
+	for ( int iteratorName = treeName.FirstInorder(); (treeName).IsUtlRBTree && iteratorName != treeName.InvalidIndex(); iteratorName = treeName.NextInorder( iteratorName ) )
 
 
 //-----------------------------------------------------------------------------
@@ -35,8 +35,30 @@ public:
 
 //-------------------------------------
 
-inline bool StringLessThan( const char * const &lhs, const char * const &rhs)			{ return ( strcmp( lhs, rhs) < 0 );  }
-inline bool CaselessStringLessThan( const char * const &lhs, const char * const &rhs )	{ return ( stricmp( lhs, rhs) < 0 ); }
+template <typename T>
+class CDefLess
+{
+public:
+	CDefLess() {}
+	CDefLess( int i ) {}
+	inline bool operator()( const T &lhs, const T &rhs ) const { return ( lhs < rhs );	}
+	inline bool operator!() const { return false; }
+};
+
+
+//-------------------------------------
+
+inline bool StringLessThan( const char * const &lhs, const char * const &rhs)			{ 
+	if ( !lhs ) return false;
+	if ( !rhs ) return true;
+	return ( strcmp( lhs, rhs) < 0 );  
+}
+
+inline bool CaselessStringLessThan( const char * const &lhs, const char * const &rhs )	{ 
+	if ( !lhs ) return false;
+	if ( !rhs ) return true;
+	return ( stricmp( lhs, rhs) < 0 ); 
+}
 
 
 // Same as CaselessStringLessThan, but it ignores differences in / and \.
@@ -95,6 +117,17 @@ void SetDefLessFunc( RBTREE_T &RBTree )
 	RBTree.SetLessFunc( DefLessFunc( typename RBTREE_T::KeyType_t ) );
 }
 
+// For use with FindClosest
+// Move these to a common area if anyone else ever uses them
+enum CompareOperands_t
+{
+	k_EEqual = 0x1,
+	k_EGreaterThan = 0x2,
+	k_ELessThan = 0x4,
+	k_EGreaterThanOrEqualTo = k_EGreaterThan | k_EEqual,
+	k_ELessThanOrEqualTo = k_ELessThan | k_EEqual,
+};
+
 //-----------------------------------------------------------------------------
 // A red-black binary search tree
 //-----------------------------------------------------------------------------
@@ -122,6 +155,7 @@ public:
 	typedef T KeyType_t;
 	typedef T ElemType_t;
 	typedef I IndexType_t;
+	enum { IsUtlRBTree = true }; // Used to match this at compiletime 
 
 	// Less func typedef
 	// Returns true if the first parameter is "less" than the second
@@ -131,8 +165,8 @@ public:
 	// Left at growSize = 0, the memory will first allocate 1 element and double in size
 	// at each increment.
 	// LessFunc_t is required, but may be set after the constructor using SetLessFunc() below
-	CUtlRBTree( int growSize = 0, int initSize = 0, const LessFunc_t &lessfunc = 0 );
-	CUtlRBTree( const LessFunc_t &lessfunc );
+	explicit CUtlRBTree( int growSize = 0, int initSize = 0, const LessFunc_t &lessfunc = 0 );
+	explicit CUtlRBTree( const LessFunc_t &lessfunc );
 	~CUtlRBTree( );
 
 	void EnsureCapacity( int num );
@@ -152,9 +186,9 @@ public:
 	unsigned int Count() const;
 
 	// Max "size" of the vector
-	// it's not generally safe to iterate from index 0 to MaxElement()-1
-	// it IS safe to do so when using CUtlMemory as the allocator,
-	// but we should really remove patterns using this anyways, for safety and generality
+	// it's not generally safe to iterate from index 0 to MaxElement()-1 (you could do this as a potential
+	// iteration optimization, IF CUtlMemory is the allocator, and IF IsValidIndex() is tested for each element...
+	//  but this should be implemented inside the CUtlRBTree iteration API, if anywhere)
 	I  MaxElement() const;
 
 	// Gets the children                               
@@ -190,12 +224,20 @@ public:
 	I  NewNode();
 
 	// Insert method (inserts in order)
+	// NOTE: the returned 'index' will be valid as long as the element remains in the tree
+	//       (other elements being added/removed will not affect it)
 	I  Insert( T const &insert );
 	void Insert( const T *pArray, int nItems );
 	I  InsertIfNotFound( T const &insert );
 
 	// Find method
 	I  Find( T const &search ) const;
+
+	// FindFirst method ( finds first inorder if there are duplicates )
+	I  FindFirst( T const &search ) const;
+
+	// First element >= key
+	I  FindClosest( T const &search, CompareOperands_t eFindCriteria ) const;
 
 	// Remove methods
 	void     RemoveAt( I i );
@@ -372,8 +414,8 @@ m_LastAlloc( m_Elements.InvalidIterator() )
 
 template < class T, class I, typename L, class M >
 inline CUtlRBTree<T, I, L, M>::CUtlRBTree( const LessFunc_t &lessfunc ) : 
-m_LessFunc( lessfunc ),
 m_Elements( 0, 0 ),
+m_LessFunc( lessfunc ),
 m_Root( InvalidIndex() ),
 m_NumElements( 0 ),
 m_FirstFree( InvalidIndex() ),
@@ -414,13 +456,15 @@ inline void CUtlRBTree<T, I, L, M>::CopyFrom( const CUtlRBTree<T, I, L, M> &othe
 
 template < class T, class I, typename L, class M >
 inline T &CUtlRBTree<T, I, L, M>::Element( I i )        
-{ 
+{
+	Assert( IsValidIndex( i ) );
 	return m_Elements[i].m_Data; 
 }
 
 template < class T, class I, typename L, class M >
 inline T const &CUtlRBTree<T, I, L, M>::Element( I i ) const  
 { 
+	Assert( IsValidIndex( i ) );
 	return m_Elements[i].m_Data; 
 }
 
@@ -480,19 +524,19 @@ inline	I  CUtlRBTree<T, I, L, M>::MaxElement() const
 template < class T, class I, typename L, class M >
 inline	I CUtlRBTree<T, I, L, M>::Parent( I i ) const      
 { 
-	return Links(i).m_Parent; 
+	return i != InvalidIndex() ? m_Elements[i].m_Parent : InvalidIndex();
 }
 
 template < class T, class I, typename L, class M >
 inline	I CUtlRBTree<T, I, L, M>::LeftChild( I i ) const   
 { 
-	return Links(i).m_Left; 
+	return i != InvalidIndex() ? m_Elements[i].m_Left : InvalidIndex();
 }
 
 template < class T, class I, typename L, class M >
 inline	I CUtlRBTree<T, I, L, M>::RightChild( I i ) const  
 { 
-	return Links(i).m_Right; 
+	return i != InvalidIndex() ? m_Elements[i].m_Right : InvalidIndex();
 }
 
 //-----------------------------------------------------------------------------
@@ -597,19 +641,22 @@ template < class T, class I, typename L, class M >
 inline typename CUtlRBTree<T, I, L, M>::Links_t const &CUtlRBTree<T, I, L, M>::Links( I i ) const 
 {
 	// Sentinel node, makes life easier
-	static Links_t s_Sentinel = 
+	static const Links_t s_Sentinel = 
 	{ 
-		InvalidIndex(), InvalidIndex(), InvalidIndex(), CUtlRBTree<T, I, L, M>::BLACK 
+		// Use M::INVALID_INDEX instead of InvalidIndex() so that this is
+		// a compile-time constant -- otherwise it is constructed on the first
+		// call!
+		M::INVALID_INDEX, M::INVALID_INDEX, M::INVALID_INDEX, CUtlRBTree<T, I, L, M>::BLACK
 	};
 
-	return (i != InvalidIndex()) ? *(Links_t*)&m_Elements[i] : *(Links_t*)&s_Sentinel;
+	return (i != InvalidIndex()) ? m_Elements[i] : s_Sentinel;
 }
 
 template < class T, class I, typename L, class M >
 inline typename CUtlRBTree<T, I, L, M>::Links_t &CUtlRBTree<T, I, L, M>::Links( I i )       
 { 
 	Assert(i != InvalidIndex()); 
-	return *(Links_t *)&m_Elements[i];
+	return m_Elements[i];
 }
 
 //-----------------------------------------------------------------------------
@@ -619,13 +666,13 @@ inline typename CUtlRBTree<T, I, L, M>::Links_t &CUtlRBTree<T, I, L, M>::Links( 
 template < class T, class I, typename L, class M >
 inline bool CUtlRBTree<T, I, L, M>::IsRed( I i ) const                
 { 
-	return (Links(i).m_Tag == RED); 
+	return Color( i ) == RED; 
 }
 
 template < class T, class I, typename L, class M >
 inline bool CUtlRBTree<T, I, L, M>::IsBlack( I i ) const             
 { 
-	return (Links(i).m_Tag == BLACK); 
+	return Color( i ) == BLACK; 
 }
 
 
@@ -636,7 +683,7 @@ inline bool CUtlRBTree<T, I, L, M>::IsBlack( I i ) const
 template < class T, class I, typename L, class M >
 inline typename CUtlRBTree<T, I, L, M>::NodeColor_t  CUtlRBTree<T, I, L, M>::Color( I i ) const            
 { 
-	return (NodeColor_t)Links(i).m_Tag; 
+	return (NodeColor_t)(i != InvalidIndex() ? m_Elements[i].m_Tag : BLACK); 
 }
 
 template < class T, class I, typename L, class M >
@@ -648,10 +695,8 @@ inline void CUtlRBTree<T, I, L, M>::SetColor( I i, typename CUtlRBTree<T, I, L, 
 //-----------------------------------------------------------------------------
 // Allocates/ deallocates nodes
 //-----------------------------------------------------------------------------
-#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable:4389) // '==' : signed/unsigned mismatch
-#endif
 template < class T, class I, typename L, class M >
 I  CUtlRBTree<T, I, L, M>::NewNode()
 {
@@ -682,7 +727,7 @@ I  CUtlRBTree<T, I, L, M>::NewNode()
 	else
 	{
 		elem = m_FirstFree;
-		m_FirstFree = Links( m_FirstFree ).m_Right;
+		m_FirstFree = RightChild( m_FirstFree );
 	}
 
 #ifdef _DEBUG
@@ -696,9 +741,7 @@ I  CUtlRBTree<T, I, L, M>::NewNode()
 
 	return elem;
 }
-#ifdef _MSC_VER
 #pragma warning(pop)
-#endif
 
 template < class T, class I, typename L, class M >
 void  CUtlRBTree<T, I, L, M>::FreeNode( I i )
@@ -1056,8 +1099,8 @@ void CUtlRBTree<T, I, L, M>::Link( I elem )
 {
 	if ( elem != InvalidIndex() )
 	{
-		I parent;
-		bool leftchild;
+		I parent = InvalidIndex();
+		bool leftchild = false;
 
 		FindInsertionPosition( Element( elem ), parent, leftchild );
 
@@ -1165,8 +1208,9 @@ template < class T, class I, typename L, class M >
 I CUtlRBTree<T, I, L, M>::FirstInorder() const
 {
 	I i = m_Root;
-	while (LeftChild(i) != InvalidIndex())
-		i = LeftChild(i);
+	I left;
+	while ((left = LeftChild(i)) != InvalidIndex())
+		i = left;
 	return i;
 }
 
@@ -1175,11 +1219,13 @@ I CUtlRBTree<T, I, L, M>::NextInorder( I i ) const
 {
 	Assert(IsValidIndex(i));
 
-	if (RightChild(i) != InvalidIndex())
+	I right;
+	if ((right = RightChild(i)) != InvalidIndex())
 	{
-		i = RightChild(i);
-		while (LeftChild(i) != InvalidIndex())
-			i = LeftChild(i);
+		i = right;
+		I left;
+		while ((left = LeftChild(i)) != InvalidIndex())
+			i = left;
 		return i;
 	}
 
@@ -1198,11 +1244,12 @@ I CUtlRBTree<T, I, L, M>::PrevInorder( I i ) const
 {
 	Assert(IsValidIndex(i));
 
-	if (LeftChild(i) != InvalidIndex())
+	I left, right;
+	if ((left = LeftChild(i)) != InvalidIndex())
 	{
-		i = LeftChild(i);
-		while (RightChild(i) != InvalidIndex())
-			i = RightChild(i);
+		i = left;
+		while ((right = RightChild(i)) != InvalidIndex())
+			i = right;
 		return i;
 	}
 
@@ -1220,8 +1267,9 @@ template < class T, class I, typename L, class M >
 I CUtlRBTree<T, I, L, M>::LastInorder() const
 {
 	I i = m_Root;
-	while (RightChild(i) != InvalidIndex())
-		i = RightChild(i);
+	I right;
+	while ((right = RightChild(i)) != InvalidIndex())
+		i = right;
 	return i;
 }
 
@@ -1234,11 +1282,12 @@ I CUtlRBTree<T, I, L, M>::FirstPreorder() const
 template < class T, class I, typename L, class M >
 I CUtlRBTree<T, I, L, M>::NextPreorder( I i ) const
 {
-	if (LeftChild(i) != InvalidIndex())
-		return LeftChild(i);
+	I left, right;
+	if ((left = LeftChild(i)) != InvalidIndex())
+		return left;
 
-	if (RightChild(i) != InvalidIndex())
-		return RightChild(i);
+	if ((right = RightChild(i)) != InvalidIndex())
+		return right;
 
 	I parent = Parent(i);
 	while( parent != InvalidIndex())
@@ -1264,11 +1313,12 @@ I CUtlRBTree<T, I, L, M>::LastPreorder() const
 	I i = m_Root;
 	while (1)
 	{
-		while (RightChild(i) != InvalidIndex())
-			i = RightChild(i);
+		I left, right;
+		while ((right = RightChild(i)) != InvalidIndex())
+			i = right;
 
-		if (LeftChild(i) != InvalidIndex())
-			i = LeftChild(i);
+		if ((left = LeftChild(i)) != InvalidIndex())
+			i = left;
 		else
 			break;
 	}
@@ -1281,8 +1331,9 @@ I CUtlRBTree<T, I, L, M>::FirstPostorder() const
 	I i = m_Root;
 	while (!IsLeaf(i))
 	{
-		if (LeftChild(i))
-			i = LeftChild(i);
+		I left;
+		if ((left = LeftChild(i)) != InvalidIndex())
+			i = left;
 		else
 			i = RightChild(i);
 	}
@@ -1305,8 +1356,9 @@ I CUtlRBTree<T, I, L, M>::NextPostorder( I i ) const
 	i = RightChild(parent);
 	while (!IsLeaf(i))
 	{
-		if (LeftChild(i))
-			i = LeftChild(i);
+		I left;
+		if ((left = LeftChild(i)) != InvalidIndex())
+			i = left;
 		else
 			i = RightChild(i);
 	}
@@ -1454,7 +1506,7 @@ void CUtlRBTree<T, I, L, M>::SetLessFunc( const typename CUtlRBTree<T, I, L, M>:
 template < class T, class I, typename L, class M > 
 void CUtlRBTree<T, I, L, M>::FindInsertionPosition( T const &insert, I &parent, bool &leftchild )
 {
-	Assert( m_LessFunc );
+	Assert( !!m_LessFunc );
 
 	/* find where node belongs */
 	I current = m_Root;
@@ -1478,8 +1530,8 @@ template < class T, class I, typename L, class M >
 I CUtlRBTree<T, I, L, M>::Insert( T const &insert )
 {
 	// use copy constructor to copy it in
-	I parent;
-	bool leftchild;
+	I parent = InvalidIndex();
+	bool leftchild = false;
 	FindInsertionPosition( insert, parent, leftchild );
 	I newNode = InsertAt( parent, leftchild );
 	CopyConstruct( &Element( newNode ), insert );
@@ -1535,7 +1587,7 @@ I CUtlRBTree<T, I, L, M>::InsertIfNotFound( T const &insert )
 template < class T, class I, typename L, class M > 
 I CUtlRBTree<T, I, L, M>::Find( T const &search ) const
 {
-	Assert( m_LessFunc );
+	Assert( !!m_LessFunc );
 
 	I current = m_Root;
 	while (current != InvalidIndex()) 
@@ -1548,6 +1600,82 @@ I CUtlRBTree<T, I, L, M>::Find( T const &search ) const
 			break;
 	}
 	return current;
+}
+
+
+//-----------------------------------------------------------------------------
+// finds a the first node (inorder) with this key in the tree
+//-----------------------------------------------------------------------------
+template <class T, class I, typename L, class E>
+I CUtlRBTree<T, I, L, E>::FindFirst( T const &search ) const
+{
+	Assert( !!m_LessFunc );
+
+	I current = m_Root;
+	I best = InvalidIndex();
+	while ( current != InvalidIndex() )
+	{
+		if ( m_LessFunc( search, Element( current ) ) )
+			current = LeftChild( current );
+		else if ( m_LessFunc( Element( current ), search ) )
+			current = RightChild( current );
+		else
+		{
+			best = current;
+			current = LeftChild( current );
+		}
+	}
+	return best;
+}
+
+
+//-----------------------------------------------------------------------------
+// finds the closest node to the key supplied
+//-----------------------------------------------------------------------------
+template <class T, class I, typename L, class E>
+I CUtlRBTree<T, I, L, E>::FindClosest( T const &search, CompareOperands_t eFindCriteria ) const
+{
+	Assert( !!m_LessFunc );
+	Assert( ( eFindCriteria & ( k_EGreaterThan | k_ELessThan ) ) ^ ( k_EGreaterThan | k_ELessThan ) );
+
+	I current = m_Root;
+	I best = InvalidIndex();
+
+	while ( current != InvalidIndex() )
+	{
+		if ( m_LessFunc( search, Element( current ) ) )
+		{
+			// current node is > key
+			if ( eFindCriteria & k_EGreaterThan )
+				best = current;
+			current = LeftChild( current );
+		}
+		else if ( m_LessFunc( Element( current ), search ) )
+		{
+			// current node is < key
+			if ( eFindCriteria & k_ELessThan )
+				best = current;
+			current = RightChild( current );
+		}
+		else
+		{
+			// exact match
+			if ( eFindCriteria & k_EEqual )
+			{
+				best = current;
+				break;
+			}
+			else if ( eFindCriteria & k_EGreaterThan )
+			{
+				current = RightChild( current );
+			}
+			else if ( eFindCriteria & k_ELessThan )
+			{
+				current = LeftChild( current );
+			}
+		}
+	}
+	return best;
 }
 
 
