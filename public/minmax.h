@@ -9,11 +9,11 @@
 #ifndef MINMAX_H
 #define MINMAX_H
 
-#ifndef min
-#define min(a,b)  (((a) < (b)) ? (a) : (b))
+#ifndef V_min
+#define V_min(a,b)  (((a) < (b)) ? (a) : (b))
 #endif
-#ifndef max
-#define max(a,b)  (((a) > (b)) ? (a) : (b))
+#ifndef V_max
+#define V_max(a,b)  (((a) > (b)) ? (a) : (b))
 #endif
 
 #endif // MINMAX_H

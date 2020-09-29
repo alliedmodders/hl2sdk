@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -20,6 +20,30 @@
 
 class CBaseEntity;
 
+
+struct CSGOAttackerInfo
+{
+	CSGOAttackerInfo() {
+		m_bNeedInit = true;
+		m_bIsPlayer = false;
+		m_bIsWorld = false;
+		m_iClientIndex = 0;
+		m_nSurvivalTeam = -1;
+		m_iTeamChecked = -1;
+		m_iTeamNum = -1;
+		m_iUserId = -1;
+	}
+
+	bool m_bNeedInit;
+	EHANDLE m_hHndl;
+	bool m_bIsPlayer;
+	bool m_bIsWorld;
+	int m_iClientIndex;
+	int m_nSurvivalTeam;
+	int m_iTeamChecked; // If team index is spectator, switch to m_iCoachingTeam
+	int m_iTeamNum;
+	int m_iUserId;
+};
 
 class CTakeDamageInfo
 {
@@ -116,12 +140,11 @@ protected:
 	int				m_iDamageStats;
 	int				m_iAmmoType;			// AmmoType of the weapon used to cause this damage, if any
 	float			m_flRadius;
-	
-	// CS:GO
 	int				m_iDamagedOtherPlayers;
-	int				m_iObjectsPenetrated;
+	int				m_iObjectsPenetrated;	// Number of objects penetrated
 	uint32			m_uiBulletID;
 	uint8			m_uiRecoilIndex;
+	CSGOAttackerInfo	m_CSGOAttacker;
 
 	DECLARE_SIMPLE_DATADESC();
 };
