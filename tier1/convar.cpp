@@ -274,7 +274,7 @@ ConCommandBase *ConCommandBase::GetNext( void )
 //-----------------------------------------------------------------------------
 char *ConCommandBase::CopyString( const char *from )
 {
-	int		len;
+	int   len;
 	char	*to;
 
 	len = strlen( from );
@@ -961,7 +961,7 @@ void ConVar::Create( const char *pName, const char *pDefaultValue, int flags /*=
 	m_pszDefaultValue = pDefaultValue ? pDefaultValue : empty_string;
 	Assert( m_pszDefaultValue );
 
-	m_Value.m_StringLength = strlen( m_pszDefaultValue ) + 1;
+	m_Value.m_StringLength = static_cast<int>(strlen( m_pszDefaultValue ) + 1);
 	m_Value.m_pszString = new char[m_Value.m_StringLength];
 	memcpy( m_Value.m_pszString, m_pszDefaultValue, m_Value.m_StringLength );
 	

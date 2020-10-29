@@ -329,7 +329,7 @@ enum XUSER_SIGNIN_STATE
 
 #if (defined(POSIX))
 typedef size_t ULONG_PTR;
-#else
+#elif !(defined(WIN64))
 typedef _W64 unsigned long ULONG_PTR;
 #endif
 typedef ULONG_PTR DWORD_PTR, *PDWORD_PTR;
