@@ -113,6 +113,30 @@ class CCSUsrMsg_SurvivalStats_Damage;
 class CCSUsrMsg_EndOfMatchAllPlayersData;
 class CCSUsrMsg_EndOfMatchAllPlayersData_Accolade;
 class CCSUsrMsg_EndOfMatchAllPlayersData_PlayerData;
+class CCSUsrMsg_RoundImpactScoreData;
+class CCSUsrMsg_RoundImpactScoreData_RisEvent;
+class CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim;
+class CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective;
+class CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage;
+class CCSUsrMsg_RoundImpactScoreData_InitialConditions;
+class CCSUsrMsg_CurrentRoundOdds;
+class DeepPlayerStatsEntry;
+class DeepPlayerMatchEvent;
+class CMsgGCCStrike15_ClientDeepStats;
+class CMsgGCCStrike15_ClientDeepStats_DeepStatsRange;
+class CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch;
+class CCSUsrMsg_DeepStats;
+class PlayerRankingInfo;
+class IpAddressMask;
+class TournamentEvent;
+class TournamentPlayer;
+class TournamentTeam;
+class CDataGCCStrike15_v2_TournamentMatchDraft;
+class CDataGCCStrike15_v2_TournamentMatchDraft_Entry;
+class CPreMatchInfoData;
+class CPreMatchInfoData_TeamStats;
+class CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve;
+class CCSUsrMsg_ServerRankRevealAll;
 class CCSUsrMsg_ResetHud;
 class CCSUsrMsg_GameTitle;
 class CCSUsrMsg_RequestState;
@@ -120,7 +144,6 @@ class CCSUsrMsg_StopSpectatorMode;
 class CCSUsrMsg_DisconnectToLobby;
 class CCSUsrMsg_WarmupHasEnded;
 class CCSUsrMsg_ClientInfo;
-class CCSUsrMsg_ServerRankRevealAll;
 
 enum ECstrike15UserMessages {
   CS_UM_VGUIMenu = 1,
@@ -193,11 +216,14 @@ enum ECstrike15UserMessages {
   CS_UM_SSUI = 72,
   CS_UM_SurvivalStats = 73,
   CS_UM_DisconnectToLobby2 = 74,
-  CS_UM_EndOfMatchAllPlayersData = 75
+  CS_UM_EndOfMatchAllPlayersData = 75,
+  CS_UM_RoundImpactScoreData = 79,
+  CS_UM_CurrentRoundOdds = 80,
+  CS_UM_DeepStats = 81
 };
 bool ECstrike15UserMessages_IsValid(int value);
 const ECstrike15UserMessages ECstrike15UserMessages_MIN = CS_UM_VGUIMenu;
-const ECstrike15UserMessages ECstrike15UserMessages_MAX = CS_UM_EndOfMatchAllPlayersData;
+const ECstrike15UserMessages ECstrike15UserMessages_MAX = CS_UM_DeepStats;
 const int ECstrike15UserMessages_ARRAYSIZE = ECstrike15UserMessages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ECstrike15UserMessages_descriptor();
@@ -8856,6 +8882,3370 @@ class CCSUsrMsg_EndOfMatchAllPlayersData : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim();
+  virtual ~CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim();
+
+  CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim(const CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim& from);
+
+  inline CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim& operator=(const CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim& default_instance();
+
+  void Swap(CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim& from);
+  void MergeFrom(const CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 team_number = 1;
+  inline bool has_team_number() const;
+  inline void clear_team_number();
+  static const int kTeamNumberFieldNumber = 1;
+  inline ::google::protobuf::int32 team_number() const;
+  inline void set_team_number(::google::protobuf::int32 value);
+
+  // optional int32 entindex = 2;
+  inline bool has_entindex() const;
+  inline void clear_entindex();
+  static const int kEntindexFieldNumber = 2;
+  inline ::google::protobuf::int32 entindex() const;
+  inline void set_entindex(::google::protobuf::int32 value);
+
+  // optional uint64 xuid = 3;
+  inline bool has_xuid() const;
+  inline void clear_xuid();
+  static const int kXuidFieldNumber = 3;
+  inline ::google::protobuf::uint64 xuid() const;
+  inline void set_xuid(::google::protobuf::uint64 value);
+
+  // optional int32 color = 4;
+  inline bool has_color() const;
+  inline void clear_color();
+  static const int kColorFieldNumber = 4;
+  inline ::google::protobuf::int32 color() const;
+  inline void set_color(::google::protobuf::int32 value);
+
+  // optional bool is_bot = 5;
+  inline bool has_is_bot() const;
+  inline void clear_is_bot();
+  static const int kIsBotFieldNumber = 5;
+  inline bool is_bot() const;
+  inline void set_is_bot(bool value);
+
+  // optional bool is_dead = 6;
+  inline bool has_is_dead() const;
+  inline void clear_is_dead();
+  static const int kIsDeadFieldNumber = 6;
+  inline bool is_dead() const;
+  inline void set_is_dead(bool value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_RoundImpactScoreData.RisEvent.Victim)
+ private:
+  inline void set_has_team_number();
+  inline void clear_has_team_number();
+  inline void set_has_entindex();
+  inline void clear_has_entindex();
+  inline void set_has_xuid();
+  inline void clear_has_xuid();
+  inline void set_has_color();
+  inline void clear_has_color();
+  inline void set_has_is_bot();
+  inline void clear_has_is_bot();
+  inline void set_has_is_dead();
+  inline void clear_has_is_dead();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 team_number_;
+  ::google::protobuf::int32 entindex_;
+  ::google::protobuf::uint64 xuid_;
+  ::google::protobuf::int32 color_;
+  bool is_bot_;
+  bool is_dead_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective();
+  virtual ~CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective();
+
+  CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective(const CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective& from);
+
+  inline CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective& operator=(const CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective& default_instance();
+
+  void Swap(CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective& from);
+  void MergeFrom(const CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 type = 1;
+  inline bool has_type() const;
+  inline void clear_type();
+  static const int kTypeFieldNumber = 1;
+  inline ::google::protobuf::int32 type() const;
+  inline void set_type(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_RoundImpactScoreData.RisEvent.Objective)
+ private:
+  inline void set_has_type();
+  inline void clear_has_type();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 type_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage();
+  virtual ~CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage();
+
+  CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage(const CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage& from);
+
+  inline CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage& operator=(const CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage& default_instance();
+
+  void Swap(CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage& from);
+  void MergeFrom(const CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 target_entindex = 1;
+  inline bool has_target_entindex() const;
+  inline void clear_target_entindex();
+  static const int kTargetEntindexFieldNumber = 1;
+  inline ::google::protobuf::int32 target_entindex() const;
+  inline void set_target_entindex(::google::protobuf::int32 value);
+
+  // optional uint64 target_xuid = 2;
+  inline bool has_target_xuid() const;
+  inline void clear_target_xuid();
+  static const int kTargetXuidFieldNumber = 2;
+  inline ::google::protobuf::uint64 target_xuid() const;
+  inline void set_target_xuid(::google::protobuf::uint64 value);
+
+  // optional int32 health_removed = 3;
+  inline bool has_health_removed() const;
+  inline void clear_health_removed();
+  static const int kHealthRemovedFieldNumber = 3;
+  inline ::google::protobuf::int32 health_removed() const;
+  inline void set_health_removed(::google::protobuf::int32 value);
+
+  // optional int32 num_hits = 4;
+  inline bool has_num_hits() const;
+  inline void clear_num_hits();
+  static const int kNumHitsFieldNumber = 4;
+  inline ::google::protobuf::int32 num_hits() const;
+  inline void set_num_hits(::google::protobuf::int32 value);
+
+  // optional int32 return_health_removed = 5;
+  inline bool has_return_health_removed() const;
+  inline void clear_return_health_removed();
+  static const int kReturnHealthRemovedFieldNumber = 5;
+  inline ::google::protobuf::int32 return_health_removed() const;
+  inline void set_return_health_removed(::google::protobuf::int32 value);
+
+  // optional int32 num_return_hits = 6;
+  inline bool has_num_return_hits() const;
+  inline void clear_num_return_hits();
+  static const int kNumReturnHitsFieldNumber = 6;
+  inline ::google::protobuf::int32 num_return_hits() const;
+  inline void set_num_return_hits(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_RoundImpactScoreData.RisEvent.Damage)
+ private:
+  inline void set_has_target_entindex();
+  inline void clear_has_target_entindex();
+  inline void set_has_target_xuid();
+  inline void clear_has_target_xuid();
+  inline void set_has_health_removed();
+  inline void clear_has_health_removed();
+  inline void set_has_num_hits();
+  inline void clear_has_num_hits();
+  inline void set_has_return_health_removed();
+  inline void clear_has_return_health_removed();
+  inline void set_has_num_return_hits();
+  inline void clear_has_num_return_hits();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint64 target_xuid_;
+  ::google::protobuf::int32 target_entindex_;
+  ::google::protobuf::int32 health_removed_;
+  ::google::protobuf::int32 num_hits_;
+  ::google::protobuf::int32 return_health_removed_;
+  ::google::protobuf::int32 num_return_hits_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_RoundImpactScoreData_RisEvent : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_RoundImpactScoreData_RisEvent();
+  virtual ~CCSUsrMsg_RoundImpactScoreData_RisEvent();
+
+  CCSUsrMsg_RoundImpactScoreData_RisEvent(const CCSUsrMsg_RoundImpactScoreData_RisEvent& from);
+
+  inline CCSUsrMsg_RoundImpactScoreData_RisEvent& operator=(const CCSUsrMsg_RoundImpactScoreData_RisEvent& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_RoundImpactScoreData_RisEvent& default_instance();
+
+  void Swap(CCSUsrMsg_RoundImpactScoreData_RisEvent* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_RoundImpactScoreData_RisEvent* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_RoundImpactScoreData_RisEvent& from);
+  void MergeFrom(const CCSUsrMsg_RoundImpactScoreData_RisEvent& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  typedef CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim Victim;
+  typedef CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective Objective;
+  typedef CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage Damage;
+
+  // accessors -------------------------------------------------------
+
+  // optional float timestamp = 1;
+  inline bool has_timestamp() const;
+  inline void clear_timestamp();
+  static const int kTimestampFieldNumber = 1;
+  inline float timestamp() const;
+  inline void set_timestamp(float value);
+
+  // optional int32 terrorist_odds = 2;
+  inline bool has_terrorist_odds() const;
+  inline void clear_terrorist_odds();
+  static const int kTerroristOddsFieldNumber = 2;
+  inline ::google::protobuf::int32 terrorist_odds() const;
+  inline void set_terrorist_odds(::google::protobuf::int32 value);
+
+  // optional int32 ct_alive = 3;
+  inline bool has_ct_alive() const;
+  inline void clear_ct_alive();
+  static const int kCtAliveFieldNumber = 3;
+  inline ::google::protobuf::int32 ct_alive() const;
+  inline void set_ct_alive(::google::protobuf::int32 value);
+
+  // optional int32 t_alive = 4;
+  inline bool has_t_alive() const;
+  inline void clear_t_alive();
+  static const int kTAliveFieldNumber = 4;
+  inline ::google::protobuf::int32 t_alive() const;
+  inline void set_t_alive(::google::protobuf::int32 value);
+
+  // optional .CCSUsrMsg_RoundImpactScoreData.RisEvent.Victim victim_data = 5;
+  inline bool has_victim_data() const;
+  inline void clear_victim_data();
+  static const int kVictimDataFieldNumber = 5;
+  inline const ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim& victim_data() const;
+  inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim* mutable_victim_data();
+  inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim* release_victim_data();
+  inline void set_allocated_victim_data(::CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim* victim_data);
+
+  // optional .CCSUsrMsg_RoundImpactScoreData.RisEvent.Objective objective_data = 6;
+  inline bool has_objective_data() const;
+  inline void clear_objective_data();
+  static const int kObjectiveDataFieldNumber = 6;
+  inline const ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective& objective_data() const;
+  inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective* mutable_objective_data();
+  inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective* release_objective_data();
+  inline void set_allocated_objective_data(::CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective* objective_data);
+
+  // repeated .CCSUsrMsg_RoundImpactScoreData.RisEvent.Damage all_damage_data = 7;
+  inline int all_damage_data_size() const;
+  inline void clear_all_damage_data();
+  static const int kAllDamageDataFieldNumber = 7;
+  inline const ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage& all_damage_data(int index) const;
+  inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage* mutable_all_damage_data(int index);
+  inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage* add_all_damage_data();
+  inline const ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage >&
+      all_damage_data() const;
+  inline ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage >*
+      mutable_all_damage_data();
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_RoundImpactScoreData.RisEvent)
+ private:
+  inline void set_has_timestamp();
+  inline void clear_has_timestamp();
+  inline void set_has_terrorist_odds();
+  inline void clear_has_terrorist_odds();
+  inline void set_has_ct_alive();
+  inline void clear_has_ct_alive();
+  inline void set_has_t_alive();
+  inline void clear_has_t_alive();
+  inline void set_has_victim_data();
+  inline void clear_has_victim_data();
+  inline void set_has_objective_data();
+  inline void clear_has_objective_data();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  float timestamp_;
+  ::google::protobuf::int32 terrorist_odds_;
+  ::google::protobuf::int32 ct_alive_;
+  ::google::protobuf::int32 t_alive_;
+  ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim* victim_data_;
+  ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective* objective_data_;
+  ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage > all_damage_data_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_RoundImpactScoreData_RisEvent* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_RoundImpactScoreData_InitialConditions : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_RoundImpactScoreData_InitialConditions();
+  virtual ~CCSUsrMsg_RoundImpactScoreData_InitialConditions();
+
+  CCSUsrMsg_RoundImpactScoreData_InitialConditions(const CCSUsrMsg_RoundImpactScoreData_InitialConditions& from);
+
+  inline CCSUsrMsg_RoundImpactScoreData_InitialConditions& operator=(const CCSUsrMsg_RoundImpactScoreData_InitialConditions& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_RoundImpactScoreData_InitialConditions& default_instance();
+
+  void Swap(CCSUsrMsg_RoundImpactScoreData_InitialConditions* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_RoundImpactScoreData_InitialConditions* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_RoundImpactScoreData_InitialConditions& from);
+  void MergeFrom(const CCSUsrMsg_RoundImpactScoreData_InitialConditions& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 ct_equip_value = 1;
+  inline bool has_ct_equip_value() const;
+  inline void clear_ct_equip_value();
+  static const int kCtEquipValueFieldNumber = 1;
+  inline ::google::protobuf::int32 ct_equip_value() const;
+  inline void set_ct_equip_value(::google::protobuf::int32 value);
+
+  // optional int32 t_equip_value = 2;
+  inline bool has_t_equip_value() const;
+  inline void clear_t_equip_value();
+  static const int kTEquipValueFieldNumber = 2;
+  inline ::google::protobuf::int32 t_equip_value() const;
+  inline void set_t_equip_value(::google::protobuf::int32 value);
+
+  // optional int32 terrorist_odds = 3;
+  inline bool has_terrorist_odds() const;
+  inline void clear_terrorist_odds();
+  static const int kTerroristOddsFieldNumber = 3;
+  inline ::google::protobuf::int32 terrorist_odds() const;
+  inline void set_terrorist_odds(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_RoundImpactScoreData.InitialConditions)
+ private:
+  inline void set_has_ct_equip_value();
+  inline void clear_has_ct_equip_value();
+  inline void set_has_t_equip_value();
+  inline void clear_has_t_equip_value();
+  inline void set_has_terrorist_odds();
+  inline void clear_has_terrorist_odds();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 ct_equip_value_;
+  ::google::protobuf::int32 t_equip_value_;
+  ::google::protobuf::int32 terrorist_odds_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_RoundImpactScoreData_InitialConditions* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_RoundImpactScoreData : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_RoundImpactScoreData();
+  virtual ~CCSUsrMsg_RoundImpactScoreData();
+
+  CCSUsrMsg_RoundImpactScoreData(const CCSUsrMsg_RoundImpactScoreData& from);
+
+  inline CCSUsrMsg_RoundImpactScoreData& operator=(const CCSUsrMsg_RoundImpactScoreData& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_RoundImpactScoreData& default_instance();
+
+  void Swap(CCSUsrMsg_RoundImpactScoreData* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_RoundImpactScoreData* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_RoundImpactScoreData& from);
+  void MergeFrom(const CCSUsrMsg_RoundImpactScoreData& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  typedef CCSUsrMsg_RoundImpactScoreData_RisEvent RisEvent;
+  typedef CCSUsrMsg_RoundImpactScoreData_InitialConditions InitialConditions;
+
+  // accessors -------------------------------------------------------
+
+  // optional .CCSUsrMsg_RoundImpactScoreData.InitialConditions init_conditions = 1;
+  inline bool has_init_conditions() const;
+  inline void clear_init_conditions();
+  static const int kInitConditionsFieldNumber = 1;
+  inline const ::CCSUsrMsg_RoundImpactScoreData_InitialConditions& init_conditions() const;
+  inline ::CCSUsrMsg_RoundImpactScoreData_InitialConditions* mutable_init_conditions();
+  inline ::CCSUsrMsg_RoundImpactScoreData_InitialConditions* release_init_conditions();
+  inline void set_allocated_init_conditions(::CCSUsrMsg_RoundImpactScoreData_InitialConditions* init_conditions);
+
+  // repeated .CCSUsrMsg_RoundImpactScoreData.RisEvent all_ris_event_data = 2;
+  inline int all_ris_event_data_size() const;
+  inline void clear_all_ris_event_data();
+  static const int kAllRisEventDataFieldNumber = 2;
+  inline const ::CCSUsrMsg_RoundImpactScoreData_RisEvent& all_ris_event_data(int index) const;
+  inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent* mutable_all_ris_event_data(int index);
+  inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent* add_all_ris_event_data();
+  inline const ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_RoundImpactScoreData_RisEvent >&
+      all_ris_event_data() const;
+  inline ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_RoundImpactScoreData_RisEvent >*
+      mutable_all_ris_event_data();
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_RoundImpactScoreData)
+ private:
+  inline void set_has_init_conditions();
+  inline void clear_has_init_conditions();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::CCSUsrMsg_RoundImpactScoreData_InitialConditions* init_conditions_;
+  ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_RoundImpactScoreData_RisEvent > all_ris_event_data_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_RoundImpactScoreData* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_CurrentRoundOdds : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_CurrentRoundOdds();
+  virtual ~CCSUsrMsg_CurrentRoundOdds();
+
+  CCSUsrMsg_CurrentRoundOdds(const CCSUsrMsg_CurrentRoundOdds& from);
+
+  inline CCSUsrMsg_CurrentRoundOdds& operator=(const CCSUsrMsg_CurrentRoundOdds& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_CurrentRoundOdds& default_instance();
+
+  void Swap(CCSUsrMsg_CurrentRoundOdds* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_CurrentRoundOdds* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_CurrentRoundOdds& from);
+  void MergeFrom(const CCSUsrMsg_CurrentRoundOdds& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 odds = 1;
+  inline bool has_odds() const;
+  inline void clear_odds();
+  static const int kOddsFieldNumber = 1;
+  inline ::google::protobuf::int32 odds() const;
+  inline void set_odds(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_CurrentRoundOdds)
+ private:
+  inline void set_has_odds();
+  inline void clear_has_odds();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 odds_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_CurrentRoundOdds* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class DeepPlayerStatsEntry : public ::google::protobuf::Message {
+ public:
+  DeepPlayerStatsEntry();
+  virtual ~DeepPlayerStatsEntry();
+
+  DeepPlayerStatsEntry(const DeepPlayerStatsEntry& from);
+
+  inline DeepPlayerStatsEntry& operator=(const DeepPlayerStatsEntry& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const DeepPlayerStatsEntry& default_instance();
+
+  void Swap(DeepPlayerStatsEntry* other);
+
+  // implements Message ----------------------------------------------
+
+  DeepPlayerStatsEntry* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const DeepPlayerStatsEntry& from);
+  void MergeFrom(const DeepPlayerStatsEntry& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 accountid = 1;
+  inline bool has_accountid() const;
+  inline void clear_accountid();
+  static const int kAccountidFieldNumber = 1;
+  inline ::google::protobuf::uint32 accountid() const;
+  inline void set_accountid(::google::protobuf::uint32 value);
+
+  // optional uint64 match_id = 2;
+  inline bool has_match_id() const;
+  inline void clear_match_id();
+  static const int kMatchIdFieldNumber = 2;
+  inline ::google::protobuf::uint64 match_id() const;
+  inline void set_match_id(::google::protobuf::uint64 value);
+
+  // optional uint32 mm_game_mode = 3;
+  inline bool has_mm_game_mode() const;
+  inline void clear_mm_game_mode();
+  static const int kMmGameModeFieldNumber = 3;
+  inline ::google::protobuf::uint32 mm_game_mode() const;
+  inline void set_mm_game_mode(::google::protobuf::uint32 value);
+
+  // optional uint32 mapid = 4;
+  inline bool has_mapid() const;
+  inline void clear_mapid();
+  static const int kMapidFieldNumber = 4;
+  inline ::google::protobuf::uint32 mapid() const;
+  inline void set_mapid(::google::protobuf::uint32 value);
+
+  // optional bool b_starting_ct = 5;
+  inline bool has_b_starting_ct() const;
+  inline void clear_b_starting_ct();
+  static const int kBStartingCtFieldNumber = 5;
+  inline bool b_starting_ct() const;
+  inline void set_b_starting_ct(bool value);
+
+  // optional uint32 match_outcome = 6;
+  inline bool has_match_outcome() const;
+  inline void clear_match_outcome();
+  static const int kMatchOutcomeFieldNumber = 6;
+  inline ::google::protobuf::uint32 match_outcome() const;
+  inline void set_match_outcome(::google::protobuf::uint32 value);
+
+  // optional uint32 rounds_won = 7;
+  inline bool has_rounds_won() const;
+  inline void clear_rounds_won();
+  static const int kRoundsWonFieldNumber = 7;
+  inline ::google::protobuf::uint32 rounds_won() const;
+  inline void set_rounds_won(::google::protobuf::uint32 value);
+
+  // optional uint32 rounds_lost = 8;
+  inline bool has_rounds_lost() const;
+  inline void clear_rounds_lost();
+  static const int kRoundsLostFieldNumber = 8;
+  inline ::google::protobuf::uint32 rounds_lost() const;
+  inline void set_rounds_lost(::google::protobuf::uint32 value);
+
+  // optional uint32 stat_score = 9;
+  inline bool has_stat_score() const;
+  inline void clear_stat_score();
+  static const int kStatScoreFieldNumber = 9;
+  inline ::google::protobuf::uint32 stat_score() const;
+  inline void set_stat_score(::google::protobuf::uint32 value);
+
+  // optional uint32 stat_deaths = 12;
+  inline bool has_stat_deaths() const;
+  inline void clear_stat_deaths();
+  static const int kStatDeathsFieldNumber = 12;
+  inline ::google::protobuf::uint32 stat_deaths() const;
+  inline void set_stat_deaths(::google::protobuf::uint32 value);
+
+  // optional uint32 stat_mvps = 13;
+  inline bool has_stat_mvps() const;
+  inline void clear_stat_mvps();
+  static const int kStatMvpsFieldNumber = 13;
+  inline ::google::protobuf::uint32 stat_mvps() const;
+  inline void set_stat_mvps(::google::protobuf::uint32 value);
+
+  // optional uint32 enemy_kills = 14;
+  inline bool has_enemy_kills() const;
+  inline void clear_enemy_kills();
+  static const int kEnemyKillsFieldNumber = 14;
+  inline ::google::protobuf::uint32 enemy_kills() const;
+  inline void set_enemy_kills(::google::protobuf::uint32 value);
+
+  // optional uint32 enemy_headshots = 15;
+  inline bool has_enemy_headshots() const;
+  inline void clear_enemy_headshots();
+  static const int kEnemyHeadshotsFieldNumber = 15;
+  inline ::google::protobuf::uint32 enemy_headshots() const;
+  inline void set_enemy_headshots(::google::protobuf::uint32 value);
+
+  // optional uint32 enemy_2ks = 16;
+  inline bool has_enemy_2ks() const;
+  inline void clear_enemy_2ks();
+  static const int kEnemy2KsFieldNumber = 16;
+  inline ::google::protobuf::uint32 enemy_2ks() const;
+  inline void set_enemy_2ks(::google::protobuf::uint32 value);
+
+  // optional uint32 enemy_3ks = 17;
+  inline bool has_enemy_3ks() const;
+  inline void clear_enemy_3ks();
+  static const int kEnemy3KsFieldNumber = 17;
+  inline ::google::protobuf::uint32 enemy_3ks() const;
+  inline void set_enemy_3ks(::google::protobuf::uint32 value);
+
+  // optional uint32 enemy_4ks = 18;
+  inline bool has_enemy_4ks() const;
+  inline void clear_enemy_4ks();
+  static const int kEnemy4KsFieldNumber = 18;
+  inline ::google::protobuf::uint32 enemy_4ks() const;
+  inline void set_enemy_4ks(::google::protobuf::uint32 value);
+
+  // optional uint32 total_damage = 19;
+  inline bool has_total_damage() const;
+  inline void clear_total_damage();
+  static const int kTotalDamageFieldNumber = 19;
+  inline ::google::protobuf::uint32 total_damage() const;
+  inline void set_total_damage(::google::protobuf::uint32 value);
+
+  // optional uint32 engagements_entry_count = 23;
+  inline bool has_engagements_entry_count() const;
+  inline void clear_engagements_entry_count();
+  static const int kEngagementsEntryCountFieldNumber = 23;
+  inline ::google::protobuf::uint32 engagements_entry_count() const;
+  inline void set_engagements_entry_count(::google::protobuf::uint32 value);
+
+  // optional uint32 engagements_entry_wins = 24;
+  inline bool has_engagements_entry_wins() const;
+  inline void clear_engagements_entry_wins();
+  static const int kEngagementsEntryWinsFieldNumber = 24;
+  inline ::google::protobuf::uint32 engagements_entry_wins() const;
+  inline void set_engagements_entry_wins(::google::protobuf::uint32 value);
+
+  // optional uint32 engagements_1v1_count = 25;
+  inline bool has_engagements_1v1_count() const;
+  inline void clear_engagements_1v1_count();
+  static const int kEngagements1V1CountFieldNumber = 25;
+  inline ::google::protobuf::uint32 engagements_1v1_count() const;
+  inline void set_engagements_1v1_count(::google::protobuf::uint32 value);
+
+  // optional uint32 engagements_1v1_wins = 26;
+  inline bool has_engagements_1v1_wins() const;
+  inline void clear_engagements_1v1_wins();
+  static const int kEngagements1V1WinsFieldNumber = 26;
+  inline ::google::protobuf::uint32 engagements_1v1_wins() const;
+  inline void set_engagements_1v1_wins(::google::protobuf::uint32 value);
+
+  // optional uint32 engagements_1v2_count = 27;
+  inline bool has_engagements_1v2_count() const;
+  inline void clear_engagements_1v2_count();
+  static const int kEngagements1V2CountFieldNumber = 27;
+  inline ::google::protobuf::uint32 engagements_1v2_count() const;
+  inline void set_engagements_1v2_count(::google::protobuf::uint32 value);
+
+  // optional uint32 engagements_1v2_wins = 28;
+  inline bool has_engagements_1v2_wins() const;
+  inline void clear_engagements_1v2_wins();
+  static const int kEngagements1V2WinsFieldNumber = 28;
+  inline ::google::protobuf::uint32 engagements_1v2_wins() const;
+  inline void set_engagements_1v2_wins(::google::protobuf::uint32 value);
+
+  // optional uint32 utility_count = 29;
+  inline bool has_utility_count() const;
+  inline void clear_utility_count();
+  static const int kUtilityCountFieldNumber = 29;
+  inline ::google::protobuf::uint32 utility_count() const;
+  inline void set_utility_count(::google::protobuf::uint32 value);
+
+  // optional uint32 utility_success = 30;
+  inline bool has_utility_success() const;
+  inline void clear_utility_success();
+  static const int kUtilitySuccessFieldNumber = 30;
+  inline ::google::protobuf::uint32 utility_success() const;
+  inline void set_utility_success(::google::protobuf::uint32 value);
+
+  // optional uint32 flash_count = 32;
+  inline bool has_flash_count() const;
+  inline void clear_flash_count();
+  static const int kFlashCountFieldNumber = 32;
+  inline ::google::protobuf::uint32 flash_count() const;
+  inline void set_flash_count(::google::protobuf::uint32 value);
+
+  // optional uint32 flash_success = 33;
+  inline bool has_flash_success() const;
+  inline void clear_flash_success();
+  static const int kFlashSuccessFieldNumber = 33;
+  inline ::google::protobuf::uint32 flash_success() const;
+  inline void set_flash_success(::google::protobuf::uint32 value);
+
+  // repeated uint32 mates = 34;
+  inline int mates_size() const;
+  inline void clear_mates();
+  static const int kMatesFieldNumber = 34;
+  inline ::google::protobuf::uint32 mates(int index) const;
+  inline void set_mates(int index, ::google::protobuf::uint32 value);
+  inline void add_mates(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      mates() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_mates();
+
+  // @@protoc_insertion_point(class_scope:DeepPlayerStatsEntry)
+ private:
+  inline void set_has_accountid();
+  inline void clear_has_accountid();
+  inline void set_has_match_id();
+  inline void clear_has_match_id();
+  inline void set_has_mm_game_mode();
+  inline void clear_has_mm_game_mode();
+  inline void set_has_mapid();
+  inline void clear_has_mapid();
+  inline void set_has_b_starting_ct();
+  inline void clear_has_b_starting_ct();
+  inline void set_has_match_outcome();
+  inline void clear_has_match_outcome();
+  inline void set_has_rounds_won();
+  inline void clear_has_rounds_won();
+  inline void set_has_rounds_lost();
+  inline void clear_has_rounds_lost();
+  inline void set_has_stat_score();
+  inline void clear_has_stat_score();
+  inline void set_has_stat_deaths();
+  inline void clear_has_stat_deaths();
+  inline void set_has_stat_mvps();
+  inline void clear_has_stat_mvps();
+  inline void set_has_enemy_kills();
+  inline void clear_has_enemy_kills();
+  inline void set_has_enemy_headshots();
+  inline void clear_has_enemy_headshots();
+  inline void set_has_enemy_2ks();
+  inline void clear_has_enemy_2ks();
+  inline void set_has_enemy_3ks();
+  inline void clear_has_enemy_3ks();
+  inline void set_has_enemy_4ks();
+  inline void clear_has_enemy_4ks();
+  inline void set_has_total_damage();
+  inline void clear_has_total_damage();
+  inline void set_has_engagements_entry_count();
+  inline void clear_has_engagements_entry_count();
+  inline void set_has_engagements_entry_wins();
+  inline void clear_has_engagements_entry_wins();
+  inline void set_has_engagements_1v1_count();
+  inline void clear_has_engagements_1v1_count();
+  inline void set_has_engagements_1v1_wins();
+  inline void clear_has_engagements_1v1_wins();
+  inline void set_has_engagements_1v2_count();
+  inline void clear_has_engagements_1v2_count();
+  inline void set_has_engagements_1v2_wins();
+  inline void clear_has_engagements_1v2_wins();
+  inline void set_has_utility_count();
+  inline void clear_has_utility_count();
+  inline void set_has_utility_success();
+  inline void clear_has_utility_success();
+  inline void set_has_flash_count();
+  inline void clear_has_flash_count();
+  inline void set_has_flash_success();
+  inline void clear_has_flash_success();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint64 match_id_;
+  ::google::protobuf::uint32 accountid_;
+  ::google::protobuf::uint32 mm_game_mode_;
+  ::google::protobuf::uint32 mapid_;
+  bool b_starting_ct_;
+  ::google::protobuf::uint32 match_outcome_;
+  ::google::protobuf::uint32 rounds_won_;
+  ::google::protobuf::uint32 rounds_lost_;
+  ::google::protobuf::uint32 stat_score_;
+  ::google::protobuf::uint32 stat_deaths_;
+  ::google::protobuf::uint32 stat_mvps_;
+  ::google::protobuf::uint32 enemy_kills_;
+  ::google::protobuf::uint32 enemy_headshots_;
+  ::google::protobuf::uint32 enemy_2ks_;
+  ::google::protobuf::uint32 enemy_3ks_;
+  ::google::protobuf::uint32 enemy_4ks_;
+  ::google::protobuf::uint32 total_damage_;
+  ::google::protobuf::uint32 engagements_entry_count_;
+  ::google::protobuf::uint32 engagements_entry_wins_;
+  ::google::protobuf::uint32 engagements_1v1_count_;
+  ::google::protobuf::uint32 engagements_1v1_wins_;
+  ::google::protobuf::uint32 engagements_1v2_count_;
+  ::google::protobuf::uint32 engagements_1v2_wins_;
+  ::google::protobuf::uint32 utility_count_;
+  ::google::protobuf::uint32 utility_success_;
+  ::google::protobuf::uint32 flash_count_;
+  ::google::protobuf::uint32 flash_success_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > mates_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(28 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static DeepPlayerStatsEntry* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class DeepPlayerMatchEvent : public ::google::protobuf::Message {
+ public:
+  DeepPlayerMatchEvent();
+  virtual ~DeepPlayerMatchEvent();
+
+  DeepPlayerMatchEvent(const DeepPlayerMatchEvent& from);
+
+  inline DeepPlayerMatchEvent& operator=(const DeepPlayerMatchEvent& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const DeepPlayerMatchEvent& default_instance();
+
+  void Swap(DeepPlayerMatchEvent* other);
+
+  // implements Message ----------------------------------------------
+
+  DeepPlayerMatchEvent* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const DeepPlayerMatchEvent& from);
+  void MergeFrom(const DeepPlayerMatchEvent& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 accountid = 1;
+  inline bool has_accountid() const;
+  inline void clear_accountid();
+  static const int kAccountidFieldNumber = 1;
+  inline ::google::protobuf::uint32 accountid() const;
+  inline void set_accountid(::google::protobuf::uint32 value);
+
+  // optional uint64 match_id = 2;
+  inline bool has_match_id() const;
+  inline void clear_match_id();
+  static const int kMatchIdFieldNumber = 2;
+  inline ::google::protobuf::uint64 match_id() const;
+  inline void set_match_id(::google::protobuf::uint64 value);
+
+  // optional uint32 event_id = 3;
+  inline bool has_event_id() const;
+  inline void clear_event_id();
+  static const int kEventIdFieldNumber = 3;
+  inline ::google::protobuf::uint32 event_id() const;
+  inline void set_event_id(::google::protobuf::uint32 value);
+
+  // optional uint32 event_type = 4;
+  inline bool has_event_type() const;
+  inline void clear_event_type();
+  static const int kEventTypeFieldNumber = 4;
+  inline ::google::protobuf::uint32 event_type() const;
+  inline void set_event_type(::google::protobuf::uint32 value);
+
+  // optional bool b_playing_ct = 5;
+  inline bool has_b_playing_ct() const;
+  inline void clear_b_playing_ct();
+  static const int kBPlayingCtFieldNumber = 5;
+  inline bool b_playing_ct() const;
+  inline void set_b_playing_ct(bool value);
+
+  // optional int32 user_pos_x = 6;
+  inline bool has_user_pos_x() const;
+  inline void clear_user_pos_x();
+  static const int kUserPosXFieldNumber = 6;
+  inline ::google::protobuf::int32 user_pos_x() const;
+  inline void set_user_pos_x(::google::protobuf::int32 value);
+
+  // optional int32 user_pos_y = 7;
+  inline bool has_user_pos_y() const;
+  inline void clear_user_pos_y();
+  static const int kUserPosYFieldNumber = 7;
+  inline ::google::protobuf::int32 user_pos_y() const;
+  inline void set_user_pos_y(::google::protobuf::int32 value);
+
+  // optional int32 user_pos_z = 12;
+  inline bool has_user_pos_z() const;
+  inline void clear_user_pos_z();
+  static const int kUserPosZFieldNumber = 12;
+  inline ::google::protobuf::int32 user_pos_z() const;
+  inline void set_user_pos_z(::google::protobuf::int32 value);
+
+  // optional uint32 user_defidx = 8;
+  inline bool has_user_defidx() const;
+  inline void clear_user_defidx();
+  static const int kUserDefidxFieldNumber = 8;
+  inline ::google::protobuf::uint32 user_defidx() const;
+  inline void set_user_defidx(::google::protobuf::uint32 value);
+
+  // optional int32 other_pos_x = 9;
+  inline bool has_other_pos_x() const;
+  inline void clear_other_pos_x();
+  static const int kOtherPosXFieldNumber = 9;
+  inline ::google::protobuf::int32 other_pos_x() const;
+  inline void set_other_pos_x(::google::protobuf::int32 value);
+
+  // optional int32 other_pos_y = 10;
+  inline bool has_other_pos_y() const;
+  inline void clear_other_pos_y();
+  static const int kOtherPosYFieldNumber = 10;
+  inline ::google::protobuf::int32 other_pos_y() const;
+  inline void set_other_pos_y(::google::protobuf::int32 value);
+
+  // optional int32 other_pos_z = 13;
+  inline bool has_other_pos_z() const;
+  inline void clear_other_pos_z();
+  static const int kOtherPosZFieldNumber = 13;
+  inline ::google::protobuf::int32 other_pos_z() const;
+  inline void set_other_pos_z(::google::protobuf::int32 value);
+
+  // optional uint32 other_defidx = 11;
+  inline bool has_other_defidx() const;
+  inline void clear_other_defidx();
+  static const int kOtherDefidxFieldNumber = 11;
+  inline ::google::protobuf::uint32 other_defidx() const;
+  inline void set_other_defidx(::google::protobuf::uint32 value);
+
+  // optional int32 event_data = 14;
+  inline bool has_event_data() const;
+  inline void clear_event_data();
+  static const int kEventDataFieldNumber = 14;
+  inline ::google::protobuf::int32 event_data() const;
+  inline void set_event_data(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:DeepPlayerMatchEvent)
+ private:
+  inline void set_has_accountid();
+  inline void clear_has_accountid();
+  inline void set_has_match_id();
+  inline void clear_has_match_id();
+  inline void set_has_event_id();
+  inline void clear_has_event_id();
+  inline void set_has_event_type();
+  inline void clear_has_event_type();
+  inline void set_has_b_playing_ct();
+  inline void clear_has_b_playing_ct();
+  inline void set_has_user_pos_x();
+  inline void clear_has_user_pos_x();
+  inline void set_has_user_pos_y();
+  inline void clear_has_user_pos_y();
+  inline void set_has_user_pos_z();
+  inline void clear_has_user_pos_z();
+  inline void set_has_user_defidx();
+  inline void clear_has_user_defidx();
+  inline void set_has_other_pos_x();
+  inline void clear_has_other_pos_x();
+  inline void set_has_other_pos_y();
+  inline void clear_has_other_pos_y();
+  inline void set_has_other_pos_z();
+  inline void clear_has_other_pos_z();
+  inline void set_has_other_defidx();
+  inline void clear_has_other_defidx();
+  inline void set_has_event_data();
+  inline void clear_has_event_data();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint64 match_id_;
+  ::google::protobuf::uint32 accountid_;
+  ::google::protobuf::uint32 event_id_;
+  ::google::protobuf::uint32 event_type_;
+  bool b_playing_ct_;
+  ::google::protobuf::int32 user_pos_x_;
+  ::google::protobuf::int32 user_pos_y_;
+  ::google::protobuf::int32 user_pos_z_;
+  ::google::protobuf::uint32 user_defidx_;
+  ::google::protobuf::int32 other_pos_x_;
+  ::google::protobuf::int32 other_pos_y_;
+  ::google::protobuf::int32 other_pos_z_;
+  ::google::protobuf::uint32 other_defidx_;
+  ::google::protobuf::int32 event_data_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(14 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static DeepPlayerMatchEvent* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CMsgGCCStrike15_ClientDeepStats_DeepStatsRange : public ::google::protobuf::Message {
+ public:
+  CMsgGCCStrike15_ClientDeepStats_DeepStatsRange();
+  virtual ~CMsgGCCStrike15_ClientDeepStats_DeepStatsRange();
+
+  CMsgGCCStrike15_ClientDeepStats_DeepStatsRange(const CMsgGCCStrike15_ClientDeepStats_DeepStatsRange& from);
+
+  inline CMsgGCCStrike15_ClientDeepStats_DeepStatsRange& operator=(const CMsgGCCStrike15_ClientDeepStats_DeepStatsRange& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CMsgGCCStrike15_ClientDeepStats_DeepStatsRange& default_instance();
+
+  void Swap(CMsgGCCStrike15_ClientDeepStats_DeepStatsRange* other);
+
+  // implements Message ----------------------------------------------
+
+  CMsgGCCStrike15_ClientDeepStats_DeepStatsRange* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CMsgGCCStrike15_ClientDeepStats_DeepStatsRange& from);
+  void MergeFrom(const CMsgGCCStrike15_ClientDeepStats_DeepStatsRange& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 begin = 1;
+  inline bool has_begin() const;
+  inline void clear_begin();
+  static const int kBeginFieldNumber = 1;
+  inline ::google::protobuf::uint32 begin() const;
+  inline void set_begin(::google::protobuf::uint32 value);
+
+  // optional uint32 end = 2;
+  inline bool has_end() const;
+  inline void clear_end();
+  static const int kEndFieldNumber = 2;
+  inline ::google::protobuf::uint32 end() const;
+  inline void set_end(::google::protobuf::uint32 value);
+
+  // optional bool frozen = 3;
+  inline bool has_frozen() const;
+  inline void clear_frozen();
+  static const int kFrozenFieldNumber = 3;
+  inline bool frozen() const;
+  inline void set_frozen(bool value);
+
+  // @@protoc_insertion_point(class_scope:CMsgGCCStrike15_ClientDeepStats.DeepStatsRange)
+ private:
+  inline void set_has_begin();
+  inline void clear_has_begin();
+  inline void set_has_end();
+  inline void clear_has_end();
+  inline void set_has_frozen();
+  inline void clear_has_frozen();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 begin_;
+  ::google::protobuf::uint32 end_;
+  bool frozen_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CMsgGCCStrike15_ClientDeepStats_DeepStatsRange* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch : public ::google::protobuf::Message {
+ public:
+  CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch();
+  virtual ~CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch();
+
+  CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch(const CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch& from);
+
+  inline CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch& operator=(const CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch& default_instance();
+
+  void Swap(CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch* other);
+
+  // implements Message ----------------------------------------------
+
+  CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch& from);
+  void MergeFrom(const CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .DeepPlayerStatsEntry player = 1;
+  inline bool has_player() const;
+  inline void clear_player();
+  static const int kPlayerFieldNumber = 1;
+  inline const ::DeepPlayerStatsEntry& player() const;
+  inline ::DeepPlayerStatsEntry* mutable_player();
+  inline ::DeepPlayerStatsEntry* release_player();
+  inline void set_allocated_player(::DeepPlayerStatsEntry* player);
+
+  // repeated .DeepPlayerMatchEvent events = 2;
+  inline int events_size() const;
+  inline void clear_events();
+  static const int kEventsFieldNumber = 2;
+  inline const ::DeepPlayerMatchEvent& events(int index) const;
+  inline ::DeepPlayerMatchEvent* mutable_events(int index);
+  inline ::DeepPlayerMatchEvent* add_events();
+  inline const ::google::protobuf::RepeatedPtrField< ::DeepPlayerMatchEvent >&
+      events() const;
+  inline ::google::protobuf::RepeatedPtrField< ::DeepPlayerMatchEvent >*
+      mutable_events();
+
+  // @@protoc_insertion_point(class_scope:CMsgGCCStrike15_ClientDeepStats.DeepStatsMatch)
+ private:
+  inline void set_has_player();
+  inline void clear_has_player();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::DeepPlayerStatsEntry* player_;
+  ::google::protobuf::RepeatedPtrField< ::DeepPlayerMatchEvent > events_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CMsgGCCStrike15_ClientDeepStats : public ::google::protobuf::Message {
+ public:
+  CMsgGCCStrike15_ClientDeepStats();
+  virtual ~CMsgGCCStrike15_ClientDeepStats();
+
+  CMsgGCCStrike15_ClientDeepStats(const CMsgGCCStrike15_ClientDeepStats& from);
+
+  inline CMsgGCCStrike15_ClientDeepStats& operator=(const CMsgGCCStrike15_ClientDeepStats& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CMsgGCCStrike15_ClientDeepStats& default_instance();
+
+  void Swap(CMsgGCCStrike15_ClientDeepStats* other);
+
+  // implements Message ----------------------------------------------
+
+  CMsgGCCStrike15_ClientDeepStats* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CMsgGCCStrike15_ClientDeepStats& from);
+  void MergeFrom(const CMsgGCCStrike15_ClientDeepStats& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  typedef CMsgGCCStrike15_ClientDeepStats_DeepStatsRange DeepStatsRange;
+  typedef CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch DeepStatsMatch;
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 account_id = 1;
+  inline bool has_account_id() const;
+  inline void clear_account_id();
+  static const int kAccountIdFieldNumber = 1;
+  inline ::google::protobuf::uint32 account_id() const;
+  inline void set_account_id(::google::protobuf::uint32 value);
+
+  // optional .CMsgGCCStrike15_ClientDeepStats.DeepStatsRange range = 2;
+  inline bool has_range() const;
+  inline void clear_range();
+  static const int kRangeFieldNumber = 2;
+  inline const ::CMsgGCCStrike15_ClientDeepStats_DeepStatsRange& range() const;
+  inline ::CMsgGCCStrike15_ClientDeepStats_DeepStatsRange* mutable_range();
+  inline ::CMsgGCCStrike15_ClientDeepStats_DeepStatsRange* release_range();
+  inline void set_allocated_range(::CMsgGCCStrike15_ClientDeepStats_DeepStatsRange* range);
+
+  // repeated .CMsgGCCStrike15_ClientDeepStats.DeepStatsMatch matches = 3;
+  inline int matches_size() const;
+  inline void clear_matches();
+  static const int kMatchesFieldNumber = 3;
+  inline const ::CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch& matches(int index) const;
+  inline ::CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch* mutable_matches(int index);
+  inline ::CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch* add_matches();
+  inline const ::google::protobuf::RepeatedPtrField< ::CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch >&
+      matches() const;
+  inline ::google::protobuf::RepeatedPtrField< ::CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch >*
+      mutable_matches();
+
+  // @@protoc_insertion_point(class_scope:CMsgGCCStrike15_ClientDeepStats)
+ private:
+  inline void set_has_account_id();
+  inline void clear_has_account_id();
+  inline void set_has_range();
+  inline void clear_has_range();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::CMsgGCCStrike15_ClientDeepStats_DeepStatsRange* range_;
+  ::google::protobuf::RepeatedPtrField< ::CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch > matches_;
+  ::google::protobuf::uint32 account_id_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CMsgGCCStrike15_ClientDeepStats* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_DeepStats : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_DeepStats();
+  virtual ~CCSUsrMsg_DeepStats();
+
+  CCSUsrMsg_DeepStats(const CCSUsrMsg_DeepStats& from);
+
+  inline CCSUsrMsg_DeepStats& operator=(const CCSUsrMsg_DeepStats& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_DeepStats& default_instance();
+
+  void Swap(CCSUsrMsg_DeepStats* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_DeepStats* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_DeepStats& from);
+  void MergeFrom(const CCSUsrMsg_DeepStats& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .CMsgGCCStrike15_ClientDeepStats stats = 1;
+  inline bool has_stats() const;
+  inline void clear_stats();
+  static const int kStatsFieldNumber = 1;
+  inline const ::CMsgGCCStrike15_ClientDeepStats& stats() const;
+  inline ::CMsgGCCStrike15_ClientDeepStats* mutable_stats();
+  inline ::CMsgGCCStrike15_ClientDeepStats* release_stats();
+  inline void set_allocated_stats(::CMsgGCCStrike15_ClientDeepStats* stats);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_DeepStats)
+ private:
+  inline void set_has_stats();
+  inline void clear_has_stats();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::CMsgGCCStrike15_ClientDeepStats* stats_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_DeepStats* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class PlayerRankingInfo : public ::google::protobuf::Message {
+ public:
+  PlayerRankingInfo();
+  virtual ~PlayerRankingInfo();
+
+  PlayerRankingInfo(const PlayerRankingInfo& from);
+
+  inline PlayerRankingInfo& operator=(const PlayerRankingInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const PlayerRankingInfo& default_instance();
+
+  void Swap(PlayerRankingInfo* other);
+
+  // implements Message ----------------------------------------------
+
+  PlayerRankingInfo* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const PlayerRankingInfo& from);
+  void MergeFrom(const PlayerRankingInfo& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 account_id = 1;
+  inline bool has_account_id() const;
+  inline void clear_account_id();
+  static const int kAccountIdFieldNumber = 1;
+  inline ::google::protobuf::uint32 account_id() const;
+  inline void set_account_id(::google::protobuf::uint32 value);
+
+  // optional uint32 rank_id = 2;
+  inline bool has_rank_id() const;
+  inline void clear_rank_id();
+  static const int kRankIdFieldNumber = 2;
+  inline ::google::protobuf::uint32 rank_id() const;
+  inline void set_rank_id(::google::protobuf::uint32 value);
+
+  // optional uint32 wins = 3;
+  inline bool has_wins() const;
+  inline void clear_wins();
+  static const int kWinsFieldNumber = 3;
+  inline ::google::protobuf::uint32 wins() const;
+  inline void set_wins(::google::protobuf::uint32 value);
+
+  // optional float rank_change = 4;
+  inline bool has_rank_change() const;
+  inline void clear_rank_change();
+  static const int kRankChangeFieldNumber = 4;
+  inline float rank_change() const;
+  inline void set_rank_change(float value);
+
+  // optional uint32 rank_type_id = 6;
+  inline bool has_rank_type_id() const;
+  inline void clear_rank_type_id();
+  static const int kRankTypeIdFieldNumber = 6;
+  inline ::google::protobuf::uint32 rank_type_id() const;
+  inline void set_rank_type_id(::google::protobuf::uint32 value);
+
+  // optional uint32 tv_control = 7;
+  inline bool has_tv_control() const;
+  inline void clear_tv_control();
+  static const int kTvControlFieldNumber = 7;
+  inline ::google::protobuf::uint32 tv_control() const;
+  inline void set_tv_control(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:PlayerRankingInfo)
+ private:
+  inline void set_has_account_id();
+  inline void clear_has_account_id();
+  inline void set_has_rank_id();
+  inline void clear_has_rank_id();
+  inline void set_has_wins();
+  inline void clear_has_wins();
+  inline void set_has_rank_change();
+  inline void clear_has_rank_change();
+  inline void set_has_rank_type_id();
+  inline void clear_has_rank_type_id();
+  inline void set_has_tv_control();
+  inline void clear_has_tv_control();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 account_id_;
+  ::google::protobuf::uint32 rank_id_;
+  ::google::protobuf::uint32 wins_;
+  float rank_change_;
+  ::google::protobuf::uint32 rank_type_id_;
+  ::google::protobuf::uint32 tv_control_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static PlayerRankingInfo* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class IpAddressMask : public ::google::protobuf::Message {
+ public:
+  IpAddressMask();
+  virtual ~IpAddressMask();
+
+  IpAddressMask(const IpAddressMask& from);
+
+  inline IpAddressMask& operator=(const IpAddressMask& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const IpAddressMask& default_instance();
+
+  void Swap(IpAddressMask* other);
+
+  // implements Message ----------------------------------------------
+
+  IpAddressMask* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const IpAddressMask& from);
+  void MergeFrom(const IpAddressMask& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 a = 1;
+  inline bool has_a() const;
+  inline void clear_a();
+  static const int kAFieldNumber = 1;
+  inline ::google::protobuf::uint32 a() const;
+  inline void set_a(::google::protobuf::uint32 value);
+
+  // optional uint32 b = 2;
+  inline bool has_b() const;
+  inline void clear_b();
+  static const int kBFieldNumber = 2;
+  inline ::google::protobuf::uint32 b() const;
+  inline void set_b(::google::protobuf::uint32 value);
+
+  // optional uint32 c = 3;
+  inline bool has_c() const;
+  inline void clear_c();
+  static const int kCFieldNumber = 3;
+  inline ::google::protobuf::uint32 c() const;
+  inline void set_c(::google::protobuf::uint32 value);
+
+  // optional uint32 d = 4;
+  inline bool has_d() const;
+  inline void clear_d();
+  static const int kDFieldNumber = 4;
+  inline ::google::protobuf::uint32 d() const;
+  inline void set_d(::google::protobuf::uint32 value);
+
+  // optional uint32 bits = 5;
+  inline bool has_bits() const;
+  inline void clear_bits();
+  static const int kBitsFieldNumber = 5;
+  inline ::google::protobuf::uint32 bits() const;
+  inline void set_bits(::google::protobuf::uint32 value);
+
+  // optional uint32 token = 6;
+  inline bool has_token() const;
+  inline void clear_token();
+  static const int kTokenFieldNumber = 6;
+  inline ::google::protobuf::uint32 token() const;
+  inline void set_token(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:IpAddressMask)
+ private:
+  inline void set_has_a();
+  inline void clear_has_a();
+  inline void set_has_b();
+  inline void clear_has_b();
+  inline void set_has_c();
+  inline void clear_has_c();
+  inline void set_has_d();
+  inline void clear_has_d();
+  inline void set_has_bits();
+  inline void clear_has_bits();
+  inline void set_has_token();
+  inline void clear_has_token();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 a_;
+  ::google::protobuf::uint32 b_;
+  ::google::protobuf::uint32 c_;
+  ::google::protobuf::uint32 d_;
+  ::google::protobuf::uint32 bits_;
+  ::google::protobuf::uint32 token_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static IpAddressMask* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class TournamentEvent : public ::google::protobuf::Message {
+ public:
+  TournamentEvent();
+  virtual ~TournamentEvent();
+
+  TournamentEvent(const TournamentEvent& from);
+
+  inline TournamentEvent& operator=(const TournamentEvent& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const TournamentEvent& default_instance();
+
+  void Swap(TournamentEvent* other);
+
+  // implements Message ----------------------------------------------
+
+  TournamentEvent* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const TournamentEvent& from);
+  void MergeFrom(const TournamentEvent& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 event_id = 1;
+  inline bool has_event_id() const;
+  inline void clear_event_id();
+  static const int kEventIdFieldNumber = 1;
+  inline ::google::protobuf::int32 event_id() const;
+  inline void set_event_id(::google::protobuf::int32 value);
+
+  // optional string event_tag = 2;
+  inline bool has_event_tag() const;
+  inline void clear_event_tag();
+  static const int kEventTagFieldNumber = 2;
+  inline const ::std::string& event_tag() const;
+  inline void set_event_tag(const ::std::string& value);
+  inline void set_event_tag(const char* value);
+  inline void set_event_tag(const char* value, size_t size);
+  inline ::std::string* mutable_event_tag();
+  inline ::std::string* release_event_tag();
+  inline void set_allocated_event_tag(::std::string* event_tag);
+
+  // optional string event_name = 3;
+  inline bool has_event_name() const;
+  inline void clear_event_name();
+  static const int kEventNameFieldNumber = 3;
+  inline const ::std::string& event_name() const;
+  inline void set_event_name(const ::std::string& value);
+  inline void set_event_name(const char* value);
+  inline void set_event_name(const char* value, size_t size);
+  inline ::std::string* mutable_event_name();
+  inline ::std::string* release_event_name();
+  inline void set_allocated_event_name(::std::string* event_name);
+
+  // optional uint32 event_time_start = 4;
+  inline bool has_event_time_start() const;
+  inline void clear_event_time_start();
+  static const int kEventTimeStartFieldNumber = 4;
+  inline ::google::protobuf::uint32 event_time_start() const;
+  inline void set_event_time_start(::google::protobuf::uint32 value);
+
+  // optional uint32 event_time_end = 5;
+  inline bool has_event_time_end() const;
+  inline void clear_event_time_end();
+  static const int kEventTimeEndFieldNumber = 5;
+  inline ::google::protobuf::uint32 event_time_end() const;
+  inline void set_event_time_end(::google::protobuf::uint32 value);
+
+  // optional int32 event_public = 6;
+  inline bool has_event_public() const;
+  inline void clear_event_public();
+  static const int kEventPublicFieldNumber = 6;
+  inline ::google::protobuf::int32 event_public() const;
+  inline void set_event_public(::google::protobuf::int32 value);
+
+  // optional int32 event_stage_id = 7;
+  inline bool has_event_stage_id() const;
+  inline void clear_event_stage_id();
+  static const int kEventStageIdFieldNumber = 7;
+  inline ::google::protobuf::int32 event_stage_id() const;
+  inline void set_event_stage_id(::google::protobuf::int32 value);
+
+  // optional string event_stage_name = 8;
+  inline bool has_event_stage_name() const;
+  inline void clear_event_stage_name();
+  static const int kEventStageNameFieldNumber = 8;
+  inline const ::std::string& event_stage_name() const;
+  inline void set_event_stage_name(const ::std::string& value);
+  inline void set_event_stage_name(const char* value);
+  inline void set_event_stage_name(const char* value, size_t size);
+  inline ::std::string* mutable_event_stage_name();
+  inline ::std::string* release_event_stage_name();
+  inline void set_allocated_event_stage_name(::std::string* event_stage_name);
+
+  // optional uint32 active_section_id = 9;
+  inline bool has_active_section_id() const;
+  inline void clear_active_section_id();
+  static const int kActiveSectionIdFieldNumber = 9;
+  inline ::google::protobuf::uint32 active_section_id() const;
+  inline void set_active_section_id(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:TournamentEvent)
+ private:
+  inline void set_has_event_id();
+  inline void clear_has_event_id();
+  inline void set_has_event_tag();
+  inline void clear_has_event_tag();
+  inline void set_has_event_name();
+  inline void clear_has_event_name();
+  inline void set_has_event_time_start();
+  inline void clear_has_event_time_start();
+  inline void set_has_event_time_end();
+  inline void clear_has_event_time_end();
+  inline void set_has_event_public();
+  inline void clear_has_event_public();
+  inline void set_has_event_stage_id();
+  inline void clear_has_event_stage_id();
+  inline void set_has_event_stage_name();
+  inline void clear_has_event_stage_name();
+  inline void set_has_active_section_id();
+  inline void clear_has_active_section_id();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* event_tag_;
+  ::google::protobuf::int32 event_id_;
+  ::google::protobuf::uint32 event_time_start_;
+  ::std::string* event_name_;
+  ::google::protobuf::uint32 event_time_end_;
+  ::google::protobuf::int32 event_public_;
+  ::std::string* event_stage_name_;
+  ::google::protobuf::int32 event_stage_id_;
+  ::google::protobuf::uint32 active_section_id_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(9 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static TournamentEvent* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class TournamentPlayer : public ::google::protobuf::Message {
+ public:
+  TournamentPlayer();
+  virtual ~TournamentPlayer();
+
+  TournamentPlayer(const TournamentPlayer& from);
+
+  inline TournamentPlayer& operator=(const TournamentPlayer& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const TournamentPlayer& default_instance();
+
+  void Swap(TournamentPlayer* other);
+
+  // implements Message ----------------------------------------------
+
+  TournamentPlayer* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const TournamentPlayer& from);
+  void MergeFrom(const TournamentPlayer& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 account_id = 1;
+  inline bool has_account_id() const;
+  inline void clear_account_id();
+  static const int kAccountIdFieldNumber = 1;
+  inline ::google::protobuf::uint32 account_id() const;
+  inline void set_account_id(::google::protobuf::uint32 value);
+
+  // optional string player_nick = 2;
+  inline bool has_player_nick() const;
+  inline void clear_player_nick();
+  static const int kPlayerNickFieldNumber = 2;
+  inline const ::std::string& player_nick() const;
+  inline void set_player_nick(const ::std::string& value);
+  inline void set_player_nick(const char* value);
+  inline void set_player_nick(const char* value, size_t size);
+  inline ::std::string* mutable_player_nick();
+  inline ::std::string* release_player_nick();
+  inline void set_allocated_player_nick(::std::string* player_nick);
+
+  // optional string player_name = 3;
+  inline bool has_player_name() const;
+  inline void clear_player_name();
+  static const int kPlayerNameFieldNumber = 3;
+  inline const ::std::string& player_name() const;
+  inline void set_player_name(const ::std::string& value);
+  inline void set_player_name(const char* value);
+  inline void set_player_name(const char* value, size_t size);
+  inline ::std::string* mutable_player_name();
+  inline ::std::string* release_player_name();
+  inline void set_allocated_player_name(::std::string* player_name);
+
+  // optional uint32 player_dob = 4;
+  inline bool has_player_dob() const;
+  inline void clear_player_dob();
+  static const int kPlayerDobFieldNumber = 4;
+  inline ::google::protobuf::uint32 player_dob() const;
+  inline void set_player_dob(::google::protobuf::uint32 value);
+
+  // optional string player_flag = 5;
+  inline bool has_player_flag() const;
+  inline void clear_player_flag();
+  static const int kPlayerFlagFieldNumber = 5;
+  inline const ::std::string& player_flag() const;
+  inline void set_player_flag(const ::std::string& value);
+  inline void set_player_flag(const char* value);
+  inline void set_player_flag(const char* value, size_t size);
+  inline ::std::string* mutable_player_flag();
+  inline ::std::string* release_player_flag();
+  inline void set_allocated_player_flag(::std::string* player_flag);
+
+  // optional string player_location = 6;
+  inline bool has_player_location() const;
+  inline void clear_player_location();
+  static const int kPlayerLocationFieldNumber = 6;
+  inline const ::std::string& player_location() const;
+  inline void set_player_location(const ::std::string& value);
+  inline void set_player_location(const char* value);
+  inline void set_player_location(const char* value, size_t size);
+  inline ::std::string* mutable_player_location();
+  inline ::std::string* release_player_location();
+  inline void set_allocated_player_location(::std::string* player_location);
+
+  // optional string player_desc = 7;
+  inline bool has_player_desc() const;
+  inline void clear_player_desc();
+  static const int kPlayerDescFieldNumber = 7;
+  inline const ::std::string& player_desc() const;
+  inline void set_player_desc(const ::std::string& value);
+  inline void set_player_desc(const char* value);
+  inline void set_player_desc(const char* value, size_t size);
+  inline ::std::string* mutable_player_desc();
+  inline ::std::string* release_player_desc();
+  inline void set_allocated_player_desc(::std::string* player_desc);
+
+  // @@protoc_insertion_point(class_scope:TournamentPlayer)
+ private:
+  inline void set_has_account_id();
+  inline void clear_has_account_id();
+  inline void set_has_player_nick();
+  inline void clear_has_player_nick();
+  inline void set_has_player_name();
+  inline void clear_has_player_name();
+  inline void set_has_player_dob();
+  inline void clear_has_player_dob();
+  inline void set_has_player_flag();
+  inline void clear_has_player_flag();
+  inline void set_has_player_location();
+  inline void clear_has_player_location();
+  inline void set_has_player_desc();
+  inline void clear_has_player_desc();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* player_nick_;
+  ::google::protobuf::uint32 account_id_;
+  ::google::protobuf::uint32 player_dob_;
+  ::std::string* player_name_;
+  ::std::string* player_flag_;
+  ::std::string* player_location_;
+  ::std::string* player_desc_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static TournamentPlayer* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class TournamentTeam : public ::google::protobuf::Message {
+ public:
+  TournamentTeam();
+  virtual ~TournamentTeam();
+
+  TournamentTeam(const TournamentTeam& from);
+
+  inline TournamentTeam& operator=(const TournamentTeam& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const TournamentTeam& default_instance();
+
+  void Swap(TournamentTeam* other);
+
+  // implements Message ----------------------------------------------
+
+  TournamentTeam* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const TournamentTeam& from);
+  void MergeFrom(const TournamentTeam& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 team_id = 1;
+  inline bool has_team_id() const;
+  inline void clear_team_id();
+  static const int kTeamIdFieldNumber = 1;
+  inline ::google::protobuf::int32 team_id() const;
+  inline void set_team_id(::google::protobuf::int32 value);
+
+  // optional string team_tag = 2;
+  inline bool has_team_tag() const;
+  inline void clear_team_tag();
+  static const int kTeamTagFieldNumber = 2;
+  inline const ::std::string& team_tag() const;
+  inline void set_team_tag(const ::std::string& value);
+  inline void set_team_tag(const char* value);
+  inline void set_team_tag(const char* value, size_t size);
+  inline ::std::string* mutable_team_tag();
+  inline ::std::string* release_team_tag();
+  inline void set_allocated_team_tag(::std::string* team_tag);
+
+  // optional string team_flag = 3;
+  inline bool has_team_flag() const;
+  inline void clear_team_flag();
+  static const int kTeamFlagFieldNumber = 3;
+  inline const ::std::string& team_flag() const;
+  inline void set_team_flag(const ::std::string& value);
+  inline void set_team_flag(const char* value);
+  inline void set_team_flag(const char* value, size_t size);
+  inline ::std::string* mutable_team_flag();
+  inline ::std::string* release_team_flag();
+  inline void set_allocated_team_flag(::std::string* team_flag);
+
+  // optional string team_name = 4;
+  inline bool has_team_name() const;
+  inline void clear_team_name();
+  static const int kTeamNameFieldNumber = 4;
+  inline const ::std::string& team_name() const;
+  inline void set_team_name(const ::std::string& value);
+  inline void set_team_name(const char* value);
+  inline void set_team_name(const char* value, size_t size);
+  inline ::std::string* mutable_team_name();
+  inline ::std::string* release_team_name();
+  inline void set_allocated_team_name(::std::string* team_name);
+
+  // repeated .TournamentPlayer players = 5;
+  inline int players_size() const;
+  inline void clear_players();
+  static const int kPlayersFieldNumber = 5;
+  inline const ::TournamentPlayer& players(int index) const;
+  inline ::TournamentPlayer* mutable_players(int index);
+  inline ::TournamentPlayer* add_players();
+  inline const ::google::protobuf::RepeatedPtrField< ::TournamentPlayer >&
+      players() const;
+  inline ::google::protobuf::RepeatedPtrField< ::TournamentPlayer >*
+      mutable_players();
+
+  // @@protoc_insertion_point(class_scope:TournamentTeam)
+ private:
+  inline void set_has_team_id();
+  inline void clear_has_team_id();
+  inline void set_has_team_tag();
+  inline void clear_has_team_tag();
+  inline void set_has_team_flag();
+  inline void clear_has_team_flag();
+  inline void set_has_team_name();
+  inline void clear_has_team_name();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* team_tag_;
+  ::std::string* team_flag_;
+  ::std::string* team_name_;
+  ::google::protobuf::RepeatedPtrField< ::TournamentPlayer > players_;
+  ::google::protobuf::int32 team_id_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static TournamentTeam* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDataGCCStrike15_v2_TournamentMatchDraft_Entry : public ::google::protobuf::Message {
+ public:
+  CDataGCCStrike15_v2_TournamentMatchDraft_Entry();
+  virtual ~CDataGCCStrike15_v2_TournamentMatchDraft_Entry();
+
+  CDataGCCStrike15_v2_TournamentMatchDraft_Entry(const CDataGCCStrike15_v2_TournamentMatchDraft_Entry& from);
+
+  inline CDataGCCStrike15_v2_TournamentMatchDraft_Entry& operator=(const CDataGCCStrike15_v2_TournamentMatchDraft_Entry& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDataGCCStrike15_v2_TournamentMatchDraft_Entry& default_instance();
+
+  void Swap(CDataGCCStrike15_v2_TournamentMatchDraft_Entry* other);
+
+  // implements Message ----------------------------------------------
+
+  CDataGCCStrike15_v2_TournamentMatchDraft_Entry* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDataGCCStrike15_v2_TournamentMatchDraft_Entry& from);
+  void MergeFrom(const CDataGCCStrike15_v2_TournamentMatchDraft_Entry& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 mapid = 1;
+  inline bool has_mapid() const;
+  inline void clear_mapid();
+  static const int kMapidFieldNumber = 1;
+  inline ::google::protobuf::int32 mapid() const;
+  inline void set_mapid(::google::protobuf::int32 value);
+
+  // optional int32 team_id_ct = 2;
+  inline bool has_team_id_ct() const;
+  inline void clear_team_id_ct();
+  static const int kTeamIdCtFieldNumber = 2;
+  inline ::google::protobuf::int32 team_id_ct() const;
+  inline void set_team_id_ct(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:CDataGCCStrike15_v2_TournamentMatchDraft.Entry)
+ private:
+  inline void set_has_mapid();
+  inline void clear_has_mapid();
+  inline void set_has_team_id_ct();
+  inline void clear_has_team_id_ct();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 mapid_;
+  ::google::protobuf::int32 team_id_ct_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CDataGCCStrike15_v2_TournamentMatchDraft_Entry* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CDataGCCStrike15_v2_TournamentMatchDraft : public ::google::protobuf::Message {
+ public:
+  CDataGCCStrike15_v2_TournamentMatchDraft();
+  virtual ~CDataGCCStrike15_v2_TournamentMatchDraft();
+
+  CDataGCCStrike15_v2_TournamentMatchDraft(const CDataGCCStrike15_v2_TournamentMatchDraft& from);
+
+  inline CDataGCCStrike15_v2_TournamentMatchDraft& operator=(const CDataGCCStrike15_v2_TournamentMatchDraft& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CDataGCCStrike15_v2_TournamentMatchDraft& default_instance();
+
+  void Swap(CDataGCCStrike15_v2_TournamentMatchDraft* other);
+
+  // implements Message ----------------------------------------------
+
+  CDataGCCStrike15_v2_TournamentMatchDraft* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CDataGCCStrike15_v2_TournamentMatchDraft& from);
+  void MergeFrom(const CDataGCCStrike15_v2_TournamentMatchDraft& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  typedef CDataGCCStrike15_v2_TournamentMatchDraft_Entry Entry;
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 event_id = 1;
+  inline bool has_event_id() const;
+  inline void clear_event_id();
+  static const int kEventIdFieldNumber = 1;
+  inline ::google::protobuf::int32 event_id() const;
+  inline void set_event_id(::google::protobuf::int32 value);
+
+  // optional int32 event_stage_id = 2;
+  inline bool has_event_stage_id() const;
+  inline void clear_event_stage_id();
+  static const int kEventStageIdFieldNumber = 2;
+  inline ::google::protobuf::int32 event_stage_id() const;
+  inline void set_event_stage_id(::google::protobuf::int32 value);
+
+  // optional int32 team_id_0 = 3;
+  inline bool has_team_id_0() const;
+  inline void clear_team_id_0();
+  static const int kTeamId0FieldNumber = 3;
+  inline ::google::protobuf::int32 team_id_0() const;
+  inline void set_team_id_0(::google::protobuf::int32 value);
+
+  // optional int32 team_id_1 = 4;
+  inline bool has_team_id_1() const;
+  inline void clear_team_id_1();
+  static const int kTeamId1FieldNumber = 4;
+  inline ::google::protobuf::int32 team_id_1() const;
+  inline void set_team_id_1(::google::protobuf::int32 value);
+
+  // optional int32 maps_count = 5;
+  inline bool has_maps_count() const;
+  inline void clear_maps_count();
+  static const int kMapsCountFieldNumber = 5;
+  inline ::google::protobuf::int32 maps_count() const;
+  inline void set_maps_count(::google::protobuf::int32 value);
+
+  // optional int32 maps_current = 6;
+  inline bool has_maps_current() const;
+  inline void clear_maps_current();
+  static const int kMapsCurrentFieldNumber = 6;
+  inline ::google::protobuf::int32 maps_current() const;
+  inline void set_maps_current(::google::protobuf::int32 value);
+
+  // optional int32 team_id_start = 7;
+  inline bool has_team_id_start() const;
+  inline void clear_team_id_start();
+  static const int kTeamIdStartFieldNumber = 7;
+  inline ::google::protobuf::int32 team_id_start() const;
+  inline void set_team_id_start(::google::protobuf::int32 value);
+
+  // optional int32 team_id_veto1 = 8;
+  inline bool has_team_id_veto1() const;
+  inline void clear_team_id_veto1();
+  static const int kTeamIdVeto1FieldNumber = 8;
+  inline ::google::protobuf::int32 team_id_veto1() const;
+  inline void set_team_id_veto1(::google::protobuf::int32 value);
+
+  // optional int32 team_id_pickn = 9;
+  inline bool has_team_id_pickn() const;
+  inline void clear_team_id_pickn();
+  static const int kTeamIdPicknFieldNumber = 9;
+  inline ::google::protobuf::int32 team_id_pickn() const;
+  inline void set_team_id_pickn(::google::protobuf::int32 value);
+
+  // repeated .CDataGCCStrike15_v2_TournamentMatchDraft.Entry drafts = 10;
+  inline int drafts_size() const;
+  inline void clear_drafts();
+  static const int kDraftsFieldNumber = 10;
+  inline const ::CDataGCCStrike15_v2_TournamentMatchDraft_Entry& drafts(int index) const;
+  inline ::CDataGCCStrike15_v2_TournamentMatchDraft_Entry* mutable_drafts(int index);
+  inline ::CDataGCCStrike15_v2_TournamentMatchDraft_Entry* add_drafts();
+  inline const ::google::protobuf::RepeatedPtrField< ::CDataGCCStrike15_v2_TournamentMatchDraft_Entry >&
+      drafts() const;
+  inline ::google::protobuf::RepeatedPtrField< ::CDataGCCStrike15_v2_TournamentMatchDraft_Entry >*
+      mutable_drafts();
+
+  // @@protoc_insertion_point(class_scope:CDataGCCStrike15_v2_TournamentMatchDraft)
+ private:
+  inline void set_has_event_id();
+  inline void clear_has_event_id();
+  inline void set_has_event_stage_id();
+  inline void clear_has_event_stage_id();
+  inline void set_has_team_id_0();
+  inline void clear_has_team_id_0();
+  inline void set_has_team_id_1();
+  inline void clear_has_team_id_1();
+  inline void set_has_maps_count();
+  inline void clear_has_maps_count();
+  inline void set_has_maps_current();
+  inline void clear_has_maps_current();
+  inline void set_has_team_id_start();
+  inline void clear_has_team_id_start();
+  inline void set_has_team_id_veto1();
+  inline void clear_has_team_id_veto1();
+  inline void set_has_team_id_pickn();
+  inline void clear_has_team_id_pickn();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::int32 event_id_;
+  ::google::protobuf::int32 event_stage_id_;
+  ::google::protobuf::int32 team_id_0_;
+  ::google::protobuf::int32 team_id_1_;
+  ::google::protobuf::int32 maps_count_;
+  ::google::protobuf::int32 maps_current_;
+  ::google::protobuf::int32 team_id_start_;
+  ::google::protobuf::int32 team_id_veto1_;
+  ::google::protobuf::RepeatedPtrField< ::CDataGCCStrike15_v2_TournamentMatchDraft_Entry > drafts_;
+  ::google::protobuf::int32 team_id_pickn_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(10 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CDataGCCStrike15_v2_TournamentMatchDraft* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CPreMatchInfoData_TeamStats : public ::google::protobuf::Message {
+ public:
+  CPreMatchInfoData_TeamStats();
+  virtual ~CPreMatchInfoData_TeamStats();
+
+  CPreMatchInfoData_TeamStats(const CPreMatchInfoData_TeamStats& from);
+
+  inline CPreMatchInfoData_TeamStats& operator=(const CPreMatchInfoData_TeamStats& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CPreMatchInfoData_TeamStats& default_instance();
+
+  void Swap(CPreMatchInfoData_TeamStats* other);
+
+  // implements Message ----------------------------------------------
+
+  CPreMatchInfoData_TeamStats* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CPreMatchInfoData_TeamStats& from);
+  void MergeFrom(const CPreMatchInfoData_TeamStats& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 match_info_idxtxt = 1;
+  inline bool has_match_info_idxtxt() const;
+  inline void clear_match_info_idxtxt();
+  static const int kMatchInfoIdxtxtFieldNumber = 1;
+  inline ::google::protobuf::int32 match_info_idxtxt() const;
+  inline void set_match_info_idxtxt(::google::protobuf::int32 value);
+
+  // optional string match_info_txt = 2;
+  inline bool has_match_info_txt() const;
+  inline void clear_match_info_txt();
+  static const int kMatchInfoTxtFieldNumber = 2;
+  inline const ::std::string& match_info_txt() const;
+  inline void set_match_info_txt(const ::std::string& value);
+  inline void set_match_info_txt(const char* value);
+  inline void set_match_info_txt(const char* value, size_t size);
+  inline ::std::string* mutable_match_info_txt();
+  inline ::std::string* release_match_info_txt();
+  inline void set_allocated_match_info_txt(::std::string* match_info_txt);
+
+  // repeated string match_info_teams = 3;
+  inline int match_info_teams_size() const;
+  inline void clear_match_info_teams();
+  static const int kMatchInfoTeamsFieldNumber = 3;
+  inline const ::std::string& match_info_teams(int index) const;
+  inline ::std::string* mutable_match_info_teams(int index);
+  inline void set_match_info_teams(int index, const ::std::string& value);
+  inline void set_match_info_teams(int index, const char* value);
+  inline void set_match_info_teams(int index, const char* value, size_t size);
+  inline ::std::string* add_match_info_teams();
+  inline void add_match_info_teams(const ::std::string& value);
+  inline void add_match_info_teams(const char* value);
+  inline void add_match_info_teams(const char* value, size_t size);
+  inline const ::google::protobuf::RepeatedPtrField< ::std::string>& match_info_teams() const;
+  inline ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_match_info_teams();
+
+  // @@protoc_insertion_point(class_scope:CPreMatchInfoData.TeamStats)
+ private:
+  inline void set_has_match_info_idxtxt();
+  inline void clear_has_match_info_idxtxt();
+  inline void set_has_match_info_txt();
+  inline void clear_has_match_info_txt();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* match_info_txt_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> match_info_teams_;
+  ::google::protobuf::int32 match_info_idxtxt_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CPreMatchInfoData_TeamStats* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CPreMatchInfoData : public ::google::protobuf::Message {
+ public:
+  CPreMatchInfoData();
+  virtual ~CPreMatchInfoData();
+
+  CPreMatchInfoData(const CPreMatchInfoData& from);
+
+  inline CPreMatchInfoData& operator=(const CPreMatchInfoData& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CPreMatchInfoData& default_instance();
+
+  void Swap(CPreMatchInfoData* other);
+
+  // implements Message ----------------------------------------------
+
+  CPreMatchInfoData* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CPreMatchInfoData& from);
+  void MergeFrom(const CPreMatchInfoData& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  typedef CPreMatchInfoData_TeamStats TeamStats;
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 predictions_pct = 1;
+  inline bool has_predictions_pct() const;
+  inline void clear_predictions_pct();
+  static const int kPredictionsPctFieldNumber = 1;
+  inline ::google::protobuf::int32 predictions_pct() const;
+  inline void set_predictions_pct(::google::protobuf::int32 value);
+
+  // optional .CDataGCCStrike15_v2_TournamentMatchDraft draft = 4;
+  inline bool has_draft() const;
+  inline void clear_draft();
+  static const int kDraftFieldNumber = 4;
+  inline const ::CDataGCCStrike15_v2_TournamentMatchDraft& draft() const;
+  inline ::CDataGCCStrike15_v2_TournamentMatchDraft* mutable_draft();
+  inline ::CDataGCCStrike15_v2_TournamentMatchDraft* release_draft();
+  inline void set_allocated_draft(::CDataGCCStrike15_v2_TournamentMatchDraft* draft);
+
+  // repeated .CPreMatchInfoData.TeamStats stats = 5;
+  inline int stats_size() const;
+  inline void clear_stats();
+  static const int kStatsFieldNumber = 5;
+  inline const ::CPreMatchInfoData_TeamStats& stats(int index) const;
+  inline ::CPreMatchInfoData_TeamStats* mutable_stats(int index);
+  inline ::CPreMatchInfoData_TeamStats* add_stats();
+  inline const ::google::protobuf::RepeatedPtrField< ::CPreMatchInfoData_TeamStats >&
+      stats() const;
+  inline ::google::protobuf::RepeatedPtrField< ::CPreMatchInfoData_TeamStats >*
+      mutable_stats();
+
+  // repeated int32 wins = 6;
+  inline int wins_size() const;
+  inline void clear_wins();
+  static const int kWinsFieldNumber = 6;
+  inline ::google::protobuf::int32 wins(int index) const;
+  inline void set_wins(int index, ::google::protobuf::int32 value);
+  inline void add_wins(::google::protobuf::int32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      wins() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_wins();
+
+  // @@protoc_insertion_point(class_scope:CPreMatchInfoData)
+ private:
+  inline void set_has_predictions_pct();
+  inline void clear_has_predictions_pct();
+  inline void set_has_draft();
+  inline void clear_has_draft();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::CDataGCCStrike15_v2_TournamentMatchDraft* draft_;
+  ::google::protobuf::RepeatedPtrField< ::CPreMatchInfoData_TeamStats > stats_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > wins_;
+  ::google::protobuf::int32 predictions_pct_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CPreMatchInfoData* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve : public ::google::protobuf::Message {
+ public:
+  CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve();
+  virtual ~CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve();
+
+  CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve(const CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve& from);
+
+  inline CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve& operator=(const CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve& default_instance();
+
+  void Swap(CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve* other);
+
+  // implements Message ----------------------------------------------
+
+  CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve& from);
+  void MergeFrom(const CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated uint32 account_ids = 1;
+  inline int account_ids_size() const;
+  inline void clear_account_ids();
+  static const int kAccountIdsFieldNumber = 1;
+  inline ::google::protobuf::uint32 account_ids(int index) const;
+  inline void set_account_ids(int index, ::google::protobuf::uint32 value);
+  inline void add_account_ids(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      account_ids() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_account_ids();
+
+  // optional uint32 game_type = 2;
+  inline bool has_game_type() const;
+  inline void clear_game_type();
+  static const int kGameTypeFieldNumber = 2;
+  inline ::google::protobuf::uint32 game_type() const;
+  inline void set_game_type(::google::protobuf::uint32 value);
+
+  // optional uint64 match_id = 3;
+  inline bool has_match_id() const;
+  inline void clear_match_id();
+  static const int kMatchIdFieldNumber = 3;
+  inline ::google::protobuf::uint64 match_id() const;
+  inline void set_match_id(::google::protobuf::uint64 value);
+
+  // optional uint32 server_version = 4;
+  inline bool has_server_version() const;
+  inline void clear_server_version();
+  static const int kServerVersionFieldNumber = 4;
+  inline ::google::protobuf::uint32 server_version() const;
+  inline void set_server_version(::google::protobuf::uint32 value);
+
+  // optional uint32 flags = 18;
+  inline bool has_flags() const;
+  inline void clear_flags();
+  static const int kFlagsFieldNumber = 18;
+  inline ::google::protobuf::uint32 flags() const;
+  inline void set_flags(::google::protobuf::uint32 value);
+
+  // repeated .PlayerRankingInfo rankings = 5;
+  inline int rankings_size() const;
+  inline void clear_rankings();
+  static const int kRankingsFieldNumber = 5;
+  inline const ::PlayerRankingInfo& rankings(int index) const;
+  inline ::PlayerRankingInfo* mutable_rankings(int index);
+  inline ::PlayerRankingInfo* add_rankings();
+  inline const ::google::protobuf::RepeatedPtrField< ::PlayerRankingInfo >&
+      rankings() const;
+  inline ::google::protobuf::RepeatedPtrField< ::PlayerRankingInfo >*
+      mutable_rankings();
+
+  // optional uint64 encryption_key = 6;
+  inline bool has_encryption_key() const;
+  inline void clear_encryption_key();
+  static const int kEncryptionKeyFieldNumber = 6;
+  inline ::google::protobuf::uint64 encryption_key() const;
+  inline void set_encryption_key(::google::protobuf::uint64 value);
+
+  // optional uint64 encryption_key_pub = 7;
+  inline bool has_encryption_key_pub() const;
+  inline void clear_encryption_key_pub();
+  static const int kEncryptionKeyPubFieldNumber = 7;
+  inline ::google::protobuf::uint64 encryption_key_pub() const;
+  inline void set_encryption_key_pub(::google::protobuf::uint64 value);
+
+  // repeated uint32 party_ids = 8;
+  inline int party_ids_size() const;
+  inline void clear_party_ids();
+  static const int kPartyIdsFieldNumber = 8;
+  inline ::google::protobuf::uint32 party_ids(int index) const;
+  inline void set_party_ids(int index, ::google::protobuf::uint32 value);
+  inline void add_party_ids(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      party_ids() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_party_ids();
+
+  // repeated .IpAddressMask whitelist = 9;
+  inline int whitelist_size() const;
+  inline void clear_whitelist();
+  static const int kWhitelistFieldNumber = 9;
+  inline const ::IpAddressMask& whitelist(int index) const;
+  inline ::IpAddressMask* mutable_whitelist(int index);
+  inline ::IpAddressMask* add_whitelist();
+  inline const ::google::protobuf::RepeatedPtrField< ::IpAddressMask >&
+      whitelist() const;
+  inline ::google::protobuf::RepeatedPtrField< ::IpAddressMask >*
+      mutable_whitelist();
+
+  // optional uint64 tv_master_steamid = 10;
+  inline bool has_tv_master_steamid() const;
+  inline void clear_tv_master_steamid();
+  static const int kTvMasterSteamidFieldNumber = 10;
+  inline ::google::protobuf::uint64 tv_master_steamid() const;
+  inline void set_tv_master_steamid(::google::protobuf::uint64 value);
+
+  // optional .TournamentEvent tournament_event = 11;
+  inline bool has_tournament_event() const;
+  inline void clear_tournament_event();
+  static const int kTournamentEventFieldNumber = 11;
+  inline const ::TournamentEvent& tournament_event() const;
+  inline ::TournamentEvent* mutable_tournament_event();
+  inline ::TournamentEvent* release_tournament_event();
+  inline void set_allocated_tournament_event(::TournamentEvent* tournament_event);
+
+  // repeated .TournamentTeam tournament_teams = 12;
+  inline int tournament_teams_size() const;
+  inline void clear_tournament_teams();
+  static const int kTournamentTeamsFieldNumber = 12;
+  inline const ::TournamentTeam& tournament_teams(int index) const;
+  inline ::TournamentTeam* mutable_tournament_teams(int index);
+  inline ::TournamentTeam* add_tournament_teams();
+  inline const ::google::protobuf::RepeatedPtrField< ::TournamentTeam >&
+      tournament_teams() const;
+  inline ::google::protobuf::RepeatedPtrField< ::TournamentTeam >*
+      mutable_tournament_teams();
+
+  // repeated uint32 tournament_casters_account_ids = 13;
+  inline int tournament_casters_account_ids_size() const;
+  inline void clear_tournament_casters_account_ids();
+  static const int kTournamentCastersAccountIdsFieldNumber = 13;
+  inline ::google::protobuf::uint32 tournament_casters_account_ids(int index) const;
+  inline void set_tournament_casters_account_ids(int index, ::google::protobuf::uint32 value);
+  inline void add_tournament_casters_account_ids(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      tournament_casters_account_ids() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_tournament_casters_account_ids();
+
+  // optional uint64 tv_relay_steamid = 14;
+  inline bool has_tv_relay_steamid() const;
+  inline void clear_tv_relay_steamid();
+  static const int kTvRelaySteamidFieldNumber = 14;
+  inline ::google::protobuf::uint64 tv_relay_steamid() const;
+  inline void set_tv_relay_steamid(::google::protobuf::uint64 value);
+
+  // optional .CPreMatchInfoData pre_match_data = 15;
+  inline bool has_pre_match_data() const;
+  inline void clear_pre_match_data();
+  static const int kPreMatchDataFieldNumber = 15;
+  inline const ::CPreMatchInfoData& pre_match_data() const;
+  inline ::CPreMatchInfoData* mutable_pre_match_data();
+  inline ::CPreMatchInfoData* release_pre_match_data();
+  inline void set_allocated_pre_match_data(::CPreMatchInfoData* pre_match_data);
+
+  // optional uint32 rtime32_event_start = 16;
+  inline bool has_rtime32_event_start() const;
+  inline void clear_rtime32_event_start();
+  static const int kRtime32EventStartFieldNumber = 16;
+  inline ::google::protobuf::uint32 rtime32_event_start() const;
+  inline void set_rtime32_event_start(::google::protobuf::uint32 value);
+
+  // optional uint32 tv_control = 17;
+  inline bool has_tv_control() const;
+  inline void clear_tv_control();
+  static const int kTvControlFieldNumber = 17;
+  inline ::google::protobuf::uint32 tv_control() const;
+  inline void set_tv_control(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve)
+ private:
+  inline void set_has_game_type();
+  inline void clear_has_game_type();
+  inline void set_has_match_id();
+  inline void clear_has_match_id();
+  inline void set_has_server_version();
+  inline void clear_has_server_version();
+  inline void set_has_flags();
+  inline void clear_has_flags();
+  inline void set_has_encryption_key();
+  inline void clear_has_encryption_key();
+  inline void set_has_encryption_key_pub();
+  inline void clear_has_encryption_key_pub();
+  inline void set_has_tv_master_steamid();
+  inline void clear_has_tv_master_steamid();
+  inline void set_has_tournament_event();
+  inline void clear_has_tournament_event();
+  inline void set_has_tv_relay_steamid();
+  inline void clear_has_tv_relay_steamid();
+  inline void set_has_pre_match_data();
+  inline void clear_has_pre_match_data();
+  inline void set_has_rtime32_event_start();
+  inline void clear_has_rtime32_event_start();
+  inline void set_has_tv_control();
+  inline void clear_has_tv_control();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > account_ids_;
+  ::google::protobuf::uint64 match_id_;
+  ::google::protobuf::uint32 game_type_;
+  ::google::protobuf::uint32 server_version_;
+  ::google::protobuf::RepeatedPtrField< ::PlayerRankingInfo > rankings_;
+  ::google::protobuf::uint64 encryption_key_;
+  ::google::protobuf::uint64 encryption_key_pub_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > party_ids_;
+  ::google::protobuf::RepeatedPtrField< ::IpAddressMask > whitelist_;
+  ::google::protobuf::uint64 tv_master_steamid_;
+  ::google::protobuf::uint32 flags_;
+  ::google::protobuf::uint32 rtime32_event_start_;
+  ::TournamentEvent* tournament_event_;
+  ::google::protobuf::RepeatedPtrField< ::TournamentTeam > tournament_teams_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > tournament_casters_account_ids_;
+  ::google::protobuf::uint64 tv_relay_steamid_;
+  ::CPreMatchInfoData* pre_match_data_;
+  ::google::protobuf::uint32 tv_control_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(18 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCSUsrMsg_ServerRankRevealAll : public ::google::protobuf::Message {
+ public:
+  CCSUsrMsg_ServerRankRevealAll();
+  virtual ~CCSUsrMsg_ServerRankRevealAll();
+
+  CCSUsrMsg_ServerRankRevealAll(const CCSUsrMsg_ServerRankRevealAll& from);
+
+  inline CCSUsrMsg_ServerRankRevealAll& operator=(const CCSUsrMsg_ServerRankRevealAll& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCSUsrMsg_ServerRankRevealAll& default_instance();
+
+  void Swap(CCSUsrMsg_ServerRankRevealAll* other);
+
+  // implements Message ----------------------------------------------
+
+  CCSUsrMsg_ServerRankRevealAll* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCSUsrMsg_ServerRankRevealAll& from);
+  void MergeFrom(const CCSUsrMsg_ServerRankRevealAll& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 seconds_till_shutdown = 1;
+  inline bool has_seconds_till_shutdown() const;
+  inline void clear_seconds_till_shutdown();
+  static const int kSecondsTillShutdownFieldNumber = 1;
+  inline ::google::protobuf::int32 seconds_till_shutdown() const;
+  inline void set_seconds_till_shutdown(::google::protobuf::int32 value);
+
+  // optional .CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve reservation = 2;
+  inline bool has_reservation() const;
+  inline void clear_reservation();
+  static const int kReservationFieldNumber = 2;
+  inline const ::CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve& reservation() const;
+  inline ::CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve* mutable_reservation();
+  inline ::CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve* release_reservation();
+  inline void set_allocated_reservation(::CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve* reservation);
+
+  // @@protoc_insertion_point(class_scope:CCSUsrMsg_ServerRankRevealAll)
+ private:
+  inline void set_has_seconds_till_shutdown();
+  inline void clear_has_seconds_till_shutdown();
+  inline void set_has_reservation();
+  inline void clear_has_reservation();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve* reservation_;
+  ::google::protobuf::int32 seconds_till_shutdown_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
+  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCSUsrMsg_ServerRankRevealAll* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class CCSUsrMsg_ResetHud : public ::google::protobuf::Message {
  public:
   CCSUsrMsg_ResetHud();
@@ -9427,88 +12817,6 @@ class CCSUsrMsg_ClientInfo : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static CCSUsrMsg_ClientInfo* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class CCSUsrMsg_ServerRankRevealAll : public ::google::protobuf::Message {
- public:
-  CCSUsrMsg_ServerRankRevealAll();
-  virtual ~CCSUsrMsg_ServerRankRevealAll();
-
-  CCSUsrMsg_ServerRankRevealAll(const CCSUsrMsg_ServerRankRevealAll& from);
-
-  inline CCSUsrMsg_ServerRankRevealAll& operator=(const CCSUsrMsg_ServerRankRevealAll& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const CCSUsrMsg_ServerRankRevealAll& default_instance();
-
-  void Swap(CCSUsrMsg_ServerRankRevealAll* other);
-
-  // implements Message ----------------------------------------------
-
-  CCSUsrMsg_ServerRankRevealAll* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const CCSUsrMsg_ServerRankRevealAll& from);
-  void MergeFrom(const CCSUsrMsg_ServerRankRevealAll& from);
-  void Clear();
-  bool IsInitialized() const;
-
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // optional int32 seconds_till_shutdown = 1;
-  inline bool has_seconds_till_shutdown() const;
-  inline void clear_seconds_till_shutdown();
-  static const int kSecondsTillShutdownFieldNumber = 1;
-  inline ::google::protobuf::int32 seconds_till_shutdown() const;
-  inline void set_seconds_till_shutdown(::google::protobuf::int32 value);
-
-  // @@protoc_insertion_point(class_scope:CCSUsrMsg_ServerRankRevealAll)
- private:
-  inline void set_has_seconds_till_shutdown();
-  inline void clear_has_seconds_till_shutdown();
-
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-  ::google::protobuf::int32 seconds_till_shutdown_;
-
-  mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-
-  friend void  protobuf_AddDesc_cstrike15_5fusermessages_2eproto();
-  friend void protobuf_AssignDesc_cstrike15_5fusermessages_2eproto();
-  friend void protobuf_ShutdownFile_cstrike15_5fusermessages_2eproto();
-
-  void InitAsDefaultInstance();
-  static CCSUsrMsg_ServerRankRevealAll* default_instance_;
 };
 // ===================================================================
 
@@ -17357,6 +20665,4183 @@ inline void CCSUsrMsg_EndOfMatchAllPlayersData::set_scene(::google::protobuf::in
 
 // -------------------------------------------------------------------
 
+// CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim
+
+// optional int32 team_number = 1;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::has_team_number() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::set_has_team_number() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::clear_has_team_number() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::clear_team_number() {
+  team_number_ = 0;
+  clear_has_team_number();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::team_number() const {
+  return team_number_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::set_team_number(::google::protobuf::int32 value) {
+  set_has_team_number();
+  team_number_ = value;
+}
+
+// optional int32 entindex = 2;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::has_entindex() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::set_has_entindex() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::clear_has_entindex() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::clear_entindex() {
+  entindex_ = 0;
+  clear_has_entindex();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::entindex() const {
+  return entindex_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::set_entindex(::google::protobuf::int32 value) {
+  set_has_entindex();
+  entindex_ = value;
+}
+
+// optional uint64 xuid = 3;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::has_xuid() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::set_has_xuid() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::clear_has_xuid() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::clear_xuid() {
+  xuid_ = GOOGLE_ULONGLONG(0);
+  clear_has_xuid();
+}
+inline ::google::protobuf::uint64 CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::xuid() const {
+  return xuid_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::set_xuid(::google::protobuf::uint64 value) {
+  set_has_xuid();
+  xuid_ = value;
+}
+
+// optional int32 color = 4;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::has_color() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::set_has_color() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::clear_has_color() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::clear_color() {
+  color_ = 0;
+  clear_has_color();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::color() const {
+  return color_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::set_color(::google::protobuf::int32 value) {
+  set_has_color();
+  color_ = value;
+}
+
+// optional bool is_bot = 5;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::has_is_bot() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::set_has_is_bot() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::clear_has_is_bot() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::clear_is_bot() {
+  is_bot_ = false;
+  clear_has_is_bot();
+}
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::is_bot() const {
+  return is_bot_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::set_is_bot(bool value) {
+  set_has_is_bot();
+  is_bot_ = value;
+}
+
+// optional bool is_dead = 6;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::has_is_dead() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::set_has_is_dead() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::clear_has_is_dead() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::clear_is_dead() {
+  is_dead_ = false;
+  clear_has_is_dead();
+}
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::is_dead() const {
+  return is_dead_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::set_is_dead(bool value) {
+  set_has_is_dead();
+  is_dead_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective
+
+// optional int32 type = 1;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective::has_type() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective::set_has_type() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective::clear_has_type() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective::clear_type() {
+  type_ = 0;
+  clear_has_type();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective::type() const {
+  return type_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective::set_type(::google::protobuf::int32 value) {
+  set_has_type();
+  type_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage
+
+// optional int32 target_entindex = 1;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::has_target_entindex() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::set_has_target_entindex() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::clear_has_target_entindex() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::clear_target_entindex() {
+  target_entindex_ = 0;
+  clear_has_target_entindex();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::target_entindex() const {
+  return target_entindex_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::set_target_entindex(::google::protobuf::int32 value) {
+  set_has_target_entindex();
+  target_entindex_ = value;
+}
+
+// optional uint64 target_xuid = 2;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::has_target_xuid() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::set_has_target_xuid() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::clear_has_target_xuid() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::clear_target_xuid() {
+  target_xuid_ = GOOGLE_ULONGLONG(0);
+  clear_has_target_xuid();
+}
+inline ::google::protobuf::uint64 CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::target_xuid() const {
+  return target_xuid_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::set_target_xuid(::google::protobuf::uint64 value) {
+  set_has_target_xuid();
+  target_xuid_ = value;
+}
+
+// optional int32 health_removed = 3;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::has_health_removed() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::set_has_health_removed() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::clear_has_health_removed() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::clear_health_removed() {
+  health_removed_ = 0;
+  clear_has_health_removed();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::health_removed() const {
+  return health_removed_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::set_health_removed(::google::protobuf::int32 value) {
+  set_has_health_removed();
+  health_removed_ = value;
+}
+
+// optional int32 num_hits = 4;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::has_num_hits() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::set_has_num_hits() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::clear_has_num_hits() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::clear_num_hits() {
+  num_hits_ = 0;
+  clear_has_num_hits();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::num_hits() const {
+  return num_hits_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::set_num_hits(::google::protobuf::int32 value) {
+  set_has_num_hits();
+  num_hits_ = value;
+}
+
+// optional int32 return_health_removed = 5;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::has_return_health_removed() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::set_has_return_health_removed() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::clear_has_return_health_removed() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::clear_return_health_removed() {
+  return_health_removed_ = 0;
+  clear_has_return_health_removed();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::return_health_removed() const {
+  return return_health_removed_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::set_return_health_removed(::google::protobuf::int32 value) {
+  set_has_return_health_removed();
+  return_health_removed_ = value;
+}
+
+// optional int32 num_return_hits = 6;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::has_num_return_hits() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::set_has_num_return_hits() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::clear_has_num_return_hits() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::clear_num_return_hits() {
+  num_return_hits_ = 0;
+  clear_has_num_return_hits();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::num_return_hits() const {
+  return num_return_hits_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage::set_num_return_hits(::google::protobuf::int32 value) {
+  set_has_num_return_hits();
+  num_return_hits_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_RoundImpactScoreData_RisEvent
+
+// optional float timestamp = 1;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent::has_timestamp() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::set_has_timestamp() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_has_timestamp() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_timestamp() {
+  timestamp_ = 0;
+  clear_has_timestamp();
+}
+inline float CCSUsrMsg_RoundImpactScoreData_RisEvent::timestamp() const {
+  return timestamp_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::set_timestamp(float value) {
+  set_has_timestamp();
+  timestamp_ = value;
+}
+
+// optional int32 terrorist_odds = 2;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent::has_terrorist_odds() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::set_has_terrorist_odds() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_has_terrorist_odds() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_terrorist_odds() {
+  terrorist_odds_ = 0;
+  clear_has_terrorist_odds();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_RisEvent::terrorist_odds() const {
+  return terrorist_odds_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::set_terrorist_odds(::google::protobuf::int32 value) {
+  set_has_terrorist_odds();
+  terrorist_odds_ = value;
+}
+
+// optional int32 ct_alive = 3;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent::has_ct_alive() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::set_has_ct_alive() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_has_ct_alive() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_ct_alive() {
+  ct_alive_ = 0;
+  clear_has_ct_alive();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_RisEvent::ct_alive() const {
+  return ct_alive_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::set_ct_alive(::google::protobuf::int32 value) {
+  set_has_ct_alive();
+  ct_alive_ = value;
+}
+
+// optional int32 t_alive = 4;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent::has_t_alive() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::set_has_t_alive() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_has_t_alive() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_t_alive() {
+  t_alive_ = 0;
+  clear_has_t_alive();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_RisEvent::t_alive() const {
+  return t_alive_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::set_t_alive(::google::protobuf::int32 value) {
+  set_has_t_alive();
+  t_alive_ = value;
+}
+
+// optional .CCSUsrMsg_RoundImpactScoreData.RisEvent.Victim victim_data = 5;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent::has_victim_data() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::set_has_victim_data() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_has_victim_data() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_victim_data() {
+  if (victim_data_ != NULL) victim_data_->::CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim::Clear();
+  clear_has_victim_data();
+}
+inline const ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim& CCSUsrMsg_RoundImpactScoreData_RisEvent::victim_data() const {
+  return victim_data_ != NULL ? *victim_data_ : *default_instance_->victim_data_;
+}
+inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim* CCSUsrMsg_RoundImpactScoreData_RisEvent::mutable_victim_data() {
+  set_has_victim_data();
+  if (victim_data_ == NULL) victim_data_ = new ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim;
+  return victim_data_;
+}
+inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim* CCSUsrMsg_RoundImpactScoreData_RisEvent::release_victim_data() {
+  clear_has_victim_data();
+  ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim* temp = victim_data_;
+  victim_data_ = NULL;
+  return temp;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::set_allocated_victim_data(::CCSUsrMsg_RoundImpactScoreData_RisEvent_Victim* victim_data) {
+  delete victim_data_;
+  victim_data_ = victim_data;
+  if (victim_data) {
+    set_has_victim_data();
+  } else {
+    clear_has_victim_data();
+  }
+}
+
+// optional .CCSUsrMsg_RoundImpactScoreData.RisEvent.Objective objective_data = 6;
+inline bool CCSUsrMsg_RoundImpactScoreData_RisEvent::has_objective_data() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::set_has_objective_data() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_has_objective_data() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_objective_data() {
+  if (objective_data_ != NULL) objective_data_->::CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective::Clear();
+  clear_has_objective_data();
+}
+inline const ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective& CCSUsrMsg_RoundImpactScoreData_RisEvent::objective_data() const {
+  return objective_data_ != NULL ? *objective_data_ : *default_instance_->objective_data_;
+}
+inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective* CCSUsrMsg_RoundImpactScoreData_RisEvent::mutable_objective_data() {
+  set_has_objective_data();
+  if (objective_data_ == NULL) objective_data_ = new ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective;
+  return objective_data_;
+}
+inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective* CCSUsrMsg_RoundImpactScoreData_RisEvent::release_objective_data() {
+  clear_has_objective_data();
+  ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective* temp = objective_data_;
+  objective_data_ = NULL;
+  return temp;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::set_allocated_objective_data(::CCSUsrMsg_RoundImpactScoreData_RisEvent_Objective* objective_data) {
+  delete objective_data_;
+  objective_data_ = objective_data;
+  if (objective_data) {
+    set_has_objective_data();
+  } else {
+    clear_has_objective_data();
+  }
+}
+
+// repeated .CCSUsrMsg_RoundImpactScoreData.RisEvent.Damage all_damage_data = 7;
+inline int CCSUsrMsg_RoundImpactScoreData_RisEvent::all_damage_data_size() const {
+  return all_damage_data_.size();
+}
+inline void CCSUsrMsg_RoundImpactScoreData_RisEvent::clear_all_damage_data() {
+  all_damage_data_.Clear();
+}
+inline const ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage& CCSUsrMsg_RoundImpactScoreData_RisEvent::all_damage_data(int index) const {
+  return all_damage_data_.Get(index);
+}
+inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage* CCSUsrMsg_RoundImpactScoreData_RisEvent::mutable_all_damage_data(int index) {
+  return all_damage_data_.Mutable(index);
+}
+inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage* CCSUsrMsg_RoundImpactScoreData_RisEvent::add_all_damage_data() {
+  return all_damage_data_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage >&
+CCSUsrMsg_RoundImpactScoreData_RisEvent::all_damage_data() const {
+  return all_damage_data_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_RoundImpactScoreData_RisEvent_Damage >*
+CCSUsrMsg_RoundImpactScoreData_RisEvent::mutable_all_damage_data() {
+  return &all_damage_data_;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_RoundImpactScoreData_InitialConditions
+
+// optional int32 ct_equip_value = 1;
+inline bool CCSUsrMsg_RoundImpactScoreData_InitialConditions::has_ct_equip_value() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_InitialConditions::set_has_ct_equip_value() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_InitialConditions::clear_has_ct_equip_value() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_InitialConditions::clear_ct_equip_value() {
+  ct_equip_value_ = 0;
+  clear_has_ct_equip_value();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_InitialConditions::ct_equip_value() const {
+  return ct_equip_value_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_InitialConditions::set_ct_equip_value(::google::protobuf::int32 value) {
+  set_has_ct_equip_value();
+  ct_equip_value_ = value;
+}
+
+// optional int32 t_equip_value = 2;
+inline bool CCSUsrMsg_RoundImpactScoreData_InitialConditions::has_t_equip_value() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_InitialConditions::set_has_t_equip_value() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_InitialConditions::clear_has_t_equip_value() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_InitialConditions::clear_t_equip_value() {
+  t_equip_value_ = 0;
+  clear_has_t_equip_value();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_InitialConditions::t_equip_value() const {
+  return t_equip_value_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_InitialConditions::set_t_equip_value(::google::protobuf::int32 value) {
+  set_has_t_equip_value();
+  t_equip_value_ = value;
+}
+
+// optional int32 terrorist_odds = 3;
+inline bool CCSUsrMsg_RoundImpactScoreData_InitialConditions::has_terrorist_odds() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_InitialConditions::set_has_terrorist_odds() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_InitialConditions::clear_has_terrorist_odds() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_InitialConditions::clear_terrorist_odds() {
+  terrorist_odds_ = 0;
+  clear_has_terrorist_odds();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_RoundImpactScoreData_InitialConditions::terrorist_odds() const {
+  return terrorist_odds_;
+}
+inline void CCSUsrMsg_RoundImpactScoreData_InitialConditions::set_terrorist_odds(::google::protobuf::int32 value) {
+  set_has_terrorist_odds();
+  terrorist_odds_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_RoundImpactScoreData
+
+// optional .CCSUsrMsg_RoundImpactScoreData.InitialConditions init_conditions = 1;
+inline bool CCSUsrMsg_RoundImpactScoreData::has_init_conditions() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_RoundImpactScoreData::set_has_init_conditions() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData::clear_has_init_conditions() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_RoundImpactScoreData::clear_init_conditions() {
+  if (init_conditions_ != NULL) init_conditions_->::CCSUsrMsg_RoundImpactScoreData_InitialConditions::Clear();
+  clear_has_init_conditions();
+}
+inline const ::CCSUsrMsg_RoundImpactScoreData_InitialConditions& CCSUsrMsg_RoundImpactScoreData::init_conditions() const {
+  return init_conditions_ != NULL ? *init_conditions_ : *default_instance_->init_conditions_;
+}
+inline ::CCSUsrMsg_RoundImpactScoreData_InitialConditions* CCSUsrMsg_RoundImpactScoreData::mutable_init_conditions() {
+  set_has_init_conditions();
+  if (init_conditions_ == NULL) init_conditions_ = new ::CCSUsrMsg_RoundImpactScoreData_InitialConditions;
+  return init_conditions_;
+}
+inline ::CCSUsrMsg_RoundImpactScoreData_InitialConditions* CCSUsrMsg_RoundImpactScoreData::release_init_conditions() {
+  clear_has_init_conditions();
+  ::CCSUsrMsg_RoundImpactScoreData_InitialConditions* temp = init_conditions_;
+  init_conditions_ = NULL;
+  return temp;
+}
+inline void CCSUsrMsg_RoundImpactScoreData::set_allocated_init_conditions(::CCSUsrMsg_RoundImpactScoreData_InitialConditions* init_conditions) {
+  delete init_conditions_;
+  init_conditions_ = init_conditions;
+  if (init_conditions) {
+    set_has_init_conditions();
+  } else {
+    clear_has_init_conditions();
+  }
+}
+
+// repeated .CCSUsrMsg_RoundImpactScoreData.RisEvent all_ris_event_data = 2;
+inline int CCSUsrMsg_RoundImpactScoreData::all_ris_event_data_size() const {
+  return all_ris_event_data_.size();
+}
+inline void CCSUsrMsg_RoundImpactScoreData::clear_all_ris_event_data() {
+  all_ris_event_data_.Clear();
+}
+inline const ::CCSUsrMsg_RoundImpactScoreData_RisEvent& CCSUsrMsg_RoundImpactScoreData::all_ris_event_data(int index) const {
+  return all_ris_event_data_.Get(index);
+}
+inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent* CCSUsrMsg_RoundImpactScoreData::mutable_all_ris_event_data(int index) {
+  return all_ris_event_data_.Mutable(index);
+}
+inline ::CCSUsrMsg_RoundImpactScoreData_RisEvent* CCSUsrMsg_RoundImpactScoreData::add_all_ris_event_data() {
+  return all_ris_event_data_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_RoundImpactScoreData_RisEvent >&
+CCSUsrMsg_RoundImpactScoreData::all_ris_event_data() const {
+  return all_ris_event_data_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::CCSUsrMsg_RoundImpactScoreData_RisEvent >*
+CCSUsrMsg_RoundImpactScoreData::mutable_all_ris_event_data() {
+  return &all_ris_event_data_;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_CurrentRoundOdds
+
+// optional int32 odds = 1;
+inline bool CCSUsrMsg_CurrentRoundOdds::has_odds() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_CurrentRoundOdds::set_has_odds() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_CurrentRoundOdds::clear_has_odds() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_CurrentRoundOdds::clear_odds() {
+  odds_ = 0;
+  clear_has_odds();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_CurrentRoundOdds::odds() const {
+  return odds_;
+}
+inline void CCSUsrMsg_CurrentRoundOdds::set_odds(::google::protobuf::int32 value) {
+  set_has_odds();
+  odds_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// DeepPlayerStatsEntry
+
+// optional uint32 accountid = 1;
+inline bool DeepPlayerStatsEntry::has_accountid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_accountid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void DeepPlayerStatsEntry::clear_has_accountid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void DeepPlayerStatsEntry::clear_accountid() {
+  accountid_ = 0u;
+  clear_has_accountid();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::accountid() const {
+  return accountid_;
+}
+inline void DeepPlayerStatsEntry::set_accountid(::google::protobuf::uint32 value) {
+  set_has_accountid();
+  accountid_ = value;
+}
+
+// optional uint64 match_id = 2;
+inline bool DeepPlayerStatsEntry::has_match_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_match_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void DeepPlayerStatsEntry::clear_has_match_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void DeepPlayerStatsEntry::clear_match_id() {
+  match_id_ = GOOGLE_ULONGLONG(0);
+  clear_has_match_id();
+}
+inline ::google::protobuf::uint64 DeepPlayerStatsEntry::match_id() const {
+  return match_id_;
+}
+inline void DeepPlayerStatsEntry::set_match_id(::google::protobuf::uint64 value) {
+  set_has_match_id();
+  match_id_ = value;
+}
+
+// optional uint32 mm_game_mode = 3;
+inline bool DeepPlayerStatsEntry::has_mm_game_mode() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_mm_game_mode() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void DeepPlayerStatsEntry::clear_has_mm_game_mode() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void DeepPlayerStatsEntry::clear_mm_game_mode() {
+  mm_game_mode_ = 0u;
+  clear_has_mm_game_mode();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::mm_game_mode() const {
+  return mm_game_mode_;
+}
+inline void DeepPlayerStatsEntry::set_mm_game_mode(::google::protobuf::uint32 value) {
+  set_has_mm_game_mode();
+  mm_game_mode_ = value;
+}
+
+// optional uint32 mapid = 4;
+inline bool DeepPlayerStatsEntry::has_mapid() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_mapid() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void DeepPlayerStatsEntry::clear_has_mapid() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void DeepPlayerStatsEntry::clear_mapid() {
+  mapid_ = 0u;
+  clear_has_mapid();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::mapid() const {
+  return mapid_;
+}
+inline void DeepPlayerStatsEntry::set_mapid(::google::protobuf::uint32 value) {
+  set_has_mapid();
+  mapid_ = value;
+}
+
+// optional bool b_starting_ct = 5;
+inline bool DeepPlayerStatsEntry::has_b_starting_ct() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_b_starting_ct() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void DeepPlayerStatsEntry::clear_has_b_starting_ct() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void DeepPlayerStatsEntry::clear_b_starting_ct() {
+  b_starting_ct_ = false;
+  clear_has_b_starting_ct();
+}
+inline bool DeepPlayerStatsEntry::b_starting_ct() const {
+  return b_starting_ct_;
+}
+inline void DeepPlayerStatsEntry::set_b_starting_ct(bool value) {
+  set_has_b_starting_ct();
+  b_starting_ct_ = value;
+}
+
+// optional uint32 match_outcome = 6;
+inline bool DeepPlayerStatsEntry::has_match_outcome() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_match_outcome() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void DeepPlayerStatsEntry::clear_has_match_outcome() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void DeepPlayerStatsEntry::clear_match_outcome() {
+  match_outcome_ = 0u;
+  clear_has_match_outcome();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::match_outcome() const {
+  return match_outcome_;
+}
+inline void DeepPlayerStatsEntry::set_match_outcome(::google::protobuf::uint32 value) {
+  set_has_match_outcome();
+  match_outcome_ = value;
+}
+
+// optional uint32 rounds_won = 7;
+inline bool DeepPlayerStatsEntry::has_rounds_won() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_rounds_won() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void DeepPlayerStatsEntry::clear_has_rounds_won() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void DeepPlayerStatsEntry::clear_rounds_won() {
+  rounds_won_ = 0u;
+  clear_has_rounds_won();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::rounds_won() const {
+  return rounds_won_;
+}
+inline void DeepPlayerStatsEntry::set_rounds_won(::google::protobuf::uint32 value) {
+  set_has_rounds_won();
+  rounds_won_ = value;
+}
+
+// optional uint32 rounds_lost = 8;
+inline bool DeepPlayerStatsEntry::has_rounds_lost() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_rounds_lost() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void DeepPlayerStatsEntry::clear_has_rounds_lost() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void DeepPlayerStatsEntry::clear_rounds_lost() {
+  rounds_lost_ = 0u;
+  clear_has_rounds_lost();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::rounds_lost() const {
+  return rounds_lost_;
+}
+inline void DeepPlayerStatsEntry::set_rounds_lost(::google::protobuf::uint32 value) {
+  set_has_rounds_lost();
+  rounds_lost_ = value;
+}
+
+// optional uint32 stat_score = 9;
+inline bool DeepPlayerStatsEntry::has_stat_score() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_stat_score() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void DeepPlayerStatsEntry::clear_has_stat_score() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void DeepPlayerStatsEntry::clear_stat_score() {
+  stat_score_ = 0u;
+  clear_has_stat_score();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::stat_score() const {
+  return stat_score_;
+}
+inline void DeepPlayerStatsEntry::set_stat_score(::google::protobuf::uint32 value) {
+  set_has_stat_score();
+  stat_score_ = value;
+}
+
+// optional uint32 stat_deaths = 12;
+inline bool DeepPlayerStatsEntry::has_stat_deaths() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_stat_deaths() {
+  _has_bits_[0] |= 0x00000200u;
+}
+inline void DeepPlayerStatsEntry::clear_has_stat_deaths() {
+  _has_bits_[0] &= ~0x00000200u;
+}
+inline void DeepPlayerStatsEntry::clear_stat_deaths() {
+  stat_deaths_ = 0u;
+  clear_has_stat_deaths();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::stat_deaths() const {
+  return stat_deaths_;
+}
+inline void DeepPlayerStatsEntry::set_stat_deaths(::google::protobuf::uint32 value) {
+  set_has_stat_deaths();
+  stat_deaths_ = value;
+}
+
+// optional uint32 stat_mvps = 13;
+inline bool DeepPlayerStatsEntry::has_stat_mvps() const {
+  return (_has_bits_[0] & 0x00000400u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_stat_mvps() {
+  _has_bits_[0] |= 0x00000400u;
+}
+inline void DeepPlayerStatsEntry::clear_has_stat_mvps() {
+  _has_bits_[0] &= ~0x00000400u;
+}
+inline void DeepPlayerStatsEntry::clear_stat_mvps() {
+  stat_mvps_ = 0u;
+  clear_has_stat_mvps();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::stat_mvps() const {
+  return stat_mvps_;
+}
+inline void DeepPlayerStatsEntry::set_stat_mvps(::google::protobuf::uint32 value) {
+  set_has_stat_mvps();
+  stat_mvps_ = value;
+}
+
+// optional uint32 enemy_kills = 14;
+inline bool DeepPlayerStatsEntry::has_enemy_kills() const {
+  return (_has_bits_[0] & 0x00000800u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_enemy_kills() {
+  _has_bits_[0] |= 0x00000800u;
+}
+inline void DeepPlayerStatsEntry::clear_has_enemy_kills() {
+  _has_bits_[0] &= ~0x00000800u;
+}
+inline void DeepPlayerStatsEntry::clear_enemy_kills() {
+  enemy_kills_ = 0u;
+  clear_has_enemy_kills();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::enemy_kills() const {
+  return enemy_kills_;
+}
+inline void DeepPlayerStatsEntry::set_enemy_kills(::google::protobuf::uint32 value) {
+  set_has_enemy_kills();
+  enemy_kills_ = value;
+}
+
+// optional uint32 enemy_headshots = 15;
+inline bool DeepPlayerStatsEntry::has_enemy_headshots() const {
+  return (_has_bits_[0] & 0x00001000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_enemy_headshots() {
+  _has_bits_[0] |= 0x00001000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_enemy_headshots() {
+  _has_bits_[0] &= ~0x00001000u;
+}
+inline void DeepPlayerStatsEntry::clear_enemy_headshots() {
+  enemy_headshots_ = 0u;
+  clear_has_enemy_headshots();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::enemy_headshots() const {
+  return enemy_headshots_;
+}
+inline void DeepPlayerStatsEntry::set_enemy_headshots(::google::protobuf::uint32 value) {
+  set_has_enemy_headshots();
+  enemy_headshots_ = value;
+}
+
+// optional uint32 enemy_2ks = 16;
+inline bool DeepPlayerStatsEntry::has_enemy_2ks() const {
+  return (_has_bits_[0] & 0x00002000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_enemy_2ks() {
+  _has_bits_[0] |= 0x00002000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_enemy_2ks() {
+  _has_bits_[0] &= ~0x00002000u;
+}
+inline void DeepPlayerStatsEntry::clear_enemy_2ks() {
+  enemy_2ks_ = 0u;
+  clear_has_enemy_2ks();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::enemy_2ks() const {
+  return enemy_2ks_;
+}
+inline void DeepPlayerStatsEntry::set_enemy_2ks(::google::protobuf::uint32 value) {
+  set_has_enemy_2ks();
+  enemy_2ks_ = value;
+}
+
+// optional uint32 enemy_3ks = 17;
+inline bool DeepPlayerStatsEntry::has_enemy_3ks() const {
+  return (_has_bits_[0] & 0x00004000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_enemy_3ks() {
+  _has_bits_[0] |= 0x00004000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_enemy_3ks() {
+  _has_bits_[0] &= ~0x00004000u;
+}
+inline void DeepPlayerStatsEntry::clear_enemy_3ks() {
+  enemy_3ks_ = 0u;
+  clear_has_enemy_3ks();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::enemy_3ks() const {
+  return enemy_3ks_;
+}
+inline void DeepPlayerStatsEntry::set_enemy_3ks(::google::protobuf::uint32 value) {
+  set_has_enemy_3ks();
+  enemy_3ks_ = value;
+}
+
+// optional uint32 enemy_4ks = 18;
+inline bool DeepPlayerStatsEntry::has_enemy_4ks() const {
+  return (_has_bits_[0] & 0x00008000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_enemy_4ks() {
+  _has_bits_[0] |= 0x00008000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_enemy_4ks() {
+  _has_bits_[0] &= ~0x00008000u;
+}
+inline void DeepPlayerStatsEntry::clear_enemy_4ks() {
+  enemy_4ks_ = 0u;
+  clear_has_enemy_4ks();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::enemy_4ks() const {
+  return enemy_4ks_;
+}
+inline void DeepPlayerStatsEntry::set_enemy_4ks(::google::protobuf::uint32 value) {
+  set_has_enemy_4ks();
+  enemy_4ks_ = value;
+}
+
+// optional uint32 total_damage = 19;
+inline bool DeepPlayerStatsEntry::has_total_damage() const {
+  return (_has_bits_[0] & 0x00010000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_total_damage() {
+  _has_bits_[0] |= 0x00010000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_total_damage() {
+  _has_bits_[0] &= ~0x00010000u;
+}
+inline void DeepPlayerStatsEntry::clear_total_damage() {
+  total_damage_ = 0u;
+  clear_has_total_damage();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::total_damage() const {
+  return total_damage_;
+}
+inline void DeepPlayerStatsEntry::set_total_damage(::google::protobuf::uint32 value) {
+  set_has_total_damage();
+  total_damage_ = value;
+}
+
+// optional uint32 engagements_entry_count = 23;
+inline bool DeepPlayerStatsEntry::has_engagements_entry_count() const {
+  return (_has_bits_[0] & 0x00020000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_engagements_entry_count() {
+  _has_bits_[0] |= 0x00020000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_engagements_entry_count() {
+  _has_bits_[0] &= ~0x00020000u;
+}
+inline void DeepPlayerStatsEntry::clear_engagements_entry_count() {
+  engagements_entry_count_ = 0u;
+  clear_has_engagements_entry_count();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::engagements_entry_count() const {
+  return engagements_entry_count_;
+}
+inline void DeepPlayerStatsEntry::set_engagements_entry_count(::google::protobuf::uint32 value) {
+  set_has_engagements_entry_count();
+  engagements_entry_count_ = value;
+}
+
+// optional uint32 engagements_entry_wins = 24;
+inline bool DeepPlayerStatsEntry::has_engagements_entry_wins() const {
+  return (_has_bits_[0] & 0x00040000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_engagements_entry_wins() {
+  _has_bits_[0] |= 0x00040000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_engagements_entry_wins() {
+  _has_bits_[0] &= ~0x00040000u;
+}
+inline void DeepPlayerStatsEntry::clear_engagements_entry_wins() {
+  engagements_entry_wins_ = 0u;
+  clear_has_engagements_entry_wins();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::engagements_entry_wins() const {
+  return engagements_entry_wins_;
+}
+inline void DeepPlayerStatsEntry::set_engagements_entry_wins(::google::protobuf::uint32 value) {
+  set_has_engagements_entry_wins();
+  engagements_entry_wins_ = value;
+}
+
+// optional uint32 engagements_1v1_count = 25;
+inline bool DeepPlayerStatsEntry::has_engagements_1v1_count() const {
+  return (_has_bits_[0] & 0x00080000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_engagements_1v1_count() {
+  _has_bits_[0] |= 0x00080000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_engagements_1v1_count() {
+  _has_bits_[0] &= ~0x00080000u;
+}
+inline void DeepPlayerStatsEntry::clear_engagements_1v1_count() {
+  engagements_1v1_count_ = 0u;
+  clear_has_engagements_1v1_count();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::engagements_1v1_count() const {
+  return engagements_1v1_count_;
+}
+inline void DeepPlayerStatsEntry::set_engagements_1v1_count(::google::protobuf::uint32 value) {
+  set_has_engagements_1v1_count();
+  engagements_1v1_count_ = value;
+}
+
+// optional uint32 engagements_1v1_wins = 26;
+inline bool DeepPlayerStatsEntry::has_engagements_1v1_wins() const {
+  return (_has_bits_[0] & 0x00100000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_engagements_1v1_wins() {
+  _has_bits_[0] |= 0x00100000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_engagements_1v1_wins() {
+  _has_bits_[0] &= ~0x00100000u;
+}
+inline void DeepPlayerStatsEntry::clear_engagements_1v1_wins() {
+  engagements_1v1_wins_ = 0u;
+  clear_has_engagements_1v1_wins();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::engagements_1v1_wins() const {
+  return engagements_1v1_wins_;
+}
+inline void DeepPlayerStatsEntry::set_engagements_1v1_wins(::google::protobuf::uint32 value) {
+  set_has_engagements_1v1_wins();
+  engagements_1v1_wins_ = value;
+}
+
+// optional uint32 engagements_1v2_count = 27;
+inline bool DeepPlayerStatsEntry::has_engagements_1v2_count() const {
+  return (_has_bits_[0] & 0x00200000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_engagements_1v2_count() {
+  _has_bits_[0] |= 0x00200000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_engagements_1v2_count() {
+  _has_bits_[0] &= ~0x00200000u;
+}
+inline void DeepPlayerStatsEntry::clear_engagements_1v2_count() {
+  engagements_1v2_count_ = 0u;
+  clear_has_engagements_1v2_count();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::engagements_1v2_count() const {
+  return engagements_1v2_count_;
+}
+inline void DeepPlayerStatsEntry::set_engagements_1v2_count(::google::protobuf::uint32 value) {
+  set_has_engagements_1v2_count();
+  engagements_1v2_count_ = value;
+}
+
+// optional uint32 engagements_1v2_wins = 28;
+inline bool DeepPlayerStatsEntry::has_engagements_1v2_wins() const {
+  return (_has_bits_[0] & 0x00400000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_engagements_1v2_wins() {
+  _has_bits_[0] |= 0x00400000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_engagements_1v2_wins() {
+  _has_bits_[0] &= ~0x00400000u;
+}
+inline void DeepPlayerStatsEntry::clear_engagements_1v2_wins() {
+  engagements_1v2_wins_ = 0u;
+  clear_has_engagements_1v2_wins();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::engagements_1v2_wins() const {
+  return engagements_1v2_wins_;
+}
+inline void DeepPlayerStatsEntry::set_engagements_1v2_wins(::google::protobuf::uint32 value) {
+  set_has_engagements_1v2_wins();
+  engagements_1v2_wins_ = value;
+}
+
+// optional uint32 utility_count = 29;
+inline bool DeepPlayerStatsEntry::has_utility_count() const {
+  return (_has_bits_[0] & 0x00800000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_utility_count() {
+  _has_bits_[0] |= 0x00800000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_utility_count() {
+  _has_bits_[0] &= ~0x00800000u;
+}
+inline void DeepPlayerStatsEntry::clear_utility_count() {
+  utility_count_ = 0u;
+  clear_has_utility_count();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::utility_count() const {
+  return utility_count_;
+}
+inline void DeepPlayerStatsEntry::set_utility_count(::google::protobuf::uint32 value) {
+  set_has_utility_count();
+  utility_count_ = value;
+}
+
+// optional uint32 utility_success = 30;
+inline bool DeepPlayerStatsEntry::has_utility_success() const {
+  return (_has_bits_[0] & 0x01000000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_utility_success() {
+  _has_bits_[0] |= 0x01000000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_utility_success() {
+  _has_bits_[0] &= ~0x01000000u;
+}
+inline void DeepPlayerStatsEntry::clear_utility_success() {
+  utility_success_ = 0u;
+  clear_has_utility_success();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::utility_success() const {
+  return utility_success_;
+}
+inline void DeepPlayerStatsEntry::set_utility_success(::google::protobuf::uint32 value) {
+  set_has_utility_success();
+  utility_success_ = value;
+}
+
+// optional uint32 flash_count = 32;
+inline bool DeepPlayerStatsEntry::has_flash_count() const {
+  return (_has_bits_[0] & 0x02000000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_flash_count() {
+  _has_bits_[0] |= 0x02000000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_flash_count() {
+  _has_bits_[0] &= ~0x02000000u;
+}
+inline void DeepPlayerStatsEntry::clear_flash_count() {
+  flash_count_ = 0u;
+  clear_has_flash_count();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::flash_count() const {
+  return flash_count_;
+}
+inline void DeepPlayerStatsEntry::set_flash_count(::google::protobuf::uint32 value) {
+  set_has_flash_count();
+  flash_count_ = value;
+}
+
+// optional uint32 flash_success = 33;
+inline bool DeepPlayerStatsEntry::has_flash_success() const {
+  return (_has_bits_[0] & 0x04000000u) != 0;
+}
+inline void DeepPlayerStatsEntry::set_has_flash_success() {
+  _has_bits_[0] |= 0x04000000u;
+}
+inline void DeepPlayerStatsEntry::clear_has_flash_success() {
+  _has_bits_[0] &= ~0x04000000u;
+}
+inline void DeepPlayerStatsEntry::clear_flash_success() {
+  flash_success_ = 0u;
+  clear_has_flash_success();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::flash_success() const {
+  return flash_success_;
+}
+inline void DeepPlayerStatsEntry::set_flash_success(::google::protobuf::uint32 value) {
+  set_has_flash_success();
+  flash_success_ = value;
+}
+
+// repeated uint32 mates = 34;
+inline int DeepPlayerStatsEntry::mates_size() const {
+  return mates_.size();
+}
+inline void DeepPlayerStatsEntry::clear_mates() {
+  mates_.Clear();
+}
+inline ::google::protobuf::uint32 DeepPlayerStatsEntry::mates(int index) const {
+  return mates_.Get(index);
+}
+inline void DeepPlayerStatsEntry::set_mates(int index, ::google::protobuf::uint32 value) {
+  mates_.Set(index, value);
+}
+inline void DeepPlayerStatsEntry::add_mates(::google::protobuf::uint32 value) {
+  mates_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+DeepPlayerStatsEntry::mates() const {
+  return mates_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+DeepPlayerStatsEntry::mutable_mates() {
+  return &mates_;
+}
+
+// -------------------------------------------------------------------
+
+// DeepPlayerMatchEvent
+
+// optional uint32 accountid = 1;
+inline bool DeepPlayerMatchEvent::has_accountid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_accountid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void DeepPlayerMatchEvent::clear_has_accountid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void DeepPlayerMatchEvent::clear_accountid() {
+  accountid_ = 0u;
+  clear_has_accountid();
+}
+inline ::google::protobuf::uint32 DeepPlayerMatchEvent::accountid() const {
+  return accountid_;
+}
+inline void DeepPlayerMatchEvent::set_accountid(::google::protobuf::uint32 value) {
+  set_has_accountid();
+  accountid_ = value;
+}
+
+// optional uint64 match_id = 2;
+inline bool DeepPlayerMatchEvent::has_match_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_match_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void DeepPlayerMatchEvent::clear_has_match_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void DeepPlayerMatchEvent::clear_match_id() {
+  match_id_ = GOOGLE_ULONGLONG(0);
+  clear_has_match_id();
+}
+inline ::google::protobuf::uint64 DeepPlayerMatchEvent::match_id() const {
+  return match_id_;
+}
+inline void DeepPlayerMatchEvent::set_match_id(::google::protobuf::uint64 value) {
+  set_has_match_id();
+  match_id_ = value;
+}
+
+// optional uint32 event_id = 3;
+inline bool DeepPlayerMatchEvent::has_event_id() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_event_id() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void DeepPlayerMatchEvent::clear_has_event_id() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void DeepPlayerMatchEvent::clear_event_id() {
+  event_id_ = 0u;
+  clear_has_event_id();
+}
+inline ::google::protobuf::uint32 DeepPlayerMatchEvent::event_id() const {
+  return event_id_;
+}
+inline void DeepPlayerMatchEvent::set_event_id(::google::protobuf::uint32 value) {
+  set_has_event_id();
+  event_id_ = value;
+}
+
+// optional uint32 event_type = 4;
+inline bool DeepPlayerMatchEvent::has_event_type() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_event_type() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void DeepPlayerMatchEvent::clear_has_event_type() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void DeepPlayerMatchEvent::clear_event_type() {
+  event_type_ = 0u;
+  clear_has_event_type();
+}
+inline ::google::protobuf::uint32 DeepPlayerMatchEvent::event_type() const {
+  return event_type_;
+}
+inline void DeepPlayerMatchEvent::set_event_type(::google::protobuf::uint32 value) {
+  set_has_event_type();
+  event_type_ = value;
+}
+
+// optional bool b_playing_ct = 5;
+inline bool DeepPlayerMatchEvent::has_b_playing_ct() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_b_playing_ct() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void DeepPlayerMatchEvent::clear_has_b_playing_ct() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void DeepPlayerMatchEvent::clear_b_playing_ct() {
+  b_playing_ct_ = false;
+  clear_has_b_playing_ct();
+}
+inline bool DeepPlayerMatchEvent::b_playing_ct() const {
+  return b_playing_ct_;
+}
+inline void DeepPlayerMatchEvent::set_b_playing_ct(bool value) {
+  set_has_b_playing_ct();
+  b_playing_ct_ = value;
+}
+
+// optional int32 user_pos_x = 6;
+inline bool DeepPlayerMatchEvent::has_user_pos_x() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_user_pos_x() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void DeepPlayerMatchEvent::clear_has_user_pos_x() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void DeepPlayerMatchEvent::clear_user_pos_x() {
+  user_pos_x_ = 0;
+  clear_has_user_pos_x();
+}
+inline ::google::protobuf::int32 DeepPlayerMatchEvent::user_pos_x() const {
+  return user_pos_x_;
+}
+inline void DeepPlayerMatchEvent::set_user_pos_x(::google::protobuf::int32 value) {
+  set_has_user_pos_x();
+  user_pos_x_ = value;
+}
+
+// optional int32 user_pos_y = 7;
+inline bool DeepPlayerMatchEvent::has_user_pos_y() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_user_pos_y() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void DeepPlayerMatchEvent::clear_has_user_pos_y() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void DeepPlayerMatchEvent::clear_user_pos_y() {
+  user_pos_y_ = 0;
+  clear_has_user_pos_y();
+}
+inline ::google::protobuf::int32 DeepPlayerMatchEvent::user_pos_y() const {
+  return user_pos_y_;
+}
+inline void DeepPlayerMatchEvent::set_user_pos_y(::google::protobuf::int32 value) {
+  set_has_user_pos_y();
+  user_pos_y_ = value;
+}
+
+// optional int32 user_pos_z = 12;
+inline bool DeepPlayerMatchEvent::has_user_pos_z() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_user_pos_z() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void DeepPlayerMatchEvent::clear_has_user_pos_z() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void DeepPlayerMatchEvent::clear_user_pos_z() {
+  user_pos_z_ = 0;
+  clear_has_user_pos_z();
+}
+inline ::google::protobuf::int32 DeepPlayerMatchEvent::user_pos_z() const {
+  return user_pos_z_;
+}
+inline void DeepPlayerMatchEvent::set_user_pos_z(::google::protobuf::int32 value) {
+  set_has_user_pos_z();
+  user_pos_z_ = value;
+}
+
+// optional uint32 user_defidx = 8;
+inline bool DeepPlayerMatchEvent::has_user_defidx() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_user_defidx() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void DeepPlayerMatchEvent::clear_has_user_defidx() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void DeepPlayerMatchEvent::clear_user_defidx() {
+  user_defidx_ = 0u;
+  clear_has_user_defidx();
+}
+inline ::google::protobuf::uint32 DeepPlayerMatchEvent::user_defidx() const {
+  return user_defidx_;
+}
+inline void DeepPlayerMatchEvent::set_user_defidx(::google::protobuf::uint32 value) {
+  set_has_user_defidx();
+  user_defidx_ = value;
+}
+
+// optional int32 other_pos_x = 9;
+inline bool DeepPlayerMatchEvent::has_other_pos_x() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_other_pos_x() {
+  _has_bits_[0] |= 0x00000200u;
+}
+inline void DeepPlayerMatchEvent::clear_has_other_pos_x() {
+  _has_bits_[0] &= ~0x00000200u;
+}
+inline void DeepPlayerMatchEvent::clear_other_pos_x() {
+  other_pos_x_ = 0;
+  clear_has_other_pos_x();
+}
+inline ::google::protobuf::int32 DeepPlayerMatchEvent::other_pos_x() const {
+  return other_pos_x_;
+}
+inline void DeepPlayerMatchEvent::set_other_pos_x(::google::protobuf::int32 value) {
+  set_has_other_pos_x();
+  other_pos_x_ = value;
+}
+
+// optional int32 other_pos_y = 10;
+inline bool DeepPlayerMatchEvent::has_other_pos_y() const {
+  return (_has_bits_[0] & 0x00000400u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_other_pos_y() {
+  _has_bits_[0] |= 0x00000400u;
+}
+inline void DeepPlayerMatchEvent::clear_has_other_pos_y() {
+  _has_bits_[0] &= ~0x00000400u;
+}
+inline void DeepPlayerMatchEvent::clear_other_pos_y() {
+  other_pos_y_ = 0;
+  clear_has_other_pos_y();
+}
+inline ::google::protobuf::int32 DeepPlayerMatchEvent::other_pos_y() const {
+  return other_pos_y_;
+}
+inline void DeepPlayerMatchEvent::set_other_pos_y(::google::protobuf::int32 value) {
+  set_has_other_pos_y();
+  other_pos_y_ = value;
+}
+
+// optional int32 other_pos_z = 13;
+inline bool DeepPlayerMatchEvent::has_other_pos_z() const {
+  return (_has_bits_[0] & 0x00000800u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_other_pos_z() {
+  _has_bits_[0] |= 0x00000800u;
+}
+inline void DeepPlayerMatchEvent::clear_has_other_pos_z() {
+  _has_bits_[0] &= ~0x00000800u;
+}
+inline void DeepPlayerMatchEvent::clear_other_pos_z() {
+  other_pos_z_ = 0;
+  clear_has_other_pos_z();
+}
+inline ::google::protobuf::int32 DeepPlayerMatchEvent::other_pos_z() const {
+  return other_pos_z_;
+}
+inline void DeepPlayerMatchEvent::set_other_pos_z(::google::protobuf::int32 value) {
+  set_has_other_pos_z();
+  other_pos_z_ = value;
+}
+
+// optional uint32 other_defidx = 11;
+inline bool DeepPlayerMatchEvent::has_other_defidx() const {
+  return (_has_bits_[0] & 0x00001000u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_other_defidx() {
+  _has_bits_[0] |= 0x00001000u;
+}
+inline void DeepPlayerMatchEvent::clear_has_other_defidx() {
+  _has_bits_[0] &= ~0x00001000u;
+}
+inline void DeepPlayerMatchEvent::clear_other_defidx() {
+  other_defidx_ = 0u;
+  clear_has_other_defidx();
+}
+inline ::google::protobuf::uint32 DeepPlayerMatchEvent::other_defidx() const {
+  return other_defidx_;
+}
+inline void DeepPlayerMatchEvent::set_other_defidx(::google::protobuf::uint32 value) {
+  set_has_other_defidx();
+  other_defidx_ = value;
+}
+
+// optional int32 event_data = 14;
+inline bool DeepPlayerMatchEvent::has_event_data() const {
+  return (_has_bits_[0] & 0x00002000u) != 0;
+}
+inline void DeepPlayerMatchEvent::set_has_event_data() {
+  _has_bits_[0] |= 0x00002000u;
+}
+inline void DeepPlayerMatchEvent::clear_has_event_data() {
+  _has_bits_[0] &= ~0x00002000u;
+}
+inline void DeepPlayerMatchEvent::clear_event_data() {
+  event_data_ = 0;
+  clear_has_event_data();
+}
+inline ::google::protobuf::int32 DeepPlayerMatchEvent::event_data() const {
+  return event_data_;
+}
+inline void DeepPlayerMatchEvent::set_event_data(::google::protobuf::int32 value) {
+  set_has_event_data();
+  event_data_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CMsgGCCStrike15_ClientDeepStats_DeepStatsRange
+
+// optional uint32 begin = 1;
+inline bool CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::has_begin() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::set_has_begin() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::clear_has_begin() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::clear_begin() {
+  begin_ = 0u;
+  clear_has_begin();
+}
+inline ::google::protobuf::uint32 CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::begin() const {
+  return begin_;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::set_begin(::google::protobuf::uint32 value) {
+  set_has_begin();
+  begin_ = value;
+}
+
+// optional uint32 end = 2;
+inline bool CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::has_end() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::set_has_end() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::clear_has_end() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::clear_end() {
+  end_ = 0u;
+  clear_has_end();
+}
+inline ::google::protobuf::uint32 CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::end() const {
+  return end_;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::set_end(::google::protobuf::uint32 value) {
+  set_has_end();
+  end_ = value;
+}
+
+// optional bool frozen = 3;
+inline bool CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::has_frozen() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::set_has_frozen() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::clear_has_frozen() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::clear_frozen() {
+  frozen_ = false;
+  clear_has_frozen();
+}
+inline bool CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::frozen() const {
+  return frozen_;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::set_frozen(bool value) {
+  set_has_frozen();
+  frozen_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch
+
+// optional .DeepPlayerStatsEntry player = 1;
+inline bool CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::has_player() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::set_has_player() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::clear_has_player() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::clear_player() {
+  if (player_ != NULL) player_->::DeepPlayerStatsEntry::Clear();
+  clear_has_player();
+}
+inline const ::DeepPlayerStatsEntry& CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::player() const {
+  return player_ != NULL ? *player_ : *default_instance_->player_;
+}
+inline ::DeepPlayerStatsEntry* CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::mutable_player() {
+  set_has_player();
+  if (player_ == NULL) player_ = new ::DeepPlayerStatsEntry;
+  return player_;
+}
+inline ::DeepPlayerStatsEntry* CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::release_player() {
+  clear_has_player();
+  ::DeepPlayerStatsEntry* temp = player_;
+  player_ = NULL;
+  return temp;
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::set_allocated_player(::DeepPlayerStatsEntry* player) {
+  delete player_;
+  player_ = player;
+  if (player) {
+    set_has_player();
+  } else {
+    clear_has_player();
+  }
+}
+
+// repeated .DeepPlayerMatchEvent events = 2;
+inline int CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::events_size() const {
+  return events_.size();
+}
+inline void CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::clear_events() {
+  events_.Clear();
+}
+inline const ::DeepPlayerMatchEvent& CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::events(int index) const {
+  return events_.Get(index);
+}
+inline ::DeepPlayerMatchEvent* CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::mutable_events(int index) {
+  return events_.Mutable(index);
+}
+inline ::DeepPlayerMatchEvent* CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::add_events() {
+  return events_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::DeepPlayerMatchEvent >&
+CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::events() const {
+  return events_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::DeepPlayerMatchEvent >*
+CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch::mutable_events() {
+  return &events_;
+}
+
+// -------------------------------------------------------------------
+
+// CMsgGCCStrike15_ClientDeepStats
+
+// optional uint32 account_id = 1;
+inline bool CMsgGCCStrike15_ClientDeepStats::has_account_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CMsgGCCStrike15_ClientDeepStats::set_has_account_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CMsgGCCStrike15_ClientDeepStats::clear_has_account_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CMsgGCCStrike15_ClientDeepStats::clear_account_id() {
+  account_id_ = 0u;
+  clear_has_account_id();
+}
+inline ::google::protobuf::uint32 CMsgGCCStrike15_ClientDeepStats::account_id() const {
+  return account_id_;
+}
+inline void CMsgGCCStrike15_ClientDeepStats::set_account_id(::google::protobuf::uint32 value) {
+  set_has_account_id();
+  account_id_ = value;
+}
+
+// optional .CMsgGCCStrike15_ClientDeepStats.DeepStatsRange range = 2;
+inline bool CMsgGCCStrike15_ClientDeepStats::has_range() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CMsgGCCStrike15_ClientDeepStats::set_has_range() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CMsgGCCStrike15_ClientDeepStats::clear_has_range() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CMsgGCCStrike15_ClientDeepStats::clear_range() {
+  if (range_ != NULL) range_->::CMsgGCCStrike15_ClientDeepStats_DeepStatsRange::Clear();
+  clear_has_range();
+}
+inline const ::CMsgGCCStrike15_ClientDeepStats_DeepStatsRange& CMsgGCCStrike15_ClientDeepStats::range() const {
+  return range_ != NULL ? *range_ : *default_instance_->range_;
+}
+inline ::CMsgGCCStrike15_ClientDeepStats_DeepStatsRange* CMsgGCCStrike15_ClientDeepStats::mutable_range() {
+  set_has_range();
+  if (range_ == NULL) range_ = new ::CMsgGCCStrike15_ClientDeepStats_DeepStatsRange;
+  return range_;
+}
+inline ::CMsgGCCStrike15_ClientDeepStats_DeepStatsRange* CMsgGCCStrike15_ClientDeepStats::release_range() {
+  clear_has_range();
+  ::CMsgGCCStrike15_ClientDeepStats_DeepStatsRange* temp = range_;
+  range_ = NULL;
+  return temp;
+}
+inline void CMsgGCCStrike15_ClientDeepStats::set_allocated_range(::CMsgGCCStrike15_ClientDeepStats_DeepStatsRange* range) {
+  delete range_;
+  range_ = range;
+  if (range) {
+    set_has_range();
+  } else {
+    clear_has_range();
+  }
+}
+
+// repeated .CMsgGCCStrike15_ClientDeepStats.DeepStatsMatch matches = 3;
+inline int CMsgGCCStrike15_ClientDeepStats::matches_size() const {
+  return matches_.size();
+}
+inline void CMsgGCCStrike15_ClientDeepStats::clear_matches() {
+  matches_.Clear();
+}
+inline const ::CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch& CMsgGCCStrike15_ClientDeepStats::matches(int index) const {
+  return matches_.Get(index);
+}
+inline ::CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch* CMsgGCCStrike15_ClientDeepStats::mutable_matches(int index) {
+  return matches_.Mutable(index);
+}
+inline ::CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch* CMsgGCCStrike15_ClientDeepStats::add_matches() {
+  return matches_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch >&
+CMsgGCCStrike15_ClientDeepStats::matches() const {
+  return matches_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::CMsgGCCStrike15_ClientDeepStats_DeepStatsMatch >*
+CMsgGCCStrike15_ClientDeepStats::mutable_matches() {
+  return &matches_;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_DeepStats
+
+// optional .CMsgGCCStrike15_ClientDeepStats stats = 1;
+inline bool CCSUsrMsg_DeepStats::has_stats() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_DeepStats::set_has_stats() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_DeepStats::clear_has_stats() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_DeepStats::clear_stats() {
+  if (stats_ != NULL) stats_->::CMsgGCCStrike15_ClientDeepStats::Clear();
+  clear_has_stats();
+}
+inline const ::CMsgGCCStrike15_ClientDeepStats& CCSUsrMsg_DeepStats::stats() const {
+  return stats_ != NULL ? *stats_ : *default_instance_->stats_;
+}
+inline ::CMsgGCCStrike15_ClientDeepStats* CCSUsrMsg_DeepStats::mutable_stats() {
+  set_has_stats();
+  if (stats_ == NULL) stats_ = new ::CMsgGCCStrike15_ClientDeepStats;
+  return stats_;
+}
+inline ::CMsgGCCStrike15_ClientDeepStats* CCSUsrMsg_DeepStats::release_stats() {
+  clear_has_stats();
+  ::CMsgGCCStrike15_ClientDeepStats* temp = stats_;
+  stats_ = NULL;
+  return temp;
+}
+inline void CCSUsrMsg_DeepStats::set_allocated_stats(::CMsgGCCStrike15_ClientDeepStats* stats) {
+  delete stats_;
+  stats_ = stats;
+  if (stats) {
+    set_has_stats();
+  } else {
+    clear_has_stats();
+  }
+}
+
+// -------------------------------------------------------------------
+
+// PlayerRankingInfo
+
+// optional uint32 account_id = 1;
+inline bool PlayerRankingInfo::has_account_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void PlayerRankingInfo::set_has_account_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void PlayerRankingInfo::clear_has_account_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void PlayerRankingInfo::clear_account_id() {
+  account_id_ = 0u;
+  clear_has_account_id();
+}
+inline ::google::protobuf::uint32 PlayerRankingInfo::account_id() const {
+  return account_id_;
+}
+inline void PlayerRankingInfo::set_account_id(::google::protobuf::uint32 value) {
+  set_has_account_id();
+  account_id_ = value;
+}
+
+// optional uint32 rank_id = 2;
+inline bool PlayerRankingInfo::has_rank_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void PlayerRankingInfo::set_has_rank_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void PlayerRankingInfo::clear_has_rank_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void PlayerRankingInfo::clear_rank_id() {
+  rank_id_ = 0u;
+  clear_has_rank_id();
+}
+inline ::google::protobuf::uint32 PlayerRankingInfo::rank_id() const {
+  return rank_id_;
+}
+inline void PlayerRankingInfo::set_rank_id(::google::protobuf::uint32 value) {
+  set_has_rank_id();
+  rank_id_ = value;
+}
+
+// optional uint32 wins = 3;
+inline bool PlayerRankingInfo::has_wins() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void PlayerRankingInfo::set_has_wins() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void PlayerRankingInfo::clear_has_wins() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void PlayerRankingInfo::clear_wins() {
+  wins_ = 0u;
+  clear_has_wins();
+}
+inline ::google::protobuf::uint32 PlayerRankingInfo::wins() const {
+  return wins_;
+}
+inline void PlayerRankingInfo::set_wins(::google::protobuf::uint32 value) {
+  set_has_wins();
+  wins_ = value;
+}
+
+// optional float rank_change = 4;
+inline bool PlayerRankingInfo::has_rank_change() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void PlayerRankingInfo::set_has_rank_change() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void PlayerRankingInfo::clear_has_rank_change() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void PlayerRankingInfo::clear_rank_change() {
+  rank_change_ = 0;
+  clear_has_rank_change();
+}
+inline float PlayerRankingInfo::rank_change() const {
+  return rank_change_;
+}
+inline void PlayerRankingInfo::set_rank_change(float value) {
+  set_has_rank_change();
+  rank_change_ = value;
+}
+
+// optional uint32 rank_type_id = 6;
+inline bool PlayerRankingInfo::has_rank_type_id() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void PlayerRankingInfo::set_has_rank_type_id() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void PlayerRankingInfo::clear_has_rank_type_id() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void PlayerRankingInfo::clear_rank_type_id() {
+  rank_type_id_ = 0u;
+  clear_has_rank_type_id();
+}
+inline ::google::protobuf::uint32 PlayerRankingInfo::rank_type_id() const {
+  return rank_type_id_;
+}
+inline void PlayerRankingInfo::set_rank_type_id(::google::protobuf::uint32 value) {
+  set_has_rank_type_id();
+  rank_type_id_ = value;
+}
+
+// optional uint32 tv_control = 7;
+inline bool PlayerRankingInfo::has_tv_control() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void PlayerRankingInfo::set_has_tv_control() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void PlayerRankingInfo::clear_has_tv_control() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void PlayerRankingInfo::clear_tv_control() {
+  tv_control_ = 0u;
+  clear_has_tv_control();
+}
+inline ::google::protobuf::uint32 PlayerRankingInfo::tv_control() const {
+  return tv_control_;
+}
+inline void PlayerRankingInfo::set_tv_control(::google::protobuf::uint32 value) {
+  set_has_tv_control();
+  tv_control_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// IpAddressMask
+
+// optional uint32 a = 1;
+inline bool IpAddressMask::has_a() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void IpAddressMask::set_has_a() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void IpAddressMask::clear_has_a() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void IpAddressMask::clear_a() {
+  a_ = 0u;
+  clear_has_a();
+}
+inline ::google::protobuf::uint32 IpAddressMask::a() const {
+  return a_;
+}
+inline void IpAddressMask::set_a(::google::protobuf::uint32 value) {
+  set_has_a();
+  a_ = value;
+}
+
+// optional uint32 b = 2;
+inline bool IpAddressMask::has_b() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void IpAddressMask::set_has_b() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void IpAddressMask::clear_has_b() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void IpAddressMask::clear_b() {
+  b_ = 0u;
+  clear_has_b();
+}
+inline ::google::protobuf::uint32 IpAddressMask::b() const {
+  return b_;
+}
+inline void IpAddressMask::set_b(::google::protobuf::uint32 value) {
+  set_has_b();
+  b_ = value;
+}
+
+// optional uint32 c = 3;
+inline bool IpAddressMask::has_c() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void IpAddressMask::set_has_c() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void IpAddressMask::clear_has_c() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void IpAddressMask::clear_c() {
+  c_ = 0u;
+  clear_has_c();
+}
+inline ::google::protobuf::uint32 IpAddressMask::c() const {
+  return c_;
+}
+inline void IpAddressMask::set_c(::google::protobuf::uint32 value) {
+  set_has_c();
+  c_ = value;
+}
+
+// optional uint32 d = 4;
+inline bool IpAddressMask::has_d() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void IpAddressMask::set_has_d() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void IpAddressMask::clear_has_d() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void IpAddressMask::clear_d() {
+  d_ = 0u;
+  clear_has_d();
+}
+inline ::google::protobuf::uint32 IpAddressMask::d() const {
+  return d_;
+}
+inline void IpAddressMask::set_d(::google::protobuf::uint32 value) {
+  set_has_d();
+  d_ = value;
+}
+
+// optional uint32 bits = 5;
+inline bool IpAddressMask::has_bits() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void IpAddressMask::set_has_bits() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void IpAddressMask::clear_has_bits() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void IpAddressMask::clear_bits() {
+  bits_ = 0u;
+  clear_has_bits();
+}
+inline ::google::protobuf::uint32 IpAddressMask::bits() const {
+  return bits_;
+}
+inline void IpAddressMask::set_bits(::google::protobuf::uint32 value) {
+  set_has_bits();
+  bits_ = value;
+}
+
+// optional uint32 token = 6;
+inline bool IpAddressMask::has_token() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void IpAddressMask::set_has_token() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void IpAddressMask::clear_has_token() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void IpAddressMask::clear_token() {
+  token_ = 0u;
+  clear_has_token();
+}
+inline ::google::protobuf::uint32 IpAddressMask::token() const {
+  return token_;
+}
+inline void IpAddressMask::set_token(::google::protobuf::uint32 value) {
+  set_has_token();
+  token_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// TournamentEvent
+
+// optional int32 event_id = 1;
+inline bool TournamentEvent::has_event_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void TournamentEvent::set_has_event_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void TournamentEvent::clear_has_event_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void TournamentEvent::clear_event_id() {
+  event_id_ = 0;
+  clear_has_event_id();
+}
+inline ::google::protobuf::int32 TournamentEvent::event_id() const {
+  return event_id_;
+}
+inline void TournamentEvent::set_event_id(::google::protobuf::int32 value) {
+  set_has_event_id();
+  event_id_ = value;
+}
+
+// optional string event_tag = 2;
+inline bool TournamentEvent::has_event_tag() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void TournamentEvent::set_has_event_tag() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void TournamentEvent::clear_has_event_tag() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void TournamentEvent::clear_event_tag() {
+  if (event_tag_ != &::google::protobuf::internal::kEmptyString) {
+    event_tag_->clear();
+  }
+  clear_has_event_tag();
+}
+inline const ::std::string& TournamentEvent::event_tag() const {
+  return *event_tag_;
+}
+inline void TournamentEvent::set_event_tag(const ::std::string& value) {
+  set_has_event_tag();
+  if (event_tag_ == &::google::protobuf::internal::kEmptyString) {
+    event_tag_ = new ::std::string;
+  }
+  event_tag_->assign(value);
+}
+inline void TournamentEvent::set_event_tag(const char* value) {
+  set_has_event_tag();
+  if (event_tag_ == &::google::protobuf::internal::kEmptyString) {
+    event_tag_ = new ::std::string;
+  }
+  event_tag_->assign(value);
+}
+inline void TournamentEvent::set_event_tag(const char* value, size_t size) {
+  set_has_event_tag();
+  if (event_tag_ == &::google::protobuf::internal::kEmptyString) {
+    event_tag_ = new ::std::string;
+  }
+  event_tag_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TournamentEvent::mutable_event_tag() {
+  set_has_event_tag();
+  if (event_tag_ == &::google::protobuf::internal::kEmptyString) {
+    event_tag_ = new ::std::string;
+  }
+  return event_tag_;
+}
+inline ::std::string* TournamentEvent::release_event_tag() {
+  clear_has_event_tag();
+  if (event_tag_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = event_tag_;
+    event_tag_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TournamentEvent::set_allocated_event_tag(::std::string* event_tag) {
+  if (event_tag_ != &::google::protobuf::internal::kEmptyString) {
+    delete event_tag_;
+  }
+  if (event_tag) {
+    set_has_event_tag();
+    event_tag_ = event_tag;
+  } else {
+    clear_has_event_tag();
+    event_tag_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional string event_name = 3;
+inline bool TournamentEvent::has_event_name() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void TournamentEvent::set_has_event_name() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void TournamentEvent::clear_has_event_name() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void TournamentEvent::clear_event_name() {
+  if (event_name_ != &::google::protobuf::internal::kEmptyString) {
+    event_name_->clear();
+  }
+  clear_has_event_name();
+}
+inline const ::std::string& TournamentEvent::event_name() const {
+  return *event_name_;
+}
+inline void TournamentEvent::set_event_name(const ::std::string& value) {
+  set_has_event_name();
+  if (event_name_ == &::google::protobuf::internal::kEmptyString) {
+    event_name_ = new ::std::string;
+  }
+  event_name_->assign(value);
+}
+inline void TournamentEvent::set_event_name(const char* value) {
+  set_has_event_name();
+  if (event_name_ == &::google::protobuf::internal::kEmptyString) {
+    event_name_ = new ::std::string;
+  }
+  event_name_->assign(value);
+}
+inline void TournamentEvent::set_event_name(const char* value, size_t size) {
+  set_has_event_name();
+  if (event_name_ == &::google::protobuf::internal::kEmptyString) {
+    event_name_ = new ::std::string;
+  }
+  event_name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TournamentEvent::mutable_event_name() {
+  set_has_event_name();
+  if (event_name_ == &::google::protobuf::internal::kEmptyString) {
+    event_name_ = new ::std::string;
+  }
+  return event_name_;
+}
+inline ::std::string* TournamentEvent::release_event_name() {
+  clear_has_event_name();
+  if (event_name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = event_name_;
+    event_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TournamentEvent::set_allocated_event_name(::std::string* event_name) {
+  if (event_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete event_name_;
+  }
+  if (event_name) {
+    set_has_event_name();
+    event_name_ = event_name;
+  } else {
+    clear_has_event_name();
+    event_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional uint32 event_time_start = 4;
+inline bool TournamentEvent::has_event_time_start() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void TournamentEvent::set_has_event_time_start() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void TournamentEvent::clear_has_event_time_start() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void TournamentEvent::clear_event_time_start() {
+  event_time_start_ = 0u;
+  clear_has_event_time_start();
+}
+inline ::google::protobuf::uint32 TournamentEvent::event_time_start() const {
+  return event_time_start_;
+}
+inline void TournamentEvent::set_event_time_start(::google::protobuf::uint32 value) {
+  set_has_event_time_start();
+  event_time_start_ = value;
+}
+
+// optional uint32 event_time_end = 5;
+inline bool TournamentEvent::has_event_time_end() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void TournamentEvent::set_has_event_time_end() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void TournamentEvent::clear_has_event_time_end() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void TournamentEvent::clear_event_time_end() {
+  event_time_end_ = 0u;
+  clear_has_event_time_end();
+}
+inline ::google::protobuf::uint32 TournamentEvent::event_time_end() const {
+  return event_time_end_;
+}
+inline void TournamentEvent::set_event_time_end(::google::protobuf::uint32 value) {
+  set_has_event_time_end();
+  event_time_end_ = value;
+}
+
+// optional int32 event_public = 6;
+inline bool TournamentEvent::has_event_public() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void TournamentEvent::set_has_event_public() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void TournamentEvent::clear_has_event_public() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void TournamentEvent::clear_event_public() {
+  event_public_ = 0;
+  clear_has_event_public();
+}
+inline ::google::protobuf::int32 TournamentEvent::event_public() const {
+  return event_public_;
+}
+inline void TournamentEvent::set_event_public(::google::protobuf::int32 value) {
+  set_has_event_public();
+  event_public_ = value;
+}
+
+// optional int32 event_stage_id = 7;
+inline bool TournamentEvent::has_event_stage_id() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void TournamentEvent::set_has_event_stage_id() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void TournamentEvent::clear_has_event_stage_id() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void TournamentEvent::clear_event_stage_id() {
+  event_stage_id_ = 0;
+  clear_has_event_stage_id();
+}
+inline ::google::protobuf::int32 TournamentEvent::event_stage_id() const {
+  return event_stage_id_;
+}
+inline void TournamentEvent::set_event_stage_id(::google::protobuf::int32 value) {
+  set_has_event_stage_id();
+  event_stage_id_ = value;
+}
+
+// optional string event_stage_name = 8;
+inline bool TournamentEvent::has_event_stage_name() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void TournamentEvent::set_has_event_stage_name() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void TournamentEvent::clear_has_event_stage_name() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void TournamentEvent::clear_event_stage_name() {
+  if (event_stage_name_ != &::google::protobuf::internal::kEmptyString) {
+    event_stage_name_->clear();
+  }
+  clear_has_event_stage_name();
+}
+inline const ::std::string& TournamentEvent::event_stage_name() const {
+  return *event_stage_name_;
+}
+inline void TournamentEvent::set_event_stage_name(const ::std::string& value) {
+  set_has_event_stage_name();
+  if (event_stage_name_ == &::google::protobuf::internal::kEmptyString) {
+    event_stage_name_ = new ::std::string;
+  }
+  event_stage_name_->assign(value);
+}
+inline void TournamentEvent::set_event_stage_name(const char* value) {
+  set_has_event_stage_name();
+  if (event_stage_name_ == &::google::protobuf::internal::kEmptyString) {
+    event_stage_name_ = new ::std::string;
+  }
+  event_stage_name_->assign(value);
+}
+inline void TournamentEvent::set_event_stage_name(const char* value, size_t size) {
+  set_has_event_stage_name();
+  if (event_stage_name_ == &::google::protobuf::internal::kEmptyString) {
+    event_stage_name_ = new ::std::string;
+  }
+  event_stage_name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TournamentEvent::mutable_event_stage_name() {
+  set_has_event_stage_name();
+  if (event_stage_name_ == &::google::protobuf::internal::kEmptyString) {
+    event_stage_name_ = new ::std::string;
+  }
+  return event_stage_name_;
+}
+inline ::std::string* TournamentEvent::release_event_stage_name() {
+  clear_has_event_stage_name();
+  if (event_stage_name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = event_stage_name_;
+    event_stage_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TournamentEvent::set_allocated_event_stage_name(::std::string* event_stage_name) {
+  if (event_stage_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete event_stage_name_;
+  }
+  if (event_stage_name) {
+    set_has_event_stage_name();
+    event_stage_name_ = event_stage_name;
+  } else {
+    clear_has_event_stage_name();
+    event_stage_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional uint32 active_section_id = 9;
+inline bool TournamentEvent::has_active_section_id() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void TournamentEvent::set_has_active_section_id() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void TournamentEvent::clear_has_active_section_id() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void TournamentEvent::clear_active_section_id() {
+  active_section_id_ = 0u;
+  clear_has_active_section_id();
+}
+inline ::google::protobuf::uint32 TournamentEvent::active_section_id() const {
+  return active_section_id_;
+}
+inline void TournamentEvent::set_active_section_id(::google::protobuf::uint32 value) {
+  set_has_active_section_id();
+  active_section_id_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// TournamentPlayer
+
+// optional uint32 account_id = 1;
+inline bool TournamentPlayer::has_account_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void TournamentPlayer::set_has_account_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void TournamentPlayer::clear_has_account_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void TournamentPlayer::clear_account_id() {
+  account_id_ = 0u;
+  clear_has_account_id();
+}
+inline ::google::protobuf::uint32 TournamentPlayer::account_id() const {
+  return account_id_;
+}
+inline void TournamentPlayer::set_account_id(::google::protobuf::uint32 value) {
+  set_has_account_id();
+  account_id_ = value;
+}
+
+// optional string player_nick = 2;
+inline bool TournamentPlayer::has_player_nick() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void TournamentPlayer::set_has_player_nick() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void TournamentPlayer::clear_has_player_nick() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void TournamentPlayer::clear_player_nick() {
+  if (player_nick_ != &::google::protobuf::internal::kEmptyString) {
+    player_nick_->clear();
+  }
+  clear_has_player_nick();
+}
+inline const ::std::string& TournamentPlayer::player_nick() const {
+  return *player_nick_;
+}
+inline void TournamentPlayer::set_player_nick(const ::std::string& value) {
+  set_has_player_nick();
+  if (player_nick_ == &::google::protobuf::internal::kEmptyString) {
+    player_nick_ = new ::std::string;
+  }
+  player_nick_->assign(value);
+}
+inline void TournamentPlayer::set_player_nick(const char* value) {
+  set_has_player_nick();
+  if (player_nick_ == &::google::protobuf::internal::kEmptyString) {
+    player_nick_ = new ::std::string;
+  }
+  player_nick_->assign(value);
+}
+inline void TournamentPlayer::set_player_nick(const char* value, size_t size) {
+  set_has_player_nick();
+  if (player_nick_ == &::google::protobuf::internal::kEmptyString) {
+    player_nick_ = new ::std::string;
+  }
+  player_nick_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TournamentPlayer::mutable_player_nick() {
+  set_has_player_nick();
+  if (player_nick_ == &::google::protobuf::internal::kEmptyString) {
+    player_nick_ = new ::std::string;
+  }
+  return player_nick_;
+}
+inline ::std::string* TournamentPlayer::release_player_nick() {
+  clear_has_player_nick();
+  if (player_nick_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = player_nick_;
+    player_nick_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TournamentPlayer::set_allocated_player_nick(::std::string* player_nick) {
+  if (player_nick_ != &::google::protobuf::internal::kEmptyString) {
+    delete player_nick_;
+  }
+  if (player_nick) {
+    set_has_player_nick();
+    player_nick_ = player_nick;
+  } else {
+    clear_has_player_nick();
+    player_nick_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional string player_name = 3;
+inline bool TournamentPlayer::has_player_name() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void TournamentPlayer::set_has_player_name() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void TournamentPlayer::clear_has_player_name() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void TournamentPlayer::clear_player_name() {
+  if (player_name_ != &::google::protobuf::internal::kEmptyString) {
+    player_name_->clear();
+  }
+  clear_has_player_name();
+}
+inline const ::std::string& TournamentPlayer::player_name() const {
+  return *player_name_;
+}
+inline void TournamentPlayer::set_player_name(const ::std::string& value) {
+  set_has_player_name();
+  if (player_name_ == &::google::protobuf::internal::kEmptyString) {
+    player_name_ = new ::std::string;
+  }
+  player_name_->assign(value);
+}
+inline void TournamentPlayer::set_player_name(const char* value) {
+  set_has_player_name();
+  if (player_name_ == &::google::protobuf::internal::kEmptyString) {
+    player_name_ = new ::std::string;
+  }
+  player_name_->assign(value);
+}
+inline void TournamentPlayer::set_player_name(const char* value, size_t size) {
+  set_has_player_name();
+  if (player_name_ == &::google::protobuf::internal::kEmptyString) {
+    player_name_ = new ::std::string;
+  }
+  player_name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TournamentPlayer::mutable_player_name() {
+  set_has_player_name();
+  if (player_name_ == &::google::protobuf::internal::kEmptyString) {
+    player_name_ = new ::std::string;
+  }
+  return player_name_;
+}
+inline ::std::string* TournamentPlayer::release_player_name() {
+  clear_has_player_name();
+  if (player_name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = player_name_;
+    player_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TournamentPlayer::set_allocated_player_name(::std::string* player_name) {
+  if (player_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete player_name_;
+  }
+  if (player_name) {
+    set_has_player_name();
+    player_name_ = player_name;
+  } else {
+    clear_has_player_name();
+    player_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional uint32 player_dob = 4;
+inline bool TournamentPlayer::has_player_dob() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void TournamentPlayer::set_has_player_dob() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void TournamentPlayer::clear_has_player_dob() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void TournamentPlayer::clear_player_dob() {
+  player_dob_ = 0u;
+  clear_has_player_dob();
+}
+inline ::google::protobuf::uint32 TournamentPlayer::player_dob() const {
+  return player_dob_;
+}
+inline void TournamentPlayer::set_player_dob(::google::protobuf::uint32 value) {
+  set_has_player_dob();
+  player_dob_ = value;
+}
+
+// optional string player_flag = 5;
+inline bool TournamentPlayer::has_player_flag() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void TournamentPlayer::set_has_player_flag() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void TournamentPlayer::clear_has_player_flag() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void TournamentPlayer::clear_player_flag() {
+  if (player_flag_ != &::google::protobuf::internal::kEmptyString) {
+    player_flag_->clear();
+  }
+  clear_has_player_flag();
+}
+inline const ::std::string& TournamentPlayer::player_flag() const {
+  return *player_flag_;
+}
+inline void TournamentPlayer::set_player_flag(const ::std::string& value) {
+  set_has_player_flag();
+  if (player_flag_ == &::google::protobuf::internal::kEmptyString) {
+    player_flag_ = new ::std::string;
+  }
+  player_flag_->assign(value);
+}
+inline void TournamentPlayer::set_player_flag(const char* value) {
+  set_has_player_flag();
+  if (player_flag_ == &::google::protobuf::internal::kEmptyString) {
+    player_flag_ = new ::std::string;
+  }
+  player_flag_->assign(value);
+}
+inline void TournamentPlayer::set_player_flag(const char* value, size_t size) {
+  set_has_player_flag();
+  if (player_flag_ == &::google::protobuf::internal::kEmptyString) {
+    player_flag_ = new ::std::string;
+  }
+  player_flag_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TournamentPlayer::mutable_player_flag() {
+  set_has_player_flag();
+  if (player_flag_ == &::google::protobuf::internal::kEmptyString) {
+    player_flag_ = new ::std::string;
+  }
+  return player_flag_;
+}
+inline ::std::string* TournamentPlayer::release_player_flag() {
+  clear_has_player_flag();
+  if (player_flag_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = player_flag_;
+    player_flag_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TournamentPlayer::set_allocated_player_flag(::std::string* player_flag) {
+  if (player_flag_ != &::google::protobuf::internal::kEmptyString) {
+    delete player_flag_;
+  }
+  if (player_flag) {
+    set_has_player_flag();
+    player_flag_ = player_flag;
+  } else {
+    clear_has_player_flag();
+    player_flag_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional string player_location = 6;
+inline bool TournamentPlayer::has_player_location() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void TournamentPlayer::set_has_player_location() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void TournamentPlayer::clear_has_player_location() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void TournamentPlayer::clear_player_location() {
+  if (player_location_ != &::google::protobuf::internal::kEmptyString) {
+    player_location_->clear();
+  }
+  clear_has_player_location();
+}
+inline const ::std::string& TournamentPlayer::player_location() const {
+  return *player_location_;
+}
+inline void TournamentPlayer::set_player_location(const ::std::string& value) {
+  set_has_player_location();
+  if (player_location_ == &::google::protobuf::internal::kEmptyString) {
+    player_location_ = new ::std::string;
+  }
+  player_location_->assign(value);
+}
+inline void TournamentPlayer::set_player_location(const char* value) {
+  set_has_player_location();
+  if (player_location_ == &::google::protobuf::internal::kEmptyString) {
+    player_location_ = new ::std::string;
+  }
+  player_location_->assign(value);
+}
+inline void TournamentPlayer::set_player_location(const char* value, size_t size) {
+  set_has_player_location();
+  if (player_location_ == &::google::protobuf::internal::kEmptyString) {
+    player_location_ = new ::std::string;
+  }
+  player_location_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TournamentPlayer::mutable_player_location() {
+  set_has_player_location();
+  if (player_location_ == &::google::protobuf::internal::kEmptyString) {
+    player_location_ = new ::std::string;
+  }
+  return player_location_;
+}
+inline ::std::string* TournamentPlayer::release_player_location() {
+  clear_has_player_location();
+  if (player_location_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = player_location_;
+    player_location_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TournamentPlayer::set_allocated_player_location(::std::string* player_location) {
+  if (player_location_ != &::google::protobuf::internal::kEmptyString) {
+    delete player_location_;
+  }
+  if (player_location) {
+    set_has_player_location();
+    player_location_ = player_location;
+  } else {
+    clear_has_player_location();
+    player_location_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional string player_desc = 7;
+inline bool TournamentPlayer::has_player_desc() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void TournamentPlayer::set_has_player_desc() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void TournamentPlayer::clear_has_player_desc() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void TournamentPlayer::clear_player_desc() {
+  if (player_desc_ != &::google::protobuf::internal::kEmptyString) {
+    player_desc_->clear();
+  }
+  clear_has_player_desc();
+}
+inline const ::std::string& TournamentPlayer::player_desc() const {
+  return *player_desc_;
+}
+inline void TournamentPlayer::set_player_desc(const ::std::string& value) {
+  set_has_player_desc();
+  if (player_desc_ == &::google::protobuf::internal::kEmptyString) {
+    player_desc_ = new ::std::string;
+  }
+  player_desc_->assign(value);
+}
+inline void TournamentPlayer::set_player_desc(const char* value) {
+  set_has_player_desc();
+  if (player_desc_ == &::google::protobuf::internal::kEmptyString) {
+    player_desc_ = new ::std::string;
+  }
+  player_desc_->assign(value);
+}
+inline void TournamentPlayer::set_player_desc(const char* value, size_t size) {
+  set_has_player_desc();
+  if (player_desc_ == &::google::protobuf::internal::kEmptyString) {
+    player_desc_ = new ::std::string;
+  }
+  player_desc_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TournamentPlayer::mutable_player_desc() {
+  set_has_player_desc();
+  if (player_desc_ == &::google::protobuf::internal::kEmptyString) {
+    player_desc_ = new ::std::string;
+  }
+  return player_desc_;
+}
+inline ::std::string* TournamentPlayer::release_player_desc() {
+  clear_has_player_desc();
+  if (player_desc_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = player_desc_;
+    player_desc_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TournamentPlayer::set_allocated_player_desc(::std::string* player_desc) {
+  if (player_desc_ != &::google::protobuf::internal::kEmptyString) {
+    delete player_desc_;
+  }
+  if (player_desc) {
+    set_has_player_desc();
+    player_desc_ = player_desc;
+  } else {
+    clear_has_player_desc();
+    player_desc_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// -------------------------------------------------------------------
+
+// TournamentTeam
+
+// optional int32 team_id = 1;
+inline bool TournamentTeam::has_team_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void TournamentTeam::set_has_team_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void TournamentTeam::clear_has_team_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void TournamentTeam::clear_team_id() {
+  team_id_ = 0;
+  clear_has_team_id();
+}
+inline ::google::protobuf::int32 TournamentTeam::team_id() const {
+  return team_id_;
+}
+inline void TournamentTeam::set_team_id(::google::protobuf::int32 value) {
+  set_has_team_id();
+  team_id_ = value;
+}
+
+// optional string team_tag = 2;
+inline bool TournamentTeam::has_team_tag() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void TournamentTeam::set_has_team_tag() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void TournamentTeam::clear_has_team_tag() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void TournamentTeam::clear_team_tag() {
+  if (team_tag_ != &::google::protobuf::internal::kEmptyString) {
+    team_tag_->clear();
+  }
+  clear_has_team_tag();
+}
+inline const ::std::string& TournamentTeam::team_tag() const {
+  return *team_tag_;
+}
+inline void TournamentTeam::set_team_tag(const ::std::string& value) {
+  set_has_team_tag();
+  if (team_tag_ == &::google::protobuf::internal::kEmptyString) {
+    team_tag_ = new ::std::string;
+  }
+  team_tag_->assign(value);
+}
+inline void TournamentTeam::set_team_tag(const char* value) {
+  set_has_team_tag();
+  if (team_tag_ == &::google::protobuf::internal::kEmptyString) {
+    team_tag_ = new ::std::string;
+  }
+  team_tag_->assign(value);
+}
+inline void TournamentTeam::set_team_tag(const char* value, size_t size) {
+  set_has_team_tag();
+  if (team_tag_ == &::google::protobuf::internal::kEmptyString) {
+    team_tag_ = new ::std::string;
+  }
+  team_tag_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TournamentTeam::mutable_team_tag() {
+  set_has_team_tag();
+  if (team_tag_ == &::google::protobuf::internal::kEmptyString) {
+    team_tag_ = new ::std::string;
+  }
+  return team_tag_;
+}
+inline ::std::string* TournamentTeam::release_team_tag() {
+  clear_has_team_tag();
+  if (team_tag_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = team_tag_;
+    team_tag_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TournamentTeam::set_allocated_team_tag(::std::string* team_tag) {
+  if (team_tag_ != &::google::protobuf::internal::kEmptyString) {
+    delete team_tag_;
+  }
+  if (team_tag) {
+    set_has_team_tag();
+    team_tag_ = team_tag;
+  } else {
+    clear_has_team_tag();
+    team_tag_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional string team_flag = 3;
+inline bool TournamentTeam::has_team_flag() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void TournamentTeam::set_has_team_flag() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void TournamentTeam::clear_has_team_flag() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void TournamentTeam::clear_team_flag() {
+  if (team_flag_ != &::google::protobuf::internal::kEmptyString) {
+    team_flag_->clear();
+  }
+  clear_has_team_flag();
+}
+inline const ::std::string& TournamentTeam::team_flag() const {
+  return *team_flag_;
+}
+inline void TournamentTeam::set_team_flag(const ::std::string& value) {
+  set_has_team_flag();
+  if (team_flag_ == &::google::protobuf::internal::kEmptyString) {
+    team_flag_ = new ::std::string;
+  }
+  team_flag_->assign(value);
+}
+inline void TournamentTeam::set_team_flag(const char* value) {
+  set_has_team_flag();
+  if (team_flag_ == &::google::protobuf::internal::kEmptyString) {
+    team_flag_ = new ::std::string;
+  }
+  team_flag_->assign(value);
+}
+inline void TournamentTeam::set_team_flag(const char* value, size_t size) {
+  set_has_team_flag();
+  if (team_flag_ == &::google::protobuf::internal::kEmptyString) {
+    team_flag_ = new ::std::string;
+  }
+  team_flag_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TournamentTeam::mutable_team_flag() {
+  set_has_team_flag();
+  if (team_flag_ == &::google::protobuf::internal::kEmptyString) {
+    team_flag_ = new ::std::string;
+  }
+  return team_flag_;
+}
+inline ::std::string* TournamentTeam::release_team_flag() {
+  clear_has_team_flag();
+  if (team_flag_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = team_flag_;
+    team_flag_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TournamentTeam::set_allocated_team_flag(::std::string* team_flag) {
+  if (team_flag_ != &::google::protobuf::internal::kEmptyString) {
+    delete team_flag_;
+  }
+  if (team_flag) {
+    set_has_team_flag();
+    team_flag_ = team_flag;
+  } else {
+    clear_has_team_flag();
+    team_flag_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional string team_name = 4;
+inline bool TournamentTeam::has_team_name() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void TournamentTeam::set_has_team_name() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void TournamentTeam::clear_has_team_name() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void TournamentTeam::clear_team_name() {
+  if (team_name_ != &::google::protobuf::internal::kEmptyString) {
+    team_name_->clear();
+  }
+  clear_has_team_name();
+}
+inline const ::std::string& TournamentTeam::team_name() const {
+  return *team_name_;
+}
+inline void TournamentTeam::set_team_name(const ::std::string& value) {
+  set_has_team_name();
+  if (team_name_ == &::google::protobuf::internal::kEmptyString) {
+    team_name_ = new ::std::string;
+  }
+  team_name_->assign(value);
+}
+inline void TournamentTeam::set_team_name(const char* value) {
+  set_has_team_name();
+  if (team_name_ == &::google::protobuf::internal::kEmptyString) {
+    team_name_ = new ::std::string;
+  }
+  team_name_->assign(value);
+}
+inline void TournamentTeam::set_team_name(const char* value, size_t size) {
+  set_has_team_name();
+  if (team_name_ == &::google::protobuf::internal::kEmptyString) {
+    team_name_ = new ::std::string;
+  }
+  team_name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TournamentTeam::mutable_team_name() {
+  set_has_team_name();
+  if (team_name_ == &::google::protobuf::internal::kEmptyString) {
+    team_name_ = new ::std::string;
+  }
+  return team_name_;
+}
+inline ::std::string* TournamentTeam::release_team_name() {
+  clear_has_team_name();
+  if (team_name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = team_name_;
+    team_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TournamentTeam::set_allocated_team_name(::std::string* team_name) {
+  if (team_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete team_name_;
+  }
+  if (team_name) {
+    set_has_team_name();
+    team_name_ = team_name;
+  } else {
+    clear_has_team_name();
+    team_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// repeated .TournamentPlayer players = 5;
+inline int TournamentTeam::players_size() const {
+  return players_.size();
+}
+inline void TournamentTeam::clear_players() {
+  players_.Clear();
+}
+inline const ::TournamentPlayer& TournamentTeam::players(int index) const {
+  return players_.Get(index);
+}
+inline ::TournamentPlayer* TournamentTeam::mutable_players(int index) {
+  return players_.Mutable(index);
+}
+inline ::TournamentPlayer* TournamentTeam::add_players() {
+  return players_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::TournamentPlayer >&
+TournamentTeam::players() const {
+  return players_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::TournamentPlayer >*
+TournamentTeam::mutable_players() {
+  return &players_;
+}
+
+// -------------------------------------------------------------------
+
+// CDataGCCStrike15_v2_TournamentMatchDraft_Entry
+
+// optional int32 mapid = 1;
+inline bool CDataGCCStrike15_v2_TournamentMatchDraft_Entry::has_mapid() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft_Entry::set_has_mapid() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft_Entry::clear_has_mapid() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft_Entry::clear_mapid() {
+  mapid_ = 0;
+  clear_has_mapid();
+}
+inline ::google::protobuf::int32 CDataGCCStrike15_v2_TournamentMatchDraft_Entry::mapid() const {
+  return mapid_;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft_Entry::set_mapid(::google::protobuf::int32 value) {
+  set_has_mapid();
+  mapid_ = value;
+}
+
+// optional int32 team_id_ct = 2;
+inline bool CDataGCCStrike15_v2_TournamentMatchDraft_Entry::has_team_id_ct() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft_Entry::set_has_team_id_ct() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft_Entry::clear_has_team_id_ct() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft_Entry::clear_team_id_ct() {
+  team_id_ct_ = 0;
+  clear_has_team_id_ct();
+}
+inline ::google::protobuf::int32 CDataGCCStrike15_v2_TournamentMatchDraft_Entry::team_id_ct() const {
+  return team_id_ct_;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft_Entry::set_team_id_ct(::google::protobuf::int32 value) {
+  set_has_team_id_ct();
+  team_id_ct_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CDataGCCStrike15_v2_TournamentMatchDraft
+
+// optional int32 event_id = 1;
+inline bool CDataGCCStrike15_v2_TournamentMatchDraft::has_event_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_has_event_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_has_event_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_event_id() {
+  event_id_ = 0;
+  clear_has_event_id();
+}
+inline ::google::protobuf::int32 CDataGCCStrike15_v2_TournamentMatchDraft::event_id() const {
+  return event_id_;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_event_id(::google::protobuf::int32 value) {
+  set_has_event_id();
+  event_id_ = value;
+}
+
+// optional int32 event_stage_id = 2;
+inline bool CDataGCCStrike15_v2_TournamentMatchDraft::has_event_stage_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_has_event_stage_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_has_event_stage_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_event_stage_id() {
+  event_stage_id_ = 0;
+  clear_has_event_stage_id();
+}
+inline ::google::protobuf::int32 CDataGCCStrike15_v2_TournamentMatchDraft::event_stage_id() const {
+  return event_stage_id_;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_event_stage_id(::google::protobuf::int32 value) {
+  set_has_event_stage_id();
+  event_stage_id_ = value;
+}
+
+// optional int32 team_id_0 = 3;
+inline bool CDataGCCStrike15_v2_TournamentMatchDraft::has_team_id_0() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_has_team_id_0() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_has_team_id_0() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_team_id_0() {
+  team_id_0_ = 0;
+  clear_has_team_id_0();
+}
+inline ::google::protobuf::int32 CDataGCCStrike15_v2_TournamentMatchDraft::team_id_0() const {
+  return team_id_0_;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_team_id_0(::google::protobuf::int32 value) {
+  set_has_team_id_0();
+  team_id_0_ = value;
+}
+
+// optional int32 team_id_1 = 4;
+inline bool CDataGCCStrike15_v2_TournamentMatchDraft::has_team_id_1() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_has_team_id_1() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_has_team_id_1() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_team_id_1() {
+  team_id_1_ = 0;
+  clear_has_team_id_1();
+}
+inline ::google::protobuf::int32 CDataGCCStrike15_v2_TournamentMatchDraft::team_id_1() const {
+  return team_id_1_;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_team_id_1(::google::protobuf::int32 value) {
+  set_has_team_id_1();
+  team_id_1_ = value;
+}
+
+// optional int32 maps_count = 5;
+inline bool CDataGCCStrike15_v2_TournamentMatchDraft::has_maps_count() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_has_maps_count() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_has_maps_count() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_maps_count() {
+  maps_count_ = 0;
+  clear_has_maps_count();
+}
+inline ::google::protobuf::int32 CDataGCCStrike15_v2_TournamentMatchDraft::maps_count() const {
+  return maps_count_;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_maps_count(::google::protobuf::int32 value) {
+  set_has_maps_count();
+  maps_count_ = value;
+}
+
+// optional int32 maps_current = 6;
+inline bool CDataGCCStrike15_v2_TournamentMatchDraft::has_maps_current() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_has_maps_current() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_has_maps_current() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_maps_current() {
+  maps_current_ = 0;
+  clear_has_maps_current();
+}
+inline ::google::protobuf::int32 CDataGCCStrike15_v2_TournamentMatchDraft::maps_current() const {
+  return maps_current_;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_maps_current(::google::protobuf::int32 value) {
+  set_has_maps_current();
+  maps_current_ = value;
+}
+
+// optional int32 team_id_start = 7;
+inline bool CDataGCCStrike15_v2_TournamentMatchDraft::has_team_id_start() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_has_team_id_start() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_has_team_id_start() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_team_id_start() {
+  team_id_start_ = 0;
+  clear_has_team_id_start();
+}
+inline ::google::protobuf::int32 CDataGCCStrike15_v2_TournamentMatchDraft::team_id_start() const {
+  return team_id_start_;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_team_id_start(::google::protobuf::int32 value) {
+  set_has_team_id_start();
+  team_id_start_ = value;
+}
+
+// optional int32 team_id_veto1 = 8;
+inline bool CDataGCCStrike15_v2_TournamentMatchDraft::has_team_id_veto1() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_has_team_id_veto1() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_has_team_id_veto1() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_team_id_veto1() {
+  team_id_veto1_ = 0;
+  clear_has_team_id_veto1();
+}
+inline ::google::protobuf::int32 CDataGCCStrike15_v2_TournamentMatchDraft::team_id_veto1() const {
+  return team_id_veto1_;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_team_id_veto1(::google::protobuf::int32 value) {
+  set_has_team_id_veto1();
+  team_id_veto1_ = value;
+}
+
+// optional int32 team_id_pickn = 9;
+inline bool CDataGCCStrike15_v2_TournamentMatchDraft::has_team_id_pickn() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_has_team_id_pickn() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_has_team_id_pickn() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_team_id_pickn() {
+  team_id_pickn_ = 0;
+  clear_has_team_id_pickn();
+}
+inline ::google::protobuf::int32 CDataGCCStrike15_v2_TournamentMatchDraft::team_id_pickn() const {
+  return team_id_pickn_;
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::set_team_id_pickn(::google::protobuf::int32 value) {
+  set_has_team_id_pickn();
+  team_id_pickn_ = value;
+}
+
+// repeated .CDataGCCStrike15_v2_TournamentMatchDraft.Entry drafts = 10;
+inline int CDataGCCStrike15_v2_TournamentMatchDraft::drafts_size() const {
+  return drafts_.size();
+}
+inline void CDataGCCStrike15_v2_TournamentMatchDraft::clear_drafts() {
+  drafts_.Clear();
+}
+inline const ::CDataGCCStrike15_v2_TournamentMatchDraft_Entry& CDataGCCStrike15_v2_TournamentMatchDraft::drafts(int index) const {
+  return drafts_.Get(index);
+}
+inline ::CDataGCCStrike15_v2_TournamentMatchDraft_Entry* CDataGCCStrike15_v2_TournamentMatchDraft::mutable_drafts(int index) {
+  return drafts_.Mutable(index);
+}
+inline ::CDataGCCStrike15_v2_TournamentMatchDraft_Entry* CDataGCCStrike15_v2_TournamentMatchDraft::add_drafts() {
+  return drafts_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::CDataGCCStrike15_v2_TournamentMatchDraft_Entry >&
+CDataGCCStrike15_v2_TournamentMatchDraft::drafts() const {
+  return drafts_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::CDataGCCStrike15_v2_TournamentMatchDraft_Entry >*
+CDataGCCStrike15_v2_TournamentMatchDraft::mutable_drafts() {
+  return &drafts_;
+}
+
+// -------------------------------------------------------------------
+
+// CPreMatchInfoData_TeamStats
+
+// optional int32 match_info_idxtxt = 1;
+inline bool CPreMatchInfoData_TeamStats::has_match_info_idxtxt() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CPreMatchInfoData_TeamStats::set_has_match_info_idxtxt() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CPreMatchInfoData_TeamStats::clear_has_match_info_idxtxt() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CPreMatchInfoData_TeamStats::clear_match_info_idxtxt() {
+  match_info_idxtxt_ = 0;
+  clear_has_match_info_idxtxt();
+}
+inline ::google::protobuf::int32 CPreMatchInfoData_TeamStats::match_info_idxtxt() const {
+  return match_info_idxtxt_;
+}
+inline void CPreMatchInfoData_TeamStats::set_match_info_idxtxt(::google::protobuf::int32 value) {
+  set_has_match_info_idxtxt();
+  match_info_idxtxt_ = value;
+}
+
+// optional string match_info_txt = 2;
+inline bool CPreMatchInfoData_TeamStats::has_match_info_txt() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CPreMatchInfoData_TeamStats::set_has_match_info_txt() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CPreMatchInfoData_TeamStats::clear_has_match_info_txt() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CPreMatchInfoData_TeamStats::clear_match_info_txt() {
+  if (match_info_txt_ != &::google::protobuf::internal::kEmptyString) {
+    match_info_txt_->clear();
+  }
+  clear_has_match_info_txt();
+}
+inline const ::std::string& CPreMatchInfoData_TeamStats::match_info_txt() const {
+  return *match_info_txt_;
+}
+inline void CPreMatchInfoData_TeamStats::set_match_info_txt(const ::std::string& value) {
+  set_has_match_info_txt();
+  if (match_info_txt_ == &::google::protobuf::internal::kEmptyString) {
+    match_info_txt_ = new ::std::string;
+  }
+  match_info_txt_->assign(value);
+}
+inline void CPreMatchInfoData_TeamStats::set_match_info_txt(const char* value) {
+  set_has_match_info_txt();
+  if (match_info_txt_ == &::google::protobuf::internal::kEmptyString) {
+    match_info_txt_ = new ::std::string;
+  }
+  match_info_txt_->assign(value);
+}
+inline void CPreMatchInfoData_TeamStats::set_match_info_txt(const char* value, size_t size) {
+  set_has_match_info_txt();
+  if (match_info_txt_ == &::google::protobuf::internal::kEmptyString) {
+    match_info_txt_ = new ::std::string;
+  }
+  match_info_txt_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CPreMatchInfoData_TeamStats::mutable_match_info_txt() {
+  set_has_match_info_txt();
+  if (match_info_txt_ == &::google::protobuf::internal::kEmptyString) {
+    match_info_txt_ = new ::std::string;
+  }
+  return match_info_txt_;
+}
+inline ::std::string* CPreMatchInfoData_TeamStats::release_match_info_txt() {
+  clear_has_match_info_txt();
+  if (match_info_txt_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = match_info_txt_;
+    match_info_txt_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CPreMatchInfoData_TeamStats::set_allocated_match_info_txt(::std::string* match_info_txt) {
+  if (match_info_txt_ != &::google::protobuf::internal::kEmptyString) {
+    delete match_info_txt_;
+  }
+  if (match_info_txt) {
+    set_has_match_info_txt();
+    match_info_txt_ = match_info_txt;
+  } else {
+    clear_has_match_info_txt();
+    match_info_txt_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// repeated string match_info_teams = 3;
+inline int CPreMatchInfoData_TeamStats::match_info_teams_size() const {
+  return match_info_teams_.size();
+}
+inline void CPreMatchInfoData_TeamStats::clear_match_info_teams() {
+  match_info_teams_.Clear();
+}
+inline const ::std::string& CPreMatchInfoData_TeamStats::match_info_teams(int index) const {
+  return match_info_teams_.Get(index);
+}
+inline ::std::string* CPreMatchInfoData_TeamStats::mutable_match_info_teams(int index) {
+  return match_info_teams_.Mutable(index);
+}
+inline void CPreMatchInfoData_TeamStats::set_match_info_teams(int index, const ::std::string& value) {
+  match_info_teams_.Mutable(index)->assign(value);
+}
+inline void CPreMatchInfoData_TeamStats::set_match_info_teams(int index, const char* value) {
+  match_info_teams_.Mutable(index)->assign(value);
+}
+inline void CPreMatchInfoData_TeamStats::set_match_info_teams(int index, const char* value, size_t size) {
+  match_info_teams_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CPreMatchInfoData_TeamStats::add_match_info_teams() {
+  return match_info_teams_.Add();
+}
+inline void CPreMatchInfoData_TeamStats::add_match_info_teams(const ::std::string& value) {
+  match_info_teams_.Add()->assign(value);
+}
+inline void CPreMatchInfoData_TeamStats::add_match_info_teams(const char* value) {
+  match_info_teams_.Add()->assign(value);
+}
+inline void CPreMatchInfoData_TeamStats::add_match_info_teams(const char* value, size_t size) {
+  match_info_teams_.Add()->assign(reinterpret_cast<const char*>(value), size);
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+CPreMatchInfoData_TeamStats::match_info_teams() const {
+  return match_info_teams_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+CPreMatchInfoData_TeamStats::mutable_match_info_teams() {
+  return &match_info_teams_;
+}
+
+// -------------------------------------------------------------------
+
+// CPreMatchInfoData
+
+// optional int32 predictions_pct = 1;
+inline bool CPreMatchInfoData::has_predictions_pct() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CPreMatchInfoData::set_has_predictions_pct() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CPreMatchInfoData::clear_has_predictions_pct() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CPreMatchInfoData::clear_predictions_pct() {
+  predictions_pct_ = 0;
+  clear_has_predictions_pct();
+}
+inline ::google::protobuf::int32 CPreMatchInfoData::predictions_pct() const {
+  return predictions_pct_;
+}
+inline void CPreMatchInfoData::set_predictions_pct(::google::protobuf::int32 value) {
+  set_has_predictions_pct();
+  predictions_pct_ = value;
+}
+
+// optional .CDataGCCStrike15_v2_TournamentMatchDraft draft = 4;
+inline bool CPreMatchInfoData::has_draft() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CPreMatchInfoData::set_has_draft() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CPreMatchInfoData::clear_has_draft() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CPreMatchInfoData::clear_draft() {
+  if (draft_ != NULL) draft_->::CDataGCCStrike15_v2_TournamentMatchDraft::Clear();
+  clear_has_draft();
+}
+inline const ::CDataGCCStrike15_v2_TournamentMatchDraft& CPreMatchInfoData::draft() const {
+  return draft_ != NULL ? *draft_ : *default_instance_->draft_;
+}
+inline ::CDataGCCStrike15_v2_TournamentMatchDraft* CPreMatchInfoData::mutable_draft() {
+  set_has_draft();
+  if (draft_ == NULL) draft_ = new ::CDataGCCStrike15_v2_TournamentMatchDraft;
+  return draft_;
+}
+inline ::CDataGCCStrike15_v2_TournamentMatchDraft* CPreMatchInfoData::release_draft() {
+  clear_has_draft();
+  ::CDataGCCStrike15_v2_TournamentMatchDraft* temp = draft_;
+  draft_ = NULL;
+  return temp;
+}
+inline void CPreMatchInfoData::set_allocated_draft(::CDataGCCStrike15_v2_TournamentMatchDraft* draft) {
+  delete draft_;
+  draft_ = draft;
+  if (draft) {
+    set_has_draft();
+  } else {
+    clear_has_draft();
+  }
+}
+
+// repeated .CPreMatchInfoData.TeamStats stats = 5;
+inline int CPreMatchInfoData::stats_size() const {
+  return stats_.size();
+}
+inline void CPreMatchInfoData::clear_stats() {
+  stats_.Clear();
+}
+inline const ::CPreMatchInfoData_TeamStats& CPreMatchInfoData::stats(int index) const {
+  return stats_.Get(index);
+}
+inline ::CPreMatchInfoData_TeamStats* CPreMatchInfoData::mutable_stats(int index) {
+  return stats_.Mutable(index);
+}
+inline ::CPreMatchInfoData_TeamStats* CPreMatchInfoData::add_stats() {
+  return stats_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::CPreMatchInfoData_TeamStats >&
+CPreMatchInfoData::stats() const {
+  return stats_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::CPreMatchInfoData_TeamStats >*
+CPreMatchInfoData::mutable_stats() {
+  return &stats_;
+}
+
+// repeated int32 wins = 6;
+inline int CPreMatchInfoData::wins_size() const {
+  return wins_.size();
+}
+inline void CPreMatchInfoData::clear_wins() {
+  wins_.Clear();
+}
+inline ::google::protobuf::int32 CPreMatchInfoData::wins(int index) const {
+  return wins_.Get(index);
+}
+inline void CPreMatchInfoData::set_wins(int index, ::google::protobuf::int32 value) {
+  wins_.Set(index, value);
+}
+inline void CPreMatchInfoData::add_wins(::google::protobuf::int32 value) {
+  wins_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+CPreMatchInfoData::wins() const {
+  return wins_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+CPreMatchInfoData::mutable_wins() {
+  return &wins_;
+}
+
+// -------------------------------------------------------------------
+
+// CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve
+
+// repeated uint32 account_ids = 1;
+inline int CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::account_ids_size() const {
+  return account_ids_.size();
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_account_ids() {
+  account_ids_.Clear();
+}
+inline ::google::protobuf::uint32 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::account_ids(int index) const {
+  return account_ids_.Get(index);
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_account_ids(int index, ::google::protobuf::uint32 value) {
+  account_ids_.Set(index, value);
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::add_account_ids(::google::protobuf::uint32 value) {
+  account_ids_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::account_ids() const {
+  return account_ids_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::mutable_account_ids() {
+  return &account_ids_;
+}
+
+// optional uint32 game_type = 2;
+inline bool CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::has_game_type() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_has_game_type() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_has_game_type() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_game_type() {
+  game_type_ = 0u;
+  clear_has_game_type();
+}
+inline ::google::protobuf::uint32 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::game_type() const {
+  return game_type_;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_game_type(::google::protobuf::uint32 value) {
+  set_has_game_type();
+  game_type_ = value;
+}
+
+// optional uint64 match_id = 3;
+inline bool CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::has_match_id() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_has_match_id() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_has_match_id() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_match_id() {
+  match_id_ = GOOGLE_ULONGLONG(0);
+  clear_has_match_id();
+}
+inline ::google::protobuf::uint64 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::match_id() const {
+  return match_id_;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_match_id(::google::protobuf::uint64 value) {
+  set_has_match_id();
+  match_id_ = value;
+}
+
+// optional uint32 server_version = 4;
+inline bool CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::has_server_version() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_has_server_version() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_has_server_version() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_server_version() {
+  server_version_ = 0u;
+  clear_has_server_version();
+}
+inline ::google::protobuf::uint32 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::server_version() const {
+  return server_version_;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_server_version(::google::protobuf::uint32 value) {
+  set_has_server_version();
+  server_version_ = value;
+}
+
+// optional uint32 flags = 18;
+inline bool CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::has_flags() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_has_flags() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_has_flags() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_flags() {
+  flags_ = 0u;
+  clear_has_flags();
+}
+inline ::google::protobuf::uint32 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::flags() const {
+  return flags_;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_flags(::google::protobuf::uint32 value) {
+  set_has_flags();
+  flags_ = value;
+}
+
+// repeated .PlayerRankingInfo rankings = 5;
+inline int CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::rankings_size() const {
+  return rankings_.size();
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_rankings() {
+  rankings_.Clear();
+}
+inline const ::PlayerRankingInfo& CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::rankings(int index) const {
+  return rankings_.Get(index);
+}
+inline ::PlayerRankingInfo* CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::mutable_rankings(int index) {
+  return rankings_.Mutable(index);
+}
+inline ::PlayerRankingInfo* CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::add_rankings() {
+  return rankings_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::PlayerRankingInfo >&
+CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::rankings() const {
+  return rankings_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::PlayerRankingInfo >*
+CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::mutable_rankings() {
+  return &rankings_;
+}
+
+// optional uint64 encryption_key = 6;
+inline bool CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::has_encryption_key() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_has_encryption_key() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_has_encryption_key() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_encryption_key() {
+  encryption_key_ = GOOGLE_ULONGLONG(0);
+  clear_has_encryption_key();
+}
+inline ::google::protobuf::uint64 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::encryption_key() const {
+  return encryption_key_;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_encryption_key(::google::protobuf::uint64 value) {
+  set_has_encryption_key();
+  encryption_key_ = value;
+}
+
+// optional uint64 encryption_key_pub = 7;
+inline bool CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::has_encryption_key_pub() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_has_encryption_key_pub() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_has_encryption_key_pub() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_encryption_key_pub() {
+  encryption_key_pub_ = GOOGLE_ULONGLONG(0);
+  clear_has_encryption_key_pub();
+}
+inline ::google::protobuf::uint64 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::encryption_key_pub() const {
+  return encryption_key_pub_;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_encryption_key_pub(::google::protobuf::uint64 value) {
+  set_has_encryption_key_pub();
+  encryption_key_pub_ = value;
+}
+
+// repeated uint32 party_ids = 8;
+inline int CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::party_ids_size() const {
+  return party_ids_.size();
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_party_ids() {
+  party_ids_.Clear();
+}
+inline ::google::protobuf::uint32 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::party_ids(int index) const {
+  return party_ids_.Get(index);
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_party_ids(int index, ::google::protobuf::uint32 value) {
+  party_ids_.Set(index, value);
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::add_party_ids(::google::protobuf::uint32 value) {
+  party_ids_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::party_ids() const {
+  return party_ids_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::mutable_party_ids() {
+  return &party_ids_;
+}
+
+// repeated .IpAddressMask whitelist = 9;
+inline int CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::whitelist_size() const {
+  return whitelist_.size();
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_whitelist() {
+  whitelist_.Clear();
+}
+inline const ::IpAddressMask& CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::whitelist(int index) const {
+  return whitelist_.Get(index);
+}
+inline ::IpAddressMask* CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::mutable_whitelist(int index) {
+  return whitelist_.Mutable(index);
+}
+inline ::IpAddressMask* CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::add_whitelist() {
+  return whitelist_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::IpAddressMask >&
+CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::whitelist() const {
+  return whitelist_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::IpAddressMask >*
+CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::mutable_whitelist() {
+  return &whitelist_;
+}
+
+// optional uint64 tv_master_steamid = 10;
+inline bool CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::has_tv_master_steamid() const {
+  return (_has_bits_[0] & 0x00000400u) != 0;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_has_tv_master_steamid() {
+  _has_bits_[0] |= 0x00000400u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_has_tv_master_steamid() {
+  _has_bits_[0] &= ~0x00000400u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_tv_master_steamid() {
+  tv_master_steamid_ = GOOGLE_ULONGLONG(0);
+  clear_has_tv_master_steamid();
+}
+inline ::google::protobuf::uint64 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::tv_master_steamid() const {
+  return tv_master_steamid_;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_tv_master_steamid(::google::protobuf::uint64 value) {
+  set_has_tv_master_steamid();
+  tv_master_steamid_ = value;
+}
+
+// optional .TournamentEvent tournament_event = 11;
+inline bool CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::has_tournament_event() const {
+  return (_has_bits_[0] & 0x00000800u) != 0;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_has_tournament_event() {
+  _has_bits_[0] |= 0x00000800u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_has_tournament_event() {
+  _has_bits_[0] &= ~0x00000800u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_tournament_event() {
+  if (tournament_event_ != NULL) tournament_event_->::TournamentEvent::Clear();
+  clear_has_tournament_event();
+}
+inline const ::TournamentEvent& CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::tournament_event() const {
+  return tournament_event_ != NULL ? *tournament_event_ : *default_instance_->tournament_event_;
+}
+inline ::TournamentEvent* CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::mutable_tournament_event() {
+  set_has_tournament_event();
+  if (tournament_event_ == NULL) tournament_event_ = new ::TournamentEvent;
+  return tournament_event_;
+}
+inline ::TournamentEvent* CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::release_tournament_event() {
+  clear_has_tournament_event();
+  ::TournamentEvent* temp = tournament_event_;
+  tournament_event_ = NULL;
+  return temp;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_allocated_tournament_event(::TournamentEvent* tournament_event) {
+  delete tournament_event_;
+  tournament_event_ = tournament_event;
+  if (tournament_event) {
+    set_has_tournament_event();
+  } else {
+    clear_has_tournament_event();
+  }
+}
+
+// repeated .TournamentTeam tournament_teams = 12;
+inline int CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::tournament_teams_size() const {
+  return tournament_teams_.size();
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_tournament_teams() {
+  tournament_teams_.Clear();
+}
+inline const ::TournamentTeam& CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::tournament_teams(int index) const {
+  return tournament_teams_.Get(index);
+}
+inline ::TournamentTeam* CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::mutable_tournament_teams(int index) {
+  return tournament_teams_.Mutable(index);
+}
+inline ::TournamentTeam* CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::add_tournament_teams() {
+  return tournament_teams_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::TournamentTeam >&
+CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::tournament_teams() const {
+  return tournament_teams_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::TournamentTeam >*
+CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::mutable_tournament_teams() {
+  return &tournament_teams_;
+}
+
+// repeated uint32 tournament_casters_account_ids = 13;
+inline int CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::tournament_casters_account_ids_size() const {
+  return tournament_casters_account_ids_.size();
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_tournament_casters_account_ids() {
+  tournament_casters_account_ids_.Clear();
+}
+inline ::google::protobuf::uint32 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::tournament_casters_account_ids(int index) const {
+  return tournament_casters_account_ids_.Get(index);
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_tournament_casters_account_ids(int index, ::google::protobuf::uint32 value) {
+  tournament_casters_account_ids_.Set(index, value);
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::add_tournament_casters_account_ids(::google::protobuf::uint32 value) {
+  tournament_casters_account_ids_.Add(value);
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::tournament_casters_account_ids() const {
+  return tournament_casters_account_ids_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::mutable_tournament_casters_account_ids() {
+  return &tournament_casters_account_ids_;
+}
+
+// optional uint64 tv_relay_steamid = 14;
+inline bool CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::has_tv_relay_steamid() const {
+  return (_has_bits_[0] & 0x00004000u) != 0;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_has_tv_relay_steamid() {
+  _has_bits_[0] |= 0x00004000u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_has_tv_relay_steamid() {
+  _has_bits_[0] &= ~0x00004000u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_tv_relay_steamid() {
+  tv_relay_steamid_ = GOOGLE_ULONGLONG(0);
+  clear_has_tv_relay_steamid();
+}
+inline ::google::protobuf::uint64 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::tv_relay_steamid() const {
+  return tv_relay_steamid_;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_tv_relay_steamid(::google::protobuf::uint64 value) {
+  set_has_tv_relay_steamid();
+  tv_relay_steamid_ = value;
+}
+
+// optional .CPreMatchInfoData pre_match_data = 15;
+inline bool CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::has_pre_match_data() const {
+  return (_has_bits_[0] & 0x00008000u) != 0;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_has_pre_match_data() {
+  _has_bits_[0] |= 0x00008000u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_has_pre_match_data() {
+  _has_bits_[0] &= ~0x00008000u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_pre_match_data() {
+  if (pre_match_data_ != NULL) pre_match_data_->::CPreMatchInfoData::Clear();
+  clear_has_pre_match_data();
+}
+inline const ::CPreMatchInfoData& CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::pre_match_data() const {
+  return pre_match_data_ != NULL ? *pre_match_data_ : *default_instance_->pre_match_data_;
+}
+inline ::CPreMatchInfoData* CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::mutable_pre_match_data() {
+  set_has_pre_match_data();
+  if (pre_match_data_ == NULL) pre_match_data_ = new ::CPreMatchInfoData;
+  return pre_match_data_;
+}
+inline ::CPreMatchInfoData* CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::release_pre_match_data() {
+  clear_has_pre_match_data();
+  ::CPreMatchInfoData* temp = pre_match_data_;
+  pre_match_data_ = NULL;
+  return temp;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_allocated_pre_match_data(::CPreMatchInfoData* pre_match_data) {
+  delete pre_match_data_;
+  pre_match_data_ = pre_match_data;
+  if (pre_match_data) {
+    set_has_pre_match_data();
+  } else {
+    clear_has_pre_match_data();
+  }
+}
+
+// optional uint32 rtime32_event_start = 16;
+inline bool CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::has_rtime32_event_start() const {
+  return (_has_bits_[0] & 0x00010000u) != 0;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_has_rtime32_event_start() {
+  _has_bits_[0] |= 0x00010000u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_has_rtime32_event_start() {
+  _has_bits_[0] &= ~0x00010000u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_rtime32_event_start() {
+  rtime32_event_start_ = 0u;
+  clear_has_rtime32_event_start();
+}
+inline ::google::protobuf::uint32 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::rtime32_event_start() const {
+  return rtime32_event_start_;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_rtime32_event_start(::google::protobuf::uint32 value) {
+  set_has_rtime32_event_start();
+  rtime32_event_start_ = value;
+}
+
+// optional uint32 tv_control = 17;
+inline bool CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::has_tv_control() const {
+  return (_has_bits_[0] & 0x00020000u) != 0;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_has_tv_control() {
+  _has_bits_[0] |= 0x00020000u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_has_tv_control() {
+  _has_bits_[0] &= ~0x00020000u;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::clear_tv_control() {
+  tv_control_ = 0u;
+  clear_has_tv_control();
+}
+inline ::google::protobuf::uint32 CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::tv_control() const {
+  return tv_control_;
+}
+inline void CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::set_tv_control(::google::protobuf::uint32 value) {
+  set_has_tv_control();
+  tv_control_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CCSUsrMsg_ServerRankRevealAll
+
+// optional int32 seconds_till_shutdown = 1;
+inline bool CCSUsrMsg_ServerRankRevealAll::has_seconds_till_shutdown() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCSUsrMsg_ServerRankRevealAll::set_has_seconds_till_shutdown() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCSUsrMsg_ServerRankRevealAll::clear_has_seconds_till_shutdown() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCSUsrMsg_ServerRankRevealAll::clear_seconds_till_shutdown() {
+  seconds_till_shutdown_ = 0;
+  clear_has_seconds_till_shutdown();
+}
+inline ::google::protobuf::int32 CCSUsrMsg_ServerRankRevealAll::seconds_till_shutdown() const {
+  return seconds_till_shutdown_;
+}
+inline void CCSUsrMsg_ServerRankRevealAll::set_seconds_till_shutdown(::google::protobuf::int32 value) {
+  set_has_seconds_till_shutdown();
+  seconds_till_shutdown_ = value;
+}
+
+// optional .CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve reservation = 2;
+inline bool CCSUsrMsg_ServerRankRevealAll::has_reservation() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCSUsrMsg_ServerRankRevealAll::set_has_reservation() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCSUsrMsg_ServerRankRevealAll::clear_has_reservation() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCSUsrMsg_ServerRankRevealAll::clear_reservation() {
+  if (reservation_ != NULL) reservation_->::CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve::Clear();
+  clear_has_reservation();
+}
+inline const ::CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve& CCSUsrMsg_ServerRankRevealAll::reservation() const {
+  return reservation_ != NULL ? *reservation_ : *default_instance_->reservation_;
+}
+inline ::CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve* CCSUsrMsg_ServerRankRevealAll::mutable_reservation() {
+  set_has_reservation();
+  if (reservation_ == NULL) reservation_ = new ::CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve;
+  return reservation_;
+}
+inline ::CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve* CCSUsrMsg_ServerRankRevealAll::release_reservation() {
+  clear_has_reservation();
+  ::CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve* temp = reservation_;
+  reservation_ = NULL;
+  return temp;
+}
+inline void CCSUsrMsg_ServerRankRevealAll::set_allocated_reservation(::CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve* reservation) {
+  delete reservation_;
+  reservation_ = reservation;
+  if (reservation) {
+    set_has_reservation();
+  } else {
+    clear_has_reservation();
+  }
+}
+
+// -------------------------------------------------------------------
+
 // CCSUsrMsg_ResetHud
 
 // optional bool reset = 1;
@@ -17535,32 +25020,6 @@ inline ::google::protobuf::int32 CCSUsrMsg_ClientInfo::dummy() const {
 inline void CCSUsrMsg_ClientInfo::set_dummy(::google::protobuf::int32 value) {
   set_has_dummy();
   dummy_ = value;
-}
-
-// -------------------------------------------------------------------
-
-// CCSUsrMsg_ServerRankRevealAll
-
-// optional int32 seconds_till_shutdown = 1;
-inline bool CCSUsrMsg_ServerRankRevealAll::has_seconds_till_shutdown() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void CCSUsrMsg_ServerRankRevealAll::set_has_seconds_till_shutdown() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void CCSUsrMsg_ServerRankRevealAll::clear_has_seconds_till_shutdown() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void CCSUsrMsg_ServerRankRevealAll::clear_seconds_till_shutdown() {
-  seconds_till_shutdown_ = 0;
-  clear_has_seconds_till_shutdown();
-}
-inline ::google::protobuf::int32 CCSUsrMsg_ServerRankRevealAll::seconds_till_shutdown() const {
-  return seconds_till_shutdown_;
-}
-inline void CCSUsrMsg_ServerRankRevealAll::set_seconds_till_shutdown(::google::protobuf::int32 value) {
-  set_has_seconds_till_shutdown();
-  seconds_till_shutdown_ = value;
 }
 
 

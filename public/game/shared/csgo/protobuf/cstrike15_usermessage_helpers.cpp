@@ -85,6 +85,9 @@ CCstrike15UsermessageHelpers::CCstrike15UsermessageHelpers()
 	SETUP_MESSAGE( SurvivalStats );
 	//SETUP_MESSAGE( DisconnectToLobby2 );
 	SETUP_MESSAGE( EndOfMatchAllPlayersData );
+	SETUP_MESSAGE( RoundImpactScoreData );
+	SETUP_MESSAGE( CurrentRoundOdds );
+	SETUP_MESSAGE( DeepStats );
 }
 
 const google::protobuf::Message *CCstrike15UsermessageHelpers::GetPrototype( int index ) const

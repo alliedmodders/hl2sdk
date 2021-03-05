@@ -138,6 +138,9 @@ enum ECstrike15UserMessages
 	CS_UM_SurvivalStats = 73;
 	CS_UM_DisconnectToLobby2 = 74;
 	CS_UM_EndOfMatchAllPlayersData = 75;
+	CS_UM_RoundImpactScoreData = 79;
+	CS_UM_CurrentRoundOdds = 80;
+	CS_UM_DeepStats = 81;
 }
 
 enum ECSUsrMsg_DisconnectToLobby_Action {
@@ -714,6 +717,229 @@ message CCSUsrMsg_EndOfMatchAllPlayersData {
 	optional int32 scene = 2;
 }
 
+message CCSUsrMsg_RoundImpactScoreData {
+	message RisEvent {
+		message Victim {
+			optional int32 team_number = 1;
+			optional int32 entindex = 2;
+			optional uint64 xuid = 3;
+			optional int32 color = 4;
+			optional bool is_bot = 5;
+			optional bool is_dead = 6;
+		}
+
+		message Objective {
+			optional int32 type = 1;
+		}
+
+		message Damage {
+			optional int32 target_entindex = 1;
+			optional uint64 target_xuid = 2;
+			optional int32 health_removed = 3;
+			optional int32 num_hits = 4;
+			optional int32 return_health_removed = 5;
+			optional int32 num_return_hits = 6;
+		}
+
+		optional float timestamp = 1;
+		optional int32 terrorist_odds = 2;
+		optional int32 ct_alive = 3;
+		optional int32 t_alive = 4;
+		optional Victim victim_data = 5;
+		optional Objective objective_data = 6;
+		repeated Damage all_damage_data = 7;
+	}
+
+	message InitialConditions {
+		optional int32 ct_equip_value = 1;
+		optional int32 t_equip_value = 2;
+		optional int32 terrorist_odds = 3;
+	}
+
+	optional InitialConditions init_conditions = 1;
+	repeated RisEvent all_ris_event_data = 2;
+}
+
+message CCSUsrMsg_CurrentRoundOdds {
+	optional int32 odds = 1;
+}
+
+
+message DeepPlayerStatsEntry {
+	optional uint32 accountid = 1;
+	optional uint64 match_id = 2;
+	optional uint32 mm_game_mode = 3;
+	optional uint32 mapid = 4;
+	optional bool b_starting_ct = 5;
+	optional uint32 match_outcome = 6;
+	optional uint32 rounds_won = 7;
+	optional uint32 rounds_lost = 8;
+	optional uint32 stat_score = 9;
+	optional uint32 stat_deaths = 12;
+	optional uint32 stat_mvps = 13;
+	optional uint32 enemy_kills = 14;
+	optional uint32 enemy_headshots = 15;
+	optional uint32 enemy_2ks = 16;
+	optional uint32 enemy_3ks = 17;
+	optional uint32 enemy_4ks = 18;
+	optional uint32 total_damage = 19;
+	optional uint32 engagements_entry_count = 23;
+	optional uint32 engagements_entry_wins = 24;
+	optional uint32 engagements_1v1_count = 25;
+	optional uint32 engagements_1v1_wins = 26;
+	optional uint32 engagements_1v2_count = 27;
+	optional uint32 engagements_1v2_wins = 28;
+	optional uint32 utility_count = 29;
+	optional uint32 utility_success = 30;
+	optional uint32 flash_count = 32;
+	optional uint32 flash_success = 33;
+	repeated uint32 mates = 34;
+}
+
+message DeepPlayerMatchEvent {
+	optional uint32 accountid = 1;
+	optional uint64 match_id = 2;
+	optional uint32 event_id = 3;
+	optional uint32 event_type = 4;
+	optional bool b_playing_ct = 5;
+	optional int32 user_pos_x = 6;
+	optional int32 user_pos_y = 7;
+	optional int32 user_pos_z = 12;
+	optional uint32 user_defidx = 8;
+	optional int32 other_pos_x = 9;
+	optional int32 other_pos_y = 10;
+	optional int32 other_pos_z = 13;
+	optional uint32 other_defidx = 11;
+	optional int32 event_data = 14;
+}
+
+message CMsgGCCStrike15_ClientDeepStats {
+	message DeepStatsRange {
+		optional uint32 begin = 1;
+		optional uint32 end = 2;
+		optional bool frozen = 3;
+	}
+
+	message DeepStatsMatch {
+		optional DeepPlayerStatsEntry player = 1;
+		repeated DeepPlayerMatchEvent events = 2;
+	}
+
+	optional uint32 account_id = 1;
+	optional DeepStatsRange range = 2;
+	repeated DeepStatsMatch matches = 3;
+}
+
+message CCSUsrMsg_DeepStats {
+	optional CMsgGCCStrike15_ClientDeepStats stats = 1;
+}
+
+message PlayerRankingInfo {
+	optional uint32 account_id = 1;
+	optional uint32 rank_id = 2;
+	optional uint32 wins = 3;
+	optional float rank_change = 4;
+	optional uint32 rank_type_id = 6;
+	optional uint32 tv_control = 7;
+}
+
+message IpAddressMask {
+	optional uint32 a = 1;
+	optional uint32 b = 2;
+	optional uint32 c = 3;
+	optional uint32 d = 4;
+	optional uint32 bits = 5;
+	optional uint32 token = 6;
+}
+
+message TournamentEvent {
+	optional int32 event_id = 1;
+	optional string event_tag = 2;
+	optional string event_name = 3;
+	optional uint32 event_time_start = 4;
+	optional uint32 event_time_end = 5;
+	optional int32 event_public = 6;
+	optional int32 event_stage_id = 7;
+	optional string event_stage_name = 8;
+	optional uint32 active_section_id = 9;
+}
+
+message TournamentPlayer {
+	optional uint32 account_id = 1;
+	optional string player_nick = 2;
+	optional string player_name = 3;
+	optional uint32 player_dob = 4;
+	optional string player_flag = 5;
+	optional string player_location = 6;
+	optional string player_desc = 7;
+}
+
+message TournamentTeam {
+	optional int32 team_id = 1;
+	optional string team_tag = 2;
+	optional string team_flag = 3;
+	optional string team_name = 4;
+	repeated TournamentPlayer players = 5;
+}
+
+message CDataGCCStrike15_v2_TournamentMatchDraft {
+	message Entry {
+		optional int32 mapid = 1;
+		optional int32 team_id_ct = 2;
+	}
+
+	optional int32 event_id = 1;
+	optional int32 event_stage_id = 2;
+	optional int32 team_id_0 = 3;
+	optional int32 team_id_1 = 4;
+	optional int32 maps_count = 5;
+	optional int32 maps_current = 6;
+	optional int32 team_id_start = 7;
+	optional int32 team_id_veto1 = 8;
+	optional int32 team_id_pickn = 9;
+	repeated Entry drafts = 10;
+}
+
+message CPreMatchInfoData {
+	message TeamStats {
+		optional int32 match_info_idxtxt = 1;
+		optional string match_info_txt = 2;
+		repeated string match_info_teams = 3;
+	}
+
+	optional int32 predictions_pct = 1;
+	optional CDataGCCStrike15_v2_TournamentMatchDraft draft = 4;
+	repeated TeamStats stats = 5;
+	repeated int32 wins = 6;
+}
+
+message CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve {
+	repeated uint32 account_ids = 1;
+	optional uint32 game_type = 2;
+	optional uint64 match_id = 3;
+	optional uint32 server_version = 4;
+	optional uint32 flags = 18;
+	repeated PlayerRankingInfo rankings = 5;
+	optional uint64 encryption_key = 6;
+	optional uint64 encryption_key_pub = 7;
+	repeated uint32 party_ids = 8;
+	repeated IpAddressMask whitelist = 9;
+	optional uint64 tv_master_steamid = 10;
+	optional TournamentEvent tournament_event = 11;
+	repeated TournamentTeam tournament_teams = 12;
+	repeated uint32 tournament_casters_account_ids = 13;
+	optional uint64 tv_relay_steamid = 14;
+	optional CPreMatchInfoData pre_match_data = 15;
+	optional uint32 rtime32_event_start = 16;
+	optional uint32 tv_control = 17;
+}
+
+message CCSUsrMsg_ServerRankRevealAll
+{
+	optional int32 seconds_till_shutdown = 1;
+	optional CMsgGCCStrike15_v2_MatchmakingGC2ServerReserve reservation = 2;
+}
+
 //=============================================================================
 // Messages where the data seems to be irrelevant
 //=============================================================================
@@ -751,9 +977,4 @@ message CCSUsrMsg_WarmupHasEnded
 message CCSUsrMsg_ClientInfo
 {
 	optional int32 dummy = 1;
-}
-
-message CCSUsrMsg_ServerRankRevealAll
-{
-	optional int32 seconds_till_shutdown = 1;
 }
