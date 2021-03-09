@@ -13,7 +13,7 @@
 #include <limits.h>
 #include "tier0/dbg.h"
 #include "tier0/basetypes.h"
-
+#include "tier1/strtools.h"
 
 class CBitVecAccessor
 {
@@ -46,7 +46,7 @@ inline int FirstBitInWord( unsigned int elem, int offset )
 #if _WIN32
 	if ( !elem )
 		return -1;
-#if _X360
+#if defined( _X360 )
 	// this implements CountTrailingZeros() / BitScanForward()
 	unsigned int mask = elem-1;
 	unsigned int comp = ~elem;
@@ -201,6 +201,38 @@ inline int GetBitForBitnumByte( int bitNum )
 
 inline int CalcNumIntsForBits( int numBits )	{ return (numBits + (BITS_PER_INT-1)) / BITS_PER_INT; }
 
+// http://bits.stephan-brumme.com/PopulationCount.html
+// http://graphics.stanford.edu/~seander/bithacks.html#PopulationCountSetParallel
+inline uint PopulationCount( uint32 v )
+{
+	uint32 const w = v - ((v >> 1) & 0x55555555);
+	uint32 const x = (w & 0x33333333) + ((w >> 2) & 0x33333333);
+	return ((x + (x >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
+}
+
+inline uint PopulationCount( uint64 v )
+{
+	uint64 const w = v - ((v >> 1) & 0x5555555555555555ull);
+	uint64 const x = (w & 0x3333333333333333ull) + ((w >> 2) & 0x3333333333333333ull);
+	return ( ( x + ( x >> 4 ) & 0x0F0F0F0F0F0F0F0Full ) * 0x0101010101010101ull ) >> 56; // [Sergiy] I'm not sure if it's faster to multiply here to reduce the bit sum further first, so feel free to optimize, please
+}
+
+inline uint PopulationCount( uint16 v )
+{
+	uint16 const w = v - ((v >> 1) & 0x5555);
+	uint16 const x = (w & 0x3333) + ((w >> 2) & 0x3333);
+	return ( ( x + ( x >> 4 ) & 0x0F0F) * 0x101 ) >> 8;
+}
+
+
+inline uint PopulationCount( uint8 v )
+{
+	uint8 const w = v - ( ( v >> 1 ) & 0x55);
+	uint8 const x = ( w & 0x33 ) +  ( ( w >> 2 ) & 0x33 );
+	return x + ( x >> 4 ) & 0x0F;
+}
+
+
 #ifdef _X360
 #define BitVec_Bit( bitNum ) GetBitForBitnum( bitNum )
 #define BitVec_BitInByte( bitNum ) GetBitForBitnumByte( bitNum )
@@ -226,12 +258,13 @@ class CBitVecT : public BASE_OPS
 {
 public:
 	CBitVecT();
-	CBitVecT(int numBits);			// Must be initialized with the number of bits
+	explicit CBitVecT(int numBits);			// Must be initialized with the number of bits
 
 	void	Init(int val = 0);
 
 	// Access the bits like an array.
 	CBitVecAccessor	operator[](int i);
+	uint32 operator[]( int i )const;
 
 	// Do NOT override bitwise operators (see note in header)
 	void	And(const CBitVecT &andStr, CBitVecT *out) const;
@@ -264,6 +297,7 @@ public:
 
 	uint32	GetDWord(int i) const;
 	void	SetDWord(int i, uint32 val);
+	uint    PopulationCount()const;
 
 	CBitVecT<BASE_OPS>&	operator=(const CBitVecT<BASE_OPS> &other)	{ other.CopyTo( this ); return *this; }
 	bool			operator==(const CBitVecT<BASE_OPS> &other)		{ return Compare( other ); }
@@ -276,7 +310,7 @@ public:
 // class CVarBitVecBase
 //
 // Defines the operations necessary for a variable sized bit array
-
+template <typename BITCOUNTTYPE>
 class CVarBitVecBase
 {
 public:
@@ -295,19 +329,19 @@ public:
 
 protected:
 	CVarBitVecBase();
-	CVarBitVecBase(int numBits);
-	CVarBitVecBase( const CVarBitVecBase &from );
-	CVarBitVecBase &operator=( const CVarBitVecBase &from );
+	explicit CVarBitVecBase(int numBits);
+	CVarBitVecBase( const CVarBitVecBase<BITCOUNTTYPE> &from );
+	CVarBitVecBase &operator=( const CVarBitVecBase<BITCOUNTTYPE> &from );
 	~CVarBitVecBase(void);
 	
-	void 		ValidateOperand( const CVarBitVecBase &operand ) const	{ Assert(GetNumBits() == operand.GetNumBits()); }
+	void 		ValidateOperand( const CVarBitVecBase<BITCOUNTTYPE> &operand ) const	{ Assert(GetNumBits() == operand.GetNumBits()); }
 
 	unsigned	GetEndMask() const		{ return ::GetEndMask( GetNumBits() ); }
 
 private:
 
-	unsigned short	m_numBits;					// Number of bits in the bitstring
-	unsigned short	m_numInts;					// Number of ints to needed to store bitstring
+	BITCOUNTTYPE	m_numBits;					// Number of bits in the bitstring
+	BITCOUNTTYPE	m_numInts;					// Number of ints to needed to store bitstring
 	uint32			m_iBitStringStorage;		// If the bit string fits in one int, it goes here
 	uint32 *		m_pInt;					// Array of ints containing the bitstring
 
@@ -374,7 +408,11 @@ public:
 
 protected:
 	CFixedBitVecBase()				{}
-	CFixedBitVecBase(int numBits)	{ Assert( numBits == NUM_BITS ); } // doesn't make sense, really. Supported to simplify templates & allow easy replacement of variable 
+	explicit CFixedBitVecBase(int numBits)
+	{
+		// doesn't make sense, really. Supported to simplify templates & allow easy replacement of variable 
+		Assert( numBits == NUM_BITS );
+	}
 	
 	void 		ValidateOperand( const CFixedBitVecBase<NUM_BITS> &operand ) const	{ } // no need, compiler does so statically
 
@@ -396,15 +434,36 @@ private:
 //
 
 // inheritance instead of typedef to allow forward declarations
-class CVarBitVec : public CBitVecT<CVarBitVecBase>
+template< class CountType = unsigned short >
+class CVarBitVecT : public CBitVecT< CVarBitVecBase< CountType > >
 {
 public:
-	CVarBitVec()
+	CVarBitVecT()
 	{
 	}
 	
-	CVarBitVec(int numBits)
-	 : CBitVecT<CVarBitVecBase>(numBits)
+	explicit CVarBitVecT(int numBits)
+	 : CBitVecT<CVarBitVecBase< CountType > >(numBits)
+	{
+	}
+};
+
+class CVarBitVec : public CVarBitVecT<unsigned short> 
+{
+public:
+	CVarBitVec() : CVarBitVecT<unsigned short>() {}
+	explicit CVarBitVec( int nBitCount ) : CVarBitVecT<unsigned short>(nBitCount) {}
+};
+
+class CLargeVarBitVec : public CBitVecT< CVarBitVecBase<int> >
+{
+public:
+	CLargeVarBitVec()
+	{
+	}
+
+	explicit CLargeVarBitVec(int numBits)
+		: CBitVecT< CVarBitVecBase<int> >(numBits)
 	{
 	}
 };
@@ -419,7 +478,7 @@ public:
 	{
 	}
 	
-	CBitVec(int numBits)
+	explicit CBitVec(int numBits)
 	 : CBitVecT< CFixedBitVecBase<NUM_BITS> >(numBits)
 	{
 	}
@@ -432,14 +491,16 @@ typedef CBitVec<32> CDWordBitVec;
 
 //-----------------------------------------------------------------------------
 
-inline CVarBitVecBase::CVarBitVecBase()
+template <typename BITCOUNTTYPE>
+inline CVarBitVecBase<BITCOUNTTYPE>::CVarBitVecBase()
 {
 	Plat_FastMemset( this, 0, sizeof( *this ) );
 }
 
 //-----------------------------------------------------------------------------
 
-inline CVarBitVecBase::CVarBitVecBase(int numBits)
+template <typename BITCOUNTTYPE>
+inline CVarBitVecBase<BITCOUNTTYPE>::CVarBitVecBase(int numBits)
 {
 	Assert( numBits );
 	m_numBits	= numBits;
@@ -452,7 +513,8 @@ inline CVarBitVecBase::CVarBitVecBase(int numBits)
 
 //-----------------------------------------------------------------------------
 
-inline CVarBitVecBase::CVarBitVecBase( const CVarBitVecBase &from )
+template <typename BITCOUNTTYPE>
+inline CVarBitVecBase<BITCOUNTTYPE>::CVarBitVecBase( const CVarBitVecBase<BITCOUNTTYPE> &from )
 {
 	if ( from.m_numInts )
 	{
@@ -468,7 +530,8 @@ inline CVarBitVecBase::CVarBitVecBase( const CVarBitVecBase &from )
 
 //-----------------------------------------------------------------------------
 
-inline CVarBitVecBase &CVarBitVecBase::operator=( const CVarBitVecBase &from )
+template <typename BITCOUNTTYPE>
+inline CVarBitVecBase<BITCOUNTTYPE> &CVarBitVecBase<BITCOUNTTYPE>::operator=( const CVarBitVecBase<BITCOUNTTYPE> &from )
 {
 	Resize( from.GetNumBits() );
 	if ( m_pInt )
@@ -482,14 +545,16 @@ inline CVarBitVecBase &CVarBitVecBase::operator=( const CVarBitVecBase &from )
 // Output :
 //-----------------------------------------------------------------------------
 
-inline CVarBitVecBase::~CVarBitVecBase(void)
+template <typename BITCOUNTTYPE>
+inline CVarBitVecBase<BITCOUNTTYPE>::~CVarBitVecBase(void)
 {
 	FreeInts();
 }
 
 //-----------------------------------------------------------------------------
 
-inline void CVarBitVecBase::Attach( uint32 *pBits, int numBits )
+template <typename BITCOUNTTYPE>
+inline void CVarBitVecBase<BITCOUNTTYPE>::Attach( uint32 *pBits, int numBits )
 {
 	FreeInts();
 	m_numBits = numBits;
@@ -508,7 +573,8 @@ inline void CVarBitVecBase::Attach( uint32 *pBits, int numBits )
 
 //-----------------------------------------------------------------------------
 
-inline bool CVarBitVecBase::Detach( uint32 **ppBits, int *pNumBits )
+template <typename BITCOUNTTYPE>
+inline bool CVarBitVecBase<BITCOUNTTYPE>::Detach( uint32 **ppBits, int *pNumBits )
 {
 	if ( !m_numBits )
 	{
@@ -568,6 +634,12 @@ inline CBitVecAccessor CBitVecT<BASE_OPS>::operator[](int i)
 	return CBitVecAccessor(this->Base(), i);
 }
 
+template <class BASE_OPS>
+inline uint32 CBitVecT<BASE_OPS>::operator[]( int i )const
+{
+	Assert( i >= 0 && i < this->GetNumBits() );
+	return this->Base()[ i >> 5 ] & ( 1 << ( i & 31 ) );
+}
 
 //-----------------------------------------------------------------------------
 
@@ -743,7 +815,7 @@ inline void CBitVecT<BASE_OPS>::Xor(const CBitVecT &xorStr, CBitVecT *out) const
 template <class BASE_OPS>
 inline void CBitVecT<BASE_OPS>::Not(CBitVecT *out) const
 {
-	ValidateOperand( *out );
+	this->ValidateOperand( *out );
 
 	uint32 *	   pDest	= out->Base();
 	const uint32 *pOperand	= this->Base();
@@ -851,7 +923,7 @@ inline void CBitVecT<BASE_OPS>::Copy( const CBitVecT<BASE_OPS> &other, int nBits
 
 	this->Resize( nBits );
 
-	ValidateOperand( other );
+	this->ValidateOperand( other );
 	Assert( &other != this );
 
 	memcpy( this->Base(), other.Base(), this->GetNumDWords() * sizeof( uint32 ) );
@@ -901,6 +973,20 @@ inline void CBitVecT<BASE_OPS>::SetDWord(int i, uint32 val)
 }
 
 //-----------------------------------------------------------------------------
+template <class BASE_OPS>
+inline uint32 CBitVecT<BASE_OPS>::PopulationCount() const
+{
+	int nDwordCount = this->GetNumDWords();
+	const uint32 *pBase = this->Base();
+	uint32 nCount = 0;
+	for( int i = 0; i < nDwordCount; ++i )
+	{
+		nCount += ::PopulationCount( pBase[i] );
+	}
+	return nCount;
+}
+
+//-----------------------------------------------------------------------------
 
 inline unsigned GetStartBitMask( int startBit )
 {
@@ -943,7 +1029,130 @@ inline unsigned GetStartBitMask( int startBit )
 	return g_StartMask[ startBit & 31 ];
 }
 
-inline int CVarBitVecBase::FindNextSetBit( int startBit ) const
+
+#ifdef _X360
+#define BitVec_Bit( bitNum ) GetBitForBitnum( bitNum )
+#define BitVec_BitInByte( bitNum ) GetBitForBitnumByte( bitNum )
+#else
+#define BitVec_Bit( bitNum ) ( 1 << ( (bitNum) & (BITS_PER_INT-1) ) )
+#define BitVec_BitInByte( bitNum ) ( 1 << ( (bitNum) & 7 ) )
+#endif
+#define BitVec_Int( bitNum ) ( (bitNum) >> LOG2_BITS_PER_INT )
+
+inline bool BitVec_IsBitSet( const uint32 *pBase, int nBitNum )
+{
+	const uint32 *pInt = pBase + BitVec_Int( nBitNum );
+	return ( ( *pInt & BitVec_Bit( nBitNum ) ) != 0 );
+}
+
+inline void Bitvec_Set( uint32 *pBits, int nBitNum )
+{
+	uint32 *pInt = pBits + BitVec_Int( nBitNum );
+	*pInt |= BitVec_Bit( nBitNum );
+}
+
+inline void Bitvec_Unset( uint32 *pBits, int nBitNum )
+{
+	uint32 *pInt = pBits + BitVec_Int( nBitNum );
+	*pInt &= ~BitVec_Bit( nBitNum );
+}
+
+inline bool BitVec_TestAndSetBit( uint32 *pBase, int nBitNum )
+{
+	uint32 *pInt = pBase + BitVec_Int( nBitNum );
+	uint32 nBits = *pInt;
+	uint32 nSetMask = BitVec_Bit( nBitNum );
+	*pInt = nBits | nSetMask;
+	return ( nBits & nSetMask ) ? true : false;
+}
+
+inline void BitVec_ClearAll( uint32 *pDst, int nDWords, uint32 nEndMask )
+{
+	if ( nDWords > 1 )
+	{
+		V_memset( pDst, 0, ( nDWords - 1 ) * sizeof( uint32 ) );
+	}
+	pDst[ nDWords - 1 ] &= ~nEndMask;
+}
+
+inline void BitVec_ClearAll( uint32 *pDst, int nDWords )
+{
+	V_memset( pDst, 0, nDWords * sizeof( uint32 ) );
+}
+
+inline void BitVec_SetAll( uint32 *pDst, int nDWords, uint32 nEndMask )
+{
+	if ( nDWords > 1 )
+	{
+		V_memset( pDst, 0xff, ( nDWords - 1 ) * sizeof( uint32 ) );
+	}
+	pDst[ nDWords - 1 ] |= nEndMask;
+}
+
+inline void BitVec_SetAll( uint32 *pDst, int nDWords )
+{
+	V_memset( pDst, 0xff, nDWords * sizeof( uint32 ) );
+}
+
+inline void BitVec_Or( uint32 *pDst, const uint32 *pSrc, int nDWords, uint32 nEndMask )
+{
+	uint32 *pEnd = pDst + nDWords - 1;
+	for ( ; pDst < pEnd; ++pSrc, ++pDst )
+	{
+		*pDst = *pDst | *pSrc;
+	}
+	*pDst = *pDst | ( *pSrc & nEndMask );
+}
+
+inline void BitVec_Or( uint32 *pDst, const uint32 *pSrc, int nDWords )
+{
+	uint32 *pEnd = pDst + nDWords;
+	for ( ; pDst < pEnd; ++pSrc, ++pDst )
+	{
+		*pDst = *pDst | *pSrc;
+	}
+}
+
+inline void BitVec_AndNot( uint32 *pDst, const uint32 *pSrc, const uint32 *pAndNot, int nDWords )
+{
+	uint32 *pEnd = pDst + nDWords;
+	for ( ; pDst < pEnd; ++pSrc, ++pDst, ++pAndNot )
+	{
+		*pDst = *pSrc & ~( *pAndNot );
+	}
+}
+
+inline bool BitVec_IsAnySet( const uint32 *pDst, int nDWords )
+{
+	const uint32 *pEnd = pDst + nDWords;
+	for ( ; pDst < pEnd; ++pDst )
+	{
+		if ( *pDst != 0 )
+			return true;
+	}
+	return false;
+}
+
+inline int BitVec_CountNewBits( const uint32 *pOld, const uint32 *pNew, int nDWords, uint32 nEndMask )
+{
+	// NOTE - this assumes that any unused bits are unchanged between pOld and pNew
+
+	int nNewBits = 0;
+
+	const uint32 *pEnd = pNew + nDWords - 1;
+	for ( ; pNew < pEnd; ++pOld, ++pNew )
+	{
+		uint32 diff = *pNew & ~*pOld;
+		nNewBits += PopulationCount( diff );
+	}
+	nNewBits += PopulationCount( ( *pNew & ~*pOld ) & nEndMask );
+
+	return nNewBits;
+}
+
+
+template <typename BITCOUNTTYPE>
+inline int CVarBitVecBase<BITCOUNTTYPE>::FindNextSetBit( int startBit ) const
 {
 	if ( startBit < GetNumBits() )
 	{
@@ -1276,9 +1485,10 @@ inline void CBitVecT< CFixedBitVecBase<32> >::Set( int bitNum, bool bNewVal )
 // Purpose: Resizes the bit string to a new number of bits
 // Input  : resizeNumBits - 
 //-----------------------------------------------------------------------------
-inline void CVarBitVecBase::Resize( int resizeNumBits, bool bClearAll )
+template <typename BITCOUNTTYPE>
+inline void CVarBitVecBase<BITCOUNTTYPE>::Resize( int resizeNumBits, bool bClearAll )
 {
-	Assert( resizeNumBits >= 0 && resizeNumBits <= USHRT_MAX );
+	Assert( resizeNumBits >= 0 && ((BITCOUNTTYPE)resizeNumBits == resizeNumBits) );
 
 	int newIntCount = CalcNumIntsForBits( resizeNumBits );
 	if ( newIntCount != GetNumDWords() )
@@ -1320,7 +1530,8 @@ inline void CVarBitVecBase::Resize( int resizeNumBits, bool bClearAll )
 // Purpose: Allocate the storage for the ints
 // Input  : numInts - 
 //-----------------------------------------------------------------------------
-inline void CVarBitVecBase::AllocInts( int numInts )
+template <typename BITCOUNTTYPE>
+inline void CVarBitVecBase<BITCOUNTTYPE>::AllocInts( int numInts )
 {
 	Assert( !m_pInt );
 
@@ -1341,7 +1552,8 @@ inline void CVarBitVecBase::AllocInts( int numInts )
 // Purpose: Reallocate the storage for the ints
 // Input  : numInts - 
 //-----------------------------------------------------------------------------
-inline void CVarBitVecBase::ReallocInts( int numInts )
+template <typename BITCOUNTTYPE>
+inline void CVarBitVecBase<BITCOUNTTYPE>::ReallocInts( int numInts )
 {
 	Assert( Base() );
 	if ( numInts == 0)
@@ -1376,7 +1588,8 @@ inline void CVarBitVecBase::ReallocInts( int numInts )
 //-----------------------------------------------------------------------------
 // Purpose: Free storage allocated with AllocInts
 //-----------------------------------------------------------------------------
-inline void CVarBitVecBase::FreeInts( void )
+template <typename BITCOUNTTYPE>
+inline void CVarBitVecBase<BITCOUNTTYPE>::FreeInts( void )
 {
 	if ( m_numInts > 1 )
 	{

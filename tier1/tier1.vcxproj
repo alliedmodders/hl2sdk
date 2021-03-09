@@ -18,9 +18,11 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -130,6 +132,7 @@
     <ClCompile Include="KeyValues.cpp" />
     <ClCompile Include="mempool.cpp" />
     <ClCompile Include="memstack.cpp" />
+    <ClCompile Include="murmurhash3.cpp" />
     <ClCompile Include="NetAdr.cpp" />
     <ClCompile Include="newbitbuf.cpp" />
     <ClCompile Include="processor_detect.cpp">
