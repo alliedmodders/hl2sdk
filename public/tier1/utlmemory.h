@@ -264,6 +264,133 @@ private:
 	char m_Memory[ SIZE*sizeof(T) + nAlignment ];
 };
 
+#ifdef _LINUX
+#define REMEMBER_ALLOC_SIZE_FOR_VALGRIND 1
+#endif
+
+//-----------------------------------------------------------------------------
+// The CUtlMemoryConservative class:
+// A dynamic memory class that tries to minimize overhead (itself small, no custom grow factor)
+//-----------------------------------------------------------------------------
+template< typename T >
+class CUtlMemoryConservative
+{
+
+public:
+	// constructor, destructor
+	CUtlMemoryConservative( int nGrowSize = 0, int nInitSize = 0 ) : m_pMemory( NULL )
+	{
+#ifdef REMEMBER_ALLOC_SIZE_FOR_VALGRIND
+		m_nCurAllocSize = 0;
+#endif
+
+	}
+	CUtlMemoryConservative( T* pMemory, int numElements )								{ Assert( 0 ); }
+	~CUtlMemoryConservative()								{ if ( m_pMemory ) free( m_pMemory ); }
+
+	// Can we use this index?
+	bool IsIdxValid( int i ) const							{ return ( IsDebug() ) ? ( i >= 0 && i < NumAllocated() ) : ( i >= 0 ); }
+	static int InvalidIndex()								{ return -1; }
+
+	// Gets the base address
+	T* Base()												{ return m_pMemory; }
+	const T* Base() const									{ return m_pMemory; }
+
+	// element access
+	T& operator[]( int i )									{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	const T& operator[]( int i ) const						{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	T& Element( int i )										{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	const T& Element( int i ) const							{ Assert( IsIdxValid(i) ); return Base()[i];	}
+
+	// Attaches the buffer to external memory....
+	void SetExternalBuffer( T* pMemory, int numElements )	{ Assert( 0 ); }
+
+	// Size
+	FORCEINLINE void RememberAllocSize( size_t sz )
+	{
+#ifdef REMEMBER_ALLOC_SIZE_FOR_VALGRIND
+		m_nCurAllocSize = sz;
+#endif
+	}
+
+	size_t AllocSize( void ) const
+	{
+#ifdef REMEMBER_ALLOC_SIZE_FOR_VALGRIND
+		return m_nCurAllocSize;
+#else
+		return ( m_pMemory ) ? g_pMemAlloc->GetSize( m_pMemory ) : 0;
+#endif
+	}
+
+	int NumAllocated() const
+	{
+		return AllocSize() / sizeof( T );
+	}
+	int Count() const
+	{
+		return NumAllocated();
+	}
+
+	FORCEINLINE void ReAlloc( size_t sz )
+	{
+		m_pMemory = (T*)realloc( m_pMemory, sz );
+		RememberAllocSize( sz );
+	}
+	// Grows the memory, so that at least allocated + num elements are allocated
+	void Grow( int num = 1 )
+	{
+		int nCurN = NumAllocated();
+		ReAlloc( ( nCurN + num ) * sizeof( T ) );
+	}
+
+	// Makes sure we've got at least this much memory
+	void EnsureCapacity( int num )
+	{
+		size_t nSize = sizeof( T ) * MAX( num, Count() );
+		ReAlloc( nSize );
+	}
+
+	// Memory deallocation
+	void Purge()
+	{
+		free( m_pMemory ); 
+		RememberAllocSize( 0 );
+		m_pMemory = NULL; 
+	}
+
+	// Purge all but the given number of elements
+	void Purge( int numElements )							{ ReAlloc( numElements * sizeof(T) ); }
+
+	// is the memory externally allocated?
+	bool IsExternallyAllocated() const						{ return false; }
+
+	// Set the size by which the memory grows
+	void SetGrowSize( int size )							{}
+
+	class Iterator_t
+	{
+	public:
+		Iterator_t( int i, int _limit ) : index( i ), limit( _limit ) {}
+		int index;
+		int limit;
+		bool operator==( const Iterator_t it ) const	{ return index == it.index; }
+		bool operator!=( const Iterator_t it ) const	{ return index != it.index; }
+	};
+	Iterator_t First() const							{ int limit = NumAllocated(); return Iterator_t( limit ? 0 : InvalidIndex(), limit ); }
+	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( ( it.index + 1 < it.limit ) ? it.index + 1 : InvalidIndex(), it.limit ); }
+	int GetIndex( const Iterator_t &it ) const			{ return it.index; }
+	bool IsIdxAfter( int i, const Iterator_t &it ) const { return i > it.index; }
+	bool IsValidIterator( const Iterator_t &it ) const	{ return IsIdxValid( it.index ) && ( it.index < it.limit ); }
+	Iterator_t InvalidIterator() const					{ return Iterator_t( InvalidIndex(), 0 ); }
+
+private:
+	T *m_pMemory;
+#ifdef REMEMBER_ALLOC_SIZE_FOR_VALGRIND
+	size_t m_nCurAllocSize;
+#endif
+
+};
+
 //-----------------------------------------------------------------------------
 // constructor, destructor
 //-----------------------------------------------------------------------------

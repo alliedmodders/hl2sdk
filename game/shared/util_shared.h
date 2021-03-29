@@ -424,6 +424,8 @@ inline float DistanceToRay( const Vector &pos, const Vector &rayStart, const Vec
 class IntervalTimer
 {
 public:
+	DECLARE_EMBEDDED_NETWORKVAR();
+	
 	IntervalTimer( void )
 	{
 		m_timestamp = -1.0f;
@@ -466,7 +468,7 @@ public:
 	}
 
 private:
-	float m_timestamp;
+	CNetworkVar( float, m_timestamp );
 	float Now( void ) const;		// work-around since client header doesn't like inlined gpGlobals->curtime
 };
 
@@ -479,6 +481,8 @@ private:
 class CountdownTimer
 {
 public:
+	DECLARE_EMBEDDED_NETWORKVAR();
+	
 	CountdownTimer( void )
 	{
 		m_timestamp = -1.0f;
@@ -528,8 +532,8 @@ public:
 	}
 
 private:
-	float m_duration;
-	float m_timestamp;
+	CNetworkVar( float, m_duration );
+	CNetworkVar( float, m_timestamp );
 	float Now( void ) const;		// work-around since client header doesn't like inlined gpGlobals->curtime
 };
 
