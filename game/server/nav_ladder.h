@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -11,25 +11,9 @@
 #ifndef _NAV_LADDER_H_
 #define _NAV_LADDER_H_
 
+#include "nav.h"
+
 class CNavArea;
-
-//--------------------------------------------------------------------------------------------------------------
-/**
- * Placeholder ladder class that holds the mins and maxs for a ladder, since its brushes
- * are merged into the world during the compile.
- */
-class CInfoLadder : public CBaseEntity
-{
-public:
-	DECLARE_CLASS( CInfoLadder, CBaseEntity );
-	DECLARE_DATADESC();
-
-	bool KeyValue( const char *szKeyName, const char *szValue );
-
-	Vector mins;
-	Vector maxs;
-};
-
 
 //--------------------------------------------------------------------------------------------------------------
 /**
@@ -53,8 +37,10 @@ public:
 
 	~CNavLadder();
 
-	void Save( FileHandle_t file, unsigned int version ) const;
-	void Load( FileHandle_t file, unsigned int version );
+	void OnRoundRestart( void );			///< invoked when a game round restarts
+
+	void Save( CUtlBuffer &fileBuffer, unsigned int version ) const;
+	void Load( CUtlBuffer &fileBuffer, unsigned int version );
 
 	unsigned int GetID( void ) const	{ return m_id; }		///< return this ladder's unique ID
 	static void CompressIDs( void );							///<re-orders ladder ID's so they are continuous
@@ -75,14 +61,14 @@ public:
 	Vector GetPosAtHeight( float height ) const;	///< Compute x,y coordinate of the ladder at a given height
 
 	CNavArea *m_topForwardArea;						///< the area at the top of the ladder
-	CNavArea *m_topLeftArea;					
-	CNavArea *m_topRightArea;					
+	CNavArea *m_topLeftArea;
+	CNavArea *m_topRightArea;
 	CNavArea *m_topBehindArea;						///< area at top of ladder "behind" it - only useful for descending
 	CNavArea *m_bottomArea;							///< the area at the bottom of the ladder
 
 	bool IsConnected( const CNavArea *area, LadderDirectionType dir ) const;	///< returns true if given area is connected in given direction
 
-	void ConnectGeneratedLadder( void );			///< Connect a generated ladder to nav areas at the end of nav generation
+	void ConnectGeneratedLadder( float maxHeightAboveTopArea );		///< Connect a generated ladder to nav areas at the end of nav generation
 
 	void ConnectTo( CNavArea *area );				///< connect this ladder to given area
 	void Disconnect( CNavArea *area );				///< disconnect this ladder from given area
@@ -101,7 +87,16 @@ public:
 	NavDirType GetDir( void ) const;
 	const Vector &GetNormal( void ) const;
 
+	void Shift( const Vector &shift );							///< shift the nav ladder
+
+	bool IsUsableByTeam( int teamNumber ) const;
+	CBaseEntity *GetLadderEntity( void ) const;
+
 private:
+	void FindLadderEntity( void );
+
+	EHANDLE m_ladderEntity;
+
 	NavDirType m_dir;								///< which way the ladder faces (ie: surface normal of climbable side)
 	Vector m_normal;								///< surface normal of the ladder surface (or Vector-ized m_dir, if the traceline fails)
 
@@ -121,7 +116,25 @@ private:
 	static unsigned int m_nextID;					///< used to allocate unique IDs
 	unsigned int m_id;								///< unique area ID
 };
-typedef CUtlLinkedList< CNavLadder *, int > NavLadderList;
+typedef CUtlVector< CNavLadder * > NavLadderVector;
+
+
+//--------------------------------------------------------------------------------------------------------------
+inline bool CNavLadder::IsUsableByTeam( int teamNumber ) const
+{
+	if ( m_ladderEntity.Get() == NULL )
+		return true;
+
+	int ladderTeamNumber = m_ladderEntity->GetTeamNumber();
+	return ( teamNumber == ladderTeamNumber || ladderTeamNumber == TEAM_UNASSIGNED );
+}
+
+
+//--------------------------------------------------------------------------------------------------------------
+inline CBaseEntity *CNavLadder::GetLadderEntity( void ) const
+{
+	return m_ladderEntity.Get();
+}
 
 
 //--------------------------------------------------------------------------------------------------------------

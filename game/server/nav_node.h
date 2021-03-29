@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -16,11 +16,7 @@
 
 // If DEBUG_NAV_NODES is true, nav_show_nodes controls drawing node positions, and
 // nav_show_node_id allows you to show the IDs of nodes that didn't get used to create areas.
-#ifdef _DEBUG
 #define DEBUG_NAV_NODES 1
-#else
-#define DEBUG_NAV_NODES 0
-#endif
 
 //--------------------------------------------------------------------------------------------------------------
 /**
@@ -31,9 +27,11 @@
 class CNavNode
 {
 public:
-	CNavNode( const Vector &pos, const Vector &normal, CNavNode *parent = NULL );
+	CNavNode( const Vector &pos, const Vector &normal, CNavNode *parent, bool onDisplacement );
+	~CNavNode();
 
 	static CNavNode *GetNode( const Vector &pos );					///< return navigation node at the position, or NULL if none exists
+	static void CleanupGeneration();
 
 	CNavNode *GetConnectedNode( NavDirType dir ) const;				///< get navigation node connected in given direction, or NULL if cant go that way
 	const Vector *GetPosition( void ) const;
@@ -46,7 +44,7 @@ public:
 
 	void Draw( void );
 
-	void ConnectTo( CNavNode *node, NavDirType dir );				///< create a connection FROM this node TO the given node, in the given direction
+	void ConnectTo( CNavNode *node, NavDirType dir, float obstacleHeight, float flObstacleStartDist, float flObstacleEndDist );		///< create a connection FROM this node TO the given node, in the given direction
 	CNavNode *GetParent( void ) const;
 
 	void MarkAsVisited( NavDirType dir );							///< mark the given direction as having been visited
@@ -60,24 +58,34 @@ public:
 	void AssignArea( CNavArea *area );								///< assign the given area to this node
 	CNavArea *GetArea( void ) const;								///< return associated area
 
-	void SetAttributes( unsigned char bits )		{ m_attributeFlags = bits; }
-	unsigned char GetAttributes( void ) const		{ return m_attributeFlags; }
+	void SetAttributes( int bits )		{ m_attributeFlags = bits; }
+	int GetAttributes( void ) const		{ return m_attributeFlags; }
+	float GetGroundHeightAboveNode( NavCornerType cornerType ) const;	///< return ground height above node in given corner direction (NUM_CORNERS for highest in any direction)
+	bool IsBlockedInAnyDirection( void) const;						///< return true if the node is blocked in any direction
+
+	bool IsOnDisplacement( void ) const				{ return m_isOnDisplacement; }
 
 private:
+	CNavNode() {}													// constructor used only for hash lookup
 	friend class CNavMesh;
 
+	bool TestForCrouchArea( NavCornerType cornerNum, const Vector& mins, const Vector& maxs, float *groundHeightAboveNode );
 	void CheckCrouch( void );
 
 	Vector m_pos;													///< position of this node in the world
 	Vector m_normal;												///< surface normal at this location
 	CNavNode *m_to[ NUM_DIRECTIONS ];								///< links to north, south, east, and west. NULL if no link
+	float  m_obstacleHeight[ NUM_DIRECTIONS ];						///< obstacle height (delta from nav node z position) that must be climbed to reach next node in this direction
+	float  m_obstacleStartDist[ NUM_DIRECTIONS ];					///< distance along this direction to reach the beginning of the obstacle
+	float  m_obstacleEndDist[ NUM_DIRECTIONS ];						///< distance along this direction to reach the end of the obstacle
 	unsigned int m_id;												///< unique ID of this node
-	unsigned char m_attributeFlags;									///< set of attribute bit flags (see NavAttributeType)
+	int	m_attributeFlags;											///< set of attribute bit flags (see NavAttributeType)
 
 	static CNavNode *m_list;										///< the master list of all nodes for this map
 	static unsigned int m_listLength;
 	static unsigned int m_nextID;
 	CNavNode *m_next;												///< next link in master list
+	CNavNode *m_nextAtXY;											///< next link at a particular position
 
 	// below are only needed when generating
 	unsigned char m_visited;										///< flags for automatic node generation. If direction bit is clear, that direction hasn't been explored yet.
@@ -85,7 +93,10 @@ private:
 	bool m_isCovered;												///< true when this node is "covered" by a CNavArea
 	CNavArea *m_area;												///< the area this node is contained within
 
+	bool m_isBlocked[ NUM_CORNERS ];
 	bool m_crouch[ NUM_CORNERS ];
+	float m_groundHeightAboveNode[ NUM_CORNERS ];
+	bool m_isOnDisplacement;
 };
 
 //--------------------------------------------------------------------------------------------------------------
@@ -129,6 +140,11 @@ inline void CNavNode::AssignArea( CNavArea *area )
 inline CNavArea *CNavNode::GetArea( void ) const
 {
 	return m_area;
+}
+
+inline bool CNavNode::IsBlockedInAnyDirection( void ) const
+{
+	return m_isBlocked[ SOUTH_EAST ] || m_isBlocked[ SOUTH_WEST ] || m_isBlocked[ NORTH_EAST ] || m_isBlocked[ NORTH_WEST ];
 }
 
 
