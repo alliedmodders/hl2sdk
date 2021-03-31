@@ -26,7 +26,7 @@
 #ifdef _DEBUG
 	#undef new
 	extern bool g_bUseNetworkVars;
-	#define CHECK_USENETWORKVARS if(g_bUseNetworkVars)
+	#define CHECK_USENETWORKVARS
 #else
 	#define CHECK_USENETWORKVARS // don't check for g_bUseNetworkVars
 #endif
