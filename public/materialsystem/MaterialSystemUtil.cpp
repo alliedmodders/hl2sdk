@@ -31,6 +31,12 @@ CMaterialReference::CMaterialReference( char const* pMaterialName, const char *p
 	}
 }
 
+const CMaterialReference& CMaterialReference::operator=( const CMaterialReference &ref )
+{
+	Init( ref.m_pMaterial );
+	return *this;
+}
+
 CMaterialReference::~CMaterialReference()
 {
 	Shutdown();
@@ -89,11 +95,15 @@ void CMaterialReference::Init( CMaterialReference& ref )
 //-----------------------------------------------------------------------------
 // Detach from a material
 //-----------------------------------------------------------------------------
-void CMaterialReference::Shutdown( )
+void CMaterialReference::Shutdown( bool bDeleteIfUnreferenced /*=false*/ )
 {
 	if ( m_pMaterial && materials )
 	{
 		m_pMaterial->DecrementReferenceCount();
+		if ( bDeleteIfUnreferenced )
+		{
+			m_pMaterial->DeleteIfUnreferenced();
+		}
 		m_pMaterial = NULL;
 	}
 }
@@ -110,22 +120,15 @@ CTextureReference::CTextureReference( ) : m_pTexture(NULL)
 {
 }
 
-CTextureReference::CTextureReference( const CTextureReference &ref )
+CTextureReference::CTextureReference( const CTextureReference &ref ) : m_pTexture( NULL )
 {
-	m_pTexture = ref.m_pTexture;
-	if ( m_pTexture )
-	{
-		m_pTexture->IncrementReferenceCount();
-	}
+	Init( ref.m_pTexture );
 }
 
-void CTextureReference::operator=( CTextureReference &ref )
+const CTextureReference& CTextureReference::operator=( CTextureReference &ref )
 {
-	m_pTexture = ref.m_pTexture;
-	if ( m_pTexture )
-	{
-		m_pTexture->IncrementReferenceCount();
-	}
+	Init( ref.m_pTexture );
+	return *this;
 }
 
 CTextureReference::~CTextureReference( )
@@ -148,12 +151,15 @@ void CTextureReference::Init( char const* pTextureName, const char *pTextureGrou
 
 void CTextureReference::Init( ITexture* pTexture )
 {
-	Shutdown();
-
-	m_pTexture = pTexture;
-	if (m_pTexture)
+	if ( m_pTexture != pTexture )
 	{
-		m_pTexture->IncrementReferenceCount();
+		Shutdown();
+
+		m_pTexture = pTexture;
+		if (m_pTexture)
+		{
+			m_pTexture->IncrementReferenceCount();
+		}
 	}
 }
 
@@ -236,12 +242,12 @@ void CTextureReference::InitRenderTargetTexture( int w, int h, RenderTargetSizeM
 // The paired system memory texture can be built in an alternate format.
 //-----------------------------------------------------------------------------
 #if defined( _X360 )
-void CTextureReference::InitRenderTargetSurface( int width, int height, ImageFormat fmt, bool bSameAsTexture )
+void CTextureReference::InitRenderTargetSurface( int width, int height, ImageFormat fmt, bool bSameAsTexture, RTMultiSampleCount360_t multiSampleCount )
 {
 	// texture has to be created first
 	Assert( m_pTexture && m_pTexture->IsRenderTarget() );
 
-	m_pTexture->CreateRenderTargetSurface( width, height, fmt, bSameAsTexture );
+	m_pTexture->CreateRenderTargetSurface( width, height, fmt, bSameAsTexture, multiSampleCount );
 }
 #endif
 

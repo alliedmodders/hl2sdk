@@ -1,9 +1,9 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: Public interfaces to vphysics DLL
 //
 // $NoKeywords: $
-//=============================================================================//
+//===========================================================================//
 
 #ifndef VPHYSICS_INTERFACE_H
 #define VPHYSICS_INTERFACE_H
@@ -17,7 +17,7 @@
 #include "mathlib/vector.h"
 #include "mathlib/vector4d.h"
 #include "vcollide.h"
-
+#include "tier3/tier3.h"
 
 // ------------------------------------------------------------------------------------
 // UNITS:
@@ -696,6 +696,12 @@ enum callbackflags
 	CALLBACK_MARKED_FOR_TEST	= 0x8000,	// debug -- marked object is being debugged
 };
 
+enum collisionhints
+{
+	COLLISION_HINT_DEBRIS		= 0x0001,
+	COLLISION_HINT_STATICSOLID	= 0x0002,
+};
+
 abstract_class IPhysicsObject
 {
 public:
@@ -777,7 +783,7 @@ public:
 	// Get the radius if this is a sphere object (zero if this is a polygonal mesh)
 	virtual float			GetSphereRadius() const = 0;
 	// Set the radius on a sphere. May need to force recalculation of contact points
-	virtual void			SetSphereRadius( float radius ) = 0;
+	virtual void			SetSphereRadius(float radius) = 0;
 	virtual float			GetEnergy() const = 0;
 	virtual Vector			GetMassCenterLocalSpace() const = 0;
 

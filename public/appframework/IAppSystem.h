@@ -32,6 +32,15 @@ enum InitReturnVal_t
 	INIT_LAST_VAL,
 };
 
+enum AppSystemTier_t
+{
+	APP_SYSTEM_TIER0 = 0,
+	APP_SYSTEM_TIER1,
+	APP_SYSTEM_TIER2,
+	APP_SYSTEM_TIER3,
+
+	APP_SYSTEM_TIER_OTHER,
+};
 
 abstract_class IAppSystem
 {

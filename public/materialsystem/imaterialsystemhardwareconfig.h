@@ -15,12 +15,14 @@
 
 
 #include "tier1/interface.h"
+#include "tier2/tier2.h"
+
+#include "bitmap/imageformat.h"
 
 
 //-----------------------------------------------------------------------------
 // Material system interface version
 //-----------------------------------------------------------------------------
-#define MATERIALSYSTEM_HARDWARECONFIG_INTERFACE_VERSION		"MaterialSystemHardwareConfig012"
 
 // HDRFIXME NOTE: must match common_ps_fxc.h
 enum HDRType_t
@@ -76,39 +78,19 @@ virtual ret_type method const = 0;
 class IMaterialSystemHardwareConfig
 {
 public:
-	// on xbox, some methods are inlined to return constants
-
-	DEFCONFIGMETHOD( bool, HasDestAlphaBuffer(), true );
-	DEFCONFIGMETHOD( bool, HasStencilBuffer(), true );
 	virtual int	 GetFrameBufferColorDepth() const = 0;
 	virtual int  GetSamplerCount() const = 0;
 	virtual bool HasSetDeviceGammaRamp() const = 0;
-	DEFCONFIGMETHOD( bool, SupportsCompressedTextures(), true );
 	virtual VertexCompressionType_t SupportsCompressedVertices() const = 0;
-	DEFCONFIGMETHOD( bool, SupportsNormalMapCompression(), true );
-	DEFCONFIGMETHOD( bool, SupportsVertexAndPixelShaders(), true );
-	DEFCONFIGMETHOD( bool, SupportsPixelShaders_1_4(), true );
-	DEFCONFIGMETHOD( bool, SupportsPixelShaders_2_0(), true );
-	DEFCONFIGMETHOD( bool,  SupportsVertexShaders_2_0(), true );
 	virtual int  MaximumAnisotropicLevel() const = 0;	// 0 means no anisotropic filtering
 	virtual int  MaxTextureWidth() const = 0;
 	virtual int  MaxTextureHeight() const = 0;
 	virtual int	 TextureMemorySize() const = 0;
-	virtual bool SupportsOverbright() const = 0;
-	virtual bool SupportsCubeMaps() const = 0;
 	virtual bool SupportsMipmappedCubemaps() const = 0;
-	virtual bool SupportsNonPow2Textures() const = 0;
 
-	// The number of texture stages represents the number of computations
-	// we can do in the fixed-function pipeline, it is *not* related to the
-	// simultaneous number of textures we can use
-	virtual int  GetTextureStageCount() const = 0;
 	virtual int	 NumVertexShaderConstants() const = 0;
 	virtual int	 NumPixelShaderConstants() const = 0;
 	virtual int	 MaxNumLights() const = 0;
-	virtual bool SupportsHardwareLighting() const = 0;
-	virtual int	 MaxBlendMatrices() const = 0;
-	virtual int	 MaxBlendMatrixIndices() const = 0;
 	virtual int	 MaxTextureAspectRatio() const = 0;
 	virtual int	 MaxVertexShaderBlendMatrices() const = 0;
 	virtual int	 MaxUserClipPlanes() const = 0;
@@ -126,17 +108,8 @@ public:
 
 	DEFCONFIGMETHOD( bool, SupportsHDR(), true );
 
-	virtual bool HasProjectedBumpEnv() const = 0;
-	virtual bool SupportsSpheremapping() const = 0;
 	virtual bool NeedsAAClamp() const = 0;
 	virtual bool NeedsATICentroidHack() const = 0;
-
-	virtual bool SupportsColorOnSecondStream() const = 0;
-	virtual bool SupportsStaticPlusDynamicLighting() const = 0;
-
-	// Does our card have a hard time with fillrate 
-	// relative to other cards w/ the same dx level?
-	virtual bool PreferReducedFillrate() const = 0;
 
 	// This is the max dx support level supported by the card
 	virtual int	 GetMaxDXSupportLevel() const = 0;
@@ -150,7 +123,7 @@ public:
 	virtual bool IsAAEnabled() const = 0;	// Is antialiasing being used?
 
 	// NOTE: Anything after this was added after shipping HL2.
-	virtual int GetVertexTextureCount() const = 0;
+	virtual int GetVertexSamplerCount() const = 0;
 	virtual int GetMaxVertexTextureDimension() const = 0;
 
 	virtual int  MaxTextureDepth() const = 0;
@@ -158,7 +131,6 @@ public:
 	virtual HDRType_t GetHDRType() const = 0;
 	virtual HDRType_t GetHardwareHDRType() const = 0;
 
-	DEFCONFIGMETHOD( bool, SupportsPixelShaders_2_b(), true );
 	virtual bool SupportsStreamOffset() const = 0;
 
 	virtual int StencilBufferBits() const = 0;
@@ -172,12 +144,8 @@ public:
 
 	DEFCONFIGMETHOD( bool, UsesSRGBCorrectBlending(), true );
 
-	virtual bool SupportsShaderModel_3_0() const = 0;
 	virtual bool HasFastVertexTextures() const = 0;
 	virtual int MaxHWMorphBatchCount() const = 0;
-
-	// Does the board actually support this?
-	DEFCONFIGMETHOD( bool, ActuallySupportsPixelShaders_2_b(), true );
 
 	virtual bool SupportsHDRMode( HDRType_t nHDRMode ) const = 0;
 
@@ -186,6 +154,27 @@ public:
 
 	virtual bool SupportsBorderColor( void ) const = 0;
 	virtual bool SupportsFetch4( void ) const = 0;
+
+	virtual float GetShadowDepthBias() const = 0;
+	virtual float GetShadowSlopeScaleDepthBias() const = 0;
+
+	virtual bool PreferZPrepass() const = 0;
+
+	virtual bool SuppressPixelShaderCentroidHackFixup() const = 0;
+	virtual bool PreferTexturesInHWMemory() const = 0;
+	virtual bool PreferHardwareSync() const = 0;
+	virtual bool ActualHasFastVertexTextures() const = 0;
+
+	virtual bool SupportsShadowDepthTextures( void ) const = 0;
+	virtual ImageFormat GetShadowDepthTextureFormat( void ) const = 0;
+	virtual ImageFormat GetNullTextureFormat( void ) const = 0;
+	virtual int	GetMinDXSupportLevel() const = 0;
+	virtual bool IsUnsupported() const = 0;
+
+	// Backward compat for stdshaders
+#if defined ( STDSHADER_DBG_DLL_EXPORT ) || defined( STDSHADER_DX9_DLL_EXPORT )
+	inline bool SupportsPixelShaders_2_b() const { return GetDXSupportLevel() >= 92; }
+#endif
 };
 
 #endif // IMATERIALSYSTEMHARDWARECONFIG_H

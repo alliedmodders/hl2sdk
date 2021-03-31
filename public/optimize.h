@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2008, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -14,9 +14,6 @@
 
 #include "studio.h"
 
-
-// NOTE: You can change this without affecting the vtx file format.
-#define MAX_NUM_BONES_PER_TRI ( MAX_NUM_BONES_PER_VERT * 3 )
 #define MAX_NUM_BONES_PER_STRIP 512
 
 #define OPTIMIZED_MODEL_FILE_VERSION 7
@@ -51,44 +48,47 @@ struct Vertex_t
 	char boneID[MAX_NUM_BONES_PER_VERT];
 };
 
-enum StripHeaderFlags_t {
-	STRIP_IS_TRILIST	= 0x01,
-	STRIP_IS_TRISTRIP	= 0x02
+// We don't do actual strips anymore, only triangle lists and subd quad lists
+enum StripHeaderFlags_t
+{
+	STRIP_IS_TRILIST		= 0x01,
+	STRIP_IS_QUADLIST_REG	= 0x02,		// Regular sub-d quads
+	STRIP_IS_QUADLIST_EXTRA = 0x04		// Extraordinary sub-d quads
 };
 
-// a strip is a piece of a stripgroup that is divided by bones 
-// (and potentially tristrips if we remove some degenerates.)
+// A strip is a piece of a stripgroup that is divided by bones 
 struct StripHeader_t
 {
 	DECLARE_BYTESWAP_DATADESC();
-	// indexOffset offsets into the mesh's index array.
-	int numIndices;
+	int numIndices;				// indexOffset offsets into the mesh's index array
 	int indexOffset;
 
-	// vertexOffset offsets into the mesh's vert array.
-	int numVerts;
+	int numVerts;				// vertexOffset offsets into the mesh's vert array
 	int vertOffset;
 
-	// use this to enable/disable skinning.  
-	// May decide (in optimize.cpp) to put all with 1 bone in a different strip 
+	// Use this to enable/disable skinning.
+	// May decide (in optimize.cpp) to put all with 1 bone in a different strip
 	// than those that need skinning.
-	short numBones;  
+	short numBones;
 	
 	unsigned char flags;
 	
 	int numBoneStateChanges;
 	int boneStateChangeOffset;
-	inline BoneStateChangeHeader_t *pBoneStateChange( int i ) const 
-	{ 
-		return (BoneStateChangeHeader_t *)(((byte *)this) + boneStateChangeOffset) + i; 
+	inline BoneStateChangeHeader_t *pBoneStateChange( int i ) const
+	{
+		return (BoneStateChangeHeader_t *)(((byte *)this) + boneStateChangeOffset) + i;
 	};
+
+	// These go last on purpose!
+	int numTopologyIndices;
+	int topologyOffset;
 };
 
-enum StripGroupFlags_t 
+enum StripGroupFlags_t
 {
-	STRIPGROUP_IS_FLEXED		= 0x01,
-	STRIPGROUP_IS_HWSKINNED		= 0x02,
-	STRIPGROUP_IS_DELTA_FLEXED	= 0x04,
+	STRIPGROUP_IS_HWSKINNED		 = 0x02,
+	STRIPGROUP_IS_DELTA_FLEXED	 = 0x04,
 	STRIPGROUP_SUPPRESS_HW_MORPH = 0x08,	// NOTE: This is a temporary flag used at run time.
 };
 
@@ -121,6 +121,13 @@ struct StripGroupHeader_t
 	};
 
 	unsigned char flags;
+
+	int numTopologyIndices;
+	int topologyOffset;
+	inline unsigned short *pTopologyIndex( int i ) const 
+	{ 
+		return (unsigned short *)(((byte *)this) + topologyOffset) + i; 
+	};
 };
 
 enum MeshFlags_t { 
@@ -222,7 +229,7 @@ struct FileHeader_t
 	// hardware params that affect how the model is to be optimized.
 	int vertCacheSize;
 	unsigned short maxBonesPerStrip;
-	unsigned short maxBonesPerTri;
+	unsigned short maxBonesPerFace;
 	int maxBonesPerVert;
 
 	// must match checkSum in the .mdl
