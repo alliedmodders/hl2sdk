@@ -423,6 +423,18 @@ typedef void * HINSTANCE;
 #define  stackfree( _p )
 #endif
 
+#if defined( GNUC )
+#ifdef _LINUX
+	#define mallocsize( _p )	( malloc_usable_size( _p ) )
+#elif defined(OSX)
+	#define mallocsize( _p )	( malloc_size( _p ) )
+#else
+#error
+#endif
+#elif defined ( _WIN32 )
+	#define mallocsize( _p )		( _msize( _p ) )
+#endif
+
 #ifdef _WIN32
 #define RESTRICT __restrict
 #define RESTRICT_FUNC __declspec(restrict)
