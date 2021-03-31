@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Shared util code between client and server.
 //
@@ -107,6 +107,7 @@ inline CBaseEntity *EntityFromEntityHandle( IHandleEntity *pHandleEntity )
 #endif
 }
 
+typedef bool (*ShouldHitFunc_t)( IHandleEntity *pHandleEntity, int contentsMask );
 
 //-----------------------------------------------------------------------------
 // traceline methods
@@ -116,8 +117,8 @@ class CTraceFilterSimple : public CTraceFilter
 public:
 	// It does have a base, but we'll never network anything below here..
 	DECLARE_CLASS_NOBASE( CTraceFilterSimple );
-	
-	CTraceFilterSimple( const IHandleEntity *passentity, int collisionGroup );
+
+	CTraceFilterSimple( const IHandleEntity *passentity, int collisionGroup, ShouldHitFunc_t pExtraShouldHitCheckFn = NULL );
 	virtual bool ShouldHitEntity( IHandleEntity *pHandleEntity, int contentsMask );
 	virtual void SetPassEntity( const IHandleEntity *pPassEntity ) { m_pPassEnt = pPassEntity; }
 	virtual void SetCollisionGroup( int iCollisionGroup ) { m_collisionGroup = iCollisionGroup; }
@@ -127,6 +128,8 @@ public:
 private:
 	const IHandleEntity *m_pPassEnt;
 	int m_collisionGroup;
+	ShouldHitFunc_t m_pExtraShouldHitCheckFunction;
+
 };
 
 class CTraceFilterSkipTwoEntities : public CTraceFilterSimple
@@ -302,9 +305,9 @@ inline void UTIL_TraceHull( const Vector &vecAbsStart, const Vector &vecAbsEnd, 
 }
 
 inline void UTIL_TraceRay( const Ray_t &ray, unsigned int mask, 
-						  const IHandleEntity *ignore, int collisionGroup, trace_t *ptr )
+						  const IHandleEntity *ignore, int collisionGroup, trace_t *ptr, ShouldHitFunc_t pExtraShouldHitCheckFn = NULL )
 {
-	CTraceFilterSimple traceFilter( ignore, collisionGroup );
+	CTraceFilterSimple traceFilter( ignore, collisionGroup, pExtraShouldHitCheckFn );
 
 	enginetrace->TraceRay( ray, mask, &traceFilter, ptr );
 	
@@ -313,6 +316,7 @@ inline void UTIL_TraceRay( const Ray_t &ray, unsigned int mask,
 		DebugDrawLine( ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f );
 	}
 }
+
 
 // Sweeps a particular entity through the world
 void UTIL_TraceEntity( CBaseEntity *pEntity, const Vector &vecAbsStart, const Vector &vecAbsEnd, unsigned int mask, trace_t *ptr );
@@ -356,10 +360,17 @@ void		UTIL_StringToColor32( color32 *color, const char *pString );
 
 CBasePlayer *UTIL_PlayerByIndex( int entindex );
 
+//=============================================================================
+// HPE_BEGIN:
+// [menglish] Added UTIL function for events in client win_panel which transmit the player as a user ID
+//=============================================================================
+CBasePlayer *UTIL_PlayerByUserId( int userID );
+//=============================================================================
+// HPE_END
+//=============================================================================
+
 // decodes a buffer using a 64bit ICE key (inplace)
 void		UTIL_DecodeICE( unsigned char * buffer, int size, const unsigned char *key);
-
-unsigned short UTIL_GetAchievementEventMask( void );	
 
 
 //--------------------------------------------------------------------------------------------------------------
@@ -415,6 +426,58 @@ inline float DistanceToRay( const Vector &pos, const Vector &rayStart, const Vec
 	return range;
 }
 
+
+//--------------------------------------------------------------------------------------------------------------
+/**
+* Macro for creating an interface that when inherited from automatically maintains a list of instances
+* that inherit from that interface.
+*/
+
+// interface for entities that want to a auto maintained global list
+#define DECLARE_AUTO_LIST( interfaceName ) \
+	class interfaceName; \
+	abstract_class interfaceName \
+	{ \
+	public: \
+		interfaceName( bool bAutoAdd = true ); \
+		virtual ~interfaceName(); \
+		static void AddToAutoList( interfaceName *pElement ) { m_##interfaceName##AutoList.AddToTail( pElement ); } \
+		static void RemoveFromAutoList( interfaceName *pElement ) { m_##interfaceName##AutoList.FindAndFastRemove( pElement ); } \
+		static const CUtlVector< interfaceName* >& AutoList( void ) { return m_##interfaceName##AutoList; } \
+	private: \
+		static CUtlVector< interfaceName* > m_##interfaceName##AutoList; \
+	};
+
+// Creates the auto add/remove constructor/destructor...
+// Pass false to the constructor to not auto add
+#define IMPLEMENT_AUTO_LIST( interfaceName ) \
+	CUtlVector< class interfaceName* > interfaceName::m_##interfaceName##AutoList; \
+	interfaceName::interfaceName( bool bAutoAdd ) \
+	{ \
+		if ( bAutoAdd ) \
+		{ \
+			AddToAutoList( this ); \
+		} \
+	} \
+	interfaceName::~interfaceName() \
+	{ \
+		RemoveFromAutoList( this ); \
+	}
+
+//--------------------------------------------------------------------------------------------------------------
+// This would do the same thing without requiring casts all over the place. Yes, it's a template, but 
+// DECLARE_AUTO_LIST requires a CUtlVector<T> anyway. TODO ask about replacing the macros with this.
+//template<class T>
+//class AutoList {
+//public:
+//	typedef CUtlVector<T*> AutoListType;
+//	static AutoListType& All() { return m_autolist; }
+//protected:
+//	AutoList() { m_autolist.AddToTail(static_cast<T*>(this)); }
+//	virtual ~AutoList() { m_autolist.FindAndFastRemove(static_cast<T*>(this)); }
+//private:
+//	static AutoListType m_autolist;
+//};
 
 //--------------------------------------------------------------------------------------------------------------
 /**
@@ -530,11 +593,34 @@ public:
 private:
 	float m_duration;
 	float m_timestamp;
-	float Now( void ) const;		// work-around since client header doesn't like inlined gpGlobals->curtime
+	virtual float Now( void ) const;		// work-around since client header doesn't like inlined gpGlobals->curtime
 };
 
-const char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename = NULL );
+class RealTimeCountdownTimer : public CountdownTimer
+{
+	virtual float Now( void ) const OVERRIDE
+	{
+		return Plat_FloatTime();
+	}
+};
+
+char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename = NULL );
 
 int UTIL_StringFieldToInt( const char *szValue, const char **pValueStrings, int iNumStrings );
+
+//-----------------------------------------------------------------------------
+// Holidays
+//-----------------------------------------------------------------------------
+
+// Used at level change and round start to re-calculate which holiday is active
+void				UTIL_CalculateHolidays();
+
+bool				UTIL_IsHolidayActive( /*EHoliday*/ int eHoliday );
+/*EHoliday*/ int	UTIL_GetHolidayForString( const char* pszHolidayName );
+
+// This will return the first active holiday string it can find. In the case of multiple
+// holidays overlapping, the list order will act as priority.
+const char		   *UTIL_GetActiveHolidayString();
+
 
 #endif // UTIL_SHARED_H

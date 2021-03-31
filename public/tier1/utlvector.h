@@ -224,6 +224,273 @@ public:
 	CUtlVectorFixedGrowable( int growSize = 0 ) : BaseClass( growSize, MAX_SIZE ) {}
 };
 
+//-----------------------------------------------------------------------------
+// The CUtlVectorConservative class:
+// A array class with a conservative allocation scheme
+//-----------------------------------------------------------------------------
+template< class T >
+class CUtlVectorConservative : public CUtlVector< T, CUtlMemoryConservative<T> >
+{
+	typedef CUtlVector< T, CUtlMemoryConservative<T> > BaseClass;
+public:
+
+	// constructor, destructor
+	explicit CUtlVectorConservative( int growSize = 0, int initSize = 0 ) : BaseClass( growSize, initSize ) {}
+	explicit CUtlVectorConservative( T* pMemory, int numElements ) : BaseClass( pMemory, numElements ) {}
+};
+
+
+//-----------------------------------------------------------------------------
+// The CUtlVectorUltra Conservative class:
+// A array class with a very conservative allocation scheme, with customizable allocator
+// Especialy useful if you have a lot of vectors that are sparse, or if you're
+// carefully packing holders of vectors
+//-----------------------------------------------------------------------------
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning(disable : 4200) // warning C4200: nonstandard extension used : zero-sized array in struct/union
+#pragma warning(disable : 4815 ) // warning C4815: 'staticData' : zero-sized array in stack object will have no elements
+#endif
+
+class CUtlVectorUltraConservativeAllocator
+{
+public:
+	static void *Alloc( size_t nSize )
+	{
+		return malloc( nSize );
+	}
+
+	static void *Realloc( void *pMem, size_t nSize )
+	{
+		return realloc( pMem, nSize );
+	}
+
+	static void Free( void *pMem )
+	{
+		free( pMem );
+	}
+
+	static size_t GetSize( void *pMem )
+	{
+		return mallocsize( pMem );
+	}
+
+};
+
+template <typename T, typename A = CUtlVectorUltraConservativeAllocator >
+class CUtlVectorUltraConservative : private A
+{
+public:
+	CUtlVectorUltraConservative()
+	{
+		m_pData = StaticData();
+	}
+
+	~CUtlVectorUltraConservative()
+	{
+		RemoveAll();
+	}
+
+	int Count() const
+	{
+		return m_pData->m_Size;
+	}
+
+	static int InvalidIndex()
+	{
+		return -1;
+	}
+
+	inline bool IsValidIndex( int i ) const
+	{
+		return (i >= 0) && (i < Count());
+	}
+
+	T& operator[]( int i )
+	{
+		Assert( IsValidIndex( i ) );
+		return m_pData->m_Elements[i];
+	}
+
+	const T& operator[]( int i ) const
+	{
+		Assert( IsValidIndex( i ) );
+		return m_pData->m_Elements[i];
+	}
+
+	T& Element( int i )
+	{
+		Assert( IsValidIndex( i ) );
+		return m_pData->m_Elements[i];
+	}
+
+	const T& Element( int i ) const
+	{
+		Assert( IsValidIndex( i ) );
+		return m_pData->m_Elements[i];
+	}
+
+	void EnsureCapacity( int num )
+	{
+		int nCurCount = Count();
+		if ( num <= nCurCount )
+		{
+			return;
+		}
+		if ( m_pData == StaticData() )
+		{
+			m_pData = (Data_t *)A::Alloc( sizeof(int) + ( num * sizeof(T) ) );
+			m_pData->m_Size = 0;
+		}
+		else
+		{
+			int nNeeded = sizeof(int) + ( num * sizeof(T) );
+			int nHave = A::GetSize( m_pData );
+			if ( nNeeded > nHave )
+			{
+				m_pData = (Data_t *)A::Realloc( m_pData, nNeeded );
+			}
+		}
+	}
+
+	int AddToTail( const T& src )
+	{
+		int iNew = Count();
+		EnsureCapacity( Count() + 1 );
+		m_pData->m_Elements[iNew] = src;
+		m_pData->m_Size++;
+		return iNew;
+	}
+
+	void RemoveAll()
+	{
+		if ( Count() )
+		{
+			for (int i = m_pData->m_Size; --i >= 0; )
+			{
+				Destruct(&m_pData->m_Elements[i]);
+			}
+		}
+		if ( m_pData != StaticData() )
+		{
+			A::Free( m_pData );
+			m_pData = StaticData();
+
+		}
+	}
+
+	void PurgeAndDeleteElements()
+	{
+		if ( m_pData != StaticData() )
+		{
+			for( int i=0; i < m_pData->m_Size; i++ )
+			{
+				delete Element(i);
+			}
+			RemoveAll();
+		}
+	}
+
+	void FastRemove( int elem )
+	{
+		Assert( IsValidIndex(elem) );
+
+		Destruct( &Element(elem) );
+		if (Count() > 0)
+		{
+			if ( elem != m_pData->m_Size -1 )
+				memcpy( &Element(elem), &Element(m_pData->m_Size-1), sizeof(T) );
+			--m_pData->m_Size;
+		}
+		if ( !m_pData->m_Size )
+		{
+			A::Free( m_pData );
+			m_pData = StaticData();
+		}
+	}
+
+	void Remove( int elem )
+	{
+		Destruct( &Element(elem) );
+		ShiftElementsLeft(elem);
+		--m_pData->m_Size;
+		if ( !m_pData->m_Size )
+		{
+			A::Free( m_pData );
+			m_pData = StaticData();
+		}
+	}
+
+	int Find( const T& src ) const
+	{
+		int nCount = Count();
+		for ( int i = 0; i < nCount; ++i )
+		{
+			if (Element(i) == src)
+				return i;
+		}
+		return -1;
+	}
+
+	bool FindAndRemove( const T& src )
+	{
+		int elem = Find( src );
+		if ( elem != -1 )
+		{
+			Remove( elem );
+			return true;
+		}
+		return false;
+	}
+
+
+	bool FindAndFastRemove( const T& src )
+	{
+		int elem = Find( src );
+		if ( elem != -1 )
+		{
+			FastRemove( elem );
+			return true;
+		}
+		return false;
+	}
+
+	struct Data_t
+	{
+		int m_Size;
+		T m_Elements[0];
+	};
+
+	Data_t *m_pData;
+private:
+	void ShiftElementsLeft( int elem, int num = 1 )
+	{
+		int Size = Count();
+		Assert( IsValidIndex(elem) || ( Size == 0 ) || ( num == 0 ));
+		int numToMove = Size - elem - num;
+		if ((numToMove > 0) && (num > 0))
+		{
+			Q_memmove( &Element(elem), &Element(elem+num), numToMove * sizeof(T) );
+
+#ifdef _DEBUG
+			Q_memset( &Element(Size-num), 0xDD, num * sizeof(T) );
+#endif
+		}
+	}
+
+
+
+	static Data_t *StaticData()
+	{
+		static Data_t staticData;
+		Assert( staticData.m_Size == 0 );
+		return &staticData;
+	}
+};
+
+#ifdef _WIN32
+#pragma warning(pop)
+#endif
 
 //-----------------------------------------------------------------------------
 // The CCopyableUtlVector class:
