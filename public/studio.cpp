@@ -798,9 +798,6 @@ const virtualmodel_t * CStudioHdr::ResetVModel( const virtualmodel_t *pVModel ) 
 	if (pVModel != NULL)
 	{
 		m_pVModel = (virtualmodel_t *)pVModel;
-#if !defined( POSIX )
-		Assert( !pVModel->m_Lock.GetOwnerId() );
-#endif
 		m_pStudioHdrCache.SetCount( m_pVModel->m_group.Count() );
 
 		int i;
@@ -848,9 +845,6 @@ const studiohdr_t *CStudioHdr::GroupStudioHdr( int i )
 
 	if (pStudioHdr == NULL)
 	{
-#if !defined( POSIX )
-		Assert( !m_pVModel->m_Lock.GetOwnerId() );
-#endif
 		virtualgroup_t *pGroup = &m_pVModel->m_group[ i ];
 		pStudioHdr = pGroup->GetStudioHdr();
 		m_pStudioHdrCache[ i ] = pStudioHdr;
