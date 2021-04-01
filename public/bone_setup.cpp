@@ -2750,7 +2750,7 @@ bool Studio_SolveIK( int iThigh, int iKnee, int iFoot, Vector &targetFoot, matri
 //-----------------------------------------------------------------------------
 // Purpose: Realign the matrix so that its X axis points along the desired axis.
 //-----------------------------------------------------------------------------
-void Studio_AlignIKMatrix( matrix3x4_t &mMat, const Vector &vAlignTo )
+void Studio_AlignIKMatrix( matrix3x4a_t &mMat, const Vector &vAlignTo )
 {
 	Vector tmp1, tmp2, tmp3;
 
@@ -2776,7 +2776,7 @@ void Studio_AlignIKMatrix( matrix3x4_t &mMat, const Vector &vAlignTo )
 // Purpose: Solve Knee position for a known hip and foot location, and a known knee direction
 //-----------------------------------------------------------------------------
 
-bool Studio_SolveIK( int iThigh, int iKnee, int iFoot, Vector &targetFoot, Vector &targetKneePos, Vector &targetKneeDir, matrix3x4_t *pBoneToWorld )
+bool Studio_SolveIK( int iThigh, int iKnee, int iFoot, Vector &targetFoot, Vector &targetKneePos, Vector &targetKneeDir, matrix3x4a_t *pBoneToWorld )
 {
 	Vector worldFoot, worldKnee, worldThigh;
 
@@ -2831,9 +2831,9 @@ bool Studio_SolveIK( int iThigh, int iKnee, int iFoot, Vector &targetFoot, Vecto
 	CIKSolver ik;
 	if (ik.solve( l1, l2, ikFoot.Base(), ikTargetKnee.Base(), ikKnee.Base() ))
 	{
-		matrix3x4_t& mWorldThigh = pBoneToWorld[ iThigh ];
-		matrix3x4_t& mWorldKnee = pBoneToWorld[ iKnee ];
-		matrix3x4_t& mWorldFoot = pBoneToWorld[ iFoot ];
+		matrix3x4a_t& mWorldThigh = pBoneToWorld[ iThigh ];
+		matrix3x4a_t& mWorldKnee = pBoneToWorld[ iKnee ];
+		matrix3x4a_t& mWorldFoot = pBoneToWorld[ iFoot ];
 
 		//debugLine( worldThigh, ikKnee + worldThigh, 255, 0, 0, true, 0 );
 		//debugLine( ikKnee + worldThigh, ikFoot + worldThigh, 255, 0, 0, true,0 );
@@ -3468,17 +3468,17 @@ void CIKContext::BuildBoneChain(
 //-----------------------------------------------------------------------------
 void BuildBoneChain(
 	const CStudioHdr *pStudioHdr,
-	const matrix3x4_t &rootxform,
+	const matrix3x4a_t &rootxform,
 	const Vector pos[], 
 	const Quaternion q[], 
 	int	iBone,
-	matrix3x4_t *pBoneToWorld,
+	matrix3x4a_t *pBoneToWorld,
 	CBoneBitList &boneComputed )
 {
 	if ( boneComputed.IsBoneMarked(iBone) )
 		return;
 
-	matrix3x4_t bonematrix;
+	matrix3x4a_t bonematrix;
 	QuaternionMatrix( q[iBone], pos[iBone], bonematrix );
 
 	int parent = pStudioHdr->boneParent( iBone );
@@ -5780,6 +5780,13 @@ bool Studio_SeqMovement( const CStudioHdr *pStudioHdr, int iSequence, float flCy
 	return found;
 }
 
+float Studio_SeqMovementAndDuration( const CStudioHdr *pStudioHdr, int iSequence, float flCycleFrom, float flCycleTo, const float poseParameter[], Vector &deltaPos )
+{
+	QAngle deltaAngles;
+	Studio_SeqMovement( pStudioHdr, iSequence, flCycleFrom, flCycleTo, poseParameter, deltaPos, deltaAngles );
+	
+	return Studio_Duration( pStudioHdr, iSequence, poseParameter );
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: calculate instantaneous velocity in ips at a given point in the sequence's cycle
