@@ -95,8 +95,9 @@ DEFINES +=-DGNUC -DPOSIX -D_POSIX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstri
 	-Dstrnicmp=strncasecmp -D_vsnprintf=vsnprintf -D_alloca=alloca -Dstrcmpi=strcasecmp
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
-BASE_CFLAGS = -fno-strict-aliasing -Wall -Wsign-compare -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
+BASE_CFLAGS = -fno-strict-aliasing -Wall -Wsign-compare -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
 	      -Wno-delete-non-virtual-dtor
+BASE_CFLAGS += -Wno-class-memaccess -Wno-unknown-pragmas -Wno-narrowing -fpermissive
 SHLIBCFLAGS = -fPIC
 
 # Flags passed to the c compiler
