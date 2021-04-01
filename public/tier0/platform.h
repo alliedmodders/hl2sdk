@@ -300,10 +300,35 @@ typedef void * HINSTANCE;
         #define DECL_ALIGN(x) /* */
 #endif
 
+#ifdef _MSC_VER
+// MSVC has the align at the start of the struct
+#define ALIGN4 DECL_ALIGN(4)
 #define ALIGN8 DECL_ALIGN(8)
 #define ALIGN16 DECL_ALIGN(16)
 #define ALIGN32 DECL_ALIGN(32)
 #define ALIGN128 DECL_ALIGN(128)
+
+#define ALIGN4_POST
+#define ALIGN8_POST
+#define ALIGN16_POST
+#define ALIGN32_POST
+#define ALIGN128_POST
+#elif defined( GNUC )
+// gnuc has the align decoration at the end
+#define ALIGN4
+#define ALIGN8 
+#define ALIGN16
+#define ALIGN32
+#define ALIGN128
+
+#define ALIGN4_POST DECL_ALIGN(4)
+#define ALIGN8_POST DECL_ALIGN(8)
+#define ALIGN16_POST DECL_ALIGN(16)
+#define ALIGN32_POST DECL_ALIGN(32)
+#define ALIGN128_POST DECL_ALIGN(128)
+#else
+#error
+#endif
 
 
 // Linux had a few areas where it didn't construct objects in the same order that Windows does.
