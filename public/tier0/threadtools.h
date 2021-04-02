@@ -574,13 +574,6 @@ private:
 #else
 #error
 #endif
-
-#ifdef THREAD_MUTEX_TRACING_SUPPORTED
-	// Debugging (always here to allow mixed debug/release builds w/o changing size)
-	uint	m_currentOwnerID;
-	uint16	m_lockCount;
-	bool	m_bTrace;
-#endif
 };
 
 //-----------------------------------------------------------------------------
