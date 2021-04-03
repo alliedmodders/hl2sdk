@@ -1095,6 +1095,8 @@ public:
 	// Access the thread handle directly
 	HANDLE GetThreadHandle();
 	uint GetThreadId();
+#elif defined( LINUX )
+	uint GetThreadId();
 #endif
 
 	//-----------------------------------------------------

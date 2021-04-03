@@ -1,4 +1,4 @@
-//====== Copyright © Valve Corporation, All rights reserved. =======
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: interface for game servers to steam stats and achievements
 //
@@ -53,7 +53,13 @@ public:
 #define STEAMGAMESERVERSTATS_INTERFACE_VERSION "SteamGameServerStats001"
 
 // callbacks
+#if defined( VALVE_CALLBACK_PACK_SMALL )
+#pragma pack( push, 4 )
+#elif defined( VALVE_CALLBACK_PACK_LARGE )
 #pragma pack( push, 8 )
+#else
+#error isteamclient.h must be included
+#endif 
 
 //-----------------------------------------------------------------------------
 // Purpose: called when the latests stats and achievements have been received

@@ -30,16 +30,24 @@
 
 typedef void (*MemoryPoolReportFunc_t)( char const* pMsg, ... );
 
+enum MemoryPoolGrowType_t
+{
+	UTLMEMORYPOOL_GROW_NONE=0,		// Don't allow new blobs.
+	UTLMEMORYPOOL_GROW_FAST=1,		// New blob size is numElements * (i+1)  (ie: the blocks it allocates
+									// get larger and larger each time it allocates one).
+	UTLMEMORYPOOL_GROW_SLOW=2		// New blob size is numElements.
+};
+
 class CMemoryPool
 {
 public:
 	// Ways the memory pool can grow when it needs to make a new blob.
 	enum MemoryPoolGrowType_t
 	{
-		GROW_NONE=0,		// Don't allow new blobs.
-		GROW_FAST=1,		// New blob size is numElements * (i+1)  (ie: the blocks it allocates
+		GROW_NONE=UTLMEMORYPOOL_GROW_NONE,		// Don't allow new blobs.
+		GROW_FAST=UTLMEMORYPOOL_GROW_FAST,		// New blob size is numElements * (i+1)  (ie: the blocks it allocates
 							// get larger and larger each time it allocates one).
-		GROW_SLOW=2			// New blob size is numElements.
+		GROW_SLOW=UTLMEMORYPOOL_GROW_SLOW			// New blob size is numElements.
 	};
 
 				CMemoryPool( int blockSize, int numElements, int growMode = GROW_FAST, const char *pszAllocOwner = NULL, int nAlignment = 0 );
@@ -92,6 +100,8 @@ protected:
 	static MemoryPoolReportFunc_t g_ReportFunc;
 };
 
+
+typedef CMemoryPool CUtlMemoryPool;
 
 //-----------------------------------------------------------------------------
 // 

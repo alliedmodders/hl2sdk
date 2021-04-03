@@ -26,7 +26,9 @@
 
 #define FOR_EACH_VEC( vecName, iteratorName ) \
 	for ( int iteratorName = 0; iteratorName < vecName.Count(); iteratorName++ )
-
+#define FOR_EACH_VEC_BACK( vecName, iteratorName ) \
+	for ( int iteratorName = (vecName).Count()-1; iteratorName >= 0; iteratorName-- )
+		
 //-----------------------------------------------------------------------------
 // The CUtlVector class:
 // A growable array class which doubles in size by default.
@@ -41,6 +43,8 @@ class CUtlVector
 	typedef A CAllocator;
 public:
 	typedef T ElemType_t;
+	typedef T* iterator;
+	typedef const T* const_iterator;
 
 	// constructor, destructor
 	CUtlVector( int growSize = 0, int initSize = 0 );
@@ -69,6 +73,11 @@ public:
 	int Count() const;
 	int Size() const;	// don't use me!
 
+	iterator begin()						{ return Base(); }
+	const_iterator begin() const			{ return Base(); }
+	iterator end()							{ return Base() + Count(); }
+	const_iterator end() const				{ return Base() + Count(); }
+	
 	// Is element index valid?
 	bool IsValidIndex( int i ) const;
 	static int InvalidIndex();
@@ -119,6 +128,7 @@ public:
 	void FastRemove( int elem );	// doesn't preserve order
 	void Remove( int elem );		// preserves order, shifts elements
 	bool FindAndRemove( const T& src );	// removes first occurrence of src, preserves order, shifts elements
+	bool FindAndFastRemove( const T& src );	
 	void RemoveMultiple( int elem, int num );	// preserves order, shifts elements
 	void RemoveAll();				// doesn't deallocate memory
 
@@ -978,6 +988,18 @@ bool CUtlVector<T, A>::FindAndRemove( const T& src )
 }
 
 template< typename T, class A >
+bool CUtlVector<T, A>::FindAndFastRemove( const T& src )
+{
+	int elem = Find( src );
+	if ( elem != -1 )
+	{
+		FastRemove( elem );
+		return true;
+	}
+	return false;
+}
+
+template< typename T, class A >
 void CUtlVector<T, A>::RemoveMultiple( int elem, int num )
 {
 	Assert( elem >= 0 );
@@ -1053,5 +1075,75 @@ void CUtlVector<T, A>::Validate( CValidator &validator, char *pchName )
 }
 #endif // DBGFLAG_VALIDATE
 
+template<class T> class CUtlVectorAutoPurge : public CUtlVector< T, CUtlMemory< T, int> >
+{
+public:
+	~CUtlVectorAutoPurge( void )
+	{
+		this->PurgeAndDeleteElements();
+	}
+
+};
+
+// easy string list class with dynamically allocated strings. For use with V_SplitString, etc.
+// Frees the dynamic strings in destructor.
+class CUtlStringList : public CUtlVectorAutoPurge< char *>
+{
+public:
+	void CopyAndAddToTail( char const *pString )			// clone the string and add to the end
+	{
+		char *pNewStr = new char[1 + strlen( pString )];
+		V_strcpy( pNewStr, pString );
+		AddToTail( pNewStr );
+	}
+
+	static int __cdecl SortFunc( char * const * sz1, char * const * sz2 )
+	{
+		return strcmp( *sz1, *sz2 );
+	}
+
+	CUtlStringList(){}
+
+	CUtlStringList( char const *pString, char const *pSeparator )
+	{
+		SplitString( pString, pSeparator );
+	}
+
+	CUtlStringList( char const *pString, const char **pSeparators, int nSeparators )
+	{
+		SplitString2( pString, pSeparators, nSeparators );
+	}
+
+	void SplitString( char const *pString, char const *pSeparator )
+	{
+		V_SplitString( pString, pSeparator, *this );
+	}
+
+	void SplitString2( char const *pString, const char **pSeparators, int nSeparators )
+	{
+		V_SplitString2( pString, pSeparators, nSeparators, *this );
+	}
+private:
+	CUtlStringList( const CUtlStringList &other ); // copying directly will cause double-release of the same strings; maybe we need to do a deep copy, but unless and until such need arises, this will guard against double-release
+};
+
+
+
+// <Sergiy> placing it here a few days before Cert to minimize disruption to the rest of codebase
+class CSplitString: public CUtlVector<char*, CUtlMemory<char*, int> >
+{
+public:
+	CSplitString(const char *pString, const char *pSeparator);
+	CSplitString(const char *pString, const char **pSeparators, int nSeparators);
+	~CSplitString();
+	//
+	// NOTE: If you want to make Construct() public and implement Purge() here, you'll have to free m_szBuffer there
+	//
+private:
+	void Construct(const char *pString, const char **pSeparators, int nSeparators);
+	void PurgeAndDeleteElements();
+private:
+	char *m_szBuffer; // a copy of original string, with '\0' instead of separators
+};
 
 #endif // CCVECTOR_H
