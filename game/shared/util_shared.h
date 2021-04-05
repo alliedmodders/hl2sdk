@@ -243,7 +243,7 @@ private:
 // helper
 void DebugDrawLine( const Vector& vecAbsStart, const Vector& vecAbsEnd, int r, int g, int b, bool test, float duration );
 
-extern ConVar r_visualizetraces;
+extern ConVar *r_visualizetraces;
 
 inline void UTIL_TraceLine( const Vector& vecAbsStart, const Vector& vecAbsEnd, unsigned int mask, 
 					 const IHandleEntity *ignore, int collisionGroup, trace_t *ptr )
@@ -254,7 +254,7 @@ inline void UTIL_TraceLine( const Vector& vecAbsStart, const Vector& vecAbsEnd, 
 
 	enginetrace->TraceRay( ray, mask, &traceFilter, ptr );
 
-	if( r_visualizetraces.GetBool() )
+	if( r_visualizetraces->GetBool() )
 	{
 		DebugDrawLine( ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f );
 	}
@@ -268,7 +268,7 @@ inline void UTIL_TraceLine( const Vector& vecAbsStart, const Vector& vecAbsEnd, 
 
 	enginetrace->TraceRay( ray, mask, pFilter, ptr );
 
-	if( r_visualizetraces.GetBool() )
+	if( r_visualizetraces->GetBool() )
 	{
 		DebugDrawLine( ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f );
 	}
@@ -284,7 +284,7 @@ inline void UTIL_TraceHull( const Vector &vecAbsStart, const Vector &vecAbsEnd, 
 
 	enginetrace->TraceRay( ray, mask, &traceFilter, ptr );
 
-	if( r_visualizetraces.GetBool() )
+	if( r_visualizetraces->GetBool() )
 	{
 		DebugDrawLine( ptr->startpos, ptr->endpos, 255, 255, 0, true, -1.0f );
 	}
@@ -298,7 +298,7 @@ inline void UTIL_TraceHull( const Vector &vecAbsStart, const Vector &vecAbsEnd, 
 
 	enginetrace->TraceRay( ray, mask, pFilter, ptr );
 
-	if( r_visualizetraces.GetBool() )
+	if( r_visualizetraces->GetBool() )
 	{
 		DebugDrawLine( ptr->startpos, ptr->endpos, 255, 255, 0, true, -1.0f );
 	}
@@ -311,7 +311,7 @@ inline void UTIL_TraceRay( const Ray_t &ray, unsigned int mask,
 
 	enginetrace->TraceRay( ray, mask, &traceFilter, ptr );
 	
-	if( r_visualizetraces.GetBool() )
+	if( r_visualizetraces->GetBool() )
 	{
 		DebugDrawLine( ptr->startpos, ptr->endpos, 255, 0, 0, true, -1.0f );
 	}
