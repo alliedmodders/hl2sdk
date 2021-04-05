@@ -503,7 +503,7 @@ public:
 		if ( !m_grid.Count() )
 		{
 #if _DEBUG
-			Warning("Query before nav mesh is loaded! %d\n", TheNavAreas.Count() );
+			//Warning("Query before nav mesh is loaded! %d\n", TheNavAreas.Count() );
 #endif
 			return true;
 		}
