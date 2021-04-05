@@ -33,7 +33,7 @@ class CGameTrace;
 class CBasePlayer;
 typedef CGameTrace trace_t;
 
-extern ConVar developer;	// developer mode
+
 
 
 //-----------------------------------------------------------------------------
