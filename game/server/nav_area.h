@@ -646,6 +646,9 @@ private:
 	*/
 
 	static unsigned int m_nextID;								// used to allocate unique IDs
+	
+	char pad1[4];
+	
 	unsigned int m_id;											// unique area ID
 	unsigned int m_debugid;
 

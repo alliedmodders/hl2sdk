@@ -725,6 +725,8 @@ private:
 	friend class CNavArea;
 	friend class CNavNode;
 	friend class CNavUIBasePanel;
+	
+	char pad1[4];
 
 	mutable CUtlVector<NavAreaVector> m_grid;
 	float m_gridCellSize;										// the width/height of a grid cell for spatially partitioning nav areas for fast access
