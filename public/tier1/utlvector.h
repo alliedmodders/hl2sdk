@@ -25,7 +25,7 @@
 #include "tier1/strtools.h"
 
 #define FOR_EACH_VEC( vecName, iteratorName ) \
-	for ( int iteratorName = 0; iteratorName < vecName.Count(); iteratorName++ )
+	for ( int iteratorName = 0; iteratorName < (vecName).Count(); iteratorName++ )
 #define FOR_EACH_VEC_BACK( vecName, iteratorName ) \
 	for ( int iteratorName = (vecName).Count()-1; iteratorName >= 0; iteratorName-- )
 		

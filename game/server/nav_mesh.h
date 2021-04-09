@@ -464,9 +464,9 @@ public:
 	template < typename Functor >
 	bool ForAllAreas( Functor &func )
 	{
-		FOR_EACH_VEC( TheNavAreas, it )
+		FOR_EACH_VEC( *TheNavAreas, it )
 		{
-			CNavArea *area = TheNavAreas[ it ];
+			CNavArea *area = (*TheNavAreas)[ it ];
 
 			if (func( area ) == false)
 				return false;
@@ -479,9 +479,9 @@ public:
 	template < typename Functor >
 	bool ForAllAreas( Functor &func ) const
 	{
-		FOR_EACH_VEC( TheNavAreas, it )
+		FOR_EACH_VEC( *TheNavAreas, it )
 		{
-			const CNavArea *area = TheNavAreas[ it ];
+			const CNavArea *area = (*TheNavAreas)[ it ];
 
 			if (func( area ) == false)
 				return false;
@@ -503,7 +503,7 @@ public:
 		if ( !m_grid.Count() )
 		{
 #if _DEBUG
-			//Warning("Query before nav mesh is loaded! %d\n", TheNavAreas.Count() );
+			Warning("Query before nav mesh is loaded! %d\n", TheNavAreas->Count() );
 #endif
 			return true;
 		}
@@ -673,9 +673,9 @@ public:
 	template < typename Functor >
 		bool StitchMesh( Functor &func )
 	{
-		FOR_EACH_VEC( TheNavAreas, it )
+		FOR_EACH_VEC( *TheNavAreas, it )
 		{
-			CNavArea *area = TheNavAreas[ it ];
+			CNavArea *area = (*TheNavAreas)[ it ];
 
 			if ( func( area ) )
 			{
