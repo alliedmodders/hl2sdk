@@ -768,7 +768,7 @@ private:
 };
 
 typedef CUtlVector< CNavArea * > NavAreaVector;
-extern NavAreaVector TheNavAreas;
+extern NavAreaVector *TheNavAreas;
 
 
 //--------------------------------------------------------------------------------------------------------------
