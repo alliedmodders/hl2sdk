@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ? 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -80,6 +80,9 @@ public:
 	void			SetAmmoType( int iAmmoType );
 	const char *	GetAmmoName() const;
 
+	float			GetRadius() const;
+	void			SetRadius( float fRadius );
+
 	void			Set( CBaseEntity *pInflictor, CBaseEntity *pAttacker, float flDamage, int bitsDamageType, int iKillType = 0 );
 	void			Set( CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBaseEntity *pWeapon, float flDamage, int bitsDamageType, int iKillType = 0 );
 	void			Set( CBaseEntity *pInflictor, CBaseEntity *pAttacker, const Vector &damageForce, const Vector &damagePosition, float flDamage, int bitsDamageType, int iKillType = 0, Vector *reportedPosition = NULL );
@@ -113,6 +116,7 @@ protected:
 	int				m_iDamageCustom;
 	int				m_iDamageStats;
 	int				m_iAmmoType;			// AmmoType of the weapon used to cause this damage, if any
+	float			m_flRadius;
 
 	DECLARE_SIMPLE_DATADESC();
 };
@@ -329,6 +333,16 @@ inline void CTakeDamageInfo::SetAmmoType( int iAmmoType )
 inline void CTakeDamageInfo::CopyDamageToBaseDamage()
 { 
 	m_flBaseDamage = m_flDamage;
+}
+
+inline float CTakeDamageInfo::GetRadius() const
+{
+	return m_flRadius;
+}
+
+inline void CTakeDamageInfo::SetRadius( float flRadius )
+{
+	m_flRadius = flRadius;
 }
 
 
