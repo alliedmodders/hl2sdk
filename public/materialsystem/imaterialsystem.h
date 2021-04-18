@@ -70,6 +70,8 @@ class IPaintMapTextureManager;
 //-----------------------------------------------------------------------------
 typedef uint64 VertexFormat_t;
 
+#define MATERIAL_SYSTEM_INTERFACE_VERSION "VMaterialSystem080"
+
 //-----------------------------------------------------------------------------
 // important enumeration
 //-----------------------------------------------------------------------------
