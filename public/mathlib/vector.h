@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2005, Valve Corporation, All rights reserved. =======//
+//====== Copyright Â© 1996-2005, Valve Corporation, All rights reserved. =======//
 //
 // Purpose: 
 //
@@ -203,8 +203,9 @@ private:
 };
 
 
-
-#define USE_M64S ( ( !defined( _X360 ) ) && ( ! defined( _LINUX) ) )
+#if ( ( !defined( _X360 ) ) && ( ! defined( _LINUX) ) )
+    #define USE_M64S 1
+#endif
 
 
 
@@ -516,9 +517,9 @@ inline void Vector::Init( vec_t ix, vec_t iy, vec_t iz )
 
 inline void Vector::Random( vec_t minVal, vec_t maxVal )
 {
-	x = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
-	y = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
-	z = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
+	x = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
+	y = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
+	z = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
 	CHECK_VALID(*this);
 }
 
@@ -1852,9 +1853,9 @@ inline void QAngle::Init( vec_t ix, vec_t iy, vec_t iz )
 
 inline void QAngle::Random( vec_t minVal, vec_t maxVal )
 {
-	x = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
-	y = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
-	z = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
+	x = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
+	y = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
+	z = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
 	CHECK_VALID(*this);
 }
 
