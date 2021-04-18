@@ -21,6 +21,7 @@ struct vcollide_t
 	// VPhysicsSolids
 	CPhysCollide	**solids;
 	char			*pKeyValues;
+	void			*pUserData;
 };
 
 #endif // VCOLLIDE_H

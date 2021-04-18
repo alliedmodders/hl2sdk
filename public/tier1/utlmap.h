@@ -24,11 +24,11 @@
 
 // This is a useful macro to iterate from start to end in order in a map
 #define FOR_EACH_MAP( mapName, iteratorName ) \
-	for ( int iteratorName = mapName.FirstInorder(); iteratorName != mapName.InvalidIndex(); iteratorName = mapName.NextInorder( iteratorName ) )
+	for ( int iteratorName = (mapName).FirstInorder(); iteratorName != (mapName).InvalidIndex(); iteratorName = (mapName).NextInorder( iteratorName ) )
 
 // faster iteration, but in an unspecified order
 #define FOR_EACH_MAP_FAST( mapName, iteratorName ) \
-	for ( int iteratorName = 0; iteratorName < mapName.MaxElement(); ++iteratorName ) if ( !mapName.IsValidIndex( iteratorName ) ) continue; else
+	for ( int iteratorName = 0; iteratorName < (mapName).MaxElement(); ++iteratorName ) if ( !(mapName).IsValidIndex( iteratorName ) ) continue; else
 
 template <typename K, typename T, typename I = unsigned short> 
 class CUtlMap
@@ -123,6 +123,8 @@ public:
 	
 	void     RemoveAll( )									{ m_Tree.RemoveAll(); }
 	void     Purge( )										{ m_Tree.Purge(); }
+	
+	void PurgeAndDeleteElements();
 			
 	// Iteration
 	IndexType_t  FirstInorder() const						{ return m_Tree.FirstInorder(); }
@@ -197,6 +199,32 @@ public:
 protected:
 	CTree 	   m_Tree;
 };
+
+template< typename K, typename T, typename I >
+inline void CUtlMap<K, T, I>::PurgeAndDeleteElements()
+{
+	for ( I i = 0; i < MaxElement(); ++i ) 
+	{
+		if ( !IsValidIndex( i ) ) 
+			continue; 
+		
+		delete Element( i );
+	}
+
+	Purge();
+}
+
+template < typename K, typename T, typename I >
+void DeepCopyMap( const CUtlMap<K,T,I>& pmapIn, CUtlMap<K,T,I> *out_pmapOut )
+{
+	Assert( out_pmapOut );
+
+	out_pmapOut->Purge();
+	FOR_EACH_MAP_FAST( pmapIn, i )
+	{
+		out_pmapOut->Insert( pmapIn.Key( i ), pmapIn.Element( i ) );
+	}
+}
 
 //-----------------------------------------------------------------------------
 

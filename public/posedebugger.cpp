@@ -392,6 +392,12 @@ void CPoseDebuggerImpl::StartBlending( IClientNetworkable *pEntity, const CStudi
 // 	if ( !pVMdl )
 // 		return;
 
+	if ( !ThreadInMainThread() )
+	{
+		ExecuteOnce( "Turn of threading when using pose debugger\n" );
+		return;
+	}
+
 	// If we are starting a new model then finalize the previous one
 	if ( pStudioHdr != m_pLastModel && m_pLastModel )
 	{
@@ -470,6 +476,11 @@ void CPoseDebuggerImpl::AccumulatePose( const CStudioHdr *pStudioHdr, CIKContext
 // 	if ( !pVMdl )
 // 		return;
 
+	if ( !ThreadInMainThread() )
+	{
+		return;
+	}
+
 	studiohdr_t const *pRMdl = pStudioHdr->GetRenderHdr();
 	if ( !pRMdl ||
 		 !pRMdl->numincludemodels )
@@ -495,12 +506,12 @@ void CPoseDebuggerImpl::AccumulatePose( const CStudioHdr *pStudioHdr, CIKContext
 	// Actual processing
 	//
 
-	mstudioseqdesc_t	&seqdesc = pStudioHdr->pSeqdesc( sequence );
+	mstudioseqdesc_t	&seqdesc = ((CStudioHdr *)pStudioHdr)->pSeqdesc( sequence );
 
 	if ( sequence >= pStudioHdr->GetNumSeq() )
 	{
 		sequence = 0;
-		seqdesc = pStudioHdr->pSeqdesc( sequence );
+		seqdesc = ((CStudioHdr *)pStudioHdr)->pSeqdesc( sequence );
 	}
 
 	enum
@@ -546,9 +557,9 @@ void CPoseDebuggerImpl::AccumulatePose( const CStudioHdr *pStudioHdr, CIKContext
 		7,
 		pOldTxt ? pOldTxt->m_flTimeAlive : 0.f,
 		5,
-		cycle * ( pStudioHdr->pAnimdesc( seqdesc.anim( 0, 0 ) ).numframes - 1 ),
+		cycle * ( ((CStudioHdr *)pStudioHdr)->pAnimdesc( seqdesc.anim( 0, 0 ) ).numframes - 1 ),
 		3,
-		pStudioHdr->pAnimdesc( seqdesc.anim( 0, 0 ) ).numframes,
+		((CStudioHdr *)pStudioHdr)->pAnimdesc( seqdesc.anim( 0, 0 ) ).numframes,
 		widthPercent,
 		flWeight * 100.0f
 		);

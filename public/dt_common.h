@@ -115,6 +115,7 @@ typedef enum
 #if 0 // We can't ship this since it changes the size of DTVariant to be 20 bytes instead of 16 and that breaks MODs!!!
 	DPT_Quaternion,
 #endif
+	DPT_Int64,
 	DPT_NUMSendPropTypes
 } SendPropType;
 
@@ -163,6 +164,9 @@ public:
 			case DPT_DataTable :
 				Q_snprintf( text, sizeof(text), "DataTable" ); 
 				break;
+			case DPT_Int64:
+				Q_snprintf( text, sizeof(text), "%I64d", m_Int64 );
+				break;
 			default :
 				Q_snprintf( text, sizeof(text), "DVariant type %i unknown", m_Type ); 
 				break;
@@ -182,6 +186,7 @@ public:
 #else
 		float	m_Vector[3];
 #endif
+		int64	m_Int64;
 	};
 	SendPropType	m_Type;
 };

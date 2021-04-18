@@ -18,7 +18,6 @@
 #endif
 
 // This interface is actually exported by the shader API DLL.
-#define VB_ALLOC_TRACKER_INTERFACE_VERSION "VBAllocTracker001"
 
 // Interface to the VB mem alloc tracker
 abstract_class IVBAllocTracker
@@ -32,4 +31,4 @@ public:
 	virtual void TrackMeshAllocations( const char * allocatorName ) = 0;
 };
 
-#endif IVBALLOCTRACKER_H
+#endif // IVBALLOCTRACKER_H

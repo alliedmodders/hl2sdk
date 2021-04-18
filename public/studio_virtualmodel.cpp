@@ -348,6 +348,15 @@ void virtualmodel_t::AppendBonemap( int group, const studiohdr_t *pStudioHdr )
 				{
 					Warning( "%s/%s : missmatched parent bones on \"%s\"\n", pBaseStudioHdr->pszName(), pStudioHdr->pszName(), pStudioHdr->pBone( j )->pszName() );
 				}
+
+				// merge the bone use flags and pass up the chain
+				int flags = (pStudioHdr->pBone( j )->flags | pBaseStudioHdr->pBone( k )->flags) & BONE_USED_MASK;
+				int n = k;
+				while (n != -1 && flags != pBaseStudioHdr->pBone( n )->flags)
+				{
+					pBaseStudioHdr->pBone( n )->flags |= flags;
+					n = pBaseStudioHdr->pBone( n )->parent;
+				}
 			}
 			else
 			{
@@ -405,23 +414,6 @@ void virtualmodel_t::AppendAttachments( int group, const studiohdr_t *pStudioHdr
 			tmp.group = group;
 			tmp.index = j;
 			k = attachment.AddToTail( tmp );
-
-			// make sure bone flags are set so attachment calculates
-			if ((m_group[ 0 ].GetStudioHdr()->pBone( n )->flags & BONE_USED_BY_ATTACHMENT) == 0)
-			{
-				while (n != -1)
-				{
-					m_group[ 0 ].GetStudioHdr()->pBone( n )->flags |= BONE_USED_BY_ATTACHMENT;
-
-					if (m_group[ 0 ].GetStudioHdr()->pLinearBones())
-					{
-						*m_group[ 0 ].GetStudioHdr()->pLinearBones()->pflags(n) |= BONE_USED_BY_ATTACHMENT;
-					}
-
-					n = m_group[ 0 ].GetStudioHdr()->pBone( n )->parent;
-				}
-				continue;
-			}
 		}
 
 		m_group[ group ].masterAttachment[ j ] = k;

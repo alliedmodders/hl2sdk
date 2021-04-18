@@ -31,10 +31,12 @@ enum EDictCompareType
 //-----------------------------------------------------------------------------
 // A dictionary mapping from symbol to structure
 //-----------------------------------------------------------------------------
-template <class T, class I> 
+template <class T, class I = int> 
 class CUtlDict
 {
 public:
+	typedef I IndexType_t;
+	
 	// constructor, destructor
 	// Left at growSize = 0, the memory will first allocate 1 element and double in size
 	// at each increment.

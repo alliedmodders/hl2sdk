@@ -22,11 +22,11 @@ class CBoneAccessor
 public:
 	
 	CBoneAccessor();
-	CBoneAccessor( matrix3x4_t *pBones ); // This can be used to allow access to all bones.
+	CBoneAccessor( matrix3x4a_t *pBones ); // This can be used to allow access to all bones.
 	
 	// Initialize.
 #if defined( CLIENT_DLL )
-	void Init( const C_BaseAnimating *pAnimating, matrix3x4_t *pBones );
+	void Init( const C_BaseAnimating *pAnimating, matrix3x4a_t *pBones );
 #endif
 	
 	int GetReadableBones();
@@ -36,11 +36,11 @@ public:
 	void SetWritableBones( int flags );
 
 	// Get bones for read or write access.
-	const matrix3x4_t&	GetBone( int iBone ) const;
-	const matrix3x4_t&	operator[]( int iBone ) const;
-	matrix3x4_t&		GetBoneForWrite( int iBone );
+	const matrix3x4a_t&	GetBone( int iBone ) const;
+	const matrix3x4a_t&	operator[]( int iBone ) const;
+	matrix3x4a_t&		GetBoneForWrite( int iBone );
 
-	matrix3x4_t			*GetBoneArrayForWrite( ) const;
+	matrix3x4a_t			*GetBoneArrayForWrite( ) const;
 
 private:
 
@@ -51,7 +51,7 @@ private:
 	// Only used in the client DLL for debug verification.
 	const C_BaseAnimating *m_pAnimating;
 
-	matrix3x4_t *m_pBones;
+	matrix3x4a_t *m_pBones;
 
 	int m_ReadableBones;		// Which bones can be read.
 	int m_WritableBones;		// Which bones can be written.
@@ -65,14 +65,14 @@ inline CBoneAccessor::CBoneAccessor()
 	m_ReadableBones = m_WritableBones = 0;
 }
 
-inline CBoneAccessor::CBoneAccessor( matrix3x4_t *pBones )
+inline CBoneAccessor::CBoneAccessor( matrix3x4a_t *pBones )
 {
 	m_pAnimating = NULL;
 	m_pBones = pBones;
 }
 
 #if defined( CLIENT_DLL )
-	inline void CBoneAccessor::Init( const C_BaseAnimating *pAnimating, matrix3x4_t *pBones )
+	inline void CBoneAccessor::Init( const C_BaseAnimating *pAnimating, matrix3x4a_t *pBones )
 	{
 		m_pAnimating = pAnimating;
 		m_pBones = pBones;
@@ -99,7 +99,7 @@ inline void CBoneAccessor::SetWritableBones( int flags )
 	m_WritableBones = flags;
 }
 
-inline const matrix3x4_t& CBoneAccessor::GetBone( int iBone ) const
+inline const matrix3x4a_t& CBoneAccessor::GetBone( int iBone ) const
 {
 #if defined( CLIENT_DLL ) && defined( _DEBUG )
 	SanityCheckBone( iBone, true );
@@ -107,7 +107,7 @@ inline const matrix3x4_t& CBoneAccessor::GetBone( int iBone ) const
 	return m_pBones[iBone];
 }
 
-inline const matrix3x4_t& CBoneAccessor::operator[]( int iBone ) const
+inline const matrix3x4a_t& CBoneAccessor::operator[]( int iBone ) const
 {
 #if defined( CLIENT_DLL ) && defined( _DEBUG )
 	SanityCheckBone( iBone, true );
@@ -115,7 +115,7 @@ inline const matrix3x4_t& CBoneAccessor::operator[]( int iBone ) const
 	return m_pBones[iBone];
 }
 
-inline matrix3x4_t& CBoneAccessor::GetBoneForWrite( int iBone )
+inline matrix3x4a_t& CBoneAccessor::GetBoneForWrite( int iBone )
 {
 #if defined( CLIENT_DLL ) && defined( _DEBUG )
 	SanityCheckBone( iBone, false );
@@ -123,7 +123,7 @@ inline matrix3x4_t& CBoneAccessor::GetBoneForWrite( int iBone )
 	return m_pBones[iBone];
 }
 
-inline matrix3x4_t *CBoneAccessor::GetBoneArrayForWrite( void ) const
+inline matrix3x4a_t *CBoneAccessor::GetBoneArrayForWrite( void ) const
 {
 	return m_pBones;
 }

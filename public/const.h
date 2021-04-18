@@ -25,13 +25,20 @@
 #define INVALID_STEAM_LOGGED_IN_ELSEWHERE "This Steam account is being used in another location\n"
 
 // This is the default, see shareddefs.h for mod-specific value, which can override this
-#define DEFAULT_TICK_INTERVAL	(0.015)				// 15 msec is the default
+#define DEFAULT_TICK_INTERVAL	(1.0f / 60.0f)				// 16.666667 msec is the default
 #define MINIMUM_TICK_INTERVAL   (0.001)
 #define MAXIMUM_TICK_INTERVAL	(0.1)
 
 // This is the max # of players the engine can handle
-#define ABSOLUTE_PLAYER_LIMIT 255  // not 256, so we can send the limit as a byte 
+// Note, must be power of 2
+#define ABSOLUTE_PLAYER_LIMIT 64
 #define ABSOLUTE_PLAYER_LIMIT_DW	( (ABSOLUTE_PLAYER_LIMIT/32) + 1 )
+
+#if ABSOLUTE_PLAYER_LIMIT > 32
+#define CPlayerBitVec CBitVec<ABSOLUTE_PLAYER_LIMIT>
+#else
+#define CPlayerBitVec CDWordBitVec
+#endif
 
 // a player name may have 31 chars + 0 on the PC.
 // the 360 only allows 15 char + 0, but stick with the larger PC size for cross-platform communication
@@ -65,10 +72,11 @@
 // Used for networking ehandles.
 #define NUM_ENT_ENTRY_BITS		(MAX_EDICT_BITS + 1)
 #define NUM_ENT_ENTRIES			(1 << NUM_ENT_ENTRY_BITS)
-#define ENT_ENTRY_MASK			(NUM_ENT_ENTRIES - 1)
 #define INVALID_EHANDLE_INDEX	0xFFFFFFFF
 
 #define NUM_SERIAL_NUM_BITS		(32 - NUM_ENT_ENTRY_BITS)
+#define NUM_SERIAL_NUM_SHIFT_BITS (32 - NUM_SERIAL_NUM_BITS)
+#define ENT_ENTRY_MASK			(NUM_ENT_ENTRIES - 1)
 
 
 // Networked ehandles use less bits to encode the serial number.
@@ -103,12 +111,12 @@
 #define FL_ATCONTROLS			(1<<6) // Player can't move, but keeps key inputs for controlling another entity
 #define	FL_CLIENT				(1<<7)	// Is a player
 #define FL_FAKECLIENT			(1<<8)	// Fake client, simulated server side; don't send network messages to them
+#define	FL_INWATER				(1<<9)	// In water
 
 // NOTE if you move things up, make sure to change this value
-#define PLAYER_FLAG_BITS		9
+#define PLAYER_FLAG_BITS		10
 
 // NON-PLAYER SPECIFIC (i.e., not used by GameMovement or the client .dll ) -- Can still be applied to players, though
-#define	FL_INWATER				(1<<9)	// In water
 #define	FL_FLY					(1<<10)	// Changes the SV_Movestep() behavior to not need to be on ground
 #define	FL_SWIM					(1<<11)	// Changes the SV_Movestep() behavior to not need to be on ground (but stay in water)
 #define	FL_CONVEYOR				(1<<12)
@@ -130,6 +138,7 @@
 #define FL_DISSOLVING			(1<<28) // We're dissolving!
 #define FL_TRANSRAGDOLL			(1<<29) // In the process of turning into a client side ragdoll.
 #define FL_UNBLOCKABLE_BY_PLAYER (1<<30) // pusher that can't be blocked by the player
+#define FL_FREEZING				(1<<31) // We're becoming frozen!
 
 // edict->movetype values
 enum MoveType_t
@@ -201,8 +210,10 @@ enum SolidFlags_t
 	FSOLID_USE_TRIGGER_BOUNDS	= 0x0080,	// Uses a special trigger bounds separate from the normal OBB
 	FSOLID_ROOT_PARENT_ALIGNED	= 0x0100,	// Collisions are defined in root parent's local coordinate space
 	FSOLID_TRIGGER_TOUCH_DEBRIS	= 0x0200,	// This trigger will touch debris objects
+	FSOLID_TRIGGER_TOUCH_PLAYER	= 0x0400,	// This trigger will touch only players
+	FSOLID_NOT_MOVEABLE			= 0x0800,	// Assume this object will not move
 
-	FSOLID_MAX_BITS	= 10
+	FSOLID_MAX_BITS	= 12
 };
 
 //-----------------------------------------------------------------------------
@@ -293,7 +304,7 @@ enum
 // if this is changed, update common/MaterialSystem/Sprite.cpp
 enum RenderMode_t
 {	
-	kRenderNormal,			// src
+	kRenderNormal = 0,		// src
 	kRenderTransColor,		// c*a+dest*(1-a)
 	kRenderTransTexture,	// src*a+dest*(1-a)
 	kRenderGlow,			// src*a+dest -- No Z buffer checks -- Fixed size in screen space
@@ -304,6 +315,8 @@ enum RenderMode_t
 	kRenderTransAlphaAdd,	// src + dest*(1-a)
 	kRenderWorldGlow,		// Same as kRenderGlow but not fixed size in screen space
 	kRenderNone,			// Don't render.
+
+	kRenderModeCount,		// must be last
 };
 
 enum RenderFx_t
@@ -313,26 +326,24 @@ enum RenderFx_t
 	kRenderFxPulseFast, 
 	kRenderFxPulseSlowWide, 
 	kRenderFxPulseFastWide, 
+
 	kRenderFxFadeSlow, 
 	kRenderFxFadeFast, 
 	kRenderFxSolidSlow, 
 	kRenderFxSolidFast, 	   
 	kRenderFxStrobeSlow, 
+
 	kRenderFxStrobeFast, 
 	kRenderFxStrobeFaster, 
 	kRenderFxFlickerSlow, 
 	kRenderFxFlickerFast,
 	kRenderFxNoDissipation,
-	kRenderFxDistort,			// Distort/scale/translate flicker
-	kRenderFxHologram,			// kRenderFxDistort + distance fade
-	kRenderFxExplode,			// Scale up really big!
-	kRenderFxGlowShell,			// Glowing Shell
-	kRenderFxClampMinScale,		// Keep this sprite from getting very small (SPRITES only!)
-	kRenderFxEnvRain,			// for environmental rendermode, make rain
-	kRenderFxEnvSnow,			//  "        "            "    , make snow
-	kRenderFxSpotlight,			// TEST CODE for experimental spotlight
-	kRenderFxRagdoll,			// HACKHACK: TEST CODE for signalling death of a ragdoll character
+
+	kRenderFxFadeOut,
+	kRenderFxFadeIn,
 	kRenderFxPulseFastWider,
+	kRenderFxGlowShell,			// Glowing Shell
+
 	kRenderFxMax
 };
 
@@ -360,6 +371,11 @@ enum Collision_Group_t
 
 	COLLISION_GROUP_NPC_ACTOR,		// Used so NPCs in scripts ignore the player.
 	COLLISION_GROUP_NPC_SCRIPTED,	// USed for NPCs in scripts that should not collide with each other
+	COLLISION_GROUP_PZ_CLIP,
+
+
+
+	COLLISION_GROUP_DEBRIS_BLOCK_PROJECTILE, // Only collides with bullets
 
 	LAST_SHARED_COLLISION_GROUP
 };
@@ -368,12 +384,25 @@ enum Collision_Group_t
 
 #define SOUND_NORMAL_CLIP_DIST	1000.0f
 
+//-----------------------------------------------------------------------------
+// Base light indices to avoid index collision
+//-----------------------------------------------------------------------------
+
+enum
+{
+	LIGHT_INDEX_TE_DYNAMIC = 0x10000000,
+	LIGHT_INDEX_PLAYER_BRIGHT = 0x20000000,
+	LIGHT_INDEX_MUZZLEFLASH = 0x40000000,
+	LIGHT_INDEX_LOW_PRIORITY = 0x64000000,
+};
+
 // How many networked area portals do we allow?
 #define MAX_AREA_STATE_BYTES		32
 #define MAX_AREA_PORTAL_STATE_BYTES 24
 
 // user message max payload size (note, this value is used by the engine, so MODs cannot change it)
-#define MAX_USER_MSG_DATA 255
+#define MAX_USER_MSG_BITS 12
+#define MAX_USER_MSG_DATA ( ( 1 << ( MAX_USER_MSG_BITS - 3 ) ) - 1 )
 #define MAX_ENTITY_MSG_DATA 255
 
 #define SOURCE_MT
@@ -383,6 +412,17 @@ typedef CThreadMutex CSourceMutex;
 #else
 class CThreadNullMutex;
 typedef CThreadNullMutex CSourceMutex;
+#endif
+
+#if defined( CLIENT_DLL )
+#define IsServerDll() false
+#define IsClientDll() true
+#elif defined( GAME_DLL )
+#define IsServerDll() true
+#define IsClientDll() false
+#else
+#define IsServerDll() false
+#define IsClientDll() false
 #endif
 
 #endif

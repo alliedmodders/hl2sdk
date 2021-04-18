@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright (c) 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Misc utility code.
 //
@@ -45,13 +45,13 @@ class IEntityFactory;
 
 #include "tier0/memdbgon.h"
 
-CBaseEntity *CreateEntityByName(const char *className, int iForceEdictIndex);
 
 // entity creation
 // creates an entity that has not been linked to a classname
 template< class T >
 T *_CreateEntityTemplate( T *newEnt, const char *className )
 {
+	MEM_ALLOC_CREDIT_("Entities");
 	newEnt = new T; // this is the only place 'new' should be used!
 	newEnt->PostConstructor( className );
 	return newEnt;
@@ -59,24 +59,6 @@ T *_CreateEntityTemplate( T *newEnt, const char *className )
 
 #include "tier0/memdbgoff.h"
 
-// creates an entity by name, and ensure it's correctness
-// does not spawn the entity
-// use the CREATE_ENTITY() macro which wraps this, instead of using it directly
-template< class T >
-T *_CreateEntity( T *newClass, const char *className )
-{
-	T *newEnt = dynamic_cast<T*>( CreateEntityByName(className, -1) );
-	if ( !newEnt )
-	{
-		Warning( "classname %s used to create wrong class type\n" );
-		Assert(0);
-	}
-
-	return newEnt;
-}
-
-#define CREATE_ENTITY( newClass, className ) _CreateEntity( (newClass*)NULL, className )
-#define CREATE_UNSAVED_ENTITY( newClass, className ) _CreateEntityTemplate( (newClass*)NULL, className )
 
 
 // This is the glue that hooks .MAP entity class names to our CPP classes
@@ -142,18 +124,28 @@ public:
 // Conversion among the three types of "entity", including identity-conversions.
 //
 extern CGlobalVars *gpGlobals;
-inline int	  ENTINDEX( edict_t *pEdict)			
+extern bool g_bIsLogging;
+
+inline int ENTINDEX( edict_t *pEdict )
 { 
-	return (int)(pEdict - gpGlobals->pEdicts);
+	if ( !pEdict ) 
+		return 0;
+	int edictIndex = pEdict - gpGlobals->pEdicts; 
+	Assert( edictIndex < MAX_EDICTS && edictIndex >= 0 );
+	return edictIndex;
 }
 
 int	  ENTINDEX( CBaseEntity *pEnt );
 
 inline edict_t* INDEXENT( int iEdictNum )		
-{ 
-	if (iEdictNum >= 0 && iEdictNum < gpGlobals->maxEntities)
+{
+	Assert(iEdictNum>=0 && iEdictNum < MAX_EDICTS);
+	if ( gpGlobals->pEdicts )
 	{
-		return (edict_t *)(gpGlobals->pEdicts + iEdictNum);
+		edict_t *pEdict = gpGlobals->pEdicts + iEdictNum;
+		if ( pEdict->IsFree() )
+			return NULL;
+		return pEdict;
 	}
 	return NULL;
 }
@@ -172,8 +164,6 @@ inline bool FNullEnt(const edict_t* pent)
 
 class CBaseEntity;
 class CBasePlayer;
-
-extern CGlobalVars *gpGlobals;
 
 // Misc useful
 inline bool FStrEq(const char *sz1, const char *sz2)
@@ -222,6 +212,23 @@ CBasePlayer* UTIL_GetLocalPlayer( void );
 // get the local player on a listen server
 CBasePlayer *UTIL_GetListenServerHost( void );
 
+// Convenience function so we don't have to make this check all over
+inline CBasePlayer * UTIL_GetLocalPlayerOrListenServerHost( void )
+{
+	if ( gpGlobals->maxClients > 1 )
+	{
+		if ( engine->IsDedicatedServer() )
+		{
+			return NULL;
+		}
+
+		return UTIL_GetListenServerHost();
+	}
+
+	return UTIL_GetLocalPlayer();
+}
+
+
 CBasePlayer* UTIL_PlayerByUserId( int userID );
 CBasePlayer* UTIL_PlayerByName( const char *name ); // not case sensitive
 
@@ -236,52 +243,26 @@ void		UTIL_GetPlayerConnectionInfo( int playerIndex, int& ping, int &packetloss 
 void		UTIL_SetClientVisibilityPVS( edict_t *pClient, const unsigned char *pvs, int pvssize );
 bool		UTIL_ClientPVSIsExpanded();
 
+
+
 edict_t		*UTIL_FindClientInPVS( edict_t *pEdict );
 edict_t		*UTIL_FindClientInVisibilityPVS( edict_t *pEdict );
+
+edict_t		*UTIL_FindClientInPVSGuts(edict_t *pEdict, unsigned char *pvs, unsigned pvssize );
 
 // This is a version which finds any clients whose PVS intersects the box
 CBaseEntity *UTIL_FindClientInPVS( const Vector &vecBoxMins, const Vector &vecBoxMaxs );
 
 CBaseEntity *UTIL_EntitiesInPVS( CBaseEntity *pPVSEntity, CBaseEntity *pStartingEntity );
 
-//-----------------------------------------------------------------------------
-// class CFlaggedEntitiesEnum
-//-----------------------------------------------------------------------------
-// enumerate entities that match a set of edict flags into a static array
-class CFlaggedEntitiesEnum : public IPartitionEnumerator
-{
-public:
-	CFlaggedEntitiesEnum( CBaseEntity **pList, int listMax, int flagMask );
-
-	// This gets called	by the enumeration methods with each element
-	// that passes the test.
-	virtual IterationRetval_t EnumElement( IHandleEntity *pHandleEntity );
-	
-	int GetCount() { return m_count; }
-	bool AddToList( CBaseEntity *pEntity );
-	
-private:
-	CBaseEntity		**m_pList;
-	int				m_listMax;
-	int				m_flagMask;
-	int				m_count;
-};
-
 // Pass in an array of pointers and an array size, it fills the array and returns the number inserted
 int			UTIL_EntitiesInBox( const Vector &mins, const Vector &maxs, CFlaggedEntitiesEnum *pEnum  );
-int			UTIL_EntitiesAlongRay( const Ray_t &ray, CFlaggedEntitiesEnum *pEnum  );
 int			UTIL_EntitiesInSphere( const Vector &center, float radius, CFlaggedEntitiesEnum *pEnum  );
 
 inline int UTIL_EntitiesInBox( CBaseEntity **pList, int listMax, const Vector &mins, const Vector &maxs, int flagMask )
 {
 	CFlaggedEntitiesEnum boxEnum( pList, listMax, flagMask );
 	return UTIL_EntitiesInBox( mins, maxs, &boxEnum );
-}
-
-inline int UTIL_EntitiesAlongRay( CBaseEntity **pList, int listMax, const Ray_t &ray, int flagMask )
-{
-	CFlaggedEntitiesEnum rayEnum( pList, listMax, flagMask );
-	return UTIL_EntitiesAlongRay( ray, &rayEnum );
 }
 
 inline int UTIL_EntitiesInSphere( CBaseEntity **pList, int listMax, const Vector &center, float radius, int flagMask )
@@ -327,9 +308,10 @@ bool		UTIL_CheckBottom( CBaseEntity *pEntity, ITraceFilter *pTraceFilter, float 
 
 void		UTIL_SetOrigin			( CBaseEntity *entity, const Vector &vecOrigin, bool bFireTriggers = false );
 void		UTIL_EmitAmbientSound	( int entindex, const Vector &vecOrigin, const char *samp, float vol, soundlevel_t soundlevel, int fFlags, int pitch, float soundtime = 0.0f, float *duration = NULL );
-void		UTIL_ParticleEffect		( const Vector &vecOrigin, const Vector &vecDirection, ULONG ulColor, ULONG ulCount );
-void		UTIL_ScreenShake		( const Vector &center, float amplitude, float frequency, float duration, float radius, ShakeCommand_t eCommand, bool bAirShake=false );
+void		UTIL_ParticleEffect		( const Vector &vecOrigin, const Vector &vecDirection, uint32 ulColor, int ulCount );
+void		UTIL_ScreenShake		( const Vector &center, float amplitude, float frequency, float duration, float radius, ShakeCommand_t eCommand, bool bAirShake = false, CUtlVector<CBasePlayer *> *ignore = NULL );
 void		UTIL_ScreenShakeObject	( CBaseEntity *pEnt, const Vector &center, float amplitude, float frequency, float duration, float radius, ShakeCommand_t eCommand, bool bAirShake=false );
+void		UTIL_ScreenTilt			( const Vector &center, const QAngle &tiltAngle, float duration, float radius, float tiltTime, ShakeCommand_t eCommand, bool bEaseInOut );
 void		UTIL_ViewPunch			( const Vector &center, QAngle angPunch, float radius, bool bInAir );
 void		UTIL_ShowMessage		( const char *pString, CBasePlayer *pPlayer );
 void		UTIL_ShowMessageAll		( const char *pString );
@@ -343,8 +325,9 @@ int			UTIL_EntityInSolid( CBaseEntity *ent );
 bool		UTIL_IsMasterTriggered	(string_t sMaster, CBaseEntity *pActivator);
 void		UTIL_BloodStream( const Vector &origin, const Vector &direction, int color, int amount );
 void		UTIL_BloodSpray( const Vector &pos, const Vector &dir, int color, int amount, int flags );
+void		UTIL_BloodSprayPrecache();
 Vector		UTIL_RandomBloodVector( void );
-void		UTIL_ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName = NULL );
+void		UTIL_ImpactTrace( trace_t *pTrace, int iDamageType, char *pCustomImpactName = NULL );
 void		UTIL_PlayerDecalTrace( trace_t *pTrace, int playernum );
 void		UTIL_Smoke( const Vector &origin, const float scale, const float framerate );
 void		UTIL_AxisStringToPointDir( Vector &start, Vector &dir, const char *pString );
@@ -466,7 +449,7 @@ void			UTIL_HudMessage( CBasePlayer *pToPlayer, const hudtextparms_t &textparms,
 void			UTIL_HudHintText( CBaseEntity *pEntity, const char *pMessage );
 
 // Writes message to console with timestamp and FragLog header.
-void			UTIL_LogPrintf( const char *fmt, ... );
+void			UTIL_LogPrintf( char *fmt, ... );
 
 // Sorta like FInViewCone, but for nonNPCs. 
 float UTIL_DotPoints ( const Vector &vecSrc, const Vector &vecCheck, const Vector &vecDir );
@@ -509,12 +492,11 @@ void DBG_AssertFunction(bool fExpr, const char* szExpr, const char* szFile, int 
 #define SF_BRUSH_ROTATE_BACKWARDS	2
 #define SF_BRUSH_ROTATE_Z_AXIS		4
 #define SF_BRUSH_ROTATE_X_AXIS		8
-#define SF_BRUSH_ROTATE_CLIENTSIDE	16
-
 
 #define SF_BRUSH_ROTATE_SMALLRADIUS	128
 #define SF_BRUSH_ROTATE_MEDIUMRADIUS 256
 #define SF_BRUSH_ROTATE_LARGERADIUS 512
+#define SF_BRUSH_ROTATE_CLIENTSIDE	1024
 
 #define PUSH_BLOCK_ONLY_X	1
 #define PUSH_BLOCK_ONLY_Y	2
@@ -621,7 +603,6 @@ extern void			*UTIL_FunctionFromName( datamap_t *pMap, const char *pName );
 
 int UTIL_GetCommandClientIndex( void );
 CBasePlayer *UTIL_GetCommandClient( void );
-bool UTIL_GetModDir( char *lpszTextOut, unsigned int nSize );
 
 AngularImpulse WorldToLocalRotation( const VMatrix &localToWorld, const Vector &worldAxis, float rotation );
 void UTIL_WorldToParentSpace( CBaseEntity *pEntity, Vector &vecPosition, QAngle &vecAngles );
@@ -630,6 +611,19 @@ void UTIL_ParentToWorldSpace( CBaseEntity *pEntity, Vector &vecPosition, QAngle 
 void UTIL_ParentToWorldSpace( CBaseEntity *pEntity, Vector &vecPosition, Quaternion &quat );
 
 bool UTIL_LoadAndSpawnEntitiesFromScript( CUtlVector <CBaseEntity*> &entities, const char *pScriptFile, const char *pBlock, bool bActivate = true );
+
+// HudMessagePanel helpers
+void UTIL_MessageTextAll( const char *text, Color color = Color( 0, 0, 0, 0 ) );	// Send a HudMessagePanel string to clients
+void UTIL_MessageText( CBasePlayer *player, const char *text, Color color = Color( 0, 0, 0, 0 ) );	// Send a HudMessagePanel string to a client
+void UTIL_ResetMessageTextAll( void );												// Reset clients' HudMessagePanel
+void UTIL_ResetMessageText( CBasePlayer *player );									// Reset a client's HudMessagePanel
+
+//--------------------------------------------------------------------------------------------------------
+/**
+ * Return true if ground is fairly level within the given radius around an entity
+ * Trace 4 vertical hull-quadrants and test their collisions and ground heights and normals
+ */
+bool UTIL_IsGroundLevel( float radius, const Vector &position, float hullHeight, int mask, const CBaseEntity *ignore, bool debugTraces = false );
 
 // Given a vector, clamps the scalar axes to MAX_COORD_FLOAT ranges from worldsize.h
 void UTIL_BoundToWorldSize( Vector *pVecPos );

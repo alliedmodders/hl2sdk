@@ -17,6 +17,16 @@ extern const char *s_ElementNames[MAX_ARRAY_ELEMENTS];
 class CSendPropExtra_UtlVector
 {
 public:
+	CSendPropExtra_UtlVector() :
+		m_DataTableProxyFn( NULL ),
+		m_ProxyFn( NULL ),
+		m_EnsureCapacityFn( NULL ),
+		m_ElementStride( 0 ),
+		m_Offset( 0 ),
+		m_nMaxElements( 0 )	
+	{
+	}
+
 	SendTableProxyFn m_DataTableProxyFn;	// If it's a datatable, then this is the proxy they specified.
 	SendVarProxyFn m_ProxyFn;				// If it's a non-datatable, then this is the proxy they specified.
 	EnsureCapacityFn m_EnsureCapacityFn;

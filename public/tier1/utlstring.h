@@ -125,6 +125,8 @@ public:
 
 	// Strips the trailing slash
 	void		StripTrailingSlash();
+	
+	void		ToLower();
 
 	CUtlString &operator=( const CUtlString &src );
 	CUtlString &operator=( const char *src );
@@ -140,6 +142,9 @@ public:
 	CUtlString &operator+=( char c );
 	CUtlString &operator+=( int rhs );
 	CUtlString &operator+=( double rhs );
+	
+	void		Append( const char *pchAddition )
+	{ this->operator+=(pchAddition); }
 
 	int Format( const char *pFormat, ... );
 
@@ -147,6 +152,15 @@ private:
 	CUtlBinaryBlock m_Storage;
 };
 
+inline void CUtlString::ToLower()
+{
+	if ( IsEmpty() )
+	{
+		return;
+	}
+
+	V_strlower( (char *)m_Storage.Get() );
+}
 
 //-----------------------------------------------------------------------------
 // Inline methods
@@ -156,5 +170,121 @@ inline bool CUtlString::IsEmpty() const
 	return Length() == 0;
 }
 
+template < typename T >
+class StringFuncs
+{
+public:
+	static T		*Duplicate( const T *pValue );
+	// Note that this function takes a character count, and does not guarantee null-termination.
+	static void		 Copy( T *out_pOut, const T *pIn, int iLengthInChars );
+	static int		 Compare( const T *pLhs, const T *pRhs );
+	static int		 CaselessCompare( const T *pLhs, const T *pRhs );
+	static int		 Length( const T *pValue );
+	static const T  *FindChar( const T *pStr, const T cSearch );
+	static const T	*EmptyString();
+	static const T	*NullDebugString();
+};
+
+template < >
+class StringFuncs<char>
+{
+public:
+	static char		  *Duplicate( const char *pValue ) { return strdup( pValue ); }
+	// Note that this function takes a character count, and does not guarantee null-termination.
+	static void		   Copy( OUT_CAP(iLengthInChars) char *out_pOut, const char *pIn, int iLengthInChars ) { strncpy( out_pOut, pIn, iLengthInChars ); }
+	static int		   Compare( const char *pLhs, const char *pRhs ) { return strcmp( pLhs, pRhs ); }
+	static int		   CaselessCompare( const char *pLhs, const char *pRhs ) { return Q_strcasecmp( pLhs, pRhs ); }
+	static int		   Length( const char *pValue ) { return (int)strlen( pValue ); }
+	static const char *FindChar( const char *pStr, const char cSearch ) { return strchr( pStr, cSearch ); }
+	static const char *EmptyString() { return ""; }
+	static const char *NullDebugString() { return "(null)"; }
+};
+
+template < >
+class StringFuncs<wchar_t>
+{
+public:
+	static wchar_t		 *Duplicate( const wchar_t *pValue ) { return wcsdup( pValue ); }
+	// Note that this function takes a character count, and does not guarantee null-termination.
+	static void			  Copy( OUT_CAP(iLengthInChars) wchar_t *out_pOut, const wchar_t  *pIn, int iLengthInChars ) { wcsncpy( out_pOut, pIn, iLengthInChars ); }
+	static int			  Compare( const wchar_t *pLhs, const wchar_t *pRhs ) { return wcscmp( pLhs, pRhs ); }
+	static int			  CaselessCompare( const wchar_t *pLhs, const wchar_t *pRhs ); // no implementation?
+	static int			  Length( const wchar_t *pValue ) { return (int)wcslen( pValue ); }
+	static const wchar_t *FindChar( const wchar_t *pStr, const wchar_t cSearch ) { return wcschr( pStr, cSearch ); }
+	static const wchar_t *EmptyString() { return L""; }
+	static const wchar_t *NullDebugString() { return L"(null)"; }
+};
+
+template < typename T = char >
+class CUtlConstStringBase
+{
+public:
+	CUtlConstStringBase() : m_pString( NULL ) {}
+	explicit CUtlConstStringBase( const T *pString ) : m_pString( NULL ) { Set( pString ); }
+	CUtlConstStringBase( const CUtlConstStringBase& src ) : m_pString( NULL ) { Set( src.m_pString ); }
+	~CUtlConstStringBase() { Set( NULL ); }
+
+	void Set( const T *pValue );
+	void Clear() { Set( NULL ); }
+
+	const T *Get() const { return m_pString ? m_pString : StringFuncs<T>::EmptyString(); }
+	operator const T*() const { return m_pString ? m_pString : StringFuncs<T>::EmptyString(); }
+
+	bool IsEmpty() const { return m_pString == NULL; } // Note: empty strings are never stored by Set
+
+	int Compare( const T *rhs ) const;
+
+	// Logical ops
+	bool operator<( const T *rhs ) const { return Compare( rhs ) < 0; }
+	bool operator==( const T *rhs ) const { return Compare( rhs ) == 0; }
+	bool operator!=( const T *rhs ) const { return Compare( rhs ) != 0; }
+	bool operator<( const CUtlConstStringBase &rhs ) const { return Compare( rhs.m_pString ) < 0; }
+	bool operator==( const CUtlConstStringBase &rhs ) const { return Compare( rhs.m_pString ) == 0; }
+	bool operator!=( const CUtlConstStringBase &rhs ) const { return Compare( rhs.m_pString ) != 0; }
+
+	// If these are not defined, CUtlConstString as rhs will auto-convert
+	// to const char* and do logical operations on the raw pointers. Ugh.
+	inline friend bool operator<( const T *lhs, const CUtlConstStringBase &rhs ) { return rhs.Compare( lhs ) > 0; }
+	inline friend bool operator==( const T *lhs, const CUtlConstStringBase &rhs ) { return rhs.Compare( lhs ) == 0; }
+	inline friend bool operator!=( const T *lhs, const CUtlConstStringBase &rhs ) { return rhs.Compare( lhs ) != 0; }
+
+	CUtlConstStringBase &operator=( const T *src ) { Set( src ); return *this; }
+	CUtlConstStringBase &operator=( const CUtlConstStringBase &src ) { Set( src.m_pString ); return *this; }
+
+	// Defining AltArgumentType_t is a hint to containers that they should
+	// implement Find/Insert/Remove functions that take const char* params.
+	typedef const T *AltArgumentType_t;
+
+protected:
+	const T *m_pString;
+};
+
+template < typename T >
+void CUtlConstStringBase<T>::Set( const T *pValue )
+{
+	if ( pValue != m_pString )
+	{
+		free( ( void* ) m_pString );
+		m_pString = pValue && pValue[0] ? StringFuncs<T>::Duplicate( pValue ) : NULL;
+	}
+}
+
+template < typename T >
+int CUtlConstStringBase<T>::Compare( const T *rhs ) const
+{
+	// Empty or null RHS?
+	if ( !rhs || !rhs[0] )
+		return m_pString ? 1 : 0;
+
+	// Empty *this, non-empty RHS?
+	if ( !m_pString )
+		return -1;
+
+	// Neither empty
+	return StringFuncs<T>::Compare( m_pString, rhs );
+}
+
+typedef	CUtlConstStringBase<char>		CUtlConstString;
+typedef	CUtlConstStringBase<wchar_t>	CUtlConstWideString;
 
 #endif // UTLSTRING_H

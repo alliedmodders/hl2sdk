@@ -27,6 +27,10 @@ enum
 	CHAN_STREAM		= 5,		// allocate stream channel from the static or dynamic area
 	CHAN_STATIC		= 6,		// allocate channel from the static area 
 	CHAN_VOICE_BASE	= 7,		// allocate channel for network voice data
+};
+
+enum
+{
 	CHAN_USER_BASE	= (CHAN_VOICE_BASE+128)		// Anything >= this number is allocated to game code.
 };
 
@@ -102,7 +106,7 @@ enum soundlevel_t
 
 
 #define ATTN_TO_SNDLVL( a ) (soundlevel_t)(int)((a) ? (50 + 20 / ((float)a)) : 0 )
-#define SNDLVL_TO_ATTN( a ) ((a > 50) ? (20.0f / (float)(a - 50)) : 4.0 )
+#define SNDLVL_TO_ATTN( a ) ( (a > 50) ? (20.0f / (float)(a - 50)) : ( (a == 0) ? (0.0f) : (4.0f) ) )
 
 // This is a limit due to network encoding.
 // It encodes attenuation * 64 in 8 bits, so the maximum is (255 / 64)

@@ -79,10 +79,12 @@ public:
 	SendVarProxyFn m_Int8ToInt32;
 	SendVarProxyFn m_Int16ToInt32;
 	SendVarProxyFn m_Int32ToInt32;
+	SendVarProxyFn m_Int64ToInt64;
 
 	SendVarProxyFn m_UInt8ToInt32;
 	SendVarProxyFn m_UInt16ToInt32;
 	SendVarProxyFn m_UInt32ToInt32;
+	SendVarProxyFn m_UInt64ToInt64;
 
 	SendVarProxyFn m_FloatToFloat;
 	SendVarProxyFn m_VectorToVector;
@@ -94,7 +96,6 @@ public:
 	CStandardSendProxies();
 	
 	SendTableProxyFn m_DataTableToDataTable;
-	SendTableProxyFn m_SendLocalDataTable;
 	CNonModifiedPointerProxy **m_ppNonModifiedPointerProxies;
 };
 
@@ -122,10 +123,12 @@ public:
 
 	// Clear all recipients and set only the specified one.
 	void	SetOnly( int iClient );
+	// Set all recipients, save for the specified on
+	void    ExcludeOnly( int iClient );
 
 public:
 	// Make sure we have enough room for the max possible player count
-	CBitVec< ABSOLUTE_PLAYER_LIMIT >	m_Bits;
+	CPlayerBitVec	m_Bits;
 };
 
 inline void CSendProxyRecipients::SetAllRecipients()
@@ -138,21 +141,6 @@ inline void CSendProxyRecipients::ClearAllRecipients()
 	m_Bits.ClearAll();
 }
 
-inline void CSendProxyRecipients::SetRecipient( int iClient )
-{
-	m_Bits.Set( iClient );
-}
-
-inline void	CSendProxyRecipients::ClearRecipient( int iClient )
-{
-	m_Bits.Clear( iClient );
-}
-
-inline void CSendProxyRecipients::SetOnly( int iClient )
-{
-	m_Bits.ClearAll();
-	m_Bits.Set( iClient );
-}
 
 
 
@@ -596,7 +584,6 @@ inline void SendTable::SetHasPropsEncodedAgainstTickcount( bool bState )
 #define SENDINFO_ARRAY(varName)				#varName, offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName), sizeof(((currentSendDTClass*)0)->varName[0])
 #define SENDINFO_ARRAY3(varName)			#varName, offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName), sizeof(((currentSendDTClass*)0)->varName[0]), sizeof(((currentSendDTClass*)0)->varName)/sizeof(((currentSendDTClass*)0)->varName[0])
 #define SENDINFO_ARRAYELEM(varName, i)		#varName "[" #i "]", offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName[i]), sizeof(((currentSendDTClass*)0)->varName[0])
-#define SENDINFO_ARRAYELEM2(varName, i)		#varName "[" #i "]", offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName) + offsetof(currentSendDTClass::MakeANetworkVar_##varName::NetworkVar_##varName, m_Value[i]), sizeof(((currentSendDTClass*)0)->varName[0])
 #define SENDINFO_NETWORKARRAYELEM(varName, i)#varName "[" #i "]", offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName.m_Value[i]), sizeof(((currentSendDTClass*)0)->varName.m_Value[0])
 
 // NOTE: Be VERY careful to specify any other vector elems for the same vector IN ORDER and 
@@ -604,14 +591,12 @@ inline void SendTable::SetHasPropsEncodedAgainstTickcount( bool bState )
 //
 // Note: this macro specifies a negative offset so the engine can detect it and setup m_pNext
 #define SENDINFO_VECTORELEM(varName, i)		#varName "[" #i "]", -(int)offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName.m_Value[i]), sizeof(((currentSendDTClass*)0)->varName.m_Value[0])
-#define SENDINFO_VECTORELEM2(varName, i, which)	#varName "[" #i "]", -(int)offsetof(currentSendDTClass::MakeANetworkVar_##varName, varName.m_Value.which), sizeof(((currentSendDTClass*)0)->varName.m_Value[0])
 
 #define SENDINFO_STRUCTELEM(varName)		#varName, offsetof(currentSendDTClass, varName), sizeof(((currentSendDTClass*)0)->varName.m_Value)
 #define SENDINFO_STRUCTARRAYELEM(varName, i)#varName "[" #i "]", offsetof(currentSendDTClass, varName.m_Value[i]), sizeof(((currentSendDTClass*)0)->varName.m_Value[0])
 
 // Use this when you're not using a CNetworkVar to represent the data you're sending.
 #define SENDINFO_NOCHECK(varName)						#varName, offsetof(currentSendDTClass, varName), sizeof(((currentSendDTClass*)0)->varName)
-#define SENDINFO_NOCHECK_VECTORELEM(varName, i, which)	#varName "[" #i "]", offsetof(currentSendDTClass, varName.which), sizeof(((currentSendDTClass*)0)->varName.which)
 #define SENDINFO_STRING_NOCHECK(varName)				#varName, offsetof(currentSendDTClass, varName)
 #define SENDINFO_DT(varName)							#varName, offsetof(currentSendDTClass, varName)
 #define SENDINFO_DT_NAME(varName, remoteVarName)		#remoteVarName, offsetof(currentSendDTClass, varName)
@@ -636,17 +621,16 @@ void SendProxy_QuaternionToQuaternion( const SendProp *pProp, const void *pStruc
 void SendProxy_Int8ToInt32		( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
 void SendProxy_Int16ToInt32		( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
 void SendProxy_Int32ToInt32		( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
+void SendProxy_Int64ToInt64		( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
+void SendProxy_Color32ToInt32	( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
 void SendProxy_StringToString	( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
+
 
 // pData is the address of a data table.
 void* SendProxy_DataTableToDataTable( const SendProp *pProp, const void *pStructBase, const void *pData, CSendProxyRecipients *pRecipients, int objectID );
 
 // pData is the address of a pointer to a data table.
 void* SendProxy_DataTablePtrToDataTable( const SendProp *pProp, const void *pStructBase, const void *pData, CSendProxyRecipients *pRecipients, int objectID );
-
-// Used on player entities - only sends the data to the local player (objectID-1).
-void* SendProxy_SendLocalDataTable( const SendProp *pProp, const void *pStruct, const void *pVarData, CSendProxyRecipients *pRecipients, int objectID );
-
 
 // ------------------------------------------------------------------------ //
 // Use these functions to setup your data tables.
@@ -763,6 +747,33 @@ SendProp SendPropArray3(
 	SendTableProxyFn varProxy=SendProxy_DataTableToDataTable,
 	byte priority = SENDPROP_DEFAULT_PRIORITY
 	);
+
+
+
+//
+// Only use this if you change the array infrequently and you usually change all the elements
+// when you do change it.
+//
+// The array data is all sent together, so even if you only change one element,
+// it'll send all the elements.
+//
+// The upside is that it doesn't need extra bits to encode indices of all the variables.
+//
+#define SendPropArray_AllAtOnce( arrayName, propDefinition ) \
+	SendPropArray( propDefinition, arrayName )
+
+
+//
+// This is what you should use for most arrays. It will generate a separate SendProp for each array element
+// in your array. That way, if you change one element of the array, it will only transmit that array element
+// and not the whole array.
+//
+// Example: 
+//
+//     GenerateSendPropsForArrayElements( m_Array, SendPropInt( SENDINFO_ARRAY( m_Array ) )
+//
+#define SendPropArray_UniqueElements( arrayName, propDefinition ) \
+	SendPropArray3( SENDINFO_ARRAY3( arrayName ), propDefinition )
 
 
 

@@ -48,6 +48,10 @@ public:
 	virtual void		UpdateStatus(float *fps, int *nActive, int *nMaxPlayers, char *pszMap, int maxlen ) = 0;
 	// Get current Hostname to display in the hlds UI (console window title bar, e.g. )
 	virtual void		UpdateHostname(char *pszHostname, int maxlen) = 0;
+
+	// for the multi-processed fork() server, set the server instance number (1..)
+	virtual void        SetSubProcessID( int nID, int nSocketHandle ) = 0;
+
 };
 
 #endif // ENGINE_HLDS_API_H

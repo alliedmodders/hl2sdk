@@ -30,6 +30,15 @@ class CUtlBuffer;
 class Color;
 typedef void * FileHandle_t;
 
+#define FOR_EACH_SUBKEY( kvRoot, kvSubKey ) \
+	for ( KeyValues * kvSubKey = kvRoot->GetFirstSubKey(); kvSubKey != NULL; kvSubKey = kvSubKey->GetNextKey() )
+
+#define FOR_EACH_TRUE_SUBKEY( kvRoot, kvSubKey ) \
+	for ( KeyValues * kvSubKey = kvRoot->GetFirstTrueSubKey(); kvSubKey != NULL; kvSubKey = kvSubKey->GetNextTrueSubKey() )
+
+#define FOR_EACH_VALUE( kvRoot, kvValue ) \
+	for ( KeyValues * kvValue = kvRoot->GetFirstValue(); kvValue != NULL; kvValue = kvValue->GetNextValue() )
+		
 //-----------------------------------------------------------------------------
 // Purpose: Simple recursive data access class
 //			Used in vgui for message parameters and resource files
@@ -146,6 +155,7 @@ public:
 	const wchar_t *GetWString( const char *keyName = NULL, const wchar_t *defaultValue = L"" );
 	void *GetPtr( const char *keyName = NULL, void *defaultValue = (void*)0 );
 	Color GetColor( const char *keyName = NULL /* default value is all black */);
+	bool GetBool( const char *keyName = NULL, bool defaultValue = false ) { return GetInt( keyName, defaultValue ? 1 : 0 ) ? true : false; }
 	bool  IsEmpty(const char *keyName = NULL);
 
 	// Data access
@@ -155,6 +165,7 @@ public:
 	const wchar_t *GetWString( int keySymbol, const wchar_t *defaultValue = L"" );
 	void *GetPtr( int keySymbol, void *defaultValue = (void*)0 );
 	Color GetColor( int keySymbol /* default value is all black */);
+	bool GetBool( int keySymbol, bool defaultValue = false ) { return GetInt( keySymbol, defaultValue ? 1 : 0 ) ? true : false; }
 	bool  IsEmpty( int keySymbol );
 
 	// Key writing
@@ -353,5 +364,14 @@ inline bool  KeyValues::IsEmpty( int keySymbol )
 }
 
 bool EvaluateConditional( const char *str );
+
+class CUtlSortVectorKeyValuesByName
+{
+public:
+	bool Less( const KeyValues* lhs, const KeyValues* rhs, void * )
+	{
+		return Q_stricmp( lhs->GetName(), rhs->GetName() ) < 0;
+	}
+};
 
 #endif // KEYVALUES_H

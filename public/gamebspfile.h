@@ -34,7 +34,8 @@ enum
 {
 	GAMELUMP_DETAIL_PROPS_VERSION = 4,
 	GAMELUMP_DETAIL_PROP_LIGHTING_VERSION = 0,
-	GAMELUMP_STATIC_PROPS_VERSION = 6,
+	GAMELUMP_STATIC_PROPS_MIN_VERSION = 4,
+	GAMELUMP_STATIC_PROPS_VERSION = 9,
 	GAMELUMP_STATIC_PROP_LIGHTING_VERSION = 0,
 	GAMELUMP_DETAIL_PROP_LIGHTING_HDR_VERSION = 0,
 };
@@ -130,7 +131,7 @@ enum
 	// These are set in WC
 	STATIC_PROP_IGNORE_NORMALS	= 0x8,
 	STATIC_PROP_NO_SHADOW	= 0x10,
-	STATIC_PROP_SCREEN_SPACE_FADE	= 0x20,
+	STATIC_PROP_UNUSED		= 0x20,
 
 	STATIC_PROP_NO_PER_VERTEX_LIGHTING = 0x40,				// in vrad, compute lighting at
 															// lighting origin, not for each vertex
@@ -138,6 +139,11 @@ enum
 	STATIC_PROP_NO_SELF_SHADOWING = 0x80,					// disable self shadowing in vrad
 
 	STATIC_PROP_WC_MASK		= 0xd8,							// all flags settable in hammer (?)
+};
+
+enum
+{
+	STATIC_PROP_SCREEN_SPACE_FADE_OBSOLETE	= 0x20,	// only keeping these here to be able to report errors
 };
 
 struct StaticPropDictLump_t
@@ -181,7 +187,7 @@ struct StaticPropLumpV5_t
 //	int				m_Lighting;			// index into the GAMELUMP_STATIC_PROP_LIGHTING lump
 };
 
-struct StaticPropLump_t
+struct StaticPropLumpV6_t
 {
 	DECLARE_BYTESWAP_DATADESC();
 	Vector			m_Origin;
@@ -199,6 +205,74 @@ struct StaticPropLump_t
 	unsigned short	m_nMinDXLevel;
 	unsigned short	m_nMaxDXLevel;
 	//	int				m_Lighting;			// index into the GAMELUMP_STATIC_PROP_LIGHTING lump
+};
+
+struct StaticPropLumpV7_t
+{
+	DECLARE_BYTESWAP_DATADESC();
+	Vector			m_Origin;
+	QAngle			m_Angles;
+	unsigned short	m_PropType;
+	unsigned short	m_FirstLeaf;
+	unsigned short	m_LeafCount;
+	unsigned char	m_Solid;
+	unsigned char	m_Flags;
+	int				m_Skin;
+	float			m_FadeMinDist;
+	float			m_FadeMaxDist;
+	Vector			m_LightingOrigin;
+	float			m_flForcedFadeScale;
+	unsigned short	m_nMinDXLevel;
+	unsigned short	m_nMaxDXLevel;
+	//	int				m_Lighting;			// index into the GAMELUMP_STATIC_PROP_LIGHTING lump
+	color32			m_DiffuseModulation;	// per instance color and alpha modulation
+};
+
+struct StaticPropLumpV8_t
+{
+	DECLARE_BYTESWAP_DATADESC();
+	Vector			m_Origin;
+	QAngle			m_Angles;
+	unsigned short	m_PropType;
+	unsigned short	m_FirstLeaf;
+	unsigned short	m_LeafCount;
+	unsigned char	m_Solid;
+	unsigned char	m_Flags;
+	int				m_Skin;
+	float			m_FadeMinDist;
+	float			m_FadeMaxDist;
+	Vector			m_LightingOrigin;
+	float			m_flForcedFadeScale;
+	unsigned char	m_nMinCPULevel;
+	unsigned char	m_nMaxCPULevel;
+	unsigned char	m_nMinGPULevel;
+	unsigned char	m_nMaxGPULevel;
+	//	int				m_Lighting;			// index into the GAMELUMP_STATIC_PROP_LIGHTING lump
+	color32			m_DiffuseModulation;	// per instance color and alpha modulation
+};
+
+struct StaticPropLump_t
+{
+	DECLARE_BYTESWAP_DATADESC();
+	Vector			m_Origin;
+	QAngle			m_Angles;
+	unsigned short	m_PropType;
+	unsigned short	m_FirstLeaf;
+	unsigned short	m_LeafCount;
+	unsigned char	m_Solid;
+	unsigned char	m_Flags;
+	int				m_Skin;
+	float			m_FadeMinDist;
+	float			m_FadeMaxDist;
+	Vector			m_LightingOrigin;
+	float			m_flForcedFadeScale;
+	unsigned char	m_nMinCPULevel;
+	unsigned char	m_nMaxCPULevel;
+	unsigned char	m_nMinGPULevel;
+	unsigned char	m_nMaxGPULevel;
+	//	int				m_Lighting;			// index into the GAMELUMP_STATIC_PROP_LIGHTING lump
+	color32			m_DiffuseModulation;	// per instance color and alpha modulation
+	bool			m_bDisableX360;
 };
 
 struct StaticPropLeafLump_t

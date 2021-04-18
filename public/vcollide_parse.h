@@ -15,11 +15,12 @@
 
 struct solid_t
 {
-	int		index;
 	char	name[512];
 	char	parent[512];
 	char	surfaceprop[512];
 	Vector	massCenterOverride;
+	int		index;
+	int		contents;
 	objectparams_t params;
 };
 
@@ -35,6 +36,26 @@ struct fluid_t
 	{
 		index = src.index;
 	}
+};
+
+struct ragdollcollisionrules_t
+{
+	void Defaults( IPhysics *pPhysics, IPhysicsCollisionSet *pSetIn )
+	{
+		pCollisionSet = pSetIn;
+		bSelfCollisions = true;
+	}
+	int	   bSelfCollisions;
+	IPhysicsCollisionSet *pCollisionSet;
+};
+
+struct ragdollanimatedfriction_t
+{
+	float minFriction;
+	float maxFriction;
+	float timeIn;
+	float timeOut;
+	float timeHold;
 };
 
 //-----------------------------------------------------------------------------
@@ -63,6 +84,8 @@ public:
 	virtual void		ParseCustom( void *pCustom, IVPhysicsKeyHandler *unknownKeyHandler ) = 0;
 	virtual void		ParseVehicle( vehicleparams_t *pVehicle, IVPhysicsKeyHandler *unknownKeyHandler ) = 0;
 	virtual void		SkipBlock( void ) = 0;
+	virtual void		ParseCollisionRules( ragdollcollisionrules_t *pRules, IVPhysicsKeyHandler *unknownKeyHandler ) = 0;
+	virtual void		ParseRagdollAnimatedFriction( ragdollanimatedfriction_t *pFriction, IVPhysicsKeyHandler *unknownKeyHandler	) = 0;
 };
 
 #endif // VCOLLIDE_PARSE_H

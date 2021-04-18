@@ -9,6 +9,7 @@
 #include <mathlib/lightdesc.h>
 #include <assert.h>
 #include <tier1/utlvector.h>
+#include <tier1/utlbuffer.h>
 #include <mathlib/mathlib.h>
 #include <bspfile.h>
 
@@ -120,7 +121,10 @@ struct CacheOptimizedTriangle
 	                                                        // computing intersections.
 
 	int ClassifyAgainstAxisSplit(int split_plane, float split_value); // PLANECHECK_xxx below
-	
+
+	// Debug - take a triangle that has been converted to intersection format and extract the vertices
+	// from by intersecting the planes
+	void ExtractVerticesFromIntersectionFormat( Vector &v0, Vector &v1, Vector &v2 ) const;
 };
 
 #define PLANECHECK_POSITIVE 1
@@ -203,7 +207,7 @@ struct RayTracingSingleResult
 struct RayTracingResult
 {
 	FourVectors surface_normal;								// surface normal at intersection
-	ALIGN16 int32 HitIds[4];								// -1=no hit. otherwise, triangle index
+	ALIGN16 int32 HitIds[4] ALIGN16_POST;								// -1=no hit. otherwise, triangle index
 	fltx4 HitDistance;										// distance to intersection
 };
 
@@ -252,6 +256,16 @@ public:
 	virtual bool VisitTriangle_ShouldContinue( const TriIntersectData_t &triangle, const FourRays &rays, fltx4 *hitMask, fltx4 *b0, fltx4 *b1, fltx4 *b2, int32 hitID ) = 0;
 };
 
+enum RTECullMode_t
+{
+	RTE_CULL_NONE = 0,
+	RTE_CULL_FRONT,
+	RTE_CULL_BACK
+};
+
+// serialization flag bits and defines
+#define RT_ENV_SERIALIZE_COLORS 1
+
 class RayTracingEnvironment
 {
 public:
@@ -274,6 +288,12 @@ public:
 		Flags=0;
 	}
 
+#if !( defined ( _DEBUG ) && defined ( HAMMER_RAYTRACE ) )
+	inline void* operator new( size_t size ) { MEM_ALLOC_CREDIT_( "RayTracingEnvironment" ); return MemAlloc_AllocAligned( size, 16 ); }
+	inline void* operator new( size_t size, int nBlockUse, const char *pFileName, int nLine ) { MEM_ALLOC_CREDIT_( "RayTracingEnvironment" ); return MemAlloc_AllocAligned( size, 16 ); }
+	inline void  operator delete( void* p ) { MemAlloc_FreeAligned( p ); }
+	inline void  operator delete( void* p, int nBlockUse, const char *pFileName, int nLine ) { MemAlloc_FreeAligned( p ); }
+#endif
 
 	// call AddTriangle to set up the world
 	void AddTriangle(int32 id, const Vector &v1, const Vector &v2, const Vector &v3,
@@ -296,18 +316,23 @@ public:
 	// SetupAccelerationStructure to prepare for tracing
 	void SetupAccelerationStructure(void);
 
-
 	// lowest level intersection routine - fire 4 rays through the scene. all 4 rays must pass the
 	// Check() function, and t extents must be initialized. skipid can be set to exclude a
 	// particular id (such as the origin surface). This function finds the closest intersection.
+	template <RTECullMode_t cullMode>
 	void Trace4Rays(const FourRays &rays, fltx4 TMin, fltx4 TMax,int DirectionSignMask,
 					RayTracingResult *rslt_out,
-					int32 skip_id=-1, ITransparentTriangleCallback *pCallback = NULL);
+					int32 skip_id=-1, ITransparentTriangleCallback *pCallback = NULL );
+
+	// wrapper for the low level trace4 rays routine
+	void Trace4Rays(const FourRays &rays, fltx4 TMin, fltx4 TMax,int DirectionSignMask,
+					RayTracingResult *rslt_out,
+					int32 skip_id=-1, ITransparentTriangleCallback *pCallback = NULL, RTECullMode_t cullMode = RTE_CULL_NONE );
 
 	// higher level intersection routine that handles computing the mask and handling rays which do not match in direciton sign
 	void Trace4Rays(const FourRays &rays, fltx4 TMin, fltx4 TMax,
 					RayTracingResult *rslt_out,
-					int32 skip_id=-1, ITransparentTriangleCallback *pCallback = NULL);
+					int32 skip_id=-1, ITransparentTriangleCallback *pCallback = NULL, RTECullMode_t cullMode = RTE_CULL_NONE );
 
 	// compute virtual light sources to model inter-reflection
 	void ComputeVirtualLightSources(void);
@@ -332,13 +357,14 @@ public:
 	/// the rays by direction, tracing them 4 at a time, and de-interleaving the results.
 
 	void AddToRayStream(RayStream &s,
-						Vector const &start,Vector const &end,RayTracingSingleResult *rslt_out);
+						Vector const &start,Vector const &end,RayTracingSingleResult *rslt_out, 
+						RTECullMode_t cullMode = RTE_CULL_NONE);
 
-	inline void RayTracingEnvironment::FlushStreamEntry(RayStream &s,int msk);
+	inline void FlushStreamEntry(RayStream &s, int msk, RTECullMode_t cullMode = RTE_CULL_NONE);
 
 	/// call this when you are done. handles all cleanup. After this is called, all rslt ptrs
 	/// previously passed to AddToRaySteam will have been filled in.
-	void FinishRayStream(RayStream &s);
+	void FinishRayStream(RayStream &s, RTECullMode_t cullMode = RTE_CULL_NONE);
 
 
 	int MakeLeafNode(int first_tri, int last_tri);
@@ -381,6 +407,11 @@ public:
 	{
 		return TriangleColors[triID];
 	}
+
+	// (un)serialization
+	size_t GetSerializationNumBytes( uint32 nSerializationFlags = 0 ) const;
+	void Serialize( CUtlBuffer &outbuf, uint32 nSerializationFlags = 0 ) const;
+	void UnSerialize( CUtlBuffer &inbuf );
 
 };
 

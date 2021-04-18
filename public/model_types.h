@@ -1,11 +1,11 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
 // $Workfile:     $
 // $Date:         $
 // $NoKeywords: $
-//=============================================================================//
+//===========================================================================//
 #if !defined( MODEL_TYPES_H )
 #define MODEL_TYPES_H
 #ifdef _WIN32
@@ -22,6 +22,9 @@
 #define STUDIO_ITEM_BLINK				0x00000040
 #define STUDIO_NOSHADOWS				0x00000080
 #define STUDIO_WIREFRAME_VCOLLIDE		0x00000100
+#define STUDIO_NOLIGHTING_OR_CUBEMAP	0x00000200
+#define STUDIO_SKIP_FLEXES				0x00000400
+#define STUDIO_DONOTMODIFYSTENCILSTATE	0x00000800	// TERROR
 
 // Not a studio flag, but used to flag model as a non-sorting brush model
 #define STUDIO_TRANSPARENCY				0x80000000
@@ -29,6 +32,10 @@
 // Not a studio flag, but used to flag model as using shadow depth material override
 #define STUDIO_SHADOWDEPTHTEXTURE		0x40000000
 
+// Not a studio flag, but used to flag model as doing custom rendering into shadow texture
+#define STUDIO_SHADOWTEXTURE			0x20000000
+
+#define STUDIO_SKIP_DECALS				0x10000000
 
 enum modtype_t
 {

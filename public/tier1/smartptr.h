@@ -66,10 +66,10 @@ class CPlainAutoPtr
 {
 public:
 	explicit CPlainAutoPtr( T *p = NULL )		: m_p( p ) {}
-	~CPlainAutoPtr( void )						{ Delete(); }
+	~CPlainAutoPtr( void )						{ this->Delete(); }
 
 public:
-	void Delete( void )							{ delete Detach(); }
+	void Delete( void )							{ delete this->Detach(); }
 
 private:	// Disallow copying, use Detach() instead to avoid ambiguity
 	CPlainAutoPtr( CPlainAutoPtr const &x );
@@ -82,8 +82,8 @@ public:
 public:
 	bool IsValid( void ) const					{ return m_p != NULL; }
 	T * Get( void ) const						{ return m_p; }
-	T * operator -> ( void ) const				{ return Get(); }
-	T & operator *  ( void ) const				{ return *Get(); }
+	T * operator -> ( void ) const				{ return this->Get(); }
+	T & operator *  ( void ) const				{ return *this->Get(); }
 
 private:
 	T * m_p;
@@ -107,14 +107,14 @@ template < typename T >
 class CArrayAutoPtr : public CPlainAutoPtr < T > // Warning: no polymorphic destructor (delete on base class will be a mistake)
 {
 public:
-	explicit CArrayAutoPtr( T *p = NULL )		{ Attach( p ); }
-	~CArrayAutoPtr( void )						{ Delete(); }
+	explicit CArrayAutoPtr( T *p = NULL )		{ this->Attach( p ); }
+	~CArrayAutoPtr( void )						{ this->Delete(); }
 
 public:
-	void Delete( void )							{ delete [] Detach(); }
+	void Delete( void )							{ delete [] this->Detach(); }
 
 public:
-	T & operator [] ( int k ) const				{ return Get()[ k ]; }
+	T & operator [] ( int k ) const				{ return this->Get()[ k ]; }
 };
 
 

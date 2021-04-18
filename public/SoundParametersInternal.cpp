@@ -11,8 +11,9 @@
 #if !defined(_STATIC_LINKED) || defined(SOUNDEMITTERSYSTEM_DLL)
 
 #include "SoundEmitterSystem/isoundemittersystembase.h"
-#include "interval.h"
+#include "tier2/interval.h"
 #include "soundchars.h"
+#include "KeyValues.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -339,29 +340,42 @@ CSoundParametersInternal::CSoundParametersInternal()
 	had_missing_wave_files = false;
 	uses_gender_token = false;
 
+	// TERROR:
+	m_pGameData = NULL;
+
 }
 
 CSoundParametersInternal::CSoundParametersInternal( const CSoundParametersInternal& src )
 {
 	m_pSoundNames = NULL;
 	m_pConvertedNames = NULL;
+	// TERROR:
+	m_pGameData = NULL;
+		// TERROR:
+	m_pGameData = NULL;
+
 	CopyFrom( src );
 }
 
 CSoundParametersInternal::~CSoundParametersInternal()
 {
 	if ( m_nSoundNames > 1 )
-		delete m_pSoundNames;
+		free(m_pSoundNames );
 	if ( m_nConvertedNames > 1 )
-		delete m_pConvertedNames;
+		free( m_pConvertedNames);
+
+	m_pConvertedNames = NULL;
+	m_pSoundNames = NULL;
+	m_nSoundNames = 0;
+	m_nConvertedNames = 0;
 }
 
 void CSoundParametersInternal::CopyFrom( const CSoundParametersInternal& src )
 {
 	if ( m_nSoundNames > 1 )
-		delete m_pSoundNames;
+		free(m_pSoundNames);
 	if ( m_nConvertedNames > 1 )
-		delete m_pConvertedNames;
+		free(m_pConvertedNames);
 
 	channel = src.channel;
 	volume = src.volume;
@@ -375,7 +389,7 @@ void CSoundParametersInternal::CopyFrom( const CSoundParametersInternal& src )
 	{
 		if ( m_nSoundNames > 1 )
 		{
-			m_pSoundNames = new SoundFile[m_nSoundNames];
+			m_pSoundNames = (SoundFile*)malloc( sizeof(SoundFile)*m_nSoundNames);
 			memcpy( m_pSoundNames, src.m_pSoundNames, m_nSoundNames * sizeof(SoundFile) );
 		}
 		else
@@ -393,7 +407,7 @@ void CSoundParametersInternal::CopyFrom( const CSoundParametersInternal& src )
 	{
 		if ( m_nConvertedNames > 1 )
 		{
-			m_pConvertedNames = new SoundFile[m_nConvertedNames];
+			m_pConvertedNames = (SoundFile*)malloc( sizeof(SoundFile)*m_nConvertedNames);
 			memcpy( m_pConvertedNames, src.m_pConvertedNames, m_nConvertedNames * sizeof(SoundFile) );
 		}
 		else

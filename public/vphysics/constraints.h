@@ -287,6 +287,14 @@ struct constraint_lengthparams_t
 		minLength = rigid ? totalLength : 0;
 	}
 
+	void Init( IPhysicsObject *pRef, IPhysicsObject *pAttached, float flLength, bool rigid = false )
+	{
+		objectPosition[0] = vec3_origin;
+		objectPosition[1] = vec3_origin;
+		totalLength = flLength;
+		minLength = rigid ? totalLength : 0;
+	}
+
 	inline void Defaults()
 	{
 		constraint.Defaults();

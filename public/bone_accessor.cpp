@@ -7,6 +7,9 @@
 #include "cbase.h"
 #include "bone_accessor.h"
 
+// NOTE: This has to be the last file included!
+#include "tier0/memdbgon.h"
+
 
 #if defined( CLIENT_DLL ) && defined( _DEBUG )
 

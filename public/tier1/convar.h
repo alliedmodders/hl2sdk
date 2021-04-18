@@ -68,6 +68,7 @@ void ConVar_PublishToVXConsole();
 // Called when a ConCommand needs to execute
 //-----------------------------------------------------------------------------
 typedef void ( *FnCommandCallbackV1_t )( void );
+typedef void ( *FnCommandCallbackVoid_t )( void );
 typedef void ( *FnCommandCallback_t )( const CCommand &command );
 
 #define COMMAND_COMPLETION_MAXITEMS		64

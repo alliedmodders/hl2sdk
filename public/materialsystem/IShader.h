@@ -1,10 +1,10 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
 // $NoKeywords: $
 //
-//=============================================================================//
+//===========================================================================//
 
 #ifndef ISHADER_H
 #define ISHADER_H
@@ -26,6 +26,7 @@ class IShaderShadow;
 class IShaderDynamicAPI;
 class IShaderInit;
 class CBasePerMaterialContextData;
+
 
 //-----------------------------------------------------------------------------
 // Shader flags
@@ -58,6 +59,44 @@ struct ShaderParamInfo_t
 };
 
 
+
+//-----------------------------------------------------------------------------
+// shaders can keep per material data in classes descended from this
+//-----------------------------------------------------------------------------
+class CBasePerMaterialContextData								
+{
+public:
+	uint32 m_nVarChangeID;
+	bool m_bMaterialVarsChanged;							// set by mat system when material vars change. shader should rehtink and then clear the var
+
+	FORCEINLINE CBasePerMaterialContextData( void )
+	{
+		m_bMaterialVarsChanged = true;
+		m_nVarChangeID = 0xffffffff;
+	}
+
+	// virtual destructor so that derived classes can have their own data to be cleaned up on
+	// delete of material
+	virtual ~CBasePerMaterialContextData( void )
+	{
+	}
+};
+
+
+//-----------------------------------------------------------------------------
+// shaders can keep per instance data in classes descended from this
+//-----------------------------------------------------------------------------
+class CBasePerInstanceContextData
+{
+public:
+	// virtual destructor so that derived classes can have their own data
+	// to be cleaned up on delete of material
+	virtual ~CBasePerInstanceContextData( void )
+	{
+	}
+};
+
+
 //-----------------------------------------------------------------------------
 // Standard vertex shader constants
 //-----------------------------------------------------------------------------
@@ -70,7 +109,7 @@ enum
 	VERTEX_SHADER_LIGHT_INDEX = 3,
 	VERTEX_SHADER_MODELVIEWPROJ = 4,
 	VERTEX_SHADER_VIEWPROJ = 8,
-	VERTEX_SHADER_UNUSED = 12,
+	VERTEX_SHADER_SHADER_SPECIFIC_CONST_12 = 12,
 	VERTEX_SHADER_FLEXSCALE = 13,
 	VERTEX_SHADER_SHADER_SPECIFIC_CONST_10 = 14,
 	VERTEX_SHADER_SHADER_SPECIFIC_CONST_11 = 15,
@@ -91,11 +130,15 @@ enum
 	VERTEX_SHADER_SHADER_SPECIFIC_CONST_8 = 56,
 	VERTEX_SHADER_SHADER_SPECIFIC_CONST_9 = 57,
 	VERTEX_SHADER_MODEL = 58,
+	//
+	// We reserve up through 217 for the 53 bones supported on DX9
+	//
 
 	VERTEX_SHADER_FLEX_WEIGHTS = 1024,
 	VERTEX_SHADER_MAX_FLEX_WEIGHT_COUNT = 512,
 };
 
+#define VERTEX_SHADER_BONE_TRANSFORM( k )	( VERTEX_SHADER_MODEL + 3 * (k) )
 
 //-----------------------------------------------------------------------------
 // Standard vertex shader constants
@@ -115,6 +158,9 @@ enum
 	VERTEX_SHADER_SHADER_SPECIFIC_BOOL_CONST_6 = 10,
 	VERTEX_SHADER_SHADER_SPECIFIC_BOOL_CONST_7 = 11,
 };
+
+
+//-----------------------------------------------------------------------------
 // The public methods exposed by each shader
 //-----------------------------------------------------------------------------
 abstract_class IShader
@@ -127,18 +173,15 @@ public:
 	virtual char const* GetFallbackShader( IMaterialVar** params ) const = 0;
 
 	// Shader parameters
-	virtual int GetNumParams( ) const = 0;
+	virtual int GetParamCount( ) const = 0;
+	virtual const ShaderParamInfo_t& GetParamInfo( int paramIndex ) const = 0;
 
 	// These functions must be implemented by the shader
 	virtual void InitShaderParams( IMaterialVar** ppParams, const char *pMaterialName ) = 0;
 	virtual void InitShaderInstance( IMaterialVar** ppParams, IShaderInit *pShaderInit, const char *pMaterialName, const char *pTextureGroupName ) = 0;
 	virtual void DrawElements( IMaterialVar **params, int nModulationFlags,
-		IShaderShadow* pShaderShadow, IShaderDynamicAPI* pShaderAPI, VertexCompressionType_t vertexCompression, CBasePerMaterialContextData **pContextDataPtr ) = 0;
-
-	virtual char const* GetParamName( int paramIndex ) const = 0;
-	virtual char const* GetParamHelp( int paramIndex ) const = 0;
-	virtual ShaderParamType_t GetParamType( int paramIndex ) const = 0;
-	virtual char const* GetParamDefault( int paramIndex ) const = 0;
+		IShaderShadow* pShaderShadow, IShaderDynamicAPI* pShaderAPI, 
+		VertexCompressionType_t vertexCompression, CBasePerMaterialContextData **pContextDataPtr, CBasePerInstanceContextData** pInstanceDataPtr ) = 0;
 
 	// FIXME: Figure out a better way to do this?
 	virtual int ComputeModulationFlags( IMaterialVar** params, IShaderDynamicAPI* pShaderAPI ) = 0;
@@ -146,12 +189,7 @@ public:
 	virtual bool NeedsFullFrameBufferTexture( IMaterialVar **params, bool bCheckSpecificToThisFrame ) const = 0;
 	virtual bool IsTranslucent( IMaterialVar **params ) const = 0;
 
-	virtual int GetParamFlags( int paramIndex ) const = 0;
-
 	virtual int GetFlags() const = 0;
-
-	// FIXME: Remove GetParamName, etc. above
-//	virtual const ShaderParamInfo_t& GetParamInfo( int paramIndex ) const = 0;
 };
 
 
@@ -173,7 +211,7 @@ enum PrecompiledShaderType_t
 enum
 {
 	// runtime flags
-	SHADER_DYNAMIC_COMPILE_IS_HLSL = 0x1,
+	SHADER_IS_ASM = 0x1,
 	SHADER_FAILED_LOAD = 0x2,
 };
 

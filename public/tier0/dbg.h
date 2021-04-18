@@ -47,6 +47,27 @@
 #endif // BUILD_AS_DLL
 
 
+enum SpewType_t
+{
+	SPEW_MESSAGE = 0,
+	SPEW_WARNING,
+	SPEW_ASSERT,
+	SPEW_ERROR,
+	SPEW_LOG,
+
+	SPEW_TYPE_COUNT
+};
+
+enum SpewRetval_t
+{
+	SPEW_DEBUGGER = 0,
+	SPEW_CONTINUE,
+	SPEW_ABORT
+};
+
+/* type of externally defined function used to display debug spew */
+typedef SpewRetval_t (*SpewOutputFunc_t)( SpewType_t spewType, const tchar *pMsg );
+
 class Color;
 
 

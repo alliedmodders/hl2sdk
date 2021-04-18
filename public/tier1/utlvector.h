@@ -25,8 +25,10 @@
 #include "tier1/strtools.h"
 
 #define FOR_EACH_VEC( vecName, iteratorName ) \
-	for ( int iteratorName = 0; iteratorName < vecName.Count(); iteratorName++ )
-
+	for ( int iteratorName = 0; iteratorName < (vecName).Count(); iteratorName++ )
+#define FOR_EACH_VEC_BACK( vecName, iteratorName ) \
+	for ( int iteratorName = (vecName).Count()-1; iteratorName >= 0; iteratorName-- )
+		
 //-----------------------------------------------------------------------------
 // The CUtlVector class:
 // A growable array class which doubles in size by default.
@@ -41,6 +43,8 @@ class CUtlVector
 	typedef A CAllocator;
 public:
 	typedef T ElemType_t;
+	typedef T* iterator;
+	typedef const T* const_iterator;
 
 	// constructor, destructor
 	CUtlVector( int growSize = 0, int initSize = 0 );
@@ -69,6 +73,11 @@ public:
 	int Count() const;
 	int Size() const;	// don't use me!
 
+	iterator begin()						{ return Base(); }
+	const_iterator begin() const			{ return Base(); }
+	iterator end()							{ return Base() + Count(); }
+	const_iterator end() const				{ return Base() + Count(); }
+	
 	// Is element index valid?
 	bool IsValidIndex( int i ) const;
 	static int InvalidIndex();
@@ -119,6 +128,7 @@ public:
 	void FastRemove( int elem );	// doesn't preserve order
 	void Remove( int elem );		// preserves order, shifts elements
 	bool FindAndRemove( const T& src );	// removes first occurrence of src, preserves order, shifts elements
+	bool FindAndFastRemove( const T& src );	
 	void RemoveMultiple( int elem, int num );	// preserves order, shifts elements
 	void RemoveAll();				// doesn't deallocate memory
 
@@ -224,6 +234,273 @@ public:
 	CUtlVectorFixedGrowable( int growSize = 0 ) : BaseClass( growSize, MAX_SIZE ) {}
 };
 
+//-----------------------------------------------------------------------------
+// The CUtlVectorConservative class:
+// A array class with a conservative allocation scheme
+//-----------------------------------------------------------------------------
+template< class T >
+class CUtlVectorConservative : public CUtlVector< T, CUtlMemoryConservative<T> >
+{
+	typedef CUtlVector< T, CUtlMemoryConservative<T> > BaseClass;
+public:
+
+	// constructor, destructor
+	CUtlVectorConservative( int growSize = 0, int initSize = 0 ) : BaseClass( growSize, initSize ) {}
+	CUtlVectorConservative( T* pMemory, int numElements ) : BaseClass( pMemory, numElements ) {}
+};
+
+
+//-----------------------------------------------------------------------------
+// The CUtlVectorUltra Conservative class:
+// A array class with a very conservative allocation scheme, with customizable allocator
+// Especialy useful if you have a lot of vectors that are sparse, or if you're
+// carefully packing holders of vectors
+//-----------------------------------------------------------------------------
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4200) // warning C4200: nonstandard extension used : zero-sized array in struct/union
+#pragma warning(disable : 4815 ) // warning C4815: 'staticData' : zero-sized array in stack object will have no elements
+#endif
+
+class CUtlVectorUltraConservativeAllocator
+{
+public:
+	static void *Alloc( size_t nSize )
+	{
+		return malloc( nSize );
+	}
+
+	static void *Realloc( void *pMem, size_t nSize )
+	{
+		return realloc( pMem, nSize );
+	}
+
+	static void Free( void *pMem )
+	{
+		free( pMem );
+	}
+
+	static size_t GetSize( void *pMem )
+	{
+		return mallocsize( pMem );
+	}
+
+};
+
+template <typename T, typename A = CUtlVectorUltraConservativeAllocator >
+class CUtlVectorUltraConservative : private A
+{
+public:
+	CUtlVectorUltraConservative()
+	{
+		m_pData = StaticData();
+	}
+
+	~CUtlVectorUltraConservative()
+	{
+		RemoveAll();
+	}
+
+	int Count() const
+	{
+		return m_pData->m_Size;
+	}
+
+	static int InvalidIndex()
+	{
+		return -1;
+	}
+
+	inline bool IsValidIndex( int i ) const
+	{
+		return (i >= 0) && (i < Count());
+	}
+
+	T& operator[]( int i )
+	{
+		Assert( IsValidIndex( i ) );
+		return m_pData->m_Elements[i];
+	}
+
+	const T& operator[]( int i ) const
+	{
+		Assert( IsValidIndex( i ) );
+		return m_pData->m_Elements[i];
+	}
+
+	T& Element( int i )
+	{
+		Assert( IsValidIndex( i ) );
+		return m_pData->m_Elements[i];
+	}
+
+	const T& Element( int i ) const
+	{
+		Assert( IsValidIndex( i ) );
+		return m_pData->m_Elements[i];
+	}
+
+	void EnsureCapacity( int num )
+	{
+		int nCurCount = Count();
+		if ( num <= nCurCount )
+		{
+			return;
+		}
+		if ( m_pData == StaticData() )
+		{
+			m_pData = (Data_t *)A::Alloc( sizeof(int) + ( num * sizeof(T) ) );
+			m_pData->m_Size = 0;
+		}
+		else
+		{
+			int nNeeded = sizeof(int) + ( num * sizeof(T) );
+			int nHave = A::GetSize( m_pData );
+			if ( nNeeded > nHave )
+			{
+				m_pData = (Data_t *)A::Realloc( m_pData, nNeeded );
+			}
+		}
+	}
+
+	int AddToTail( const T& src )
+	{
+		int iNew = Count();
+		EnsureCapacity( Count() + 1 );
+		m_pData->m_Elements[iNew] = src;
+		m_pData->m_Size++;
+		return iNew;
+	}
+
+	void RemoveAll()
+	{
+		if ( Count() )
+		{
+			for (int i = m_pData->m_Size; --i >= 0; )
+			{
+				Destruct(&m_pData->m_Elements[i]);
+			}
+		}
+		if ( m_pData != StaticData() )
+		{
+			A::Free( m_pData );
+			m_pData = StaticData();
+
+		}
+	}
+
+	void PurgeAndDeleteElements()
+	{
+		if ( m_pData != StaticData() )
+		{
+			for( int i=0; i < m_pData->m_Size; i++ )
+			{
+				delete Element(i);
+			}
+			RemoveAll();
+		}
+	}
+
+	void FastRemove( int elem )
+	{
+		Assert( IsValidIndex(elem) );
+
+		Destruct( &Element(elem) );
+		if (Count() > 0)
+		{
+			if ( elem != m_pData->m_Size -1 )
+				memcpy( &Element(elem), &Element(m_pData->m_Size-1), sizeof(T) );
+			--m_pData->m_Size;
+		}
+		if ( !m_pData->m_Size )
+		{
+			A::Free( m_pData );
+			m_pData = StaticData();
+		}
+	}
+
+	void Remove( int elem )
+	{
+		Destruct( &Element(elem) );
+		ShiftElementsLeft(elem);
+		--m_pData->m_Size;
+		if ( !m_pData->m_Size )
+		{
+			A::Free( m_pData );
+			m_pData = StaticData();
+		}
+	}
+
+	int Find( const T& src ) const
+	{
+		int nCount = Count();
+		for ( int i = 0; i < nCount; ++i )
+		{
+			if (Element(i) == src)
+				return i;
+		}
+		return -1;
+	}
+
+	bool FindAndRemove( const T& src )
+	{
+		int elem = Find( src );
+		if ( elem != -1 )
+		{
+			Remove( elem );
+			return true;
+		}
+		return false;
+	}
+
+
+	bool FindAndFastRemove( const T& src )
+	{
+		int elem = Find( src );
+		if ( elem != -1 )
+		{
+			FastRemove( elem );
+			return true;
+		}
+		return false;
+	}
+
+	struct Data_t
+	{
+		int m_Size;
+		T m_Elements[];
+	};
+
+	Data_t *m_pData;
+private:
+	void ShiftElementsLeft( int elem, int num = 1 )
+	{
+		int Size = Count();
+		Assert( IsValidIndex(elem) || ( Size == 0 ) || ( num == 0 ));
+		int numToMove = Size - elem - num;
+		if ((numToMove > 0) && (num > 0))
+		{
+			Q_memmove( &Element(elem), &Element(elem+num), numToMove * sizeof(T) );
+
+#ifdef _DEBUG
+			Q_memset( &Element(Size-num), 0xDD, num * sizeof(T) );
+#endif
+		}
+	}
+
+
+
+	static Data_t *StaticData()
+	{
+		static Data_t staticData;
+		Assert( staticData.m_Size == 0 );
+		return &staticData;
+	}
+};
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 //-----------------------------------------------------------------------------
 // The CCopyableUtlVector class:
@@ -715,6 +992,18 @@ bool CUtlVector<T, A>::FindAndRemove( const T& src )
 }
 
 template< typename T, class A >
+bool CUtlVector<T, A>::FindAndFastRemove( const T& src )
+{
+	int elem = Find( src );
+	if ( elem != -1 )
+	{
+		FastRemove( elem );
+		return true;
+	}
+	return false;
+}
+
+template< typename T, class A >
 void CUtlVector<T, A>::RemoveMultiple( int elem, int num )
 {
 	Assert( elem >= 0 );
@@ -790,5 +1079,75 @@ void CUtlVector<T, A>::Validate( CValidator &validator, char *pchName )
 }
 #endif // DBGFLAG_VALIDATE
 
+template<class T> class CUtlVectorAutoPurge : public CUtlVector< T, CUtlMemory< T, int> >
+{
+public:
+	~CUtlVectorAutoPurge( void )
+	{
+		this->PurgeAndDeleteElements();
+	}
+
+};
+
+// easy string list class with dynamically allocated strings. For use with V_SplitString, etc.
+// Frees the dynamic strings in destructor.
+class CUtlStringList : public CUtlVectorAutoPurge< char *>
+{
+public:
+	void CopyAndAddToTail( char const *pString )			// clone the string and add to the end
+	{
+		char *pNewStr = new char[1 + strlen( pString )];
+		V_strcpy( pNewStr, pString );
+		AddToTail( pNewStr );
+	}
+
+	static int __cdecl SortFunc( char * const * sz1, char * const * sz2 )
+	{
+		return strcmp( *sz1, *sz2 );
+	}
+
+	CUtlStringList(){}
+
+	CUtlStringList( char const *pString, char const *pSeparator )
+	{
+		SplitString( pString, pSeparator );
+	}
+
+	CUtlStringList( char const *pString, const char **pSeparators, int nSeparators )
+	{
+		SplitString2( pString, pSeparators, nSeparators );
+	}
+
+	void SplitString( char const *pString, char const *pSeparator )
+	{
+		V_SplitString( pString, pSeparator, *this );
+	}
+
+	void SplitString2( char const *pString, const char **pSeparators, int nSeparators )
+	{
+		V_SplitString2( pString, pSeparators, nSeparators, *this );
+	}
+private:
+	CUtlStringList( const CUtlStringList &other ); // copying directly will cause double-release of the same strings; maybe we need to do a deep copy, but unless and until such need arises, this will guard against double-release
+};
+
+
+
+// <Sergiy> placing it here a few days before Cert to minimize disruption to the rest of codebase
+class CSplitString: public CUtlVector<char*, CUtlMemory<char*, int> >
+{
+public:
+	CSplitString(const char *pString, const char *pSeparator);
+	CSplitString(const char *pString, const char **pSeparators, int nSeparators);
+	~CSplitString();
+	//
+	// NOTE: If you want to make Construct() public and implement Purge() here, you'll have to free m_szBuffer there
+	//
+private:
+	void Construct(const char *pString, const char **pSeparators, int nSeparators);
+	void PurgeAndDeleteElements();
+private:
+	char *m_szBuffer; // a copy of original string, with '\0' instead of separators
+};
 
 #endif // CCVECTOR_H

@@ -12,12 +12,11 @@
 #endif
 
 #include "tier1/interface.h"
+#include "tier0/basetypes.h"
 #include "bitmap/imageformat.h"
 
 typedef unsigned int ColorCorrectionHandle_t;
 struct ShaderColorCorrectionInfo_t;
-
-#define COLORCORRECTION_INTERFACE_VERSION "COLORCORRECTION_VERSION_1"
 
 abstract_class IColorCorrectionSystem
 {
@@ -36,7 +35,7 @@ public:
 	virtual void LockLookup( ColorCorrectionHandle_t handle ) = 0;
 
 	virtual void UnlockLookup() = 0;
-	virtual void UnlockLookup( ColorCorrectionHandle_t handle ) = 0;
+	virtual void UnlockLookup( ColorCorrectionHandle_t handle, bool bDownload = true ) = 0;
 
 	virtual void SetLookup( RGBX5551_t inColor, color24 outColor ) = 0;
 	virtual void SetLookup( ColorCorrectionHandle_t handle, RGBX5551_t inColor, color24 outColor ) = 0;
@@ -68,6 +67,9 @@ public:
 
 	// FIXME: Move this to a private interface only the material system can see?
 	virtual void GetCurrentColorCorrection( ShaderColorCorrectionInfo_t* pInfo ) = 0;
+
+	virtual void OnProceduralRegenComplete( ColorCorrectionHandle_t handle ) = 0;
 };
 
 #endif
+
