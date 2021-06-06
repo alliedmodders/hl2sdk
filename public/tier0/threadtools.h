@@ -543,7 +543,7 @@ private:
 //
 //-----------------------------------------------------------------------------
 
-#if defined(_WIN32) && !defined(THREAD_PROFILER)
+#if !defined(THREAD_PROFILER)
 
 class CThreadFastMutex
 {
@@ -756,7 +756,7 @@ typedef CAutoLockT<CThreadMutex> CAutoLock;
 template <int size>	struct CAutoLockTypeDeducer {};
 template <> struct CAutoLockTypeDeducer<sizeof(CThreadMutex)> {	typedef CThreadMutex Type_t; };
 template <> struct CAutoLockTypeDeducer<sizeof(CThreadNullMutex)> {	typedef CThreadNullMutex Type_t; };
-#if defined(_WIN32) && !defined(THREAD_PROFILER)
+#if !defined(THREAD_PROFILER)
 template <> struct CAutoLockTypeDeducer<sizeof(CThreadFastMutex)> {	typedef CThreadFastMutex Type_t; };
 template <> struct CAutoLockTypeDeducer<sizeof(CAlignedThreadFastMutex)> {	typedef CAlignedThreadFastMutex Type_t; };
 #endif

@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -13,8 +13,18 @@
 #include "vphysics/object_hash.h"
 #include "mathlib/IceKey.H"
 #include "checksum_crc.h"
+#ifdef TF_CLIENT_DLL
+#include "cdll_util.h"
+#endif
 #include "particle_parse.h"
 #include "KeyValues.h"
+#include "time.h"
+
+#ifdef USES_ECON_ITEMS
+	#include "econ_item_constants.h"
+	#include "econ_holidays.h"
+	#include "rtime.h"
+#endif // USES_ECON_ITEMS
 
 #ifdef CLIENT_DLL
 	#include "c_te_effect_dispatch.h"
@@ -258,16 +268,16 @@ bool StandardFilterRules( IHandleEntity *pHandleEntity, int fContentsMask )
 }
 
 
-
 //-----------------------------------------------------------------------------
 // Simple trace filter
 //-----------------------------------------------------------------------------
-CTraceFilterSimple::CTraceFilterSimple( const IHandleEntity *passedict, int collisionGroup )
+CTraceFilterSimple::CTraceFilterSimple( const IHandleEntity *passedict, int collisionGroup,
+									   ShouldHitFunc_t pExtraShouldHitFunc )
 {
 	m_pPassEnt = passedict;
 	m_collisionGroup = collisionGroup;
+	m_pExtraShouldHitCheckFunction = pExtraShouldHitFunc;
 }
-
 
 //-----------------------------------------------------------------------------
 // The trace filter!
@@ -292,6 +302,9 @@ bool CTraceFilterSimple::ShouldHitEntity( IHandleEntity *pHandleEntity, int cont
 	if ( !pEntity->ShouldCollide( m_collisionGroup, contentsMask ) )
 		return false;
 	if ( pEntity && !g_pGameRules->ShouldCollide( m_collisionGroup, pEntity->GetCollisionGroup() ) )
+		return false;
+	if ( m_pExtraShouldHitCheckFunction &&
+		(! ( m_pExtraShouldHitCheckFunction( pHandleEntity, contentsMask ) ) ) )
 		return false;
 
 	return true;
@@ -328,7 +341,7 @@ bool CTraceFilterNoNPCsOrPlayer::ShouldHitEntity( IHandleEntity *pHandleEntity, 
 	{
 		CBaseEntity *pEntity = EntityFromEntityHandle( pHandleEntity );
 		if ( !pEntity )
-			return false;
+			return NULL;
 #ifndef CLIENT_DLL
 		if ( pEntity->Classify() == CLASS_PLAYER_ALLY )
 			return false; // CS hostages are CLASS_PLAYER_ALLY but not IsNPC()
@@ -493,7 +506,6 @@ bool CTraceFilterChain::ShouldHitEntity( IHandleEntity *pHandleEntity, int conte
 
 	if ( m_pTraceFilter1 )
 		bResult1 = m_pTraceFilter1->ShouldHitEntity( pHandleEntity, contentsMask );
-
 
 	if ( m_pTraceFilter2 )
 		bResult2 = m_pTraceFilter2->ShouldHitEntity( pHandleEntity, contentsMask );
@@ -812,6 +824,14 @@ bool UTIL_IsLowViolence( void )
 	if ( !violence_hblood.GetBool() || !violence_ablood.GetBool() || !violence_hgibs.GetBool() || !violence_agibs.GetBool() )
 		return true;
 
+#ifdef TF_CLIENT_DLL
+	// Use low violence if the local player has an item that allows them to see it (Pyro Goggles)
+	if ( IsLocalPlayerUsingVisionFilterFlags( TF_VISION_FILTER_PYRO ) )
+	{
+		return true;
+	}
+#endif
+
 	return engine->IsLowViolence();
 }
 
@@ -887,7 +907,6 @@ bool UTIL_IsSpaceEmpty( CBaseEntity *pMainEnt, const Vector &vMin, const Vector 
 	Vector vCenter = vMin + vHalfDims;
 
 	trace_t trace;
-
 	UTIL_TraceHull( vCenter, vCenter, -vHalfDims, vHalfDims, MASK_SOLID, pMainEnt, COLLISION_GROUP_NONE, &trace );
 
 	bool bClear = ( trace.fraction == 1 && trace.allsolid != 1 && (trace.startsolid != 1) );
@@ -1015,36 +1034,45 @@ float CountdownTimer::Now( void ) const
 	{
 		return ToBasePlayer( ClientEntityList().GetEnt( entindex ) );
 	}
+
+//=============================================================================
+// HPE_BEGIN:
+// [menglish] Added UTIL function for events in client win_panel which transmit the player as a user ID
+//=============================================================================
+
+	CBasePlayer* UTIL_PlayerByUserId( int userID )
+	{
+		for (int i = 1; i<=gpGlobals->maxClients; i++ )
+		{
+			CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
+
+			if ( !pPlayer )
+				continue;
+
+			if ( pPlayer->GetUserID() == userID )
+			{
+				return pPlayer;
+			}
+		}
+
+		return NULL;
+	}
+
+//=============================================================================
+// HPE_END
+//=============================================================================
+
 #endif
 
 
-unsigned short UTIL_GetAchievementEventMask( void )
-{
-	CRC32_t mapCRC;
-	CRC32_Init( &mapCRC );
-
-	char lowercase[ 256 ];
-#ifdef CLIENT_DLL
-	Q_FileBase( engine->GetLevelName(), lowercase, sizeof( lowercase ) );
-#else
-	Q_strncpy( lowercase, STRING( gpGlobals->mapname ), sizeof( lowercase ) );
-#endif
-	Q_strlower( lowercase );
-
-	CRC32_ProcessBuffer( &mapCRC, lowercase, Q_strlen( lowercase ) );
-	CRC32_Final( &mapCRC );
-
-	return ( mapCRC & 0xFFFF );
-}
-
-const char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename )
+char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename )
 {
 	const char *pValue = pSub->GetString( pName, NULL );
 	if ( !pValue )
 	{
 		if ( pFilename )
 		{
-			DevWarning( "Can't get key value '%s' from file '%s'.\n", pName, pFilename );
+			DevWarning( "Can't get key value	'%s' from file '%s'.\n", pName, pFilename );
 		}
 		return "";
 	}
@@ -1069,4 +1097,81 @@ int UTIL_StringFieldToInt( const char *szValue, const char **pValueStrings, int 
 
 	Assert(0);
 	return -1;
+}
+
+
+int find_day_of_week( struct tm& found_day, int day_of_week, int step )
+{
+	return 0;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+#ifdef USES_ECON_ITEMS
+static bool					  s_HolidaysCalculated = false;
+static CBitVec<kHolidayCount> s_HolidaysActive;
+
+//-----------------------------------------------------------------------------
+// Purpose: Used at level change and round start to re-calculate which holiday is active
+//-----------------------------------------------------------------------------
+void UTIL_CalculateHolidays()
+{
+	s_HolidaysActive.ClearAll();
+
+	CRTime::UpdateRealTime();
+	for ( int iHoliday = 0; iHoliday < kHolidayCount; iHoliday++ )
+	{
+		if ( EconHolidays_IsHolidayActive( iHoliday, CRTime::RTime32TimeCur() ) )
+		{
+			s_HolidaysActive.Set( iHoliday );
+		}
+	}
+
+	s_HolidaysCalculated = true;
+}
+#endif // USES_ECON_ITEMS
+
+bool UTIL_IsHolidayActive( /*EHoliday*/ int eHoliday )
+{
+#ifdef USES_ECON_ITEMS
+	if ( IsX360() )
+		return false;
+
+	if ( !s_HolidaysCalculated )
+	{
+		UTIL_CalculateHolidays();
+	}
+
+	return s_HolidaysActive.IsBitSet( eHoliday );
+#else
+	return false;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+int	UTIL_GetHolidayForString( const char* pszHolidayName )
+{
+#ifdef USES_ECON_ITEMS
+	if ( !pszHolidayName )
+		return kHoliday_None;
+
+	return EconHolidays_GetHolidayForString( pszHolidayName );
+#else
+	return 0;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+const char* UTIL_GetActiveHolidayString()
+{
+#ifdef USES_ECON_ITEMS
+	return EconHolidays_GetActiveHolidayString();
+#else
+	return NULL;
+#endif
 }

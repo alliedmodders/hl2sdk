@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Misc utility code.
 //
@@ -42,10 +42,19 @@ class IEntityFactory;
 	#define SETUP_EXTERNC(mapClassName)
 #endif
 
+//
+// How did I ever live without ASSERT?
+//
+#ifdef	DEBUG
+void DBG_AssertFunction(bool fExpr, const char* szExpr, const char* szFile, int szLine, const char* szMessage);
+#define ASSERT(f)		DBG_AssertFunction((bool)((f)!=0), #f, __FILE__, __LINE__, NULL)
+#define ASSERTSZ(f, sz)	DBG_AssertFunction((bool)((f)!=0), #f, __FILE__, __LINE__, sz)
+#else	// !DEBUG
+#define ASSERT(f)
+#define ASSERTSZ(f, sz)
+#endif	// !DEBUG
 
 #include "tier0/memdbgon.h"
-
-CBaseEntity *CreateEntityByName(const char *className, int iForceEdictIndex);
 
 // entity creation
 // creates an entity that has not been linked to a classname
@@ -59,6 +68,8 @@ T *_CreateEntityTemplate( T *newEnt, const char *className )
 
 #include "tier0/memdbgoff.h"
 
+CBaseEntity *CreateEntityByName( const char *className, int iForceEdictIndex );
+
 // creates an entity by name, and ensure it's correctness
 // does not spawn the entity
 // use the CREATE_ENTITY() macro which wraps this, instead of using it directly
@@ -68,7 +79,7 @@ T *_CreateEntity( T *newClass, const char *className )
 	T *newEnt = dynamic_cast<T*>( CreateEntityByName(className, -1) );
 	if ( !newEnt )
 	{
-		Warning( "classname %s used to create wrong class type\n" );
+		Warning( "classname %s used to create wrong class type\n", className );
 		Assert(0);
 	}
 
@@ -143,7 +154,9 @@ public:
 //
 inline int	  ENTINDEX( edict_t *pEdict)			
 { 
-	return engine->IndexOfEdict(pEdict); 
+	int nResult = pEdict ? pEdict->m_EdictIndex : 0;
+	Assert( nResult == engine->IndexOfEdict(pEdict) );
+	return nResult;
 }
 
 int	  ENTINDEX( CBaseEntity *pEnt );
@@ -173,7 +186,7 @@ extern CGlobalVars *gpGlobals;
 // Misc useful
 inline bool FStrEq(const char *sz1, const char *sz2)
 {
-	return ( sz1 == sz2 || stricmp(sz1, sz2) == 0 );
+	return ( sz1 == sz2 || V_stricmp(sz1, sz2) == 0 );
 }
 
 #if 0
@@ -208,6 +221,7 @@ float		UTIL_GetSimulationInterval();
 // NOTENOTE: Use UTIL_GetLocalPlayer instead of UTIL_PlayerByIndex IF you're in single player
 // and you want the player.
 CBasePlayer	*UTIL_PlayerByIndex( int playerIndex );
+CBasePlayer *UTIL_PlayerBySteamID( const CSteamID &steamID );
 
 // NOTENOTE: Use this instead of UTIL_PlayerByIndex IF you're in single player
 // and you want the player.
@@ -351,7 +365,7 @@ void		UTIL_Beam( Vector &Start, Vector &End, int nModelIndex, int nHaloIndex, un
 				float Life, unsigned char Width, unsigned char EndWidth, unsigned char FadeLength, unsigned char Noise, unsigned char Red, unsigned char Green,
 				unsigned char Blue, unsigned char Brightness, unsigned char Speed);
 
-char		*UTIL_VarArgs( const char *format, ... );
+const char	*UTIL_VarArgs( PRINTF_FORMAT_STRING const char *format, ... ) FMTFUNCTION( 1, 2 );
 bool		UTIL_IsValidEntity( CBaseEntity *pEnt );
 bool		UTIL_TeamsMatch( const char *pTeamName1, const char *pTeamName2 );
 
@@ -461,7 +475,7 @@ void			UTIL_HudMessage( CBasePlayer *pToPlayer, const hudtextparms_t &textparms,
 void			UTIL_HudHintText( CBaseEntity *pEntity, const char *pMessage );
 
 // Writes message to console with timestamp and FragLog header.
-void			UTIL_LogPrintf( const char *fmt, ... );
+void			UTIL_LogPrintf( PRINTF_FORMAT_STRING const char *fmt, ... ) FMTFUNCTION( 1, 2 );
 
 // Sorta like FInViewCone, but for nonNPCs. 
 float UTIL_DotPoints ( const Vector &vecSrc, const Vector &vecCheck, const Vector &vecDir );
@@ -473,17 +487,7 @@ int BuildChangeList( levellist_t *pLevelList, int maxList );
 
 // computes gravity scale for an absolute gravity.  Pass the result into CBaseEntity::SetGravity()
 float UTIL_ScaleForGravity( float desiredGravity );
-//
-// How did I ever live without ASSERT?
-//
-#ifdef	DEBUG
-void DBG_AssertFunction(bool fExpr, const char* szExpr, const char* szFile, int szLine, const char* szMessage);
-#define ASSERT(f)		DBG_AssertFunction((bool)((f)!=0), #f, __FILE__, __LINE__, NULL)
-#define ASSERTSZ(f, sz)	DBG_AssertFunction((bool)((f)!=0), #f, __FILE__, __LINE__, sz)
-#else	// !DEBUG
-#define ASSERT(f)
-#define ASSERTSZ(f, sz)
-#endif	// !DEBUG
+
 
 
 //
@@ -611,8 +615,7 @@ bool UTIL_IsFacingWithinTolerance( CBaseEntity *pViewer, CBaseEntity *pTarget, f
 void UTIL_GetDebugColorForRelationship( int nRelationship, int &r, int &g, int &b );
 
 struct datamap_t;
-extern const char	*UTIL_FunctionToName( datamap_t *pMap, void *function );
-extern void			*UTIL_FunctionFromName( datamap_t *pMap, const char *pName );
+extern const char	*UTIL_FunctionToName( datamap_t *pMap, inputfunc_t *function );
 
 int UTIL_GetCommandClientIndex( void );
 CBasePlayer *UTIL_GetCommandClient( void );

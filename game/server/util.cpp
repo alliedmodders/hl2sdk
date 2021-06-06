@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Utility code.
 //
@@ -35,6 +35,7 @@
 #include "engine/ivdebugoverlay.h"
 #include "datacache/imdlcache.h"
 #include "util.h"
+#include "cdll_int.h"
 
 #ifdef PORTAL
 #include "PortalSimulation.h"
@@ -58,7 +59,7 @@ void DBG_AssertFunction( bool fExpr, const char *szExpr, const char *szFile, int
 		Q_snprintf(szOut,sizeof(szOut), "ASSERT FAILED:\n %s \n(%s@%d)\n%s", szExpr, szFile, szLine, szMessage);
 	else
 		Q_snprintf(szOut,sizeof(szOut), "ASSERT FAILED:\n %s \n(%s@%d)\n", szExpr, szFile, szLine);
-	Warning( szOut);
+	Warning( "%s", szOut);
 }
 #endif	// DEBUG
 
@@ -94,6 +95,9 @@ IEntityFactoryDictionary *EntityFactoryDictionary()
 
 void DumpEntityFactories_f()
 {
+	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+		return;
+
 	CEntityFactoryDictionary *dict = ( CEntityFactoryDictionary * )EntityFactoryDictionary();
 	if ( dict )
 	{
@@ -112,6 +116,9 @@ static ConCommand dumpentityfactories( "dumpentityfactories", DumpEntityFactorie
 //-----------------------------------------------------------------------------
 CON_COMMAND( dump_entity_sizes, "Print sizeof(entclass)" )
 {
+	if ( !UTIL_IsCommandIssuedByServerAdmin() )
+		return;
+
 	((CEntityFactoryDictionary*)EntityFactoryDictionary())->ReportEntitySizes();
 }
 
@@ -154,6 +161,11 @@ IServerNetworkable *CEntityFactoryDictionary::Create( const char *pClassName )
 	IEntityFactory *pFactory = FindFactory( pClassName );
 	if ( !pFactory )
 	{
+#ifdef STAGING_ONLY
+		static ConVarRef tf_bot_use_items( "tf_bot_use_items" );
+		if ( tf_bot_use_items.IsValid() && tf_bot_use_items.GetInt() )
+			return NULL;
+#endif
 		Warning("Attempted to create unknown entity type %s!\n", pClassName );
 		return NULL;
 	}
@@ -193,7 +205,7 @@ void CEntityFactoryDictionary::ReportEntitySizes()
 {
 	for ( int i = m_Factories.First(); i != m_Factories.InvalidIndex(); i = m_Factories.Next( i ) )
 	{
-		Msg( " %s: %d", m_Factories.GetElementName( i ), m_Factories[i]->GetEntitySize() );
+		Msg( " %s: %llu", m_Factories.GetElementName( i ), (uint64)(m_Factories[i]->GetEntitySize()) );
 	}
 }
 
@@ -329,7 +341,7 @@ private:
 //-----------------------------------------------------------------------------
 // Drops an entity onto the floor
 //-----------------------------------------------------------------------------
-int UTIL_DropToFloor( CBaseEntity *pEntity, unsigned int mask, CBaseEntity *pIgnore)
+int UTIL_DropToFloor( CBaseEntity *pEntity, unsigned int mask, CBaseEntity *pIgnore )
 {
 	// Assume no ground
 	pEntity->SetGroundEntity( NULL );
@@ -337,10 +349,13 @@ int UTIL_DropToFloor( CBaseEntity *pEntity, unsigned int mask, CBaseEntity *pIgn
 	Assert( pEntity );
 
 	trace_t	trace;
+
+#ifndef HL2MP
 	// HACK: is this really the only sure way to detect crossing a terrain boundry?
 	UTIL_TraceEntity( pEntity, pEntity->GetAbsOrigin(), pEntity->GetAbsOrigin(), mask, pIgnore, pEntity->GetCollisionGroup(), &trace );
 	if (trace.fraction == 0.0)
 		return -1;
+#endif // HL2MP
 
 	UTIL_TraceEntity( pEntity, pEntity->GetAbsOrigin(), pEntity->GetAbsOrigin() - Vector(0,0,256), mask, pIgnore, pEntity->GetCollisionGroup(), &trace );
 
@@ -558,6 +573,24 @@ CBasePlayer	*UTIL_PlayerByIndex( int playerIndex )
 	return pPlayer;
 }
 
+CBasePlayer *UTIL_PlayerBySteamID( const CSteamID &steamID )
+{
+	CSteamID steamIDPlayer;
+	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
+	{
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
+		if ( !pPlayer )
+			continue;
+
+		if ( !pPlayer->GetSteamID( &steamIDPlayer ) )
+			continue;
+
+		if ( steamIDPlayer == steamID )
+			return pPlayer;
+	}
+	return NULL;
+}
+
 CBasePlayer* UTIL_PlayerByName( const char *name )
 {
 	if ( !name || !name[0] )
@@ -655,8 +688,23 @@ bool UTIL_IsCommandIssuedByServerAdmin( void )
 	if ( engine->IsDedicatedServer() && issuingPlayerIndex > 0 )
 		return false;
 
-	if ( issuingPlayerIndex > 1 )
+#if defined( REPLAY_ENABLED )
+	// entity 1 is replay?
+	player_info_t pi;
+	bool bPlayerIsReplay = engine->GetPlayerInfo( 1, &pi ) && pi.isreplay;
+#else
+	bool bPlayerIsReplay = false;
+#endif
+
+	if ( bPlayerIsReplay )
+	{
+		if ( issuingPlayerIndex > 2 )
+			return false;
+	}
+	else if ( issuingPlayerIndex > 1 )
+	{
 		return false;
+	}
 
 	return true;
 }
@@ -719,10 +767,10 @@ void UTIL_GetPlayerConnectionInfo( int playerIndex, int& ping, int &packetloss )
 		// Source pings by half a tick to match the old GoldSrc pings.
 		latency -= TICKS_TO_TIME( 0.5f );
 
-		ping = (int)(latency * 1000.0f); // as msecs
+		ping = latency * 1000.0f; // as msecs
 		ping = clamp( ping, 5, 1000 ); // set bounds, dont show pings under 5 msecs
 		
-		packetloss = (int)(100.0f * nci->GetAvgLoss( FLOW_INCOMING )); // loss in percentage
+		packetloss = 100.0f * nci->GetAvgLoss( FLOW_INCOMING ); // loss in percentage
 		packetloss = clamp( packetloss, 0, 100 );
 	}
 	else
@@ -736,7 +784,7 @@ static unsigned short FixedUnsigned16( float value, float scale )
 {
 	int output;
 
-	output = (int)(value * scale);
+	output = value * scale;
 	if ( output < 0 )
 		output = 0;
 	if ( output > 0xFFFF )
@@ -877,7 +925,15 @@ void UTIL_ScreenShakeObject( CBaseEntity *pEnt, const Vector &center, float ampl
 				continue;
 			}
 
-			localAmplitude = ComputeShakeAmplitude( center, pPlayer->WorldSpaceCenter(), amplitude, radius );
+			if ( radius > 0 )
+			{
+				localAmplitude = ComputeShakeAmplitude( center, pPlayer->WorldSpaceCenter(), amplitude, radius );
+			}
+			else
+			{
+				// If using a 0 radius, apply to everyone with no falloff
+				localAmplitude = amplitude;
+			}
 
 			// This happens if the player is outside the radius, 
 			// in which case we should ignore all commands
@@ -1255,27 +1311,11 @@ void UTIL_SetModel( CBaseEntity *pEntity, const char *pModelName )
 {
 	// check to see if model was properly precached
 	int i = modelinfo->GetModelIndex( pModelName );
-	if ( i < 0 )
+	if ( i == -1 )	
 	{
 		Error("%i/%s - %s:  UTIL_SetModel:  not precached: %s\n", pEntity->entindex(),
 			STRING( pEntity->GetEntityName() ),
 			pEntity->GetClassname(), pModelName);
-	}
-
-	pEntity->SetModelIndex( i ) ;
-	pEntity->SetModelName( AllocPooledString( pModelName ) );
-
-	// brush model
-	const model_t *mod = modelinfo->GetModel( i );
-	if ( mod )
-	{
-		Vector mins, maxs;
-		modelinfo->GetModelBounds( mod, mins, maxs );
-		SetMinMaxSize (pEntity, mins, maxs);
-	}
-	else
-	{
-		SetMinMaxSize (pEntity, vec3_origin, vec3_origin);
 	}
 
 	CBaseAnimating *pAnimating = pEntity->GetBaseAnimating();
@@ -1283,6 +1323,11 @@ void UTIL_SetModel( CBaseEntity *pEntity, const char *pModelName )
 	{
 		pAnimating->m_nForceBone = 0;
 	}
+
+	pEntity->SetModelName( AllocPooledString( pModelName ) );
+	pEntity->SetModelIndex( i ) ;
+	SetMinMaxSize(pEntity, vec3_origin, vec3_origin);
+	pEntity->SetCollisionBoundsFromModel();
 }
 
 	
@@ -1326,7 +1371,7 @@ void UTIL_SnapDirectionToAxis( Vector &direction, float epsilon )
 	}
 }
 
-char *UTIL_VarArgs( const char *format, ... )
+const char *UTIL_VarArgs( const char *format, ... )
 {
 	va_list		argptr;
 	static char		string[1024];
@@ -1813,7 +1858,7 @@ void UTIL_StripToken( const char *pKey, char *pDest )
 // computes gravity scale for an absolute gravity.  Pass the result into CBaseEntity::SetGravity()
 float UTIL_ScaleForGravity( float desiredGravity )
 {
-	float worldGravity = sv_gravity.GetFloat();
+	float worldGravity = GetCurrentGravity();
 	return worldGravity > 0 ? desiredGravity / worldGravity : 0;
 }
 
@@ -1878,7 +1923,8 @@ int DispatchSpawn( CBaseEntity *pEntity )
 			// Don't allow the PVS check to skip animation setup during spawning
 			pAnimating->SetBoneCacheFlags( BCF_IS_IN_SPAWN );
 			pEntity->Spawn();
-			pAnimating->ClearBoneCacheFlags( BCF_IS_IN_SPAWN );
+			if ( pEntSafe != NULL )
+				pAnimating->ClearBoneCacheFlags( BCF_IS_IN_SPAWN );
 		}
 		mdlcache->SetAsyncLoad( MDLCACHE_ANIMBLOCK, bAsyncAnims );
 
@@ -2189,7 +2235,7 @@ void UTIL_SetClientVisibilityPVS( edict_t *pClient, const unsigned char *pvs, in
 {
 	if ( pClient == UTIL_GetCurrentCheckClient() )
 	{
-		Assert( pvssize <= (int)sizeof(g_CheckClient.m_checkVisibilityPVS) );
+		Assert( pvssize <= sizeof(g_CheckClient.m_checkVisibilityPVS) );
 
 		g_CheckClient.m_bClientPVSIsExpanded = false;
 
@@ -2327,6 +2373,7 @@ CBaseEntity *UTIL_EntitiesInPVS( CBaseEntity *pPVSEntity, CBaseEntity *pStarting
 	Vector			org;
 	static byte		pvs[ MAX_MAP_CLUSTERS/8 ];
 	static Vector	lastOrg( 0, 0, 0 );
+	static int		lastCluster = -1;
 
 	if ( !pPVSEntity )
 		return NULL;
@@ -2956,7 +3003,7 @@ void CC_KDTreeTest( const CCommand &args )
 			trace_t trace;
 			for ( int iTest = 0; iTest < NUM_KDTREE_TESTS; ++iTest )
 			{
-				UTIL_TraceHull( vecStart, vecTargets[iTest], VEC_HULL_MIN, VEC_HULL_MAX, MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &trace );
+				UTIL_TraceHull( vecStart, vecTargets[iTest], VEC_HULL_MIN_SCALED( pPlayer ), VEC_HULL_MAX_SCALED( pPlayer ), MASK_SOLID, pPlayer, COLLISION_GROUP_NONE, &trace );
 			}
 			break;
 		}
@@ -3053,7 +3100,7 @@ void CC_VoxelTreePlayerView( void )
 
 	CBasePlayer *pPlayer = static_cast<CBasePlayer*>( UTIL_GetLocalPlayer() );
 	Vector vecStart = pPlayer->GetAbsOrigin();
-	partition->RenderObjectsInPlayerLeafs( vecStart - VEC_HULL_MIN, vecStart + VEC_HULL_MAX, 3.0f  );
+	partition->RenderObjectsInPlayerLeafs( vecStart - VEC_HULL_MIN_SCALED( pPlayer ), vecStart + VEC_HULL_MAX_SCALED( pPlayer ), 3.0f  );
 }
 
 static ConCommand voxeltree_playerview( "voxeltree_playerview", CC_VoxelTreePlayerView, "View entities in the voxel-tree at the player position.", FCVAR_CHEAT );

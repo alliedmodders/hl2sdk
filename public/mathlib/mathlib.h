@@ -2067,7 +2067,21 @@ void RGBtoHSV( const Vector &rgb, Vector &hsv );
 //-----------------------------------------------------------------------------
 void HSVtoRGB( const Vector &hsv, Vector &rgb );
 
+//-----------------------------------------------------------------------------
+// For testing float equality
+//-----------------------------------------------------------------------------
 
+inline bool CloseEnough( float a, float b, float epsilon = EQUAL_EPSILON )
+{
+	return fabs( a - b ) <= epsilon;
+}
+
+inline bool CloseEnough( const Vector &a, const Vector &b, float epsilon = EQUAL_EPSILON )
+{
+	return fabs( a.x - b.x ) <= epsilon &&
+		fabs( a.y - b.y ) <= epsilon &&
+		fabs( a.z - b.z ) <= epsilon;
+}
 
 #endif	// MATH_BASE_H
 

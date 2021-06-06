@@ -69,7 +69,7 @@ struct Ray_t
 
 	void Init( Vector const& start, Vector const& end )
 	{
-		Assert( &end );
+		//Assert( &end );
 		VectorSubtract( end, start, m_Delta );
 
 		m_IsSwept = (m_Delta.LengthSqr() != 0);
@@ -84,7 +84,7 @@ struct Ray_t
 
 	void Init( Vector const& start, Vector const& end, Vector const& mins, Vector const& maxs )
 	{
-		Assert( &end );
+		//Assert( &end );
 		VectorSubtract( end, start, m_Delta );
 
 		m_IsSwept = (m_Delta.LengthSqr() != 0);
