@@ -390,6 +390,11 @@ protected:
 	inline Type  operator++( Type &a, int ) { Type t = a; ++a; return t; } \
 	inline Type  operator--( Type &a, int ) { Type t = a; --a; return t; }
 
+// Max 2 player splitscreen in portal (don't merge this back), saves a bunch of memory [8/31/2010 tom]
+#define MAX_SPLITSCREEN_CLIENT_BITS 1
+// this should == MAX_JOYSTICKS in InputEnums.h
+#define MAX_SPLITSCREEN_CLIENTS	( 1 << MAX_SPLITSCREEN_CLIENT_BITS ) // 2
+
 #include "tier0/valve_on.h"
 
 #endif // BASETYPES_H
