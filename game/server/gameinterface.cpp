@@ -925,17 +925,25 @@ void CServerGameDLL::DLLShutdown( void )
 //-----------------------------------------------------------------------------
 float CServerGameDLL::GetTickInterval( void ) const
 {
-	float tickinterval = DEFAULT_TICK_INTERVAL;
-
-
-
+	float tickinterval = 1.0 / 29.97; // 0.03336666
+	if ( !engine->IsDedicatedServerForXbox() )
+	{
+		tickinterval = 1.0 / 30.0; // 0.03333333
+		if ( !engine->IsDedicatedServerForPS3() )
+		{
+			tickinterval = DEFAULT_TICK_INTERVAL;
+		}
+	}
 
 	// override if tick rate specified in command line
 	if ( CommandLine()->CheckParm( "-tickrate" ) )
 	{
 		float tickrate = CommandLine()->ParmValue( "-tickrate", 0 );
-		if ( tickrate > 10 )
-			tickinterval = 1.0f / tickrate;
+		if ( tickrate > 0 )
+		{
+			tickinterval = floorf((1.0f / tickrate) * 512.0 + 0.5) / 512.0;
+		}
+		tickinterval = clamp(tickinterval, MINIMUM_TICK_INTERVAL, MAXIMUM_TICK_INTERVAL);
 	}
 
 

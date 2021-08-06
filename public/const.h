@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -25,9 +25,9 @@
 #define INVALID_STEAM_LOGGED_IN_ELSEWHERE "This Steam account is being used in another location\n"
 
 // This is the default, see shareddefs.h for mod-specific value, which can override this
-#define DEFAULT_TICK_INTERVAL	(1.0f / 60.0f)				// 16.666667 msec is the default
-#define MINIMUM_TICK_INTERVAL   (0.001)
-#define MAXIMUM_TICK_INTERVAL	(0.1)
+#define DEFAULT_TICK_INTERVAL	(1.0f / 64.0f)	// 0.015625
+#define MINIMUM_TICK_INTERVAL	(1.0f / 128.0f) // 0.0078125
+#define MAXIMUM_TICK_INTERVAL	(1.0f / 20.48f)	// 0.048828125
 
 // This is the max # of players the engine can handle
 // Note, must be power of 2
