@@ -26,7 +26,7 @@
 
 // This is the default, see shareddefs.h for mod-specific value, which can override this
 #define DEFAULT_TICK_INTERVAL	(1.0f / 64.0f)	// 0.015625
-#define MINIMUM_TICK_INTERVAL   (1.0f / 128.0f) // 0.0078125
+#define MINIMUM_TICK_INTERVAL	(1.0f / 128.0f) // 0.0078125
 #define MAXIMUM_TICK_INTERVAL	(1.0f / 20.48f)	// 0.048828125
 
 // This is the max # of players the engine can handle
