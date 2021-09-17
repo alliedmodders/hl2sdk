@@ -342,9 +342,6 @@ public:
 	// even though we may not have waited enough time
 	virtual void			AllowImmediateEdictReuse( ) = 0;
 
-	// Returns true if the engine is an internal build. i.e. is using the internal bugreporter.
-	virtual bool		IsInternalBuild( void ) = 0;
-
 	virtual IChangeInfoAccessor *GetChangeAccessor( const edict_t *pEdict ) = 0;	
 
 	// Name of most recently load .sav file
