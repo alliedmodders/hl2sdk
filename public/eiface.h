@@ -506,6 +506,7 @@ public:
 	//BBMigration
 	virtual bool SetBBTVEnabled(bool enabled) = 0;
 
+	virtual IServer *GetIServer() = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
