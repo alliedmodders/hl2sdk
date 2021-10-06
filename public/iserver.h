@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -33,6 +33,7 @@ public:
 	virtual IClient	*GetClient( int index ) = 0; // returns interface to client 
 	virtual int		GetClientCount() const = 0; // returns number of clients slots (used & unused)
 	virtual netadr_t GetPublicAddress() = 0;
+	virtual bool		IsUsingFakeIP( void ) const = 0;
 	virtual int		GetLocalUDPPort( void ) const = 0; // returns current used UDP port
 	virtual float	GetTime( void ) const = 0;	// returns game world time
 	virtual int		GetTick( void ) const = 0;	// returns game world tick
