@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -148,6 +148,8 @@ public:
 	virtual edict_t		*CreateEdict( int iForceEdictIndex = -1 ) = 0;
 	// Remove the specified edict and place back into the free edict list
 	virtual void		RemoveEdict( edict_t *e ) = 0;
+
+	virtual bool		CanAllocateNewEdict() = 0;
 	
 	// Memory allocation for entity class data
 	virtual void		*PvAllocEntPrivateData( long cb ) = 0;
@@ -440,6 +442,9 @@ public:
 
 	// Returns the XUID of the specified player. It'll be NULL if the player hasn't connected yet.
 	virtual uint64 GetClientXUID( edict_t *pPlayerEdict ) = 0;
+
+	virtual void SetServerUsesAngelScriptMods( bool bValue ) = 0;
+	virtual bool GetServerUsesAngelScriptMods() = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL005"
@@ -561,6 +566,8 @@ public:
 	virtual void            GenerateLumpFileName( const char *, char *, int, int ) = 0;
 
 	virtual void            GetMatchmakingGameData( char *buf, size_t bufSize ) = 0; 
+
+	virtual void			InitializeWorkshop();
 };
 
 //-----------------------------------------------------------------------------
