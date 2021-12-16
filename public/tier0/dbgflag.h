@@ -34,7 +34,7 @@
 //-----------------------------------------------------------------------------
 // Default flags for debug builds
 //-----------------------------------------------------------------------------
-#ifdef _DEBUG
+#if defined( _DEBUG ) && !defined( PS3MEMOVERRIDEWRAP )
 
 #define DBGFLAG_MEMORY
 #ifdef _SERVER	// only enable new & delete tracking for server; on client it conflicts with CRT mem leak tracking
@@ -60,5 +60,9 @@
 #define DBGFLAG_ASSERTDLG
 
 #endif // _DEBUG
+
+#if defined( _CERT )
+#define DBGFLAG_STRINGS_STRIP
+#endif
 
 #endif // DBGFLAG_H

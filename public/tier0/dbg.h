@@ -1,12 +1,15 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ========//
+//===== Copyright (c) Valve Corporation, All rights reserved. ========//
 //
-// Purpose: 
+// Purpose:  
 //
 // $NoKeywords: $
 //
-//===========================================================================//
+//====================================================================//
 #ifndef DBG_H
 #define DBG_H
+
+#if !defined(__SPU__)
+
 
 #ifdef _WIN32
 #pragma once
@@ -20,13 +23,19 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#ifdef POSIX
-#define __cdecl
-#endif
-
 //-----------------------------------------------------------------------------
 // dll export stuff
 //-----------------------------------------------------------------------------
+
+#ifdef TIER0_DLL_EXPORT
+#define DBG_INTERFACE	DLL_EXPORT
+#define DBG_OVERLOAD	DLL_GLOBAL_EXPORT
+#define DBG_CLASS		DLL_CLASS_EXPORT
+#else
+#define DBG_INTERFACE	DLL_IMPORT
+#define DBG_OVERLOAD	DLL_GLOBAL_IMPORT
+#define DBG_CLASS		DLL_CLASS_IMPORT
+#endif
 
 class Color;
 
@@ -83,6 +92,13 @@ class Color;
 //-----------------------------------------------------------------------------
 
 PLATFORM_INTERFACE void _ExitOnFatalAssert( const tchar* pFile, int line );
+
+#if defined( DBGFLAG_STRINGS_STRIP )
+#define DbgFlagMacro_ExitOnFatalAssert( pFile, line ) _ExitOnFatalAssert( "", 0 )
+#else
+#define DbgFlagMacro_ExitOnFatalAssert( pFile, line ) _ExitOnFatalAssert( pFile, line )
+#endif
+
 PLATFORM_INTERFACE bool ShouldUseNewAssertDialog();
 
 PLATFORM_INTERFACE bool SetupWin32ConsoleIO();
@@ -90,23 +106,68 @@ PLATFORM_INTERFACE bool SetupWin32ConsoleIO();
 // Returns true if they want to break in the debugger.
 PLATFORM_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const tchar *pExpression );
 
+#if defined( DBGFLAG_STRINGS_STRIP )
+#define DbgFlagMacro_DoNewAssertDialog( pFile, line, pExpression ) DoNewAssertDialog( "", 0, "" )
+#else
+#define DbgFlagMacro_DoNewAssertDialog( pFile, line, pExpression ) DoNewAssertDialog( pFile, line, pExpression )
+#endif
+
+// Allows the assert dialogs to be turned off from code
+PLATFORM_INTERFACE bool AreAllAssertsDisabled();
+PLATFORM_INTERFACE void SetAllAssertsDisabled( bool bAssertsEnabled );
+
+PLATFORM_INTERFACE bool IsAssertDialogDisabled();
+PLATFORM_INTERFACE void SetAssertDialogDisabled( bool bAssertDialogDisabled );
+
+// Provides a callback that is called on asserts regardless of spew levels
+typedef void (*AssertFailedNotifyFunc_t)( const char *pchFile, int nLine, const char *pchMessage );
+PLATFORM_INTERFACE void SetAssertFailedNotifyFunc( AssertFailedNotifyFunc_t func );
+PLATFORM_INTERFACE void CallAssertFailedNotifyFunc( const char *pchFile, int nLine, const char *pchMessage );
+
+#if defined( LINUX )
+PLATFORM_INTERFACE void SetAssertDialogParent( struct SDL_Window *window );
+PLATFORM_INTERFACE struct SDL_Window * GetAssertDialogParent();
+#endif
+
 /* Used to define macros, never use these directly. */
 
-#define  _AssertMsg( _exp, _msg, _executeExp, _bFatal )	\
-	do {																\
-		if (!(_exp)) 													\
-		{ 																\
-			LoggingResponse_t ret = Log_Assert( "%s (%d) : %s\n", __TFILE__, __LINE__, _msg );	\
-			_executeExp; 												\
-			if ( ret == LR_DEBUGGER )									\
-			{															\
-				if ( !ShouldUseNewAssertDialog() || DoNewAssertDialog( __TFILE__, __LINE__, _msg ) ) \
-					DebuggerBreak();									\
-				if ( _bFatal )											\
-					_ExitOnFatalAssert( __TFILE__, __LINE__ );			\
-			}															\
-		}																\
-	} while (0)
+#ifdef _PREFAST_
+	// When doing /analyze builds define _AssertMsg to be __analysis_assume. This tells
+	// the compiler to assume that the condition is true, which helps to suppress many
+	// warnings. This define is done in debug and release builds.
+	// The unfortunate !! is necessary because otherwise /analyze is incapable of evaluating
+	// all of the logical expressions that the regular compiler can handle.
+	// Include _msg in the macro so that format errors in it are detected.
+	#define _AssertMsg( _exp, _msg, _executeExp, _bFatal ) do { __analysis_assume( !!(_exp) ); _msg; } while (0)
+	#define  _AssertMsgOnce( _exp, _msg, _bFatal ) do { __analysis_assume( !!(_exp) ); _msg; } while (0)
+	// Force asserts on for /analyze so that we get a __analysis_assume of all of the constraints.
+	#define DBGFLAG_ASSERT
+	#define DBGFLAG_ASSERTFATAL
+	#define DBGFLAG_ASSERTDEBUG
+
+	// Define the Q_ASSERT macro to override the QT assert macro so that its asserts
+	// suppress warnings instead of causing them.
+	#define  Q_ASSERT( _exp )           							_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), ((void)0), false )
+#else
+	#define  _AssertMsg( _exp, _msg, _executeExp, _bFatal )	\
+		do {																\
+			if (!(_exp)) 													\
+			{ 																\
+				LoggingResponse_t ret = Log_Assert( "%s (%d) : %s\n", __TFILE__, __LINE__, static_cast<const char*>( _msg ) );	\
+				CallAssertFailedNotifyFunc( __TFILE__, __LINE__, _msg );								\
+				_executeExp; 												\
+				if ( ret == LR_DEBUGGER )									\
+				{															\
+					if ( ShouldUseNewAssertDialog() )                       \
+					{                                                       \
+						if ( DbgFlagMacro_DoNewAssertDialog( __TFILE__, __LINE__, _msg ) ) \
+							DebuggerBreak();									\
+					}                                                       \
+					if ( _bFatal )											\
+						DbgFlagMacro_ExitOnFatalAssert( __TFILE__, __LINE__ );			\
+				}															\
+			}																\
+		} while (0)
 
 #define  _AssertMsgOnce( _exp, _msg, _bFatal ) \
 	do {																\
@@ -116,6 +177,7 @@ PLATFORM_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const t
 			_AssertMsg( _exp, _msg, (fAsserted = true), _bFatal );		\
 		}																\
 	} while (0)
+#endif
 
 /* Spew macros... */
 
@@ -135,6 +197,7 @@ PLATFORM_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const t
 #define  AssertFatalFloatEquals( _exp, _expectedValue, _tol )   AssertFatalMsg2( fabs((_exp) - (_expectedValue)) <= (_tol), _T("Expected %f but got %f!"), (_expectedValue), (_exp) )
 #define  VerifyFatal( _exp )									AssertFatal( _exp )
 #define  VerifyEqualsFatal( _exp, _expectedValue )				AssertFatalEquals( _exp, _expectedValue )
+#define  DbgVerifyFatal( _exp )									AssertFatal( _exp )
 
 #define  AssertFatalMsg1( _exp, _msg, a1 )									AssertFatalMsg( _exp, (const tchar *)(CDbgFmtMsg( _msg, a1 )))
 #define  AssertFatalMsg2( _exp, _msg, a1, a2 )								AssertFatalMsg( _exp, (const tchar *)(CDbgFmtMsg( _msg, a1, a2 )))
@@ -158,6 +221,7 @@ PLATFORM_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const t
 #define  AssertFatalFloatEquals( _exp, _expectedValue, _tol )	((void)0)
 #define  VerifyFatal( _exp )									(_exp)
 #define  VerifyEqualsFatal( _exp, _expectedValue )				(_exp)
+#define  DbgVerifyFatal( _exp )									(_exp)
 
 #define  AssertFatalMsg1( _exp, _msg, a1 )									((void)0)
 #define  AssertFatalMsg2( _exp, _msg, a1, a2 )								((void)0)
@@ -172,6 +236,27 @@ PLATFORM_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const t
 
 #endif // DBGFLAG_ASSERTFATAL
 
+// lightweight assert macros: in theory, can be run in release without slowing it down
+#if defined(_CERT) || defined(_RETAIL) 
+#define AssertAligned(PTR)
+#define AssertAlignedWidth(PTR, width)
+#define AssertAlignedConsole(PTR)
+#else
+#  if defined( _X360 )
+#	 define AssertAlignedWidth( PTR, width ) __twnei( intp(PTR) & ( width - 1 ), 0 ) // trap if not equal to immediate value (from width mask); unsigned comparison
+#    define AssertAligned( PTR ) AssertAlignedWidth( PTR, 16 ) // Call above with 16 width defined
+#    define AssertAlignedConsole( PTR ) AssertAlignedWidth( PTR, 4 ) // Call above with 4 width defined (xbox only for now)
+#  elif defined( DBGFLAG_ASSERT )
+#	 define  AssertAlignedWidth( adr, width )  Assert( ( ( ( intp ) ( adr ) ) & ( width - 1 ) ) == 0 )
+#    define  AssertAligned( adr )           AssertAlignedWidth( adr, 16 )
+#    define AssertAlignedConsole(adr)     // XBox only for now.
+#  else
+#  define AssertAlignedWidth(PTR, width)
+#  define AssertAligned(PTR) 
+#  define AssertAlignedConsole(PTR)
+#  endif
+#endif
+
 // Assert macros
 // Assert is used to detect an important but survivable error.
 // It's only turned on when DBGFLAG_ASSERT is true.
@@ -179,15 +264,29 @@ PLATFORM_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const t
 #ifdef DBGFLAG_ASSERT
 
 #define  Assert( _exp )           							_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), ((void)0), false )
-#define  AssertAligned( adr )                               Assert( ( ( ( intp ) ( adr ) ) & 0xf ) == 0 )
 #define  AssertMsg_( _exp, _msg )  							_AssertMsg( _exp, _msg, ((void)0), false )
 #define  AssertOnce( _exp )       							_AssertMsgOnce( _exp, _T("Assertion Failed: ") _T(#_exp), false )
 #define  AssertMsgOnce( _exp, _msg )  						_AssertMsgOnce( _exp, _msg, false )
 #define  AssertFunc( _exp, _f )   							_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), _f, false )
 #define  AssertEquals( _exp, _expectedValue )              	AssertMsg2( (_exp) == (_expectedValue), _T("Expected %d but got %d!"), (_expectedValue), (_exp) ) 
 #define  AssertFloatEquals( _exp, _expectedValue, _tol )  	AssertMsg2( fabs((_exp) - (_expectedValue)) <= (_tol), _T("Expected %f but got %f!"), (_expectedValue), (_exp) )
-#define  Verify( _exp )           							Assert( _exp )
+#define  Verify( _exp )           							( _exp )
 #define  VerifyEquals( _exp, _expectedValue )           	AssertEquals( _exp, _expectedValue )
+#ifndef DbgVerify
+#define  DbgVerify( _exp )           						Assert( _exp )
+#endif
+
+#ifdef _DEBUG
+#define DbgAssert( _exp )	Assert( _exp )
+#else
+#define DbgAssert( _exp )	((void)0)
+#endif
+
+#ifdef _DEBUG
+#define DbgAssert( _exp )	Assert( _exp )
+#else
+#define DbgAssert( _exp )	((void)0)
+#endif
 
 #define  AssertMsg(  _exp, _msg )  										AssertMsg_( _exp, _T( _msg ) )
 #define  AssertMsg1( _exp, _msg, a1 )									AssertMsg_( _exp, (const tchar *)(CDbgFmtMsg( _T( _msg ), a1 )) )
@@ -203,7 +302,6 @@ PLATFORM_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const t
 #else // DBGFLAG_ASSERT
 
 #define  Assert( _exp )										((void)0)
-#define  AssertAligned( ptr )								((void)0)
 #define  AssertOnce( _exp )									((void)0)
 #define  AssertMsg( _exp, _msg )							((void)0)
 #define  AssertMsgOnce( _exp, _msg )						((void)0)
@@ -212,6 +310,10 @@ PLATFORM_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const t
 #define  AssertFloatEquals( _exp, _expectedValue, _tol )	((void)0)
 #define  Verify( _exp )										(_exp)
 #define  VerifyEquals( _exp, _expectedValue )           	(_exp)
+#ifndef DbgVerify
+#define  DbgVerify( _exp )			  (_exp)
+#endif
+#define	 DbgAssert( _exp )									((void)0)
 
 #define  AssertMsg1( _exp, _msg, a1 )									((void)0)
 #define  AssertMsg2( _exp, _msg, a1, a2 )								((void)0)
@@ -226,17 +328,33 @@ PLATFORM_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const t
 
 #endif // DBGFLAG_ASSERT
 
-#define FILE_LINE_FUNCTION_STRINGIFY(x) #x
-#define FILE_LINE_FUNCTION_TOSTRING(x) FILE_LINE_FUNCTION_STRINGIFY(x)
-#define FILE_LINE_FUNCTION_STRING __FILE__ "(" FILE_LINE_FUNCTION_TOSTRING(__LINE__) "):" __FUNCTION__ ":"
+// Source2 compatibility macro
+#define AssertDbg( X ) DbgAssert( X )
 
-#define FILE_LINE_STRINGIFY(x) #x
-#define FILE_LINE_TOSTRING(x) FILE_LINE_STRINGIFY(x)
-#define FILE_LINE_STRING __FILE__ "(" FILE_LINE_TOSTRING(__LINE__) "):"
 
-#define FUNCTION_LINE_STRINGIFY(x) #x
-#define FUNCTION_LINE_TOSTRING(x) FUNCTION_LINE_STRINGIFY(x)
-#define FUNCTION_LINE_STRING __FUNCTION__ "(" FUNCTION_LINE_TOSTRING(__LINE__) "): "
+// Use AssertAnalyze when the main purpose is to work around /analyze bugs by
+// telling the compiler that a condition is impossible. If DBGFLAG_ASSERT is set
+// then these will still be Asserts (just in case). The use of a different macro
+// is in order to indicate their purpose.
+#define AssertAnalyze( _exp )								Assert( _exp )
+#define STRINGIFY_INTERNAL(x) #x
+#define STRINGIFY(x) STRINGIFY_INTERNAL(x)
+
+// The Always version of the assert macros are defined even when DBGFLAG_ASSERT is not, 
+// so they will be available even in release.
+#define  AssertAlways( _exp )           							_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), ((void)0), false )
+#define  AssertMsgAlways( _exp, _msg )  							_AssertMsg( _exp, _msg, ((void)0), false )
+
+
+#define FILE_LINE_FUNCTION_STRING __FILE__ "(" STRINGIFY(__LINE__) "):" __FUNCTION__ ":"
+#define FILE_LINE_STRING __FILE__ "(" STRINGIFY(__LINE__) "):"
+#define FUNCTION_LINE_STRING __FUNCTION__ "(" STRINGIFY(__LINE__) "): "
+
+
+// Handy define for inserting clickable messages into the build output.
+// Use like this:
+// #pragma MESSAGE("Some message")
+#define MESSAGE(msg) message(__FILE__ "(" FUNCTION_LINE_TOSTRING(__LINE__) "): " msg)
 
 //////////////////////////////////////////////////////////////////////////
 // Legacy Logging System
@@ -245,7 +363,8 @@ PLATFORM_INTERFACE bool DoNewAssertDialog( const tchar *pFile, int line, const t
 // Channels which map the legacy logging system to the new system.
 
 // Channel for all default Msg/Warning/Error commands.
-DECLARE_LOGGING_CHANNEL( LOG_GENERAL );
+PLATFORM_INTERFACE LoggingChannelID_t LOG_GENERAL;
+
 // Channel for all asserts.
 DECLARE_LOGGING_CHANNEL( LOG_ASSERT );
 // Channel for all ConMsg and ConColorMsg commands.
@@ -259,29 +378,58 @@ DECLARE_LOGGING_CHANNEL( LOG_DEVELOPER_VERBOSE );
 
 // Legacy logging functions
 
-PLATFORM_INTERFACE void Msg( const tchar* pMsg, ... );
-PLATFORM_INTERFACE void Warning( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
-PLATFORM_INTERFACE void Warning_SpewCallStack( int iMaxCallStackLength, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
-PLATFORM_INTERFACE void Error( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
-PLATFORM_INTERFACE void Error_SpewCallStack( int iMaxCallStackLength, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
+// These functions do not return.
+PLATFORM_INTERFACE void Error( PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+PLATFORM_INTERFACE void Error_SpewCallStack( int iMaxCallStackLength, PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
+#define Plat_FatalError( ... ) do { Log_Error( LOG_GENERAL, ##__VA_ARGS__ ); Plat_ExitProcess( EXIT_FAILURE ); } while( 0 )
 
-// @TODO: these callstack spew functions are currently disabled in the new logging system.  Need to add support for these if desired.
-PLATFORM_INTERFACE void _Warning_AlwaysSpewCallStack_Enable( bool bEnable );
-PLATFORM_INTERFACE void _Warning_AlwaysSpewCallStack_Length( int iMaxCallStackLength );
+#if defined( DBGFLAG_STRINGS_STRIP )
 
-PLATFORM_INTERFACE void _Error_AlwaysSpewCallStack_Enable( bool bEnable );
-PLATFORM_INTERFACE void _Error_AlwaysSpewCallStack_Length( int iMaxCallStackLength );
+#define Msg( ... ) ((void)0)
+#define Warning( ... ) ((void)0)
+#define Warning_SpewCallStack( ... ) ((void)0)
+#define DevMsg( ... ) ((void)0)
+#define DevWarning( ... ) ((void)0)
+#define ConColorMsg( ... ) ((void)0)
+#define ConMsg( ... ) ((void)0)
+#define ConDMsg( ... ) ((void)0)
+#define COM_TimestampedLog( ... ) ((void)0)
 
-PLATFORM_INTERFACE void DevMsg( int level, const tchar* pMsg, ... ) FMTFUNCTION( 2, 3 );
-PLATFORM_INTERFACE void DevWarning( int level, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
+#else // DBGFLAG_STRINGS_STRIP
 
-PLATFORM_OVERLOAD void DevMsg( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
-PLATFORM_OVERLOAD void DevWarning( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+PLATFORM_INTERFACE void Msg( PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+PLATFORM_INTERFACE void Warning( PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+PLATFORM_INTERFACE void Warning_SpewCallStack( int iMaxCallStackLength, PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
 
-PLATFORM_OVERLOAD void ConColorMsg( const Color& clr, const tchar* pMsg, ... ) FMTFUNCTION( 2, 3 );
-PLATFORM_OVERLOAD void ConMsg( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+#ifdef _PS3
 
-PLATFORM_INTERFACE void ConDMsg( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+PLATFORM_OVERLOAD void DevMsg( int level, PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 2, 3 );
+PLATFORM_OVERLOAD void DevWarning( int level, PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
+
+PLATFORM_INTERFACE void DevMsg( PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+PLATFORM_INTERFACE void DevWarning( PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+
+PLATFORM_INTERFACE void ConColorMsg( const Color& clr, PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 2, 3 );
+PLATFORM_INTERFACE void ConMsg( PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+
+#else // !_PS3
+
+PLATFORM_INTERFACE void DevMsg( int level, PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 2, 3 );
+PLATFORM_INTERFACE void DevWarning( int level, PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
+
+PLATFORM_OVERLOAD void DevMsg( PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+PLATFORM_OVERLOAD void DevWarning( PRINTF_FORMAT_STRING const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+
+PLATFORM_OVERLOAD void ConColorMsg( const Color& clr, PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 2, 3 );
+PLATFORM_OVERLOAD void ConMsg( PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+
+#endif // _PS3
+
+PLATFORM_INTERFACE void ConDMsg( PRINTF_FORMAT_STRING const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+
+PLATFORM_INTERFACE void COM_TimestampedLog( PRINTF_FORMAT_STRING char const *fmt, ... ) FMTFUNCTION( 1, 2 );
+
+#endif // DBGFLAG_STRINGS_STRIP
 
 // You can use this macro like a runtime assert macro.
 // If the condition fails, then Error is called with the message. This macro is called
@@ -302,7 +450,13 @@ PLATFORM_INTERFACE void ConDMsg( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
 #define DebugMsg(...)
 #endif
 
-PLATFORM_INTERFACE void COM_TimestampedLog( char const *fmt, ... ) FMTFUNCTION( 1, 2 );
+// @TODO: these callstack spew functions are currently disabled in the new logging system.  Need to add support for these if desired.
+PLATFORM_INTERFACE void _Warning_AlwaysSpewCallStack_Enable( bool bEnable );
+PLATFORM_INTERFACE void _Warning_AlwaysSpewCallStack_Length( int iMaxCallStackLength );
+
+PLATFORM_INTERFACE void _Error_AlwaysSpewCallStack_Enable( bool bEnable );
+PLATFORM_INTERFACE void _Error_AlwaysSpewCallStack_Length( int iMaxCallStackLength );
+
 
 /* Code macros, debugger interface */
 
@@ -322,16 +476,6 @@ PLATFORM_INTERFACE void COM_TimestampedLog( char const *fmt, ... ) FMTFUNCTION( 
 
 #endif /* _DEBUG */
 
-//-----------------------------------------------------------------------------
-// Macro to assist in asserting constant invariants during compilation
-
-#ifdef _DEBUG
-#define COMPILE_TIME_ASSERT( pred )	switch(0){case 0:case pred:;}
-#define ASSERT_INVARIANT( pred )	static void UNIQUE_ID() { COMPILE_TIME_ASSERT( pred ) }
-#else
-#define COMPILE_TIME_ASSERT( pred )
-#define ASSERT_INVARIANT( pred )
-#endif
 
 #ifdef _DEBUG
 template<typename DEST_POINTER_TYPE, typename SOURCE_POINTER_TYPE>
@@ -351,14 +495,23 @@ inline DEST_POINTER_TYPE assert_cast(SOURCE_POINTER_TYPE* pSource)
 PLATFORM_INTERFACE void _AssertValidReadPtr( void* ptr, int count = 1 );
 PLATFORM_INTERFACE void _AssertValidWritePtr( void* ptr, int count = 1 );
 PLATFORM_INTERFACE void _AssertValidReadWritePtr( void* ptr, int count = 1 );
+PLATFORM_INTERFACE void _AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFFF );
 
-PLATFORM_INTERFACE  void _AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFFF );
+#ifdef DBGFLAG_ASSERT
+inline void AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFFF )		 { _AssertValidStringPtr( ptr, maxchar ); }
 template<class T> inline void AssertValidReadPtr( T* ptr, int count = 1 )		     { _AssertValidReadPtr( (void*)ptr, count ); }
 template<class T> inline void AssertValidWritePtr( T* ptr, int count = 1 )		     { _AssertValidWritePtr( (void*)ptr, count ); }
 template<class T> inline void AssertValidReadWritePtr( T* ptr, int count = 1 )	     { _AssertValidReadWritePtr( (void*)ptr, count ); }
-
-
 #define AssertValidThis() AssertValidReadWritePtr(this,sizeof(*this))
+
+#else
+
+inline void AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFFF ) 		 {	}
+template<class T> inline void AssertValidReadPtr( T* ptr, int count = 1 )		     {  }
+template<class T> inline void AssertValidWritePtr( T* ptr, int count = 1 )		     {  }
+template<class T> inline void AssertValidReadWritePtr( T* ptr, int count = 1 )	     {  }
+#define AssertValidThis() 
+#endif
 
 //-----------------------------------------------------------------------------
 // Macro to protect functions that are not reentrant
@@ -410,7 +563,7 @@ private:
 class CDbgFmtMsg
 {
 public:
-	CDbgFmtMsg(const tchar *pszFormat, ...)
+	CDbgFmtMsg(PRINTF_FORMAT_STRING const tchar *pszFormat, ...)
 	{ 
 		va_list arg_ptr;
 
@@ -640,5 +793,60 @@ private:
 
 #endif // IS_WINDOWS_PC
 //-----------------------------------------------------------------------------
+
+
+#else //#if !defined(__SPU__)
+
+// void these for now
+
+#define  Assert( _exp )										((void)0)
+#define  AssertOnce( _exp )									((void)0)
+#define  AssertMsg( _exp, _msg )							((void)0)
+#define  AssertMsgOnce( _exp, _msg )						((void)0)
+#define  AssertFunc( _exp, _f )								((void)0)
+#define  AssertEquals( _exp, _expectedValue )				((void)0)
+#define  AssertFloatEquals( _exp, _expectedValue, _tol )	((void)0)
+#define  Verify( _exp )										(_exp)
+#define  VerifyEquals( _exp, _expectedValue )           	(_exp)
+
+#define  AssertMsg1( _exp, _msg, a1 )									((void)0)
+#define  AssertMsg2( _exp, _msg, a1, a2 )								((void)0)
+#define  AssertMsg3( _exp, _msg, a1, a2, a3 )							((void)0)
+#define  AssertMsg4( _exp, _msg, a1, a2, a3, a4 )						((void)0)
+#define  AssertMsg5( _exp, _msg, a1, a2, a3, a4, a5 )					((void)0)
+#define  AssertMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				((void)0)
+#define  AssertMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				((void)0)
+#define  AssertMsg7( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )			((void)0)
+#define  AssertMsg8( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )		((void)0)
+#define  AssertMsg9( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )	((void)0)
+
+#define COMPILE_TIME_ASSERT( pred )
+#define ASSERT_INVARIANT( pred )
+
+#define  AssertFatal( _exp )									((void)0)
+#define  AssertFatalOnce( _exp )								((void)0)
+#define  AssertFatalMsg( _exp, _msg )							((void)0)
+#define  AssertFatalMsgOnce( _exp, _msg )						((void)0)
+#define  AssertFatalFunc( _exp, _f )							((void)0)
+#define  AssertFatalEquals( _exp, _expectedValue )				((void)0)
+#define  AssertFatalFloatEquals( _exp, _expectedValue, _tol )	((void)0)
+#define  VerifyFatal( _exp )									(_exp)
+#define  VerifyEqualsFatal( _exp, _expectedValue )				(_exp)
+
+#define  AssertFatalMsg1( _exp, _msg, a1 )									((void)0)
+#define  AssertFatalMsg2( _exp, _msg, a1, a2 )								((void)0)
+#define  AssertFatalMsg3( _exp, _msg, a1, a2, a3 )							((void)0)
+#define  AssertFatalMsg4( _exp, _msg, a1, a2, a3, a4 )						((void)0)
+#define  AssertFatalMsg5( _exp, _msg, a1, a2, a3, a4, a5 )					((void)0)
+#define  AssertFatalMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				((void)0)
+#define  AssertFatalMsg6( _exp, _msg, a1, a2, a3, a4, a5, a6 )				((void)0)
+#define  AssertFatalMsg7( _exp, _msg, a1, a2, a3, a4, a5, a6, a7 )			((void)0)
+#define  AssertFatalMsg8( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8 )		((void)0)
+#define  AssertFatalMsg9( _exp, _msg, a1, a2, a3, a4, a5, a6, a7, a8, a9 )	((void)0)
+
+#define AssertAligned(PTR)
+
+#endif
+
 
 #endif /* DBG_H */
