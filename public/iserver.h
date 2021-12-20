@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -13,6 +13,7 @@
 #include <inetmsghandler.h>
 #include <bitvec.h>
 #include <const.h>
+#include <netadr.h>
 
 class INetMessage;
 class IRecipientFilter;
@@ -31,7 +32,9 @@ public:
 	virtual int		GetMaxClients( void ) const = 0; // returns current client limit
 	virtual IClient	*GetClient( int index ) = 0; // returns interface to client 
 	virtual int		GetClientCount() const = 0; // returns number of clients slots (used & unused)
-	virtual int		GetUDPPort( void ) const = 0; // returns current used UDP port
+	virtual netadr_t GetPublicAddress() = 0;
+	virtual bool		IsUsingFakeIP( void ) const = 0;
+	virtual int		GetLocalUDPPort( void ) const = 0; // returns current used UDP port
 	virtual float	GetTime( void ) const = 0;	// returns game world time
 	virtual int		GetTick( void ) const = 0;	// returns game world tick
 	virtual float	GetTickInterval( void ) const = 0; // tick interval in seconds
