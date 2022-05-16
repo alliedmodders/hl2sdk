@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -105,8 +105,8 @@ protected:
 	// Implement this if you want to know when the player collides during OnPlayerMove
 	virtual void	OnTryPlayerMoveCollision( trace_t &tr ) {}
 
-	virtual const Vector&	GetPlayerMins( void ) const; // uses local player
-	virtual const Vector&	GetPlayerMaxs( void ) const; // uses local player
+	virtual Vector	GetPlayerMins( void ) const; // uses local player
+	virtual Vector	GetPlayerMaxs( void ) const; // uses local player
 
 	typedef enum
 	{
