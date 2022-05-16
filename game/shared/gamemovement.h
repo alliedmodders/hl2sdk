@@ -42,9 +42,9 @@ public:
 	virtual void	StartTrackPredictionErrors( CBasePlayer *pPlayer );
 	virtual void	FinishTrackPredictionErrors( CBasePlayer *pPlayer );
 	virtual void	DiffPrint( char const *fmt, ... );
-	virtual const Vector&	GetPlayerMins( bool ducked ) const;
-	virtual const Vector&	GetPlayerMaxs( bool ducked ) const;
-	virtual const Vector&	GetPlayerViewOffset( bool ducked ) const;
+	virtual Vector  GetPlayerMins( bool ducked ) const;
+	virtual Vector	GetPlayerMaxs( bool ducked ) const;
+	virtual Vector	GetPlayerViewOffset( bool ducked ) const;
 
 // For sanity checking getting stuck on CMoveData::SetAbsOrigin
 	virtual void			TracePlayerBBox( const Vector& start, const Vector& end, unsigned int fMask, int collisionGroup, trace_t& pm );
