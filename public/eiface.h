@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -448,11 +448,11 @@ public:
 typedef IVEngineServer IVEngineServer021;
 typedef IVEngineServer IVEngineServer022;
 
-
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_8	"ServerGameDLL008"
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_9	"ServerGameDLL009"
-#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL010"
-#define INTERFACEVERSION_SERVERGAMEDLL_INT			10
+#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_10	"ServerGameDLL010"
+#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL011"
+#define INTERFACEVERSION_SERVERGAMEDLL_INT			11
 
 class IServerGCLobby;
 
