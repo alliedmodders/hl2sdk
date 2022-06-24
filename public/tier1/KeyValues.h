@@ -343,6 +343,7 @@ private:
 	uint16	   m_iKeyNameCaseSensitive2;	// 2nd part of case sensitive symbol defined in KeyValueSystem;
 
 	KeyValues *m_pPeer;	// pointer to next key in list
+	bool m_Unknown1;
 	KeyValues *m_pSub;	// pointer to Start of a new sub key list
 	KeyValues *m_pChain;// Search here if it's not in our list
 };

@@ -28,6 +28,8 @@ public:
 	// the sizes will usually never differ but this is for versioning safety
 	virtual void RegisterSizeofKeyValues(int size) = 0;
 
+	virtual void Unknown1() = 0;
+
 	// allocates/frees a KeyValues object from the shared mempool
 	virtual void *AllocKeyValuesMemory(int size) = 0;
 	virtual void FreeKeyValuesMemory(void *pMem) = 0;
