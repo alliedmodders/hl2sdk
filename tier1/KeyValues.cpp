@@ -1,4 +1,4 @@
-//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -301,8 +301,11 @@ void KeyValues::Init()
 	
 	m_bHasEscapeSequences = false;
 
-	m_iUnk1 = 0;
-	m_iUnk2 = 0;
+	m_pKeyValuesSystem = 0;
+	m_bOwnsCustomKeyValuesSystem = 0;
+	
+	// for future proof
+	memset( unused, 0, sizeof(unused) );
 }
 
 //-----------------------------------------------------------------------------

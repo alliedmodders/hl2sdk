@@ -1,4 +1,4 @@
-//========== Copyright ï¿½ 2005, Valve Corporation, All rights reserved. ========
+//========== Copyright © 2005, Valve Corporation, All rights reserved. ========
 //
 // Purpose: A collection of utility classes to simplify thread handling, and
 //			as much as possible contain portability problems. Here avoiding 
