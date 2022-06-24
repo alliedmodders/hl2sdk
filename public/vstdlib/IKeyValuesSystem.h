@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -27,6 +27,11 @@ public:
 	// so it can build a properly sized memory pool for the KeyValues objects
 	// the sizes will usually never differ but this is for versioning safety
 	virtual void RegisterSizeofKeyValues(int size) = 0;
+
+	virtual void Unknown1() = 0;
+#ifndef _WIN32
+	virtual void Unknown2() = 0;
+#endif
 
 	// allocates/frees a KeyValues object from the shared mempool
 	virtual void *AllocKeyValuesMemory(int size) = 0;
