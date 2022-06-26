@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -20,6 +20,8 @@
 #endif
 #endif
 
+#include <vstdlib/IKeyValuesSystem.h>
+
 #include "utlvector.h"
 #include "Color.h"
 #include "exprevaluator.h"
@@ -29,7 +31,6 @@ class CUtlBuffer;
 class Color;
 class KeyValues;
 class IKeyValuesDumpContext;
-class IKeyValuesSystem;
 typedef void * FileHandle_t;
 
 // single byte identifies a xbox kv file in binary format
@@ -71,7 +72,7 @@ typedef void * FileHandle_t;
 class KeyValues
 {
 public:
-	KeyValues( const char *setName );
+	KeyValues( const char *setName, IKeyValuesSystem *customSystem = NULL, bool ownsCustomSystem = false );
 
 	//
 	// AutoDelete class to automatically free the keyvalues.
@@ -312,7 +313,7 @@ private:
 	// If filesystem is null, it'll ignore f.
 	void InternalWrite( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, const void *pData, int len );
 	
-	void Init();
+	void Init(IKeyValuesSystem *customSystem = NULL, bool ownsCustomSystem = false);
 	const char * ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasConditional );
 	void WriteIndents( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, int indentLevel );
 
@@ -322,6 +323,14 @@ private:
 	bool ReadAsBinaryPooledFormat( CUtlBuffer &buf, IBaseFileSystem *pFileSystem, unsigned int poolKey, GetSymbolProc_t pfnEvaluateSymbolProc );
 
 	bool EvaluateConditional( const char *pExpressionString, GetSymbolProc_t pfnEvaluateSymbolProc );
+
+	inline IKeyValuesSystem *GetKeyValuesSystem() const {
+		if (m_pKeyValuesSystem) {
+			return m_pKeyValuesSystem;
+		}
+
+		return KeyValuesSystem();
+	}
 
 	uint32 m_iKeyName : 24;	// keyname is a symbol defined in KeyValuesSystem
 	uint32 m_iKeyNameCaseSensitive1 : 8;	// 1st part of case sensitive symbol defined in KeyValueSystem
@@ -344,8 +353,7 @@ private:
 	uint16	   m_iKeyNameCaseSensitive2;	// 2nd part of case sensitive symbol defined in KeyValueSystem;
 
 	IKeyValuesSystem *m_pKeyValuesSystem;
-	char m_bOwnsCustomKeyValuesSystem;
-	char unused[3];
+	bool              m_bOwnsCustomKeyValuesSystem;
 
 	KeyValues *m_pPeer;	// pointer to next key in list
 	KeyValues *m_pSub;	// pointer to Start of a new sub key list
