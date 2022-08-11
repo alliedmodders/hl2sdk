@@ -876,9 +876,9 @@ CNavArea *FindMinimumCostArea( CNavArea *startArea, CostFunctor &costFunc )
 	cheapAreaSet[ NUM_CHEAP_AREAS ] = {};
 	int cheapAreaSetCount = 0;
 
-	FOR_EACH_VEC( TheNavAreas, iter )
+	FOR_EACH_VEC( (*TheNavAreas), iter )
 	{
-		CNavArea *area = TheNavAreas[iter];
+		CNavArea *area = (*TheNavAreas)[iter];
 
 		// skip the small areas
 		if ( area->GetSizeX() < minSize || area->GetSizeY() < minSize)
@@ -918,13 +918,13 @@ CNavArea *FindMinimumCostArea( CNavArea *startArea, CostFunctor &costFunc )
 	else
 	{
 		// degenerate case - no decent sized areas - pick a random area
-		int numAreas = TheNavAreas.Count();
+		int numAreas = (*TheNavAreas).Count();
 		int which = RandomInt( 0, numAreas-1 );
 
-		FOR_EACH_VEC( TheNavAreas, iter )
+		FOR_EACH_VEC( (*TheNavAreas), iter )
 		{
 			if (which-- == 0)
-				return TheNavAreas[iter];
+				return (*TheNavAreas)[iter];
 		}
 
 	}

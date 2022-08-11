@@ -146,9 +146,9 @@ public:
 	unsigned int GetID( void ) const			{ return m_id; }
 	const CNavArea *GetArea( void ) const		{ return m_area; }	// return nav area this hiding spot is within
 
-	void Mark( void )							{ m_marker = m_masterMarker; }
-	bool IsMarked( void ) const					{ return (m_marker == m_masterMarker) ? true : false; }
-	static void ChangeMasterMarker( void )		{ ++m_masterMarker; }
+	void Mark( void )							{ m_marker = *m_masterMarker; }
+	bool IsMarked( void ) const					{ return (m_marker == *m_masterMarker) ? true : false; }
+	static void ChangeMasterMarker( void )		{ ++(*m_masterMarker); }
 
 
 public:
@@ -168,8 +168,8 @@ private:
 
 	unsigned char m_flags;									// bit flags
 
-	static unsigned int m_nextID;							// used when allocating spot ID's
-	static unsigned int m_masterMarker;						// used to mark spots
+	static unsigned int *m_nextID;							// used when allocating spot ID's
+	static unsigned int *m_masterMarker;						// used to mark spots
 };
 typedef CUtlVectorUltraConservative< HidingSpot * > HidingSpotVector;
 extern HidingSpotVector TheHidingSpots;
@@ -432,9 +432,9 @@ public:
 	float GetLightIntensity( void ) const;						// returns a 0..1 light intensity averaged over the whole area
 
 	//- A* pathfinding algorithm ------------------------------------------------------------------------
-	static void MakeNewMarker( void )	{ ++m_masterMarker; if (m_masterMarker == 0) m_masterMarker = 1; }
-	void Mark( void )					{ m_marker = m_masterMarker; }
-	BOOL IsMarked( void ) const			{ return (m_marker == m_masterMarker) ? true : false; }
+	static void MakeNewMarker( void )	{ ++(*m_masterMarker); if (*m_masterMarker == 0) *m_masterMarker = 1; }
+	void Mark( void )					{ m_marker = *m_masterMarker; }
+	BOOL IsMarked( void ) const			{ return (m_marker == *m_masterMarker) ? true : false; }
 	
 	void SetParent( CNavArea *parent, NavTraverseType how = NUM_TRAVERSE_TYPES )	{ m_parent = parent; m_parentHow = how; }
 	CNavArea *GetParent( void ) const	{ return m_parent; }
@@ -669,7 +669,7 @@ private:
 					m_seCorner
 	*/
 
-	static unsigned int m_nextID;								// used to allocate unique IDs
+	static unsigned int *m_nextID;								// used to allocate unique IDs
 	unsigned int m_id;											// unique area ID
 	unsigned int m_debugid;
 
@@ -711,10 +711,10 @@ private:
 	float m_lightIntensity[ NUM_CORNERS ];						// 0..1 light intensity at corners
 
 	//- A* pathfinding algorithm ------------------------------------------------------------------------
-	static unsigned int m_masterMarker;
+	static unsigned int *m_masterMarker;
 
-	static CNavArea *m_openList;
-	static CNavArea *m_openListTail;
+	static CNavArea **m_openList;
+	static CNavArea **m_openListTail;
 
 	//- connections to adjacent areas -------------------------------------------------------------------
 	NavConnectVector m_incomingConnect[ NUM_DIRECTIONS ];		// a list of adjacent areas for each direction that connect TO us, but we have no connection back to them
@@ -831,14 +831,14 @@ inline CNavArea *CNavArea::GetAdjacentArea( NavDirType dir, int i ) const
 //--------------------------------------------------------------------------------------------------------------
 inline bool CNavArea::IsOpen( void ) const
 {
-	return (m_openMarker == m_masterMarker) ? true : false;
+	return (m_openMarker == *m_masterMarker) ? true : false;
 }
 
 //--------------------------------------------------------------------------------------------------------------
 inline bool CNavArea::IsOpenListEmpty( void )
 {
 	Assert( (m_openList && m_openList->m_prevOpen == NULL) || m_openList == NULL );
-	return (m_openList) ? false : true;
+	return (*m_openList) ? false : true;
 }
 
 //--------------------------------------------------------------------------------------------------------------
@@ -846,9 +846,9 @@ inline CNavArea *CNavArea::PopOpenList( void )
 {
 	Assert( (m_openList && m_openList->m_prevOpen == NULL) || m_openList == NULL );
 
-	if ( m_openList )
+	if ( *m_openList )
 	{
-		CNavArea *area = m_openList;
+		CNavArea *area = *m_openList;
 	
 		// disconnect from list
 		area->RemoveFromOpenList();
