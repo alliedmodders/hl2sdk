@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ========//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ========//
 //
 // Purpose: 
 //
@@ -252,7 +252,7 @@ inline void Error( const tchar* pMsg, ... )
 	va_start(params, pMsg);
 	V_vsnprintf(szBuffer, sizeof(szBuffer), pMsg, params);
 	va_end(params);
-	LoggingSystem_LogDirect(LOG_GENERAL, LS_ERROR, szBuffer);
+	Plat_FatalErrorFunc( "%s", szBuffer );
 }
 
 // @TODO: these callstack spew functions are currently disabled in the new logging system.  Need to add support for these if desired.
