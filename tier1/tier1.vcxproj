@@ -327,7 +327,6 @@
     <ClCompile Include="datamanager.cpp" />
     <ClCompile Include="diff.cpp" />
     <ClCompile Include="generichash.cpp" />
-    <ClCompile Include="KeyValues.cpp" />
     <ClCompile Include="mempool.cpp" />
     <ClCompile Include="memstack.cpp" />
     <ClCompile Include="NetAdr.cpp" />
