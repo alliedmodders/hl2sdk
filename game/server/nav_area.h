@@ -837,14 +837,14 @@ inline bool CNavArea::IsOpen( void ) const
 //--------------------------------------------------------------------------------------------------------------
 inline bool CNavArea::IsOpenListEmpty( void )
 {
-	Assert( (m_openList && m_openList->m_prevOpen == NULL) || m_openList == NULL );
+	//Assert( (m_openList && m_openList->m_prevOpen == NULL) || m_openList == NULL );
 	return (*m_openList) ? false : true;
 }
 
 //--------------------------------------------------------------------------------------------------------------
 inline CNavArea *CNavArea::PopOpenList( void )
 {
-	Assert( (m_openList && m_openList->m_prevOpen == NULL) || m_openList == NULL );
+	//Assert( (m_openList && m_openList->m_prevOpen == NULL) || m_openList == NULL );
 
 	if ( *m_openList )
 	{
@@ -855,12 +855,12 @@ inline CNavArea *CNavArea::PopOpenList( void )
 		area->m_prevOpen = NULL;
 		area->m_nextOpen = NULL;
 
-		Assert( (m_openList && m_openList->m_prevOpen == NULL) || m_openList == NULL );
+		//Assert( (m_openList && m_openList->m_prevOpen == NULL) || m_openList == NULL );
 
 		return area;
 	}
 
-	Assert( (m_openList && m_openList->m_prevOpen == NULL) || m_openList == NULL );
+	//Assert( (m_openList && m_openList->m_prevOpen == NULL) || m_openList == NULL );
 
 	return NULL;
 }

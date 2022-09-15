@@ -57,8 +57,8 @@ int ExtractBbox( CStudioHdr *pstudiohdr, int sequence, Vector& mins, Vector& max
 // Output : mstudioseqdesc_t
 //-----------------------------------------------------------------------------
 
-extern int g_nActivityListVersion;
-extern int g_nEventListVersion;
+extern int *g_nActivityListVersion;
+extern int *g_nEventListVersion;
 
 void SetEventIndexForSequence( mstudioseqdesc_t &seqdesc )
 {
@@ -112,14 +112,14 @@ void BuildAllAnimationEventIndexes( CStudioHdr *pstudiohdr )
 	if ( !pstudiohdr )
 		return;
 
-	if( pstudiohdr->GetEventListVersion() != g_nEventListVersion )
+	if( pstudiohdr->GetEventListVersion() != *g_nEventListVersion )
 	{
 		for ( int i = 0 ; i < pstudiohdr->GetNumSeq() ; i++ )
 		{
 			SetEventIndexForSequence( pstudiohdr->pSeqdesc( i ) );
 		}
 
-		pstudiohdr->SetEventListVersion( g_nEventListVersion );
+		pstudiohdr->SetEventListVersion( *g_nEventListVersion );
 	}
 }
 
@@ -133,7 +133,7 @@ void ResetEventIndexes( CStudioHdr *pstudiohdr )
 	if (! pstudiohdr)
 		return;
 
-	pstudiohdr->SetEventListVersion( g_nEventListVersion - 1 );
+	pstudiohdr->SetEventListVersion( *g_nEventListVersion - 1 );
 }
 
 //-----------------------------------------------------------------------------
@@ -193,7 +193,7 @@ void IndexModelSequences( CStudioHdr *pstudiohdr )
 		SetEventIndexForSequence( pstudiohdr->pSeqdesc( i ) );
 	}
 
-	pstudiohdr->SetActivityListVersion( g_nActivityListVersion );
+	pstudiohdr->SetActivityListVersion( *g_nActivityListVersion );
 }
 
 //-----------------------------------------------------------------------------
@@ -206,7 +206,7 @@ void ResetActivityIndexes( CStudioHdr *pstudiohdr )
 	if (! pstudiohdr)
 		return;
 
-	pstudiohdr->SetActivityListVersion( g_nActivityListVersion - 1 );
+	pstudiohdr->SetActivityListVersion( *g_nActivityListVersion - 1 );
 }
 
 void VerifySequenceIndex( CStudioHdr *pstudiohdr )
@@ -216,7 +216,7 @@ void VerifySequenceIndex( CStudioHdr *pstudiohdr )
 		return;
 	}
 
-	if( pstudiohdr->GetActivityListVersion( ) != g_nActivityListVersion )
+	if( pstudiohdr->GetActivityListVersion( ) != *g_nActivityListVersion )
 	{
 		// this model's sequences have not yet been indexed by activity
 		IndexModelSequences( pstudiohdr );
