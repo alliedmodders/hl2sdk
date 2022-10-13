@@ -630,7 +630,7 @@ public:
 	// Called to see if the game server is okay with a manual changelevel or map command
 	virtual bool			IsManualMapChangeOkay( const char **pszReason ) = 0;
 
-	virtual bool GetWorkshopMap(unsigned int unk, WorkshopMapDesc_t *) = 0;
+	virtual bool GetWorkshopMap( unsigned int unk, WorkshopMapDesc_t *pMapDesc ) = 0;
 };
 
 typedef IServerGameDLL IServerGameDLL008;
