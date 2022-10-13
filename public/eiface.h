@@ -60,6 +60,7 @@ class CSteamID;
 class IReplayFactory;
 class IReplaySystem;
 class IServer;
+class WorkshopMapDesc_t;
 
 typedef struct player_info_s player_info_t;
 
@@ -451,8 +452,8 @@ typedef IVEngineServer IVEngineServer022;
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_8	"ServerGameDLL008"
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_9	"ServerGameDLL009"
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_10	"ServerGameDLL010"
-#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL011"
-#define INTERFACEVERSION_SERVERGAMEDLL_INT			11
+#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL012"
+#define INTERFACEVERSION_SERVERGAMEDLL_INT			12
 
 class IServerGCLobby;
 
@@ -628,6 +629,8 @@ public:
 
 	// Called to see if the game server is okay with a manual changelevel or map command
 	virtual bool			IsManualMapChangeOkay( const char **pszReason ) = 0;
+
+	virtual bool GetWorkshopMap( unsigned int unk, WorkshopMapDesc_t *pMapDesc ) = 0;
 };
 
 typedef IServerGameDLL IServerGameDLL008;
