@@ -543,7 +543,7 @@ public:
 	{
 		int i;
 
-		++s_nCurrVisTestCounter;
+		++(*s_nCurrVisTestCounter);
 
 		for ( i=0; i<m_potentiallyVisibleAreas.Count(); ++i )
 		{
@@ -552,8 +552,8 @@ public:
 				continue;
 
 			// If this assertion triggers, an area is in here twice!
-			Assert( area->m_nVisTestCounter != s_nCurrVisTestCounter );
-			area->m_nVisTestCounter = s_nCurrVisTestCounter;
+			Assert( area->m_nVisTestCounter != (*s_nCurrVisTestCounter) );
+			area->m_nVisTestCounter = (*s_nCurrVisTestCounter);
 
 			if ( m_potentiallyVisibleAreas[i].attributes == NOT_VISIBLE )
 				continue;
@@ -574,11 +574,11 @@ public:
 				continue;
 
 			// We may have visited this from m_potentiallyVisibleAreas
-			if ( inherited[i].area->m_nVisTestCounter == s_nCurrVisTestCounter )
+			if ( inherited[i].area->m_nVisTestCounter == (*s_nCurrVisTestCounter) )
 				continue;
 
 			// Theoretically, this shouldn't matter. But, just in case!
-			inherited[i].area->m_nVisTestCounter = s_nCurrVisTestCounter;
+			inherited[i].area->m_nVisTestCounter = (*s_nCurrVisTestCounter);
 
 			if ( inherited[i].attributes == NOT_VISIBLE )
 				continue;
@@ -600,7 +600,7 @@ public:
 	{
 		int i;
 
-		++s_nCurrVisTestCounter;
+		++(*s_nCurrVisTestCounter);
 
 		for ( i=0; i<m_potentiallyVisibleAreas.Count(); ++i )
 		{
@@ -609,8 +609,8 @@ public:
 				continue;
 
 			// If this assertion triggers, an area is in here twice!
-			Assert( area->m_nVisTestCounter != s_nCurrVisTestCounter );
-			area->m_nVisTestCounter = s_nCurrVisTestCounter;
+			Assert( area->m_nVisTestCounter != (*s_nCurrVisTestCounter) );
+			area->m_nVisTestCounter = (*s_nCurrVisTestCounter);
 
 			if ( ( m_potentiallyVisibleAreas[i].attributes & COMPLETELY_VISIBLE ) == 0 )
 				continue;
@@ -631,11 +631,11 @@ public:
 				continue;
 			
 			// We may have visited this from m_potentiallyVisibleAreas
-			if ( inherited[i].area->m_nVisTestCounter == s_nCurrVisTestCounter )
+			if ( inherited[i].area->m_nVisTestCounter == (*s_nCurrVisTestCounter) )
 				continue;
 
 			// Theoretically, this shouldn't matter. But, just in case!
-			inherited[i].area->m_nVisTestCounter = s_nCurrVisTestCounter;
+			inherited[i].area->m_nVisTestCounter = (*s_nCurrVisTestCounter);
 
 			if ( ( inherited[i].attributes & COMPLETELY_VISIBLE ) == 0 )
 				continue;
@@ -762,7 +762,7 @@ private:
 	const CAreaBindInfoArray &ComputeVisibilityDelta( const CNavArea *other ) const;	// return a list of the delta between our visibility list and the given adjacent area
 
 	uint32 m_nVisTestCounter;
-	static uint32 s_nCurrVisTestCounter;
+	static uint32 *s_nCurrVisTestCounter;
 
 	CUtlVector< CHandle< CFuncNavCost > > m_funcNavCostVector;	// active, overlapping cost entities
 };
