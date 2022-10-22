@@ -122,6 +122,10 @@ public:
 	virtual bool			HasQueuedMaterialThreadConVarSets() const = 0;
 	virtual int				ProcessQueuedMaterialThreadConVarSets() = 0;
 
+	virtual void			UnknownFunc1() = 0;
+	virtual void			UnknownFunc2() = 0;
+	virtual void			UnknownFunc3() = 0;
+
 protected:	class ICVarIteratorInternal;
 public:
 	/// Iteration over all cvars. 
