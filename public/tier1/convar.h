@@ -458,10 +458,7 @@ protected:
 	
 	CVValue_t					m_Value;
 	
-	char						*m_pszStringUnknown;
-	int							m_StringLengthUnknown;
-	float						m_fValueUnknown;
-	int							m_nValueUnknown;
+	CVValue_t					m_ValueUnknown;
 
 	// Min/Max values
 	bool						m_bHasMin;
