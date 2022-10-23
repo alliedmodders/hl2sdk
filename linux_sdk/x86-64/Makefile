@@ -91,9 +91,9 @@ ARCH_CFLAGS = -mtune=generic -march=core2 -mmmx -msse -msse2 -std=gnu++11 -fPIC
 
 ifeq "$(OS)" "Darwin"
 DEFINES = -D_OSX -DOSX -D_DLL_EXT=.dylib
-ARCH_CFLAGS += -mmacosx-version-min=10.5
+ARCH_CFLAGS += -mmacosx-version-min=10.9 -stdlib=libc++
 SHLIBEXT = dylib
-SHLIBLDFLAGS = -dynamiclib -mmacosx-version-min=10.5
+SHLIBLDFLAGS = -dynamiclib -mmacosx-version-min=10.9
 SHLIBSUFFIX =
 else
 DEFINES = -D_LINUX -DLINUX -D_DLL_EXT=.so
@@ -107,7 +107,7 @@ DEFINES += -DCOMPILER_GCC -DPOSIX -DX64BITS -DPLATFORM_64BITS -DVPROF_LEVEL=1 -D
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
 BASE_CFLAGS = -fno-strict-aliasing -Wall -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
-	      -Wno-unused
+	      -Wno-unused -Wno-register
 SHLIBCFLAGS = -fPIC
 
 # Clang >= 3 || GCC >= 4.7
