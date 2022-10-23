@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -457,6 +457,8 @@ protected:
 	const char					*m_pszDefaultValue;
 	
 	CVValue_t					m_Value;
+	
+	CVValue_t					m_ValueUnknown;
 
 	// Min/Max values
 	bool						m_bHasMin;
