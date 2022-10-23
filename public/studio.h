@@ -1724,7 +1724,7 @@ struct virtualmodel_t
 		return &m_group[ m_seq[ sequence ].group ];
 	} // Note: user must manage mutex for this
 
-    CThreadFastMutex m_Lock;
+    CThreadFastMutexRecursive m_Lock;
 
 	CUtlVector< virtualsequence_t > m_seq;
 	CUtlVector< virtualgeneric_t > m_anim;

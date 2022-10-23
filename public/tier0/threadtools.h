@@ -11,6 +11,11 @@
 
 #include <limits.h>
 
+#include <limits>
+#include <atomic>
+#include <mutex>
+#include <shared_mutex>
+
 #include "tier0/platform.h"
 #include "tier0/dbg.h"
 #include "tier0/vcrmode.h"
@@ -589,64 +594,24 @@ private:
 //
 //-----------------------------------------------------------------------------
 
-class PLATFORM_CLASS CThreadMutex
+class CThreadMutex
 {
+	std::mutex mutex;
+
 public:
-	CThreadMutex();
-	~CThreadMutex();
+	bool TryLock() { return mutex.try_lock(); }
+	void Lock() { mutex.lock(); }
+	void Unlock() { mutex.unlock(); }
+};
 
-	//------------------------------------------------------
-	// Mutex acquisition/release. Const intentionally defeated.
-	//------------------------------------------------------
-	void Lock();
-	void Lock() const		{ (const_cast<CThreadMutex *>(this))->Lock(); }
-	void Unlock();
-	void Unlock() const		{ (const_cast<CThreadMutex *>(this))->Unlock(); }
+class CThreadMutexRecursive
+{
+	std::recursive_mutex mutex;
 
-	bool TryLock();
-	bool TryLock() const	{ return (const_cast<CThreadMutex *>(this))->TryLock(); }
-
-	//------------------------------------------------------
-	// Use this to make deadlocks easier to track by asserting
-	// when it is expected that the current thread owns the mutex
-	//------------------------------------------------------
-	bool AssertOwnedByCurrentThread();
-
-	//------------------------------------------------------
-	// Enable tracing to track deadlock problems
-	//------------------------------------------------------
-	void SetTrace( bool );
-
-private:
-	// Disallow copying
-	CThreadMutex( const CThreadMutex & );
-	CThreadMutex &operator=( const CThreadMutex & );
-
-#if defined( _WIN32 )
-	// Efficient solution to breaking the windows.h dependency, invariant is tested.
-#ifdef _WIN64
-	#define TT_SIZEOF_CRITICALSECTION 40	
-#else
-#ifndef _X360
-	#define TT_SIZEOF_CRITICALSECTION 24
-#else
-	#define TT_SIZEOF_CRITICALSECTION 28
-#endif // !_XBOX
-#endif // _WIN64
-	byte m_CriticalSection[TT_SIZEOF_CRITICALSECTION];
-#elif defined(POSIX)
-	pthread_mutex_t m_Mutex;
-	pthread_mutexattr_t m_Attr;
-#else
-#error
-#endif
-
-#ifdef THREAD_MUTEX_TRACING_SUPPORTED
-	// Debugging (always here to allow mixed debug/release builds w/o changing size)
-	uint	m_currentOwnerID;
-	uint16	m_lockCount;
-	bool	m_bTrace;
-#endif
+public:
+	bool TryLock() { return mutex.try_lock(); }
+	void Lock() { mutex.lock(); }
+	void Unlock() { mutex.unlock(); }
 };
 
 //-----------------------------------------------------------------------------
@@ -661,118 +626,11 @@ private:
 
 #if !defined(THREAD_PROFILER)
 
-class CThreadFastMutex
-{
-public:
-	CThreadFastMutex()
-	  :	m_ownerID( 0 ),
-	  	m_depth( 0 )
-	{
-	}
-
-private:
-	FORCEINLINE bool TryLockInline( const uint32 threadId ) volatile
-	{
-		if ( threadId != m_ownerID && !ThreadInterlockedAssignIf( (volatile long *)&m_ownerID, (long)threadId, 0 ) )
-			return false;
-
-		ThreadMemoryBarrier();
-		++m_depth;
-		return true;
-	}
-
-	bool TryLock( const uint32 threadId ) volatile
-	{
-		return TryLockInline( threadId );
-	}
-
-	PLATFORM_CLASS void Lock( const uint32 threadId, unsigned nSpinSleepTime ) volatile;
-
-public:
-	bool TryLock() volatile
-	{
-#ifdef _DEBUG
-		if ( m_depth == INT_MAX )
-			DebuggerBreak();
-
-		if ( m_depth < 0 )
-			DebuggerBreak();
-#endif
-		return TryLockInline( ThreadGetCurrentId() );
-	}
-
-#ifndef _DEBUG 
-	FORCEINLINE 
-#endif
-	void Lock( unsigned int nSpinSleepTime = 0 ) volatile
-	{
-		const uint32 threadId = ThreadGetCurrentId();
-
-		if ( !TryLockInline( threadId ) )
-		{
-			ThreadPause();
-			Lock( threadId, nSpinSleepTime );
-		}
-#ifdef _DEBUG
-		if ( m_ownerID != ThreadGetCurrentId() )
-			DebuggerBreak();
-
-		if ( m_depth == INT_MAX )
-			DebuggerBreak();
-
-		if ( m_depth < 0 )
-			DebuggerBreak();
-#endif
-	}
-
-#ifndef _DEBUG
-	FORCEINLINE 
-#endif
-	void Unlock() volatile
-	{
-#ifdef _DEBUG
-		if ( m_ownerID != ThreadGetCurrentId() )
-			DebuggerBreak();
-
-		if ( m_depth <= 0 )
-			DebuggerBreak();
-#endif
-
-		--m_depth;
-		if ( !m_depth )
-		{
-			ThreadMemoryBarrier();
-			ThreadInterlockedExchange( &m_ownerID, 0 );
-    	}
-    }
-
-#ifdef WIN32
-	bool TryLock() const volatile							{ return (const_cast<CThreadFastMutex *>(this))->TryLock(); }
-	void Lock(unsigned nSpinSleepTime = 1 ) const volatile	{ (const_cast<CThreadFastMutex *>(this))->Lock( nSpinSleepTime ); }
-	void Unlock() const	volatile							{ (const_cast<CThreadFastMutex *>(this))->Unlock(); }
-#endif
-	// To match regular CThreadMutex:
-	bool AssertOwnedByCurrentThread()	{ return true; }
-	void SetTrace( bool )				{}
-
-	uint32 GetOwnerId() const			{ return m_ownerID;	}
-	int	GetDepth() const				{ return m_depth; }
-private:
-	volatile uint32 m_ownerID;
-	int				m_depth;
-};
-
-class ALIGN128 CAlignedThreadFastMutex : public CThreadFastMutex
-{
-public:
-	CAlignedThreadFastMutex()
-	{
-		Assert( (size_t)this % 128 == 0 && sizeof(*this) == 128 );
-	}
-
-private:
-	uint8 pad[128-sizeof(CThreadFastMutex)];
-} ALIGN128_POST;
+// Just make these the same thing, if we really need to, we can recreate these using atomics
+// But honestly the standard mutex objects will likely be superior anyway
+// Implementations already behave as spinlocks for brief periods before sleeping like our old one
+using CThreadFastMutex = CThreadMutex;
+using CThreadFastMutexRecursive = CThreadMutexRecursive;
 
 #else
 typedef CThreadMutex CThreadFastMutex;
@@ -866,7 +724,7 @@ private:
 	MUTEX_TYPE &m_lock;
 
 	// Disallow copying
-	CAutoLockT<MUTEX_TYPE>( const CAutoLockT<MUTEX_TYPE> & );
+	CAutoLockT( const CAutoLockT<MUTEX_TYPE> & );
 	CAutoLockT<MUTEX_TYPE> &operator=( const CAutoLockT<MUTEX_TYPE> & );
 };
 
@@ -878,8 +736,6 @@ template <int size>	struct CAutoLockTypeDeducer {};
 template <> struct CAutoLockTypeDeducer<sizeof(CThreadMutex)> {	typedef CThreadMutex Type_t; };
 template <> struct CAutoLockTypeDeducer<sizeof(CThreadNullMutex)> {	typedef CThreadNullMutex Type_t; };
 #if !defined(THREAD_PROFILER)
-template <> struct CAutoLockTypeDeducer<sizeof(CThreadFastMutex)> {	typedef CThreadFastMutex Type_t; };
-template <> struct CAutoLockTypeDeducer<sizeof(CAlignedThreadFastMutex)> {	typedef CAlignedThreadFastMutex Type_t; };
 #endif
 
 #define AUTO_LOCK_( type, mutex ) \
@@ -893,7 +749,7 @@ template<typename T> T strip_cv_quals_for_mutex(volatile T&);
 template<typename T> T strip_cv_quals_for_mutex(const volatile T&);
 
 #define AUTO_LOCK( mutex ) \
-    AUTO_LOCK_( typeof(::strip_cv_quals_for_mutex(mutex)), mutex )
+    AUTO_LOCK_( __typeof__(::strip_cv_quals_for_mutex(mutex)), mutex )
 
 #else // GNUC
 
@@ -1087,35 +943,15 @@ inline int ThreadWaitForEvents( int nEvents, CThreadEvent * const *pEvents, bool
 //
 //-----------------------------------------------------------------------------
 
-class PLATFORM_CLASS CThreadRWLock
+class CThreadRWLock
 {
+	std::shared_timed_mutex mutex{};
 public:
-	CThreadRWLock();
+	void LockForRead() { mutex.lock_shared(); }
+	void UnlockRead() { mutex.unlock_shared(); }
 
-	void LockForRead();
-	void UnlockRead();
-	void LockForWrite();
-	void UnlockWrite();
-
-	void LockForRead() const { const_cast<CThreadRWLock *>(this)->LockForRead(); }
-	void UnlockRead() const { const_cast<CThreadRWLock *>(this)->UnlockRead(); }
-	void LockForWrite() const { const_cast<CThreadRWLock *>(this)->LockForWrite(); }
-	void UnlockWrite() const { const_cast<CThreadRWLock *>(this)->UnlockWrite(); }
-
-private:
-	void WaitForRead();
-
-#ifdef WIN32
-	CThreadFastMutex m_mutex;
-#else
-	CThreadMutex m_mutex;	
-#endif
-	CThreadEvent m_CanWrite;
-	CThreadEvent m_CanRead;
-
-	int m_nWriters;
-	int m_nActiveReaders;
-	int m_nPendingReaders;
+	void LockForWrite() { mutex.lock(); }
+	void UnlockWrite() { mutex.unlock(); }
 };
 
 //-----------------------------------------------------------------------------
@@ -1124,40 +960,106 @@ private:
 //
 //-----------------------------------------------------------------------------
 
-class ALIGN8 PLATFORM_CLASS CThreadSpinRWLock
+class CThreadSpinRWLock
 {
+	std::atomic<uint32_t> lock{};
+	std::atomic_bool writePending{};
+
+	static constexpr uint32_t WRITE_MODE = (std::numeric_limits<uint32_t>::max)();
+	static constexpr uint32_t READ_MAX = WRITE_MODE - 1;
 public:
-	CThreadSpinRWLock()	{ COMPILE_TIME_ASSERT( sizeof( LockInfo_t ) == sizeof( int64 ) ); Assert( (intp)this % 8 == 0 ); memset( this, 0, sizeof( *this ) ); }
 
-	bool TryLockForWrite();
-	bool TryLockForRead();
+	bool TryLockForWrite()
+	{
+		uint32_t was = lock;
 
-	void LockForRead();
-	void UnlockRead();
-	void LockForWrite();
-	void UnlockWrite();
-
-	bool TryLockForWrite() const { return const_cast<CThreadSpinRWLock *>(this)->TryLockForWrite(); }
-	bool TryLockForRead() const { return const_cast<CThreadSpinRWLock *>(this)->TryLockForRead(); }
-	void LockForRead() const { const_cast<CThreadSpinRWLock *>(this)->LockForRead(); }
-	void UnlockRead() const { const_cast<CThreadSpinRWLock *>(this)->UnlockRead(); }
-	void LockForWrite() const { const_cast<CThreadSpinRWLock *>(this)->LockForWrite(); }
-	void UnlockWrite() const { const_cast<CThreadSpinRWLock *>(this)->UnlockWrite(); }
-
-private:
-	struct LockInfo_t
+		if ( was == 0 )
 		{
-			uint32	m_writerId;
-			int		m_nReaders;
-		};
+			return lock.compare_exchange_strong( was, WRITE_MODE );
+		}
 
-	bool AssignIf( const LockInfo_t &newValue, const LockInfo_t &comperand );
-	bool TryLockForWrite( const uint32 threadId );
-	void SpinLockForWrite( const uint32 threadId );
+		return false;
+	}
 
-	volatile LockInfo_t m_lockInfo;
-	CInterlockedInt m_nWriters;
-} ALIGN8_POST;
+	bool TryLockForRead()
+	{
+		uint32_t was = lock;
+
+		if ( was == 0 && writePending.load() )
+			return false;
+		
+		if ( was < READ_MAX )
+			return lock.compare_exchange_strong( was, was + 1 );
+		
+		return false;
+	}
+
+	void LockForRead()
+	{
+		while ( true )
+		{
+			uint32_t was = lock;
+
+			if ( was == 0 && writePending.load() )
+				continue;
+
+			if ( was < READ_MAX )
+			{
+				if ( lock.compare_exchange_weak( was, was + 1 ) )
+					return;
+			}
+		}
+	}
+
+	void UnlockRead()
+	{
+		while ( true )
+		{
+			uint32_t was = lock;
+
+			if ( was == 0 )
+				return;
+			
+			if ( was <= READ_MAX )
+			{
+				if ( lock.compare_exchange_weak( was, was - 1 ) )
+					return;
+			}
+		}
+	}
+
+	void LockForWrite()
+	{
+		writePending.exchange(true);
+
+		while ( true )
+		{
+			uint32_t was = lock;
+
+			if ( was == 0 )
+			{
+				if ( lock.compare_exchange_weak( was, WRITE_MODE ) )
+					return;
+			}
+		}
+	}
+
+	void UnlockWrite()
+	{
+		writePending.store(false);
+
+		while ( true )
+		{
+			uint32_t was = lock;
+
+			if ( was != WRITE_MODE )
+				return;
+			
+			if ( lock.compare_exchange_weak( was, 0 ) )
+				return;
+		}
+	}
+};
 
 //-----------------------------------------------------------------------------
 //
@@ -1505,257 +1407,6 @@ public:
 		QueueAccessMutex.Unlock();
 	}
 };
-
-
-//-----------------------------------------------------------------------------
-//
-// CThreadMutex. Inlining to reduce overhead and to allow client code
-// to decide debug status (tracing)
-//
-//-----------------------------------------------------------------------------
-
-#ifdef _WIN32
-typedef struct _RTL_CRITICAL_SECTION RTL_CRITICAL_SECTION;
-typedef RTL_CRITICAL_SECTION CRITICAL_SECTION;
-
-#ifndef _X360
-extern "C"
-{
-	void __declspec(dllimport) __stdcall InitializeCriticalSection(CRITICAL_SECTION *);
-	void __declspec(dllimport) __stdcall EnterCriticalSection(CRITICAL_SECTION *);
-	void __declspec(dllimport) __stdcall LeaveCriticalSection(CRITICAL_SECTION *);
-	void __declspec(dllimport) __stdcall DeleteCriticalSection(CRITICAL_SECTION *);
-};
-#endif
-
-//---------------------------------------------------------
-
-inline void CThreadMutex::Lock()
-{
-#ifdef THREAD_MUTEX_TRACING_ENABLED
-		uint thisThreadID = ThreadGetCurrentId();
-		if ( m_bTrace && m_currentOwnerID && ( m_currentOwnerID != thisThreadID ) )
-		Msg( "Thread %u about to wait for lock %p owned by %u\n", ThreadGetCurrentId(), (CRITICAL_SECTION *)&m_CriticalSection, m_currentOwnerID );
-	#endif
-
-	VCRHook_EnterCriticalSection((CRITICAL_SECTION *)&m_CriticalSection);
-
-	#ifdef THREAD_MUTEX_TRACING_ENABLED
-		if (m_lockCount == 0)
-		{
-			// we now own it for the first time.  Set owner information
-			m_currentOwnerID = thisThreadID;
-			if ( m_bTrace )
-			Msg( "Thread %u now owns lock %p\n", m_currentOwnerID, (CRITICAL_SECTION *)&m_CriticalSection );
-		}
-		m_lockCount++;
-	#endif
-}
-
-//---------------------------------------------------------
-
-inline void CThreadMutex::Unlock()
-{
-	#ifdef THREAD_MUTEX_TRACING_ENABLED
-		AssertMsg( m_lockCount >= 1, "Invalid unlock of thread lock" );
-		m_lockCount--;
-		if (m_lockCount == 0)
-		{
-			if ( m_bTrace )
-			Msg( "Thread %u releasing lock %p\n", m_currentOwnerID, (CRITICAL_SECTION *)&m_CriticalSection );
-			m_currentOwnerID = 0;
-		}
-	#endif
-	LeaveCriticalSection((CRITICAL_SECTION *)&m_CriticalSection);
-}
-
-//---------------------------------------------------------
-
-inline bool CThreadMutex::AssertOwnedByCurrentThread()
-{
-#ifdef THREAD_MUTEX_TRACING_ENABLED
-	if (ThreadGetCurrentId() == m_currentOwnerID)
-		return true;
-	AssertMsg3( 0, "Expected thread %u as owner of lock %p, but %u owns", ThreadGetCurrentId(), (CRITICAL_SECTION *)&m_CriticalSection, m_currentOwnerID );
-	return false;
-#else
-	return true;
-#endif
-}
-
-//---------------------------------------------------------
-
-inline void CThreadMutex::SetTrace( bool bTrace )
-{
-#ifdef THREAD_MUTEX_TRACING_ENABLED
-	m_bTrace = bTrace;
-#endif
-}
-
-//---------------------------------------------------------
-
-#elif defined(POSIX)
-
-inline CThreadMutex::CThreadMutex()
-{
-	// enable recursive locks as we need them
-	pthread_mutexattr_init( &m_Attr );
-	pthread_mutexattr_settype( &m_Attr, PTHREAD_MUTEX_RECURSIVE );
-	pthread_mutex_init( &m_Mutex, &m_Attr );
-}
-
-//---------------------------------------------------------
-
-inline CThreadMutex::~CThreadMutex()
-{
-	pthread_mutex_destroy( &m_Mutex );
-}
-
-//---------------------------------------------------------
-
-inline void CThreadMutex::Lock()
-{
-	pthread_mutex_lock( &m_Mutex );
-}
-
-//---------------------------------------------------------
-
-inline void CThreadMutex::Unlock()
-{
-	pthread_mutex_unlock( &m_Mutex );
-}
-
-//---------------------------------------------------------
-
-inline bool CThreadMutex::AssertOwnedByCurrentThread()
-{
-	return true;
-}
-
-//---------------------------------------------------------
-
-inline void CThreadMutex::SetTrace(bool fTrace)
-{
-}
-
-#endif // POSIX
-
-//-----------------------------------------------------------------------------
-//
-// CThreadRWLock inline functions
-//
-//-----------------------------------------------------------------------------
-
-inline CThreadRWLock::CThreadRWLock()
-:	m_CanRead( true ),
-	m_nWriters( 0 ),
-	m_nActiveReaders( 0 ),
-	m_nPendingReaders( 0 )
-{
-}
-
-inline void CThreadRWLock::LockForRead()
-{
-	m_mutex.Lock();
-	if ( m_nWriters)
-	{
-		WaitForRead();
-	}
-	m_nActiveReaders++;
-	m_mutex.Unlock();
-}
-
-inline void CThreadRWLock::UnlockRead()
-{
-	m_mutex.Lock();
-	m_nActiveReaders--;
-	if ( m_nActiveReaders == 0 && m_nWriters != 0 )
-	{
-		m_CanWrite.Set();
-	}
-	m_mutex.Unlock();
-}
-
-
-//-----------------------------------------------------------------------------
-//
-// CThreadSpinRWLock inline functions
-//
-//-----------------------------------------------------------------------------
-
-inline bool CThreadSpinRWLock::AssignIf( const LockInfo_t &newValue, const LockInfo_t &comperand )
-{
-	return ThreadInterlockedAssignIf64( (int64 *)&m_lockInfo, *((int64 *)&newValue), *((int64 *)&comperand) );
-}
-
-inline bool CThreadSpinRWLock::TryLockForWrite( const uint32 threadId )
-{
-	// In order to grab a write lock, there can be no readers and no owners of the write lock
-	if ( m_lockInfo.m_nReaders > 0 || ( m_lockInfo.m_writerId && m_lockInfo.m_writerId != threadId ) )
-	{
-		return false;
-	}
-
-	static const LockInfo_t oldValue = { 0, 0 };
-	LockInfo_t newValue = { threadId, 0 };
-	const bool bSuccess = AssignIf( newValue, oldValue );
-#if defined(_X360)
-	if ( bSuccess )
-	{
-		// X360TBD: Serious perf implications. Not Yet. __sync();
-	}
-#endif
-	return bSuccess;
-}
-
-inline bool CThreadSpinRWLock::TryLockForWrite()
-{
-	m_nWriters++;
-	if ( !TryLockForWrite( ThreadGetCurrentId() ) )
-	{
-		m_nWriters--;
-		return false;
-	}
-	return true;
-}
-
-inline bool CThreadSpinRWLock::TryLockForRead()
-{
-	if ( m_nWriters != 0 )
-	{
-		return false;
-	}
-	// In order to grab a write lock, the number of readers must not change and no thread can own the write
-	LockInfo_t oldValue;
-	LockInfo_t newValue;
-
-		oldValue.m_nReaders = m_lockInfo.m_nReaders;
-		oldValue.m_writerId = 0;
-		newValue.m_nReaders = oldValue.m_nReaders + 1;
-		newValue.m_writerId = 0;
-
-	const bool bSuccess = AssignIf( newValue, oldValue );
-#if defined(_X360)
-	if ( bSuccess )
-	{
-		// X360TBD: Serious perf implications. Not Yet. __sync();
-	}
-#endif
-	return bSuccess;
-}
-
-inline void CThreadSpinRWLock::LockForWrite()
-{
-	const uint32 threadId = ThreadGetCurrentId();
-
-	m_nWriters++;
-
-	if ( !TryLockForWrite( threadId ) )
-	{
-		ThreadPause();
-		SpinLockForWrite( threadId );
-	}
-}
 
 // read data from a memory address
 template<class T> FORCEINLINE T ReadVolatileMemory( T const *pPtr )
