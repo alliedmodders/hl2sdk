@@ -1129,6 +1129,8 @@ PLATFORM_INTERFACE void				Plat_ExitProcess( int nCode );
 
 PLATFORM_INTERFACE bool				Plat_ShouldCollectMiniDumpsForFatalErrors();
 
+PLATFORM_INTERFACE void				Plat_FatalErrorFunc( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+
 // b/w compatibility
 #define Sys_FloatTime Plat_FloatTime
 
@@ -1226,6 +1228,8 @@ PLATFORM_INTERFACE bool Plat_FastVerifyHardwareKey();
 // Just logs file and line to simple.log
 //-----------------------------------------------------------------------------
 PLATFORM_INTERFACE void* Plat_SimpleLog( const tchar* file, int line );
+
+PLATFORM_INTERFACE const char *Plat_GetGameDirectory( int unknown=0 );
 
 
 #if _X360

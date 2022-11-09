@@ -25,11 +25,12 @@
 #include "exprevaluator.h"
 #include <vstdlib/IKeyValuesSystem.h>
 
-class IBaseFileSystem;
+class IFileSystem;
 class CUtlBuffer;
 class Color;
 class KeyValues;
 class IKeyValuesDumpContext;
+class IKeyValuesErrorSpew;
 typedef void * FileHandle_t;
 
 // single byte identifies a xbox kv file in binary format
@@ -84,7 +85,7 @@ public:
 	public:
 		explicit inline AutoDelete( KeyValues *pKeyValues ) : m_pKeyValues( pKeyValues ) {}
 		explicit inline AutoDelete( const char *pchKVName ) : m_pKeyValues( new KeyValues( pchKVName ) ) {}
-		inline ~AutoDelete( void ) { if( m_pKeyValues ) m_pKeyValues->deleteThis(); }
+		inline ~AutoDelete( void ) { if( m_pKeyValues ) delete m_pKeyValues; }
 		inline void Assign( KeyValues *pKeyValues ) { m_pKeyValues = pKeyValues; }
 		KeyValues *operator->()	{ return m_pKeyValues; }
 		operator KeyValues *()	{ return m_pKeyValues; }
@@ -126,14 +127,14 @@ public:
 
 	// File access. Set UsesEscapeSequences true, if resource file/buffer uses Escape Sequences (eg \n, \t)
 	void UsesEscapeSequences(bool state); // default false
-	bool LoadFromFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID = NULL, GetSymbolProc_t pfnEvaluateSymbolProc = NULL);
-	bool SaveToFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID = NULL);
+	bool LoadFromFile( IFileSystem *filesystem, const char *resourceName, const char *pathID = NULL, GetSymbolProc_t pfnEvaluateSymbolProc = NULL, void *pUnkonwn1 = NULL, const char *pUnknown2 = NULL );
+	bool SaveToFile( IFileSystem *filesystem, const char *resourceName, const char *pathID = NULL);
 
 	// Read from a buffer...  Note that the buffer must be null terminated
-	bool LoadFromBuffer( char const *resourceName, const char *pBuffer, IBaseFileSystem* pFileSystem = NULL, const char *pPathID = NULL, GetSymbolProc_t pfnEvaluateSymbolProc = NULL );
+	bool LoadFromBuffer( char const *resourceName, const char *pBuffer, IFileSystem* pFileSystem = NULL, const char *pPathID = NULL, GetSymbolProc_t pfnEvaluateSymbolProc = NULL, IKeyValuesErrorSpew *pErrorSpew = NULL, void *pUnkonwn1 = NULL, const char *pUnknown2 = NULL );
 
 	// Read from a utlbuffer...
-	bool LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBaseFileSystem* pFileSystem = NULL, const char *pPathID = NULL, GetSymbolProc_t pfnEvaluateSymbolProc = NULL );
+	bool LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IFileSystem* pFileSystem = NULL, const char *pPathID = NULL, GetSymbolProc_t pfnEvaluateSymbolProc = NULL, IKeyValuesErrorSpew *pErrorSpew = NULL, void *pUnkonwn1 = NULL, const char *pUnknown2 = NULL );
 
 	// Find a keyValue, create it if it is not found.
 	// Set bCreate to true to create the key if it doesn't already exist (which ensures a valid pointer will be returned)
@@ -180,7 +181,13 @@ public:
 	int   GetInt( const char *keyName = NULL, int defaultValue = 0 );
 	uint64 GetUint64( const char *keyName = NULL, uint64 defaultValue = 0 );
 	float GetFloat( const char *keyName = NULL, float defaultValue = 0.0f );
-	const char *GetString( const char *keyName = NULL, const char *defaultValue = "" );
+	inline const char *GetString( const char *keyName = NULL, const char *defaultValue = "" )
+	{
+		static char buf[ 64 ];
+		GetString(keyName, defaultValue, &buf[0], sizeof(buf) );
+		return &buf[0];
+	}
+	const char *GetString( const char *keyName, const char *defaultValue, char *pszOut, uint64 maxlen );
 	const wchar_t *GetWString( const char *keyName = NULL, const wchar_t *defaultValue = L"" );
 	void *GetPtr( const char *keyName = NULL, void *defaultValue = (void*)0 );
 	Color GetColor( const char *keyName = NULL , const Color &defaultColor = Color( 0, 0, 0, 0 ) );
@@ -208,13 +215,11 @@ public:
 	void SetColor( const char *keyName, Color value);
 	void SetBool( const char *keyName, bool value ) { SetInt( keyName, value ? 1 : 0 ); }
 
-#if 0
 	// Memory allocation (optimized)
 	void *operator new( size_t iAllocSize );
 	void *operator new( size_t iAllocSize, int nBlockUse, const char *pFileName, int nLine );
 	void operator delete( void *pMem );
 	void operator delete( void *pMem, int nBlockUse, const char *pFileName, int nLine );
-#endif
 
 	KeyValues& operator=( KeyValues& src );
 
@@ -254,9 +259,6 @@ public:
 	};
 	types_t GetDataType(const char *keyName = NULL);
 
-	// Virtual deletion function - ensures that KeyValues object is deleted from correct heap
-	void deleteThis();
-
 	void SetStringValue( char const *strValue );
 
 	// unpack a key values list into a structure
@@ -280,31 +282,30 @@ public:
 
 	// Assign keyvalues from a string
 	static KeyValues * FromString( char const *szName, char const *szStringVal, char const **ppEndOfParse = NULL );
+
+	~KeyValues();
 		
 private:
 	KeyValues( KeyValues& );	// prevent copy constructor being used
-
-	// prevent delete being called except through deleteThis()
-	~KeyValues();
 
 	KeyValues* CreateKey( const char *keyName );
 	
 	void RecursiveCopyKeyValues( KeyValues& src );
 	void RemoveEverything();
-//	void RecursiveSaveToFile( IBaseFileSystem *filesystem, CUtlBuffer &buffer, int indentLevel );
+//	void RecursiveSaveToFile( IFileSystem *filesystem, CUtlBuffer &buffer, int indentLevel );
 //	void WriteConvertedString( CUtlBuffer &buffer, const char *pszString );
 	
 	// NOTE: If both filesystem and pBuf are non-null, it'll save to both of them.
 	// If filesystem is null, it'll ignore f.
-	void RecursiveSaveToFile( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, int indentLevel );
-	void WriteConvertedString( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, const char *pszString );
+	void RecursiveSaveToFile( IFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, int indentLevel );
+	void WriteConvertedString( IFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, const char *pszString );
 	
 	void RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &buf, GetSymbolProc_t pfnEvaluateSymbolProc );
 
 	// for handling #include "filename"
 	void AppendIncludedKeys( CUtlVector< KeyValues * >& includedKeys );
 	void ParseIncludedKeys( char const *resourceName, const char *filetoinclude, 
-		IBaseFileSystem* pFileSystem, const char *pPathID, CUtlVector< KeyValues * >& includedKeys, GetSymbolProc_t pfnEvaluateSymbolProc );
+		IFileSystem* pFileSystem, const char *pPathID, CUtlVector< KeyValues * >& includedKeys, GetSymbolProc_t pfnEvaluateSymbolProc );
 
 	// For handling #base "filename"
 	void MergeBaseKeys( CUtlVector< KeyValues * >& baseKeys );
@@ -312,16 +313,16 @@ private:
 
 	// NOTE: If both filesystem and pBuf are non-null, it'll save to both of them.
 	// If filesystem is null, it'll ignore f.
-	void InternalWrite( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, const void *pData, int len );
+	void InternalWrite( IFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, const void *pData, int len );
 	
 	void Init();
 	const char * ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasConditional );
-	void WriteIndents( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, int indentLevel );
+	void WriteIndents( IFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, int indentLevel );
 
 	void FreeAllocatedValue();
 	void AllocateValueBlock(int size);
 
-	bool ReadAsBinaryPooledFormat( CUtlBuffer &buf, IBaseFileSystem *pFileSystem, unsigned int poolKey, GetSymbolProc_t pfnEvaluateSymbolProc );
+	bool ReadAsBinaryPooledFormat( CUtlBuffer &buf, IFileSystem *pFileSystem, unsigned int poolKey, GetSymbolProc_t pfnEvaluateSymbolProc );
 
 	bool EvaluateConditional( const char *pExpressionString, GetSymbolProc_t pfnEvaluateSymbolProc );
 
@@ -377,6 +378,7 @@ struct KeyValuesUnpackStructure
 //-----------------------------------------------------------------------------
 // inline methods
 //-----------------------------------------------------------------------------
+#if 0
 inline int   KeyValues::GetInt( HKeySymbol keySymbol, int defaultValue )
 {
 	KeyValues *dat = FindKey( keySymbol );
@@ -425,6 +427,7 @@ inline bool  KeyValues::IsEmpty(HKeySymbol keySymbol)
 	KeyValues *dat = FindKey( keySymbol );
 	return dat ? dat->IsEmpty( ) : true;
 }
+#endif
 
 
 //

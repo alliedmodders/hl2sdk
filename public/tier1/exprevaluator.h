@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2006, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2006, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 	ExprSimplifier builds a binary tree from an infix expression (in the
 //				form of a character array).
@@ -34,7 +34,7 @@ struct ExprNode
 typedef ExprNode *ExprTree;
 
 // callback to evaluate a $<symbol> during evaluation, return true or false
-typedef bool (*GetSymbolProc_t)( const char *pKey );
+typedef bool (*GetSymbolProc_t)( const char *pKey, void *pUnknown );
 typedef void (*SyntaxErrorProc_t)( const char *pReason );
 
 class CExpressionEvaluator

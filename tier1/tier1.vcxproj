@@ -30,7 +30,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -327,7 +327,6 @@
     <ClCompile Include="datamanager.cpp" />
     <ClCompile Include="diff.cpp" />
     <ClCompile Include="generichash.cpp" />
-    <ClCompile Include="KeyValues.cpp" />
     <ClCompile Include="mempool.cpp" />
     <ClCompile Include="memstack.cpp" />
     <ClCompile Include="NetAdr.cpp" />
