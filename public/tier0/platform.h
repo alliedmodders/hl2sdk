@@ -1229,6 +1229,8 @@ PLATFORM_INTERFACE bool Plat_FastVerifyHardwareKey();
 //-----------------------------------------------------------------------------
 PLATFORM_INTERFACE void* Plat_SimpleLog( const tchar* file, int line );
 
+PLATFORM_INTERFACE const char *Plat_GetGameDirectory( int unknown=0 );
+
 
 #if _X360
 #define Plat_FastMemset XMemSet

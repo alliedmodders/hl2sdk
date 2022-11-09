@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -77,6 +77,7 @@ class ILoopModePrerequisiteRegistry;
 struct URLArgument_t;
 struct vis_info_t;
 class IHLTVServer;
+class CBufferString;
 
 namespace google
 {
@@ -172,6 +173,7 @@ public:
 	virtual uint32		GetStatsAppID() const = 0;
 	
 	virtual void		*UnknownFunc1(const char *pszFilename, void *pUnknown1, void *pUnknown2, void *pUnknown3) = 0;
+	virtual void		UnknownFunc2() = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -206,6 +208,9 @@ public:
 	virtual int			PrecacheDecal( const char *name, bool preload = false ) = 0;
 	virtual bool		IsDecalPrecached( const char *s ) const = 0;	
 	virtual int			GetPrecachedDecalIndex ( const char *s ) const = 0;
+
+	virtual void		UnknownFunc3() = 0;
+	virtual void		UnknownFunc4() = 0;
 	
 	virtual int			PrecacheGeneric( const char *s, bool preload = false ) = 0;
 	virtual bool		IsGenericPrecached( char const *s ) const = 0;
@@ -220,17 +225,6 @@ public:
 	virtual bool		IsUserIDInUse( int userID ) = 0;	// TERROR: used for transitioning
 	virtual int			GetLoadingProgressForUserID( int userID ) = 0;	// TERROR: used for transitioning
 	
-	// This returns which entities, to the best of the server's knowledge, the client currently knows about.
-	// This is really which entities were in the snapshot that this client last acked.
-	// This returns a bit vector with one bit for each entity.
-	//
-	// USE WITH CARE. Whatever tick the client is really currently on is subject to timing and
-	// ordering differences, so you should account for about a quarter-second discrepancy in here.
-	// Also, this will return NULL if the client doesn't exist or if this client hasn't acked any frames yet.
-	// 
-	// iClientIndex is the CLIENT index, so if you use pPlayer->entindex(), subtract 1.
-	virtual const CBitVec<MAX_EDICTS>* GetEntityTransmitBitsForClient( CEntityIndex iClientIndex ) = 0;
-	
 	// Given the current PVS(or PAS) and origin, determine which players should hear/receive the message
 	virtual void		Message_DetermineMulticastRecipients( bool usepas, const Vector& origin, CPlayerBitVec& playerbits ) = 0;
 	
@@ -242,30 +236,16 @@ public:
 	// Set the lightstyle to the specified value and network the change to any connected clients.  Note that val must not 
 	//  change place in memory (use MAKE_STRING) for anything that's not compiled into your mod.
 	virtual void		LightStyle( int style, const char *val ) = 0;
-
-	// Project a static decal onto the specified entity / model (for level placed decals in the .bsp)
-	virtual void		StaticDecal( const Vector &originInEntitySpace, int decalIndex, CEntityIndex entityIndex, int modelIndex, bool lowpriority ) = 0;
 	
 	// Print szMsg to the client console.
 	virtual void		ClientPrintf( CEntityIndex playerIndex, const char *szMsg ) = 0;
-	
-	// SINGLE PLAYER/LISTEN SERVER ONLY (just matching the client .dll api for this)
-	// Prints the formatted string to the notification area of the screen ( down the right hand edge
-	//  numbered lines starting at position 0
-	virtual void		Con_NPrintf( int pos, const char *fmt, ... ) = 0;
-	// SINGLE PLAYER/LISTEN SERVER ONLY(just matching the client .dll api for this)
-	// Similar to Con_NPrintf, but allows specifying custom text color and duration information
-	virtual void		Con_NXPrintf( const struct con_nprint_s *info, const char *fmt, ... ) = 0;
 	
 	virtual bool IsLowViolence() = 0;
 	virtual bool SetHLTVChatBan( int tvslot, bool bBanned ) = 0;
 	virtual bool IsAnyClientLowViolence() = 0;
 	
-	// Change a specified player's "view entity" (i.e., use the view entity position/orientation for rendering the client view)
-	virtual void		SetView( CEntityIndex playerIndex, CEntityIndex viewEntIndex ) = 0;
-	
 	// Get the current game directory (hl2, tf2, hl1, cstrike, etc.)
-	virtual void        GetGameDir( char *szGetGameDir, int maxlength ) = 0;
+	virtual void        GetGameDir( CBufferString *pOut ) = 0;
 	
 	// Create a bot with the given name.  Player index is -1 if fake client can't be created
 	virtual CEntityIndex	CreateFakeClient( const char *netname ) = 0;
@@ -283,9 +263,7 @@ public:
 	virtual edict_t *GetSplitScreenPlayerForEdict( CEntityIndex ent_num, int nSlot ) = 0;
 	
 	// Ret types might be all wrong for these. Haven't researched yet.
-	virtual bool	IsSpawnGroupLoadedOnClient( CEntityIndex ent_num, SpawnGroupHandle_t spawnGroup ) const = 0;
 	virtual void	UnloadSpawnGroup( SpawnGroupHandle_t spawnGroup, /*ESpawnGroupUnloadOption*/ int) = 0;
-	virtual void	LoadSpawnGroup( const SpawnGroupDesc_t & ) = 0;
 	virtual void	SetSpawnGroupDescription( SpawnGroupHandle_t spawnGroup, const char *pszDescription ) = 0;
 	virtual bool	IsSpawnGroupLoaded( SpawnGroupHandle_t spawnGroup ) const = 0;
 	virtual bool	IsSpawnGroupLoading( SpawnGroupHandle_t spawnGroup ) const = 0;
@@ -294,25 +272,11 @@ public:
 	virtual void	SynchronizeAndBlockUntilLoaded( SpawnGroupHandle_t spawnGroup ) = 0;
 	
 	virtual void SetTimescale( float flTimescale ) = 0;
-	virtual CEntityIndex	GetViewEntity( CEntityIndex ent ) = 0;
-	
-	// Is the engine in Commentary mode?
-	virtual int			IsInCommentaryMode( void ) = 0;
-	
+
 	virtual uint32		GetAppID() = 0;
 	
 	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
 	virtual const CSteamID	*GetClientSteamID( CEntityIndex clientIndex ) = 0;
-	
-	virtual void		ForceModelBounds( const char *s, const Vector &mins, const Vector &maxs ) = 0;
-	
-	// Marks the material (vmt file) for consistency checking.  If the client and server have different
-	// contents for the file, the client's vmt can only use the VertexLitGeneric shader, and can only
-	// contain $baseTexture and $bumpmap vars.
-	virtual void		ForceSimpleMaterial( const char *s ) = 0;
-	
-	// Marks the filename for consistency checking.  This should be called after precaching the file.
-	virtual void		ForceExactFile( const char *s ) = 0;
 	
 	// Methods to set/get a gamestats data container so client & server running in same process can send combined data
 	virtual void SetGamestatsData( CGamestatsData *pGamestatsData ) = 0;
@@ -394,11 +358,6 @@ public:
 	virtual void			PreWorldUpdate( bool simulating ) = 0;
 	
 	virtual CUtlMap<int, Entity2Networkable_t>	*GetEntity2Networkables( void ) const = 0;
-	virtual bool			GetEntity2Networkable( CEntityIndex index, Entity2Networkable_t &out ) = 0;
-	
-	virtual void			ClearInstancedBaselineFromServerClasses( void ) = 0;
-	
-	virtual void			ClearSaveDirectory( void ) = 0;
 	
 	virtual void			*GetEntityInfo() = 0;
 	
@@ -409,8 +368,6 @@ public:
 	// One of these bools is 'simulating'... probably
 	virtual void			GameFrame( bool, bool, bool ) = 0;
 	
-	virtual void			PreSaveGameLoaded( char const *pSaveName, bool bCurrentlyInGame ) = 0;
-
 	// Returns true if the game DLL wants the server not to be made public.
 	// Used by commentary system to hide multiplayer commentary servers from the master.
 	virtual bool			ShouldHideFromMasterServer( bool ) = 0;
@@ -553,7 +510,7 @@ public:
 	virtual void		GetConVarPrefixesToResetToDefaults( CUtlString &prefixes ) const = 0;
 };
 
-#define INTERFACEVERSION_SERVERGAMECLIENTS		"Source2GameClients002"
+#define INTERFACEVERSION_SERVERGAMECLIENTS		"Source2GameClients001"
 
 //-----------------------------------------------------------------------------
 // Purpose: Player / Client related functions
