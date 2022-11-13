@@ -29,6 +29,7 @@
 	\
 		va_start(arg_ptr, (*(ppszFormat))); \
 		result = Q_vsnprintf((szBuf), (nBufSize)-1, (*(ppszFormat)), arg_ptr); \
+		m_nLength = result; \
 		va_end(arg_ptr); \
 	\
 		(szBuf)[(nBufSize)-1] = 0; \
@@ -64,8 +65,16 @@ public:
 
 	void Clear()								{ m_szBuf[0] = 0; }
 
+protected:
+	virtual void InitQuietTruncation()
+	{
+	}
+
+	bool m_bQuietTruncation;
+
 private:
 	char m_szBuf[SIZE_BUF];
+	int m_nLength;
 };
 
 //-----------------------------------------------------------------------------
