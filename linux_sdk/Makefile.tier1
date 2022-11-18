@@ -43,7 +43,6 @@ LIB_OBJS= \
 	$(LIB_OBJ_DIR)/KeyValues.o \
 	$(LIB_OBJ_DIR)/mempool.o \
 	$(LIB_OBJ_DIR)/NetAdr.o \
-	$(LIB_OBJ_DIR)/newbitbuf.o \
 	$(LIB_OBJ_DIR)/processor_detect.o \
 	$(LIB_OBJ_DIR)/rangecheckedvar.o \
 	$(LIB_OBJ_DIR)/stringpool.o \

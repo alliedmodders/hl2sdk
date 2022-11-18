@@ -107,12 +107,16 @@ DEFINES +=-DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricm
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
 BASE_CFLAGS = -fno-strict-aliasing -Wall -Wsign-compare -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
-	      -Wno-unknown-pragmas -Wno-unused -Wno-register -Wno-class-memaccess -Wno-nonnull-compare
+	      -Wno-unknown-pragmas -Wno-unused -Wno-unused-result
 SHLIBCFLAGS = -fPIC
 
 # Clang >= 3 || GCC >= 4.7
 ifeq "$(shell expr $(IS_CLANG) \& $(CPP_MAJOR) \>= 3 \| $(CPP_MAJOR) \>= 4 \& $(CPP_MINOR) \>= 7)" "1"
 BASE_CFLAGS += -Wno-delete-non-virtual-dtor -Wno-narrowing
+endif
+
+ifeq "$(shell expr $(IS_CLANG) \= 0 \& $(CPP_MAJOR) \>= 6)" "1"
+BASE_CFLAGS += -Wno-nonnull-compare
 endif
 
 # Flags passed to the c compiler
