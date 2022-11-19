@@ -16,9 +16,9 @@
 #elif POSIX
 #include <ctype.h>
 #include <wchar.h>
-#include <math.h>
 #endif
 
+#include <math.h>
 #include <string.h>
 #include <stdlib.h>
 
