@@ -660,6 +660,7 @@ public:
 	// Scope
 	//--------------------------------------------------------
 	virtual HSCRIPT CreateScope( const char *pszScope, HSCRIPT hParent = NULL ) = 0;
+	virtual HSCRIPT ReferenceScope( HSCRIPT hScript ) = 0;
 	virtual void ReleaseScope( HSCRIPT hScript ) = 0;
 
 	//--------------------------------------------------------
