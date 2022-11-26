@@ -340,6 +340,26 @@ typedef void * HINSTANCE;
 // Pull in the /analyze code annotations.
 #include "annotations.h"
 
+
+//-----------------------------------------------------------------------------
+// Stack-based allocation related helpers
+//-----------------------------------------------------------------------------
+#if defined( GNUC )
+	#define stackalloc( _size )		alloca( ALIGN_VALUE( _size, 16 ) )
+#ifdef _LINUX
+	#define mallocsize( _p )	( malloc_usable_size( _p ) )
+#elif defined(OSX)
+	#define mallocsize( _p )	( malloc_size( _p ) )
+#else
+#error
+#endif
+#elif defined ( _WIN32 )
+	#define stackalloc( _size )		_alloca( ALIGN_VALUE( _size, 16 ) )
+	#define mallocsize( _p )		( _msize( _p ) )
+#endif
+
+#define  stackfree( _p )			0
+
 // Linux had a few areas where it didn't construct objects in the same order that Windows does.
 // So when CVProfile::CVProfile() would access g_pMemAlloc, it would crash because the allocator wasn't initalized yet.
 #if defined(_LINUX) || defined(__APPLE__)
