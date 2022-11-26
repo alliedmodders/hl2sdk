@@ -121,7 +121,7 @@ class CUtlBuffer;
 //
 //-----------------------------------------------------------------------------
 
-#define VSCRIPT_INTERFACE_VERSION		"VScriptManager009"
+#define VSCRIPT_INTERFACE_VERSION		"VScriptManager010"
 
 //-----------------------------------------------------------------------------
 //
