@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -115,7 +115,7 @@ inline int CBaseHandle::GetEntryIndex() const
 
 inline int CBaseHandle::GetSerialNumber() const
 {
-	return m_Index >> NUM_ENT_ENTRY_BITS;
+	return m_Index >> NUM_SERIAL_NUM_SHIFT_BITS;
 }
 
 inline int CBaseHandle::ToInt() const
