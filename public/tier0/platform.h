@@ -358,6 +358,8 @@ typedef void * HINSTANCE;
 	#define mallocsize( _p )		( _msize( _p ) )
 #endif
 
+#define  stackfree( _p )			0
+
 // Linux had a few areas where it didn't construct objects in the same order that Windows does.
 // So when CVProfile::CVProfile() would access g_pMemAlloc, it would crash because the allocator wasn't initalized yet.
 #if defined(_LINUX) || defined(__APPLE__)
@@ -459,15 +461,6 @@ typedef void * HINSTANCE;
 // as little code as possible, and throw an assertion in debug.
 #define NO_DEFAULT default: UNREACHABLE();
 
-#ifdef _WIN32
-// Alloca defined for this platform
-#define  stackalloc( _size ) _alloca( ALIGN_VALUE( _size, 16 ) )
-#define  stackfree( _p )
-#elif defined(_LINUX) || defined(__APPLE__)
-// Alloca defined for this platform
-#define  stackalloc( _size ) _alloca( ALIGN_VALUE( _size, 16 ) )
-#define  stackfree( _p )
-#endif
 
 #ifdef _WIN32
 #define RESTRICT __restrict
