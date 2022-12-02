@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -69,7 +69,7 @@
 #define INVALID_EHANDLE_INDEX	0xFFFFFFFF
 
 #define NUM_SERIAL_NUM_BITS		(32 - NUM_ENT_ENTRY_BITS)
-
+#define NUM_SERIAL_NUM_SHIFT_BITS       16
 
 // Networked ehandles use less bits to encode the serial number.
 #define NUM_NETWORKED_EHANDLE_SERIAL_NUMBER_BITS	10
