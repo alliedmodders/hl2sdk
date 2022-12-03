@@ -381,8 +381,17 @@ typedef void * HINSTANCE;
 //-----------------------------------------------------------------------------
 // Stack-based allocation related helpers
 //-----------------------------------------------------------------------------
+#ifdef _WIN32
+// Alloca defined for this platform
+#define  stackalloc( _size ) _alloca( ALIGN_VALUE( _size, 16 ) )
+#define  stackfree( _p )
+#elif defined(_LINUX) || defined(__APPLE__)
+// Alloca defined for this platform
+#define  stackalloc( _size ) alloca( ALIGN_VALUE( _size, 16 ) )
+#define  stackfree( _p )
+#endif
+
 #if defined( GNUC )
-	#define stackalloc( _size )		alloca( ALIGN_VALUE( _size, 16 ) )
 #ifdef _LINUX
 	#define mallocsize( _p )	( malloc_usable_size( _p ) )
 #elif defined(OSX)
@@ -391,11 +400,8 @@ typedef void * HINSTANCE;
 #error
 #endif
 #elif defined ( _WIN32 )
-	#define stackalloc( _size )		_alloca( ALIGN_VALUE( _size, 16 ) )
 	#define mallocsize( _p )		( _msize( _p ) )
 #endif
-
-#define  stackfree( _p )			0
 
 // Linux had a few areas where it didn't construct objects in the same order that Windows does.
 // So when CVProfile::CVProfile() would access g_pMemAlloc, it would crash because the allocator wasn't initalized yet.
@@ -497,28 +503,6 @@ typedef void * HINSTANCE;
 // In cases where no default is present or appropriate, this causes MSVC to generate
 // as little code as possible, and throw an assertion in debug.
 #define NO_DEFAULT default: UNREACHABLE();
-
-#ifdef _WIN32
-// Alloca defined for this platform
-#define  stackalloc( _size ) _alloca( ALIGN_VALUE( _size, 16 ) )
-#define  stackfree( _p )
-#elif defined(_LINUX) || defined(__APPLE__)
-// Alloca defined for this platform
-#define  stackalloc( _size ) alloca( ALIGN_VALUE( _size, 16 ) )
-#define  stackfree( _p )
-#endif
-
-#if defined( GNUC )
-#ifdef _LINUX
-	#define mallocsize( _p )	( malloc_usable_size( _p ) )
-#elif defined(OSX)
-	#define mallocsize( _p )	( malloc_size( _p ) )
-#else
-#error
-#endif
-#elif defined ( _WIN32 )
-	#define mallocsize( _p )		( _msize( _p ) )
-#endif
 
 #ifdef _WIN32
 #define RESTRICT __restrict

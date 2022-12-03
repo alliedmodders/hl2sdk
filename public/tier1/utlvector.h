@@ -66,6 +66,7 @@ public:
 
 	// Returns the number of elements in the vector
 	int Count() const;
+	int Size() const { return Count(); }
 
 	// Is element index valid?
 	bool IsValidIndex( int i ) const;
