@@ -1,14 +1,14 @@
 
-#include "cstrike15_usermessage_helpers.h"
+#include "vietnam_usermessage_helpers.h"
 
-CCstrike15UsermessageHelpers g_Cstrike15UsermessageHelpers;
+CVietnamUsermessageHelpers g_VietnamUsermessageHelpers;
 
 #define SETUP_MESSAGE( msgname )                          \
 	m_NameIndexMap.Insert( #msgname,  CS_UM_##msgname  ); \
 	m_IndexNameMap[CS_UM_##msgname] = #msgname;           \
 	m_Prototypes[CS_UM_##msgname] = &CCSUsrMsg_##msgname::default_instance();
 
-CCstrike15UsermessageHelpers::CCstrike15UsermessageHelpers()
+CVietnamUsermessageHelpers::CVietnamUsermessageHelpers()
 {
 	// Clear all so that any unused are inited.
 	memset( m_Prototypes, 0, sizeof(m_Prototypes) );
@@ -70,24 +70,33 @@ CCstrike15UsermessageHelpers::CCstrike15UsermessageHelpers()
 	SETUP_MESSAGE( MatchStatsUpdate );
 	SETUP_MESSAGE( ItemDrop );
 	SETUP_MESSAGE( GlowPropTurnOff );
-	SETUP_MESSAGE( SendPlayerItemDrops );
+	//SETUP_MESSAGE( SendPlayerItemDrops );
 	SETUP_MESSAGE( RoundBackupFilenames );
-	SETUP_MESSAGE( SendPlayerItemFound );
+	//SETUP_MESSAGE( SendPlayerItemFound );
 	SETUP_MESSAGE( ReportHit );
-	SETUP_MESSAGE( XpUpdate );
+	//SETUP_MESSAGE( XpUpdate );
 	SETUP_MESSAGE( QuestProgress );
-	SETUP_MESSAGE( ScoreLeaderboardData );
-	SETUP_MESSAGE( PlayerDecalDigitalSignature );
+	//SETUP_MESSAGE( ScoreLeaderboardData );
+	//SETUP_MESSAGE( PlayerDecalDigitalSignature );
+	SETUP_MESSAGE( SquadMemberDied );
+	SETUP_MESSAGE( Battery );
+	SETUP_MESSAGE( CreditsMsg );
+	SETUP_MESSAGE( LogoTimeMsg );
+	SETUP_MESSAGE( DamageIndicator );
 	SETUP_MESSAGE( WeaponSound );
-	SETUP_MESSAGE( UpdateScreenHealthBar );
 	SETUP_MESSAGE( EntityOutlineHighlight );
-	SETUP_MESSAGE( SSUI );
-	SETUP_MESSAGE( SurvivalStats );
-	//SETUP_MESSAGE( DisconnectToLobby2 );
-	SETUP_MESSAGE( EndOfMatchAllPlayersData );
+	SETUP_MESSAGE( HintTextExtended );
+	SETUP_MESSAGE( PlayerScore );
+	SETUP_MESSAGE( SpottedDuration );
+	SETUP_MESSAGE( Ribbon );
+	SETUP_MESSAGE( PointOfInterest );
+	SETUP_MESSAGE( ViewmodelAnimevent );
+	SETUP_MESSAGE( Heal );
+	SETUP_MESSAGE( Ammo );
+	SETUP_MESSAGE( ActionProgress );
 }
 
-const google::protobuf::Message *CCstrike15UsermessageHelpers::GetPrototype( int index ) const
+const google::protobuf::Message *CVietnamUsermessageHelpers::GetPrototype( int index ) const
 {
 	if( index >= 0 && index < ECstrike15UserMessages_ARRAYSIZE )
 		return m_Prototypes[index];
@@ -95,7 +104,7 @@ const google::protobuf::Message *CCstrike15UsermessageHelpers::GetPrototype( int
 	return NULL;
 }
 
-const google::protobuf::Message *CCstrike15UsermessageHelpers::GetPrototype( const char *name ) const
+const google::protobuf::Message *CVietnamUsermessageHelpers::GetPrototype( const char *name ) const
 {
 	int index = GetIndex( name );
 	if( index > -1 )
@@ -104,7 +113,7 @@ const google::protobuf::Message *CCstrike15UsermessageHelpers::GetPrototype( con
 	return NULL;
 }
 
-int CCstrike15UsermessageHelpers::GetIndex( const char *name ) const
+int CVietnamUsermessageHelpers::GetIndex( const char *name ) const
 {
 	unsigned int idx = m_NameIndexMap.Find( name );
 	if( idx != m_NameIndexMap.InvalidHandle() )
@@ -113,7 +122,7 @@ int CCstrike15UsermessageHelpers::GetIndex( const char *name ) const
 	return -1;
 }
 
-const char *CCstrike15UsermessageHelpers::GetName( int index ) const
+const char *CVietnamUsermessageHelpers::GetName( int index ) const
 {
 	if( index >= 0 && index < ECstrike15UserMessages_ARRAYSIZE )
 		return m_IndexNameMap[index];

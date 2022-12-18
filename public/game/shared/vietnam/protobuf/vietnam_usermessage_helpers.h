@@ -1,13 +1,13 @@
-#ifndef CSTRIKE15_UM_HELPERS
-#define CSTRIKE15_UM_HELPERS
+#ifndef VIETNAM_UM_HELPERS
+#define VIETNAM_UM_HELPERS
 
-#include "game/shared/csgo/protobuf/cstrike15_usermessages.pb.h"
+#include "game/shared/vietnam/protobuf/vietnam_usermessages.pb.h"
 #include <tier1/utlhashdict.h>
 
-class CCstrike15UsermessageHelpers
+class CVietnamUsermessageHelpers
 {
 public:
-	CCstrike15UsermessageHelpers();
+	CVietnamUsermessageHelpers();
 
 	const google::protobuf::Message *GetPrototype( int index ) const;
 	const google::protobuf::Message *GetPrototype( const char *name ) const;
@@ -22,6 +22,6 @@ private:
 	const google::protobuf::Message *m_Prototypes[ECstrike15UserMessages_ARRAYSIZE];
 };
 
-extern CCstrike15UsermessageHelpers g_Cstrike15UsermessageHelpers;
+extern CVietnamUsermessageHelpers g_VietnamUsermessageHelpers;
 
-#endif // CSTRIKE15_UM_HELPERS
+#endif // VIETNAM_UM_HELPERS

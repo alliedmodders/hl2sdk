@@ -94,6 +94,8 @@ class CSVCMsg_EncryptedData;
 class CSVCMsg_HltvReplay;
 class CCLCMsg_HltvReplay;
 class CSVCMsg_Broadcast_Command;
+class CCLCMsg_HltvFixupOperatorTick;
+class CSVCMsg_HltvFixupOperatorStatus;
 
 enum NET_Messages {
   net_NOP = 0,
@@ -133,11 +135,13 @@ enum CLC_Messages {
   clc_SplitPlayerConnect = 16,
   clc_ClientMessage = 17,
   clc_CmdKeyValues = 18,
-  clc_HltvReplay = 20
+  clc_HltvReplay = 20,
+  clc_HltvFixupOperatorTick = 21,
+  clc_HltvFixupOperatorReceiver = 22
 };
 bool CLC_Messages_IsValid(int value);
 const CLC_Messages CLC_Messages_MIN = clc_ClientInfo;
-const CLC_Messages CLC_Messages_MAX = clc_HltvReplay;
+const CLC_Messages CLC_Messages_MAX = clc_HltvFixupOperatorReceiver;
 const int CLC_Messages_ARRAYSIZE = CLC_Messages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CLC_Messages_descriptor();
@@ -189,27 +193,6 @@ inline bool ESplitScreenMessageType_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<ESplitScreenMessageType>(
     ESplitScreenMessageType_descriptor(), name, value);
 }
-enum ReplayEventType_t {
-  REPLAY_EVENT_CANCEL = 0,
-  REPLAY_EVENT_DEATH = 1,
-  REPLAY_EVENT_GENERIC = 2,
-  REPLAY_EVENT_STUCK_NEED_FULL_UPDATE = 3
-};
-bool ReplayEventType_t_IsValid(int value);
-const ReplayEventType_t ReplayEventType_t_MIN = REPLAY_EVENT_CANCEL;
-const ReplayEventType_t ReplayEventType_t_MAX = REPLAY_EVENT_STUCK_NEED_FULL_UPDATE;
-const int ReplayEventType_t_ARRAYSIZE = ReplayEventType_t_MAX + 1;
-
-const ::google::protobuf::EnumDescriptor* ReplayEventType_t_descriptor();
-inline const ::std::string& ReplayEventType_t_Name(ReplayEventType_t value) {
-  return ::google::protobuf::internal::NameOfEnum(
-    ReplayEventType_t_descriptor(), value);
-}
-inline bool ReplayEventType_t_Parse(
-    const ::std::string& name, ReplayEventType_t* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<ReplayEventType_t>(
-    ReplayEventType_t_descriptor(), name, value);
-}
 enum SVC_Messages {
   svc_ServerInfo = 8,
   svc_SendTable = 9,
@@ -239,11 +222,12 @@ enum SVC_Messages {
   svc_CmdKeyValues = 34,
   svc_EncryptedData = 35,
   svc_HltvReplay = 36,
-  svc_Broadcast_Command = 38
+  svc_Broadcast_Command = 38,
+  svc_HltvFixupOperatorStatus = 39
 };
 bool SVC_Messages_IsValid(int value);
 const SVC_Messages SVC_Messages_MIN = svc_ServerInfo;
-const SVC_Messages SVC_Messages_MAX = svc_Broadcast_Command;
+const SVC_Messages SVC_Messages_MAX = svc_HltvFixupOperatorStatus;
 const int SVC_Messages_ARRAYSIZE = SVC_Messages_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* SVC_Messages_descriptor();
@@ -255,6 +239,28 @@ inline bool SVC_Messages_Parse(
     const ::std::string& name, SVC_Messages* value) {
   return ::google::protobuf::internal::ParseNamedEnum<SVC_Messages>(
     SVC_Messages_descriptor(), name, value);
+}
+enum ReplayEventType_t {
+  REPLAY_EVENT_CANCEL = 0,
+  REPLAY_EVENT_DEATH = 1,
+  REPLAY_EVENT_GENERIC = 2,
+  REPLAY_EVENT_STUCK_NEED_FULL_UPDATE = 3,
+  REPLAY_EVENT_VICTORY = 4
+};
+bool ReplayEventType_t_IsValid(int value);
+const ReplayEventType_t ReplayEventType_t_MIN = REPLAY_EVENT_CANCEL;
+const ReplayEventType_t ReplayEventType_t_MAX = REPLAY_EVENT_VICTORY;
+const int ReplayEventType_t_ARRAYSIZE = ReplayEventType_t_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ReplayEventType_t_descriptor();
+inline const ::std::string& ReplayEventType_t_Name(ReplayEventType_t value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ReplayEventType_t_descriptor(), value);
+}
+inline bool ReplayEventType_t_Parse(
+    const ::std::string& name, ReplayEventType_t* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ReplayEventType_t>(
+    ReplayEventType_t_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -3123,6 +3129,20 @@ class CSVCMsg_ServerInfo : public ::google::protobuf::Message {
   inline ::google::protobuf::uint64 ugc_map_id() const;
   inline void set_ugc_map_id(::google::protobuf::uint64 value);
 
+  // optional bool allow_loose_file_loads = 23;
+  inline bool has_allow_loose_file_loads() const;
+  inline void clear_allow_loose_file_loads();
+  static const int kAllowLooseFileLoadsFieldNumber = 23;
+  inline bool allow_loose_file_loads() const;
+  inline void set_allow_loose_file_loads(bool value);
+
+  // optional bool allow_user_workshop_content = 24;
+  inline bool has_allow_user_workshop_content() const;
+  inline void clear_allow_user_workshop_content();
+  static const int kAllowUserWorkshopContentFieldNumber = 24;
+  inline bool allow_user_workshop_content() const;
+  inline void set_allow_user_workshop_content(bool value);
+
   // @@protoc_insertion_point(class_scope:CSVCMsg_ServerInfo)
  private:
   inline void set_has_protocol();
@@ -3169,6 +3189,10 @@ class CSVCMsg_ServerInfo : public ::google::protobuf::Message {
   inline void clear_has_public_ip();
   inline void set_has_ugc_map_id();
   inline void clear_has_ugc_map_id();
+  inline void set_has_allow_loose_file_loads();
+  inline void clear_has_allow_loose_file_loads();
+  inline void set_has_allow_user_workshop_content();
+  inline void clear_has_allow_user_workshop_content();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -3178,7 +3202,6 @@ class CSVCMsg_ServerInfo : public ::google::protobuf::Message {
   bool is_official_valve_server_;
   bool is_hltv_;
   bool is_replay_;
-  bool is_redirecting_to_proxy_relay_;
   ::google::protobuf::int32 c_os_;
   ::google::protobuf::uint32 map_crc_;
   ::google::protobuf::uint32 client_crc_;
@@ -3186,9 +3209,12 @@ class CSVCMsg_ServerInfo : public ::google::protobuf::Message {
   ::google::protobuf::int32 max_clients_;
   ::google::protobuf::int32 max_classes_;
   ::google::protobuf::int32 player_slot_;
-  float tick_interval_;
   ::std::string* game_dir_;
   ::std::string* map_name_;
+  float tick_interval_;
+  bool is_redirecting_to_proxy_relay_;
+  bool allow_loose_file_loads_;
+  bool allow_user_workshop_content_;
   ::std::string* map_group_name_;
   ::std::string* sky_name_;
   ::std::string* host_name_;
@@ -3196,7 +3222,7 @@ class CSVCMsg_ServerInfo : public ::google::protobuf::Message {
   ::google::protobuf::uint32 public_ip_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(22 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(24 + 31) / 32];
 
   friend void  protobuf_AddDesc_netmessages_2eproto();
   friend void protobuf_AssignDesc_netmessages_2eproto();
@@ -6964,6 +6990,13 @@ class CSVCMsg_HltvReplay : public ::google::protobuf::Message {
   inline float replay_slowdown_rate() const;
   inline void set_replay_slowdown_rate(float value);
 
+  // optional int32 reason = 8;
+  inline bool has_reason() const;
+  inline void clear_reason();
+  static const int kReasonFieldNumber = 8;
+  inline ::google::protobuf::int32 reason() const;
+  inline void set_reason(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:CSVCMsg_HltvReplay)
  private:
   inline void set_has_delay();
@@ -6980,6 +7013,8 @@ class CSVCMsg_HltvReplay : public ::google::protobuf::Message {
   inline void clear_has_replay_slowdown_end();
   inline void set_has_replay_slowdown_rate();
   inline void clear_has_replay_slowdown_rate();
+  inline void set_has_reason();
+  inline void clear_has_reason();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -6990,9 +7025,10 @@ class CSVCMsg_HltvReplay : public ::google::protobuf::Message {
   ::google::protobuf::int32 replay_slowdown_begin_;
   ::google::protobuf::int32 replay_slowdown_end_;
   float replay_slowdown_rate_;
+  ::google::protobuf::int32 reason_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
 
   friend void  protobuf_AddDesc_netmessages_2eproto();
   friend void protobuf_AssignDesc_netmessages_2eproto();
@@ -7209,6 +7245,266 @@ class CSVCMsg_Broadcast_Command : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static CSVCMsg_Broadcast_Command* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CCLCMsg_HltvFixupOperatorTick : public ::google::protobuf::Message {
+ public:
+  CCLCMsg_HltvFixupOperatorTick();
+  virtual ~CCLCMsg_HltvFixupOperatorTick();
+
+  CCLCMsg_HltvFixupOperatorTick(const CCLCMsg_HltvFixupOperatorTick& from);
+
+  inline CCLCMsg_HltvFixupOperatorTick& operator=(const CCLCMsg_HltvFixupOperatorTick& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CCLCMsg_HltvFixupOperatorTick& default_instance();
+
+  void Swap(CCLCMsg_HltvFixupOperatorTick* other);
+
+  // implements Message ----------------------------------------------
+
+  CCLCMsg_HltvFixupOperatorTick* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CCLCMsg_HltvFixupOperatorTick& from);
+  void MergeFrom(const CCLCMsg_HltvFixupOperatorTick& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 tick = 1;
+  inline bool has_tick() const;
+  inline void clear_tick();
+  static const int kTickFieldNumber = 1;
+  inline ::google::protobuf::int32 tick() const;
+  inline void set_tick(::google::protobuf::int32 value);
+
+  // optional bytes props_data = 2;
+  inline bool has_props_data() const;
+  inline void clear_props_data();
+  static const int kPropsDataFieldNumber = 2;
+  inline const ::std::string& props_data() const;
+  inline void set_props_data(const ::std::string& value);
+  inline void set_props_data(const char* value);
+  inline void set_props_data(const void* value, size_t size);
+  inline ::std::string* mutable_props_data();
+  inline ::std::string* release_props_data();
+  inline void set_allocated_props_data(::std::string* props_data);
+
+  // optional .CMsgVector origin = 3;
+  inline bool has_origin() const;
+  inline void clear_origin();
+  static const int kOriginFieldNumber = 3;
+  inline const ::CMsgVector& origin() const;
+  inline ::CMsgVector* mutable_origin();
+  inline ::CMsgVector* release_origin();
+  inline void set_allocated_origin(::CMsgVector* origin);
+
+  // optional .CMsgQAngle eye_angles = 4;
+  inline bool has_eye_angles() const;
+  inline void clear_eye_angles();
+  static const int kEyeAnglesFieldNumber = 4;
+  inline const ::CMsgQAngle& eye_angles() const;
+  inline ::CMsgQAngle* mutable_eye_angles();
+  inline ::CMsgQAngle* release_eye_angles();
+  inline void set_allocated_eye_angles(::CMsgQAngle* eye_angles);
+
+  // optional int32 observer_mode = 5;
+  inline bool has_observer_mode() const;
+  inline void clear_observer_mode();
+  static const int kObserverModeFieldNumber = 5;
+  inline ::google::protobuf::int32 observer_mode() const;
+  inline void set_observer_mode(::google::protobuf::int32 value);
+
+  // optional bool cameraman_scoreboard = 6;
+  inline bool has_cameraman_scoreboard() const;
+  inline void clear_cameraman_scoreboard();
+  static const int kCameramanScoreboardFieldNumber = 6;
+  inline bool cameraman_scoreboard() const;
+  inline void set_cameraman_scoreboard(bool value);
+
+  // optional int32 observer_target = 7;
+  inline bool has_observer_target() const;
+  inline void clear_observer_target();
+  static const int kObserverTargetFieldNumber = 7;
+  inline ::google::protobuf::int32 observer_target() const;
+  inline void set_observer_target(::google::protobuf::int32 value);
+
+  // optional .CMsgVector view_offset = 8;
+  inline bool has_view_offset() const;
+  inline void clear_view_offset();
+  static const int kViewOffsetFieldNumber = 8;
+  inline const ::CMsgVector& view_offset() const;
+  inline ::CMsgVector* mutable_view_offset();
+  inline ::CMsgVector* release_view_offset();
+  inline void set_allocated_view_offset(::CMsgVector* view_offset);
+
+  // @@protoc_insertion_point(class_scope:CCLCMsg_HltvFixupOperatorTick)
+ private:
+  inline void set_has_tick();
+  inline void clear_has_tick();
+  inline void set_has_props_data();
+  inline void clear_has_props_data();
+  inline void set_has_origin();
+  inline void clear_has_origin();
+  inline void set_has_eye_angles();
+  inline void clear_has_eye_angles();
+  inline void set_has_observer_mode();
+  inline void clear_has_observer_mode();
+  inline void set_has_cameraman_scoreboard();
+  inline void clear_has_cameraman_scoreboard();
+  inline void set_has_observer_target();
+  inline void clear_has_observer_target();
+  inline void set_has_view_offset();
+  inline void clear_has_view_offset();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* props_data_;
+  ::CMsgVector* origin_;
+  ::google::protobuf::int32 tick_;
+  ::google::protobuf::int32 observer_mode_;
+  ::CMsgQAngle* eye_angles_;
+  bool cameraman_scoreboard_;
+  ::google::protobuf::int32 observer_target_;
+  ::CMsgVector* view_offset_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
+
+  friend void  protobuf_AddDesc_netmessages_2eproto();
+  friend void protobuf_AssignDesc_netmessages_2eproto();
+  friend void protobuf_ShutdownFile_netmessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CCLCMsg_HltvFixupOperatorTick* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CSVCMsg_HltvFixupOperatorStatus : public ::google::protobuf::Message {
+ public:
+  CSVCMsg_HltvFixupOperatorStatus();
+  virtual ~CSVCMsg_HltvFixupOperatorStatus();
+
+  CSVCMsg_HltvFixupOperatorStatus(const CSVCMsg_HltvFixupOperatorStatus& from);
+
+  inline CSVCMsg_HltvFixupOperatorStatus& operator=(const CSVCMsg_HltvFixupOperatorStatus& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CSVCMsg_HltvFixupOperatorStatus& default_instance();
+
+  void Swap(CSVCMsg_HltvFixupOperatorStatus* other);
+
+  // implements Message ----------------------------------------------
+
+  CSVCMsg_HltvFixupOperatorStatus* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CSVCMsg_HltvFixupOperatorStatus& from);
+  void MergeFrom(const CSVCMsg_HltvFixupOperatorStatus& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint32 mode = 1;
+  inline bool has_mode() const;
+  inline void clear_mode();
+  static const int kModeFieldNumber = 1;
+  inline ::google::protobuf::uint32 mode() const;
+  inline void set_mode(::google::protobuf::uint32 value);
+
+  // optional string override_operator_name = 2;
+  inline bool has_override_operator_name() const;
+  inline void clear_override_operator_name();
+  static const int kOverrideOperatorNameFieldNumber = 2;
+  inline const ::std::string& override_operator_name() const;
+  inline void set_override_operator_name(const ::std::string& value);
+  inline void set_override_operator_name(const char* value);
+  inline void set_override_operator_name(const char* value, size_t size);
+  inline ::std::string* mutable_override_operator_name();
+  inline ::std::string* release_override_operator_name();
+  inline void set_allocated_override_operator_name(::std::string* override_operator_name);
+
+  // @@protoc_insertion_point(class_scope:CSVCMsg_HltvFixupOperatorStatus)
+ private:
+  inline void set_has_mode();
+  inline void clear_has_mode();
+  inline void set_has_override_operator_name();
+  inline void clear_has_override_operator_name();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* override_operator_name_;
+  ::google::protobuf::uint32 mode_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_netmessages_2eproto();
+  friend void protobuf_AssignDesc_netmessages_2eproto();
+  friend void protobuf_ShutdownFile_netmessages_2eproto();
+
+  void InitAsDefaultInstance();
+  static CSVCMsg_HltvFixupOperatorStatus* default_instance_;
 };
 // ===================================================================
 
@@ -10477,6 +10773,50 @@ inline ::google::protobuf::uint64 CSVCMsg_ServerInfo::ugc_map_id() const {
 inline void CSVCMsg_ServerInfo::set_ugc_map_id(::google::protobuf::uint64 value) {
   set_has_ugc_map_id();
   ugc_map_id_ = value;
+}
+
+// optional bool allow_loose_file_loads = 23;
+inline bool CSVCMsg_ServerInfo::has_allow_loose_file_loads() const {
+  return (_has_bits_[0] & 0x00400000u) != 0;
+}
+inline void CSVCMsg_ServerInfo::set_has_allow_loose_file_loads() {
+  _has_bits_[0] |= 0x00400000u;
+}
+inline void CSVCMsg_ServerInfo::clear_has_allow_loose_file_loads() {
+  _has_bits_[0] &= ~0x00400000u;
+}
+inline void CSVCMsg_ServerInfo::clear_allow_loose_file_loads() {
+  allow_loose_file_loads_ = false;
+  clear_has_allow_loose_file_loads();
+}
+inline bool CSVCMsg_ServerInfo::allow_loose_file_loads() const {
+  return allow_loose_file_loads_;
+}
+inline void CSVCMsg_ServerInfo::set_allow_loose_file_loads(bool value) {
+  set_has_allow_loose_file_loads();
+  allow_loose_file_loads_ = value;
+}
+
+// optional bool allow_user_workshop_content = 24;
+inline bool CSVCMsg_ServerInfo::has_allow_user_workshop_content() const {
+  return (_has_bits_[0] & 0x00800000u) != 0;
+}
+inline void CSVCMsg_ServerInfo::set_has_allow_user_workshop_content() {
+  _has_bits_[0] |= 0x00800000u;
+}
+inline void CSVCMsg_ServerInfo::clear_has_allow_user_workshop_content() {
+  _has_bits_[0] &= ~0x00800000u;
+}
+inline void CSVCMsg_ServerInfo::clear_allow_user_workshop_content() {
+  allow_user_workshop_content_ = false;
+  clear_has_allow_user_workshop_content();
+}
+inline bool CSVCMsg_ServerInfo::allow_user_workshop_content() const {
+  return allow_user_workshop_content_;
+}
+inline void CSVCMsg_ServerInfo::set_allow_user_workshop_content(bool value) {
+  set_has_allow_user_workshop_content();
+  allow_user_workshop_content_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -14651,6 +14991,28 @@ inline void CSVCMsg_HltvReplay::set_replay_slowdown_rate(float value) {
   replay_slowdown_rate_ = value;
 }
 
+// optional int32 reason = 8;
+inline bool CSVCMsg_HltvReplay::has_reason() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void CSVCMsg_HltvReplay::set_has_reason() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void CSVCMsg_HltvReplay::clear_has_reason() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void CSVCMsg_HltvReplay::clear_reason() {
+  reason_ = 0;
+  clear_has_reason();
+}
+inline ::google::protobuf::int32 CSVCMsg_HltvReplay::reason() const {
+  return reason_;
+}
+inline void CSVCMsg_HltvReplay::set_reason(::google::protobuf::int32 value) {
+  set_has_reason();
+  reason_ = value;
+}
+
 // -------------------------------------------------------------------
 
 // CCLCMsg_HltvReplay
@@ -14839,6 +15201,378 @@ inline void CSVCMsg_Broadcast_Command::set_allocated_cmd(::std::string* cmd) {
   }
 }
 
+// -------------------------------------------------------------------
+
+// CCLCMsg_HltvFixupOperatorTick
+
+// optional int32 tick = 1;
+inline bool CCLCMsg_HltvFixupOperatorTick::has_tick() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_has_tick() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_has_tick() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_tick() {
+  tick_ = 0;
+  clear_has_tick();
+}
+inline ::google::protobuf::int32 CCLCMsg_HltvFixupOperatorTick::tick() const {
+  return tick_;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_tick(::google::protobuf::int32 value) {
+  set_has_tick();
+  tick_ = value;
+}
+
+// optional bytes props_data = 2;
+inline bool CCLCMsg_HltvFixupOperatorTick::has_props_data() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_has_props_data() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_has_props_data() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_props_data() {
+  if (props_data_ != &::google::protobuf::internal::kEmptyString) {
+    props_data_->clear();
+  }
+  clear_has_props_data();
+}
+inline const ::std::string& CCLCMsg_HltvFixupOperatorTick::props_data() const {
+  return *props_data_;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_props_data(const ::std::string& value) {
+  set_has_props_data();
+  if (props_data_ == &::google::protobuf::internal::kEmptyString) {
+    props_data_ = new ::std::string;
+  }
+  props_data_->assign(value);
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_props_data(const char* value) {
+  set_has_props_data();
+  if (props_data_ == &::google::protobuf::internal::kEmptyString) {
+    props_data_ = new ::std::string;
+  }
+  props_data_->assign(value);
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_props_data(const void* value, size_t size) {
+  set_has_props_data();
+  if (props_data_ == &::google::protobuf::internal::kEmptyString) {
+    props_data_ = new ::std::string;
+  }
+  props_data_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CCLCMsg_HltvFixupOperatorTick::mutable_props_data() {
+  set_has_props_data();
+  if (props_data_ == &::google::protobuf::internal::kEmptyString) {
+    props_data_ = new ::std::string;
+  }
+  return props_data_;
+}
+inline ::std::string* CCLCMsg_HltvFixupOperatorTick::release_props_data() {
+  clear_has_props_data();
+  if (props_data_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = props_data_;
+    props_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_allocated_props_data(::std::string* props_data) {
+  if (props_data_ != &::google::protobuf::internal::kEmptyString) {
+    delete props_data_;
+  }
+  if (props_data) {
+    set_has_props_data();
+    props_data_ = props_data;
+  } else {
+    clear_has_props_data();
+    props_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional .CMsgVector origin = 3;
+inline bool CCLCMsg_HltvFixupOperatorTick::has_origin() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_has_origin() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_has_origin() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_origin() {
+  if (origin_ != NULL) origin_->::CMsgVector::Clear();
+  clear_has_origin();
+}
+inline const ::CMsgVector& CCLCMsg_HltvFixupOperatorTick::origin() const {
+  return origin_ != NULL ? *origin_ : *default_instance_->origin_;
+}
+inline ::CMsgVector* CCLCMsg_HltvFixupOperatorTick::mutable_origin() {
+  set_has_origin();
+  if (origin_ == NULL) origin_ = new ::CMsgVector;
+  return origin_;
+}
+inline ::CMsgVector* CCLCMsg_HltvFixupOperatorTick::release_origin() {
+  clear_has_origin();
+  ::CMsgVector* temp = origin_;
+  origin_ = NULL;
+  return temp;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_allocated_origin(::CMsgVector* origin) {
+  delete origin_;
+  origin_ = origin;
+  if (origin) {
+    set_has_origin();
+  } else {
+    clear_has_origin();
+  }
+}
+
+// optional .CMsgQAngle eye_angles = 4;
+inline bool CCLCMsg_HltvFixupOperatorTick::has_eye_angles() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_has_eye_angles() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_has_eye_angles() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_eye_angles() {
+  if (eye_angles_ != NULL) eye_angles_->::CMsgQAngle::Clear();
+  clear_has_eye_angles();
+}
+inline const ::CMsgQAngle& CCLCMsg_HltvFixupOperatorTick::eye_angles() const {
+  return eye_angles_ != NULL ? *eye_angles_ : *default_instance_->eye_angles_;
+}
+inline ::CMsgQAngle* CCLCMsg_HltvFixupOperatorTick::mutable_eye_angles() {
+  set_has_eye_angles();
+  if (eye_angles_ == NULL) eye_angles_ = new ::CMsgQAngle;
+  return eye_angles_;
+}
+inline ::CMsgQAngle* CCLCMsg_HltvFixupOperatorTick::release_eye_angles() {
+  clear_has_eye_angles();
+  ::CMsgQAngle* temp = eye_angles_;
+  eye_angles_ = NULL;
+  return temp;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_allocated_eye_angles(::CMsgQAngle* eye_angles) {
+  delete eye_angles_;
+  eye_angles_ = eye_angles;
+  if (eye_angles) {
+    set_has_eye_angles();
+  } else {
+    clear_has_eye_angles();
+  }
+}
+
+// optional int32 observer_mode = 5;
+inline bool CCLCMsg_HltvFixupOperatorTick::has_observer_mode() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_has_observer_mode() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_has_observer_mode() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_observer_mode() {
+  observer_mode_ = 0;
+  clear_has_observer_mode();
+}
+inline ::google::protobuf::int32 CCLCMsg_HltvFixupOperatorTick::observer_mode() const {
+  return observer_mode_;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_observer_mode(::google::protobuf::int32 value) {
+  set_has_observer_mode();
+  observer_mode_ = value;
+}
+
+// optional bool cameraman_scoreboard = 6;
+inline bool CCLCMsg_HltvFixupOperatorTick::has_cameraman_scoreboard() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_has_cameraman_scoreboard() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_has_cameraman_scoreboard() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_cameraman_scoreboard() {
+  cameraman_scoreboard_ = false;
+  clear_has_cameraman_scoreboard();
+}
+inline bool CCLCMsg_HltvFixupOperatorTick::cameraman_scoreboard() const {
+  return cameraman_scoreboard_;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_cameraman_scoreboard(bool value) {
+  set_has_cameraman_scoreboard();
+  cameraman_scoreboard_ = value;
+}
+
+// optional int32 observer_target = 7;
+inline bool CCLCMsg_HltvFixupOperatorTick::has_observer_target() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_has_observer_target() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_has_observer_target() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_observer_target() {
+  observer_target_ = 0;
+  clear_has_observer_target();
+}
+inline ::google::protobuf::int32 CCLCMsg_HltvFixupOperatorTick::observer_target() const {
+  return observer_target_;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_observer_target(::google::protobuf::int32 value) {
+  set_has_observer_target();
+  observer_target_ = value;
+}
+
+// optional .CMsgVector view_offset = 8;
+inline bool CCLCMsg_HltvFixupOperatorTick::has_view_offset() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_has_view_offset() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_has_view_offset() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::clear_view_offset() {
+  if (view_offset_ != NULL) view_offset_->::CMsgVector::Clear();
+  clear_has_view_offset();
+}
+inline const ::CMsgVector& CCLCMsg_HltvFixupOperatorTick::view_offset() const {
+  return view_offset_ != NULL ? *view_offset_ : *default_instance_->view_offset_;
+}
+inline ::CMsgVector* CCLCMsg_HltvFixupOperatorTick::mutable_view_offset() {
+  set_has_view_offset();
+  if (view_offset_ == NULL) view_offset_ = new ::CMsgVector;
+  return view_offset_;
+}
+inline ::CMsgVector* CCLCMsg_HltvFixupOperatorTick::release_view_offset() {
+  clear_has_view_offset();
+  ::CMsgVector* temp = view_offset_;
+  view_offset_ = NULL;
+  return temp;
+}
+inline void CCLCMsg_HltvFixupOperatorTick::set_allocated_view_offset(::CMsgVector* view_offset) {
+  delete view_offset_;
+  view_offset_ = view_offset;
+  if (view_offset) {
+    set_has_view_offset();
+  } else {
+    clear_has_view_offset();
+  }
+}
+
+// -------------------------------------------------------------------
+
+// CSVCMsg_HltvFixupOperatorStatus
+
+// optional uint32 mode = 1;
+inline bool CSVCMsg_HltvFixupOperatorStatus::has_mode() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CSVCMsg_HltvFixupOperatorStatus::set_has_mode() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CSVCMsg_HltvFixupOperatorStatus::clear_has_mode() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CSVCMsg_HltvFixupOperatorStatus::clear_mode() {
+  mode_ = 0u;
+  clear_has_mode();
+}
+inline ::google::protobuf::uint32 CSVCMsg_HltvFixupOperatorStatus::mode() const {
+  return mode_;
+}
+inline void CSVCMsg_HltvFixupOperatorStatus::set_mode(::google::protobuf::uint32 value) {
+  set_has_mode();
+  mode_ = value;
+}
+
+// optional string override_operator_name = 2;
+inline bool CSVCMsg_HltvFixupOperatorStatus::has_override_operator_name() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CSVCMsg_HltvFixupOperatorStatus::set_has_override_operator_name() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CSVCMsg_HltvFixupOperatorStatus::clear_has_override_operator_name() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CSVCMsg_HltvFixupOperatorStatus::clear_override_operator_name() {
+  if (override_operator_name_ != &::google::protobuf::internal::kEmptyString) {
+    override_operator_name_->clear();
+  }
+  clear_has_override_operator_name();
+}
+inline const ::std::string& CSVCMsg_HltvFixupOperatorStatus::override_operator_name() const {
+  return *override_operator_name_;
+}
+inline void CSVCMsg_HltvFixupOperatorStatus::set_override_operator_name(const ::std::string& value) {
+  set_has_override_operator_name();
+  if (override_operator_name_ == &::google::protobuf::internal::kEmptyString) {
+    override_operator_name_ = new ::std::string;
+  }
+  override_operator_name_->assign(value);
+}
+inline void CSVCMsg_HltvFixupOperatorStatus::set_override_operator_name(const char* value) {
+  set_has_override_operator_name();
+  if (override_operator_name_ == &::google::protobuf::internal::kEmptyString) {
+    override_operator_name_ = new ::std::string;
+  }
+  override_operator_name_->assign(value);
+}
+inline void CSVCMsg_HltvFixupOperatorStatus::set_override_operator_name(const char* value, size_t size) {
+  set_has_override_operator_name();
+  if (override_operator_name_ == &::google::protobuf::internal::kEmptyString) {
+    override_operator_name_ = new ::std::string;
+  }
+  override_operator_name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CSVCMsg_HltvFixupOperatorStatus::mutable_override_operator_name() {
+  set_has_override_operator_name();
+  if (override_operator_name_ == &::google::protobuf::internal::kEmptyString) {
+    override_operator_name_ = new ::std::string;
+  }
+  return override_operator_name_;
+}
+inline ::std::string* CSVCMsg_HltvFixupOperatorStatus::release_override_operator_name() {
+  clear_has_override_operator_name();
+  if (override_operator_name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = override_operator_name_;
+    override_operator_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CSVCMsg_HltvFixupOperatorStatus::set_allocated_override_operator_name(::std::string* override_operator_name) {
+  if (override_operator_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete override_operator_name_;
+  }
+  if (override_operator_name) {
+    set_has_override_operator_name();
+    override_operator_name_ = override_operator_name;
+  } else {
+    clear_has_override_operator_name();
+    override_operator_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -14863,12 +15597,12 @@ inline const EnumDescriptor* GetEnumDescriptor< ::ESplitScreenMessageType>() {
   return ::ESplitScreenMessageType_descriptor();
 }
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::ReplayEventType_t>() {
-  return ::ReplayEventType_t_descriptor();
-}
-template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::SVC_Messages>() {
   return ::SVC_Messages_descriptor();
+}
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::ReplayEventType_t>() {
+  return ::ReplayEventType_t_descriptor();
 }
 
 }  // namespace google

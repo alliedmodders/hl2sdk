@@ -201,12 +201,18 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* CSVCMsg_Broadcast_Command_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   CSVCMsg_Broadcast_Command_reflection_ = NULL;
+const ::google::protobuf::Descriptor* CCLCMsg_HltvFixupOperatorTick_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  CCLCMsg_HltvFixupOperatorTick_reflection_ = NULL;
+const ::google::protobuf::Descriptor* CSVCMsg_HltvFixupOperatorStatus_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  CSVCMsg_HltvFixupOperatorStatus_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* NET_Messages_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* CLC_Messages_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* VoiceDataFormat_t_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ESplitScreenMessageType_descriptor_ = NULL;
-const ::google::protobuf::EnumDescriptor* ReplayEventType_t_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* SVC_Messages_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* ReplayEventType_t_descriptor_ = NULL;
 
 }  // namespace
 
@@ -641,7 +647,7 @@ void protobuf_AssignDesc_netmessages_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CCLCMsg_CmdKeyValues));
   CSVCMsg_ServerInfo_descriptor_ = file->message_type(24);
-  static const int CSVCMsg_ServerInfo_offsets_[22] = {
+  static const int CSVCMsg_ServerInfo_offsets_[24] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_ServerInfo, protocol_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_ServerInfo, server_count_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_ServerInfo, is_dedicated_),
@@ -664,6 +670,8 @@ void protobuf_AssignDesc_netmessages_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_ServerInfo, host_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_ServerInfo, public_ip_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_ServerInfo, ugc_map_id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_ServerInfo, allow_loose_file_loads_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_ServerInfo, allow_user_workshop_content_),
   };
   CSVCMsg_ServerInfo_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -1244,7 +1252,7 @@ void protobuf_AssignDesc_netmessages_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CSVCMsg_EncryptedData));
   CSVCMsg_HltvReplay_descriptor_ = file->message_type(51);
-  static const int CSVCMsg_HltvReplay_offsets_[7] = {
+  static const int CSVCMsg_HltvReplay_offsets_[8] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_HltvReplay, delay_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_HltvReplay, primary_target_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_HltvReplay, replay_stop_at_),
@@ -1252,6 +1260,7 @@ void protobuf_AssignDesc_netmessages_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_HltvReplay, replay_slowdown_begin_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_HltvReplay, replay_slowdown_end_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_HltvReplay, replay_slowdown_rate_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_HltvReplay, reason_),
   };
   CSVCMsg_HltvReplay_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -1298,12 +1307,50 @@ void protobuf_AssignDesc_netmessages_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CSVCMsg_Broadcast_Command));
+  CCLCMsg_HltvFixupOperatorTick_descriptor_ = file->message_type(54);
+  static const int CCLCMsg_HltvFixupOperatorTick_offsets_[8] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCLCMsg_HltvFixupOperatorTick, tick_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCLCMsg_HltvFixupOperatorTick, props_data_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCLCMsg_HltvFixupOperatorTick, origin_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCLCMsg_HltvFixupOperatorTick, eye_angles_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCLCMsg_HltvFixupOperatorTick, observer_mode_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCLCMsg_HltvFixupOperatorTick, cameraman_scoreboard_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCLCMsg_HltvFixupOperatorTick, observer_target_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCLCMsg_HltvFixupOperatorTick, view_offset_),
+  };
+  CCLCMsg_HltvFixupOperatorTick_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      CCLCMsg_HltvFixupOperatorTick_descriptor_,
+      CCLCMsg_HltvFixupOperatorTick::default_instance_,
+      CCLCMsg_HltvFixupOperatorTick_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCLCMsg_HltvFixupOperatorTick, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CCLCMsg_HltvFixupOperatorTick, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(CCLCMsg_HltvFixupOperatorTick));
+  CSVCMsg_HltvFixupOperatorStatus_descriptor_ = file->message_type(55);
+  static const int CSVCMsg_HltvFixupOperatorStatus_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_HltvFixupOperatorStatus, mode_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_HltvFixupOperatorStatus, override_operator_name_),
+  };
+  CSVCMsg_HltvFixupOperatorStatus_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      CSVCMsg_HltvFixupOperatorStatus_descriptor_,
+      CSVCMsg_HltvFixupOperatorStatus::default_instance_,
+      CSVCMsg_HltvFixupOperatorStatus_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_HltvFixupOperatorStatus, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CSVCMsg_HltvFixupOperatorStatus, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(CSVCMsg_HltvFixupOperatorStatus));
   NET_Messages_descriptor_ = file->enum_type(0);
   CLC_Messages_descriptor_ = file->enum_type(1);
   VoiceDataFormat_t_descriptor_ = file->enum_type(2);
   ESplitScreenMessageType_descriptor_ = file->enum_type(3);
-  ReplayEventType_t_descriptor_ = file->enum_type(4);
-  SVC_Messages_descriptor_ = file->enum_type(5);
+  SVC_Messages_descriptor_ = file->enum_type(4);
+  ReplayEventType_t_descriptor_ = file->enum_type(5);
 }
 
 namespace {
@@ -1438,6 +1485,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
     CCLCMsg_HltvReplay_descriptor_, &CCLCMsg_HltvReplay::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     CSVCMsg_Broadcast_Command_descriptor_, &CSVCMsg_Broadcast_Command::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    CCLCMsg_HltvFixupOperatorTick_descriptor_, &CCLCMsg_HltvFixupOperatorTick::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    CSVCMsg_HltvFixupOperatorStatus_descriptor_, &CSVCMsg_HltvFixupOperatorStatus::default_instance());
 }
 
 }  // namespace
@@ -1565,6 +1616,10 @@ void protobuf_ShutdownFile_netmessages_2eproto() {
   delete CCLCMsg_HltvReplay_reflection_;
   delete CSVCMsg_Broadcast_Command::default_instance_;
   delete CSVCMsg_Broadcast_Command_reflection_;
+  delete CCLCMsg_HltvFixupOperatorTick::default_instance_;
+  delete CCLCMsg_HltvFixupOperatorTick_reflection_;
+  delete CSVCMsg_HltvFixupOperatorStatus::default_instance_;
+  delete CSVCMsg_HltvFixupOperatorStatus_reflection_;
 }
 
 void protobuf_AddDesc_netmessages_2eproto() {
@@ -1626,7 +1681,7 @@ void protobuf_AddDesc_netmessages_2eproto() {
     "gress\022\020\n\010progress\030\001 \001(\005\":\n\032CCLCMsg_Split"
     "PlayerConnect\022\034\n\007convars\030\001 \001(\0132\013.CMsg_CV"
     "ars\")\n\024CCLCMsg_CmdKeyValues\022\021\n\tkeyvalues"
-    "\030\001 \001(\014\"\352\003\n\022CSVCMsg_ServerInfo\022\020\n\010protoco"
+    "\030\001 \001(\014\"\257\004\n\022CSVCMsg_ServerInfo\022\020\n\010protoco"
     "l\030\001 \001(\005\022\024\n\014server_count\030\002 \001(\005\022\024\n\014is_dedi"
     "cated\030\003 \001(\010\022 \n\030is_official_valve_server\030"
     "\004 \001(\010\022\017\n\007is_hltv\030\005 \001(\010\022\021\n\tis_replay\030\006 \001("
@@ -1638,134 +1693,148 @@ void protobuf_AddDesc_netmessages_2eproto() {
     "\001(\002\022\020\n\010game_dir\030\017 \001(\t\022\020\n\010map_name\030\020 \001(\t\022"
     "\026\n\016map_group_name\030\021 \001(\t\022\020\n\010sky_name\030\022 \001("
     "\t\022\021\n\thost_name\030\023 \001(\t\022\021\n\tpublic_ip\030\024 \001(\r\022"
-    "\022\n\nugc_map_id\030\026 \001(\004\"\244\001\n\021CSVCMsg_ClassInf"
-    "o\022\030\n\020create_on_client\030\001 \001(\010\022+\n\007classes\030\002"
-    " \003(\0132\032.CSVCMsg_ClassInfo.class_t\032H\n\007clas"
-    "s_t\022\020\n\010class_id\030\001 \001(\005\022\027\n\017data_table_name"
-    "\030\002 \001(\t\022\022\n\nclass_name\030\003 \001(\t\"\260\002\n\021CSVCMsg_S"
-    "endTable\022\016\n\006is_end\030\001 \001(\010\022\026\n\016net_table_na"
-    "me\030\002 \001(\t\022\025\n\rneeds_decoder\030\003 \001(\010\022,\n\005props"
-    "\030\004 \003(\0132\035.CSVCMsg_SendTable.sendprop_t\032\255\001"
-    "\n\nsendprop_t\022\014\n\004type\030\001 \001(\005\022\020\n\010var_name\030\002"
-    " \001(\t\022\r\n\005flags\030\003 \001(\005\022\020\n\010priority\030\004 \001(\005\022\017\n"
-    "\007dt_name\030\005 \001(\t\022\024\n\014num_elements\030\006 \001(\005\022\021\n\t"
-    "low_value\030\007 \001(\002\022\022\n\nhigh_value\030\010 \001(\002\022\020\n\010n"
-    "um_bits\030\t \001(\005\"\035\n\rCSVCMsg_Print\022\014\n\004text\030\001"
-    " \001(\t\"\"\n\020CSVCMsg_SetPause\022\016\n\006paused\030\001 \001(\010"
-    "\"\'\n\017CSVCMsg_SetView\022\024\n\014entity_index\030\001 \001("
-    "\005\"\312\001\n\031CSVCMsg_CreateStringTable\022\014\n\004name\030"
-    "\001 \001(\t\022\023\n\013max_entries\030\002 \001(\005\022\023\n\013num_entrie"
-    "s\030\003 \001(\005\022\034\n\024user_data_fixed_size\030\004 \001(\010\022\026\n"
-    "\016user_data_size\030\005 \001(\005\022\033\n\023user_data_size_"
-    "bits\030\006 \001(\005\022\r\n\005flags\030\007 \001(\005\022\023\n\013string_data"
-    "\030\010 \001(\014\"_\n\031CSVCMsg_UpdateStringTable\022\020\n\010t"
-    "able_id\030\001 \001(\005\022\033\n\023num_changed_entries\030\002 \001"
-    "(\005\022\023\n\013string_data\030\003 \001(\014\"G\n\021CSVCMsg_Voice"
-    "Init\022\017\n\007quality\030\001 \001(\005\022\r\n\005codec\030\002 \001(\t\022\022\n\007"
-    "version\030\003 \001(\005:\0010\"\217\002\n\021CSVCMsg_VoiceData\022\016"
-    "\n\006client\030\001 \001(\005\022\021\n\tproximity\030\002 \001(\010\022\014\n\004xui"
-    "d\030\003 \001(\006\022\024\n\014audible_mask\030\004 \001(\005\022\022\n\nvoice_d"
-    "ata\030\005 \001(\014\022\016\n\006caster\030\006 \001(\010\022;\n\006format\030\007 \001("
-    "\0162\022.VoiceDataFormat_t:\027VOICEDATA_FORMAT_"
-    "ENGINE\022\026\n\016sequence_bytes\030\010 \001(\005\022\026\n\016sectio"
-    "n_number\030\t \001(\r\022\"\n\032uncompressed_sample_of"
-    "fset\030\n \001(\r\"@\n\020CSVCMsg_FixAngle\022\020\n\010relati"
-    "ve\030\001 \001(\010\022\032\n\005angle\030\002 \001(\0132\013.CMsgQAngle\"4\n\026"
-    "CSVCMsg_CrosshairAngle\022\032\n\005angle\030\001 \001(\0132\013."
-    "CMsgQAngle\"\'\n\020CSVCMsg_Prefetch\022\023\n\013sound_"
-    "index\030\001 \001(\005\"\212\001\n\020CSVCMsg_BSPDecal\022\030\n\003pos\030"
-    "\001 \001(\0132\013.CMsgVector\022\033\n\023decal_texture_inde"
-    "x\030\002 \001(\005\022\024\n\014entity_index\030\003 \001(\005\022\023\n\013model_i"
-    "ndex\030\004 \001(\005\022\024\n\014low_priority\030\005 \001(\010\"z\n\023CSVC"
-    "Msg_SplitScreen\022\?\n\004type\030\001 \001(\0162\030.ESplitSc"
-    "reenMessageType:\027MSG_SPLITSCREEN_ADDUSER"
-    "\022\014\n\004slot\030\002 \001(\005\022\024\n\014player_index\030\003 \001(\005\"9\n\024"
-    "CSVCMsg_GetCvarValue\022\016\n\006cookie\030\001 \001(\005\022\021\n\t"
-    "cvar_name\030\002 \001(\t\"<\n\014CSVCMsg_Menu\022\023\n\013dialo"
-    "g_type\030\001 \001(\005\022\027\n\017menu_key_values\030\002 \001(\014\"N\n"
-    "\023CSVCMsg_UserMessage\022\020\n\010msg_type\030\001 \001(\005\022\020"
-    "\n\010msg_data\030\002 \001(\014\022\023\n\013passthrough\030\003 \001(\005\"(\n"
-    "\024CSVCMsg_PaintmapData\022\020\n\010paintmap\030\001 \001(\014\""
-    "\246\002\n\021CSVCMsg_GameEvent\022\022\n\nevent_name\030\001 \001("
-    "\t\022\017\n\007eventid\030\002 \001(\005\022&\n\004keys\030\003 \003(\0132\030.CSVCM"
-    "sg_GameEvent.key_t\022\023\n\013passthrough\030\004 \001(\005\032"
-    "\256\001\n\005key_t\022\014\n\004type\030\001 \001(\005\022\022\n\nval_string\030\002 "
-    "\001(\t\022\021\n\tval_float\030\003 \001(\002\022\020\n\010val_long\030\004 \001(\005"
-    "\022\021\n\tval_short\030\005 \001(\005\022\020\n\010val_byte\030\006 \001(\005\022\020\n"
-    "\010val_bool\030\007 \001(\010\022\022\n\nval_uint64\030\010 \001(\004\022\023\n\013v"
-    "al_wstring\030\t \001(\014\"\321\001\n\025CSVCMsg_GameEventLi"
-    "st\0228\n\013descriptors\030\001 \003(\0132#.CSVCMsg_GameEv"
-    "entList.descriptor_t\032#\n\005key_t\022\014\n\004type\030\001 "
-    "\001(\005\022\014\n\004name\030\002 \001(\t\032Y\n\014descriptor_t\022\017\n\007eve"
-    "ntid\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022*\n\004keys\030\003 \003(\0132\034"
-    ".CSVCMsg_GameEventList.key_t\"R\n\024CSVCMsg_"
-    "TempEntities\022\020\n\010reliable\030\001 \001(\010\022\023\n\013num_en"
-    "tries\030\002 \001(\005\022\023\n\013entity_data\030\003 \001(\014\"\254\001\n\026CSV"
-    "CMsg_PacketEntities\022\023\n\013max_entries\030\001 \001(\005"
-    "\022\027\n\017updated_entries\030\002 \001(\005\022\020\n\010is_delta\030\003 "
-    "\001(\010\022\027\n\017update_baseline\030\004 \001(\010\022\020\n\010baseline"
-    "\030\005 \001(\005\022\022\n\ndelta_from\030\006 \001(\005\022\023\n\013entity_dat"
-    "a\030\007 \001(\014\"\266\003\n\016CSVCMsg_Sounds\022\026\n\016reliable_s"
-    "ound\030\001 \001(\010\022+\n\006sounds\030\002 \003(\0132\033.CSVCMsg_Sou"
-    "nds.sounddata_t\032\336\002\n\013sounddata_t\022\020\n\010origi"
-    "n_x\030\001 \001(\021\022\020\n\010origin_y\030\002 \001(\021\022\020\n\010origin_z\030"
-    "\003 \001(\021\022\016\n\006volume\030\004 \001(\r\022\023\n\013delay_value\030\005 \001"
-    "(\002\022\027\n\017sequence_number\030\006 \001(\005\022\024\n\014entity_in"
-    "dex\030\007 \001(\005\022\017\n\007channel\030\010 \001(\005\022\r\n\005pitch\030\t \001("
-    "\005\022\r\n\005flags\030\n \001(\005\022\021\n\tsound_num\030\013 \001(\r\022\030\n\020s"
-    "ound_num_handle\030\014 \001(\007\022\026\n\016speaker_entity\030"
-    "\r \001(\005\022\023\n\013random_seed\030\016 \001(\005\022\023\n\013sound_leve"
-    "l\030\017 \001(\005\022\023\n\013is_sentence\030\020 \001(\010\022\022\n\nis_ambie"
-    "nt\030\021 \001(\010\"J\n\021CSVCMsg_EntityMsg\022\021\n\tent_ind"
-    "ex\030\001 \001(\005\022\020\n\010class_id\030\002 \001(\005\022\020\n\010ent_data\030\003"
-    " \001(\014\")\n\024CSVCMsg_CmdKeyValues\022\021\n\tkeyvalue"
-    "s\030\001 \001(\014\"<\n\025CSVCMsg_EncryptedData\022\021\n\tencr"
-    "ypted\030\001 \001(\014\022\020\n\010key_type\030\002 \001(\005\"\306\001\n\022CSVCMs"
-    "g_HltvReplay\022\r\n\005delay\030\001 \001(\005\022\026\n\016primary_t"
-    "arget\030\002 \001(\005\022\026\n\016replay_stop_at\030\003 \001(\005\022\027\n\017r"
-    "eplay_start_at\030\004 \001(\005\022\035\n\025replay_slowdown_"
-    "begin\030\005 \001(\005\022\033\n\023replay_slowdown_end\030\006 \001(\005"
-    "\022\034\n\024replay_slowdown_rate\030\007 \001(\002\"\213\001\n\022CCLCM"
-    "sg_HltvReplay\022\017\n\007request\030\001 \001(\005\022\027\n\017slowdo"
-    "wn_length\030\002 \001(\002\022\025\n\rslowdown_rate\030\003 \001(\002\022 "
-    "\n\030primary_target_ent_index\030\004 \001(\005\022\022\n\neven"
-    "t_time\030\005 \001(\002\"(\n\031CSVCMsg_Broadcast_Comman"
-    "d\022\013\n\003cmd\030\001 \001(\t*\271\001\n\014NET_Messages\022\013\n\007net_N"
-    "OP\020\000\022\022\n\016net_Disconnect\020\001\022\014\n\010net_File\020\002\022\027"
-    "\n\023net_SplitScreenUser\020\003\022\014\n\010net_Tick\020\004\022\021\n"
-    "\rnet_StringCmd\020\005\022\021\n\rnet_SetConVar\020\006\022\023\n\017n"
-    "et_SignonState\020\007\022\030\n\024net_PlayerAvatarData"
-    "\020d*\224\002\n\014CLC_Messages\022\022\n\016clc_ClientInfo\020\010\022"
-    "\014\n\010clc_Move\020\t\022\021\n\rclc_VoiceData\020\n\022\023\n\017clc_"
-    "BaselineAck\020\013\022\024\n\020clc_ListenEvents\020\014\022\030\n\024c"
-    "lc_RespondCvarValue\020\r\022\024\n\020clc_FileCRCChec"
-    "k\020\016\022\027\n\023clc_LoadingProgress\020\017\022\032\n\026clc_Spli"
-    "tPlayerConnect\020\020\022\025\n\021clc_ClientMessage\020\021\022"
-    "\024\n\020clc_CmdKeyValues\020\022\022\022\n\016clc_HltvReplay\020"
-    "\024*L\n\021VoiceDataFormat_t\022\032\n\026VOICEDATA_FORM"
-    "AT_STEAM\020\000\022\033\n\027VOICEDATA_FORMAT_ENGINE\020\001*"
-    "y\n\027ESplitScreenMessageType\022\033\n\027MSG_SPLITS"
-    "CREEN_ADDUSER\020\000\022\036\n\032MSG_SPLITSCREEN_REMOV"
-    "EUSER\020\001\022\035\n\031MSG_SPLITSCREEN_TYPE_BITS\020\001\032\002"
-    "\020\001*\207\001\n\021ReplayEventType_t\022\027\n\023REPLAY_EVENT"
-    "_CANCEL\020\000\022\026\n\022REPLAY_EVENT_DEATH\020\001\022\030\n\024REP"
-    "LAY_EVENT_GENERIC\020\002\022\'\n#REPLAY_EVENT_STUC"
-    "K_NEED_FULL_UPDATE\020\003*\343\004\n\014SVC_Messages\022\022\n"
-    "\016svc_ServerInfo\020\010\022\021\n\rsvc_SendTable\020\t\022\021\n\r"
-    "svc_ClassInfo\020\n\022\020\n\014svc_SetPause\020\013\022\031\n\025svc"
-    "_CreateStringTable\020\014\022\031\n\025svc_UpdateString"
-    "Table\020\r\022\021\n\rsvc_VoiceInit\020\016\022\021\n\rsvc_VoiceD"
-    "ata\020\017\022\r\n\tsvc_Print\020\020\022\016\n\nsvc_Sounds\020\021\022\017\n\013"
-    "svc_SetView\020\022\022\020\n\014svc_FixAngle\020\023\022\026\n\022svc_C"
-    "rosshairAngle\020\024\022\020\n\014svc_BSPDecal\020\025\022\023\n\017svc"
-    "_SplitScreen\020\026\022\023\n\017svc_UserMessage\020\027\022\025\n\021s"
-    "vc_EntityMessage\020\030\022\021\n\rsvc_GameEvent\020\031\022\026\n"
-    "\022svc_PacketEntities\020\032\022\024\n\020svc_TempEntitie"
-    "s\020\033\022\020\n\014svc_Prefetch\020\034\022\014\n\010svc_Menu\020\035\022\025\n\021s"
-    "vc_GameEventList\020\036\022\024\n\020svc_GetCvarValue\020\037"
-    "\022\024\n\020svc_PaintmapData\020!\022\024\n\020svc_CmdKeyValu"
-    "es\020\"\022\025\n\021svc_EncryptedData\020#\022\022\n\016svc_HltvR"
-    "eplay\020$\022\031\n\025svc_Broadcast_Command\020&B\003\200\001\000", 7639);
+    "\022\n\nugc_map_id\030\026 \001(\004\022\036\n\026allow_loose_file_"
+    "loads\030\027 \001(\010\022#\n\033allow_user_workshop_conte"
+    "nt\030\030 \001(\010\"\244\001\n\021CSVCMsg_ClassInfo\022\030\n\020create"
+    "_on_client\030\001 \001(\010\022+\n\007classes\030\002 \003(\0132\032.CSVC"
+    "Msg_ClassInfo.class_t\032H\n\007class_t\022\020\n\010clas"
+    "s_id\030\001 \001(\005\022\027\n\017data_table_name\030\002 \001(\t\022\022\n\nc"
+    "lass_name\030\003 \001(\t\"\260\002\n\021CSVCMsg_SendTable\022\016\n"
+    "\006is_end\030\001 \001(\010\022\026\n\016net_table_name\030\002 \001(\t\022\025\n"
+    "\rneeds_decoder\030\003 \001(\010\022,\n\005props\030\004 \003(\0132\035.CS"
+    "VCMsg_SendTable.sendprop_t\032\255\001\n\nsendprop_"
+    "t\022\014\n\004type\030\001 \001(\005\022\020\n\010var_name\030\002 \001(\t\022\r\n\005fla"
+    "gs\030\003 \001(\005\022\020\n\010priority\030\004 \001(\005\022\017\n\007dt_name\030\005 "
+    "\001(\t\022\024\n\014num_elements\030\006 \001(\005\022\021\n\tlow_value\030\007"
+    " \001(\002\022\022\n\nhigh_value\030\010 \001(\002\022\020\n\010num_bits\030\t \001"
+    "(\005\"\035\n\rCSVCMsg_Print\022\014\n\004text\030\001 \001(\t\"\"\n\020CSV"
+    "CMsg_SetPause\022\016\n\006paused\030\001 \001(\010\"\'\n\017CSVCMsg"
+    "_SetView\022\024\n\014entity_index\030\001 \001(\005\"\312\001\n\031CSVCM"
+    "sg_CreateStringTable\022\014\n\004name\030\001 \001(\t\022\023\n\013ma"
+    "x_entries\030\002 \001(\005\022\023\n\013num_entries\030\003 \001(\005\022\034\n\024"
+    "user_data_fixed_size\030\004 \001(\010\022\026\n\016user_data_"
+    "size\030\005 \001(\005\022\033\n\023user_data_size_bits\030\006 \001(\005\022"
+    "\r\n\005flags\030\007 \001(\005\022\023\n\013string_data\030\010 \001(\014\"_\n\031C"
+    "SVCMsg_UpdateStringTable\022\020\n\010table_id\030\001 \001"
+    "(\005\022\033\n\023num_changed_entries\030\002 \001(\005\022\023\n\013strin"
+    "g_data\030\003 \001(\014\"G\n\021CSVCMsg_VoiceInit\022\017\n\007qua"
+    "lity\030\001 \001(\005\022\r\n\005codec\030\002 \001(\t\022\022\n\007version\030\003 \001"
+    "(\005:\0010\"\217\002\n\021CSVCMsg_VoiceData\022\016\n\006client\030\001 "
+    "\001(\005\022\021\n\tproximity\030\002 \001(\010\022\014\n\004xuid\030\003 \001(\006\022\024\n\014"
+    "audible_mask\030\004 \001(\005\022\022\n\nvoice_data\030\005 \001(\014\022\016"
+    "\n\006caster\030\006 \001(\010\022;\n\006format\030\007 \001(\0162\022.VoiceDa"
+    "taFormat_t:\027VOICEDATA_FORMAT_ENGINE\022\026\n\016s"
+    "equence_bytes\030\010 \001(\005\022\026\n\016section_number\030\t "
+    "\001(\r\022\"\n\032uncompressed_sample_offset\030\n \001(\r\""
+    "@\n\020CSVCMsg_FixAngle\022\020\n\010relative\030\001 \001(\010\022\032\n"
+    "\005angle\030\002 \001(\0132\013.CMsgQAngle\"4\n\026CSVCMsg_Cro"
+    "sshairAngle\022\032\n\005angle\030\001 \001(\0132\013.CMsgQAngle\""
+    "\'\n\020CSVCMsg_Prefetch\022\023\n\013sound_index\030\001 \001(\005"
+    "\"\212\001\n\020CSVCMsg_BSPDecal\022\030\n\003pos\030\001 \001(\0132\013.CMs"
+    "gVector\022\033\n\023decal_texture_index\030\002 \001(\005\022\024\n\014"
+    "entity_index\030\003 \001(\005\022\023\n\013model_index\030\004 \001(\005\022"
+    "\024\n\014low_priority\030\005 \001(\010\"z\n\023CSVCMsg_SplitSc"
+    "reen\022\?\n\004type\030\001 \001(\0162\030.ESplitScreenMessage"
+    "Type:\027MSG_SPLITSCREEN_ADDUSER\022\014\n\004slot\030\002 "
+    "\001(\005\022\024\n\014player_index\030\003 \001(\005\"9\n\024CSVCMsg_Get"
+    "CvarValue\022\016\n\006cookie\030\001 \001(\005\022\021\n\tcvar_name\030\002"
+    " \001(\t\"<\n\014CSVCMsg_Menu\022\023\n\013dialog_type\030\001 \001("
+    "\005\022\027\n\017menu_key_values\030\002 \001(\014\"N\n\023CSVCMsg_Us"
+    "erMessage\022\020\n\010msg_type\030\001 \001(\005\022\020\n\010msg_data\030"
+    "\002 \001(\014\022\023\n\013passthrough\030\003 \001(\005\"(\n\024CSVCMsg_Pa"
+    "intmapData\022\020\n\010paintmap\030\001 \001(\014\"\246\002\n\021CSVCMsg"
+    "_GameEvent\022\022\n\nevent_name\030\001 \001(\t\022\017\n\007eventi"
+    "d\030\002 \001(\005\022&\n\004keys\030\003 \003(\0132\030.CSVCMsg_GameEven"
+    "t.key_t\022\023\n\013passthrough\030\004 \001(\005\032\256\001\n\005key_t\022\014"
+    "\n\004type\030\001 \001(\005\022\022\n\nval_string\030\002 \001(\t\022\021\n\tval_"
+    "float\030\003 \001(\002\022\020\n\010val_long\030\004 \001(\005\022\021\n\tval_sho"
+    "rt\030\005 \001(\005\022\020\n\010val_byte\030\006 \001(\005\022\020\n\010val_bool\030\007"
+    " \001(\010\022\022\n\nval_uint64\030\010 \001(\004\022\023\n\013val_wstring\030"
+    "\t \001(\014\"\321\001\n\025CSVCMsg_GameEventList\0228\n\013descr"
+    "iptors\030\001 \003(\0132#.CSVCMsg_GameEventList.des"
+    "criptor_t\032#\n\005key_t\022\014\n\004type\030\001 \001(\005\022\014\n\004name"
+    "\030\002 \001(\t\032Y\n\014descriptor_t\022\017\n\007eventid\030\001 \001(\005\022"
+    "\014\n\004name\030\002 \001(\t\022*\n\004keys\030\003 \003(\0132\034.CSVCMsg_Ga"
+    "meEventList.key_t\"R\n\024CSVCMsg_TempEntitie"
+    "s\022\020\n\010reliable\030\001 \001(\010\022\023\n\013num_entries\030\002 \001(\005"
+    "\022\023\n\013entity_data\030\003 \001(\014\"\254\001\n\026CSVCMsg_Packet"
+    "Entities\022\023\n\013max_entries\030\001 \001(\005\022\027\n\017updated"
+    "_entries\030\002 \001(\005\022\020\n\010is_delta\030\003 \001(\010\022\027\n\017upda"
+    "te_baseline\030\004 \001(\010\022\020\n\010baseline\030\005 \001(\005\022\022\n\nd"
+    "elta_from\030\006 \001(\005\022\023\n\013entity_data\030\007 \001(\014\"\266\003\n"
+    "\016CSVCMsg_Sounds\022\026\n\016reliable_sound\030\001 \001(\010\022"
+    "+\n\006sounds\030\002 \003(\0132\033.CSVCMsg_Sounds.soundda"
+    "ta_t\032\336\002\n\013sounddata_t\022\020\n\010origin_x\030\001 \001(\021\022\020"
+    "\n\010origin_y\030\002 \001(\021\022\020\n\010origin_z\030\003 \001(\021\022\016\n\006vo"
+    "lume\030\004 \001(\r\022\023\n\013delay_value\030\005 \001(\002\022\027\n\017seque"
+    "nce_number\030\006 \001(\005\022\024\n\014entity_index\030\007 \001(\005\022\017"
+    "\n\007channel\030\010 \001(\005\022\r\n\005pitch\030\t \001(\005\022\r\n\005flags\030"
+    "\n \001(\005\022\021\n\tsound_num\030\013 \001(\r\022\030\n\020sound_num_ha"
+    "ndle\030\014 \001(\007\022\026\n\016speaker_entity\030\r \001(\005\022\023\n\013ra"
+    "ndom_seed\030\016 \001(\005\022\023\n\013sound_level\030\017 \001(\005\022\023\n\013"
+    "is_sentence\030\020 \001(\010\022\022\n\nis_ambient\030\021 \001(\010\"J\n"
+    "\021CSVCMsg_EntityMsg\022\021\n\tent_index\030\001 \001(\005\022\020\n"
+    "\010class_id\030\002 \001(\005\022\020\n\010ent_data\030\003 \001(\014\")\n\024CSV"
+    "CMsg_CmdKeyValues\022\021\n\tkeyvalues\030\001 \001(\014\"<\n\025"
+    "CSVCMsg_EncryptedData\022\021\n\tencrypted\030\001 \001(\014"
+    "\022\020\n\010key_type\030\002 \001(\005\"\326\001\n\022CSVCMsg_HltvRepla"
+    "y\022\r\n\005delay\030\001 \001(\005\022\026\n\016primary_target\030\002 \001(\005"
+    "\022\026\n\016replay_stop_at\030\003 \001(\005\022\027\n\017replay_start"
+    "_at\030\004 \001(\005\022\035\n\025replay_slowdown_begin\030\005 \001(\005"
+    "\022\033\n\023replay_slowdown_end\030\006 \001(\005\022\034\n\024replay_"
+    "slowdown_rate\030\007 \001(\002\022\016\n\006reason\030\010 \001(\005\"\213\001\n\022"
+    "CCLCMsg_HltvReplay\022\017\n\007request\030\001 \001(\005\022\027\n\017s"
+    "lowdown_length\030\002 \001(\002\022\025\n\rslowdown_rate\030\003 "
+    "\001(\002\022 \n\030primary_target_ent_index\030\004 \001(\005\022\022\n"
+    "\nevent_time\030\005 \001(\002\"(\n\031CSVCMsg_Broadcast_C"
+    "ommand\022\013\n\003cmd\030\001 \001(\t\"\357\001\n\035CCLCMsg_HltvFixu"
+    "pOperatorTick\022\014\n\004tick\030\001 \001(\005\022\022\n\nprops_dat"
+    "a\030\002 \001(\014\022\033\n\006origin\030\003 \001(\0132\013.CMsgVector\022\037\n\n"
+    "eye_angles\030\004 \001(\0132\013.CMsgQAngle\022\025\n\robserve"
+    "r_mode\030\005 \001(\005\022\034\n\024cameraman_scoreboard\030\006 \001"
+    "(\010\022\027\n\017observer_target\030\007 \001(\005\022 \n\013view_offs"
+    "et\030\010 \001(\0132\013.CMsgVector\"O\n\037CSVCMsg_HltvFix"
+    "upOperatorStatus\022\014\n\004mode\030\001 \001(\r\022\036\n\026overri"
+    "de_operator_name\030\002 \001(\t*\271\001\n\014NET_Messages\022"
+    "\013\n\007net_NOP\020\000\022\022\n\016net_Disconnect\020\001\022\014\n\010net_"
+    "File\020\002\022\027\n\023net_SplitScreenUser\020\003\022\014\n\010net_T"
+    "ick\020\004\022\021\n\rnet_StringCmd\020\005\022\021\n\rnet_SetConVa"
+    "r\020\006\022\023\n\017net_SignonState\020\007\022\030\n\024net_PlayerAv"
+    "atarData\020d*\326\002\n\014CLC_Messages\022\022\n\016clc_Clien"
+    "tInfo\020\010\022\014\n\010clc_Move\020\t\022\021\n\rclc_VoiceData\020\n"
+    "\022\023\n\017clc_BaselineAck\020\013\022\024\n\020clc_ListenEvent"
+    "s\020\014\022\030\n\024clc_RespondCvarValue\020\r\022\024\n\020clc_Fil"
+    "eCRCCheck\020\016\022\027\n\023clc_LoadingProgress\020\017\022\032\n\026"
+    "clc_SplitPlayerConnect\020\020\022\025\n\021clc_ClientMe"
+    "ssage\020\021\022\024\n\020clc_CmdKeyValues\020\022\022\022\n\016clc_Hlt"
+    "vReplay\020\024\022\035\n\031clc_HltvFixupOperatorTick\020\025"
+    "\022!\n\035clc_HltvFixupOperatorReceiver\020\026*L\n\021V"
+    "oiceDataFormat_t\022\032\n\026VOICEDATA_FORMAT_STE"
+    "AM\020\000\022\033\n\027VOICEDATA_FORMAT_ENGINE\020\001*y\n\027ESp"
+    "litScreenMessageType\022\033\n\027MSG_SPLITSCREEN_"
+    "ADDUSER\020\000\022\036\n\032MSG_SPLITSCREEN_REMOVEUSER\020"
+    "\001\022\035\n\031MSG_SPLITSCREEN_TYPE_BITS\020\001\032\002\020\001*\204\005\n"
+    "\014SVC_Messages\022\022\n\016svc_ServerInfo\020\010\022\021\n\rsvc"
+    "_SendTable\020\t\022\021\n\rsvc_ClassInfo\020\n\022\020\n\014svc_S"
+    "etPause\020\013\022\031\n\025svc_CreateStringTable\020\014\022\031\n\025"
+    "svc_UpdateStringTable\020\r\022\021\n\rsvc_VoiceInit"
+    "\020\016\022\021\n\rsvc_VoiceData\020\017\022\r\n\tsvc_Print\020\020\022\016\n\n"
+    "svc_Sounds\020\021\022\017\n\013svc_SetView\020\022\022\020\n\014svc_Fix"
+    "Angle\020\023\022\026\n\022svc_CrosshairAngle\020\024\022\020\n\014svc_B"
+    "SPDecal\020\025\022\023\n\017svc_SplitScreen\020\026\022\023\n\017svc_Us"
+    "erMessage\020\027\022\025\n\021svc_EntityMessage\020\030\022\021\n\rsv"
+    "c_GameEvent\020\031\022\026\n\022svc_PacketEntities\020\032\022\024\n"
+    "\020svc_TempEntities\020\033\022\020\n\014svc_Prefetch\020\034\022\014\n"
+    "\010svc_Menu\020\035\022\025\n\021svc_GameEventList\020\036\022\024\n\020sv"
+    "c_GetCvarValue\020\037\022\024\n\020svc_PaintmapData\020!\022\024"
+    "\n\020svc_CmdKeyValues\020\"\022\025\n\021svc_EncryptedDat"
+    "a\020#\022\022\n\016svc_HltvReplay\020$\022\031\n\025svc_Broadcast"
+    "_Command\020&\022\037\n\033svc_HltvFixupOperatorStatu"
+    "s\020\'*\241\001\n\021ReplayEventType_t\022\027\n\023REPLAY_EVEN"
+    "T_CANCEL\020\000\022\026\n\022REPLAY_EVENT_DEATH\020\001\022\030\n\024RE"
+    "PLAY_EVENT_GENERIC\020\002\022\'\n#REPLAY_EVENT_STU"
+    "CK_NEED_FULL_UPDATE\020\003\022\030\n\024REPLAY_EVENT_VI"
+    "CTORY\020\004B\003\200\001\000", 8172);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "netmessages.proto", &protobuf_RegisterTypes);
   CMsgVector::default_instance_ = new CMsgVector();
@@ -1829,6 +1898,8 @@ void protobuf_AddDesc_netmessages_2eproto() {
   CSVCMsg_HltvReplay::default_instance_ = new CSVCMsg_HltvReplay();
   CCLCMsg_HltvReplay::default_instance_ = new CCLCMsg_HltvReplay();
   CSVCMsg_Broadcast_Command::default_instance_ = new CSVCMsg_Broadcast_Command();
+  CCLCMsg_HltvFixupOperatorTick::default_instance_ = new CCLCMsg_HltvFixupOperatorTick();
+  CSVCMsg_HltvFixupOperatorStatus::default_instance_ = new CSVCMsg_HltvFixupOperatorStatus();
   CMsgVector::default_instance_->InitAsDefaultInstance();
   CMsgVector2D::default_instance_->InitAsDefaultInstance();
   CMsgQAngle::default_instance_->InitAsDefaultInstance();
@@ -1890,6 +1961,8 @@ void protobuf_AddDesc_netmessages_2eproto() {
   CSVCMsg_HltvReplay::default_instance_->InitAsDefaultInstance();
   CCLCMsg_HltvReplay::default_instance_->InitAsDefaultInstance();
   CSVCMsg_Broadcast_Command::default_instance_->InitAsDefaultInstance();
+  CCLCMsg_HltvFixupOperatorTick::default_instance_->InitAsDefaultInstance();
+  CSVCMsg_HltvFixupOperatorStatus::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_netmessages_2eproto);
 }
 
@@ -1938,6 +2011,8 @@ bool CLC_Messages_IsValid(int value) {
     case 17:
     case 18:
     case 20:
+    case 21:
+    case 22:
       return true;
     default:
       return false;
@@ -1966,22 +2041,6 @@ bool ESplitScreenMessageType_IsValid(int value) {
   switch(value) {
     case 0:
     case 1:
-      return true;
-    default:
-      return false;
-  }
-}
-
-const ::google::protobuf::EnumDescriptor* ReplayEventType_t_descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return ReplayEventType_t_descriptor_;
-}
-bool ReplayEventType_t_IsValid(int value) {
-  switch(value) {
-    case 0:
-    case 1:
-    case 2:
-    case 3:
       return true;
     default:
       return false;
@@ -2023,6 +2082,24 @@ bool SVC_Messages_IsValid(int value) {
     case 35:
     case 36:
     case 38:
+    case 39:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::google::protobuf::EnumDescriptor* ReplayEventType_t_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ReplayEventType_t_descriptor_;
+}
+bool ReplayEventType_t_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -9392,6 +9469,8 @@ const int CSVCMsg_ServerInfo::kSkyNameFieldNumber;
 const int CSVCMsg_ServerInfo::kHostNameFieldNumber;
 const int CSVCMsg_ServerInfo::kPublicIpFieldNumber;
 const int CSVCMsg_ServerInfo::kUgcMapIdFieldNumber;
+const int CSVCMsg_ServerInfo::kAllowLooseFileLoadsFieldNumber;
+const int CSVCMsg_ServerInfo::kAllowUserWorkshopContentFieldNumber;
 #endif  // !_MSC_VER
 
 CSVCMsg_ServerInfo::CSVCMsg_ServerInfo()
@@ -9432,6 +9511,8 @@ void CSVCMsg_ServerInfo::SharedCtor() {
   host_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   public_ip_ = 0u;
   ugc_map_id_ = GOOGLE_ULONGLONG(0);
+  allow_loose_file_loads_ = false;
+  allow_user_workshop_content_ = false;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -9528,6 +9609,8 @@ void CSVCMsg_ServerInfo::Clear() {
     }
     public_ip_ = 0u;
     ugc_map_id_ = GOOGLE_ULONGLONG(0);
+    allow_loose_file_loads_ = false;
+    allow_user_workshop_content_ = false;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -9891,6 +9974,38 @@ bool CSVCMsg_ServerInfo::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(184)) goto parse_allow_loose_file_loads;
+        break;
+      }
+
+      // optional bool allow_loose_file_loads = 23;
+      case 23: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_allow_loose_file_loads:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &allow_loose_file_loads_)));
+          set_has_allow_loose_file_loads();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(192)) goto parse_allow_user_workshop_content;
+        break;
+      }
+
+      // optional bool allow_user_workshop_content = 24;
+      case 24: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_allow_user_workshop_content:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &allow_user_workshop_content_)));
+          set_has_allow_user_workshop_content();
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -10043,6 +10158,16 @@ void CSVCMsg_ServerInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt64(22, this->ugc_map_id(), output);
   }
 
+  // optional bool allow_loose_file_loads = 23;
+  if (has_allow_loose_file_loads()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(23, this->allow_loose_file_loads(), output);
+  }
+
+  // optional bool allow_user_workshop_content = 24;
+  if (has_allow_user_workshop_content()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(24, this->allow_user_workshop_content(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -10184,6 +10309,16 @@ void CSVCMsg_ServerInfo::SerializeWithCachedSizes(
   // optional uint64 ugc_map_id = 22;
   if (has_ugc_map_id()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(22, this->ugc_map_id(), target);
+  }
+
+  // optional bool allow_loose_file_loads = 23;
+  if (has_allow_loose_file_loads()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(23, this->allow_loose_file_loads(), target);
+  }
+
+  // optional bool allow_user_workshop_content = 24;
+  if (has_allow_user_workshop_content()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(24, this->allow_user_workshop_content(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -10337,6 +10472,16 @@ int CSVCMsg_ServerInfo::ByteSize() const {
           this->ugc_map_id());
     }
 
+    // optional bool allow_loose_file_loads = 23;
+    if (has_allow_loose_file_loads()) {
+      total_size += 2 + 1;
+    }
+
+    // optional bool allow_user_workshop_content = 24;
+    if (has_allow_user_workshop_content()) {
+      total_size += 2 + 1;
+    }
+
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -10434,6 +10579,12 @@ void CSVCMsg_ServerInfo::MergeFrom(const CSVCMsg_ServerInfo& from) {
     if (from.has_ugc_map_id()) {
       set_ugc_map_id(from.ugc_map_id());
     }
+    if (from.has_allow_loose_file_loads()) {
+      set_allow_loose_file_loads(from.allow_loose_file_loads());
+    }
+    if (from.has_allow_user_workshop_content()) {
+      set_allow_user_workshop_content(from.allow_user_workshop_content());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -10479,6 +10630,8 @@ void CSVCMsg_ServerInfo::Swap(CSVCMsg_ServerInfo* other) {
     std::swap(host_name_, other->host_name_);
     std::swap(public_ip_, other->public_ip_);
     std::swap(ugc_map_id_, other->ugc_map_id_);
+    std::swap(allow_loose_file_loads_, other->allow_loose_file_loads_);
+    std::swap(allow_user_workshop_content_, other->allow_user_workshop_content_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -20965,6 +21118,7 @@ const int CSVCMsg_HltvReplay::kReplayStartAtFieldNumber;
 const int CSVCMsg_HltvReplay::kReplaySlowdownBeginFieldNumber;
 const int CSVCMsg_HltvReplay::kReplaySlowdownEndFieldNumber;
 const int CSVCMsg_HltvReplay::kReplaySlowdownRateFieldNumber;
+const int CSVCMsg_HltvReplay::kReasonFieldNumber;
 #endif  // !_MSC_VER
 
 CSVCMsg_HltvReplay::CSVCMsg_HltvReplay()
@@ -20990,6 +21144,7 @@ void CSVCMsg_HltvReplay::SharedCtor() {
   replay_slowdown_begin_ = 0;
   replay_slowdown_end_ = 0;
   replay_slowdown_rate_ = 0;
+  reason_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -21032,6 +21187,7 @@ void CSVCMsg_HltvReplay::Clear() {
     replay_slowdown_begin_ = 0;
     replay_slowdown_end_ = 0;
     replay_slowdown_rate_ = 0;
+    reason_ = 0;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -21150,6 +21306,22 @@ bool CSVCMsg_HltvReplay::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(64)) goto parse_reason;
+        break;
+      }
+
+      // optional int32 reason = 8;
+      case 8: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_reason:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &reason_)));
+          set_has_reason();
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -21207,6 +21379,11 @@ void CSVCMsg_HltvReplay::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteFloat(7, this->replay_slowdown_rate(), output);
   }
 
+  // optional int32 reason = 8;
+  if (has_reason()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(8, this->reason(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -21248,6 +21425,11 @@ void CSVCMsg_HltvReplay::SerializeWithCachedSizes(
   // optional float replay_slowdown_rate = 7;
   if (has_replay_slowdown_rate()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(7, this->replay_slowdown_rate(), target);
+  }
+
+  // optional int32 reason = 8;
+  if (has_reason()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(8, this->reason(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -21308,6 +21490,13 @@ int CSVCMsg_HltvReplay::ByteSize() const {
       total_size += 1 + 4;
     }
 
+    // optional int32 reason = 8;
+    if (has_reason()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->reason());
+    }
+
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -21356,6 +21545,9 @@ void CSVCMsg_HltvReplay::MergeFrom(const CSVCMsg_HltvReplay& from) {
     if (from.has_replay_slowdown_rate()) {
       set_replay_slowdown_rate(from.replay_slowdown_rate());
     }
+    if (from.has_reason()) {
+      set_reason(from.reason());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -21386,6 +21578,7 @@ void CSVCMsg_HltvReplay::Swap(CSVCMsg_HltvReplay* other) {
     std::swap(replay_slowdown_begin_, other->replay_slowdown_begin_);
     std::swap(replay_slowdown_end_, other->replay_slowdown_end_);
     std::swap(replay_slowdown_rate_, other->replay_slowdown_rate_);
+    std::swap(reason_, other->reason_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -21984,6 +22177,780 @@ void CSVCMsg_Broadcast_Command::Swap(CSVCMsg_Broadcast_Command* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = CSVCMsg_Broadcast_Command_descriptor_;
   metadata.reflection = CSVCMsg_Broadcast_Command_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int CCLCMsg_HltvFixupOperatorTick::kTickFieldNumber;
+const int CCLCMsg_HltvFixupOperatorTick::kPropsDataFieldNumber;
+const int CCLCMsg_HltvFixupOperatorTick::kOriginFieldNumber;
+const int CCLCMsg_HltvFixupOperatorTick::kEyeAnglesFieldNumber;
+const int CCLCMsg_HltvFixupOperatorTick::kObserverModeFieldNumber;
+const int CCLCMsg_HltvFixupOperatorTick::kCameramanScoreboardFieldNumber;
+const int CCLCMsg_HltvFixupOperatorTick::kObserverTargetFieldNumber;
+const int CCLCMsg_HltvFixupOperatorTick::kViewOffsetFieldNumber;
+#endif  // !_MSC_VER
+
+CCLCMsg_HltvFixupOperatorTick::CCLCMsg_HltvFixupOperatorTick()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void CCLCMsg_HltvFixupOperatorTick::InitAsDefaultInstance() {
+  origin_ = const_cast< ::CMsgVector*>(&::CMsgVector::default_instance());
+  eye_angles_ = const_cast< ::CMsgQAngle*>(&::CMsgQAngle::default_instance());
+  view_offset_ = const_cast< ::CMsgVector*>(&::CMsgVector::default_instance());
+}
+
+CCLCMsg_HltvFixupOperatorTick::CCLCMsg_HltvFixupOperatorTick(const CCLCMsg_HltvFixupOperatorTick& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void CCLCMsg_HltvFixupOperatorTick::SharedCtor() {
+  _cached_size_ = 0;
+  tick_ = 0;
+  props_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  origin_ = NULL;
+  eye_angles_ = NULL;
+  observer_mode_ = 0;
+  cameraman_scoreboard_ = false;
+  observer_target_ = 0;
+  view_offset_ = NULL;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+CCLCMsg_HltvFixupOperatorTick::~CCLCMsg_HltvFixupOperatorTick() {
+  SharedDtor();
+}
+
+void CCLCMsg_HltvFixupOperatorTick::SharedDtor() {
+  if (props_data_ != &::google::protobuf::internal::kEmptyString) {
+    delete props_data_;
+  }
+  if (this != default_instance_) {
+    delete origin_;
+    delete eye_angles_;
+    delete view_offset_;
+  }
+}
+
+void CCLCMsg_HltvFixupOperatorTick::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* CCLCMsg_HltvFixupOperatorTick::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return CCLCMsg_HltvFixupOperatorTick_descriptor_;
+}
+
+const CCLCMsg_HltvFixupOperatorTick& CCLCMsg_HltvFixupOperatorTick::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_netmessages_2eproto();
+  return *default_instance_;
+}
+
+CCLCMsg_HltvFixupOperatorTick* CCLCMsg_HltvFixupOperatorTick::default_instance_ = NULL;
+
+CCLCMsg_HltvFixupOperatorTick* CCLCMsg_HltvFixupOperatorTick::New() const {
+  return new CCLCMsg_HltvFixupOperatorTick;
+}
+
+void CCLCMsg_HltvFixupOperatorTick::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    tick_ = 0;
+    if (has_props_data()) {
+      if (props_data_ != &::google::protobuf::internal::kEmptyString) {
+        props_data_->clear();
+      }
+    }
+    if (has_origin()) {
+      if (origin_ != NULL) origin_->::CMsgVector::Clear();
+    }
+    if (has_eye_angles()) {
+      if (eye_angles_ != NULL) eye_angles_->::CMsgQAngle::Clear();
+    }
+    observer_mode_ = 0;
+    cameraman_scoreboard_ = false;
+    observer_target_ = 0;
+    if (has_view_offset()) {
+      if (view_offset_ != NULL) view_offset_->::CMsgVector::Clear();
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool CCLCMsg_HltvFixupOperatorTick::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 tick = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &tick_)));
+          set_has_tick();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_props_data;
+        break;
+      }
+
+      // optional bytes props_data = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_props_data:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_props_data()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_origin;
+        break;
+      }
+
+      // optional .CMsgVector origin = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_origin:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_origin()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(34)) goto parse_eye_angles;
+        break;
+      }
+
+      // optional .CMsgQAngle eye_angles = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_eye_angles:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_eye_angles()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(40)) goto parse_observer_mode;
+        break;
+      }
+
+      // optional int32 observer_mode = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_observer_mode:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &observer_mode_)));
+          set_has_observer_mode();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(48)) goto parse_cameraman_scoreboard;
+        break;
+      }
+
+      // optional bool cameraman_scoreboard = 6;
+      case 6: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_cameraman_scoreboard:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &cameraman_scoreboard_)));
+          set_has_cameraman_scoreboard();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(56)) goto parse_observer_target;
+        break;
+      }
+
+      // optional int32 observer_target = 7;
+      case 7: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_observer_target:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &observer_target_)));
+          set_has_observer_target();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(66)) goto parse_view_offset;
+        break;
+      }
+
+      // optional .CMsgVector view_offset = 8;
+      case 8: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_view_offset:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_view_offset()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void CCLCMsg_HltvFixupOperatorTick::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // optional int32 tick = 1;
+  if (has_tick()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->tick(), output);
+  }
+
+  // optional bytes props_data = 2;
+  if (has_props_data()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytes(
+      2, this->props_data(), output);
+  }
+
+  // optional .CMsgVector origin = 3;
+  if (has_origin()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, this->origin(), output);
+  }
+
+  // optional .CMsgQAngle eye_angles = 4;
+  if (has_eye_angles()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      4, this->eye_angles(), output);
+  }
+
+  // optional int32 observer_mode = 5;
+  if (has_observer_mode()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->observer_mode(), output);
+  }
+
+  // optional bool cameraman_scoreboard = 6;
+  if (has_cameraman_scoreboard()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(6, this->cameraman_scoreboard(), output);
+  }
+
+  // optional int32 observer_target = 7;
+  if (has_observer_target()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(7, this->observer_target(), output);
+  }
+
+  // optional .CMsgVector view_offset = 8;
+  if (has_view_offset()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      8, this->view_offset(), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* CCLCMsg_HltvFixupOperatorTick::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // optional int32 tick = 1;
+  if (has_tick()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->tick(), target);
+  }
+
+  // optional bytes props_data = 2;
+  if (has_props_data()) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        2, this->props_data(), target);
+  }
+
+  // optional .CMsgVector origin = 3;
+  if (has_origin()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        3, this->origin(), target);
+  }
+
+  // optional .CMsgQAngle eye_angles = 4;
+  if (has_eye_angles()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        4, this->eye_angles(), target);
+  }
+
+  // optional int32 observer_mode = 5;
+  if (has_observer_mode()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->observer_mode(), target);
+  }
+
+  // optional bool cameraman_scoreboard = 6;
+  if (has_cameraman_scoreboard()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(6, this->cameraman_scoreboard(), target);
+  }
+
+  // optional int32 observer_target = 7;
+  if (has_observer_target()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(7, this->observer_target(), target);
+  }
+
+  // optional .CMsgVector view_offset = 8;
+  if (has_view_offset()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        8, this->view_offset(), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int CCLCMsg_HltvFixupOperatorTick::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // optional int32 tick = 1;
+    if (has_tick()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->tick());
+    }
+
+    // optional bytes props_data = 2;
+    if (has_props_data()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
+          this->props_data());
+    }
+
+    // optional .CMsgVector origin = 3;
+    if (has_origin()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->origin());
+    }
+
+    // optional .CMsgQAngle eye_angles = 4;
+    if (has_eye_angles()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->eye_angles());
+    }
+
+    // optional int32 observer_mode = 5;
+    if (has_observer_mode()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->observer_mode());
+    }
+
+    // optional bool cameraman_scoreboard = 6;
+    if (has_cameraman_scoreboard()) {
+      total_size += 1 + 1;
+    }
+
+    // optional int32 observer_target = 7;
+    if (has_observer_target()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->observer_target());
+    }
+
+    // optional .CMsgVector view_offset = 8;
+    if (has_view_offset()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->view_offset());
+    }
+
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void CCLCMsg_HltvFixupOperatorTick::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const CCLCMsg_HltvFixupOperatorTick* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const CCLCMsg_HltvFixupOperatorTick*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void CCLCMsg_HltvFixupOperatorTick::MergeFrom(const CCLCMsg_HltvFixupOperatorTick& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_tick()) {
+      set_tick(from.tick());
+    }
+    if (from.has_props_data()) {
+      set_props_data(from.props_data());
+    }
+    if (from.has_origin()) {
+      mutable_origin()->::CMsgVector::MergeFrom(from.origin());
+    }
+    if (from.has_eye_angles()) {
+      mutable_eye_angles()->::CMsgQAngle::MergeFrom(from.eye_angles());
+    }
+    if (from.has_observer_mode()) {
+      set_observer_mode(from.observer_mode());
+    }
+    if (from.has_cameraman_scoreboard()) {
+      set_cameraman_scoreboard(from.cameraman_scoreboard());
+    }
+    if (from.has_observer_target()) {
+      set_observer_target(from.observer_target());
+    }
+    if (from.has_view_offset()) {
+      mutable_view_offset()->::CMsgVector::MergeFrom(from.view_offset());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void CCLCMsg_HltvFixupOperatorTick::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CCLCMsg_HltvFixupOperatorTick::CopyFrom(const CCLCMsg_HltvFixupOperatorTick& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CCLCMsg_HltvFixupOperatorTick::IsInitialized() const {
+
+  return true;
+}
+
+void CCLCMsg_HltvFixupOperatorTick::Swap(CCLCMsg_HltvFixupOperatorTick* other) {
+  if (other != this) {
+    std::swap(tick_, other->tick_);
+    std::swap(props_data_, other->props_data_);
+    std::swap(origin_, other->origin_);
+    std::swap(eye_angles_, other->eye_angles_);
+    std::swap(observer_mode_, other->observer_mode_);
+    std::swap(cameraman_scoreboard_, other->cameraman_scoreboard_);
+    std::swap(observer_target_, other->observer_target_);
+    std::swap(view_offset_, other->view_offset_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata CCLCMsg_HltvFixupOperatorTick::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = CCLCMsg_HltvFixupOperatorTick_descriptor_;
+  metadata.reflection = CCLCMsg_HltvFixupOperatorTick_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int CSVCMsg_HltvFixupOperatorStatus::kModeFieldNumber;
+const int CSVCMsg_HltvFixupOperatorStatus::kOverrideOperatorNameFieldNumber;
+#endif  // !_MSC_VER
+
+CSVCMsg_HltvFixupOperatorStatus::CSVCMsg_HltvFixupOperatorStatus()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void CSVCMsg_HltvFixupOperatorStatus::InitAsDefaultInstance() {
+}
+
+CSVCMsg_HltvFixupOperatorStatus::CSVCMsg_HltvFixupOperatorStatus(const CSVCMsg_HltvFixupOperatorStatus& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void CSVCMsg_HltvFixupOperatorStatus::SharedCtor() {
+  _cached_size_ = 0;
+  mode_ = 0u;
+  override_operator_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+CSVCMsg_HltvFixupOperatorStatus::~CSVCMsg_HltvFixupOperatorStatus() {
+  SharedDtor();
+}
+
+void CSVCMsg_HltvFixupOperatorStatus::SharedDtor() {
+  if (override_operator_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete override_operator_name_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void CSVCMsg_HltvFixupOperatorStatus::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* CSVCMsg_HltvFixupOperatorStatus::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return CSVCMsg_HltvFixupOperatorStatus_descriptor_;
+}
+
+const CSVCMsg_HltvFixupOperatorStatus& CSVCMsg_HltvFixupOperatorStatus::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_netmessages_2eproto();
+  return *default_instance_;
+}
+
+CSVCMsg_HltvFixupOperatorStatus* CSVCMsg_HltvFixupOperatorStatus::default_instance_ = NULL;
+
+CSVCMsg_HltvFixupOperatorStatus* CSVCMsg_HltvFixupOperatorStatus::New() const {
+  return new CSVCMsg_HltvFixupOperatorStatus;
+}
+
+void CSVCMsg_HltvFixupOperatorStatus::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    mode_ = 0u;
+    if (has_override_operator_name()) {
+      if (override_operator_name_ != &::google::protobuf::internal::kEmptyString) {
+        override_operator_name_->clear();
+      }
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool CSVCMsg_HltvFixupOperatorStatus::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional uint32 mode = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &mode_)));
+          set_has_mode();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_override_operator_name;
+        break;
+      }
+
+      // optional string override_operator_name = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_override_operator_name:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_override_operator_name()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->override_operator_name().data(), this->override_operator_name().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void CSVCMsg_HltvFixupOperatorStatus::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // optional uint32 mode = 1;
+  if (has_mode()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->mode(), output);
+  }
+
+  // optional string override_operator_name = 2;
+  if (has_override_operator_name()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->override_operator_name().data(), this->override_operator_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->override_operator_name(), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* CSVCMsg_HltvFixupOperatorStatus::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // optional uint32 mode = 1;
+  if (has_mode()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->mode(), target);
+  }
+
+  // optional string override_operator_name = 2;
+  if (has_override_operator_name()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->override_operator_name().data(), this->override_operator_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->override_operator_name(), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int CSVCMsg_HltvFixupOperatorStatus::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // optional uint32 mode = 1;
+    if (has_mode()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->mode());
+    }
+
+    // optional string override_operator_name = 2;
+    if (has_override_operator_name()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->override_operator_name());
+    }
+
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void CSVCMsg_HltvFixupOperatorStatus::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const CSVCMsg_HltvFixupOperatorStatus* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const CSVCMsg_HltvFixupOperatorStatus*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void CSVCMsg_HltvFixupOperatorStatus::MergeFrom(const CSVCMsg_HltvFixupOperatorStatus& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_mode()) {
+      set_mode(from.mode());
+    }
+    if (from.has_override_operator_name()) {
+      set_override_operator_name(from.override_operator_name());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void CSVCMsg_HltvFixupOperatorStatus::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CSVCMsg_HltvFixupOperatorStatus::CopyFrom(const CSVCMsg_HltvFixupOperatorStatus& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CSVCMsg_HltvFixupOperatorStatus::IsInitialized() const {
+
+  return true;
+}
+
+void CSVCMsg_HltvFixupOperatorStatus::Swap(CSVCMsg_HltvFixupOperatorStatus* other) {
+  if (other != this) {
+    std::swap(mode_, other->mode_);
+    std::swap(override_operator_name_, other->override_operator_name_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata CSVCMsg_HltvFixupOperatorStatus::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = CSVCMsg_HltvFixupOperatorStatus_descriptor_;
+  metadata.reflection = CSVCMsg_HltvFixupOperatorStatus_reflection_;
   return metadata;
 }
 
