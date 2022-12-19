@@ -552,7 +552,9 @@ public:
 
 	// Returns string describing current .dll.  e.g., TeamFortress 2, Half-Life 2.  
 	//  Hey, it's more descriptive than just the name of the game directory
-	virtual const char     *GetGameDescription( void ) = 0;      
+	virtual const char     *GetGameDescription( void ) = 0;
+	
+	virtual const char     *GetGameDescription2( void ) = 0; // ????
 	
 	// Let the game .dll allocate it's own network/shared string tables
 	virtual void			CreateNetworkStringTables( void ) = 0;
