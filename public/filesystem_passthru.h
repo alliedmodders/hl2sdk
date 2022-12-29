@@ -277,7 +277,12 @@ public:
 	virtual void			GetVPKFileStatisticsKV( KeyValues *pKV )
 		{ m_pFileSystemPassThru->GetVPKFileStatisticsKV( pKV ); }
 	
-	virtual bool			BUnknown() { return m_pFileSystemPassThru->BUnknown(); }
+	virtual bool			IsFileInReadOnlySearchPath( const char *pFileName, const char *pPathID ) { return m_pFileSystemPassThru->IsFileInReadOnlySearchPath( pFileName, pPathID ); }
+
+	virtual EFileSystemPureState	GetPureState() { return m_pFileSystemPassThru->GetPureState(); }
+	virtual void					AllowLoadFromDisk( bool bAllowLoadFromDisk ) { return m_pFileSystemPassThru->AllowLoadFromDisk( bAllowLoadFromDisk ); }
+	virtual void					SetDisallowOutsideWrites( bool bDisallow ) { return m_pFileSystemPassThru->SetDisallowOutsideWrites( bDisallow ); }
+	virtual bool					GetDisallowOutsideWrites() { return m_pFileSystemPassThru->GetDisallowOutsideWrites(); }
 
 protected:
 	IFileSystem *m_pFileSystemPassThru;

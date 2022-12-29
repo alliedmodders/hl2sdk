@@ -402,6 +402,13 @@ public:
 	virtual void	Reset() = 0;
 };
 
+enum EFileSystemPureState
+{
+	k_eFileSystemPureWhitelist,		// File system is in pure whitelist mode
+	k_eFileSystemPureAllowDisk,		// File system is allowing to load from disk, but has not loaded third-party files yet
+	k_eFileSystemPureLoadedFromDisk	// File system has loaded third-party files from disk
+};
+
 
 // Spew flags for SetWhitelistSpewFlags (set with the fs_whitelist_spew_flags cvar).
 // Update the comment for the fs_whitelist_spew_flags cvar if you change these.
@@ -514,7 +521,7 @@ public:
 	// remember it in case you add search paths with this path ID.
 	virtual void			MarkPathIDByRequestOnly( const char *pPathID, bool bRequestOnly ) = 0;
 	
-	virtual bool			BUnknown() = 0;
+	virtual bool			IsFileInReadOnlySearchPath( const char *pFileName, const char *pPathID ) = 0;
 
 	// converts a partial path into a full path
 	virtual const char		*RelativePathToFullPath( const char *pFileName, const char *pPathID, char *pLocalPath, int localPathBufferSize, PathTypeFilter_t pathFilter = FILTER_NONE, PathTypeQuery_t *pPathType = NULL ) = 0;
@@ -847,9 +854,15 @@ public:
 	
 	virtual IIoStats		*GetIoStats() = 0;
 	
+	virtual EFileSystemPureState	GetPureState() = 0;
+	virtual void					AllowLoadFromDisk( bool bAllowLoadFromDisk ) = 0;
+	
 	virtual void			CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) = 0;
 	virtual bool			CheckVPKFileHash( int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t &md5Value ) = 0;
 	virtual void			GetVPKFileStatisticsKV( KeyValues *pKV ) = 0;
+	
+	virtual void			SetDisallowOutsideWrites( bool bDisallow ) = 0;
+	virtual bool			GetDisallowOutsideWrites() = 0;
 };
 
 //-----------------------------------------------------------------------------
