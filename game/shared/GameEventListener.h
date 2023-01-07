@@ -45,18 +45,6 @@ public:
 		gameeventmanager->AddListener( this, name, bServerSide );
 	}
 
-	void ListenForAllGameEvents()
-	{
-
-#ifdef CLIENT_DLL
-	bool bServerSide = false;
-#else
-	bool bServerSide = true;
-#endif
-
-		gameeventmanager->AddListenerGlobal( this, bServerSide );
-	}
-
 	void StopListeningForAllEvents()
 	{
 		// remove me from list
