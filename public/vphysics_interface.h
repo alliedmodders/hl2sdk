@@ -503,14 +503,28 @@ public:
 	virtual void SetPriority( priority_t priority ) = 0;
 };
 
+// Can be seen in CBaseEntity::GetPhysicsCollisionRulesCache
+struct PhysicsCollisionRulesCache_t
+{
+	int modelIndex; // (_DWORD) = int CBaseEntity::GetModelIndex
+	int physicsSolidMask; // (_DWORD) = unsigned int PhysicsSolidMaskForEntity
+	short collisionGroup; // (_WORD) = int m_CollisionGroup
+	char unknownParam; // (_BYTE) What is this? looks like some kind of mask..
+};
+
 // -------------------
 // Collision filter function.  Return 0 if objects should not be tested for collisions, nonzero otherwise
 // Install with IPhysicsEnvironment::SetCollisionFilter()
 // -------------------
+
+// After the "The Last Stand" update in left4dead2, several parameters have been added to this function.
+// CCollisionEvent::ShouldCollide(IPhysicsObject *,IPhysicsObject *,void *,void *,PhysicsCollisionRulesCache_t const&,PhysicsCollisionRulesCache_t const&)
 abstract_class IPhysicsCollisionSolver
 {
 public:
-	virtual int ShouldCollide( IPhysicsObject *pObj0, IPhysicsObject *pObj1, void *pGameData0, void *pGameData1 ) = 0;
+	virtual int ShouldCollide( IPhysicsObject *pObj0, IPhysicsObject *pObj1, void *pGameData0, void *pGameData1, \
+										const PhysicsCollisionRulesCache_t &objCache1, const PhysicsCollisionRulesCache_t &objCache2) = 0;
+
 	virtual int ShouldSolvePenetration( IPhysicsObject *pObj0, IPhysicsObject *pObj1, void *pGameData0, void *pGameData1, float dt ) = 0;
 	
 	// pObject has already done the max number of collisions this tick, should we freeze it to save CPU?
