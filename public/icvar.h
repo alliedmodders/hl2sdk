@@ -122,9 +122,9 @@ public:
 	virtual bool			HasQueuedMaterialThreadConVarSets() const = 0;
 	virtual int				ProcessQueuedMaterialThreadConVarSets() = 0;
 
-	virtual void			UnknownFunc1() = 0;
-	virtual void			UnknownFunc2() = 0;
-	virtual void			UnknownFunc3() = 0;
+	virtual void			QueueMaterialThreadSetConCommand( ConCommand *pConCommand ) = 0;
+	virtual bool			HasQueuedMaterialThreadConCommandSets() const = 0;
+	virtual int				ProcessQueuedMaterialThreadConCommandSets() = 0;
 
 protected:	class ICVarIteratorInternal;
 public:
