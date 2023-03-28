@@ -116,9 +116,109 @@ public:
 	virtual int  CommandCompletionCallback( const char *pPartial, CUtlVector< CUtlString > &commands ) = 0;
 };
 
+enum EConVarType : short
+{
+	EConVarType_Bool,
+	EConVarType_Int16,
+	EConVarType_UInt16,
+	EConVarType_Int32,
+	EConVarType_UInt32,
+	EConVarType_Int64,
+	EConVarType_UInt64,
+	EConVarType_Float32,
+	EConVarType_Float64,
+	EConVarType_String,
+	EConVarType_Color,
+	EConVarType_Vector2,
+	EConVarType_Vector3,
+	EConVarType_Vector4,
+	EConVarType_Qangle
+};
+
+union CVValue_t
+{
+	bool		m_bValue;
+	uint64		m_u64Value;
+	int64		m_i64Value;
+	uint		m_u32Value;
+	int			m_iValue;
+	float		m_flValue;
+	double		m_dbValue;
+	const char*	m_szValue;
+};
+
+struct ConVarDataType_t
+{
+	const char* name;
+	int data_size;
+	int primitive; // 1 for primitive types, 0 for others
+	void* GetStringValue;
+	void* CopyValue;
+	void* unk1;
+	void* FromString;
+	void* ToString;
+	void* IsEqual;
+	void* Clamp;
+	const char* default_string_value;
+	const char* undefined_string_value;
+};
+
+struct ConVarDesc_t
+{
+	const char *name;
+	const char *description;
+	int64 flags;
+	char unk[64];
+	ConVarDataType_t type;
+	void *handle;
+	void *convar;
+};
+
+struct ConCommandDesc_t
+{
+	const char* name;
+	const char* description;
+	int64 flags;
+	void* callback;
+	void* unk1;
+	void* unk2;
+	void* unk3;
+	void* output_id_holder;
+};
+
+class ConVar
+{
+public:
+	const char *name;
+	CVValue_t *defaultValue;
+	CVValue_t *minValue;
+	CVValue_t *maxValue;
+	const char *description;
+	EConVarType type;
+	char padding[2];
+	unsigned int timesChanged;
+	int64 flags;
+	unsigned int callbackId;
+	int unk;
+	CVValue_t value[];
+};
+
+class ConCommand
+{
+
+};
+
+class ConVarRefAbstract
+{
+public:
+	ConVarID *cvarid;
+	ConVar *cvar;
+};
+
 //-----------------------------------------------------------------------------
 // Purpose: The base console invoked command/cvar interface
 //-----------------------------------------------------------------------------
+#if 0
 class ConCommandBase
 {
 	friend class CCvar;
@@ -202,7 +302,7 @@ protected:
 	// ConVars in this executable use this 'global' to access values.
 	static IConCommandBaseAccessor	*s_pAccessor;
 };
-
+#endif
 
 //-----------------------------------------------------------------------------
 // Command tokenizer
@@ -283,7 +383,7 @@ inline const char *CCommand::operator[]( int nIndex ) const
 	return Arg( nIndex );
 }
 
-
+#if 0
 //-----------------------------------------------------------------------------
 // Purpose: The console invoked command
 //-----------------------------------------------------------------------------
@@ -631,6 +731,7 @@ FORCEINLINE_CVAR int CSplitScreenAddedConVar::GetSplitScreenPlayerSlot() const
 	return m_nSplitScreenSlot; 
 }
 
+
 //-----------------------------------------------------------------------------
 // Used to read/write convars that already exist (replaces the FindVar method)
 //-----------------------------------------------------------------------------
@@ -955,6 +1056,8 @@ private:
 	FnMemberCommandCallback_t m_Func;
 	FnMemberCommandCompletionCallback_t m_CompletionFunc;
 };
+
+#endif
 
 #ifdef _MSC_VER
 #pragma warning ( default : 4355 )
