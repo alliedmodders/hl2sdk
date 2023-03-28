@@ -21,6 +21,9 @@
 #include "tier1/utlvector.h"
 #include "tier1/utlstring.h"
 #include "Color.h"
+#include "vector2d.h"
+#include "vector.h"
+#include "vector4d.h"
 #include "icvar.h"
 
 #ifdef _WIN32
@@ -138,13 +141,21 @@ enum EConVarType : short
 union CVValue_t
 {
 	bool		m_bValue;
-	uint64		m_u64Value;
-	int64		m_i64Value;
+	short		m_i16Value;
+	uint16		m_u16Value;
+	int			m_i32Value;
 	uint		m_u32Value;
-	int			m_iValue;
+	int64		m_i64Value;
+	uint64		m_u64Value;
 	float		m_flValue;
 	double		m_dbValue;
 	const char*	m_szValue;
+	Color		m_clrValue;
+	Vector2D	m_vec2Value;
+	Vector		m_vec3Value;
+	Vector4D	m_vec4Value;
+	QAngle		m_angValue;
+};
 };
 
 struct ConVarDataType_t
