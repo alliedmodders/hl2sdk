@@ -28,8 +28,11 @@
 class IConVar;
 class CCommand;
 
-typedef int ConVarID;
-typedef int ConCommandID;
+DECLARE_HANDLE_32BIT(ConVarID);
+#define CONVAR_ID_INVALID ConVarID::MakeHandle( 0xFFFFFFFF )
+
+DECLARE_HANDLE_32BIT(ConCommandID);
+#define CONCOMMAND_ID_INVALID ConCommandID::MakeHandle( 0xFFFFFFFF )
 
 //-----------------------------------------------------------------------------
 // ConVar flags

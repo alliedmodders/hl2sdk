@@ -78,7 +78,7 @@ public:
 	virtual ConCommandID FindFirstCommand() = 0;
 	virtual ConCommandID FindNextCommand(ConCommandID previous) = 0;
 
-	virtual void unk02() = 0;
+	virtual void DispatchConCommand(ConCommandID command, CCommandContext& ctx, CCommand& tok) = 0;
 
 	// Install a global change callback (to be called when any convar changes) 
 	virtual void			InstallGlobalChangeCallback(FnChangeCallback_t callback) = 0;
