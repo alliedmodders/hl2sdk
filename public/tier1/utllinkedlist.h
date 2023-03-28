@@ -168,18 +168,9 @@ protected:
 	I	m_NumAlloced;		// The number of allocated elements
 	typename M::Iterator_t	m_LastAlloc; // the last index allocated
 
-	// For debugging purposes; 
-	// it's in release builds so this can be used in libraries correctly
-	ListElem_t  *m_pElements;
-
 	FORCEINLINE M const &Memory( void ) const
 	{
 		return m_Memory;
-	}
-
-	void ResetDbgInfo()
-	{
-		m_pElements = m_Memory.Base();
 	}
 };
 
