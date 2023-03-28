@@ -152,15 +152,15 @@ struct ConVarDataType_t
 	const char* name;
 	int data_size;
 	int primitive; // 1 for primitive types, 0 for others
-	void* GetStringValue;
-	void* CopyValue;
-	void* unk1;
+	void* InitValue;
+	void* CloneValue;
+	void* DestroyValue;
 	void* FromString;
 	void* ToString;
 	void* IsEqual;
 	void* Clamp;
 	const char* default_string_value;
-	const char* undefined_string_value;
+	ConVar* undefined_cvar;
 };
 
 struct ConVarDesc_t
