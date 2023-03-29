@@ -201,7 +201,6 @@ public:
 
 private:
 	int	MaxElementIndex() const { Assert( 0 ); return this->InvalidIndex(); } // fixedmemory containers don't support iteration from 0..maxelements-1
-	void ResetDbgInfo() {}
 };
 
 // this is kind of ugly, but until C++ gets templatized typedefs in C++0x, it's our only choice
@@ -211,8 +210,6 @@ class CUtlBlockLinkedList : public CUtlLinkedList< T, I, true, I, CUtlBlockMemor
 public:
 	CUtlBlockLinkedList( int growSize = 0, int initSize = 0 )
 		: CUtlLinkedList< T, I, true, I, CUtlBlockMemory< UtlLinkedListElem_t< T, I >, I > >( growSize, initSize ) {}
-protected:
-	void ResetDbgInfo() {}
 };
 
 
@@ -227,7 +224,6 @@ CUtlLinkedList<T,S,ML,I,M>::CUtlLinkedList( int growSize, int initSize ) :
 	// Prevent signed non-int datatypes
 	COMPILE_TIME_ASSERT( sizeof(S) == 4 || ( ( (S)-1 ) > 0 ) );
 	ConstructList();
-	ResetDbgInfo();
 }
 
 template <class T, class S, bool ML, class I, class M>
@@ -394,7 +390,6 @@ void CUtlLinkedList<T,S,ML,I,M>::EnsureCapacity( int num )
 {
 	MEM_ALLOC_CREDIT_CLASS();
 	m_Memory.EnsureCapacity(num);
-	ResetDbgInfo();
 }
 
 template< class T, class S, bool ML, class I, class M >
@@ -402,7 +397,6 @@ void CUtlLinkedList<T,S,ML,I,M>::SetGrowSize( int growSize )
 {
 	RemoveAll();
 	m_Memory.Init( growSize );
-	ResetDbgInfo();
 }
 
 
@@ -422,7 +416,6 @@ void  CUtlLinkedList<T,S,ML,I,M>::Purge()
 	//Routing "m_LastAlloc = m_Memory.InvalidIterator();" through a local const to sidestep an internal compiler error on 360 builds
 	const typename M::Iterator_t scInvalidIterator = m_Memory.InvalidIterator();
 	m_LastAlloc = scInvalidIterator;
-	ResetDbgInfo();
 }
 
 
@@ -461,7 +454,6 @@ I CUtlLinkedList<T,S,ML,I,M>::AllocInternal( bool multilist ) RESTRICT
 		{
 			MEM_ALLOC_CREDIT_CLASS();
 			m_Memory.Grow();
-			ResetDbgInfo();
 
 			it = m_Memory.IsValidIterator( m_LastAlloc ) ? m_Memory.Next( m_LastAlloc ) : m_Memory.First();
 

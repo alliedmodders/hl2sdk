@@ -52,7 +52,7 @@ public:
 	// Set the size by which the memory grows - round up to the next power of 2
 	void Init( int nGrowSize = 0, int nInitSize = 0 );
 
-	// here to match CUtlMemory, but only used by ResetDbgInfo, so it can just return NULL
+	// here to match CUtlMemory, but not used, so it can just return NULL
 	T* Base() { return NULL; }
 	const T* Base() const { return NULL; }
 
