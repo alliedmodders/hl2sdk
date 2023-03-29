@@ -17,14 +17,12 @@
 #endif
 
 #include "tier0/dbg.h"
-#include "tier1/iconvar.h"
 #include "tier1/utlvector.h"
 #include "tier1/utlstring.h"
 #include "Color.h"
-#include "vector2d.h"
-#include "vector.h"
-#include "vector4d.h"
-#include "icvar.h"
+#include "mathlib/vector.h"
+#include "mathlib/vector2d.h"
+#include "mathlib/vector4d.h"
 
 #ifdef _WIN32
 #define FORCEINLINE_CVAR FORCEINLINE
@@ -34,6 +32,17 @@
 #error "implement me"
 #endif
 
+//-----------------------------------------------------------------------------
+// Forward declarations
+//-----------------------------------------------------------------------------
+
+class ConVar;
+class CCommand;
+class ConCommandBase;
+struct characterset_t;
+class ConVarRefAbstract;
+class CSplitScreenSlot;
+union CVValue_t;
 
 //-----------------------------------------------------------------------------
 // Uncomment me to test for threading issues for material system convars
