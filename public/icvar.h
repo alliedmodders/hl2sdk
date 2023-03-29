@@ -94,7 +94,7 @@ public:
 	virtual void RegisterCreationListeners(CCreationListenerCallbacks *callbacks) = 0;
 	virtual void RemoveCreationListeners(CCreationListenerCallbacks *callbacks) = 0;
 
-	virtual void unk2() = 0;
+	virtual void unk1() = 0;
 
 	virtual void ResetConVarsToDefaultValues(const char *pszSearchString) = 0;
 
