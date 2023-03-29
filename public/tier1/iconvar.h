@@ -89,6 +89,16 @@ DECLARE_HANDLE_32BIT(ConCommandID);
 //-----------------------------------------------------------------------------
 // Called when a ConVar changes value
 //-----------------------------------------------------------------------------
-typedef void ( *FnChangeCallback_t )( IConVar *var, const char *pOldValue, float flOldValue );
+typedef void ( *FnChangeCallbackGlobal_t )( ConVarRefAbstract *cvar, CSplitScreenSlot nSlot, const char *pNewValue, const char* pOldValue );
+typedef void ( *FnChangeCallback_t )( ConVarRefAbstract *cvar, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t* pOldValue );
+
+//-----------------------------------------------------------------------------
+// ConVar & ConCommand creation listener callbacks
+//-----------------------------------------------------------------------------
+struct CCreationListenerCallbacks
+{
+	void(*FnConVarCreationCallback)(CCreationListenerCallbacks *pThisCallback, ConVarRefAbstract *pNewCvar);
+	void(*FnConCommandCreationCallback)(CCreationListenerCallbacks *pThisCallback, ConCommandID commandID);
+};
 
 #endif // ICONVAR_H
