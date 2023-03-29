@@ -11,18 +11,12 @@
 #endif
 
 #include "appframework/IAppSystem.h"
-#include "tier1/iconvar.h"
 #include "tier1/utlvector.h"
 #include "tier0/memalloc.h"
+#include "convar.h"
 
-class ConCommandBase;
-class ConCommand;
-class ConVar;
-class Color;
-class IConVarListener;
-class CConVarDetail;
-struct ConVarSnapshot_t;
-
+class ConVarSnapshot_t;
+class KeyValues;
 
 //-----------------------------------------------------------------------------
 // ConVars/ComCommands are marked as having a particular DLL identifier
@@ -54,12 +48,6 @@ public:
 	// Can these two convars be aliased?
 	virtual bool AreConVarsLinkable( const ConVar *child, const ConVar *parent ) = 0;
 };
-
-union CVValue_t;
-struct ConVarDesc_t;
-
-struct characterset_t;
-struct CSplitScreenSlot;
 
 //-----------------------------------------------------------------------------
 // Purpose: DLL interface to ConVars/ConCommands
