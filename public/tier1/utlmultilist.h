@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Multiple linked list container class 
 //
@@ -145,30 +145,6 @@ protected:
 	I	m_FirstFree;
 	I	m_TotalElements;	
 	int	m_MaxElementIndex;	// The number allocated (use int so we can catch overflow)
-
-	void ResetDbgInfo()
-	{
-		m_pElements = m_Memory.Base();
-
-#ifdef _DEBUG
-		// Allocate space for the element list (which list is each element in)
-		if (m_Memory.NumAllocated() > 0)
-		{
-			if (!m_pElementList)
-			{
-				m_pElementList = (I*)malloc( m_Memory.NumAllocated() * sizeof(I) );
-			}
-			else
-			{
-				m_pElementList = (I*)realloc( m_pElementList, m_Memory.NumAllocated() * sizeof(I) );
-			}
-		}
-#endif
-	}
-
-	// For debugging purposes; 
-	// it's in release builds so this can be used in libraries correctly
-	ListElem_t  *m_pElements;
 };
    
    
@@ -204,7 +180,6 @@ void CUtlMultiList<T,I>::ConstructList( )
 	m_FirstFree = InvalidIndex();
 	m_TotalElements = 0;
 	m_MaxElementIndex = 0;
-	ResetDbgInfo();
 }
 
 
@@ -366,7 +341,6 @@ template< class T, class I >
 void CUtlMultiList<T, I>::EnsureCapacity( int num )
 {
 	m_Memory.EnsureCapacity(num);
-	ResetDbgInfo();
 }
 
 
@@ -383,7 +357,6 @@ void  CUtlMultiList<T,I>::Purge()
 	m_FirstFree = InvalidIndex();
 	m_TotalElements = 0;
 	m_MaxElementIndex = 0;
-	ResetDbgInfo();
 }
 
 
@@ -409,7 +382,6 @@ I CUtlMultiList<T,I>::Alloc( )
 		if (m_MaxElementIndex == m_Memory.NumAllocated())
 		{
 			m_Memory.Grow();
-			ResetDbgInfo();
 			
 			if ( m_MaxElementIndex >= m_Memory.NumAllocated() )
 			{

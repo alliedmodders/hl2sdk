@@ -287,17 +287,9 @@ protected:
 	I m_FirstFree;
 	typename M::Iterator_t m_LastAlloc; // the last index allocated
 
-	Node_t* m_pElements;
-
 	FORCEINLINE M const &Elements( void ) const
 	{
 		return m_Elements;
-	}
-
-
-	void ResetDbgInfo()
-	{
-		m_pElements = (Node_t*)m_Elements.Base();
 	}
 };
 
@@ -331,9 +323,6 @@ public:
 		return LeftChild(i) != i; 
 	}
 
-protected:
-	void ResetDbgInfo() {}
-
 private:
 	// this doesn't make sense for fixed rbtrees, since there's no useful max pointer, and the index space isn't contiguous anyways
 	I  MaxElement() const;
@@ -349,8 +338,6 @@ public:
 		: CUtlRBTree< T, I, L, CUtlBlockMemory< UtlRBTreeNode_t< T, I >, I > >( growSize, initSize, lessfunc ) {}
 	CUtlBlockRBTree( const LessFunc_t &lessfunc )
 		: CUtlRBTree< T, I, L, CUtlBlockMemory< UtlRBTreeNode_t< T, I >, I > >( lessfunc ) {}
-protected:
-	void ResetDbgInfo() {}
 };
 
 
@@ -367,7 +354,6 @@ m_NumElements( 0 ),
 m_FirstFree( InvalidIndex() ),
 m_LastAlloc( m_Elements.InvalidIterator() )
 {
-	ResetDbgInfo();
 }
 
 template < class T, class I, typename L, class M >
@@ -379,7 +365,6 @@ m_NumElements( 0 ),
 m_FirstFree( InvalidIndex() ),
 m_LastAlloc( m_Elements.InvalidIterator() )
 {
-	ResetDbgInfo();
 }
 
 template < class T, class I, typename L, class M > 
@@ -405,7 +390,6 @@ inline void CUtlRBTree<T, I, L, M>::CopyFrom( const CUtlRBTree<T, I, L, M> &othe
 	m_NumElements = other.m_NumElements;
 	m_FirstFree = other.m_FirstFree;
 	m_LastAlloc = other.m_LastAlloc;
-	ResetDbgInfo();
 }
 
 //-----------------------------------------------------------------------------
@@ -692,7 +676,6 @@ I  CUtlRBTree<T, I, L, M>::NewNode()
 #endif
 
 	Construct( &Element( elem ) );
-	ResetDbgInfo();
 
 	return elem;
 }
@@ -1562,7 +1545,6 @@ void CUtlRBTree<T, I, L, M>::Swap( CUtlRBTree< T, I, L > &that )
 	V_swap( m_Root, that.m_Root );
 	V_swap( m_NumElements, that.m_NumElements );
 	V_swap( m_FirstFree, that.m_FirstFree );
-	V_swap( m_pElements, that.m_pElements );
 	V_swap( m_LastAlloc, that.m_LastAlloc );
 	Assert( IsValid() );
 	Assert( m_Elements.IsValidIterator( m_LastAlloc ) || ( m_NumElements == 0 && m_FirstFree == InvalidIndex() ) );
