@@ -118,20 +118,12 @@ typedef void(*FnChangeCallback_t)(ConVarRefAbstract *cvar, CSplitScreenSlot nSlo
 //-----------------------------------------------------------------------------
 // ConVar & ConCommand creation listener callbacks
 //-----------------------------------------------------------------------------
-struct CCreationListenerCallbacks
+class ICreationListenerCallbacks
 {
-	void(*FnConVarCreationCallback)(CCreationListenerCallbacks *pThisCallback, ConVarRefAbstract *pNewCvar);
-	void(*FnConCommandCreationCallback)(CCreationListenerCallbacks *pThisCallback, ConCommandID commandID);
+public:
+	virtual void ConVarCreationCallback(ConVarRefAbstract *pNewCvar) = 0;
+	virtual void ConCommandCreationCallback(ConCommandID commandID) = 0;
 };
-
-//-----------------------------------------------------------------------------
-// Forward declarations
-//-----------------------------------------------------------------------------
-class ConVar;
-class CCommand;
-class ConCommand;
-class ConCommandBase;
-struct characterset_t;
 
 struct CCommandContext
 {

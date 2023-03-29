@@ -79,8 +79,8 @@ public:
 	virtual void SetMaxSplitScreenSlots(int nSlots) = 0;
 	virtual int	GetMaxSplitScreenSlots() const = 0;
 
-	virtual void RegisterCreationListeners(CCreationListenerCallbacks *callbacks) = 0;
-	virtual void RemoveCreationListeners(CCreationListenerCallbacks *callbacks) = 0;
+	virtual void RegisterCreationListeners(ICreationListenerCallbacks *callbacks) = 0;
+	virtual void RemoveCreationListeners(ICreationListenerCallbacks *callbacks) = 0;
 
 	virtual void unk1() = 0;
 
