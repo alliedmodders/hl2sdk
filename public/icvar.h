@@ -56,24 +56,24 @@ abstract_class ICvar : public IAppSystem
 {
 public:
 	// allow_developer - Allows finding convars with FCVAR_DEVELOPMENTONLY flag
-	virtual ConVarID FindConVar(const char *szName, bool bAllowDeveloper = false) = 0;
-	virtual ConVarID FindFirstConVar() = 0;
-	virtual ConVarID FindNextConVar(ConVarID previous) = 0;
+	virtual ConVarHandle FindConVar(const char *szName, bool bAllowDeveloper = false) = 0;
+	virtual ConVarHandle FindFirstConVar() = 0;
+	virtual ConVarHandle FindNextConVar(ConVarHandle previous) = 0;
 
-	virtual void SetConVarValue(ConVarID cvarid, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t *pOldValue) = 0;
+	virtual void SetConVarValue(ConVarHandle cvarid, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t *pOldValue) = 0;
 
-	virtual ConCommandID FindCommand(const char *szName) = 0;
-	virtual ConCommandID FindFirstCommand() = 0;
-	virtual ConCommandID FindNextCommand(ConCommandID previous) = 0;
+	virtual ConCommandHandle FindCommand(const char *szName) = 0;
+	virtual ConCommandHandle FindFirstCommand() = 0;
+	virtual ConCommandHandle FindNextCommand(ConCommandHandle previous) = 0;
 
-	virtual void DispatchConCommand(ConCommandID commandid, CCommandContext& ctx, CCommand& tok) = 0;
+	virtual void DispatchConCommand(ConCommandHandle commandid, CCommandContext& ctx, CCommand& tok) = 0;
 
 	// Install a global change callback (to be called when any convar changes) 
 	virtual void InstallGlobalChangeCallback(FnChangeCallbackGlobal_t callback) = 0;
 	virtual void RemoveGlobalChangeCallback(FnChangeCallbackGlobal_t callback) = 0;
 	virtual void CallGlobalChangeCallbacks(ConVarRefAbstract *cvar, CSplitScreenSlot nSlot, const char *pNewValue, const char* pOldValue) = 0;
 
-	// Reverts cvars which contain a specific flag
+	// Reverts to default cvars which contain a specific flag
 	virtual void RevertFlaggedConVars(int nFlag) = 0;
 
 	virtual void SetMaxSplitScreenSlots(int nSlots) = 0;
@@ -94,13 +94,13 @@ public:
 
 	virtual void SetConVarsFromGameInfo(KeyValues *) = 0;
 
-	virtual void RegisterConVar(ConVarDesc_t*, void*, ConVarID&, ConVar&) = 0;
-	virtual void UnregisterConVar(ConVarID cvarid) = 0;
-	virtual ConVar* GetConVar(ConVarID cvarid) = 0;
+	virtual void RegisterConVar(ConVarDesc_t *pDesc, bool bAdditionalFlags, ConVarRefAbstract &pCvarRef) = 0;
+	virtual void UnregisterConVar(ConVarHandle handle) = 0;
+	virtual ConVar* GetConVar(ConVarHandle handle) = 0;
 
-	virtual void RegisterConCommand(void*, void*, ConCommandID&, ConCommand&) = 0;
-	virtual void UnregisterConCommand(ConCommandID commandid) = 0;
-	virtual ConCommand* GetConCommand(ConCommandID commandid) = 0;
+	virtual ConCommandRef* RegisterConCommand(ConCommandDesc_t *pDesc, bool bAdditionalFlags = FCVAR_NONE) = 0;
+	virtual void UnregisterConCommand(ConCommandHandle handle) = 0;
+	virtual ConCommand* GetConCommand(ConCommandHandle handle) = 0;
 
 	virtual void QueueThreadSetValue(ConVarRefAbstract *ref, CSplitScreenSlot nSlot, CVValue_t *value) = 0;
 };

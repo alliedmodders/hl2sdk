@@ -51,11 +51,11 @@ union CVValue_t;
 //-----------------------------------------------------------------------------
 //#define CONVAR_TEST_MATERIAL_THREAD_CONVARS 1
 
-DECLARE_HANDLE_32BIT(ConVarID);
-#define CONVAR_ID_INVALID ConVarID::MakeHandle( 0xFFFFFFFF )
+DECLARE_HANDLE_32BIT(ConVarHandle);
+#define CONVAR_ID_INVALID ConVarHandle::MakeHandle( 0xFFFFFFFF )
 
-DECLARE_HANDLE_32BIT(ConCommandID);
-#define CONCOMMAND_ID_INVALID ConCommandID::MakeHandle( 0xFFFFFFFF )
+DECLARE_HANDLE_32BIT(ConCommandHandle);
+#define CONCOMMAND_ID_INVALID ConCommandHandle::MakeHandle( 0xFFFFFFFF )
 
 //-----------------------------------------------------------------------------
 // ConVar flags
@@ -122,7 +122,7 @@ class ICreationListenerCallbacks
 {
 public:
 	virtual void ConVarCreationCallback(ConVarRefAbstract *pNewCvar) = 0;
-	virtual void ConCommandCreationCallback(ConCommandID commandID) = 0;
+	virtual void ConCommandCreationCallback(ConCommandRef *pNewCommand) = 0;
 };
 
 struct CCommandContext
@@ -167,9 +167,9 @@ void ConVar_PublishToVXConsole();
 //-----------------------------------------------------------------------------
 // Called when a ConCommand needs to execute
 //-----------------------------------------------------------------------------
-typedef void ( *FnCommandCallbackV1_t )( const CCommandContext &context );
-typedef void ( *FnCommandCallbackV2_t )( const CCommandContext &context, const CCommand &command );
-typedef void ( *FnCommandCallback_t )( const CCommand &command );
+typedef void ( *FnCommandCallback_t )( const CCommandContext &context );
+typedef void ( *FnCommandCallbackDefault_t )( const CCommandContext &context, const CCommand &command );
+typedef void ( *FnCommandCallbackEmpty_t )( );
 
 //-----------------------------------------------------------------------------
 // Returns 0 to COMMAND_COMPLETION_MAXITEMS worth of completion strings
@@ -229,47 +229,59 @@ union CVValue_t
 	Vector4D	m_vec4Value;
 	QAngle		m_angValue;
 };
-};
 
 struct ConVarDataType_t
 {
 	const char* name;
 	int data_size;
-	int primitive; // 1 for primitive types, 0 for others
-	void* InitValue;
+	int primitive;
+
+	void* InitValue;	// Only used for string type
 	void* CloneValue;
-	void* DestroyValue;
+	void* DestroyValue;	// Only used for string type
 	void* FromString;
 	void* ToString;
 	void* IsEqual;
 	void* Clamp;
+
 	const char* default_string_value;
-	ConVar* undefined_cvar;
+	ConVarDataType_t* default;
 };
 
+class ConVarRefAbstract
+{
+public:
+	ConVarHandle *handle;
+	ConVar *cvar;
+};
+
+// Should be size of 56 (0x38)
+struct ConVarValueDescription_t
+{
+	// This gets copied to the ConVar class on creation
+	int unk1;
+
+	bool has_default;
+	bool has_min;
+	bool has_max;
+
+	CVValue_t default_value;
+	CVValue_t min_value;
+	CVValue_t max_value;
+};
+
+// Should be size of 96 (0x60)
 struct ConVarDesc_t
 {
 	const char *name;
 	const char *description;
 	int64 flags;
-	char unk[64];
-	ConVarDataType_t type;
-	void *handle;
-	void *convar;
+	ConVarValueDescription_t value_info;
+	void *callback;
+	EConVarType type;
 };
 
-struct ConCommandDesc_t
-{
-	const char* name;
-	const char* description;
-	int64 flags;
-	void* callback;
-	void* unk1;
-	void* unk2;
-	void* unk3;
-	void* output_id_holder;
-};
-
+// Should be size of 64 (0x40)
 class ConVar
 {
 public:
@@ -279,25 +291,74 @@ public:
 	CVValue_t *maxValue;
 	const char *description;
 	EConVarType type;
-	char padding[2];
+
+	// This gets copied from the ConVarDesc_t on creation
+	short unk1;
+
 	unsigned int timesChanged;
 	int64 flags;
-	unsigned int callbackId;
-	int unk;
-	CVValue_t value[];
+	unsigned int callback_index;
+
+	// Used when setting default, max, min values from the ConVarDesc_t
+	// although that's not the only place of usage
+	// flags seems to be:
+	// (1 << 0) Skip setting value to split screen slots and also something keyvalues related
+	// (1 << 1) Skip setting default value
+	// (1 << 2) Skip setting min/max values
+	int allocation_flag_of_some_sort;
+
+	CVValue_t values[];
 };
 
-class ConCommand
+class ConCommandRef
 {
-
+	ConCommandHandle handle;
 };
 
-class ConVarRefAbstract
+class ConCommandBase
 {
 public:
-	ConVarID *cvarid;
-	ConVar *cvar;
+	const char *name;
+	const char *description;
+	int64 flags;
 };
+
+struct ConCommandCB
+{
+	// Call this function when executing the command
+	union
+	{
+		void *m_fnCallbackAny;
+		FnCommandCallback_t m_fnCommandCallback;
+		FnCommandCallbackEmpty_t m_fnCommandCallbackEmpty;
+		FnCommandCallbackDefault_t m_fnCommandCallbackDefault;
+		ICommandCallback *m_pCommandCallback;
+	};
+
+	bool m_bUsingCommandCallbackInterface : 1;
+	bool m_bUsingEmptyCommandCallback : 1;
+	bool m_bUsingCommandCallback : 1;
+};
+
+// Should be size of 64 (0x40)
+class ConCommandDesc_t : ConCommandBase
+{
+public:
+	ConCommandCB callback;
+	ConCommandCB autocompletion_callback;
+	ConCommandRef *parent;
+};
+
+// Should be size of 48 (0x30) (56 in linked list)
+class ConCommand : ConCommandBase
+{
+public:
+	ConCommandCB autocompletion_callback;
+	int ccvar_autocomplete_callback_index;
+	int ccvar_callbackslist_callback_index;
+};
+
+//class CConCommandMemberAccessor : IConCommandAccessor, ConCommandRef
 
 //-----------------------------------------------------------------------------
 // Purpose: The base console invoked command/cvar interface
