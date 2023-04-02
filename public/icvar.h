@@ -86,7 +86,7 @@ public:
 
 	virtual void ResetConVarsToDefaultValues(const char *pszSearchString) = 0;
 
-	virtual ConVarSnapshot_t TakeConVarSnapshot() = 0;
+	virtual ConVarSnapshot_t *TakeConVarSnapshot() = 0;
 	virtual void ResetConVarsFromSnapshot(ConVarSnapshot_t *snapshot) = 0;
 	virtual void DestroyConVarSnapshot(ConVarSnapshot_t *snapshot) = 0;
 
