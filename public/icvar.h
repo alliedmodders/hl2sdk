@@ -94,11 +94,11 @@ public:
 
 	virtual void SetConVarsFromGameInfo(KeyValues *) = 0;
 
-	virtual void RegisterConVar(ConVarDesc_t *pDesc, bool bAdditionalFlags, ConVarRefAbstract &pCvarRef) = 0;
+	virtual void RegisterConVar(ConVarDesc_t *pDesc, int64 nAdditionalFlags, ConVarHandle &pCvarRef, ConVar &pCvar) = 0;
 	virtual void UnregisterConVar(ConVarHandle handle) = 0;
 	virtual ConVar* GetConVar(ConVarHandle handle) = 0;
 
-	virtual ConCommandRef* RegisterConCommand(ConCommandDesc_t *pDesc, bool bAdditionalFlags = FCVAR_NONE) = 0;
+	virtual ConCommandRef* RegisterConCommand(ConCommandHandle &pCommandHandle, ConCommandDesc_t *pDesc, int64 nAdditionalFlags = FCVAR_NONE) = 0;
 	virtual void UnregisterConCommand(ConCommandHandle handle) = 0;
 	virtual ConCommand* GetConCommand(ConCommandHandle handle) = 0;
 
