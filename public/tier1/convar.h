@@ -16,6 +16,8 @@
 #pragma once
 #endif
 
+#include <interfaces/interfaces.h>
+#include <icvar.h>
 #include "tier0/dbg.h"
 #include "tier1/utlvector.h"
 #include "tier1/utlstring.h"
@@ -341,8 +343,38 @@ struct ConCommandCB
 };
 
 // Should be size of 64 (0x40)
-class ConCommandDesc_t : ConCommandBase
+class ConCommandDesc_t : public ConCommandBase
 {
+public:
+	ConCommandDesc_t(const char* pName, FnCommandCallback_t callback, const char* pHelpString = 0, int64 flags = 0)
+	{
+		name = pName;
+		description = pHelpString;
+		this->flags = flags;
+
+		this->callback.m_fnCommandCallback = callback;
+		this->callback.m_bUsingCommandCallback = true;
+		this->callback.m_bUsingCommandCallbackInterface = false;
+		this->callback.m_bUsingEmptyCommandCallback = false;
+
+	}
+
+	ConCommandDesc_t(const char* pName, ICommandCallback* pCallback, const char* pHelpString = 0, int64 flags = 0)
+	{
+		name = pName;
+		description = pHelpString;
+		this->flags = flags;
+
+		this->callback.m_pCommandCallback = pCallback;
+		this->callback.m_bUsingCommandCallback = false;
+		this->callback.m_bUsingCommandCallbackInterface = true;
+		this->callback.m_bUsingEmptyCommandCallback = false;
+	}
+
+	ConCommandRef *Register(ConCommandHandle &hndl)
+	{
+		return g_pCVar->RegisterConCommand(hndl, this);
+	}
 public:
 	ConCommandCB callback;
 	ConCommandCB autocompletion_callback;
@@ -350,7 +382,7 @@ public:
 };
 
 // Should be size of 48 (0x30) (56 in linked list)
-class ConCommand : ConCommandBase
+class ConCommand : public ConCommandBase
 {
 public:
 	ConCommandCB autocompletion_callback;
