@@ -513,11 +513,10 @@ private:
 		COMMAND_MAX_LENGTH = 512,
 	};
 
-	int		m_nArgc;
-	int		m_nArgv0Size;
-	char	m_pArgSBuffer[ COMMAND_MAX_LENGTH ];
-	char	m_pArgvBuffer[ COMMAND_MAX_LENGTH ];
-	const char*	m_ppArgv[ COMMAND_MAX_ARGC ];
+    int m_nArgv0Size;
+    CUtlVectorFixedGrowable<char, COMMAND_MAX_LENGTH> m_ArgSBuffer;
+    CUtlVectorFixedGrowable<char, COMMAND_MAX_LENGTH> m_ArgvBuffer;
+    CUtlVectorFixedGrowable<char*, COMMAND_MAX_ARGC> m_Args;
 };
 
 inline int CCommand::MaxCommandLength()
@@ -527,22 +526,22 @@ inline int CCommand::MaxCommandLength()
 
 inline int CCommand::ArgC() const
 {
-	return m_nArgc;
+	return m_Args.Count();
 }
 
 inline const char **CCommand::ArgV() const
 {
-	return m_nArgc ? (const char**)m_ppArgv : NULL;
+	return ArgC() ? (const char**)m_Args.Base() : NULL;
 }
 
 inline const char *CCommand::ArgS() const
 {
-	return m_nArgv0Size ? &m_pArgSBuffer[m_nArgv0Size] : "";
+	return m_nArgv0Size ? *(const char **)(m_ArgSBuffer.Base() + m_nArgv0Size) : "";
 }
 
 inline const char *CCommand::GetCommandString() const
 {
-	return m_nArgc ? m_pArgSBuffer : "";
+	return ArgC() ? m_ArgSBuffer.Base() : "";
 }
 
 inline const char *CCommand::Arg( int nIndex ) const
@@ -550,9 +549,9 @@ inline const char *CCommand::Arg( int nIndex ) const
 	// FIXME: Many command handlers appear to not be particularly careful
 	// about checking for valid argc range. For now, we're going to
 	// do the extra check and return an empty string if it's out of range
-	if ( nIndex < 0 || nIndex >= m_nArgc )
+	if ( nIndex < 0 || nIndex >= ArgC() )
 		return "";
-	return m_ppArgv[nIndex];
+	return m_Args[nIndex];
 }
 
 inline const char *CCommand::operator[]( int nIndex ) const
