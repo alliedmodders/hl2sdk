@@ -98,7 +98,7 @@ public:
 	virtual void UnregisterConVar(ConVarHandle handle) = 0;
 	virtual ConVar* GetConVar(ConVarHandle handle) = 0;
 
-	virtual ConCommandRef* RegisterConCommand(ConCommandHandle &pCommandHandle, ConCommandDesc_t *pDesc, int64 nAdditionalFlags = FCVAR_NONE) = 0;
+	virtual ConCommandHandle RegisterConCommand(ConCommandDesc_t *pDesc, int64 nAdditionalFlags = FCVAR_NONE) = 0;
 	virtual void UnregisterConCommand(ConCommandHandle handle) = 0;
 	virtual ConCommand* GetConCommand(ConCommandHandle handle) = 0;
 
