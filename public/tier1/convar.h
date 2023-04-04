@@ -17,7 +17,6 @@
 #endif
 
 #include <interfaces/interfaces.h>
-#include <icvar.h>
 #include "tier0/dbg.h"
 #include "tier1/utlvector.h"
 #include "tier1/utlstring.h"
@@ -39,7 +38,9 @@
 //-----------------------------------------------------------------------------
 
 class ConVar;
+class ConVarRef;
 class CCommand;
+class ConCommandRef;
 class ConCommandBase;
 struct characterset_t;
 class ConVarRefAbstract;
@@ -373,7 +374,7 @@ public:
 
 	ConCommandRef *Register(ConCommandHandle &hndl)
 	{
-		return g_pCVar->RegisterConCommand(hndl, this);
+		//return g_pCVar->RegisterConCommand(hndl, this);
 	}
 public:
 	ConCommandCB callback;
