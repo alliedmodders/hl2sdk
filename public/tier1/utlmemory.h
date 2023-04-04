@@ -170,16 +170,6 @@ public:
 	CUtlMemoryFixedGrowable( int nGrowSize = 0, int nInitSize = SIZE ) : BaseClass( m_pFixedMemory, SIZE ) 
 	{
 		Assert( nInitSize == 0 || nInitSize == SIZE );
-		m_nMallocGrowSize = nGrowSize;
-	}
-
-	void Grow( int nCount = 1 )
-	{
-		if ( this->IsExternallyAllocated() )
-		{
-			this->ConvertToGrowableMemory( m_nMallocGrowSize );
-		}
-		BaseClass::Grow( nCount );
 	}
 
 	void EnsureCapacity( int num )
@@ -187,17 +177,10 @@ public:
 		if ( CUtlMemory<T>::m_nAllocationCount >= num )
 			return;
 
-		if ( this->IsExternallyAllocated() )
-		{
-			// Can't grow a buffer whose memory was externally allocated 
-			this->ConvertToGrowableMemory( m_nMallocGrowSize );
-		}
-
 		BaseClass::EnsureCapacity( num );
 	}
 
 private:
-	int m_nMallocGrowSize;
 	T m_pFixedMemory[ SIZE ];
 };
 
