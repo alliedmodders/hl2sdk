@@ -528,9 +528,29 @@ protected:
 };
 
 
+template< class DummyType >
+class CIntHandle64 : public CBaseIntHandle< uint64 >
+{
+public:
+	inline			CIntHandle64() {}
+
+	static inline	CIntHandle64<DummyType> MakeHandle(HANDLE_TYPE val)
+	{
+		return CIntHandle64<DummyType>(val);
+	}
+
+protected:
+	inline			CIntHandle64(HANDLE_TYPE val)
+	{
+		m_Handle = val;
+	}
+};
+
+
 // NOTE: This macro is the same as windows uses; so don't change the guts of it
 #define DECLARE_HANDLE_16BIT(name)	typedef CIntHandle16< struct name##__handle * > name;
 #define DECLARE_HANDLE_32BIT(name)	typedef CIntHandle32< struct name##__handle * > name;
+#define DECLARE_HANDLE_64BIT(name)	typedef CIntHandle64< struct name##__handle * > name;
 
 #define DECLARE_POINTER_HANDLE(name) struct name##__ { int unused; }; typedef struct name##__ *name
 #define FORWARD_DECLARE_HANDLE(name) typedef struct name##__ *name

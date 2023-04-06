@@ -54,11 +54,11 @@ union CVValue_t;
 //-----------------------------------------------------------------------------
 //#define CONVAR_TEST_MATERIAL_THREAD_CONVARS 1
 
-DECLARE_HANDLE_32BIT(ConVarHandle);
+DECLARE_HANDLE_64BIT(ConVarHandle);
 #define CONVAR_ID_INVALID ConVarHandle::MakeHandle( 0xFFFFFFFF )
 
-DECLARE_HANDLE_32BIT(ConCommandHandle);
-#define CONCOMMAND_ID_INVALID ConCommandHandle::MakeHandle( 0xFFFFFFFF )
+DECLARE_HANDLE_64BIT(ConCommandHandle);
+#define CONCOMMAND_ID_INVALID ConCommandHandle::MakeHandle( 0xFFFF )
 
 //-----------------------------------------------------------------------------
 // ConVar flags
