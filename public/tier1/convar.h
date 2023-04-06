@@ -350,12 +350,14 @@ public:
 		name = pName;
 		description = pHelpString;
 		this->flags = flags;
+		this->parent = nullptr;
 
 		this->callback.m_fnCommandCallback = callback;
 		this->callback.m_bUsingCommandCallbackInterface = false;
 		this->callback.m_bUsingOriginalCommandCallback = true;
 		this->callback.m_bUsingParameterlessCallback = false;
 
+		this->autocompletion_callback.m_fnCallbackAny = nullptr;
 	}
 
 	ConCommandDesc_t(const char* pName, ICommandCallback* pCallback, const char* pHelpString = 0, int64 flags = 0)
@@ -363,11 +365,14 @@ public:
 		name = pName;
 		description = pHelpString;
 		this->flags = flags;
+		this->parent = nullptr;
 
 		this->callback.m_fnCommandCallbackV2 = callback;
 		this->callback.m_bUsingCommandCallbackInterface = false;
 		this->callback.m_bUsingOriginalCommandCallback = false;
 		this->callback.m_bUsingParameterlessCallback = false;
+
+		this->autocompletion_callback.m_fnCallbackAny = nullptr;
 	}
 
 	ConCommand(const char* pName, ICommandCallback* pCallback, const char* pHelpString = 0, int64 flags = 0)
@@ -375,11 +380,14 @@ public:
 		name = pName;
 		description = pHelpString;
 		this->flags = flags;
+		this->parent = nullptr;
 
 		this->callback.m_pCommandCallback = pCallback;
 		this->callback.m_bUsingCommandCallbackInterface = true;
 		this->callback.m_bUsingOriginalCommandCallback = false;
 		this->callback.m_bUsingParameterlessCallback = false;
+
+		this->autocompletion_callback.m_fnCallbackAny = nullptr;
 	}
 
 	ConCommandRef *Register(ConCommandHandle &hndl)
