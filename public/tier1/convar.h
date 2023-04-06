@@ -170,9 +170,8 @@ void ConVar_PublishToVXConsole();
 //-----------------------------------------------------------------------------
 // Called when a ConCommand needs to execute
 //-----------------------------------------------------------------------------
-typedef void ( *FnCommandCallback_t )( const CCommandContext &context );
-typedef void ( *FnCommandCallbackDefault_t )( const CCommandContext &context, const CCommand &command );
-typedef void ( *FnCommandCallbackEmpty_t )( );
+typedef void ( *FnCommandCallbackV2_t )( const CCommandContext &context, const CCommand &command );
+typedef void ( *FnCommandCallback_t )( const CCommand &command );
 
 //-----------------------------------------------------------------------------
 // Returns 0 to COMMAND_COMPLETION_MAXITEMS worth of completion strings
@@ -333,14 +332,13 @@ struct ConCommandCB
 	{
 		void *m_fnCallbackAny;
 		FnCommandCallback_t m_fnCommandCallback;
-		FnCommandCallbackEmpty_t m_fnCommandCallbackEmpty;
-		FnCommandCallbackDefault_t m_fnCommandCallbackDefault;
-		ICommandCallback *m_pCommandCallback;
+		FnCommandCallbackV2_t m_fnCommandCallbackV2;
+		ICommandCallback *m_pCommandCallback; 
 	};
 
 	bool m_bUsingCommandCallbackInterface : 1;
-	bool m_bUsingEmptyCommandCallback : 1;
-	bool m_bUsingCommandCallback : 1;
+	bool m_bUsingParameterlessCallback : 1;
+	bool m_bUsingOriginalCommandCallback : 1;	
 };
 
 // Should be size of 64 (0x40)
@@ -354,9 +352,9 @@ public:
 		this->flags = flags;
 
 		this->callback.m_fnCommandCallback = callback;
-		this->callback.m_bUsingCommandCallback = true;
 		this->callback.m_bUsingCommandCallbackInterface = false;
-		this->callback.m_bUsingEmptyCommandCallback = false;
+		this->callback.m_bUsingOriginalCommandCallback = true;
+		this->callback.m_bUsingParameterlessCallback = false;
 
 	}
 
@@ -366,10 +364,22 @@ public:
 		description = pHelpString;
 		this->flags = flags;
 
+		this->callback.m_fnCommandCallbackV2 = callback;
+		this->callback.m_bUsingCommandCallbackInterface = false;
+		this->callback.m_bUsingOriginalCommandCallback = false;
+		this->callback.m_bUsingParameterlessCallback = false;
+	}
+
+	ConCommand(const char* pName, ICommandCallback* pCallback, const char* pHelpString = 0, int64 flags = 0)
+	{
+		name = pName;
+		description = pHelpString;
+		this->flags = flags;
+
 		this->callback.m_pCommandCallback = pCallback;
-		this->callback.m_bUsingCommandCallback = false;
 		this->callback.m_bUsingCommandCallbackInterface = true;
-		this->callback.m_bUsingEmptyCommandCallback = false;
+		this->callback.m_bUsingOriginalCommandCallback = false;
+		this->callback.m_bUsingParameterlessCallback = false;
 	}
 
 	ConCommandRef *Register(ConCommandHandle &hndl)
