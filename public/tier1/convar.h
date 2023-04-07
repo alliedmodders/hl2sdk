@@ -44,7 +44,7 @@ class ConCommandRef;
 class ConCommandBase;
 struct characterset_t;
 class ConVarRefAbstract;
-class CSplitScreenSlot;
+struct CSplitScreenSlot;
 union CVValue_t;
 
 //-----------------------------------------------------------------------------
@@ -54,11 +54,11 @@ union CVValue_t;
 //-----------------------------------------------------------------------------
 //#define CONVAR_TEST_MATERIAL_THREAD_CONVARS 1
 
-DECLARE_HANDLE_64BIT(ConVarHandle);
-#define CONVAR_ID_INVALID ConVarHandle::MakeHandle( 0xFFFFFFFF )
+DECLARE_HANDLE_16BIT(ConVarHandle);
+#define CONVAR_HANDLE_INVALID ConVarHandle::MakeHandle( 0xFFFF )
 
-DECLARE_HANDLE_64BIT(ConCommandHandle);
-#define CONCOMMAND_ID_INVALID ConCommandHandle::MakeHandle( 0xFFFF )
+DECLARE_HANDLE_16BIT(ConCommandHandle);
+#define CONCOMMAND_HANDLE_INVALID ConCommandHandle::MakeHandle( 0xFFFF )
 
 //-----------------------------------------------------------------------------
 // ConVar flags

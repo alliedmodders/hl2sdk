@@ -471,7 +471,7 @@ struct interval_t
 
 // Typesafe 8-bit and 16-bit handles.
 template< class HandleType >
-class CBaseIntHandle
+class ALIGN8 CBaseIntHandle
 {
 public:
 
