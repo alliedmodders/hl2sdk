@@ -1,4 +1,4 @@
-//========== Copyright © 2008, Valve Corporation, All rights reserved. ========
+//========== Copyright Â© 2008, Valve Corporation, All rights reserved. ========
 //
 // Purpose: VScript
 //
@@ -267,6 +267,8 @@ struct ScriptFunctionBinding_t
 	ScriptBindingFunc_t		m_pfnBinding;
 	void *					m_pFunction;
 	unsigned				m_flags;
+	
+	int                     m_unknown[3];
 };
 
 //---------------------------------------------------------
