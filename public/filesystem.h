@@ -445,12 +445,48 @@ public:
 //-----------------------------------------------------------------------------
 // Main file system interface
 //-----------------------------------------------------------------------------
-abstract_class IFileSystem : public IAppSystem, public IBaseFileSystem
+abstract_class IFileSystem : public IAppSystem
 {
 public:
 	//--------------------------------------------------------
+	// IBaseFileSystem
+	//--------------------------------------------------------
+	virtual int				Read(void* pOutput, int size, FileHandle_t file) = 0;
+	virtual int				Write(void const* pInput, int size, FileHandle_t file) = 0;
+
+	// if pathID is NULL, all paths will be searched for the file
+	virtual FileHandle_t	Open(const char *pFileName, const char *pOptions, const char *pathID = 0) = 0;
+	virtual void			Close(FileHandle_t file) = 0;
+
+
+	virtual void			Seek(FileHandle_t file, int pos, FileSystemSeek_t seekType) = 0;
+	virtual unsigned int	Tell(FileHandle_t file) = 0;
+	virtual unsigned int	Size(FileHandle_t file) = 0;
+	virtual unsigned int	Size(const char *pFileName, const char *pPathID = 0) = 0;
+
+	virtual void			Flush(FileHandle_t file) = 0;
+	virtual bool			Precache(const char *pFileName, const char *pPathID = 0) = 0;
+
+	virtual bool			FileExists(const char *pFileName, const char *pPathID = 0) = 0;
+	virtual bool			IsFileWritable(char const *pFileName, const char *pPathID = 0) = 0;
+	virtual bool			SetFileWritable(char const *pFileName, bool writable, const char *pPathID = 0) = 0;
+
+	virtual long			GetFileTime(const char *pFileName, const char *pPathID = 0) = 0;
+
+	//--------------------------------------------------------
+	// Reads/writes files to utlbuffers. Use this for optimal read performance when doing open/read/close
+	//--------------------------------------------------------
+	virtual bool			ReadFile(const char *pFileName, const char *pPath, CUtlBuffer &buf, int nMaxBytes = 0, int nStartingByte = 0, FSAllocFunc_t pfnAlloc = NULL) = 0;
+	virtual bool			WriteFile(const char *pFileName, const char *pPath, CUtlBuffer &buf) = 0;
+	virtual bool			UnzipFile(const char *pFileName, const char *pPath, const char *pDestination) = 0;
+	virtual bool			CopyAFile(const char *pFileName, const char *pPath, const char *pDestination, bool bDontOverwrite = false) = 0;
+
+	//--------------------------------------------------------
 	// Search path manipulation
 	//--------------------------------------------------------
+
+	virtual void unk001() = 0;
+	virtual void unk002() = 0;
 
 	// Add paths in priority order (mod dir, game dir, ....)
 	// If one or more .pak files are in the specified directory, then they are
@@ -468,7 +504,7 @@ public:
 
 	// Remove all search paths (including write path?)
 	virtual void			RemoveAllSearchPaths( void ) = 0;
-
+	
 	// Remove search paths associated with a given pathID
 	virtual void			RemoveSearchPaths( const char *szPathID ) = 0;
 
@@ -478,23 +514,20 @@ public:
 	// remember it in case you add search paths with this path ID.
 	virtual void			MarkPathIDByRequestOnly( const char *pPathID, bool bRequestOnly ) = 0;
 
-	virtual void			Unknown1(const char *a1, void *a2) = 0;
-	virtual void			Unknown2(void *a1, void *a2, void *a3, char *a4) = 0;
-	virtual const char		*Unknown3(void *a1, void *a2, void *a3, int a4, char *a5, double a6) = 0;
-	virtual void			Unknown4() = 0;
-	virtual void			Unknown5(void *a1, int a2, int *a3) = 0;
-	virtual void			Unknown6() = 0;
-
-	/*
 	virtual bool			IsFileInReadOnlySearchPath ( const char *pPathID, const char *pFileName ) = 0;
 	virtual void			SetSearchPathReadOnly( const char *pPathID, const char *, bool bReadOnly ) = 0;
 
 	// converts a partial path into a full path
 	virtual const char		*RelativePathToFullPath( const char *pFileName, const char *pPathID, char *pLocalPath, int localPathBufferSize, PathTypeFilter_t pathFilter = FILTER_NONE, PathTypeQuery_t *pPathType = NULL ) = 0;
 
+	virtual bool			GetWritePath(const char*, const char*, CBufferString *) = 0;
+
 	// Returns the search path, each path is separated by ;s. Returns the length of the string returned
-	virtual int				GetSearchPath( const char *pathID, GetSearchPathTypes_t pathType, char *pPath, int nMaxLen ) = 0;
-	*/
+	virtual int				GetSearchPath( const char *pathID, GetSearchPathTypes_t pathType, CBufferString *pPath, int nMaxLen ) = 0;
+	
+	virtual void unk003() = 0;
+	virtual void unk004() = 0;
+
 	//--------------------------------------------------------
 	// File manipulation operations
 	//--------------------------------------------------------
@@ -507,6 +540,8 @@ public:
 
 	// create a local directory structure
 	virtual void			CreateDirHierarchy( const char *path, const char *pathID = 0 ) = 0;
+
+	virtual void unk005() = 0;
 
 	// File I/O and info
 	virtual bool			IsDirectory( const char *pFileName, const char *pathID = 0 ) = 0;
@@ -523,7 +558,9 @@ public:
 
 	virtual bool			EndOfFile( FileHandle_t file ) = 0;
 
+	virtual const char		*ReadLine(FileHandle_t file, bool bStripNewline = true) = 0;
 	virtual char			*ReadLine( char *pOutput, int maxChars, FileHandle_t file ) = 0;
+
 	virtual int				FPrintf( FileHandle_t file, const char *pFormat, ... ) FMTFUNCTION( 3, 4 ) = 0;
 
 	//--------------------------------------------------------
@@ -561,10 +598,6 @@ public:
 	// File name and directory operations
 	//--------------------------------------------------------
 
-	// FIXME: This method is obsolete! Use RelativePathToFullPath instead!
-	// converts a partial path into a full path
-	virtual const char		*GetLocalPath( const char *pFileName, char *pLocalPath, int localPathBufferSize ) = 0;
-
 	// Returns true on success ( based on current list of search paths, otherwise false if 
 	//  it can't be resolved )
 	virtual bool			FullPathToRelativePath( const char *pFullpath, const char *pPathID, char *pRelative, int maxlen ) = 0;
@@ -579,85 +612,20 @@ public:
 	virtual FileNameHandle_t	FindOrAddFileName( char const *pFileName ) = 0;
 	virtual bool				String( const FileNameHandle_t& handle, char *buf, int buflen ) = 0;
 
-	//--------------------------------------------------------
-	// Asynchronous file operations
-	//--------------------------------------------------------
+	virtual void unk006() = 0;
+	virtual void unk007() = 0;
+	virtual void unk008() = 0;
 
-	//------------------------------------
-	// Global operations
-	//------------------------------------
-			FSAsyncStatus_t	AsyncRead( const FileAsyncRequest_t &request, FSAsyncControl_t *phControl = NULL )	{ return AsyncReadMultiple( &request, 1, phControl ); 	}
-	virtual FSAsyncStatus_t	AsyncReadMultiple( const FileAsyncRequest_t *pRequests, int nRequests,  FSAsyncControl_t *phControls = NULL ) = 0;
-	virtual FSAsyncStatus_t	AsyncAppend(const char *pFileName, const void *pSrc, int nSrcBytes, bool bFreeMemory, FSAsyncControl_t *pControl = NULL ) = 0;
-	virtual FSAsyncStatus_t	AsyncAppendFile(const char *pAppendToFileName, const char *pAppendFromFileName, FSAsyncControl_t *pControl = NULL ) = 0;
-	virtual void			AsyncFinishAll( int iToPriority = 0 ) = 0;
-	virtual void			AsyncFinishAllWrites() = 0;
-	virtual FSAsyncStatus_t	AsyncFlush() = 0;
-	virtual bool			AsyncSuspend() = 0;
-	virtual bool			AsyncResume() = 0;
+	virtual void			Trace_DumpUnclosedFiles() = 0;
 
-	//------------------------------------
-	// Functions to hold a file open if planning on doing mutiple reads. Use is optional,
-	// and is taken only as a hint
-	//------------------------------------
-	virtual FSAsyncStatus_t	AsyncBeginRead( const char *pszFile, FSAsyncFile_t *phFile ) = 0;
-	virtual FSAsyncStatus_t	AsyncEndRead( FSAsyncFile_t hFile ) = 0;
-
-	//------------------------------------
-	// Request management
-	//------------------------------------
-	virtual FSAsyncStatus_t	AsyncFinish( FSAsyncControl_t hControl, bool wait = true ) = 0;
-	virtual FSAsyncStatus_t	AsyncGetResult( FSAsyncControl_t hControl, void **ppData, int *pSize ) = 0;
-	virtual FSAsyncStatus_t	AsyncAbort( FSAsyncControl_t hControl ) = 0;
-	virtual FSAsyncStatus_t	AsyncStatus( FSAsyncControl_t hControl ) = 0;
-	// set a new priority for a file already in the queue
-	virtual FSAsyncStatus_t	AsyncSetPriority(FSAsyncControl_t hControl, int newPriority) = 0;
-	virtual void			AsyncAddRef( FSAsyncControl_t hControl ) = 0;
-	virtual void			AsyncRelease( FSAsyncControl_t hControl ) = 0;
-
-	//--------------------------------------------------------
-	// Remote resource management
-	//--------------------------------------------------------
-
-	// starts waiting for resources to be available
-	// returns FILESYSTEM_INVALID_HANDLE if there is nothing to wait on
-	virtual WaitForResourcesHandle_t WaitForResources( const char *resourcelist ) = 0;
-	// get progress on waiting for resources; progress is a float [0, 1], complete is true on the waiting being done
-	// returns false if no progress is available
-	// any calls after complete is true or on an invalid handle will return false, 0.0f, true
-	virtual bool			GetWaitForResourcesProgress( WaitForResourcesHandle_t handle, float *progress /* out */ , bool *complete /* out */ ) = 0;
-	// cancels a progress call
-	virtual void			CancelWaitForResources( WaitForResourcesHandle_t handle ) = 0;
-
-	// hints that a set of files will be loaded in near future
-	// HintResourceNeed() is not to be confused with resource precaching.
-	virtual int				HintResourceNeed( const char *hintlist, int forgetEverything ) = 0;
-	// returns true if a file is on disk
-	virtual bool			IsFileImmediatelyAvailable(const char *pFileName) = 0;
-	
-	// copies file out of pak/bsp/steam cache onto disk (to be accessible by third-party code)
-	virtual void			GetLocalCopy( const char *pFileName ) = 0;
-
-	//--------------------------------------------------------
-	// Debugging operations
-	//--------------------------------------------------------
-
-	// Dump to printf/OutputDebugString the list of files that have not been closed
-	virtual void			PrintOpenedFiles( void ) = 0;
 	virtual void			PrintSearchPaths( void ) = 0;
 
 	// output
 	virtual void			SetWarningFunc( void (*pfnWarning)( const char *fmt, ... ) ) = 0;
 	virtual void			SetWarningLevel( FileWarningLevel_t level ) = 0;
-	virtual void			AddLoggingFunc( void (*pfnLogFunc)( const char *fileName, const char *accessType ) ) = 0;
-	virtual void			RemoveLoggingFunc( FileSystemLoggingFunc_t logFunc ) = 0;
 
 	// Returns the file system statistics retreived by the implementation.  Returns NULL if not supported.
 	virtual const FileSystemStatistics *GetFilesystemStatistics() = 0;
-
-	//--------------------------------------------------------
-	// Start of new functions after Lost Coast release (7/05)
-	//--------------------------------------------------------
 
 	virtual FileHandle_t	OpenEx( const char *pFileName, const char *pOptions, unsigned flags = 0, const char *pathID = 0 ) = 0;
 
@@ -685,17 +653,8 @@ public:
 
 	// If the "PreloadedData" hasn't been purged, then this'll try and instance the KeyValues using the fast path of compiled keyvalues loaded during startup.
 	// Otherwise, it'll just fall through to the regular KeyValues loading routines
-	virtual KeyValues	*LoadKeyValues( KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) = 0;
 	virtual bool		LoadKeyValues( KeyValues& head, KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) = 0;
-
-	virtual FSAsyncStatus_t	AsyncWrite(const char *pFileName, const void *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t *pControl = NULL ) = 0;
-	virtual FSAsyncStatus_t	AsyncWriteFile(const char *pFileName, const CUtlBuffer *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t *pControl = NULL ) = 0;
-	// Async read functions with memory blame
-	FSAsyncStatus_t			AsyncReadCreditAlloc( const FileAsyncRequest_t &request, const char *pszFile, int line, FSAsyncControl_t *phControl = NULL )	{ return AsyncReadMultipleCreditAlloc( &request, 1, pszFile, line, phControl ); 	}
-	virtual FSAsyncStatus_t AsyncWriteUGCFile( const char *pFileName, const CUtlBuffer *pSrc, int nSrcBytes, bool bFreeMemory, CUtlDelegate<void (bool, const char *)> callback, FSAsyncControl_t *phControl = NULL ) = 0;
-	virtual FSAsyncStatus_t	AsyncReadMultipleCreditAlloc( const FileAsyncRequest_t *pRequests, int nRequests, const char *pszFile, int line, FSAsyncControl_t *phControls = NULL ) = 0;
-
-	virtual FSAsyncStatus_t AsyncDirectoryScan( const char* pSearchSpec, bool recurseFolders,  void* pContext, FSAsyncScanAddFunc_t pfnAdd, FSAsyncScanCompleteFunc_t pfnDone, FSAsyncControl_t *pControl = NULL ) = 0;
+	virtual KeyValues	*LoadKeyValues( KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) = 0;
 
 	virtual bool			GetFileTypeForFullPath( char const *pFullPath, wchar_t *buf, size_t bufSizeInBytes ) = 0;
 
@@ -707,7 +666,6 @@ public:
 	// Optimal IO operations
 	//--------------------------------------------------------
 	virtual bool		GetOptimalIOConstraints( FileHandle_t hFile, unsigned *pOffsetAlign, unsigned *pSizeAlign, unsigned *pBufferAlign ) = 0;
-	inline unsigned		GetOptimalReadSize( FileHandle_t hFile, unsigned nLogicalSize );
 	virtual void		*AllocOptimalReadBuffer( FileHandle_t hFile, unsigned nSize = 0, unsigned nOffset = 0 ) = 0;
 	virtual void		FreeOptimalReadBuffer( void * ) = 0;
 
@@ -789,43 +747,39 @@ public:
 	virtual bool IsVPKFileLoaded( const char *pszName ) = 0;
 	virtual void EnableAutoVPKFileLoading( bool ) = 0;
 	virtual void GetAutoVPKFileLoading( void ) = 0;
+
+	virtual void unk009() = 0;
+	virtual void unk010() = 0;
+	virtual void unk011() = 0;
+	virtual void unk012() = 0;
+
+	/*
+	//These doesn't particularly match the up to date binary, but leaving a note that they were here before!
+
 	virtual void AddUGCVPKFile( uint64 ugcId, const char *, SearchPathAdd_t ) = 0;
 	virtual void RemoveUGCVPKFile( uint64 ugcId, const char * ) = 0;
 	virtual bool IsUGCVPKFileLoaded( uint64 ugcId ) = 0;
+	*/
+
 	virtual void ParseUGCHandleFromFilename( const char *, char ** )const = 0;
 	virtual void CreateFilenameForUGCFile( char *, int, uint64 ugcId, const char *, char ) const = 0;
-	virtual void GetUGCInfo( uint64 ugcId, char **, int *, CSteamID * ) = 0;
 	virtual void OpenUGCFile( uint64 ugcId ) = 0;
-	
-	virtual void			SyncDvdDevCache() = 0;
-
-	virtual bool			DiscoverDLC( int iController ) = 0;
-	virtual int				IsAnyDLCPresent( bool *pbDLCSearchPathMounted = NULL ) = 0;
-	virtual bool			GetAnyDLCInfo( int iDLC, unsigned int *pLicenseMask, wchar_t *pTitleBuff, int nOutTitleSize ) = 0;
-	virtual int				IsAnyCorruptDLC() = 0;
-	virtual bool			GetAnyCorruptDLCInfo( int iCorruptDLC, wchar_t *pTitleBuff, int nOutTitleSize ) = 0;
-	virtual bool			AddDLCSearchPaths() = 0;
-	virtual bool			IsSpecificDLCPresent( unsigned int nDLCPackage ) = 0;
 
 	// call this to look for CPU-hogs during loading processes. When you set this, a breakpoint
 	// will be issued whenever the indicated # of seconds go by without an i/o request.  Passing
 	// 0.0 will turn off the functionality.
 	virtual void            SetIODelayAlarm( float flThreshhold ) = 0;
 	
-	virtual ILowLevelFileIO *GetLowLevelFileIO( void ) = 0;
-	virtual void			SetLowLevelFileIO( ILowLevelFileIO * ) = 0;
-	
-	virtual void			AddXLSPUpdateSearchPath( const void *, int ) = 0;
-	
-	virtual void			DumpFileSystemStats( int, const char * ) = 0;
-	
-	virtual void			DeleteDirectory( const char *pFileName, const char *pathID = 0 ) = 0;
+	virtual bool			DeleteDirectory( const char *pFileName, const char *pathID = 0 ) = 0;
+	virtual bool			DeleteDirectoryAndContents_R( const char *pFileName, const char *pathID, bool ) = 0;
 	
 	virtual bool			IsPathInvalidForFilesystem( const char *pFileName ) = 0;
 	
 	virtual void			GetAvailableDrives( CUtlVector<CUtlString> &drives ) = 0;
-	
-	virtual const char		*ReadLine( FileHandle_t file, bool bStripNewline = true ) = 0;
+
+	virtual void			GetSearchPathsForPathID( const char*, GetSearchPathTypes_t, CUtlVector<CUtlString> & ) = 0;
+
+	virtual void			MarkCorrupt( bool, const char* ) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -860,19 +814,6 @@ private:
 #else
 #define DISK_INTENSIVE() ((void)0)
 #endif
-
-//-----------------------------------------------------------------------------
-
-inline unsigned IFileSystem::GetOptimalReadSize( FileHandle_t hFile, unsigned nLogicalSize ) 
-{ 
-	unsigned align; 
-	if ( GetOptimalIOConstraints( hFile, &align, NULL, NULL ) ) 
-		return AlignValue( nLogicalSize, align );
-	else
-		return nLogicalSize;
-}
-
-//-----------------------------------------------------------------------------
 
 // We include this here so it'll catch compile errors in VMPI early.
 #include "filesystem_passthru.h"
