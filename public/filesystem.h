@@ -522,8 +522,8 @@ public:
 
 	virtual bool			GetWritePath(const char*, const char*, CBufferString *) = 0;
 
-	// Returns the search path, each path is separated by ;s. Returns the length of the string returned
-	virtual int				GetSearchPath( const char *pathID, GetSearchPathTypes_t pathType, CBufferString *pPath, int nMaxLen ) = 0;
+	// Returns the nSearchPathsToGet amount of paths, each path is separated by ;s. Returns true if pathID has any paths
+	virtual bool				GetSearchPath( const char *pathID, GetSearchPathTypes_t pathType, CBufferString *pPath, int nSearchPathsToGet ) = 0;
 	
 	virtual void unk003() = 0;
 	virtual void unk004() = 0;
@@ -666,6 +666,7 @@ public:
 	// Optimal IO operations
 	//--------------------------------------------------------
 	virtual bool		GetOptimalIOConstraints( FileHandle_t hFile, unsigned *pOffsetAlign, unsigned *pSizeAlign, unsigned *pBufferAlign ) = 0;
+	inline unsigned		GetOptimalReadSize(FileHandle_t hFile, unsigned nLogicalSize);
 	virtual void		*AllocOptimalReadBuffer( FileHandle_t hFile, unsigned nSize = 0, unsigned nOffset = 0 ) = 0;
 	virtual void		FreeOptimalReadBuffer( void * ) = 0;
 
@@ -815,8 +816,18 @@ private:
 #define DISK_INTENSIVE() ((void)0)
 #endif
 
-// We include this here so it'll catch compile errors in VMPI early.
-#include "filesystem_passthru.h"
+//-----------------------------------------------------------------------------
+
+inline unsigned IFileSystem::GetOptimalReadSize(FileHandle_t hFile, unsigned nLogicalSize)
+{
+	unsigned align;
+	if (GetOptimalIOConstraints(hFile, &align, NULL, NULL))
+		return AlignValue(nLogicalSize, align);
+	else
+		return nLogicalSize;
+}
+
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Async memory tracking
