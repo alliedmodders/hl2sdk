@@ -17,8 +17,6 @@
 
 class CSchemaClassBindingBase;
 class INetworkSerializerBindingBuildFilter;
-class IProtobufBinding;
-enum NetworkSerializationMode_t;
 struct NetworkableDataType_t;
 struct NetworkFieldResult_t;
 struct NetworkSerializerInfo_t;

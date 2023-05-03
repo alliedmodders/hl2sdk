@@ -29,7 +29,7 @@ struct NetMessageInfo_t
 
 	// (1 << 0) - FLAG_RELIABLE
 	// (1 << 6) - FLAG_AUTOASSIGNEDID
-	// (1 << 7) - FLAG_UNK002
+	// (1 << 7) - FLAG_UNK001
 	uint8 m_nFlags;
 
 	int m_unk001;
