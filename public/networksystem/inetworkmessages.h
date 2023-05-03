@@ -6,12 +6,15 @@
 #endif
 
 #include <eiface.h>
+
+#include <networksystem/inetworkserializer.h>
 #include <tier1/bitbuf.h>
 #include <tier1/utlstring.h>
+#include <tier1/utlsymbol.h>
 #include <tier1/utldelegate.h>
 #include <tier0/logging.h>
+#include "Color.h"
 
-struct NetMessageHandle_t__;
 class CSchemaClassBindingBase;
 class INetworkSerializerBindingBuildFilter;
 class IProtobufBinding;
@@ -43,62 +46,61 @@ typedef char const* ( *NetworkUnkCB001 )(void);
 abstract_class INetworkMessages
 {
 public:
-	virtual void RegisterNetworkCategory(uint, char const *) = 0;
+	virtual void RegisterNetworkCategory(NetworkCategoryId nCategoryId, char const *szDebugName) = 0;
 
-	virtual void AssociateNetMessageWithChannelCategoryAbstract(NetMessageHandle_t__ *, uint, bool) = 0;
+	virtual void AssociateNetMessageWithChannelCategoryAbstract(INetworkSerializable *pNetMessage, NetworkCategoryId nCategoryId, bool) = 0;
 
-	// virtual void FindOrCreateNetMessageSchema(int, CSchemaClassBindingBase const*, INetworkSerializerBindingBuildFilter *, bool, bool) = 0;
-	virtual void FindOrCreateNetMessage(int, IProtobufBinding const*, uint, INetworkSerializerBindingBuildFilter *, bool, bool) = 0;
+	// Passing nMessasgeId as -1 would auto-assign the id even if bAutoAssignId is false based on the message name hash.
+	virtual INetworkSerializable *FindOrCreateNetMessage(int nMessageId, IProtobufBinding const *pProtoBinding, uint nMessageSize, INetworkSerializerBindingBuildFilter *pUnused, bool bCreateIfNotFound = true, bool bAutoAssignId = false) = 0;
 
-	virtual void SerializeAbstract(bf_write &, NetMessageHandle_t__ *, void const *) = 0;
+	virtual bool SerializeAbstract(bf_write &pBuf, INetworkSerializable *pNetMessage, void const *pData) = 0;
 
-	virtual void UnserializeAbstract(bf_read &, NetMessageHandle_t__ **, void **) = 0;
-	virtual void UnserializeAbstract(bf_read &, NetMessageHandle_t__ *, void *) = 0;
+	virtual bool UnserializeAbstract(bf_read &pBuf, INetworkSerializable **pNetMessage, void **pData) = 0;
+	virtual bool UnserializeAbstract(bf_read &pBuf, INetworkSerializable *pNetMessage, void *pData) = 0;
 
-	virtual void AllocateNetMessageAbstract(NetMessageHandle_t__ *) = 0;
-	virtual void AllocateAndCopyConstructNetMessageAbstract(NetMessageHandle_t__ *, void const *) = 0;
+	virtual void *AllocateNetMessageAbstract(INetworkSerializable *pNetMessage) = 0;
+	virtual void *AllocateAndCopyConstructNetMessageAbstract(INetworkSerializable *pNetMessage, void const *pFrom) = 0;
 
-	virtual void DeallocateNetMessageAbstract(NetMessageHandle_t__ *, void *) = 0;
+	virtual void DeallocateNetMessageAbstract(INetworkSerializable *pNetMessage, void *pData) = 0;
 
-	virtual void RegisterNetworkFieldSerializer(char const *, NetworkSerializationMode_t, NetworkableDataType_t, int, NetworkFieldSerializeCB, NetworkFieldUnserializeCB, NetworkFieldInfoCB, 
+	virtual void *RegisterNetworkFieldSerializer(char const *, NetworkSerializationMode_t, NetworkableDataType_t, int, NetworkFieldSerializeCB, NetworkFieldUnserializeCB, NetworkFieldInfoCB, 
 		NetworkFieldMetaInfoCB, NetworkableDataCB, NetworkUnkCB001, NetworkFieldSerializeCB, NetworkFieldUnserializeCB) = 0;
-	virtual void RegisterNetworkArrayFieldSerializer(char const *, NetworkSerializationMode_t, NetworkFieldSerializeBufferCB, NetworkFieldUnserializeBufferCB, NetworkFieldInfoCB,
+	virtual void *RegisterNetworkArrayFieldSerializer(char const *, NetworkSerializationMode_t, NetworkFieldSerializeBufferCB, NetworkFieldUnserializeBufferCB, NetworkFieldInfoCB,
 		NetworkFieldMetaInfoCB, NetworkFieldSerializeBufferCB, NetworkFieldUnserializeBufferCB) = 0;
 
-	virtual void GetNetMessageInfo(NetMessageHandle_t__ *) = 0;
+	virtual NetMessageInfo_t *GetNetMessageInfo(INetworkSerializable *pNetMessage) = 0;
 
-	virtual NetMessageHandle_t__* FindNetworkMessage(char const *) = 0;
-	virtual NetMessageHandle_t__* FindNetworkMessagePartial(char const *) = 0;
+	virtual INetworkSerializable* FindNetworkMessage(char const *szName) = 0;
+	virtual INetworkSerializable* FindNetworkMessagePartial(char const *szPartialName) = 0;
 
-	virtual void FindNetworkGroup(char const *, bool) = 0;
-	virtual void GetNetworkGroupCount(void) = 0;
-	virtual void GetNetworkGroupName(int) = 0;
+	virtual NetworkGroupId FindNetworkGroup(char const *szGroup, bool bCreateIfNotFound = false) = 0;
+	virtual int GetNetworkGroupCount() = 0;
+	virtual const char *GetNetworkGroupName(NetworkGroupId nGroupId) = 0;
+	virtual Color GetNetworkGroupColor(NetworkGroupId nGroupId) = 0;
 
-	virtual void unk001() = 0;
-
-	virtual void AssociateNetMessageGroupIdWithChannelCategory(uint, char const *) = 0;
+	virtual void AssociateNetMessageGroupIdWithChannelCategory(NetworkCategoryId nCategoryId, char const *szGroup) = 0;
 
 	virtual void RegisterSchemaAtomicTypeOverride(uint, CSchemaType *) = 0;
 
-	virtual void SetNextworkSerializationContextData(char const *, NetworkSerializationMode_t, void *) = 0;
+	virtual void SetNetworkSerializationContextData(char const *szContext, NetworkSerializationMode_t, void *) = 0;
+	virtual void *GetNetworkSerializationContextData(char const *szContext) = 0;
 
-	virtual void unk002() = 0;
-	virtual void unk003() = 0;
+	virtual void unk001() = 0;
 
 	virtual void RegisterNetworkFieldChangeCallbackInternal(char const *, NetworkFieldChangedDelegateType_t, CUtlAbstractDelegate, NetworkFieldChangeCallbackPerformType_t, int) = 0;
 
 	virtual void AllowAdditionalMessageRegistration(bool bAllow) = 0;
 	virtual bool IsAdditionalMessageRegistrationAllowed() = 0;
 
-	virtual void GetFieldChangeCallbackOrderCount(void) = 0;
-	virtual void GetFieldChangeCallbackPriorities(int, int *) = 0;
+	virtual int GetFieldChangeCallbackOrderCount() = 0;
+	virtual void GetFieldChangeCallbackPriorities(int nCount, int *nPriorities) = 0;
 
-	virtual void RegisterFieldChangeCallbackPriority(int) = 0;
+	virtual void RegisterFieldChangeCallbackPriority(int nPriority) = 0;
 
-	virtual NetMessageHandle_t__ *FindNetworkMessageById(int) = 0;
+	virtual INetworkSerializable *FindNetworkMessageById(int nMessageId) = 0;
 
-	virtual void SetIsForServer(bool bForServer) = 0;
-	virtual bool IsForServer() = 0;
+	virtual void SetIsForServer(bool bIsForServer) = 0;
+	virtual bool GetIsForServer() = 0;
 
 	virtual void RegisterSchemaTypeOverride(uint, char const *) = 0;
 
