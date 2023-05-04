@@ -7,9 +7,8 @@
 
 #include <tier1/utlstring.h>
 #include <tier1/bitbuf.h>
+#include <inetchannel.h>
 #include "Color.h"
-
-enum NetChannelBufType_t;
 
 abstract_class IProtobufBinding
 {

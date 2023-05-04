@@ -15,15 +15,13 @@
 #include <limits.h>
 
 #include "tier0/threadtools.h"
-#include "tier0/memalloc.h"
-#include "tier0/tslist.h"
 #include "tier0/interface.h"
 #include "tier1/utlsymbol.h"
 #include "tier1/utlstring.h"
-//#include "tier1/functors.h" 
 #include "tier1/checksum_crc.h"
 #include "tier1/utldelegate.h"
 #include "tier1/utlqueue.h"
+#include "tier1/bufferstring.h"
 #include "appframework/IAppSystem.h"
 #include "tier2/tier2.h"
 
@@ -518,9 +516,9 @@ public:
 	virtual void			SetSearchPathReadOnly( const char *pPathID, const char *, bool bReadOnly ) = 0;
 
 	// converts a partial path into a full path
-	virtual const char		*RelativePathToFullPath( const char *pFileName, const char *pPathID, char *pLocalPath, int localPathBufferSize, PathTypeFilter_t pathFilter = FILTER_NONE, PathTypeQuery_t *pPathType = NULL ) = 0;
+	virtual const char		*RelativePathToFullPath( const char *pFileName, const char *pPathID, CBufferString &pLocalPath, PathTypeFilter_t pathFilter = FILTER_NONE, PathTypeQuery_t *pPathType = NULL ) = 0;
 
-	virtual bool			GetWritePath(const char*, const char*, CBufferString *) = 0;
+	virtual bool			GetWritePath(const char*, const char*, CBufferString &) = 0;
 
 	// Returns the nSearchPathsToGet amount of paths, each path is separated by ;s. Returns true if pathID has any paths
 	virtual bool			GetSearchPath( const char *pathID, GetSearchPathTypes_t pathType, CBufferString *pPath, int nSearchPathsToGet ) = 0;
@@ -582,17 +580,9 @@ public:
 	virtual void			FindClose( FileFindHandle_t handle ) = 0;
 
 	// Same as FindFirst, but you can filter by path ID, which can make it faster.
-	virtual const char		*FindFirstEx( 
-		const char *pWildCard, 
-		const char *pPathID,
-		FileFindHandle_t *pHandle
-		) = 0;
+	virtual const char		*FindFirstEx( const char *pWildCard, const char *pPathID, FileFindHandle_t *pHandle ) = 0;
 
-	virtual void			FindFileAbsoluteList(
-		CUtlVector<CUtlString> &output,
-		const char *pWildCard,
-		const char *pPathID
-		) = 0;
+	virtual void			FindFileAbsoluteList( CUtlVector<CUtlString> &output, const char *pWildCard, const char *pPathID ) = 0;
 
 	//--------------------------------------------------------
 	// File name and directory operations
@@ -603,7 +593,7 @@ public:
 	virtual bool			FullPathToRelativePath( const char *pFullpath, const char *pPathID, char *pRelative, int maxlen ) = 0;
 
 	// Gets the current working directory
-	virtual bool			GetCurrentDirectory( char* pDirectory, int maxlen ) = 0;
+	virtual bool			GetCurrentDirectory( CBufferString &pDirectory ) = 0;
 
 	//--------------------------------------------------------
 	// Filename dictionary operations
