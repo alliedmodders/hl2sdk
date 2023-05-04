@@ -282,7 +282,7 @@ private:
 		CBufferStringMemory() {}
 	} m_Memory;
 };
-	
+
 #define BUFFER_STRING_STACK(_size) CBufferString::InitStackAlloc(stackalloc(sizeof(CBufferString) + _size), ALIGN_VALUE(sizeof(CBufferString) + _size, 16 ) - sizeof(CBufferString))
 
 #endif /* BUFFERSTRING_H */

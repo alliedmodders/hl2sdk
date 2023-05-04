@@ -59,11 +59,4 @@ public:
 	virtual bool Unserialize(bf_read &pBuf, void *pData, NetworkSerializationMode_t unused) = 0;
 };
 
-class CNetworkSerializerPB : public INetworkSerializable
-{
-private:
-	const char *m_szUnscopedName;
-	NetMessageInfo_t m_MessageInfo;
-};
-
 #endif /* NETWORKSERIALIZER_H */

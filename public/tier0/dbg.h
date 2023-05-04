@@ -14,7 +14,7 @@
 
 #include "tier0/platform.h"
 #include "tier0/basetypes.h"
-#include <tier1/strtools.h>
+#include "tier1/strtools.h"
 #include "dbgflag.h"
 #include "logging.h"
 #include <math.h>

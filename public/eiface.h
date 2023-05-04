@@ -24,6 +24,7 @@
 #include "tier1/bitbuf.h"
 #include "tier1/utlmap.h"
 #include "tier1/utlstring.h"
+#include "tier1/bufferstring.h"
 #include <steam/steamclientpublic.h>
 
 //-----------------------------------------------------------------------------
@@ -77,7 +78,6 @@ class ILoopModePrerequisiteRegistry;
 struct URLArgument_t;
 struct vis_info_t;
 class IHLTVServer;
-class CBufferString;
 
 namespace google
 {
