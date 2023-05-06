@@ -12,34 +12,24 @@ class IFormatOutputStream;
 enum EStringConvertErrorPolicy;
 
 /*
-	Example usage of CBufferString class:
- 
-	* Stack buffer allocation:
-	```
-		CBufferString *buff = BUFFER_STRING_STACK(256);
-		buff->Insert(0, "Hello World!");
-		printf("Result: %s\n", buff->Get());
-	```
-	to check if the buffer is stack allocated, CBufferString::IsStackAllocated() should be used.
-	NOTE: As the buffer is stack allocated, it would be FREED once it's out of the scope it was defined in!
+	Main idea of CBufferString is to provide the base class for the CBufferStringGrowable wich implements stack allocation
+	with the ability to convert to the heap allocation if allowed.
 
-	* Heap buffer allocation:
+	Example usage of CBufferStringGrowable class:
+ 
+	* Basic buffer allocation:
 	```
-		// Regular constructor would provide the heap allocated buffer!!
-		CBufferString *buff = new CBufferString(256);
-		buff->Insert(0, "Hello World!");
-		printf("Result: %s\n", buff->Get());
-	```
-	alternatively CBufferString could be allocated on stack with the buffer on heap:
-	```
-		// Regular constructor would provide the heap allocated buffer!!
-		CBufferString buff(256);
+		CBufferStringGrowable<256> buff;
 		buff.Insert(0, "Hello World!");
 		printf("Result: %s\n", buff.Get());
 	```
-	to check if the buffer is heap allocated, CBufferString::IsHeapAllocated() should be used.
+	additionaly the heap allocation of the buffer could be disabled, by providing ``AllowHeapAllocation`` template argument,
+	by disabling heap allocation, if the buffer capacity is not enough to perform the operation, the app would exit with an Assert;
 
-	* Calling CBufferString::Get() would return a pointer to the data, or an empty string if it's not allocated.
+	* Additional usage:
+	CBufferString::IsStackAllocated() - could be used to check if the buffer is stack allocated;
+	CBufferString::IsHeapAllocated() - could be used to check if the buffer is heap allocated;
+	CBufferString::Get() - would return a pointer to the data, or an empty string if it's not allocated.
 
 	* Additionaly current length of the buffer could be read via CBufferString::GetTotalNumber()
 	and currently allocated amount of bytes could be read via CBufferString::GetAllocatedNumber()
@@ -47,93 +37,22 @@ enum EStringConvertErrorPolicy;
 	* Most, if not all the functions would ensure the buffer capacity and enlarge it when needed,
 	in case of stack allocated buffers, it would switch to heap allocation instead.
 */
+
 class CBufferString
 {
+protected:
+	// You shouldn't be initializing this class, use CBufferStringGrowable instead.
+	CBufferString() {}
+
 public:
-
-	CBufferString(int nSize): m_nAllocated(0), m_nTotalCount(0)
-	{
-		// HACK: Using game's built in allocator on windows to avoid heap corruption issues of reallocs made by the game
-#if PLATFORM_WINDOWS
-		m_Memory.m_pString = (char *)g_pMemAlloc->IndirectAlloc(nSize);
-#else
-		m_Memory.m_pString = new char[nSize];
-#endif
-		m_nAllocated |= HEAP_ALLOCATION_MARKER | (nSize & LENGTH_MASK);
-		m_nTotalCount |= HEAP_ALLOCATION_MARKER;
-	}
-
-	~CBufferString()
-	{
-		if (IsHeapAllocated() && m_Memory.m_pString)
-		{
-#if PLATFORM_WINDOWS
-			g_pMemAlloc->Free((void*)m_Memory.m_pString);
-#else
-			delete[] m_Memory.m_pString;
-#endif
-		}
-	}
-
-	// Expects a stack allocated pointer as a first param, use BUFFER_STRING_STACK macro instead
-	static inline CBufferString *InitStackAlloc(void *pData, int nSize)
-	{
-		CBufferString *buff = (CBufferString *)pData;
-
-		memset(buff, 0, nSize);
-		buff->m_nAllocated |= STACK_ALLOCATION_MARKER | (nSize & LENGTH_MASK);
-		buff->m_nTotalCount = 0;
-
-		return buff;
-	}
-
-	inline int GetAllocatedNumber() const
-	{
-		return m_nAllocated & LENGTH_MASK;
-	}
-
-	inline int GetTotalNumber() const
-	{
-		return m_nTotalCount & LENGTH_MASK;
-	}
-
-	inline bool IsStackAllocated() const
-	{
-		return (m_nAllocated & STACK_ALLOCATION_MARKER) != 0;
-	}
-
-	inline bool IsHeapAllocated() const
-	{
-		return (m_nTotalCount & HEAP_ALLOCATION_MARKER) != 0;
-	}
-
-	inline bool IsInputStringUnsafe(const char *pData)
-	{
-		return ((void *)pData >= this && (void *)pData < &this[1]) ||
-			(GetAllocatedNumber() != 0 && pData >= Get() && pData < (Get() + GetAllocatedNumber()));
-	}
-
-	inline const char *Get() const
-	{
-		if (IsStackAllocated())
-		{
-			return m_Memory.m_szString;
-		}
-		else if (GetAllocatedNumber() != 0)
-		{
-			return m_Memory.m_pString;
-		}
-
-		return "";
-	}
-
 	enum EAllocationOption_t
 	{
 		UNK1 = -1,
 		UNK2 = 0,
 		UNK3 = (1 << 1),
 		UNK4 = (1 << 8),
-		UNK5 = (1 << 9)
+		UNK5 = (1 << 9),
+		ALLOW_HEAP_ALLOCATION = (1 << 31)
 	};
 
 	enum EAllocationFlags_t
@@ -183,7 +102,7 @@ public:
 	DLL_CLASS_IMPORT const char *ExtractFilePath(const char *pPath, bool);
 	DLL_CLASS_IMPORT const char *ExtractFirstDir(const char *pPath);
 
-	DLL_CLASS_IMPORT const char *FixSlashes(char cSeparator);
+	DLL_CLASS_IMPORT const char *FixSlashes(char cSeparator = CORRECT_PATH_SEPARATOR);
 	DLL_CLASS_IMPORT const char *FixupPathName(char cSeparator);
 
 	DLL_CLASS_IMPORT int Format(const char *pFormat, ...);
@@ -207,11 +126,11 @@ public:
 	// Wrapper around V_MakeAbsolutePath()
 	DLL_CLASS_IMPORT const char *MakeAbsolutePath(const char *pPath, const char *pStartingDir);
 	// Wrapper around V_MakeAbsolutePath() but also does separator fixup
-	DLL_CLASS_IMPORT const char *MakeFixedAbsolutePath(const char *pPath, const char *pStartingDir, char cSeparator);
+	DLL_CLASS_IMPORT const char *MakeFixedAbsolutePath(const char *pPath, const char *pStartingDir, char cSeparator = CORRECT_PATH_SEPARATOR);
 	// Wrapper around V_MakeRelativePath()
 	DLL_CLASS_IMPORT const char *MakeRelativePath(const char *pFullPath, const char *pDirectory);
 
-	DLL_CLASS_IMPORT void MoveFrom(CBufferString& pOther);
+	DLL_CLASS_IMPORT void MoveFrom(CBufferString &pOther);
 
 	DLL_CLASS_IMPORT void Purge(int nLength);
 
@@ -224,7 +143,7 @@ public:
 	DLL_CLASS_IMPORT int RemoveWhitespace();
 
 	DLL_CLASS_IMPORT const char *RemoveFilePath();
-	DLL_CLASS_IMPORT const char *RemoveFirstDir(CBufferString* pRemovedDir);
+	DLL_CLASS_IMPORT const char *RemoveFirstDir(CBufferString *pRemovedDir);
 	DLL_CLASS_IMPORT const char *RemoveToFileBase();
 
 	DLL_CLASS_IMPORT bool RemovePartialUTF8Tail(bool);
@@ -254,35 +173,98 @@ public:
 
 	DLL_CLASS_IMPORT const char *StrAppendFormat(const char *pFormat, ...);
 	DLL_CLASS_IMPORT const char *StrFormat(const char *pFormat, ...);
-							    
+
 	DLL_CLASS_IMPORT const char *StripExtension();
 	DLL_CLASS_IMPORT const char *StripTrailingSlash();
 
 	DLL_CLASS_IMPORT void ToLowerFast(int nStart);
 	DLL_CLASS_IMPORT void ToUpperFast(int nStart);
 
-	DLL_CLASS_IMPORT const char *Trim(const char *pTrimChars);
-	DLL_CLASS_IMPORT const char *TrimHead(const char *pTrimChars);
-	DLL_CLASS_IMPORT const char *TrimTail(const char *pTrimChars);
+	DLL_CLASS_IMPORT const char *Trim(const char *pTrimChars = "\t\r\n ");
+	DLL_CLASS_IMPORT const char *TrimHead(const char *pTrimChars = "\t\r\n ");
+	DLL_CLASS_IMPORT const char *TrimTail(const char *pTrimChars = "\t\r\n ");
 
 	DLL_CLASS_IMPORT const char *TruncateAt(int nIndex, bool bIgnoreAlignment = false);
 	DLL_CLASS_IMPORT const char *TruncateAt(const char *pStr, bool bIgnoreAlignment = false);
 
 	DLL_CLASS_IMPORT int UnicodeCaseConvert(int, EStringConvertErrorPolicy eErrorPolicy);
+};
+
+template<size_t MAX_SIZE, bool AllowHeapAllocation = true>
+class CBufferStringGrowable : public CBufferString
+{
+	friend class CBufferString;
+
+public:
+	CBufferStringGrowable() : m_nAllocated(STACK_ALLOCATION_MARKER | (MAX_SIZE & LENGTH_MASK)), m_nTotalCount(0), m_Memory()
+	{
+		if (AllowHeapAllocation)
+		{
+			m_nAllocated |= ALLOW_HEAP_ALLOCATION;
+		}
+	}
+
+	~CBufferStringGrowable()
+	{
+		if (IsHeapAllocated() && m_Memory.m_pString)
+		{
+#if PLATFORM_WINDOWS
+			g_pMemAlloc->Free((void*)m_Memory.m_pString);
+#else
+			delete[] m_Memory.m_pString;
+#endif
+		}
+	}
+
+	inline int GetAllocatedNumber() const
+	{
+		return m_nAllocated & LENGTH_MASK;
+	}
+
+	inline int GetTotalNumber() const
+	{
+		return m_nTotalCount & LENGTH_MASK;
+	}
+
+	inline bool IsStackAllocated() const
+	{
+		return (m_nAllocated & STACK_ALLOCATION_MARKER) != 0;
+	}
+
+	inline bool IsHeapAllocated() const
+	{
+		return (m_nTotalCount & HEAP_ALLOCATION_MARKER) != 0;
+	}
+
+	inline bool IsInputStringUnsafe(const char *pData) const
+	{
+		return ((void *)pData >= this && (void *)pData < &this[1]) ||
+			(GetAllocatedNumber() != 0 && pData >= Get() && pData < (Get() + GetAllocatedNumber()));
+	}
+
+	inline const char *Get() const
+	{
+		if (IsStackAllocated())
+		{
+			return m_Memory.m_szString;
+		}
+		else if (GetAllocatedNumber() != 0)
+		{
+			return m_Memory.m_pString;
+		}
+
+		return StringFuncs<char>::EmptyString();
+	}
 
 private:
 	int m_nTotalCount;
 	int m_nAllocated;
 
-	union CBufferStringMemory
+	union
 	{
 		const char *m_pString;
-		const char m_szString[];
-
-		CBufferStringMemory() {}
+		const char m_szString[MAX_SIZE];
 	} m_Memory;
 };
-
-#define BUFFER_STRING_STACK(_size) CBufferString::InitStackAlloc(stackalloc(sizeof(CBufferString) + _size), ALIGN_VALUE(sizeof(CBufferString) + _size, 16 ) - sizeof(CBufferString))
 
 #endif /* BUFFERSTRING_H */
