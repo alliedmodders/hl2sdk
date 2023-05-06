@@ -521,7 +521,7 @@ public:
 	virtual bool			GetWritePath(const char*, const char*, CBufferString &) = 0;
 
 	// Returns the nSearchPathsToGet amount of paths, each path is separated by ;s. Returns true if pathID has any paths
-	virtual bool			GetSearchPath( const char *pathID, GetSearchPathTypes_t pathType, CBufferString *pPath, int nSearchPathsToGet ) = 0;
+	virtual bool			GetSearchPath( const char *pathID, GetSearchPathTypes_t pathType, CBufferString &pPath, int nSearchPathsToGet ) = 0;
 	
 	virtual void unk003() = 0;
 	virtual void unk004() = 0;

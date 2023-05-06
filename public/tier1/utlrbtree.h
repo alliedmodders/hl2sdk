@@ -287,6 +287,9 @@ protected:
 	I m_FirstFree;
 	typename M::Iterator_t m_LastAlloc; // the last index allocated
 
+	int m_nAllocationCount;
+	int m_nGrowSize;
+
 	FORCEINLINE M const &Elements( void ) const
 	{
 		return m_Elements;
