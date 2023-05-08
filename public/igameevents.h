@@ -19,7 +19,12 @@
 #include "interfaces/interfaces.h"
 #include "tier1/bitbuf.h"
 
-class CSVCMsg_GameEvent;
+class CMsgSource1LegacyGameEvent;
+class CPlayerSlot;
+class CBasePlayer;
+class CEntityIndex;
+class CEntityHandle;
+class CBaseEntity;
 //-----------------------------------------------------------------------------
 // Purpose: Engine interface into global game event management
 //-----------------------------------------------------------------------------
@@ -79,12 +84,39 @@ public:
 	virtual const char *GetString( const char *keyName = NULL, const char *defaultValue = "" ) = 0;
 	virtual void *GetPtr( const char *keyName = NULL, void *defaultValue = NULL ) = 0;
 
+	/* These function prototypes and names are very speculative and might be incorrect */
+	virtual CEntityHandle GetEHandle( const char *keyName, CEntityHandle defaultValue ) = 0;
+	virtual CEntityHandle GetStrictEHandle( const char *keyName, CEntityHandle defaultValue ) = 0;
+	virtual CEntityHandle GetEHandle2( const char *keyName, CEntityHandle defaultValue ) = 0;
+
+	virtual CPlayerSlot *GetPlayerSlot( const char *keyName = NULL ) = 0;
+	virtual CBasePlayer *GetPlayer( const char *keyName = NULL ) = 0;
+
+	virtual void *GetPlayerController( const char *keyName = NULL ) = 0;
+	virtual CEntityHandle GetPlayerControllerEHandle( const char *keyName = NULL ) = 0;
+	virtual CEntityHandle GetPlayerControllerEHandle2( const char *keyName = NULL ) = 0;
+	/* ============================================================ */
+
 	virtual void SetBool( const char *keyName, bool value ) = 0;
 	virtual void SetInt( const char *keyName, int value ) = 0;
 	virtual void SetUint64( const char *keyName, uint64 value ) = 0;
 	virtual void SetFloat( const char *keyName, float value ) = 0;
 	virtual void SetString( const char *keyName, const char *value ) = 0;
 	virtual void SetPtr( const char *keyName, void *value ) = 0;
+
+	/* These function prototypes and names are very speculative and might be incorrect */
+	virtual void SetEHandleStrict( const char *keyName, CEntityHandle handle ) = 0;
+	virtual void SetEHandle( const char *keyName, CEntityHandle handle ) = 0;
+
+	// Also sets the _pawn key
+	virtual void SetPlayerSlot( const char *keyName, CPlayerSlot value ) = 0;
+	virtual void SetPlayer( const char *keyName, CBasePlayer *value ) = 0;
+	/* ============================================================ */
+
+	virtual bool HasKey( const char *keyName ) = 0;
+
+	// Something script vm related
+	virtual void unk001() = 0;
 	
 	virtual KeyValues *GetDataKeys() const = 0;
 };
@@ -105,7 +137,7 @@ public:
 	virtual	~IGameEventManager2( void ) {};
 
 	// load game event descriptions from a file eg "resource\gameevents.res"
-	virtual int LoadEventsFromFile( const char *filename ) = 0;
+	virtual int LoadEventsFromFile( const char *filename, bool bSearchAll ) = 0;
 
 	// removes all and anything
 	virtual void  Reset() = 0;	
@@ -136,12 +168,14 @@ public:
 	virtual void FreeEvent( IGameEvent *event ) = 0;
 
 	// write/read event to/from bitbuffer
-	virtual bool SerializeEvent( IGameEvent *event, CSVCMsg_GameEvent *ev ) = 0;
-	virtual IGameEvent *UnserializeEvent( const CSVCMsg_GameEvent &ev ) = 0; // create new KeyValues, must be deleted
+	virtual bool SerializeEvent( IGameEvent *event, CMsgSource1LegacyGameEvent *ev ) = 0;
+	virtual IGameEvent *UnserializeEvent( const CMsgSource1LegacyGameEvent &ev ) = 0; // create new KeyValues, must be deleted
 	
 	virtual int LookupEventId( const char *name ) = 0;
 	
 	virtual void PrintEventToString( IGameEvent *event, CUtlString &out ) = 0;
+
+	virtual bool HasEventDescriptor( const char *name ) = 0;
 };
 
 
