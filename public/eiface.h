@@ -518,66 +518,61 @@ public:
 abstract_class ISource2GameClients : public IAppSystem
 {
 public:
-	// Client is connecting to server ( return false to reject the connection )
-	//	You can specify a rejection message by writing it into reject
-	virtual bool			ClientConnect( CEntityIndex index, uint64 xuid, const char *pszName, const char *pszAddress, char *reject, int maxrejectlen ) = 0;
+	virtual void			OnClientConnected( CPlayerSlot slot, const char *pszName, uint64 xuid, const char *pszNetworkID, const char *pszAddress, bool bFakePlayer ) = 0;
 	
-	virtual void			OnClientConnected( CEntityIndex index, int userId, const char *pszName, uint64 xuid, const char *pszNetworkID,
-								const char *pszAddress, bool bFakePlayer ) = 0;
-	
+	virtual void*			unk001( CPlayerSlot slot, const char *pszName, int, int, bool, int);
+
 	// Client is connected and should be put in the game
-	virtual void			ClientPutInServer( CEntityIndex index, char const *playername, bool bFakePlayer ) = 0;
+	virtual void			ClientPutInServer( CPlayerSlot slot, char const *pszName, int, bool /*bFakePlayer??*/ ) = 0;
 
 	// Client is going active
 	// If bLoadGame is true, don't spawn the player because its state is already setup.
-	virtual void			ClientActive( CEntityIndex index, bool bLoadGame ) = 0;
+	virtual void			ClientActive( CPlayerSlot slot, bool /*bLoadGame??*/, const char */*pszName??*/, int ) = 0;
 	
-	virtual void			ClientFullyConnect( CEntityIndex index, CPlayerSlot slot ) = 0;
+	virtual void			ClientFullyConnect( CPlayerSlot slot ) = 0;
 
 	// Client is disconnecting from server
-	virtual void			ClientDisconnect( CEntityIndex index, int userId, /* ENetworkDisconnectionReason */ int reason,
+	virtual void			ClientDisconnect( CPlayerSlot slot, /* ENetworkDisconnectionReason */ int reason,
 								const char *pszName, uint64 xuid, const char *pszNetworkID ) = 0;
 
 	// Sets the client index for the client who typed the command into his/her console
-	virtual void			SetCommandClient( CPlayerSlot slot) = 0;
+	// virtual void			SetCommandClient( CPlayerSlot slot) = 0;
 	
 	// The client has typed a command at the console
-	virtual void			ClientCommand( CEntityIndex index, const CCommand &args ) = 0;
+	virtual void			ClientCommand( CPlayerSlot slot, const CCommand &args ) = 0;
 
 	// A player changed one/several replicated cvars (name etc)
-	virtual void			ClientSettingsChanged( CEntityIndex index ) = 0;
+	virtual void			ClientSettingsChanged( CPlayerSlot slot ) = 0;
 	
 	// Determine PVS origin and set PVS for the player/viewentity
-	virtual void			ClientSetupVisibility( CEntityIndex viewentIndex, CEntityIndex clientindex, vis_info_t *visinfo ) = 0;
+	virtual void			ClientSetupVisibility( CPlayerSlot slot, vis_info_t *visinfo ) = 0;
 	
 	// A block of CUserCmds has arrived from the user, decode them and buffer for execution during player simulation
-	virtual float			ProcessUsercmds( CEntityIndex index, bf_read *buf, int numcmds, int totalcmds,
-								int dropped_packets, bool ignore, bool paused ) = 0;
+	virtual float			ProcessUsercmds( CPlayerSlot slot, bf_read *buf, int numcmds, bool ignore, bool paused ) = 0;
 	
-	// Let the game .dll do stuff after messages have been sent to all of the clients once the server frame is complete
-	virtual void			PostClientMessagesSent_DEPRECIATED( void ) = 0;
+	virtual bool			IsPlayerSlotOccupied( CPlayerSlot slot ) = 0;
 	
-	virtual bool			IsPlayerAlive( CEntityIndex index ) = 0;
+	virtual bool			IsPlayerAlive( CPlayerSlot slot) = 0;
 	
-	virtual int				GetPlayerScore( CEntityIndex index ) = 0;
+	virtual int				GetPlayerScore( CPlayerSlot slot ) = 0;
 
 	// Get the ear position for a specified client
-	virtual void			ClientEarPosition( CEntityIndex index, Vector *pEarOrigin ) = 0;
+	virtual void			ClientEarPosition( CPlayerSlot slot, Vector *pEarOrigin ) = 0;
 
 	// Anything this game .dll wants to add to the bug reporter text (e.g., the entity/model under the picker crosshair)
 	//  can be added here
-	virtual void			GetBugReportInfo( char *buf, int buflen ) = 0;
+	virtual void			GetBugReportInfo( CBufferString &buf ) = 0;
 
 	// TERROR: A player sent a voice packet
-	virtual void			ClientVoice( CEntityIndex index ) = 0;
+	virtual void			ClientVoice( CPlayerSlot slot ) = 0;
 
 	// A user has had their network id setup and validated 
 	virtual void			NetworkIDValidated( const char *pszUserName, const char *pszNetworkID ) = 0;
 	
 	// The client has submitted a keyvalues command
-	virtual void			ClientCommandKeyValues( CEntityIndex index, KeyValues *pKeyValues ) = 0;
+	virtual void			ClientCommandKeyValues( CPlayerSlot slot, KeyValues *pKeyValues ) = 0;
 
-	virtual bool			ClientCanPause( CEntityIndex index ) = 0;
+	virtual bool			ClientCanPause( CPlayerSlot slot ) = 0;
 	
 	virtual void			HLTVClientFullyConnect( int index, const CSteamID &steamID ) = 0;
 	
@@ -588,6 +583,19 @@ public:
 	virtual void			SendHLTVStatusMessage( IHLTVServer *, bool, bool, const char *, int, int, int ) = 0;
 	
 	virtual IHLTVDirector	*GetHLTVDirector( void ) = 0;
+
+	virtual void			unk002( CPlayerSlot slot ) = 0;
+	virtual void			unk003( CPlayerSlot slot ) = 0;
+
+	// Something NetMessage related
+	virtual void			unk004() = 0;
+
+	// Something pawn related
+	virtual void			unk005() = 0;
+	virtual void			unk006() = 0;
+
+	virtual void			unk007() = 0;
+	virtual void			unk008() = 0;
 };
 
 typedef IVEngineServer2 IVEngineServer;
