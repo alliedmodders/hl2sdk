@@ -224,6 +224,14 @@ public:
 	CUtlVectorFixedGrowable( int growSize = 0 ) : BaseClass( growSize, MAX_SIZE ) {}
 };
 
+template< class T, class B = short >
+class CUtlLeanVectorBase
+{
+private:
+	B m_nAllocationCount;
+	B m_nGrowSize;
+	T* m_pMemory;
+};
 
 //-----------------------------------------------------------------------------
 // The CUtlVectorConservative class:
