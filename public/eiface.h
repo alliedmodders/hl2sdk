@@ -78,6 +78,9 @@ class ILoopModePrerequisiteRegistry;
 struct URLArgument_t;
 struct vis_info_t;
 class IHLTVServer;
+class CCompressedResourceManifest;
+class ILoadingSpawnGroup;
+class IToolGameSimulationAPI;
 
 namespace google
 {
@@ -348,12 +351,14 @@ public:
 abstract_class ISource2Server : public IAppSystem
 {
 public:
-	virtual void			SetGlobals( CGlobalVars *pVars ) = 0;
+	virtual bool			Unknown0() const = 0;
+
+	virtual void			SetGlobals( CGlobalVars *pGlobals ) = 0;
 	
 	// Let the game .dll allocate it's own network/shared string tables
 	virtual void			GameCreateNetworkStringTables( void ) = 0;
 	
-	virtual void			WriteSignonMessages( bf_write &bf ) = 0;
+	virtual void			WriteSignonMessages( const bf_write &buf ) = 0;
 	
 	virtual void			PreWorldUpdate( bool simulating ) = 0;
 	
@@ -366,11 +371,11 @@ public:
 	
 	// The server should run physics/think on all edicts
 	// One of these bools is 'simulating'... probably
-	virtual void			GameFrame( bool, bool, bool ) = 0;
+	virtual void			GameFrame( bool simulating, bool bFirstTick, bool bLastTick ) = 0;
 	
 	// Returns true if the game DLL wants the server not to be made public.
 	// Used by commentary system to hide multiplayer commentary servers from the master.
-	virtual bool			ShouldHideFromMasterServer( bool ) = 0;
+	virtual bool			ShouldHideFromMasterServer( bool bServerHasPassword ) = 0;
 	
 	virtual void			GetMatchmakingTags( char *buf, size_t bufSize ) = 0;
 
@@ -378,12 +383,12 @@ public:
 	
 	virtual IServerGCLobby	*GetServerGCLobby() = 0;
 	
-	virtual void			GetMatchmakingGameData( char *buf, size_t bufSize ) = 0;
+	virtual void			GetMatchmakingGameData( CBufferString &buf ) = 0;
 	
 	// return true to disconnect client due to timeout (used to do stricter timeouts when the game is sure the client isn't loading a map)
 	virtual bool			ShouldTimeoutClient( int nUserID, float flTimeSinceLastReceived ) = 0;
 	
-	virtual void			PrintStatus( CEntityIndex, CUtlString * ) = 0;
+	virtual void			PrintStatus( CEntityIndex nPlayerEntityIndex, CBufferString &output ) = 0;
 	
 	virtual int				GetServerGameDLLFlags( void ) const = 0;
 	
@@ -392,48 +397,48 @@ public:
 	
 	// Give the list of datatable classes to the engine.  The engine matches class names from here with
 	//  edict_t::classname to figure out how to encode a class's data for networking
-	virtual ServerClass*	GetAllServerClasses( void ) = 0;
+	virtual ServerClass		*GetAllServerClasses( void ) = 0;
 	
-	virtual void 			*UnknownFunc2() = 0;
-	
-	virtual const char		*GetLoadedMapName( void ) const = 0;
+	virtual const char		*GetActiveWorldName( void ) const = 0;
 	
 	virtual bool			IsPaused( void ) const = 0;
 	
-	virtual bool			GetNavMeshData( CNavData *pOut ) = 0;
-	virtual void			SetNavMeshData( const CNavData &data ) = 0;
-	virtual void			RegisterNavListener( INavListener *pListener ) = 0;
-	virtual void			UnregisterNavListener( INavListener *pListener ) = 0;
+	virtual bool			GetNavMeshData( CNavData *pNavMeshData ) = 0;
+	virtual void			SetNavMeshData( const CNavData *navMeshData ) = 0;
+	virtual void			RegisterNavListener( INavListener *pNavListener ) = 0;
+	virtual void			UnregisterNavListener( INavListener *pNavListener ) = 0;
 	virtual void			*GetSpawnDebugInterface( void ) = 0;
-	virtual void			GetAnimationActivityList( CUtlVector<CUtlString> &out ) = 0;
-	virtual void			GetAnimationEventList( CUtlVector<CUtlString> &out ) = 0;
-	virtual void			FilterPlayerCounts( int *, int *, int * ) = 0;
+	virtual void			*Unknown1( void ) = 0;
+	virtual IToolGameSimulationAPI *GetToolGameSimulationAPI( void ) = 0;
+	virtual void			GetAnimationActivityList( CUtlVector<CUtlString> &activityList ) = 0;
+	virtual void			GetAnimationEventList( CUtlVector<CUtlString> &eventList ) = 0;
+	virtual void			FilterPlayerCounts( int *pInOutHumans, int *pInOutHumansSlots, int *pInOutBots ) = 0;
 
 	// Called after the steam API has been activated post-level startup
 	virtual void			GameServerSteamAPIActivated( void ) = 0;
 
 	virtual void			GameServerSteamAPIDeactivated( void ) = 0;
 	
-	virtual void			OnHostNameChanged( const char *pszNewHostname ) = 0;
+	virtual void			OnHostNameChanged( const char *pHostname ) = 0;
 	virtual void			PreFatalShutdown( void ) const = 0;
-	virtual void			UpdateWhenNotInGame( float ) = 0;
+	virtual void			UpdateWhenNotInGame( float flFrameTime ) = 0;
 	
-	virtual void			GetEconItemNamesForModel( const char *pszModel, bool, bool, CUtlVector<CUtlString> &out ) = 0;
-	virtual void			GetEconItemNamesForCharacter( const char *pszCharacter, bool, bool, CUtlVector<CUtlString> &out ) = 0;
-	virtual void			GetEconItemsInfoForModel( const char *pszModel, const char *, bool, bool, bool, CUtlVector<EconItemInfo_t> &out ) = 0;
-	virtual void			GetEconItemsInfoForCharacter( const char *pszCharacter, const char *, bool, bool, bool, CUtlVector<EconItemInfo_t> &out ) = 0;
+	virtual void			GetEconItemNamesForModel( const char *pModelName, bool bExcludeItemSets, bool bExcludeIndividualItems, CUtlVector<CUtlString> &econItemNames ) = 0;
+	virtual void			GetEconItemNamesForCharacter( const char *pCharacterName, bool bExcludeItemSets, bool bExcludeIndividualItems, CUtlVector<CUtlString> &econItemNames ) = 0;
+	virtual void			GetEconItemsInfoForModel( const char *pModelName, const char *pEconItemName, bool bExcludeItemSets, bool bExcludeIndividualItems, bool bExcludeStockItemSet, CUtlVector<EconItemInfo_t> &econInfo ) = 0;
+	virtual void			GetEconItemsInfoForCharacter( const char *pCharacterName, const char *pEconItemName, bool bExcludeItemSets, bool bExcludeIndividualItems, bool bExcludeStockItemSet, CUtlVector<EconItemInfo_t> &econInfo ) = 0;
 	
-	virtual void			GetDefaultScaleForModel( const char *pszModel ) = 0;
-	virtual void			GetDefaultScaleForCharacter( const char *pszCharacter ) = 0;
-	virtual void			GetDefaultControlPointAutoUpdates( const char *, CUtlVector<EconControlPointInfo_t> &out ) = 0;
-	virtual void			GetCharacterNameForModel( const char *pszCharacter, char *pszOut, int size ) = 0;
-	virtual void			GetModelNameForCharacter( const char *pszModel, int, char *pszOut, int size ) = 0;  
-	virtual void			GetCharacterList( CUtlVector<CUtlString> &out ) = 0;
-	virtual void			GetDefaultChoreoDirForModel( const char *pszModel, char *pszOut, int size ) = 0;
+	virtual void			GetDefaultScaleForModel( const char *pModelName, bool bCheckLoadoutScale ) = 0;
+	virtual void			GetDefaultScaleForCharacter( const char *pCharacterName, bool bCheckLoadoutScale ) = 0;
+	virtual void			GetDefaultControlPointAutoUpdates( const char *pParticleSystemName, CUtlVector<EconControlPointInfo_t> &autoUpdates ) = 0;
+	virtual void			GetCharacterNameForModel( const char *pModelName, bool bCheckItemModifiers, CUtlString &characterName ) = 0;
+	virtual void			GetModelNameForCharacter( const char *pCharacterNamel, int nIndex, CBufferString &modelName ) = 0;  
+	virtual void			GetCharacterList( CUtlVector<CUtlString> &characterNames ) = 0;
+	virtual void			GetDefaultChoreoDirForModel( const char *pModelName, CBufferString &defaultVCDDir ) = 0;
 	
 	virtual void			*GetEconItemSystem( void ) = 0;
 	
-	virtual void			ServerConVarChanged( const char *pszName, const char *pszValue ) = 0;
+	virtual void			ServerConVarChanged( const char *pVarName, const char *pValue ) = 0;
 };
 
 //-----------------------------------------------------------------------------
