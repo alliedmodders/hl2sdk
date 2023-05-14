@@ -99,6 +99,9 @@ inline char *strlwr( char *start )
 #define V_strlower(start)				_V_strlower ((start))		
 #define V_wcslen(pwch)					_V_wcslen	((pwch))		
 
+// AM TODO: handle this for the rest (above and more) now exported by tier0
+PLATFORM_INTERFACE int V_stricmp_fast(const char* s1, const char* s2);
+
 #else
 
 inline void		V_memset (void *dest, int fill, int count)			{ memset( dest, fill, count ); }
