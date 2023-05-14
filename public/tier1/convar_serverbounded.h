@@ -10,7 +10,7 @@
 #pragma once
 #endif
 
-
+#ifdef CONVAR_WORK_FINISHED
 // This class is used to virtualize a ConVar's value, so the client can restrict its 
 // value while connected to a server. When using this across modules, it's important
 // to dynamic_cast it to a ConVar_ServerBounded or you won't get the restricted value.
@@ -48,6 +48,7 @@ public:
 		return ConVar::GetFloat();
 	}
 };
+#endif // CONVAR_WORK_FINISHED
 
 
 #endif // CONVAR_SERVERBOUNDED_H
