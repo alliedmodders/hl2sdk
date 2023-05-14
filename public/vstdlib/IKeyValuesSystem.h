@@ -50,7 +50,7 @@ public:
 	virtual void ReleaseWStringCopy( const wchar_t * ) = 0;
 };
 
-VSTDLIB_INTERFACE IKeyValuesSystem *KeyValuesSystem();
+//VSTDLIB_INTERFACE IKeyValuesSystem *KeyValuesSystem();
 
 // #define KEYVALUESSYSTEM_INTERFACE_VERSION "KeyValuesSystem002"
 
