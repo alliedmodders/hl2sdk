@@ -1100,19 +1100,19 @@ private:
 #define CON_COMMAND( name, description ) \
    static ConCommandRefAbstract name##_ref; \
    static void name##_callback( const CCommand &args ); \
-   static ConCommand name##_command( name##_ref, #name, name##_callback, description ); \
+   static ConCommand name##_command( &name##_ref, #name, name##_callback, description ); \
    static void name##_callback( const CCommand &args )
 #ifdef CLIENT_DLL
 	#define CON_COMMAND_SHARED( name, description ) \
 		static ConCommandRefAbstract name##_ref; \
 		static void name##_callback( const CCommandContext &context, const CCommand &args ); \
-		static ConCommand name##_command_client( name##_ref, #name "_client", name##_callback, name, description ); \
+		static ConCommand name##_command_client( &name##_ref, #name "_client", name##_callback, name, description ); \
 		static void name##_callback( const CCommandContext &context, const CCommand &args )
 #else
 	#define CON_COMMAND_SHARED( name, description ) \
 		static ConCommandRefAbstract name##_ref; \
 		static void name##_callback( const CCommandContext &context, const CCommand &args ); \
-		static ConCommand name##_command( name##_ref, #name, name##_callback, name, description ); \
+		static ConCommand name##_command( &name##_ref, #name, name##_callback, name, description ); \
 		static void name##_callback( const CCommandContext &context, const CCommand &args )
 #endif
 
@@ -1120,20 +1120,20 @@ private:
 #define CON_COMMAND_F( name, description, flags ) \
 	static ConCommandRefAbstract name##_ref; \
 	static void name##_callback( const CCommandContext &context, const CCommand &args ); \
-	static ConCommand name##_command( name##_ref, #name, name##_callback, description, flags ); \
+	static ConCommand name##_command( &name##_ref, #name, name##_callback, description, flags ); \
 	static void name##_callback( const CCommandContext &context, const CCommand &args )
 
 #ifdef CLIENT_DLL
 	#define CON_COMMAND_F_SHARED( name, description, flags ) \
 		static ConCommandRefAbstract name##_ref; \
 		static void name##_callback( const CCommandContext &context, const CCommand &args ); \
-		static ConCommand name##_command_client( name##_ref, #name "_client", name##_callback, description, flags ); \
+		static ConCommand name##_command_client( &name##_ref, #name "_client", name##_callback, description, flags ); \
 		static void name##_callback( const CCommandContext &context, const CCommand &args )
 #else
 	#define CON_COMMAND_F_SHARED( name, description, flags ) \
 		static ConCommandRefAbstract name##_ref; \
 		static void name##_callback( const CCommandContext &context, const CCommand &args ); \
-		static ConCommand name##_command( name##_ref, #name, name##_callback, description, flags ); \
+		static ConCommand name##_command( &name##_ref, #name, name##_callback, description, flags ); \
 		static void name##_callback( const CCommandContext &context, const CCommand &args )
 #endif
 
@@ -1141,7 +1141,7 @@ private:
 #define CON_COMMAND_F_COMPLETION( name, description, flags, completion ) \
 	static ConCommandRefAbstract name##_ref; \
 	static void name##_callback( const CCommandContext &context, const CCommand &args ); \
-	static ConCommand name##_command( name##_ref, #name, name##_callback, description, flags, completion ); \
+	static ConCommand name##_command( &name##_ref, #name, name##_callback, description, flags, completion ); \
 	static void name##_callback( const CCommandContext &context, const CCommand &args )
 
 #ifdef CLIENT_DLL
@@ -1162,13 +1162,13 @@ private:
 #define CON_COMMAND_EXTERN( name, _funcname, description ) \
 	static ConCommandRefAbstract name##_ref; \
 	void _funcname( const CCommandContext &context, const CCommand &args ); \
-	static ConCommand name##_command( name##_ref, #name, _funcname, description ); \
+	static ConCommand name##_command( &name##_ref, #name, _funcname, description ); \
 	void _funcname( const CCommandContext &context, const CCommand &args )
 
 #define CON_COMMAND_EXTERN_F( name, _funcname, description, flags ) \
 	static ConCommandRefAbstract name##_ref; \
 	void _funcname( const CCommandContext &context, const CCommand &args ); \
-	static ConCommand name##_command( name##_ref, #name, _funcname, description, flags ); \
+	static ConCommand name##_command( &name##_ref, #name, _funcname, description, flags ); \
 	void _funcname( const CCommandContext &context, const CCommand &args )
 
 #define CON_COMMAND_MEMBER_F( _thisclass, name, _funcname, description, flags ) \
