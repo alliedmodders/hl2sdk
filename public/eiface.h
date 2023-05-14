@@ -142,21 +142,6 @@ struct CEntityIndex
 	int _index;
 };
 
-struct CSplitScreenSlot
-{
-	CSplitScreenSlot( int index )
-	{
-		_index = index;
-	}
-	
-	int Get() const
-	{
-		return _index;
-	}
-	
-	int _index;
-};
-
 //-----------------------------------------------------------------------------
 // Purpose: Interface the engine exposes to the game DLL and client DLL
 //-----------------------------------------------------------------------------
