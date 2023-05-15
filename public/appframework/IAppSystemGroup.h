@@ -20,7 +20,7 @@
 #endif
 
 
-#include "tier1/interface.h"
+#include "tier0/interface.h"
 #include "tier1/utlvector.h"
 #include "tier1/utldict.h"
 #include "tier1/UtlStringMap.h"

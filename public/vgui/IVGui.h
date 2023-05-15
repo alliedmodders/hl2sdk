@@ -12,7 +12,7 @@
 #pragma once
 #endif
 
-#include "tier1/interface.h"
+#include "tier0/interface.h"
 #include <vgui/VGUI.h>
 
 #include "appframework/IAppSystem.h"

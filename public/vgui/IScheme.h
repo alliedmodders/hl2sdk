@@ -13,7 +13,7 @@
 #endif
 
 #include "vgui/vgui.h"
-#include "tier1/interface.h"
+#include "tier0/interface.h"
 #include "tier1/utlsymbol.h"
 
 class Color;

@@ -14,7 +14,7 @@
 #endif
 
 
-#include "tier1/interface.h"
+#include "tier0/interface.h"
 #include "tier2/tier2.h"
 
 #include "bitmap/imageformat.h"
