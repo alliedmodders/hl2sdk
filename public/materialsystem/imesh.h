@@ -11,7 +11,7 @@
 #pragma once
 #endif
 
-#include "tier1/interface.h"
+#include "tier0/interface.h"
 #include "materialsystem/imaterial.h"
 #include <float.h>
 #include <string.h>

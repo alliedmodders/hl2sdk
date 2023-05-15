@@ -18,7 +18,7 @@
 #define GAMMA 2.2f
 #define TEXGAMMA 2.2f
 
-#include "tier1/interface.h"
+#include "tier0/interface.h"
 #include "tier1/refcount.h"
 #include "mathlib/vector.h"
 #include "mathlib/vector4d.h"

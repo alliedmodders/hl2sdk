@@ -33,7 +33,7 @@
 #include "tier1/utlstring.h"
 #include "tier1/utlstringmap.h"
 #include "tier1/utlvector.h"
-#include "tier1/interface.h"
+#include "tier0/interface.h"
 #include "mathlib/mathlib.h"
 
 #include "ValveMaya/Undo.h"

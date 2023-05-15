@@ -13,7 +13,7 @@
 #pragma once
 #endif
 
-#include "tier1/interface.h"
+#include "tier0/interface.h"
 #include "appframework/IAppSystem.h"
 #include "bitmap/imageformat.h"
 #include "tier1/utlbuffer.h"

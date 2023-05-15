@@ -17,7 +17,7 @@ class IMatchSession;
 
 #include "appframework/iAppSystem.h"
 
-#include "tier1/interface.h"
+#include "tier0/interface.h"
 #include "keyvalues.h"
 
 #if !defined( _X360 )

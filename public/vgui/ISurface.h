@@ -14,7 +14,7 @@
 
 #include "vgui/VGUI.h"
 #include "vgui/IHTML.h" // CreateHTML, PaintHTML 
-#include "tier1/interface.h"
+#include "tier0/interface.h"
 #include "bitmap/imageformat.h"
 
 #include "appframework/IAppSystem.h"
