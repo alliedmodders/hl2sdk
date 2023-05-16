@@ -122,6 +122,9 @@ struct CPlayerSlot
 	{
 		return _slot;
 	}
+
+	bool operator==( const CPlayerSlot &other ) const { return other._slot == _slot; }
+	bool operator!=( const CPlayerSlot &other ) const { return other._slot != _slot; }
 	
 private:
 	int _slot;
@@ -140,6 +143,9 @@ struct CEntityIndex
 	}
 	
 	int _index;
+
+	bool operator==( const CEntityIndex &other ) const { return other._index == _index; }
+	bool operator!=( const CEntityIndex &other ) const { return other._index != _index; }
 };
 
 //-----------------------------------------------------------------------------
