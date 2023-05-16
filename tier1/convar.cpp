@@ -49,7 +49,7 @@ public:
 
 	static void RegisterCommand( ConCommand *pCmd )
 	{
-		if ( s_bConCommandsRegisterd )
+		if ( s_bConCommandsRegistered )
 		{
 			g_pCVar->RegisterConCommand( pCmd, s_nCVarFlag );
 			if ( !pCmd->GetRef()->handle.IsValid() )
@@ -74,9 +74,9 @@ public:
 
 	static void RegisterAll()
 	{
-		if (!s_bConCommandsRegisterd && g_pCVar)
+		if (!s_bConCommandsRegistered && g_pCVar)
 		{
-			s_bConCommandsRegisterd = true;
+			s_bConCommandsRegistered = true;
 
 			ConCommandRegList* pList = s_pCmdRegList;
 			while ( pList != nullptr )
@@ -106,7 +106,7 @@ private:
 	CUtlVectorFixed<ConCommand, 100> m_Vec;
 	ConCommandRegList* m_pNext = nullptr;
 
-	static bool s_bConCommandsRegisterd;
+	static bool ConCommandRegList::s_bConCommandsRegistered;
 };
 
 #ifdef CONVAR_WORK_FINISHED
@@ -126,14 +126,14 @@ public:
 
 	static bool AreConVarsRegistered()
 	{
-		return s_bConVarsRegisterd;
+		return s_bConVarsRegistered;
 	}
 
 	static void RegisterAll()
 	{
-		if (!s_bConVarsRegisterd && g_pCVar)
+		if (!s_bConVarsRegistered && g_pCVar)
 		{
-			s_bConVarsRegisterd = true;
+			s_bConVarsRegistered = true;
 
 			ConVarRegList* pList = s_pConVarRegList;
 			while (pList != nullptr)
@@ -164,7 +164,7 @@ private:
 	CUtlVectorFixed<ConVar, 100> m_Vec;
 	ConVarRegList* m_pNext = nullptr;
 
-	static bool s_bConVarsRegisterd;
+	static bool ConVarRegList::s_bConVarsRegistered;
 };
 
 static ConVarRegList* s_pConVarRegList = nullptr;
