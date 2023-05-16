@@ -35,9 +35,10 @@
 // Statically constructed list of ConCommandBases, 
 // used for registering them with the ICVar interface
 //-----------------------------------------------------------------------------
-class ConCommandRegList;
 static int64 s_nCVarFlag = 0;
 static bool s_bRegistered = false;
+
+class ConCommandRegList;
 static ConCommandRegList* s_pCmdRegList = nullptr;
 
 class ConCommandRegList
@@ -106,14 +107,19 @@ private:
 	CUtlVectorFixed<ConCommand, 100> m_Vec;
 	ConCommandRegList* m_pNext = nullptr;
 
-	static bool ConCommandRegList::s_bConCommandsRegistered;
+	static bool s_bConCommandsRegistered;
 };
+
+bool ConCommandRegList::s_bConCommandsRegistered = false;
 
 #ifdef CONVAR_WORK_FINISHED
 template <typename ToCheck, std::size_t ExpectedSize, std::size_t RealSize = sizeof(ToCheck)>
 void check_size() {
 	static_assert(ExpectedSize == RealSize, "Size mismatch");
 };
+
+class ConVarRegList;
+static ConVarRegList* s_pConVarRegList = nullptr;
 
 class ConVarRegList
 {
@@ -164,10 +170,10 @@ private:
 	CUtlVectorFixed<ConVar, 100> m_Vec;
 	ConVarRegList* m_pNext = nullptr;
 
-	static bool ConVarRegList::s_bConVarsRegistered;
+	static bool s_bConVarsRegistered;
 };
 
-static ConVarRegList* s_pConVarRegList = nullptr;
+bool ConVarRegList::s_bConVarsRegistered = false;
 #endif // CONVAR_WORK_FINISHED
 
 //-----------------------------------------------------------------------------
