@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -43,12 +43,6 @@
 #define NULL 0
 #endif
 
-#if defined _LINUX && !defined __APPLE__
-typedef unsigned int uintptr_t;
-#elif defined __APPLE__
-#include <stdint.h>
-#endif
-
 #define ExecuteNTimes( nTimes, x )	\
 	{								\
 		static int __executeCount=0;\
@@ -66,7 +60,7 @@ typedef unsigned int uintptr_t;
 template <typename T>
 inline T AlignValue( T val, unsigned alignment )
 {
-	return (T)( ( (uintptr_t)val + alignment - 1 ) & ~( alignment - 1 ) );
+	return (T)( ( (uintp)val + alignment - 1 ) & ~( alignment - 1 ) );
 }
 
 
@@ -122,18 +116,7 @@ FORCEINLINE float fpmax( float a, float b )
 #define TRUE (!FALSE)
 #endif
 
-
-typedef int BOOL;
 typedef int qboolean;
-typedef unsigned long ULONG;
-typedef unsigned char BYTE;
-typedef unsigned char byte;
-typedef unsigned short word;
-
-#if !defined __APPLE__
-typedef unsigned int uintptr_t;
-#endif
-
 
 enum ThreeState_t
 {

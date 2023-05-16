@@ -2371,7 +2371,7 @@ void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &b
 
 			int ival = strtol( value, &pIEnd, 10 );
 			float fval = (float)strtod( value, &pFEnd );
-			bool bOverflow = ( ival == LONG_MAX || ival == LONG_MIN ) && errno == ERANGE;
+			//bool bOverflow = ( ival == LONG_MAX || ival == LONG_MIN ) && errno == ERANGE;
 #ifdef POSIX
 			// strtod supports hex representation in strings under posix but we DON'T
 			// want that support in keyvalues, so undo it here if needed
@@ -2409,7 +2409,7 @@ void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &b
 				dat->m_flValue = fval; 
 				dat->m_iDataType = TYPE_FLOAT;
 			}
-			else if (pIEnd == pSEnd && !bOverflow)
+			else if (pIEnd == pSEnd) //&& !bOverflow)
 			{
 				dat->m_iValue = ival; 
 				dat->m_iDataType = TYPE_INT;
@@ -2540,7 +2540,7 @@ bool KeyValues::WriteAsBinary( CUtlBuffer &buffer )
 			}
 		case TYPE_PTR:
 			{
-				buffer.PutUnsignedInt( (int)dat->m_pValue );
+				buffer.PutPtr( dat->m_pValue );
 			}
 
 		default:
@@ -2644,7 +2644,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer, int nStackDepth )
 			}
 		case TYPE_PTR:
 			{
-				dat->m_pValue = (void*)buffer.GetUnsignedInt();
+				dat->m_pValue = buffer.GetPtr();
 			}
 
 		default:

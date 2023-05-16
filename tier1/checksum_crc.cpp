@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Generic CRC functions
 //
@@ -147,7 +147,7 @@ JustAfew:
     // The low-order two bits of pb and nBuffer in total control the
     // upfront work.
     //
-    nFront = ((unsigned int)pb) & 3;
+    nFront = ((uintp)pb) & 3;
     nBuffer -= nFront;
     switch (nFront)
     {

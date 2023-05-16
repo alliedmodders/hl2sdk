@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2005, Valve Corporation, All rights reserved. =======//
+//====== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. =======//
 //
 // Purpose: 
 //
@@ -181,6 +181,7 @@ public:
 	unsigned int	GetUnsignedInt( );
 	float			GetFloat( );
 	double			GetDouble( );
+	void*			GetPtr( );
 	void			GetString( char* pString, int nMaxChars = 0 );
 	void			Get( void* pMem, int size );
 	void			GetLine( char* pLine, int nMaxChars = 0 );
@@ -254,6 +255,7 @@ public:
 	void			PutUnsignedInt( unsigned int u );
 	void			PutFloat( float f );
 	void			PutDouble( double d );
+	void			PutPtr( void * );
 	void			PutString( const char* pString );
 	void			Put( const void* pMem, int size );
 
@@ -627,7 +629,7 @@ inline void CUtlBuffer::GetTypeBin< float >( float &dest )
 {
 	if ( CheckGet( sizeof( float ) ) )
 	{
-		unsigned int pData = (unsigned int)PeekGet();
+		uintp pData = (uintp)PeekGet();
 		if ( IsX360() && ( pData & 0x03 ) )
 		{
 			// handle unaligned read
@@ -735,6 +737,18 @@ inline double CUtlBuffer::GetDouble( )
 	double d;
 	GetType( d, "%f" );
 	return d;
+}
+
+inline void *CUtlBuffer::GetPtr( )
+{
+	void *p;
+	// LEGACY WARNING: in text mode, PutPtr writes 32 bit pointers in hex, while GetPtr reads 32 or 64 bit pointers in decimal
+#ifndef X64BITS
+	p = ( void* )GetUnsignedInt();
+#else
+	p = ( void* )GetInt64();
+#endif
+	return p;
 }
 
 
@@ -949,6 +963,18 @@ inline void CUtlBuffer::PutDouble( double d )
 	PutType( d, "%f" );
 }
 
+inline void CUtlBuffer::PutPtr( void *p )
+{
+	// LEGACY WARNING: in text mode, PutPtr writes 32 bit pointers in hex, while GetPtr reads 32 or 64 bit pointers in decimal
+	if (!IsText())
+	{
+		PutTypeBin( p );
+	}
+	else
+	{
+		Printf( "0x%p", p );
+	}
+}
 
 //-----------------------------------------------------------------------------
 // Am I a text buffer?

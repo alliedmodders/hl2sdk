@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -328,7 +328,7 @@ void inline SinCos( float radians, float *sine, float *cosine )
 		fstp DWORD PTR [eax]
 	}
 #elif defined( _LINUX ) || defined ( __APPLE__ )
-	register double __cosr, __sinr;
+	double __cosr, __sinr;
  	__asm __volatile__
     		("fsincos"
      	: "=t" (__cosr), "=u" (__sinr) : "0" (radians));
@@ -1548,7 +1548,7 @@ float Hermite_Spline(
 	float t );
 
 
-void Hermite_SplineBasis( float t, float basis[] );
+void Hermite_SplineBasis( float t, float basis[4] );
 
 void Hermite_Spline( 
 	const Quaternion &q0, 

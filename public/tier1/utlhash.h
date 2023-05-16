@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -895,7 +895,7 @@ template<class Data, int NUM_BUCKETS, class HashFuncs> inline UtlHashFixedHandle
 	for ( UtlPtrLinkedListIndex_t iElement = bucket.Head(); iElement != bucket.InvalidIndex(); iElement = bucket.Next( iElement ) )
 	{
 		if ( bucket[iElement].m_uiKey == uiKey )
-			return (UtlHashFixedHandle_t)iElement;
+			return (UtlHashFixedHandle_t)(intp)iElement;
 	}
 
 	return InvalidHandle();

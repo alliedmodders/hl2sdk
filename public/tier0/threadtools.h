@@ -1,4 +1,4 @@
-//========== Copyright © 2005, Valve Corporation, All rights reserved. ========
+//========== Copyright ï¿½ 2005, Valve Corporation, All rights reserved. ========
 //
 // Purpose: A collection of utility classes to simplify thread handling, and
 //			as much as possible contain portability problems. Here avoiding 
@@ -983,7 +983,14 @@ private:
 class TFRWL_ALIGN TT_CLASS CThreadSpinRWLock
 {
 public:
-	CThreadSpinRWLock()	{ COMPILE_TIME_ASSERT( sizeof( LockInfo_t ) == sizeof( int64 ) ); Assert( (int)this % 8 == 0 ); memset( this, 0, sizeof( *this ) ); }
+	CThreadSpinRWLock()
+	{
+		COMPILE_TIME_ASSERT( sizeof( LockInfo_t ) == sizeof( int64 ) );
+		Assert( (int)this % 8 == 0 );
+		m_lockInfo.m_writerId = 0;
+		m_lockInfo.m_nReaders = 0;
+		m_lockInfo.m_i64 = 0;
+	}
 
 	bool TryLockForWrite();
 	bool TryLockForRead();
@@ -1001,10 +1008,14 @@ public:
 	void UnlockWrite() const { const_cast<CThreadSpinRWLock *>(this)->UnlockWrite(); }
 
 private:
-	struct LockInfo_t
+	union LockInfo_t
 	{
-		uint32	m_writerId;
-		int		m_nReaders;
+		struct
+		{
+			uint32	m_writerId;
+			int		m_nReaders;
+		};
+		int64 m_i64;
 	};
 
 	bool AssignIf( const LockInfo_t &newValue, const LockInfo_t &comperand );
@@ -1119,7 +1130,11 @@ protected:
 #endif
 
 	// "Virtual static" facility
+#ifdef PLATFORM_WINDOWS
 	typedef unsigned (__stdcall *ThreadProc_t)( void * );
+#else
+	typedef unsigned (*ThreadProc_t)( void * );
+#endif
 	virtual ThreadProc_t GetThreadProc();
 
 	CThreadMutex m_Lock;
@@ -1141,7 +1156,11 @@ private:
 		bool *        pfInitSuccess;
 	};
 
+#ifdef PLATFORM_WINDOWS
 	static unsigned __stdcall ThreadProc( void * pv );
+#else
+	static void* ThreadProc( void * pv );
+#endif
 
 	// make copy constructor and assignment operator inaccessible
 	CThread( const CThread & );
@@ -1509,8 +1528,8 @@ inline bool CThreadSpinRWLock::TryLockForWrite( const uint32 threadId )
 		return false;
 	}
 
-	static const LockInfo_t oldValue = { 0, 0 };
-	LockInfo_t newValue = { threadId, 0 };
+	static const LockInfo_t oldValue = { {0, 0} };
+	LockInfo_t newValue = { {threadId, 0} };
 	const bool bSuccess = AssignIf( newValue, oldValue );
 #if defined(_X360)
 	if ( bSuccess )
