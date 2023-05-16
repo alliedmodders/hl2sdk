@@ -703,11 +703,7 @@ typedef unsigned int		uint;
 // Returns true if debugger attached, false otherwise
 //-----------------------------------------------------------------------------
 #if defined( PLATFORM_WINDOWS ) || defined( PLATFORM_LINUX ) || defined( PLATFORM_OSX )
-PLATFORM_INTERFACE bool Plat_IsInDebugSessionRaw();
-inline bool Plat_IsInDebugSession()
-{
-	return Plat_IsInDebugSessionRaw();
-}
+PLATFORM_INTERFACE bool Plat_IsInDebugSession();
 PLATFORM_INTERFACE void Plat_DebugString( const tchar * );
 #else
 inline bool Plat_IsInDebugSession() { return false; }
