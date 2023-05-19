@@ -403,7 +403,7 @@ public:
 	void Init();
 	void Shutdown();
 
-	virtual void				Create( const char *pName, const char *pHelpString = 0,
+	void Create( const char *pName, const char *pHelpString = 0,
 		int64 flags = 0 );
 
 	int AutoCompleteSuggest( const char *partial, CUtlVector< CUtlString > &commands );
