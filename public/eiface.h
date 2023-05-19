@@ -177,6 +177,13 @@ abstract_class IVEngineServer2 : public ISource2Engine
 {
 public:
 	virtual EUniverse	GetSteamUniverse() const = 0;
+	
+	virtual void		unk001() = 0;
+	virtual void		unk002() = 0;
+	virtual void		unk003() = 0;
+	virtual void		unk004() = 0;
+	virtual void		unk005() = 0;
+
 
 	// Tell engine to change level ( "changelevel s1\n" or "changelevel2 s1 s2\n" )
 	virtual void		ChangeLevel( const char *s1, const char *s2 ) = 0;
@@ -200,7 +207,7 @@ public:
 	// If preload is specified, the file is loaded into the server/client's cache memory before level startup, otherwise
 	//  it'll only load when actually used (which can cause a disk i/o hitch if it occurs during play of a level).
 	virtual int			PrecacheDecal( const char *name, bool preload = false ) = 0;
-	virtual bool		IsDecalPrecached( const char *s ) const = 0;	
+	virtual bool		IsDecalPrecached( const char *s ) const = 0;
 	virtual int			GetPrecachedDecalIndex ( const char *s ) const = 0;
 
 	virtual void		UnknownFunc3() = 0;
@@ -211,7 +218,7 @@ public:
 	
 	// Returns the server assigned userid for this player.  Useful for logging frags, etc.  
 	//  returns -1 if the edict couldn't be found in the list of players.
-	virtual int			GetPlayerUserId( CPlayerSlot clientSlot ) = 0; 
+	virtual int			GetPlayerUserId( CPlayerSlot clientSlot ) = 0;
 	virtual const char	*GetPlayerNetworkIDString( CPlayerSlot clientSlot ) = 0;
 	// Get stats info interface for a client netchannel
 	virtual INetChannelInfo* GetPlayerNetInfo( CEntityIndex playerIndex ) = 0;
@@ -222,7 +229,7 @@ public:
 	// Given the current PVS(or PAS) and origin, determine which players should hear/receive the message
 	virtual void		Message_DetermineMulticastRecipients( bool usepas, const Vector& origin, CPlayerBitVec& playerbits ) = 0;
 	
-	// Issue a command to the command parser as if it was typed at the server console.	
+	// Issue a command to the command parser as if it was typed at the server console.
 	virtual void		ServerCommand( const char *str ) = 0;
 	// Issue the specified command to the specified client (mimics that client typing the command at the console).
 	virtual void		ClientCommand( CEntityIndex playerIndex, const char *szFmt, ... ) FMTFUNCTION( 3, 4 ) = 0;
@@ -234,17 +241,17 @@ public:
 	// Print szMsg to the client console.
 	virtual void		ClientPrintf( CEntityIndex playerIndex, const char *szMsg ) = 0;
 	
-	virtual bool IsLowViolence() = 0;
-	virtual bool SetHLTVChatBan( int tvslot, bool bBanned ) = 0;
-	virtual bool IsAnyClientLowViolence() = 0;
+	virtual bool		IsLowViolence() = 0;
+	virtual bool		SetHLTVChatBan( int tvslot, bool bBanned ) = 0;
+	virtual bool		IsAnyClientLowViolence() = 0;
 	
 	// Get the current game directory (hl2, tf2, hl1, cstrike, etc.)
-	virtual void        GetGameDir( CBufferString *pOut ) = 0;
+	virtual void        GetGameDir( CBufferString &pOut ) = 0;
 	
 	// Create a bot with the given name.  Player index is -1 if fake client can't be created
 	virtual CEntityIndex	CreateFakeClient( const char *netname ) = 0;
 	
-	// Get a convar keyvalue for s specified client
+	// Get a convar keyvalue for a specified client
 	virtual const char	*GetClientConVarValue( CEntityIndex clientIndex, const char *name ) = 0;
 	
 	// Print a message to the server log file
@@ -303,9 +310,6 @@ public:
 	// Returns the XUID of the specified player. It'll be NULL if the player hasn't connected yet.
 	virtual uint64 GetClientXUID( CEntityIndex clientIndex ) = 0;
 	
-	//Finds or Creates a shared memory space, the returned pointer will automatically be AddRef()ed
-	virtual ISPSharedMemory *GetSinglePlayerSharedMemorySpace( const char *szName, int ent_num = MAX_EDICTS ) = 0;
-	
 	virtual void				*GetPVSForSpawnGroup( SpawnGroupHandle_t spawnGroup ) = 0;
 	virtual SpawnGroupHandle_t	FindSpawnGroupByName( const char *szName ) = 0;
 	
@@ -316,11 +320,40 @@ public:
 	
 	virtual bool IsClientLowViolence( CEntityIndex clientIndex ) = 0;
 	
+#if 0 // Don't really match the binary
 	virtual void DisconnectClient( CEntityIndex clientIndex, /* ENetworkDisconnectionReason */ int reason ) = 0;
 	
 	virtual void GetAllSpawnGroupsWithPVS( CUtlVector<SpawnGroupHandle_t> *spawnGroups, CUtlVector<IPVS *> *pOut ) = 0;
 	
 	virtual void P2PGroupChanged() = 0;
+#endif
+
+	virtual void unk006() = 0;
+	virtual void unk007() = 0;
+	virtual void unk008() = 0;
+	virtual void unk009() = 0;
+	virtual void unk010() = 0;
+	virtual void unk011() = 0;
+	virtual void unk012() = 0;
+	virtual void unk013() = 0;
+
+	virtual void OnKickById( const CCommandContext &context, const CCommand &cmd ) = 0;
+
+	virtual void unk014() = 0;
+	virtual void unk015() = 0;
+	virtual void unk016() = 0;
+	virtual void unk017() = 0;
+	virtual void unk018() = 0;
+	virtual void unk019() = 0;
+	virtual void unk020() = 0;
+	virtual void unk021() = 0;
+	virtual void unk022() = 0;
+	virtual void unk023() = 0;
+
+	virtual void SetClientUpdateRate( CEntityIndex clientIndex, float flUpdateRate ) = 0;
+
+	virtual void unk024() = 0;
+	virtual void unk025() = 0;
 };
 
 abstract_class IServerGCLobby
