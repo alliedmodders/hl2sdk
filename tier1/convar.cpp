@@ -39,39 +39,25 @@ static int64 s_nCVarFlag = 0;
 static bool s_bRegistered = false;
 
 class ConCommandRegList;
-static ConCommandRegList* s_pCmdRegList = nullptr;
-
 class ConCommandRegList
 {
 public:
-	ConCommandRegList()
+	static void RegisterCommand(ConCommand* pCmd)
 	{
-	}
-
-	static void RegisterCommand( ConCommand *pCmd )
-	{
-		if ( s_bConCommandsRegistered )
+		if (s_bConCommandsRegistered)
 		{
-			ConCommandHandle hndl = g_pCVar->RegisterConCommand( pCmd, s_nCVarFlag );
-			if ( !hndl.IsValid() )
+			ConCommandHandle hndl = g_pCVar->RegisterConCommand(pCmd, s_nCVarFlag);
+			if (!hndl.IsValid())
 			{
-				Plat_FatalErrorFunc( "RegisterConCommand: Unknown error registering con command \"%s\"!\n", pCmd->GetName() );
+				Plat_FatalErrorFunc("RegisterConCommand: Unknown error registering con command \"%s\"!\n", pCmd->GetName());
 				DebuggerBreakIfDebugging();
 			}
 
-			pCmd->SetHandle( hndl );
+			pCmd->SetHandle(hndl);
 		}
 		else
 		{
-			ConCommandRegList* pList = s_pCmdRegList;
-			if ( !pList || pList->m_Vec.Count() == 100 )
-			{
-				pList = new ConCommandRegList;
-				pList->m_pNext = s_pCmdRegList;
-				s_pCmdRegList = pList;
-			}
-
-			pList->m_Vec.AddToTail(*pCmd);
+			s_ConCommandRegList.AddToTail(pCmd);
 		}
 	}
 
@@ -81,38 +67,28 @@ public:
 		{
 			s_bConCommandsRegistered = true;
 
-			ConCommandRegList* pList = s_pCmdRegList;
-			while ( pList != nullptr )
+			FOR_EACH_VEC( s_ConCommandRegList, i)
 			{
-				FOR_EACH_VEC( s_pCmdRegList->m_Vec, i )
+				ConCommand *pCmd = s_ConCommandRegList[i];
+				ConCommandHandle hndl = g_pCVar->RegisterConCommand(pCmd, s_nCVarFlag);
+				pCmd->SetHandle(hndl);
+
+				if (!hndl.IsValid())
 				{
-					ConCommand* pCmd = &pList->m_Vec[i];
-					ConCommandHandle hndl = g_pCVar->RegisterConCommand( pCmd, s_nCVarFlag );
-					pCmd->SetHandle( hndl );
-
-					if ( !hndl.IsValid() )
-					{
-						Plat_FatalErrorFunc( "RegisterConCommand: Unknown error registering con command \"%s\"!\n", pCmd->GetName() );
-						DebuggerBreakIfDebugging();
-					}
+					Plat_FatalErrorFunc("RegisterConCommand: Unknown error registering con command \"%s\"!\n", pCmd->GetName());
+					DebuggerBreakIfDebugging();
 				}
-
-				ConCommandRegList* pNext = pList->m_pNext;
-				delete pList;
-				pList = pNext;
 			}
-
-			s_pCmdRegList = nullptr;
 		}
 	}
 private:
-	CUtlVectorFixed<ConCommand, 100> m_Vec;
-	ConCommandRegList* m_pNext = nullptr;
+	static CUtlVector<ConCommand*> s_ConCommandRegList;
 
 	static bool s_bConCommandsRegistered;
 };
 
 bool ConCommandRegList::s_bConCommandsRegistered = false;
+CUtlVector<ConCommand*> ConCommandRegList::s_ConCommandRegList;
 
 #ifdef CONVAR_WORK_FINISHED
 template <typename ToCheck, std::size_t ExpectedSize, std::size_t RealSize = sizeof(ToCheck)>
