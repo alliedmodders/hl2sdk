@@ -52,12 +52,14 @@ public:
 	{
 		if ( s_bConCommandsRegistered )
 		{
-			g_pCVar->RegisterConCommand( pCmd, s_nCVarFlag );
-			if ( !pCmd->GetRef()->handle.IsValid() )
+			ConCommandHandle hndl = g_pCVar->RegisterConCommand( pCmd, s_nCVarFlag );
+			if ( !hndl.IsValid() )
 			{
 				Plat_FatalErrorFunc( "RegisterConCommand: Unknown error registering con command \"%s\"!\n", pCmd->GetName() );
 				DebuggerBreakIfDebugging();
 			}
+
+			pCmd->SetHandle( hndl );
 		}
 		else
 		{
