@@ -18,6 +18,7 @@
 
 #include "tier1/utlmemory.h"
 #include "tier1/byteswap.h"
+#include "tier1/bufferstring.h"
 #include <stdarg.h>
 
 
@@ -161,8 +162,8 @@ public:
 	typedef bool (CUtlBuffer::*UtlBufferOverflowFunc_t)( int nSize );
 
 	// Constructors for growable + external buffers for serialization/unserialization
-	CUtlBuffer( int growSize = 0, int initSize = 0, int nFlags = 0 );
-	CUtlBuffer( const void* pBuffer, int size, int nFlags = 0 );
+	DLL_CLASS_IMPORT CUtlBuffer( int growSize = 0, int initSize = 0, int nFlags = 0 );
+	DLL_CLASS_IMPORT CUtlBuffer( const void* pBuffer, int size, int nFlags = 0 );
 	// This one isn't actually defined so that we catch contructors that are trying to pass a bool in as the third param.
 	CUtlBuffer( const void *pBuffer, int size, bool crap );
 
@@ -170,18 +171,18 @@ public:
 
 	// NOTE: This will assert if you attempt to recast it in a way that
 	// is not compatible. The only valid conversion is binary-> text w/CRLF
-	void			SetBufferType( bool bIsText, bool bContainsCRLF );
+	DLL_CLASS_IMPORT void		SetBufferType( bool bIsText, bool bContainsCRLF );
 
 	// Makes sure we've got at least this much memory
-	void			EnsureCapacity( int num );
+	DLL_CLASS_IMPORT void		EnsureCapacity( int num );
 
 	// Access for direct read into buffer
 	void *			AccessForDirectRead( int nBytes );
 
 	// Attaches the buffer to external memory....
-	void			SetExternalBuffer( void* pMemory, int nSize, int nInitialPut, int nFlags = 0 );
+	DLL_CLASS_IMPORT void		SetExternalBuffer( void* pMemory, int nSize, int nInitialPut, int nFlags = 0 );
 	bool			IsExternallyAllocated() const;
-	void			AssumeMemory( void *pMemory, int nSize, int nInitialPut, int nFlags = 0 );
+	DLL_CLASS_IMPORT void		AssumeMemory( void *pMemory, int nSize, int nInitialPut, int nFlags = 0 );
 	void			*Detach();
 	void*			DetachMemory();
 
@@ -194,9 +195,9 @@ public:
 
 
 	// Controls endian-ness of binary utlbufs - default matches the current platform
-	void			ActivateByteSwapping( bool bActivate );
-	void			SetBigEndian( bool bigEndian );
-	bool			IsBigEndian( void );
+	DLL_CLASS_IMPORT void	ActivateByteSwapping( bool bActivate );
+	DLL_CLASS_IMPORT void	SetBigEndian( bool bigEndian );
+	DLL_CLASS_IMPORT bool	IsBigEndian( void );
 
 	// Resets the buffer; but doesn't free memory
 	void			Clear();
@@ -223,27 +224,27 @@ public:
 	float			GetFloat( );
 	double			GetDouble( );
 	void *			GetPtr();
-	void			GetString( char* pString, int nMaxChars = 0 );
-	void			Get( void* pMem, int size );
-	void			GetLine( char* pLine, int nMaxChars = 0 );
+	DLL_CLASS_IMPORT void	GetString( char* pString, int nMaxChars = 0 );
+	DLL_CLASS_IMPORT void	Get( void* pMem, int size );
+	DLL_CLASS_IMPORT void	GetLine( char* pLine, int nMaxChars = 0 );
 
 	// Used for getting objects that have a byteswap datadesc defined
 	template <typename T> void GetObjects( T *dest, int count = 1 );
 
 	// This will get at least 1 byte and up to nSize bytes. 
 	// It will return the number of bytes actually read.
-	int				GetUpTo( void *pMem, int nSize );
+	DLL_CLASS_IMPORT int	GetUpTo( void *pMem, int nSize );
 
 	// This version of GetString converts \" to \\ and " to \, etc.
 	// It also reads a " at the beginning and end of the string
-	void			GetDelimitedString( CUtlCharConversion *pConv, char *pString, int nMaxChars = 0 );
-	char			GetDelimitedChar( CUtlCharConversion *pConv );
+	DLL_CLASS_IMPORT void	GetDelimitedString( CUtlCharConversion *pConv, char *pString, int nMaxChars = 0 );
+	DLL_CLASS_IMPORT char	GetDelimitedChar( CUtlCharConversion *pConv );
 
 	// This will return the # of characters of the string about to be read out
 	// NOTE: The count will *include* the terminating 0!!
 	// In binary mode, it's the number of characters until the next 0
 	// In text mode, it's the number of characters until the next space.
-	int				PeekStringLength();
+	DLL_CLASS_IMPORT int	PeekStringLength();
 
 	// This version of PeekStringLength converts \" to \\ and " to \, etc.
 	// It also reads a " at the beginning and end of the string
@@ -253,17 +254,17 @@ public:
 	// Specifying false for bActualSize will return the pre-translated number of characters
 	// including the delimiters and the escape characters. So, \n counts as 2 characters when bActualSize == false
 	// and only 1 character when bActualSize == true
-	int				PeekDelimitedStringLength( CUtlCharConversion *pConv, bool bActualSize = true );
+	DLL_CLASS_IMPORT int	PeekDelimitedStringLength( CUtlCharConversion *pConv, bool bActualSize = true );
 
 	// Just like scanf, but doesn't work in binary mode
-	int				Scanf( const char* pFmt, ... );
- 	int				VaScanf( const char* pFmt, va_list list );
+	DLL_CLASS_IMPORT int	Scanf( const char* pFmt, ... );
+	DLL_CLASS_IMPORT int	VaScanf( const char* pFmt, va_list list );
 
 	// Eats white space, advances Get index
-	void			EatWhiteSpace();
+	DLL_CLASS_IMPORT void	EatWhiteSpace();
 
 	// Eats C++ style comments
-	bool			EatCPPComment();
+	DLL_CLASS_IMPORT bool	EatCPPComment();
 
 	// (For text buffers only)
 	// Parse a token from the buffer:
@@ -271,16 +272,18 @@ public:
 	// (skipping whitespace that leads + trails both delimiters).
 	// If successful, the get index is advanced and the function returns true,
 	// otherwise the index is not advanced and the function returns false.
-	bool			ParseToken( const char *pStartingDelim, const char *pEndingDelim, char* pString, int nMaxLen );
+	DLL_CLASS_IMPORT bool	ParseToken( const char *pStartingDelim, const char *pEndingDelim, char *pString, int nMaxLen );
+	DLL_CLASS_IMPORT bool	ParseToken( const char* pStartingDelim, const char* pEndingDelim, CBufferString &str );
 
 	// Advance the get index until after the particular string is found
 	// Do not eat whitespace before starting. Return false if it failed
 	// String test is case-insensitive.
-	bool			GetToken( const char *pToken );
+	DLL_CLASS_IMPORT bool	GetToken( const char *pToken );
 
 	// Parses the next token, given a set of character breaks to stop at
 	// Returns the length of the token parsed in bytes (-1 if none parsed)
-	int				ParseToken( characterset_t *pBreaks, char *pTokenBuf, int nMaxLen, bool bParseComments = true );
+	DLL_CLASS_IMPORT int	ParseToken( const characterset_t *pBreaks, char *pTokenBuf, int nMaxLen, bool bParseComments = true );
+	DLL_CLASS_IMPORT int	ParseToken( const characterset_t* pBreaks, CBufferString &str, bool bParseComments = true );
 
 	// Write stuff in
 	// Binary mode: it'll just write the bits directly in, and strings will be
@@ -297,25 +300,25 @@ public:
 	void			PutFloat( float f );
 	void			PutDouble( double d );
 	void			PutPtr( void * ); // Writes the pointer, not the pointed to
-	void			PutString( const char* pString );
-	void			Put( const void* pMem, int size );
+	DLL_CLASS_IMPORT void	PutString( const char* pString );
+	DLL_CLASS_IMPORT void	Put( const void* pMem, int size );
 
 	// Used for putting objects that have a byteswap datadesc defined
 	template <typename T> void PutObjects( T *src, int count = 1 );
 
 	// This version of PutString converts \ to \\ and " to \", etc.
 	// It also places " at the beginning and end of the string
-	void			PutDelimitedString( CUtlCharConversion *pConv, const char *pString );
-	void			PutDelimitedChar( CUtlCharConversion *pConv, char c );
+	DLL_CLASS_IMPORT void	PutDelimitedString( CUtlCharConversion *pConv, const char *pString );
+	DLL_CLASS_IMPORT void	PutDelimitedChar( CUtlCharConversion *pConv, char c );
 
 	// Just like printf, writes a terminating zero in binary mode
-	void			Printf( const char* pFmt, ... ) FMTFUNCTION( 2, 3 );
-	void			VaPrintf( const char* pFmt, va_list list );
+	DLL_CLASS_IMPORT void	Printf( const char* pFmt, ... ) FMTFUNCTION( 2, 3 );
+	DLL_CLASS_IMPORT void	VaPrintf( const char* pFmt, va_list list );
 
 	// What am I writing (put)/reading (get)?
 	void* PeekPut( int offset = 0 );
 	const void* PeekGet( int offset = 0 ) const;
-	const void* PeekGet( int nMaxSize, int nOffset );
+	DLL_CLASS_IMPORT const void* PeekGet( int nMaxSize, int nOffset );
 
 	// Where am I writing (put)/reading (get)?
 	int TellPut( ) const;
@@ -329,8 +332,8 @@ public:
 	int GetBytesRemaining() const;
 
 	// Change where I'm writing (put)/reading (get)
-	void SeekPut( SeekType_t type, int offset );
-	void SeekGet( SeekType_t type, int offset );
+	DLL_CLASS_IMPORT void SeekPut( SeekType_t type, int offset );
+	DLL_CLASS_IMPORT void SeekGet( SeekType_t type, int offset );
 
 	// Buffer base
 	const void* Base() const;
@@ -358,7 +361,7 @@ public:
 	// Converts a buffer from a CRLF buffer to a CR buffer (and back)
 	// Returns false if no conversion was necessary (and outBuf is left untouched)
 	// If the conversion occurs, outBuf will be cleared.
-	bool ConvertCRLF( CUtlBuffer &outBuf );
+	DLL_CLASS_IMPORT bool ConvertCRLF( CUtlBuffer &outBuf );
 
 	// Push/pop pretty-printing tabs
 	void PushTab();
@@ -376,45 +379,45 @@ protected:
 		MAX_ERROR_FLAG = GET_OVERFLOW,
 	};
 
-	void SetOverflowFuncs( UtlBufferOverflowFunc_t getFunc, UtlBufferOverflowFunc_t putFunc );
+	DLL_CLASS_IMPORT void SetOverflowFuncs( UtlBufferOverflowFunc_t getFunc, UtlBufferOverflowFunc_t putFunc );
 
-	bool OnPutOverflow( int nSize );
-	bool OnGetOverflow( int nSize );
+	DLL_CLASS_IMPORT bool OnPutOverflow( int nSize );
+	DLL_CLASS_IMPORT bool OnGetOverflow( int nSize );
 
 protected:
 	// Checks if a get/put is ok
-	bool CheckPut( int size );
-	bool CheckGet( int size );
+	DLL_CLASS_IMPORT bool CheckPut( int size );
+	DLL_CLASS_IMPORT bool CheckGet( int size );
 
-	void AddNullTermination( );
+	DLL_CLASS_IMPORT void AddNullTermination( );
 
 	// Methods to help with pretty-printing
 	bool WasLastCharacterCR();
 	void PutTabs();
 
 	// Help with delimited stuff
-	char GetDelimitedCharInternal( CUtlCharConversion *pConv );
-	void PutDelimitedCharInternal( CUtlCharConversion *pConv, char c );
+	DLL_CLASS_IMPORT char GetDelimitedCharInternal( CUtlCharConversion *pConv );
+	DLL_CLASS_IMPORT void PutDelimitedCharInternal( CUtlCharConversion *pConv, char c );
 
 	// Default overflow funcs
-	bool PutOverflow( int nSize );
-	bool GetOverflow( int nSize );
+	DLL_CLASS_IMPORT bool PutOverflow( int nSize );
+	DLL_CLASS_IMPORT bool GetOverflow( int nSize );
 
 	// Does the next bytes of the buffer match a pattern?
-	bool PeekStringMatch( int nOffset, const char *pString, int nLen );
+	DLL_CLASS_IMPORT bool	PeekStringMatch( int nOffset, const char *pString, int nLen );
 
 	// Peek size of line to come, check memory bound
-	int	PeekLineLength();
+	DLL_CLASS_IMPORT int	PeekLineLength();
 
 	// How much whitespace should I skip?
-	int PeekWhiteSpace( int nOffset );
+	DLL_CLASS_IMPORT int	PeekWhiteSpace( int nOffset );
 
 	// Checks if a peek get is ok
-	bool CheckPeekGet( int nOffset, int nSize );
+	DLL_CLASS_IMPORT bool	CheckPeekGet( int nOffset, int nSize );
 
 	// Call this to peek arbitrarily long into memory. It doesn't fail unless
 	// it can't read *anything* new
-	bool CheckArbitraryPeekGet( int nOffset, int &nIncrement );
+	DLL_CLASS_IMPORT bool	CheckArbitraryPeekGet( int nOffset, int &nIncrement );
 
 	template <typename T> void GetType( T& dest );
 	template <typename T> void GetTypeBin( T& dest );
@@ -518,7 +521,7 @@ inline CUtlBuffer &operator<<( CUtlBuffer &b, const Vector2D &v )
 class CUtlInplaceBuffer : public CUtlBuffer
 {
 public:
-	CUtlInplaceBuffer( int growSize = 0, int initSize = 0, int nFlags = 0 );
+	DLL_CLASS_IMPORT CUtlInplaceBuffer( int growSize = 0, int initSize = 0, int nFlags = 0 );
 
 	//
 	// Routines returning buffer-inplace-pointers
@@ -554,7 +557,7 @@ public:
 	// @returns	true				if line was successfully read
 	//			false				when EOF is reached or error occurs
 	//
-	bool InplaceGetLinePtr( /* out */ char **ppszInBufferPtr, /* out */ int *pnLineLength );
+	DLL_CLASS_IMPORT bool InplaceGetLinePtr( /* out */ char **ppszInBufferPtr, /* out */ int *pnLineLength );
 
 	//
 	// Determines the line length, advances the "get" pointer offset by the line length,
@@ -578,7 +581,7 @@ public:
 	// @returns	ptr-to-zero-terminated-line		if line was successfully read and buffer modified
 	//			NULL							when EOF is reached or error occurs
 	//
-	char * InplaceGetLinePtr( void );
+	DLL_CLASS_IMPORT char * InplaceGetLinePtr( void );
 };
 
 
