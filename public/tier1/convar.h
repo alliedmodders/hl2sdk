@@ -392,7 +392,7 @@ public:
 		const char *pHelpString = 0, int64 flags = 0, FnCommandCompletionCallback completionFunc = 0 );
 	ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, FnCommandCallbackVoid_t callback,
 		const char *pHelpString = 0, int64 flags = 0, FnCommandCompletionCallback completionFunc = 0 );
-	ConCommand( ConCommandRefAbstract* pReferenceOut, const char* pName, FnCommandCallbackNoContext_t pCallback,
+	ConCommand( ConCommandRefAbstract* pReferenceOut, const char* pName, FnCommandCallbackNoContext_t callback,
 		const char* pHelpString = 0, int64 flags = 0, FnCommandCompletionCallback completionFunc = 0 );
 	ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, ICommandCallback *pCallback,
 		const char *pHelpString = 0, int64 flags = 0, ICommandCompletionCallback *pCommandCompletionCallback = 0 );
@@ -425,10 +425,12 @@ private:
 	class CallbackInfo_t
 	{
 	public:
-		FnCommandCallback_t m_fnCommandCallback;
-		FnCommandCallbackVoid_t m_fnVoidCommandCallback;
-		FnCommandCallbackNoContext_t m_fnContextlessCommandCallback;
-		ICommandCallback* m_pCommandCallback;
+		union {
+			FnCommandCallback_t m_fnCommandCallback;
+			FnCommandCallbackVoid_t m_fnVoidCommandCallback;
+			FnCommandCallbackNoContext_t m_fnContextlessCommandCallback;
+			ICommandCallback* m_pCommandCallback;
+		};
 
 		bool m_bUsingCommandCallbackInterface : 1;
 		bool m_bHasVoidCommandCallback : 1;
@@ -1106,13 +1108,13 @@ private:
 	#define CON_COMMAND_SHARED( name, description ) \
 		static ConCommandRefAbstract name##_ref; \
 		static void name##_callback( const CCommandContext &context, const CCommand &args ); \
-		static ConCommand name##_command_client( &name##_ref, #name "_client", name##_callback, name, description ); \
+		static ConCommand name##_command_client( &name##_ref, #name "_client", name##_callback, description ); \
 		static void name##_callback( const CCommandContext &context, const CCommand &args )
 #else
 	#define CON_COMMAND_SHARED( name, description ) \
 		static ConCommandRefAbstract name##_ref; \
 		static void name##_callback( const CCommandContext &context, const CCommand &args ); \
-		static ConCommand name##_command( &name##_ref, #name, name##_callback, name, description ); \
+		static ConCommand name##_command( &name##_ref, #name, name##_callback, description ); \
 		static void name##_callback( const CCommandContext &context, const CCommand &args )
 #endif
 
