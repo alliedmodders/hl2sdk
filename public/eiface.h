@@ -160,7 +160,7 @@ public:
 	// What is the game timescale multiplied with the host_timescale?
 	virtual float		GetTimescale( void ) const = 0;
 	
-	virtual void		*FindOrCreateWorldSession( const char *, CResourceManifestPrerequisite * ) = 0;
+	virtual void		*FindOrCreateWorldSession( const char *pszWorldName, CResourceManifestPrerequisite * ) = 0;
 	
 	virtual CEntityLump	*GetEntityLumpForTemplate( const char *, bool, const char *, const char * ) = 0;
 	
@@ -218,10 +218,10 @@ public:
 	
 	// Returns the server assigned userid for this player.  Useful for logging frags, etc.  
 	//  returns -1 if the edict couldn't be found in the list of players.
-	virtual int			GetPlayerUserId( CPlayerSlot clientSlot ) = 0;
+	virtual int			GetPlayerUserId( CPlayerSlot clientSlot ) = 0; 
 	virtual const char	*GetPlayerNetworkIDString( CPlayerSlot clientSlot ) = 0;
 	// Get stats info interface for a client netchannel
-	virtual INetChannelInfo* GetPlayerNetInfo( CEntityIndex playerIndex ) = 0;
+	virtual INetChannelInfo* GetPlayerNetInfo( CPlayerSlot nSlot ) = 0;
 	
 	virtual bool		IsUserIDInUse( int userID ) = 0;	// TERROR: used for transitioning
 	virtual int			GetLoadingProgressForUserID( int userID ) = 0;	// TERROR: used for transitioning
@@ -232,36 +232,36 @@ public:
 	// Issue a command to the command parser as if it was typed at the server console.
 	virtual void		ServerCommand( const char *str ) = 0;
 	// Issue the specified command to the specified client (mimics that client typing the command at the console).
-	virtual void		ClientCommand( CEntityIndex playerIndex, const char *szFmt, ... ) FMTFUNCTION( 3, 4 ) = 0;
+	virtual void		ClientCommand( CPlayerSlot nSlot, const char *szFmt, ... ) FMTFUNCTION( 3, 4 ) = 0;
 	
 	// Set the lightstyle to the specified value and network the change to any connected clients.  Note that val must not 
 	//  change place in memory (use MAKE_STRING) for anything that's not compiled into your mod.
 	virtual void		LightStyle( int style, const char *val ) = 0;
 	
 	// Print szMsg to the client console.
-	virtual void		ClientPrintf( CEntityIndex playerIndex, const char *szMsg ) = 0;
+	virtual void		ClientPrintf( CPlayerSlot nSlot, const char *szMsg ) = 0;
 	
 	virtual bool		IsLowViolence() = 0;
 	virtual bool		SetHLTVChatBan( int tvslot, bool bBanned ) = 0;
 	virtual bool		IsAnyClientLowViolence() = 0;
 	
 	// Get the current game directory (hl2, tf2, hl1, cstrike, etc.)
-	virtual void        GetGameDir( CBufferString &pOut ) = 0;
+	virtual void        GetGameDir( CBufferString &gameDir ) = 0;
 	
 	// Create a bot with the given name.  Player index is -1 if fake client can't be created
-	virtual CEntityIndex	CreateFakeClient( const char *netname ) = 0;
+	virtual CPlayerSlot	CreateFakeClient( const char *netname ) = 0;
 	
-	// Get a convar keyvalue for a specified client
-	virtual const char	*GetClientConVarValue( CEntityIndex clientIndex, const char *name ) = 0;
+	// Get a convar keyvalue for s specified client
+	virtual const char	*GetClientConVarValue( CPlayerSlot clientIndex, const char *name ) = 0;
 	
 	// Print a message to the server log file
 	virtual void		LogPrint( const char *msg ) = 0;
 	virtual bool		IsLogEnabled() = 0;
 	
-	virtual bool IsSplitScreenPlayer( CEntityIndex ent_num ) = 0;
-	virtual edict_t *GetSplitScreenPlayerAttachToEdict( CEntityIndex ent_num ) = 0;
-	virtual int	GetNumSplitScreenUsersAttachedToEdict( CEntityIndex ent_num ) = 0;
-	virtual edict_t *GetSplitScreenPlayerForEdict( CEntityIndex ent_num, int nSlot ) = 0;
+	virtual bool IsSplitScreenPlayer( CPlayerSlot player ) = 0;
+	virtual edict_t *GetSplitScreenPlayerAttachToEdict( CPlayerSlot player ) = 0;
+	virtual int	GetNumSplitScreenUsersAttachedToEdict( CPlayerSlot player ) = 0;
+	virtual edict_t *GetSplitScreenPlayerForEdict( CPlayerSlot player, int nSlot ) = 0;
 	
 	// Ret types might be all wrong for these. Haven't researched yet.
 	virtual void	UnloadSpawnGroup( SpawnGroupHandle_t spawnGroup, /*ESpawnGroupUnloadOption*/ int) = 0;
@@ -277,7 +277,7 @@ public:
 	virtual uint32		GetAppID() = 0;
 	
 	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
-	virtual const CSteamID	*GetClientSteamID( CEntityIndex clientIndex ) = 0;
+	virtual const CSteamID	*GetClientSteamID( CPlayerSlot clientIndex ) = 0;
 	
 	// Methods to set/get a gamestats data container so client & server running in same process can send combined data
 	virtual void SetGamestatsData( CGamestatsData *pGamestatsData ) = 0;
@@ -285,7 +285,7 @@ public:
 	
 	// Send a client command keyvalues
 	// keyvalues are deleted inside the function
-	virtual void ClientCommandKeyValues( CEntityIndex client, KeyValues *pCommand ) = 0;
+	virtual void ClientCommandKeyValues( CPlayerSlot client, KeyValues *pCommand ) = 0;
 	
 	// This makes the host run 1 tick per frame instead of checking the system timer to see how many ticks to run in a certain frame.
 	// i.e. it does the same thing timedemo does.
@@ -297,7 +297,7 @@ public:
 	virtual CGlobalVars	*GetServerGlobals() = 0;
 	
 	// Sets a USERINFO client ConVar for a fakeclient
-	virtual void		SetFakeClientConVarValue( CEntityIndex clientIndex, const char *cvar, const char *value ) = 0;
+	virtual void		SetFakeClientConVarValue( CPlayerSlot clientIndex, const char *cvar, const char *value ) = 0;
 	
 	virtual CSharedEdictChangeInfo* GetSharedEdictChangeInfo() = 0;
 	
@@ -305,10 +305,10 @@ public:
 	virtual IAchievementMgr *GetAchievementMgr() = 0;
 	
 	// Fill in the player info structure for the specified player index (name, model, etc.)
-	virtual bool GetPlayerInfo( CEntityIndex ent_num, google::protobuf::Message &info ) = 0;
+	virtual bool GetPlayerInfo( CPlayerSlot clientIndex, google::protobuf::Message &info ) = 0;
 	
 	// Returns the XUID of the specified player. It'll be NULL if the player hasn't connected yet.
-	virtual uint64 GetClientXUID( CEntityIndex clientIndex ) = 0;
+	virtual uint64 GetClientXUID( CPlayerSlot clientIndex ) = 0;
 	
 	virtual void				*GetPVSForSpawnGroup( SpawnGroupHandle_t spawnGroup ) = 0;
 	virtual SpawnGroupHandle_t	FindSpawnGroupByName( const char *szName ) = 0;
