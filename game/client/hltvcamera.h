@@ -10,7 +10,7 @@
 #pragma once
 #endif
 
-#include "gameeventlistener.h"
+#include "GameEventListener.h"
 
 class C_HLTVCamera : CGameEventListener
 {

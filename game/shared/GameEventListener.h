@@ -13,6 +13,8 @@
 
 #include "igameevents.h"
 
+extern IGameEventManager2* gameeventmanager;
+
 // A safer method than inheriting straight from IGameEventListener2.
 // Avoids requiring the user to remove themselves as listeners in 
 // their deconstructor, and sets the serverside variable based on
@@ -22,10 +24,12 @@ class CGameEventListener : public IGameEventListener2
 public:
 	CGameEventListener() : m_bRegisteredForEvents(false)
 	{
+		m_nDebugID = EVENT_DEBUG_ID_INIT;
 	}
 
 	~CGameEventListener()
 	{
+		m_nDebugID = EVENT_DEBUG_ID_SHUTDOWN;
 		StopListeningForAllEvents();
 	}
 
@@ -47,13 +51,17 @@ public:
 		// remove me from list
 		if ( m_bRegisteredForEvents )
 		{
-			gameeventmanager->RemoveListener( this );
+			if (gameeventmanager)
+				gameeventmanager->RemoveListener(this);
+
 			m_bRegisteredForEvents = false;
 		}
 	}
 
 	// Intentionally abstract
 	virtual void FireGameEvent( IGameEvent *event ) = 0;
+	int m_nDebugID;
+	virtual int GetEventDebugID(void) { return m_nDebugID; }
 
 private:
 

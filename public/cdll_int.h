@@ -507,10 +507,11 @@ public:
 abstract_class IBaseClientDLL
 {
 public:
-	// Called once when the client DLL is loaded
-	virtual int				Init( CreateInterfaceFn appSystemFactory, 
-									CreateInterfaceFn physicsFactory,
-									CGlobalVarsBase *pGlobals ) = 0;
+	// Connect appsystem components, get global interfaces, don't run any other init code
+	virtual int				Connect( CreateInterfaceFn appSystemFactory, CGlobalVarsBase *pGlobals ) = 0;
+
+	// run other init code here
+	virtual int				Init( CreateInterfaceFn appSystemFactory, CGlobalVarsBase *pGlobals ) = 0;
 
 	virtual void			PostInit() = 0;
 
@@ -661,7 +662,7 @@ public:
 
 };
 
-#define CLIENT_DLL_INTERFACE_VERSION		"VClient015"
+#define CLIENT_DLL_INTERFACE_VERSION		"VClient016"
 
 //-----------------------------------------------------------------------------
 // Purpose: Interface exposed from the client .dll back to the engine for specifying shared .dll IAppSystems (e.g., ISoundEmitterSystem)
