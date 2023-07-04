@@ -13,7 +13,7 @@
 
 #include <vgui_controls/EditablePanel.h>
 #include <game/client/iviewport.h>
-#include "gameeventlistener.h"
+#include "GameEventListener.h"
 
 #define TYPE_NOTEAM			0	// NOTEAM must be zero :)
 #define TYPE_TEAM			1	// a section for a single team	
