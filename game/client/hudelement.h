@@ -13,7 +13,7 @@
 #include "hud.h"
 #include "hud_element_helper.h"
 #include "networkvar.h"
-#include "gameeventlistener.h"
+#include "GameEventListener.h"
 #include "tier0/memdbgon.h"
 #undef new
 

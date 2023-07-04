@@ -13,7 +13,7 @@
 #endif
 
 #include "iclientmode.h"
-#include "gameeventlistener.h"
+#include "GameEventListener.h"
 #include <baseviewport.h>
 
 class CBaseHudChat;

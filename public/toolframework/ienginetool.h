@@ -53,6 +53,9 @@ public:
 	// Take over input
 	virtual void		ShowCursor( bool show ) = 0;
 	virtual bool		IsCursorVisible() const = 0;
+
+	// If module not already loaded, loads it and optionally switches to first tool in module.  Returns false if load failed or tool already loaded
+	virtual bool		LoadToolModule(char const* pToolModule, bool bSwitchToFirst) = 0;
 };
 
 #define VENGINETOOLFRAMEWORK_INTERFACE_VERSION	"VENGINETOOLFRAMEWORK003"
