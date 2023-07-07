@@ -47,7 +47,7 @@ public:
 	// Install a global change callback (to be called when any convar changes) 
 	virtual void			InstallGlobalChangeCallback( FnChangeCallback_t callback ) = 0;
 	virtual void			RemoveGlobalChangeCallback( FnChangeCallback_t callback ) = 0;
-	virtual void			CallGlobalChangeCallbacks( ConVarRef *var, CSplitScreenSlot nSlot, const char *pOldString, float flOldValue ) = 0;
+	virtual void			CallGlobalChangeCallbacks( ConVarRefAbstract *var, CSplitScreenSlot nSlot, const char *pOldString, float flOldValue ) = 0;
 
 	// Reverts cvars which contain a specific flag
 	virtual void			RevertFlaggedConVars( int nFlag ) = 0;
@@ -68,6 +68,8 @@ public:
 
 	virtual characterset_t	GetCharacterSet( void ) = 0;
 	virtual void			SetConVarsFromGameInfo( KeyValues *pKV ) = 0;
+
+	virtual void	unk2() = 0;
 
 	// Register, unregister vars
 	virtual void	RegisterConVar( ConVar *pConVar, int64 nAdditionalFlags, ConVarHandle &pCvarRef, ConVar &pCvar ) = 0;
