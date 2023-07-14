@@ -19,9 +19,8 @@
 #include "tier0/platform.h"
 
 #include "tier0/memalloc.h"
-#include "tier0/memdbgon.h"
-
 #include "mathlib/mathlib.h"
+#include "tier0/memdbgon.h"
 
 #ifdef _MSC_VER
 #pragma warning (disable:4100)
