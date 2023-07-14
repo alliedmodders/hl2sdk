@@ -448,6 +448,7 @@ public:
 #endif
 	float w;	// this space is used anyway
 
+#if !defined(NO_MALLOC_OVERRIDE)
 	void* operator new[] ( size_t nSize)
 	{
 		return MemAlloc_AllocAligned(nSize, 16);
@@ -505,6 +506,7 @@ public:
 	{
 		MemAlloc_FreeAligned(p, pFileName, nLine);
 	}
+#endif
 } ALIGN16_POST;
 
 //-----------------------------------------------------------------------------
@@ -1817,6 +1819,7 @@ public:
 
 #endif
 
+#if !defined(NO_MALLOC_OVERRIDE)
 	void* operator new[] ( size_t nSize)
 	{
 		return MemAlloc_AllocAligned(nSize, 16);
@@ -1870,10 +1873,11 @@ public:
 		MemAlloc_FreeAligned(p, pFileName, nLine);
 	}
 
-	void operator delete ( void* p, int /*nBlockUse*/, const char *pFileName, int nLine)  
+	void operator delete (void *p, int /*nBlockUse*/, const char *pFileName, int nLine)
 	{
 		MemAlloc_FreeAligned(p, pFileName, nLine);
 	}
+#endif
 } ALIGN16_POST;
 
 

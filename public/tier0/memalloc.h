@@ -36,6 +36,10 @@
 // Undefine this if using a compiler lacking threadsafe RTTI (like vc6)
 #define MEM_DEBUG_CLASSNAME 1
 
+// GAMMACASE: This forces any debug usage to be disabled, due to the IMemAlloc structure being incorrect
+// which causes random crashes if used! Added until proper solution is made.
+#define PREVENT_DEBUG_USAGE
+
 #include <stddef.h>
 #if defined( OSX )
 #include <malloc/malloc.h>
@@ -63,13 +67,15 @@ typedef size_t (*MemAllocFailHandler_t)( size_t );
 abstract_class IMemAlloc
 {
 private:
+	virtual ~IMemAlloc() = 0;
+
 	// Release versions
 	virtual void *Alloc( size_t nSize ) = 0;
 public:
 	virtual void *Realloc( void *pMem, size_t nSize ) = 0;
 
 	virtual void Free( void *pMem ) = 0;
-    virtual void *Expand_NoLongerSupported( void *pMem, size_t nSize ) = 0;
+    // virtual void *Expand_NoLongerSupported( void *pMem, size_t nSize ) = 0;
 
 private:
 	// Debug versions
@@ -77,10 +83,14 @@ private:
 public:
     virtual void *Realloc( void *pMem, size_t nSize, const char *pFileName, int nLine ) = 0;
     virtual void  Free( void *pMem, const char *pFileName, int nLine ) = 0;
-    virtual void *Expand_NoLongerSupported( void *pMem, size_t nSize, const char *pFileName, int nLine ) = 0;
+    // virtual void *Expand_NoLongerSupported( void *pMem, size_t nSize, const char *pFileName, int nLine ) = 0;
 
 	inline void *IndirectAlloc( size_t nSize )										{ return Alloc( nSize ); }
 	inline void *IndirectAlloc( size_t nSize, const char *pFileName, int nLine )	{ return Alloc( nSize, pFileName, nLine ); }
+
+	// =================================================================
+	// GAMMACASE: Interface structure beyond this point is incorrect and any usage of the functions below should be discouraged!!!
+	// =================================================================
 
 	// Returns size of a particular allocation
 	virtual size_t GetSize( void *pMem ) = 0;
@@ -245,7 +255,6 @@ extern const char *g_pszModule;
 #define MemAlloc_AllocAligned( s, a )	MemAlloc_AllocAlignedUnattributed( s, a )
 #endif
 
-
 inline void *MemAlloc_ReallocAligned( void *ptr, size_t size, size_t align )
 {
 	if ( !ValueIsPowerOfTwo( align ) )
@@ -328,7 +337,6 @@ inline size_t MemAlloc_GetSizeAligned( void *pMemBlock )
 	return g_pMemAlloc->GetSize( pAlloc ) - ( (byte *)pMemBlock - (byte *)pAlloc );
 }
 
-
 struct aligned_tmp_t
 {
 	// empty base class
@@ -368,7 +376,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-#if (defined(_DEBUG) || defined(USE_MEM_DEBUG))
+#if (defined(_DEBUG) || defined(USE_MEM_DEBUG)) && !defined(PREVENT_DEBUG_USAGE)
 #define MEM_ALLOC_CREDIT_(tag)	CMemAllocAttributeAlloction memAllocAttributeAlloction( tag, __LINE__ )
 #define MemAlloc_PushAllocDbgInfo( pszFile, line ) g_pMemAlloc->PushAllocDbgInfo( pszFile, line )
 #define MemAlloc_PopAllocDbgInfo() g_pMemAlloc->PopAllocDbgInfo()
@@ -402,7 +410,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-#if defined(MSVC) && ( defined(_DEBUG) || defined(USE_MEM_DEBUG) )
+#if defined(MSVC) && ( defined(_DEBUG) || defined(USE_MEM_DEBUG) ) && !defined(PREVENT_DEBUG_USAGE)
 
 	#pragma warning(disable:4290)
 	#pragma warning(push)
@@ -442,7 +450,7 @@ public:
 
 //-----------------------------------------------------------------------------
 
-#if (defined(_DEBUG) || defined(USE_MEM_DEBUG))
+#if (defined(_DEBUG) || defined(USE_MEM_DEBUG)) && !defined(PREVENT_DEBUG_USAGE)
 struct MemAllocFileLine_t
 {
 	const char *pszFile;
