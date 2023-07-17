@@ -72,7 +72,8 @@ typedef void * FileHandle_t;
 class KeyValues
 {
 public:
-	KeyValues( const char *setName );
+	// NULL kvsystem would use the default global kv system instead.
+	KeyValues( const char *setName, IKeyValuesSystem *kvsystem = NULL, bool unkState = false );
 
 	//
 	// AutoDelete class to automatically free the keyvalues.
