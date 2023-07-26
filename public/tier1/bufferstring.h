@@ -67,11 +67,11 @@ public:
 public:
 	DLL_CLASS_IMPORT const char *AppendConcat(int, const char * const *, const int *, bool bIgnoreAlignment = false);
 	DLL_CLASS_IMPORT const char *AppendConcat(const char *, const char *, ...);
-	DLL_CLASS_IMPORT const char *AppendConcatV(const char *, const char *, char *, bool bIgnoreAlignment = false);
+	DLL_CLASS_IMPORT const char *AppendConcatV(const char *, const char *, va_list, bool bIgnoreAlignment = false);
 	DLL_CLASS_IMPORT const char *Concat(const char *, const char *, ...);
 
 	DLL_CLASS_IMPORT int AppendFormat(const char *pFormat, ...);
-	DLL_CLASS_IMPORT int AppendFormatV(const char *pFormat, char *pData);
+	DLL_CLASS_IMPORT int AppendFormatV(const char *pFormat, va_list pData);
 
 	DLL_CLASS_IMPORT const char *AppendRepeat(char cChar, int nChars, bool bIgnoreAlignment = false);
 
@@ -188,6 +188,13 @@ public:
 	DLL_CLASS_IMPORT const char *TruncateAt(const char *pStr, bool bIgnoreAlignment = false);
 
 	DLL_CLASS_IMPORT int UnicodeCaseConvert(int, EStringConvertErrorPolicy eErrorPolicy);
+
+	// Casts to CBufferStringGrowable. Very dirty solution until someone figures out the sane one.
+	template<size_t MAX_SIZE = 8, bool AllowHeapAllocation = true, typename T = CBufferStringGrowable<MAX_SIZE, AllowHeapAllocation>>
+	T *ToGrowable()
+	{
+		return (T *)this;
+	}
 };
 
 template<size_t MAX_SIZE, bool AllowHeapAllocation = true>

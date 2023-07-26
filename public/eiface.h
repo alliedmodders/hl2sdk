@@ -26,6 +26,7 @@
 #include "tier1/utlstring.h"
 #include "tier1/bufferstring.h"
 #include <steam/steamclientpublic.h>
+#include "playerslot.h"
 
 //-----------------------------------------------------------------------------
 // forward declarations
@@ -109,25 +110,6 @@ struct bbox_t
 {
 	Vector mins;
 	Vector maxs;
-};
-
-struct CPlayerSlot
-{
-	CPlayerSlot( int slot )
-	{
-		_slot = slot;
-	}
-	
-	int Get() const
-	{
-		return _slot;
-	}
-
-	bool operator==( const CPlayerSlot &other ) const { return other._slot == _slot; }
-	bool operator!=( const CPlayerSlot &other ) const { return other._slot != _slot; }
-	
-private:
-	int _slot;
 };
 
 struct CEntityIndex
@@ -556,7 +538,7 @@ public:
 
 	// Client is going active
 	// If bLoadGame is true, don't spawn the player because its state is already setup.
-	virtual void			ClientActive( CPlayerSlot slot, bool /*bLoadGame??*/, const char */*pszName??*/, int ) = 0;
+	virtual void			ClientActive( CPlayerSlot slot, bool /*bLoadGame??*/, const char * /*pszName??*/, int ) = 0;
 	
 	virtual void			ClientFullyConnect( CPlayerSlot slot ) = 0;
 

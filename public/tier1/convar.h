@@ -21,6 +21,7 @@
 #include "tier1/utlstring.h"
 #include "Color.h"
 #include "mathlib/vector4d.h"
+#include "playerslot.h"
 
 #ifdef _WIN32
 #define FORCEINLINE_CVAR FORCEINLINE
@@ -66,18 +67,25 @@ private:
 
 class CCommandContext
 {
-	CCommandContext(int nTarget)
+public:
+	CCommandContext(CommandTarget_t nTarget, CPlayerSlot nSlot) :
+		m_nTarget(nTarget), m_nPlayerSlot(nSlot)
 	{
-		m_nTarget = nTarget;
 	}
 
-	int Get() const
+	CommandTarget_t GetTarget() const
 	{
 		return m_nTarget;
 	}
 
+	CPlayerSlot GetPlayerSlot() const
+	{
+		return m_nPlayerSlot;
+	}
+
 private:
-	int m_nTarget;
+	CommandTarget_t m_nTarget;
+	CPlayerSlot m_nPlayerSlot;
 };
 
 class ALIGN8 ConCommandHandle
@@ -169,6 +177,7 @@ struct CSplitScreenSlot
 
 enum EConVarType : short
 {
+	EConVarType_Invalid = -1,
 	EConVarType_Bool,
 	EConVarType_Int16,
 	EConVarType_UInt16,
@@ -353,7 +362,7 @@ inline const char **CCommand::ArgV() const
 
 inline const char *CCommand::ArgS() const
 {
-	return m_nArgv0Size ? *(const char **)(m_ArgSBuffer.Base() + m_nArgv0Size) : "";
+	return m_nArgv0Size ? (m_ArgSBuffer.Base() + m_nArgv0Size) : "";
 }
 
 inline const char *CCommand::GetCommandString() const

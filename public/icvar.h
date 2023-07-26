@@ -45,8 +45,8 @@ public:
 	virtual void				DispatchConCommand( ConCommandHandle cmd, const CCommandContext &ctx, const CCommand &args ) = 0;
 
 	// Install a global change callback (to be called when any convar changes) 
-	virtual void			InstallGlobalChangeCallback( FnChangeCallback_t callback ) = 0;
-	virtual void			RemoveGlobalChangeCallback( FnChangeCallback_t callback ) = 0;
+	virtual void			InstallGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
+	virtual void			RemoveGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
 	virtual void			CallGlobalChangeCallbacks( ConVarRefAbstract *var, CSplitScreenSlot nSlot, const char *pOldString, float flOldValue ) = 0;
 
 	// Reverts cvars which contain a specific flag
@@ -79,7 +79,7 @@ public:
 	// Register, unregister commands
 	virtual ConCommandHandle	RegisterConCommand( ConCommand *pCmd, int64 nAdditionalFlags = 0 ) = 0;
 	virtual void				UnregisterConCommand( ConCommandHandle handle ) = 0;
-	virtual ConCommand*		GetCommand( ConCommandHandle handle ) = 0;
+	virtual ConCommand*			GetCommand( ConCommandHandle handle ) = 0;
 
 	virtual void QueueThreadSetValue( ConVarRefAbstract *ref, CSplitScreenSlot nSlot, CVValue_t *value ) = 0;
 };

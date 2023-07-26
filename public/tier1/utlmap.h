@@ -30,7 +30,7 @@
 #define FOR_EACH_MAP_FAST( mapName, iteratorName ) \
 	for ( int iteratorName = 0; iteratorName < mapName.MaxElement(); ++iteratorName ) if ( !mapName.IsValidIndex( iteratorName ) ) continue; else
 
-template <typename K, typename T, typename I = unsigned short> 
+template <typename K, typename T, typename I = short unsigned int, typename LF = bool (*)(const K&, const K&)>
 class CUtlMap
 {
 public:
@@ -40,7 +40,7 @@ public:
 
 	// Less func typedef
 	// Returns true if the first parameter is "less" than the second
-	typedef bool (*LessFunc_t)( const KeyType_t &, const KeyType_t & );
+	typedef LF LessFunc_t;
 	
 	// constructor, destructor
 	// Left at growSize = 0, the memory will first allocate 1 element and double in size

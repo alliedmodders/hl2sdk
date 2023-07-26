@@ -14,6 +14,7 @@
 #include "inetchannelinfo.h"
 #include "tier1/bitbuf.h"
 #include "tier1/netadr.h"
+#include "tier1/utldelegate.h"
 #include <eiface.h>
 
 class	IDemoRecorderBase;

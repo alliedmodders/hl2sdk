@@ -770,7 +770,7 @@ public:
 
 	virtual void			GetSearchPathsForPathID( const char*, GetSearchPathTypes_t, CUtlVector<CUtlString> & ) = 0;
 
-	virtual void			MarkCorrupt( bool, const char* ) = 0;
+	virtual void			MarkContentCorrupt( bool bMissingFilesOnly, const char* pFile ) = 0;
 };
 
 //-----------------------------------------------------------------------------
