@@ -17,6 +17,21 @@
 
 class IHandleEntity;
 
+// Represents EHANDLE2 class
+// TODO: GAMMACASE: Replace old CBaseHandle with this
+class CEntityHandle
+{
+public:
+	union
+	{
+		uint32 m_Index;
+		struct
+		{
+			uint32 m_EntityIndex : 15;
+			uint32 m_Serial : 17;
+		} m_Parts;
+	};
+};
 
 // -------------------------------------------------------------------------------------------------- //
 // CBaseHandle.
