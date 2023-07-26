@@ -40,6 +40,11 @@ inline size_t strnlen(const char *s, size_t n)
 
 #endif
 
+class CUtlStringToken
+{
+  unsigned int m_nHashCode;
+};
+
 //-----------------------------------------------------------------------------
 // Simple string class. 
 // NOTE: This is *not* optimal! Use in tools, but not runtime code
