@@ -64,6 +64,12 @@ private:
 private:
 	static const uint32 kInvalidConVarHandle = 0xFFFFFFFF;
 } ALIGN8_POST;
+enum CommandTarget_t
+{
+	CT_NO_TARGET = -1,
+	CT_FIRST_SPLITSCREEN_CLIENT = 0,
+	CT_LAST_SPLITSCREEN_CLIENT = 3,
+};
 
 class CCommandContext
 {
