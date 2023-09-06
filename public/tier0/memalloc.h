@@ -50,7 +50,11 @@
 #define offsetof(s,m)	(size_t)&(((s *)0)->m)
 #endif
 
-#include "tier0/mem.h"
+#ifdef TIER0_DLL_EXPORT
+#  define MEM_INTERFACE DLL_EXPORT
+#else
+#  define MEM_INTERFACE DLL_IMPORT
+#endif
 
 #if !defined(STEAM) && !defined(NO_MALLOC_OVERRIDE)
 
