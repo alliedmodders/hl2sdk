@@ -120,7 +120,7 @@ extern const char *g_pszModule;
 #if defined(USE_MEM_DEBUG)
 
 #define malloc(s)				MemAlloc_Alloc( s, __FILE__, __LINE__)
-#define realloc(p, s)			g_pMemAlloc->Realloc( p, s, __FILE__, __LINE__ )
+#define realloc(p, s)			g_pMemAlloc->Realloc( p, s/*, __FILE__, __LINE__*/ )
 #define _aligned_malloc( s, a )	MemAlloc_AllocAlignedFileLine( s, a, __FILE__, __LINE__ )
 
 #define _malloc_dbg(s, t, f, l)	WHYCALLINGTHISDIRECTLY(s)

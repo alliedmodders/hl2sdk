@@ -81,20 +81,23 @@ public:
 	virtual void Free( void *pMem ) = 0;
     // virtual void *Expand_NoLongerSupported( void *pMem, size_t nSize ) = 0;
 
-private:
-	// Debug versions
-    virtual void *Alloc( size_t nSize, const char *pFileName, int nLine ) = 0;
-public:
-    virtual void *Realloc( void *pMem, size_t nSize, const char *pFileName, int nLine ) = 0;
-    virtual void  Free( void *pMem, const char *pFileName, int nLine ) = 0;
-    // virtual void *Expand_NoLongerSupported( void *pMem, size_t nSize, const char *pFileName, int nLine ) = 0;
-
-	inline void *IndirectAlloc( size_t nSize )										{ return Alloc( nSize ); }
-	inline void *IndirectAlloc( size_t nSize, const char *pFileName, int nLine )	{ return Alloc( nSize, pFileName, nLine ); }
-
 	// =================================================================
 	// GAMMACASE: Interface structure beyond this point is incorrect and any usage of the functions below should be discouraged!!!
 	// =================================================================
+
+	// GAMMACASE: Seems like the debug versions are gone now, or atleast they aren't here anymore
+	// leaving them all here for future reference, but these shouldn't be used anymore!
+	// renamed with a postfix "2" otherwise they would be placed near the first functions in the virtual list
+private:
+	// Debug versions
+    virtual void *Alloc2( size_t nSize, const char *pFileName, int nLine ) = 0;
+public:
+    virtual void *Realloc2( void *pMem, size_t nSize, const char *pFileName, int nLine ) = 0;
+    virtual void  Free2( void *pMem, const char *pFileName, int nLine ) = 0;
+    // virtual void *Expand_NoLongerSupported( void *pMem, size_t nSize, const char *pFileName, int nLine ) = 0;
+
+	inline void *IndirectAlloc( size_t nSize )										{ return Alloc( nSize ); }
+	// inline void *IndirectAlloc( size_t nSize, const char *pFileName, int nLine )	{ return Alloc( nSize, pFileName, nLine ); }
 
 	// Returns size of a particular allocation
 	virtual size_t GetSize( void *pMem ) = 0;
@@ -189,7 +192,7 @@ inline void *MemAlloc_Alloc( size_t nSize )
 
 inline void *MemAlloc_Alloc( size_t nSize, const char *pFileName, int nLine )
 { 
-	return g_pMemAlloc->IndirectAlloc( nSize, pFileName, nLine );
+	return g_pMemAlloc->IndirectAlloc( nSize /*, pFileName, nLine*/ );
 }
 #endif
 inline void MemAlloc_Free( void *ptr )
@@ -198,7 +201,7 @@ inline void MemAlloc_Free( void *ptr )
 }
 inline void MemAlloc_Free( void *ptr, const char *pFileName, int nLine )
 {
-	g_pMemAlloc->Free( ptr, pFileName, nLine );
+	g_pMemAlloc->Free( ptr /*, pFileName, nLine*/ );
 }
 
 //-----------------------------------------------------------------------------
@@ -321,7 +324,7 @@ inline void MemAlloc_FreeAligned( void *pMemBlock, const char *pszFile, int nLin
 
 	// pAlloc is the pointer to the start of memory block
 	pAlloc = *( (void **)pAlloc );
-	g_pMemAlloc->Free( pAlloc, pszFile, nLine );
+	g_pMemAlloc->Free( pAlloc/*, pszFile, nLine*/ );
 }
 
 inline size_t MemAlloc_GetSizeAligned( void *pMemBlock )
