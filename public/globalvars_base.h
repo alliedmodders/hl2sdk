@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -11,7 +11,13 @@
 #pragma once
 #endif
 
-class CSaveRestoreData;
+enum GlobalVarsUsageWarning_t
+{
+	GV_RENDERTIME_CALLED_DURING_SIMULATION,
+	GV_CURTIME_CALLED_DURING_RENDERING
+};
+
+typedef void (*FnGlobalVarsWarningFunc)(GlobalVarsUsageWarning_t);
 
 //-----------------------------------------------------------------------------
 // Purpose: Global variables used by shared code
@@ -20,24 +26,29 @@ class CGlobalVarsBase
 {
 public:
 
-	CGlobalVarsBase( bool bIsClient );
-	
-	// This can be used to filter debug output or to catch the client or server in the act.
-	bool IsClient() const;
-
-	// for encoding m_flSimulationTime, m_flAnimTime
-	int GetNetworkBase( int nTick, int nEntity );
+	CGlobalVarsBase();
 
 public:
-	
 	// Absolute time (per frame still - Use Plat_FloatTime() for a high precision real time 
 	//  perf clock, but not that it doesn't obey host_timescale/host_framerate)
-	float			realtime;
+	float realtime;
 	// Absolute frame counter - continues to increase even if game is paused
-	int				framecount;
+	int framecount;
+
 	// Non-paused frametime
-	float			absoluteframetime;
-        float			absoluteframestarttimestddev;
+	float absoluteframetime;
+	float absoluteframestarttimestddev;
+
+	int maxClients;
+
+	// zer0k: Command queue related
+	int unknown1;
+	int unknown2;
+
+	FnGlobalVarsWarningFunc m_pfnWarningFunc;
+
+	// Time spent on last server or client frame (has nothing to do with think intervals)
+	float frametime;
 
 	// Current time 
 	//
@@ -54,57 +65,24 @@ public:
 	//
 	//   - During prediction, this is based on the client's current tick:
 	//     [client_current_tick * tick_interval]
-	float			curtime;
-	
-	// Time spent on last server or client frame (has nothing to do with think intervals)
-	float			frametime;
-	// current maxplayers setting
-	int				maxClients;
+	float curtime;
+	float rendertime;
+
+	// zer0k: Command queue + interpolation related 
+	float unknown3;
+	float unknown4;
+
+	bool m_bInSimulation;
+	bool m_bEnableAssertions;
 
 	// Simulation ticks - does not increase when game is paused
-	int				tickcount;
-
+	int tickcount;
 	// Simulation tick interval
-	float			interval_per_tick;
-
-	// interpolation amount ( client-only ) based on fraction of next tick which has elapsed
-	float			interpolation_amount;
-	int				simTicksThisFrame;
-
-	int				network_protocol;
-
-	// current saverestore data
-	CSaveRestoreData *pSaveData;
-
-private:
-	// Set to true in client code.
-	bool			m_bClient;
-
-	// 100 (i.e., tickcount is rounded down to this base and then the "delta" from this base is networked
-	int				nTimestampNetworkingBase;   
-	// 32 (entindex() % nTimestampRandomizeWindow ) is subtracted from gpGlobals->tickcount to set the networking basis, prevents
-	//  all of the entities from forcing a new PackedEntity on the same tick (i.e., prevents them from getting lockstepped on this)
-	int				nTimestampRandomizeWindow;  
-	
+	float interval_per_tick;
 };
 
-inline int CGlobalVarsBase::GetNetworkBase( int nTick, int nEntity )
+inline CGlobalVarsBase::CGlobalVarsBase()
 {
-	int nEntityMod = nEntity % nTimestampRandomizeWindow;
-	int nBaseTick = nTimestampNetworkingBase * (int)( ( nTick - nEntityMod ) / nTimestampNetworkingBase );
-	return nBaseTick;
-}
-
-inline CGlobalVarsBase::CGlobalVarsBase( bool bIsClient ) :
-	m_bClient( bIsClient ),
-	nTimestampNetworkingBase( 100 ),
-	nTimestampRandomizeWindow( 32 )
-{
-}
-
-inline bool CGlobalVarsBase::IsClient() const
-{
-	return m_bClient;
 }
 
 #endif // GLOBALVARS_BASE_H
