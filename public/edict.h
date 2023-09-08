@@ -43,16 +43,15 @@ class CGlobalVars : public CGlobalVarsBase
 {	
 public:
 
-	CGlobalVars( bool bIsClient );
+	CGlobalVars();
 
 public:
 	
 	// Current map
 	string_t		mapname;
-	int				mapversion;
 	string_t		startspot;
 	MapLoadType_t	eLoadType;		// How the current map was loaded
-	bool			bMapLoadFailed;	// Map has failed to load, we need to kick back to the main menu
+	bool mp_teamplay;
 
 	// current maxentities
 	int				maxEntities;
@@ -61,8 +60,8 @@ public:
 	edict_t			*pEdicts;
 };
 
-inline CGlobalVars::CGlobalVars( bool bIsClient ) : 
-	CGlobalVarsBase( bIsClient )
+inline CGlobalVars::CGlobalVars() : 
+	CGlobalVarsBase()
 {
 	serverCount = 0;
 }
