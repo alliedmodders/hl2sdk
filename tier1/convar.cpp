@@ -57,7 +57,7 @@ public:
 		}
 		else
 		{
-			s_ConCommandRegList.AddToTail(pCmd);
+			GetCommandRegList()->AddToTail(pCmd);
 		}
 	}
 
@@ -67,9 +67,9 @@ public:
 		{
 			s_bConCommandsRegistered = true;
 
-			FOR_EACH_VEC( s_ConCommandRegList, i)
+			for(int i = 0; i < GetCommandRegList()->Count(); i++)
 			{
-				ConCommand *pCmd = s_ConCommandRegList[i];
+				ConCommand *pCmd = GetCommandRegList()->Element(i);
 				ConCommandHandle hndl = g_pCVar->RegisterConCommand(pCmd, s_nCVarFlag);
 				pCmd->SetHandle(hndl);
 
@@ -82,13 +82,18 @@ public:
 		}
 	}
 private:
-	static CUtlVector<ConCommand*> s_ConCommandRegList;
+
+	// GAMMACASE: Required to prevent static initialization order problem https://isocpp.org/wiki/faq/ctors#static-init-order
+	static CUtlVector<ConCommand *> *GetCommandRegList()
+	{
+		static CUtlVector<ConCommand *> s_ConCommandRegList;
+		return &s_ConCommandRegList;
+	}
 
 	static bool s_bConCommandsRegistered;
 };
 
 bool ConCommandRegList::s_bConCommandsRegistered = false;
-CUtlVector<ConCommand*> ConCommandRegList::s_ConCommandRegList;
 
 #ifdef CONVAR_WORK_FINISHED
 template <typename ToCheck, std::size_t ExpectedSize, std::size_t RealSize = sizeof(ToCheck)>
