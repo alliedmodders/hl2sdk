@@ -666,7 +666,7 @@ public:
 	virtual int			GetPathIndex( const FileNameHandle_t &handle ) = 0;
 	virtual long		GetPathTime( const char *pPath, const char *pPathID ) = 0;
 
-	virtual DVDMode_t	GetDVDMode() = 0;
+	// virtual DVDMode_t	GetDVDMode() = 0;
 
 	//--------------------------------------------------------
 	// Whitelisting for pure servers.
@@ -721,17 +721,17 @@ public:
 	virtual void			SetWhitelistSpewFlags( int flags ) = 0;
 
 	// Installs a callback used to display a dirty disk dialog
-	virtual void			InstallDirtyDiskReportFunc( FSDirtyDiskReportFunc_t func ) = 0;
+	// virtual void			InstallDirtyDiskReportFunc( FSDirtyDiskReportFunc_t func ) = 0;
 
-	virtual bool			IsLaunchedFromXboxHDD() = 0;
-	virtual bool			IsInstalledToXboxHDDCache() = 0;
-	virtual bool			IsDVDHosted() = 0;
-	virtual bool			IsInstallAllowed() = 0;
+	// virtual bool			IsLaunchedFromXboxHDD() = 0;
+	// virtual bool			IsInstalledToXboxHDDCache() = 0;
+	// virtual bool			IsDVDHosted() = 0;
+	// virtual bool			IsInstallAllowed() = 0;
 
 	virtual int				GetSearchPathID( char *pPath, int nMaxLen ) = 0;
-	virtual bool			FixupSearchPathsAfterInstall() = 0;
-	
-	virtual FSDirtyDiskReportFunc_t		GetDirtyDiskReportFunc() = 0;
+
+	// virtual bool			FixupSearchPathsAfterInstall() = 0;
+	// virtual FSDirtyDiskReportFunc_t		GetDirtyDiskReportFunc() = 0;
 
 	virtual void AddVPKFile( const char *pszName, const char *, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) = 0;
 	virtual void RemoveVPKFile( const char *pszName, const char * ) = 0;
