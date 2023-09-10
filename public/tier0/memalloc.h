@@ -40,6 +40,7 @@
 // which causes random crashes if used! Added until proper solution is made.
 #define PREVENT_DEBUG_USAGE
 
+#include "platform.h"
 #include <stddef.h>
 #if defined( OSX )
 #include <malloc/malloc.h>
