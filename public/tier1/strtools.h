@@ -59,6 +59,21 @@ void CopyMemory3D( void *pDestAdr, void const *pSrcAdr,
 template< class T, class I > class CUtlMemory;
 template< class T, class A > class CUtlVector;
 
+// Unicode string conversion policies - what to do if an illegal sequence is encountered
+enum EStringConvertErrorPolicy
+{
+	_STRINGCONVERTFLAG_SKIP =		1,
+	_STRINGCONVERTFLAG_FAIL =		2,
+	_STRINGCONVERTFLAG_ASSERT =		4,
+
+	STRINGCONVERT_REPLACE =			0,
+	STRINGCONVERT_SKIP =			_STRINGCONVERTFLAG_SKIP,
+	STRINGCONVERT_FAIL =			_STRINGCONVERTFLAG_FAIL,
+
+	STRINGCONVERT_ASSERT_REPLACE =	_STRINGCONVERTFLAG_ASSERT + STRINGCONVERT_REPLACE,
+	STRINGCONVERT_ASSERT_SKIP =		_STRINGCONVERTFLAG_ASSERT + STRINGCONVERT_SKIP,
+	STRINGCONVERT_ASSERT_FAIL =		_STRINGCONVERTFLAG_ASSERT + STRINGCONVERT_FAIL,
+};
 
 //-----------------------------------------------------------------------------
 // Portable versions of standard string functions
