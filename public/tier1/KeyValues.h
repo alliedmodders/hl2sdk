@@ -184,9 +184,8 @@ public:
 	float GetFloat( const char *keyName = NULL, float defaultValue = 0.0f );
 	inline const char *GetString( const char *keyName = NULL, const char *defaultValue = "" )
 	{
-		static char buf[ 64 ];
-		GetString(keyName, defaultValue, &buf[0], sizeof(buf) );
-		return &buf[0];
+		const char *buf = GetString(keyName, defaultValue, NULL, 0 );
+		return buf;
 	}
 	const char *GetString( const char *keyName, const char *defaultValue, char *pszOut, uint64 maxlen );
 	const wchar_t *GetWString( const char *keyName = NULL, const wchar_t *defaultValue = L"" );
