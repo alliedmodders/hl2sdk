@@ -141,7 +141,7 @@
 #define FL_FREEZING				(1<<31) // We're becoming frozen!
 
 // edict->movetype values
-enum MoveType_t : uint8_t
+enum MoveType_t : unsigned char
 {
 	MOVETYPE_NONE		= 0,	// never moves
 	MOVETYPE_OBSOLETE,			// Previously isometric movetype
@@ -163,7 +163,7 @@ enum MoveType_t : uint8_t
 };
 
 // edict->movecollide values
-enum MoveCollide_t : uint8_t
+enum MoveCollide_t : unsigned char
 {
 	MOVECOLLIDE_DEFAULT = 0,
 
@@ -185,7 +185,7 @@ enum MoveCollide_t : uint8_t
 // Solid type basically describes how the bounding volume of the object is represented
 // NOTE: SOLID_BBOX MUST BE 2, and SOLID_VPHYSICS MUST BE 6
 // NOTE: These numerical values are used in the FGD by the prop code (see prop_dynamic)
-enum SolidType_t : uint8_t
+enum SolidType_t : unsigned char
 {
 	SOLID_NONE			= 0,	// no solid model
 	SOLID_BSP			= 1,	// a BSP tree
@@ -307,7 +307,7 @@ enum
 
 // Rendering constants
 // if this is changed, update common/MaterialSystem/Sprite.cpp
-enum RenderMode_t : uint8_t
+enum RenderMode_t : unsigned char
 {	
 	kRenderNormal = 0,		// src
 	kRenderTransColor,		// c*a+dest*(1-a)
@@ -325,7 +325,7 @@ enum RenderMode_t : uint8_t
 	kRenderModeCount,		// must be last
 };
 
-enum RenderFx_t : uint8_t
+enum RenderFx_t : unsigned char
 {	
 	kRenderFxNone = 0, 
 	kRenderFxPulseSlow, 
