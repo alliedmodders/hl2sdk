@@ -12,7 +12,7 @@
 #endif
 
 
-enum SolidType_t;
+enum SolidType_t : unsigned char;
 class IHandleEntity;
 struct Ray_t;
 struct model_t;
