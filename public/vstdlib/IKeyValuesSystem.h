@@ -13,8 +13,17 @@
 #include "vstdlib/vstdlib.h"
 
 class KeyValues;
-DECLARE_HANDLE_32BIT(HKeySymbol)
-#define INVALID_KEY_SYMBOL (HKeySymbol::MakeHandle(~0))
+
+class HKeySymbol
+{
+	HKeySymbol() : nIndex(~0) { }
+	HKeySymbol(uint32 idx) : nIndex(idx) { }
+
+	inline uint32 Get() { return nIndex; }
+
+private:
+	uint32 nIndex;
+};
 
 //-----------------------------------------------------------------------------
 // Purpose: Interface to shared data repository for KeyValues (included in vgui_controls.lib)
@@ -50,7 +59,7 @@ public:
 	virtual void ReleaseWStringCopy( const wchar_t * ) = 0;
 };
 
-//VSTDLIB_INTERFACE IKeyValuesSystem *KeyValuesSystem();
+VSTDLIB_INTERFACE IKeyValuesSystem *KeyValuesSystem();
 
 // #define KEYVALUESSYSTEM_INTERFACE_VERSION "KeyValuesSystem002"
 
