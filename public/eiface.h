@@ -531,14 +531,20 @@ abstract_class ISource2GameClients : public IAppSystem
 public:
 	virtual void			OnClientConnected( CPlayerSlot slot, const char *pszName, uint64 xuid, const char *pszNetworkID, const char *pszAddress, bool bFakePlayer ) = 0;
 	
-	virtual void*			unk001( CPlayerSlot slot, const char *pszName, int, int, bool, int);
+	// Called when the client attempts to connect (doesn't get called for bots)
+	// returning false would reject the connection with the pRejectReason message
+	virtual bool			ClientConnect( CPlayerSlot slot, const char *pszName, uint64 xuid, const char *pszNetworkID, bool unk1, CBufferString *pRejectReason );
 
 	// Client is connected and should be put in the game
-	virtual void			ClientPutInServer( CPlayerSlot slot, char const *pszName, int, bool /*bFakePlayer??*/ ) = 0;
+	// type values could be:
+	// 0 - player
+	// 1 - fake player (bot)
+	// 2 - unknown
+	virtual void			ClientPutInServer( CPlayerSlot slot, char const *pszName, int type, uint64 xuid ) = 0;
 
 	// Client is going active
 	// If bLoadGame is true, don't spawn the player because its state is already setup.
-	virtual void			ClientActive( CPlayerSlot slot, bool /*bLoadGame??*/, const char * /*pszName??*/, int ) = 0;
+	virtual void			ClientActive( CPlayerSlot slot, bool bLoadGame, const char *pszName, uint64 xuid ) = 0;
 	
 	virtual void			ClientFullyConnect( CPlayerSlot slot ) = 0;
 
