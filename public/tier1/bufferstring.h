@@ -11,6 +11,9 @@
 class CFormatStringElement;
 class IFormatOutputStream;
 
+template<size_t MAX_SIZE, bool AllowHeapAllocation>
+class CBufferStringGrowable;
+
 /*
 	Main idea of CBufferString is to provide the base class for the CBufferStringGrowable wich implements stack allocation
 	with the ability to convert to the heap allocation if allowed.

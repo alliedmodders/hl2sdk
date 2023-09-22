@@ -173,7 +173,7 @@ struct CSplitScreenSlot
 #define FCVAR_VCONSOLE_FUZZY_MATCHING (1<<23)
 
 #define FCVAR_SERVER_CAN_EXECUTE	(1<<24) // the server is allowed to execute this command on clients via ClientCommand/NET_StringCmd/CBaseClientState::ProcessStringCmd.
-#define FCVAR_MISSING4				(1<<25)
+#define FCVAR_CLIENT_CAN_EXECUTE	(1<<25) // Assigned to commands to let clients execute them
 #define FCVAR_SERVER_CANNOT_QUERY	(1<<26) // If this is set, then the server is not allowed to query this cvar's value (via IServerPluginHelpers::StartQueryCvarValue).
 #define FCVAR_VCONSOLE_SET_FOCUS	(1<<27)
 #define FCVAR_CLIENTCMD_CAN_EXECUTE	(1<<28)	// IVEngineClient::ClientCmd is allowed to execute this command. 
