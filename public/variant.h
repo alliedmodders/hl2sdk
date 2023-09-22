@@ -982,4 +982,6 @@ public:
 typedef CVariantBase<CVariantDefaultAllocator> CVariant;
 typedef CVariantBase<CEntityVariantAllocator> CEntityVariant;
 
+typedef CVariant variant_t;
+
 #endif // CVARIANT_H

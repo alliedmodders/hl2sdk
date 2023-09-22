@@ -37,10 +37,10 @@ abstract_class IParsingErrorListener
 };
 
 #define PARSING_FLAG_NONE							(0)
-#define PARSING_FLAG_ERROR_ASSERT					(1 << 0) // Triggers debug assertion on parsing errors
-#define PARSING_FLAG_INTERNAL_ASSERT_TRIGGERED		(1 << 1) // Internal flag that is set when assertion is triggered
-#define PARSING_FLAG_EMIT_WARNING					(1 << 2) // Emits global console warning on parsing errors
-#define PARSING_FLAG_INTERNAL_WARNING_EMITTED		(1 << 3) // Internal flag that is set when global warning is emitted
+#define PARSING_FLAG_ERROR_ASSERT					(1 << 0) // Triggers debug assertion on parsing errors, the default state
+#define PARSING_FLAG_SKIP_ASSERT					(1 << 1) // Internal flag that is set when assertion is triggered, could also be used to prevent debug assertions
+#define PARSING_FLAG_EMIT_WARNING					(1 << 2) // Emits global console warning on parsing errors, the default state
+#define PARSING_FLAG_SKIP_WARNING					(1 << 3) // Internal flag that is set when global warning is emitted, could also be used to prevent warning messages
 #define PARSING_FLAG_SILENT							(1 << 4) // Won't call callback when parsing errors are encountered
 #define PARSING_FLAG_ERROR_IF_EMPTY					(1 << 5) // Emits parsing error if the input string was empty or NULL
 #define PARSING_FLAG_UNK006							(1 << 6)
