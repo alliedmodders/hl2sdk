@@ -41,7 +41,6 @@ struct	studiohdr_t;
 class	CBaseEntity;
 class	CRestore;
 class	CSave;
-class	variant_t;
 struct	vcollide_t;
 class	IRecipientFilter;
 class	CBaseEntity;
