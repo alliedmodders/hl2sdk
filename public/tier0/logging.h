@@ -770,7 +770,7 @@ private:
 	void Register_##Channel##_Tags( LoggingChannelID_t channelID ) \
 	{
 
-#define ADD_LOGGING_CHANNEL_TAG( Tag ) LoggingSystem_AddTagToChannel( Tag, channelID )
+#define ADD_LOGGING_CHANNEL_TAG( Tag ) LoggingSystem_AddTagToChannel( channelID, Tag )
 
 #define END_DEFINE_LOGGING_CHANNEL() \
 	}
