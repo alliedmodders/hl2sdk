@@ -132,7 +132,7 @@ protected:
 	void ValidateGrowSize()
 	{
 #ifdef _X360
-		if ( m_nGrowSize && m_nGrowSize != EXTERNAL_BUFFER_MARKER )
+		if ( m_nGrowSize && (m_nGrowSize & EXTERNAL_BUFFER_MARKER) == 0 )
 		{
 			// Max grow size at 128 bytes on XBOX
 			const int MAX_GROW = 128;
@@ -146,8 +146,8 @@ protected:
 
 	enum
 	{
-		EXTERNAL_BUFFER_MARKER = -1,
-		EXTERNAL_CONST_BUFFER_MARKER = -2,
+		EXTERNAL_CONST_BUFFER_MARKER = (1 << 30),
+		EXTERNAL_BUFFER_MARKER = (1 << 31),
 	};
 
 	T* m_pMemory;
@@ -579,7 +579,7 @@ inline const T& CUtlMemory<T,I>::Element( I i ) const
 template< class T, class I >
 bool CUtlMemory<T,I>::IsExternallyAllocated() const
 {
-	return (m_nGrowSize < 0);
+	return (m_nGrowSize & (EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER)) != 0;
 }
 
 
@@ -589,7 +589,7 @@ bool CUtlMemory<T,I>::IsExternallyAllocated() const
 template< class T, class I >
 bool CUtlMemory<T,I>::IsReadOnly() const
 {
-	return (m_nGrowSize == EXTERNAL_CONST_BUFFER_MARKER);
+	return (m_nGrowSize & EXTERNAL_CONST_BUFFER_MARKER) != 0;
 }
 
 
@@ -905,7 +905,7 @@ CUtlMemoryAligned<T, nAlignment>::CUtlMemoryAligned( int nGrowSize, int nInitAll
 
 	// Alignment must be a power of two
 	COMPILE_TIME_ASSERT( (nAlignment & (nAlignment-1)) == 0 );
-	Assert( (nGrowSize >= 0) && (nGrowSize != CUtlMemory<T>::EXTERNAL_BUFFER_MARKER) );
+	Assert( (nGrowSize >= 0) && (nGrowSize & CUtlMemory<T>::EXTERNAL_BUFFER_MARKER) == 0 );
 	if ( CUtlMemory<T>::m_nAllocationCount )
 	{
 		UTLMEMORY_TRACK_ALLOC();
