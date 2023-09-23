@@ -129,6 +129,26 @@ struct CEntityIndex
 	bool operator!=( const CEntityIndex &other ) const { return other._index != _index; }
 };
 
+class CPlayerUserId
+{
+public:
+	CPlayerUserId( int index )
+	{
+		_index = index;
+	}
+
+	int Get() const
+	{
+		return _index;
+	}
+
+	bool operator==( const CPlayerUserId &other ) const { return other._index == _index; }
+	bool operator!=( const CPlayerUserId &other ) const { return other._index != _index; }
+
+private:
+	short _index;
+};
+
 //-----------------------------------------------------------------------------
 // Purpose: Interface the engine exposes to the game DLL and client DLL
 //-----------------------------------------------------------------------------
@@ -199,7 +219,7 @@ public:
 	
 	// Returns the server assigned userid for this player.  Useful for logging frags, etc.  
 	//  returns -1 if the edict couldn't be found in the list of players.
-	virtual int			GetPlayerUserId( CPlayerSlot clientSlot ) = 0; 
+	virtual CPlayerUserId GetPlayerUserId( CPlayerSlot clientSlot ) = 0;
 	virtual const char	*GetPlayerNetworkIDString( CPlayerSlot clientSlot ) = 0;
 	// Get stats info interface for a client netchannel
 	virtual INetChannelInfo* GetPlayerNetInfo( CPlayerSlot nSlot ) = 0;
