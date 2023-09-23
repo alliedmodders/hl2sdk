@@ -29,9 +29,6 @@
     <ClCompile Include="commandbuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="convar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="datamanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -71,13 +68,7 @@
     <ClCompile Include="uniqueid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utlbuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="utlbufferutil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utlstring.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utlsymbol.cpp">
@@ -227,9 +218,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\public\tier1\utlstack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\tier1\utlstring.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\public\tier1\UtlStringMap.h">
