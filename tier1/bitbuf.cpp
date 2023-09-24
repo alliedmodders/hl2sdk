@@ -352,7 +352,7 @@ bool bf_write::WriteBits(const void *pInData, int nBits)
 	}
 
 	// Align output to dword boundary
-	while (((unsigned long)pOut & 3) != 0 && nBitsLeft >= 8)
+	while (((uintp)pOut & 3) != 0 && nBitsLeft >= 8)
 	{
 
 		WriteUBitLong( *pOut, 8, false );
@@ -829,7 +829,7 @@ void old_bf_read::ReadBits(void *pOutData, int nBits)
 
 	
 	// align output to dword boundary
-	while( ((unsigned long)pOut & 3) != 0 && nBitsLeft >= 8 )
+	while( ((uintp)pOut & 3) != 0 && nBitsLeft >= 8 )
 	{
 		*pOut = (unsigned char)ReadUBitLong(8);
 		++pOut;

@@ -10,7 +10,7 @@
 
 #include "processor_detect_linux.cpp"
 
-#elif defined( _X360 )
+#elif defined( _X360 ) || defined( _WIN64 )
 
 bool CheckMMXTechnology(void) { return false; }
 bool CheckSSETechnology(void) { return false; }
