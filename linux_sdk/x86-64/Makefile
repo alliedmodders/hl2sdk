@@ -107,7 +107,7 @@ DEFINES += -DCOMPILER_GCC -DPOSIX -DX64BITS -DPLATFORM_64BITS -DVPROF_LEVEL=1 -D
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
 BASE_CFLAGS = -fno-strict-aliasing -Wall -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
-	      -Wno-unused
+	      -Wno-unused -Wno-deprecated-register -Wno-c++11-narrowing
 SHLIBCFLAGS = -fPIC
 
 # Clang >= 3 || GCC >= 4.7
