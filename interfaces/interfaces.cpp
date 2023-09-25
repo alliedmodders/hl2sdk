@@ -12,7 +12,7 @@
 ICvar *cvar, *g_pCVar;
 IEventSystem *g_pEventSystem;
 IProcessUtils *g_pProcessUtils;
-IPhysics2 *g_pPhysics2;
+IVPhysics2 *g_pVPhysics2;
 IPhysics2ResourceManager *g_pPhysics2ResourceManager;
 IBaseFileSystem *g_pBaseFileSystem;
 IFileSystem *g_pFullFileSystem;
@@ -155,7 +155,7 @@ static const InterfaceGlobals_t g_pInterfaceGlobals[] =
 	{ CVAR_INTERFACE_VERSION, &g_pCVar },
 	{ EVENTSYSTEM_INTERFACE_VERSION, &g_pEventSystem },
 	{ PROCESS_UTILS_INTERFACE_VERSION, &g_pProcessUtils },
-	{ VPHYSICS2_INTERFACE_VERSION, &g_pPhysics2 },
+	{ VPHYSICS2_INTERFACE_VERSION, &g_pVPhysics2 },
 	{ VPHYSICS2_RESOURCE_MGR_INTERFACE_VERSION, &g_pPhysics2ResourceManager },
 	{ BASEFILESYSTEM_INTERFACE_VERSION, &g_pBaseFileSystem },
 	{ FILESYSTEM_INTERFACE_VERSION, &g_pFullFileSystem },
