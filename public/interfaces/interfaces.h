@@ -142,7 +142,7 @@ DLL_EXPORT void* CreateInterface(const char *pName, int *pReturnCode);
 class ICvar;
 class IProcessUtils;
 class ILocalize;
-class IPhysics2;
+class IVPhysics2;
 class IPhysics2ResourceManager;
 class IEventSystem;
 
@@ -282,8 +282,8 @@ DECLARE_TIER1_INTERFACE( ICvar, g_pCVar )
 #define PROCESS_UTILS_INTERFACE_VERSION			"VProcessUtils002"
 DECLARE_TIER1_INTERFACE( IProcessUtils, g_pProcessUtils );
 
-#define VPHYSICS2_INTERFACE_VERSION				"Physics2 Interface Old v0.5"
-DECLARE_TIER1_INTERFACE( IPhysics2, g_pPhysics2 );
+#define VPHYSICS2_INTERFACE_VERSION				"VPhysics2_Interface_001"
+DECLARE_TIER1_INTERFACE( IVPhysics2, g_pVPhysics2 );
 
 #define VPHYSICS2_RESOURCE_MGR_INTERFACE_VERSION "VPhysX Interface ResourceMgr v0.1"
 DECLARE_TIER1_INTERFACE( IPhysics2ResourceManager, g_pPhysics2ResourceManager );
