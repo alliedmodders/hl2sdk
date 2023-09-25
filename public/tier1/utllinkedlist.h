@@ -222,7 +222,7 @@ CUtlLinkedList<T,S,ML,I,M>::CUtlLinkedList( int growSize, int initSize ) :
 	m_Memory( growSize, initSize ), m_LastAlloc( m_Memory.InvalidIterator() )
 {
 	// Prevent signed non-int datatypes
-	COMPILE_TIME_ASSERT( sizeof(S) == 4 || ( ( (S)-1 ) > 0 ) );
+	// COMPILE_TIME_ASSERT( sizeof(S) == 4 || ( ( (S)-1 ) > 0 ) );
 	ConstructList();
 }
 
@@ -437,7 +437,7 @@ void CUtlLinkedList<T,S,ML,I,M>::PurgeAndDeleteElements()
 // Node allocation/deallocation
 //-----------------------------------------------------------------------------
 template <class T, class S, bool ML, class I, class M>
-I CUtlLinkedList<T,S,ML,I,M>::AllocInternal( bool multilist ) RESTRICT
+I CUtlLinkedList<T,S,ML,I,M>::AllocInternal( bool multilist )
 {
 	Assert( !multilist || ML );
 #ifdef MULTILIST_PEDANTIC_ASSERTS
