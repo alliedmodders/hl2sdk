@@ -136,7 +136,7 @@ public:
 	virtual void FireGameEvent( IGameEvent *event ) = 0;
 };
 
-abstract_class IGameEventManager2 : public IBaseInterface, IToolGameEventAPI
+abstract_class IGameEventManager2 : public IBaseInterface, public IToolGameEventAPI
 {
 public:
 	virtual	~IGameEventManager2( void ) {};
