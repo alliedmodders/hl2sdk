@@ -3232,6 +3232,9 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 		s_bMMXEnabled = false;
 	}
 
+	// GAMMACASE: Since the sse.cpp doesn't have any x64 code rn
+	// we can't use the sse stuff here
+#ifndef COMPILER_MSVC64
 	if ( bAllowSSE && pi.m_bSSE )
 	{
 		s_bSSEEnabled = true;
@@ -3246,12 +3249,17 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 		pfFastSinCos = _SSE_SinCos;
 		pfFastCos = _SSE_cos;
 #endif
+
 	}
 	else
 	{
 		s_bSSEEnabled = false;
 	}
+#else
+	s_bSSEEnabled = false;
+#endif
 
+#ifndef COMPILER_MSVC64
 	if ( bAllowSSE2 && pi.m_bSSE2 )
 	{
 		s_bSSE2Enabled = true;
@@ -3264,6 +3272,9 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 	{
 		s_bSSE2Enabled = false;
 	}
+#else
+	s_bSSE2Enabled = false;
+#endif
 #endif
 
 	s_bMathlibInitialized = true;
