@@ -79,11 +79,7 @@ inline void *ReallocUnattributed( void *pMem, size_t nSize )
 
 #if _MSC_VER >= 1900
 #ifndef _CRT_NOEXCEPT
-#ifdef __cplusplus
-#define _CRT_NOEXCEPT noexcept
-#else
 #define _CRT_NOEXCEPT
-#endif
 #endif
 
 #define _CRTNOALIAS
