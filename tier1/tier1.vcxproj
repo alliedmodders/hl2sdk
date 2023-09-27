@@ -330,7 +330,6 @@
     <ClCompile Include="mempool.cpp" />
     <ClCompile Include="memstack.cpp" />
     <ClCompile Include="NetAdr.cpp" />
-    <ClCompile Include="newbitbuf.cpp" />
     <ClCompile Include="processor_detect.cpp">
       <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Sync</ExceptionHandling>
       <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Sync</ExceptionHandling>
