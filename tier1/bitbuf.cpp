@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -83,13 +83,14 @@ void SetBitBufErrorHandler( BitBufErrorHandler fn )
 
 // #define BB_PROFILING
 
+unsigned long g_LittleBits[32];
 
 // Precalculated bit masks for WriteUBitLong. Using these tables instead of 
 // doing the calculations gives a 33% speedup in WriteUBitLong.
 unsigned long g_BitWriteMasks[32][33];
 
 // (1 << i) - 1
-unsigned long g_ExtraMasks[32];
+unsigned long g_ExtraMasks[33];
 
 class CBitWriteMasksInit
 {
@@ -109,9 +110,13 @@ public:
 
 		for ( unsigned int maskBit=0; maskBit < 32; maskBit++ )
 			g_ExtraMasks[maskBit] = BitForBitnum(maskBit) - 1;
+		g_ExtraMasks[32] = ~0ul;
+
+		for ( unsigned int littleBit=0; littleBit < 32; littleBit++ )
+			StoreLittleDWord( &g_LittleBits[littleBit], 0, 1u<<littleBit );
 	}
 };
-CBitWriteMasksInit g_BitWriteMasksInit;
+static CBitWriteMasksInit g_BitWriteMasksInit;
 
 
 // ---------------------------------------------------------------------------------------- //
@@ -129,21 +134,21 @@ bf_write::bf_write()
 	m_pDebugName = NULL;
 }
 
-bf_write::bf_write( void *pData, int nBytes, int nMaxBits )
-{
-	m_bAssertOnOverflow = true;
-	m_pDebugName = NULL;
-	StartWriting( pData, nBytes, 0, nMaxBits );
-}
-
-bf_write::bf_write( const char *pDebugName, void *pData, int nBytes, int nMaxBits )
+bf_write::bf_write( const char *pDebugName, void *pData, int nBytes, int nBits )
 {
 	m_bAssertOnOverflow = true;
 	m_pDebugName = pDebugName;
-	StartWriting( pData, nBytes, 0, nMaxBits );
+	StartWriting( pData, nBytes, 0, nBits );
 }
 
-void bf_write::StartWriting( void *pData, int nBytes, int iStartBit, int nMaxBits )
+bf_write::bf_write( void *pData, int nBytes, int nBits )
+{
+	m_bAssertOnOverflow = true;
+	m_pDebugName = NULL;
+	StartWriting( pData, nBytes, 0, nBits );
+}
+
+void bf_write::StartWriting( void *pData, int nBytes, int iStartBit, int nBits )
 {
 	// Make sure it's dword aligned and padded.
 	Assert( (nBytes % 4) == 0 );
@@ -152,17 +157,17 @@ void bf_write::StartWriting( void *pData, int nBytes, int iStartBit, int nMaxBit
 	// The writing code will overrun the end of the buffer if it isn't dword aligned, so truncate to force alignment
 	nBytes &= ~3;
 
-	m_pData = (unsigned char*)pData;
+	m_pData = (unsigned long*)pData;
 	m_nDataBytes = nBytes;
 
-	if ( nMaxBits == -1 )
+	if ( nBits == -1 )
 	{
 		m_nDataBits = nBytes << 3;
 	}
 	else
 	{
-		Assert( nMaxBits <= nBytes*8 );
-		m_nDataBits = nMaxBits;
+		Assert( nBits <= nBytes*8 );
+		m_nDataBits = nBits;
 	}
 
 	m_iCurBit = iStartBit;
@@ -203,127 +208,232 @@ void bf_write::SeekToBit( int bitPos )
 // Sign bit comes first
 void bf_write::WriteSBitLong( int data, int numbits )
 {
-	// Do we have a valid # of bits to encode with?
-	Assert( numbits >= 1 );
+	// Force the sign-extension bit to be correct even in the case of overflow.
+	int nValue = data;
+	int nPreserveBits = ( 0x7FFFFFFF >> ( 32 - numbits ) );
+	int nSignExtension = ( nValue >> 31 ) & ~nPreserveBits;
+	nValue &= nPreserveBits;
+	nValue |= nSignExtension;
+	
+	AssertMsg2( nValue == data, "WriteSBitLong: 0x%08x does not fit in %d bits", data, numbits );
 
-	// Note: it does this wierdness here so it's bit-compatible with regular integer data in the buffer.
-	// (Some old code writes direct integers right into the buffer).
-	if(data < 0)
-	{
-#ifdef _DEBUG
-	if( numbits < 32 )
-	{
-		// Make sure it doesn't overflow.
-
-		if( data < 0 )
-		{
-			Assert( data >= -(BitForBitnum(numbits-1)) );
-		}
-		else
-		{
-			Assert( data < (BitForBitnum(numbits-1)) );
-		}
-	}
-#endif
-
-		WriteUBitLong( (unsigned int)(0x80000000 + data), numbits - 1, false );
-		WriteOneBit( 1 );
-	}
-	else
-	{
-		WriteUBitLong((unsigned int)data, numbits - 1);
-		WriteOneBit( 0 );
-	}
+	WriteUBitLong( nValue, numbits, false );
 }
 
 void bf_write::WriteVarInt32( uint32 data )
 {
-	while ( data > 0x7F ) 
+	// Check if align and we have room, slow path if not
+	if ( (m_iCurBit & 7) == 0 && (m_iCurBit + bitbuf::kMaxVarint32Bytes * 8 ) <= m_nDataBits)
 	{
-		WriteUBitLong( (data & 0x7F) | 0x80, 8 );
-		data >>= 7;
+		uint8 *target = ((uint8*)m_pData) + (m_iCurBit>>3);
+
+		target[0] = static_cast<uint8>(data | 0x80);
+		if ( data >= (1 << 7) )
+		{
+			target[1] = static_cast<uint8>((data >>  7) | 0x80);
+			if ( data >= (1 << 14) )
+			{
+				target[2] = static_cast<uint8>((data >> 14) | 0x80);
+				if ( data >= (1 << 21) )
+				{
+					target[3] = static_cast<uint8>((data >> 21) | 0x80);
+					if ( data >= (1 << 28) )
+					{
+						target[4] = static_cast<uint8>(data >> 28);
+						m_iCurBit += 5 * 8;
+						return;
+					}
+					else
+					{
+						target[3] &= 0x7F;
+						m_iCurBit += 4 * 8;
+						return;
+					}
+				}
+				else
+				{
+					target[2] &= 0x7F;
+					m_iCurBit += 3 * 8;
+					return;
+				}
+			}
+			else
+			{
+				target[1] &= 0x7F;
+				m_iCurBit += 2 * 8;
+				return;
+			}
+		}
+		else
+		{
+			target[0] &= 0x7F;
+			m_iCurBit += 1 * 8;
+			return;
+		}
 	}
-	WriteUBitLong( data & 0x7F, 8 );
+	else // Slow path
+	{
+		while ( data > 0x7F ) 
+		{
+			WriteUBitLong( (data & 0x7F) | 0x80, 8 );
+			data >>= 7;
+		}
+		WriteUBitLong( data & 0x7F, 8 );
+	}
+}
+
+void bf_write::WriteVarInt64( uint64 data )
+{
+	// Check if align and we have room, slow path if not
+	if ( (m_iCurBit & 7) == 0 && (m_iCurBit + bitbuf::kMaxVarintBytes * 8 ) <= m_nDataBits )
+	{
+		uint8 *target = ((uint8*)m_pData) + (m_iCurBit>>3);
+
+		// Splitting into 32-bit pieces gives better performance on 32-bit
+		// processors.
+		uint32 part0 = static_cast<uint32>(data      );
+		uint32 part1 = static_cast<uint32>(data >> 28);
+		uint32 part2 = static_cast<uint32>(data >> 56);
+
+		int size;
+
+		// Here we can't really optimize for small numbers, since the data is
+		// split into three parts.  Cheking for numbers < 128, for instance,
+		// would require three comparisons, since you'd have to make sure part1
+		// and part2 are zero.  However, if the caller is using 64-bit integers,
+		// it is likely that they expect the numbers to often be very large, so
+		// we probably don't want to optimize for small numbers anyway.  Thus,
+		// we end up with a hardcoded binary search tree...
+		if ( part2 == 0 )
+		{
+			if ( part1 == 0 )
+			{
+				if ( part0 < (1 << 14) )
+				{
+					if ( part0 < (1 << 7) )
+					{
+						size = 1; goto size1;
+					}
+					else
+					{
+						size = 2; goto size2;
+					}
+				}
+				else
+				{
+					if ( part0 < (1 << 21) )
+					{
+						size = 3; goto size3;
+					}
+					else
+					{
+						size = 4; goto size4;
+					}
+				}
+			}
+			else
+			{
+				if ( part1 < (1 << 14) )
+				{
+					if ( part1 < (1 << 7) )
+					{
+						size = 5; goto size5;
+					}
+					else
+					{
+						size = 6; goto size6;
+					}
+				}
+				else
+				{
+					if ( part1 < (1 << 21) )
+					{
+						size = 7; goto size7;
+					}
+					else
+					{
+						size = 8; goto size8;
+					}
+				}
+			}
+		}
+		else
+		{
+			if ( part2 < (1 << 7) )
+			{
+				size = 9; goto size9;
+			}
+			else
+			{
+				size = 10; goto size10;
+			}
+		}
+
+		AssertFatalMsg( false, "Can't get here." );
+
+		size10: target[9] = static_cast<uint8>((part2 >>  7) | 0x80);
+		size9 : target[8] = static_cast<uint8>((part2      ) | 0x80);
+		size8 : target[7] = static_cast<uint8>((part1 >> 21) | 0x80);
+		size7 : target[6] = static_cast<uint8>((part1 >> 14) | 0x80);
+		size6 : target[5] = static_cast<uint8>((part1 >>  7) | 0x80);
+		size5 : target[4] = static_cast<uint8>((part1      ) | 0x80);
+		size4 : target[3] = static_cast<uint8>((part0 >> 21) | 0x80);
+		size3 : target[2] = static_cast<uint8>((part0 >> 14) | 0x80);
+		size2 : target[1] = static_cast<uint8>((part0 >>  7) | 0x80);
+		size1 : target[0] = static_cast<uint8>((part0      ) | 0x80);
+
+		target[size-1] &= 0x7F;
+		m_iCurBit += size * 8;
+	}
+	else // slow path
+	{
+		while ( data > 0x7F ) 
+		{
+			WriteUBitLong( (data & 0x7F) | 0x80, 8 );
+			data >>= 7;
+		}
+		WriteUBitLong( data & 0x7F, 8 );
+	}
+}
+
+void bf_write::WriteSignedVarInt32( int32 data )
+{
+	WriteVarInt32( bitbuf::ZigZagEncode32( data ) );
+}
+
+void bf_write::WriteSignedVarInt64( int64 data )
+{
+	WriteVarInt64( bitbuf::ZigZagEncode64( data ) );
 }
 
 int	bf_write::ByteSizeVarInt32( uint32 data )
 {
 	int size = 1;
-	while ( data > 0x7F )
-	{
+	while ( data > 0x7F ) {
 		size++;
 		data >>= 7;
 	}
 	return size;
 }
 
-#if _WIN32
-inline unsigned int BitCountNeededToEncode(unsigned int data)
+int	bf_write::ByteSizeVarInt64( uint64 data )
 {
-#if defined(_X360)
-	return (32 - CountLeadingZeros(data+1)) - 1;
-#else
-	unsigned long firstBit;
-	_BitScanReverse(&firstBit,data+1);
-	return firstBit;
-#endif
+	int size = 1;
+	while ( data > 0x7F ) {
+		size++;
+		data >>= 7;
+	}
+	return size;
 }
-#endif	// _WIN32
 
-// writes an unsigned integer with variable bit length
-void bf_write::WriteUBitVar( unsigned int data )
+int bf_write::ByteSizeSignedVarInt32( int32 data )
 {
-	if ( ( data &0xf ) == data )
-	{
-		WriteUBitLong( 0, 2 );
-		WriteUBitLong( data, 4 );
-	}
-	else
-	{
-		if ( ( data & 0xff ) == data )
-		{
-			WriteUBitLong( 1, 2 );
-			WriteUBitLong( data, 8 );
-		}
-		else
-		{
-			if ( ( data & 0xfff ) == data )
-			{
-				WriteUBitLong( 2, 2 );
-				WriteUBitLong( data, 12 );
-			}
-			else
-			{
-				WriteUBitLong( 0x3, 2 );
-				WriteUBitLong( data, 32 );
-			}
-		}
-	}
-#if 0
-#if !FAST_BIT_SCAN
-	unsigned int bits = 0;
-	unsigned int base = 0;
+	return ByteSizeVarInt32( bitbuf::ZigZagEncode32( data ) );
+}
 
-	while (data > (base<<1))
-	{
-		bits++;
-		base = BitForBitnum(bits)-1;
-	}
-#else
-	unsigned int bits = BitCountNeededToEncode(data);
-	unsigned int base = GetBitForBitnum(bits)-1;
-#endif
-
-	// how many bits do we use
-	WriteUBitLong( 0, bits );
-
-	// end marker
-	WriteOneBit( 1 );  
-
-	// write the value
-	if ( bits > 0)
-		WriteUBitLong( data - base , bits );
-#endif
+int bf_write::ByteSizeSignedVarInt64( int64 data )
+{
+	return ByteSizeVarInt64( bitbuf::ZigZagEncode64( data ) );
 }
 
 void bf_write::WriteBitLong(unsigned int data, int numbits, bool bSigned)
@@ -366,7 +476,7 @@ bool bf_write::WriteBits(const void *pInData, int nBits)
 		int numbytes = nBitsLeft >> 3; 
 		int numbits = numbytes << 3;
 		
-		Q_memcpy( m_pData+(m_iCurBit>>3), pOut, numbytes );
+		Q_memcpy( (char*)m_pData+(m_iCurBit>>3), pOut, numbytes );
 		pOut += numbytes;
 		nBitsLeft -= numbits;
 		m_iCurBit += numbits;
@@ -380,7 +490,7 @@ bool bf_write::WriteBits(const void *pInData, int nBits)
 		unsigned long bitMaskLeft = g_BitWriteMasks[iBitsRight][32];
 		unsigned long bitMaskRight = g_BitWriteMasks[0][iBitsRight];
 
-		unsigned long *pData = &((unsigned long*)m_pData)[m_iCurBit>>5];
+		unsigned long *pData = &m_pData[m_iCurBit>>5];
 
 		// Read dwords.
 		while(nBitsLeft >= 32)
@@ -453,85 +563,57 @@ void bf_write::WriteBitAngle( float fAngle, int numbits )
 	WriteUBitLong((unsigned int)d, numbits);
 }
 
-void bf_write::WriteBitCoordMP( const float f, EBitCoordType coordType )
+void bf_write::WriteBitCoordMP( const float f, bool bIntegral, bool bLowPrecision )
 {
 #if defined( BB_PROFILING )
 	VPROF( "bf_write::WriteBitCoordMP" );
 #endif
-	int		signbit = (f <= -( coordType == kCW_LowPrecision ? COORD_RESOLUTION_LOWPRECISION : COORD_RESOLUTION ));
-	int		intval = (int)fabs(f);
-	int		fractval = coordType == kCW_LowPrecision ? 
+	int		signbit = (f <= -( bLowPrecision ? COORD_RESOLUTION_LOWPRECISION : COORD_RESOLUTION ));
+	int		intval = (int)abs(f);
+	int		fractval = bLowPrecision ? 
 		( abs((int)(f*COORD_DENOMINATOR_LOWPRECISION)) & (COORD_DENOMINATOR_LOWPRECISION-1) ) :
 		( abs((int)(f*COORD_DENOMINATOR)) & (COORD_DENOMINATOR-1) );
-
 
 	bool    bInBounds = intval < (1 << COORD_INTEGER_BITS_MP );
 
-	WriteOneBit( bInBounds );
+	unsigned int bits, numbits;
 
-	if ( coordType == kCW_Integral )
+	if ( bIntegral )
 	{
-		// Send the sign bit
-		WriteOneBit( intval );
+		// Integer encoding: in-bounds bit, nonzero bit, optional sign bit + integer value bits
 		if ( intval )
 		{
-			WriteOneBit( signbit );
-			// Send the integer if we have one.
 			// Adjust the integers from [1..MAX_COORD_VALUE] to [0..MAX_COORD_VALUE-1]
-			intval--;
-			if ( bInBounds )
-			{
-				WriteUBitLong( (unsigned int)intval, COORD_INTEGER_BITS_MP );
-			}
-			else
-			{
-				WriteUBitLong( (unsigned int)intval, COORD_INTEGER_BITS );
-			}
+			--intval;
+			bits = intval * 8 + signbit * 4 + 2 + bInBounds;
+			numbits = 3 + (bInBounds ? COORD_INTEGER_BITS_MP : COORD_INTEGER_BITS);
+		}
+		else
+		{
+			bits = bInBounds;
+			numbits = 2;
 		}
 	}
 	else
 	{
-		// Send the bit flags that indicate whether we have an integer part and/or a fraction part.
-		WriteOneBit( intval );
-		// Send the sign bit
-		WriteOneBit( signbit );
-
+		// Float encoding: in-bounds bit, integer bit, sign bit, fraction value bits, optional integer value bits
 		if ( intval )
 		{
 			// Adjust the integers from [1..MAX_COORD_VALUE] to [0..MAX_COORD_VALUE-1]
-			intval--;
-			if ( bInBounds )
-			{
-				WriteUBitLong( (unsigned int)intval, COORD_INTEGER_BITS_MP );
-			}
-			else
-			{
-				WriteUBitLong( (unsigned int)intval, COORD_INTEGER_BITS );
-			}
+			--intval;
+			bits = intval * 8 + signbit * 4 + 2 + bInBounds;
+			bits += bInBounds ? (fractval << (3+COORD_INTEGER_BITS_MP)) : (fractval << (3+COORD_INTEGER_BITS));
+			numbits = 3 + (bInBounds ? COORD_INTEGER_BITS_MP : COORD_INTEGER_BITS)
+						+ (bLowPrecision ? COORD_FRACTIONAL_BITS_MP_LOWPRECISION : COORD_FRACTIONAL_BITS);
 		}
-		WriteUBitLong( (unsigned int)fractval, coordType == kCW_LowPrecision ? COORD_FRACTIONAL_BITS_MP_LOWPRECISION : COORD_FRACTIONAL_BITS );
+		else
+		{
+			bits = fractval * 8 + signbit * 4 + 0 + bInBounds;
+			numbits = 3 + (bLowPrecision ? COORD_FRACTIONAL_BITS_MP_LOWPRECISION : COORD_FRACTIONAL_BITS);
+		}
 	}
-}
 
-void bf_write::WriteBitCellCoord( const float f, int bits, EBitCoordType coordType )
-{
-#if defined( BB_PROFILING )
-	VPROF( "bf_write::WriteCellBitCoordMP" );
-#endif
-	int		intval = (int)fabs(f);
-	int		fractval = coordType == kCW_LowPrecision ? 
-		( abs((int)(f*COORD_DENOMINATOR_LOWPRECISION)) & (COORD_DENOMINATOR_LOWPRECISION-1) ) :
-		( abs((int)(f*COORD_DENOMINATOR)) & (COORD_DENOMINATOR-1) );
-
-	if ( coordType == kCW_Integral )
-	{
-		WriteUBitLong( (unsigned int)intval, bits );
-	}
-	else
-	{
-		WriteUBitLong( (unsigned int)intval, bits );
-		WriteUBitLong( (unsigned int)fractval, coordType == kCW_LowPrecision ? COORD_FRACTIONAL_BITS_MP_LOWPRECISION : COORD_FRACTIONAL_BITS );
-	}
+	WriteUBitLong( bits, numbits );
 }
 
 void bf_write::WriteBitCoord (const float f)
@@ -540,7 +622,7 @@ void bf_write::WriteBitCoord (const float f)
 	VPROF( "bf_write::WriteBitCoord" );
 #endif
 	int		signbit = (f <= -COORD_RESOLUTION);
-	int		intval = (int)fabs(f);
+	int		intval = (int)abs(f);
 	int		fractval = abs((int)(f*COORD_DENOMINATOR)) & (COORD_DENOMINATOR-1);
 
 
@@ -567,17 +649,6 @@ void bf_write::WriteBitCoord (const float f)
 			WriteUBitLong( (unsigned int)fractval, COORD_FRACTIONAL_BITS );
 		}
 	}
-}
-
-void bf_write::WriteBitFloat(float val)
-{
-	long intVal;
-
-	Assert(sizeof(long) == sizeof(float));
-	Assert(sizeof(float) == 4);
-
-	intVal = *((long*)&val);
-	WriteUBitLong( intVal, 32 );
 }
 
 void bf_write::WriteBitVec3Coord( const Vector& fa )
@@ -650,7 +721,7 @@ void bf_write::WriteChar(int val)
 	WriteSBitLong(val, sizeof(char) << 3);
 }
 
-void bf_write::WriteByte(unsigned int val)
+void bf_write::WriteByte(int val)
 {
 	WriteUBitLong(val, sizeof(unsigned char) << 3);
 }
@@ -660,7 +731,7 @@ void bf_write::WriteShort(int val)
 	WriteSBitLong(val, sizeof(short) << 3);
 }
 
-void bf_write::WriteWord(unsigned int val)
+void bf_write::WriteWord(int val)
 {
 	WriteUBitLong(val, sizeof(unsigned short) << 3);
 }
@@ -712,30 +783,11 @@ bool bf_write::WriteString(const char *pStr)
 	return !IsOverflowed();
 }
 
-bool bf_write::WriteString(const wchar_t *pStr)
-{
-	if(pStr)
-	{
-		do 
-		{
-			WriteSBitLong( *pStr, 16 );
-			++pStr;
-		} while ( (*pStr-1) != 0 );
-	}
-	else
-	{
-		WriteUBitLong( 0, 15 );
-		WriteOneBit( 0 );
-	}
-
-	return !IsOverflowed();
-}
-
 // ---------------------------------------------------------------------------------------- //
-// old_bf_read
+// bf_read
 // ---------------------------------------------------------------------------------------- //
 
-old_bf_read::old_bf_read()
+bf_read::bf_read()
 {
 	m_pData = NULL;
 	m_nDataBytes = 0;
@@ -746,23 +798,23 @@ old_bf_read::old_bf_read()
 	m_pDebugName = NULL;
 }
 
-old_bf_read::old_bf_read( const void *pData, int nBytes, int nBits )
+bf_read::bf_read( const void *pData, int nBytes, int nBits )
 {
 	m_bAssertOnOverflow = true;
 	StartReading( pData, nBytes, 0, nBits );
 }
 
-old_bf_read::old_bf_read( const char *pDebugName, const void *pData, int nBytes, int nBits )
+bf_read::bf_read( const char *pDebugName, const void *pData, int nBytes, int nBits )
 {
 	m_bAssertOnOverflow = true;
 	m_pDebugName = pDebugName;
 	StartReading( pData, nBytes, 0, nBits );
 }
 
-void old_bf_read::StartReading( const void *pData, int nBytes, int iStartBit, int nBits )
+void bf_read::StartReading( const void *pData, int nBytes, int iStartBit, int nBits )
 {
 	// Make sure we're dword aligned.
-	Assert(((unsigned long)pData & 3) == 0);
+	Assert(((size_t)pData & 3) == 0);
 
 	m_pData = (unsigned char*)pData;
 	m_nDataBytes = nBytes;
@@ -781,28 +833,32 @@ void old_bf_read::StartReading( const void *pData, int nBytes, int iStartBit, in
 	m_bOverflow = false;
 }
 
-void old_bf_read::Reset()
+void bf_read::Reset()
 {
 	m_iCurBit = 0;
 	m_bOverflow = false;
 }
 
-void old_bf_read::SetAssertOnOverflow( bool bAssert )
+void bf_read::SetAssertOnOverflow( bool bAssert )
 {
 	m_bAssertOnOverflow = bAssert;
 }
 
-const char* old_bf_read::GetDebugName()
-{
-	return m_pDebugName;
-}
-
-void old_bf_read::SetDebugName( const char *pName )
+void bf_read::SetDebugName( const char *pName )
 {
 	m_pDebugName = pName;
 }
 
-unsigned int old_bf_read::CheckReadUBitLong(int numbits)
+void bf_read::SetOverflowFlag() RESTRICT
+{
+	if ( m_bAssertOnOverflow )
+	{
+		Assert( false );
+	}
+	m_bOverflow = true;
+}
+
+unsigned int bf_read::CheckReadUBitLong(int numbits)
 {
 	// Ok, just read bits out.
 	int i, nBitValue;
@@ -818,10 +874,10 @@ unsigned int old_bf_read::CheckReadUBitLong(int numbits)
 	return r;
 }
 
-void old_bf_read::ReadBits(void *pOutData, int nBits)
+void bf_read::ReadBits(void *pOutData, int nBits)
 {
 #if defined( BB_PROFILING )
-	VPROF( "old_bf_write::ReadBits" );
+	VPROF( "bf_read::ReadBits" );
 #endif
 
 	unsigned char *pOut = (unsigned char*)pOutData;
@@ -829,7 +885,7 @@ void old_bf_read::ReadBits(void *pOutData, int nBits)
 
 	
 	// align output to dword boundary
-	while( ((unsigned long)pOut & 3) != 0 && nBitsLeft >= 8 )
+	while( ((size_t)pOut & 3) != 0 && nBitsLeft >= 8 )
 	{
 		*pOut = (unsigned char)ReadUBitLong(8);
 		++pOut;
@@ -864,7 +920,32 @@ void old_bf_read::ReadBits(void *pOutData, int nBits)
 
 }
 
-float old_bf_read::ReadBitAngle( int numbits )
+int bf_read::ReadBitsClamped_ptr(void *pOutData, size_t outSizeBytes, size_t nBits)
+{
+	size_t outSizeBits = outSizeBytes * 8;
+	size_t readSizeBits = nBits;
+	int skippedBits = 0;
+	if ( readSizeBits > outSizeBits )
+	{
+		// Should we print a message when we clamp the data being read? Only
+		// in debug builds I think.
+		AssertMsg( 0, "Oversized network packet received, and clamped." );
+		readSizeBits = outSizeBits;
+		skippedBits = (int)( nBits - outSizeBits );
+		// What should we do in this case, which should only happen if nBits
+		// is negative for some reason?
+		//if ( skippedBits < 0 )
+		//	return 0;
+	}
+
+	ReadBits( pOutData, readSizeBits );
+	SeekRelative( skippedBits );
+
+	// Return the number of bits actually read.
+	return (int)readSizeBits;
+}
+
+float bf_read::ReadBitAngle( int numbits )
 {
 	float fReturn;
 	int i;
@@ -878,7 +959,7 @@ float old_bf_read::ReadBitAngle( int numbits )
 	return fReturn;
 }
 
-unsigned int old_bf_read::PeekUBitLong( int numbits )
+unsigned int bf_read::PeekUBitLong( int numbits )
 {
 	unsigned int r;
 	int i, nBitValue;
@@ -886,7 +967,7 @@ unsigned int old_bf_read::PeekUBitLong( int numbits )
 	int nShifts = numbits;
 #endif
 
-	old_bf_read savebf;
+	bf_read savebf;
 
 	savebf = *this;  // Save current state info
 
@@ -911,99 +992,85 @@ unsigned int old_bf_read::PeekUBitLong( int numbits )
 	return r;
 }
 
-// Append numbits least significant bits from data to the current bit stream
-int old_bf_read::ReadSBitLong( int numbits )
+unsigned int bf_read::ReadUBitLongNoInline( int numbits )
 {
-	int r, sign;
+	return ReadUBitLong( numbits );
+}
 
-	r = ReadUBitLong(numbits - 1);
+unsigned int bf_read::ReadUBitVarInternal( int encodingType )
+{
+	m_iCurBit -= 4;
+	// int bits = { 4, 8, 12, 32 }[ encodingType ];
+	int bits = 4 + encodingType*4 + (((2 - encodingType) >> 31) & 16);
+	return ReadUBitLong( bits );
+}
 
-	// Note: it does this wierdness here so it's bit-compatible with regular integer data in the buffer.
-	// (Some old code writes direct integers right into the buffer).
-	sign = ReadOneBit();
-	if(sign)
-		r = -((BitForBitnum(numbits-1)) - r);
-
+// Append numbits least significant bits from data to the current bit stream
+int bf_read::ReadSBitLong( int numbits )
+{
+	unsigned int r = ReadUBitLong(numbits);
+	unsigned int s = 1 << (numbits-1);
+	if (r >= s)
+	{
+		// sign-extend by removing sign bit and then subtracting sign bit again
+		r = r - s - s;
+	}
 	return r;
 }
 
-const byte g_BitMask[8] = {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80};
-const byte g_TrailingMask[8] = {0xff, 0xfe, 0xfc, 0xf8, 0xf0, 0xe0, 0xc0, 0x80};
-
-inline int old_bf_read::CountRunOfZeros()
+uint32 bf_read::ReadVarInt32()
 {
-	int bits = 0;
-	if ( m_iCurBit + 32 < m_nDataBits )
+	uint32 result = 0;
+	int count = 0;
+	uint32 b;
+
+	do 
 	{
-#if !FAST_BIT_SCAN
-		while (true)
+		if ( count == bitbuf::kMaxVarint32Bytes ) 
 		{
-			int value = (m_pData[m_iCurBit >> 3] & g_BitMask[m_iCurBit & 7]);
-			++m_iCurBit;
-			if ( value )
-				return bits;
-			++bits;
+			return result;
 		}
-#else
-		while (true)
-		{
-			int value = (m_pData[m_iCurBit >> 3] & g_TrailingMask[m_iCurBit & 7]);
-			if ( !value )
-			{
-				int zeros = (8-(m_iCurBit&7));
-				bits += zeros;
-				m_iCurBit += zeros;
-			}
-			else
-			{
-				int zeros = CountTrailingZeros(value) - (m_iCurBit & 7);
-				m_iCurBit += zeros + 1;
-				bits += zeros;
-				return bits;
-			}
-		}
-#endif
-	}
-	else
-	{
-		while ( ReadOneBit() == 0 )
-			bits++;
-	}
-	return bits;
+		b = ReadUBitLong( 8 );
+		result |= (b & 0x7F) << (7 * count);
+		++count;
+	} while (b & 0x80);
+
+	return result;
 }
 
-unsigned int old_bf_read::ReadUBitVar()
+uint64 bf_read::ReadVarInt64()
 {
-	switch( ReadUBitLong( 2 ) )
+	uint64 result = 0;
+	int count = 0;
+	uint64 b;
+
+	do 
 	{
-		case 0:
-			return ReadUBitLong( 4 );
+		if ( count == bitbuf::kMaxVarintBytes ) 
+		{
+			return result;
+		}
+		b = ReadUBitLong( 8 );
+		result |= static_cast<uint64>(b & 0x7F) << (7 * count);
+		++count;
+	} while (b & 0x80);
 
-		case 1:
-			return ReadUBitLong( 8 );
-
-		case 2:
-			return ReadUBitLong( 12 );
-			
-		default:
-		case 3:
-			return ReadUBitLong( 32 );
-	}
-#if 0
-	int bits = CountRunOfZeros();
-
-	unsigned int data = BitForBitnum(bits)-1;
-	
-	// read the value
-	if ( bits > 0)
-		data += ReadUBitLong( bits );
-
-	return data;
-#endif
+	return result;
 }
 
+int32 bf_read::ReadSignedVarInt32()
+{
+	uint32 value = ReadVarInt32();
+	return bitbuf::ZigZagDecode32( value );
+}
 
-unsigned int old_bf_read::ReadBitLong(int numbits, bool bSigned)
+int64 bf_read::ReadSignedVarInt64()
+{
+	uint32 value = ReadVarInt64();
+	return bitbuf::ZigZagDecode64( value );
+}
+
+unsigned int bf_read::ReadBitLong(int numbits, bool bSigned)
 {
 	if(bSigned)
 		return (unsigned int)ReadSBitLong(numbits);
@@ -1013,10 +1080,10 @@ unsigned int old_bf_read::ReadBitLong(int numbits, bool bSigned)
 
 
 // Basic Coordinate Routines (these contain bit-field size AND fixed point scaling constants)
-float old_bf_read::ReadBitCoord (void)
+float bf_read::ReadBitCoord (void)
 {
 #if defined( BB_PROFILING )
-	VPROF( "old_bf_write::ReadBitCoord" );
+	VPROF( "bf_read::ReadBitCoord" );
 #endif
 	int		intval=0,fractval=0,signbit=0;
 	float	value = 0.0;
@@ -1056,75 +1123,152 @@ float old_bf_read::ReadBitCoord (void)
 	return value;
 }
 
-float old_bf_read::ReadBitCoordMP( EBitCoordType coordType )
+float bf_read::ReadBitCoordMP( bool bIntegral, bool bLowPrecision )
 {
 #if defined( BB_PROFILING )
-	VPROF( "old_bf_write::ReadBitCoordMP" );
+	VPROF( "bf_read::ReadBitCoordMP" );
 #endif
-	int		intval=0,fractval=0,signbit=0;
-	float	value = 0.0;
-	
+	// BitCoordMP float encoding: inbounds bit, integer bit, sign bit, optional int bits, float bits
+	// BitCoordMP integer encoding: inbounds bit, integer bit, optional sign bit, optional int bits.
+	// int bits are always encoded as (value - 1) since zero is handled by the integer bit
 
-	bool bInBounds = ReadOneBit() ? true : false;
+	// With integer-only encoding, the presence of the third bit depends on the second
+	int flags = ReadUBitLong(3 - bIntegral);
+	enum { INBOUNDS=1, INTVAL=2, SIGN=4 };
 
-	if ( coordType == kCW_Integral )
+	if ( bIntegral )
 	{
-		// Read the required integer and fraction flags
-		intval = ReadOneBit();
-		// If we got either parse them, otherwise it's a zero.
-		if ( intval )
+		if ( flags & INTVAL )
 		{
-			// Read the sign bit
-			signbit = ReadOneBit();
+			// Read the third bit and the integer portion together at once
+			unsigned int bits = ReadUBitLong( (flags & INBOUNDS) ? COORD_INTEGER_BITS_MP+1 : COORD_INTEGER_BITS+1 );
+			// Remap from [0,N] to [1,N+1]
+			int intval = (bits >> 1) + 1;
+			return (bits & 1) ? -intval : intval;
+		}
+		return 0.f;
+	}
+	
+	static const float mul_table[4] =
+	{
+		1.f/(1<<COORD_FRACTIONAL_BITS),
+		-1.f/(1<<COORD_FRACTIONAL_BITS),
+		1.f/(1<<COORD_FRACTIONAL_BITS_MP_LOWPRECISION),
+		-1.f/(1<<COORD_FRACTIONAL_BITS_MP_LOWPRECISION)
+	};
+	//equivalent to: float multiply = mul_table[ ((flags & SIGN) ? 1 : 0) + bLowPrecision*2 ];
+	float multiply = *(float*)((uintptr_t)&mul_table[0] + (flags & 4) + bLowPrecision*8);
 
-			// If there's an integer, read it in
-			// Adjust the integers from [0..MAX_COORD_VALUE-1] to [1..MAX_COORD_VALUE]
-			if ( bInBounds )
-			{
-				value = ReadUBitLong( COORD_INTEGER_BITS_MP ) + 1;
-			}
-			else
-			{
-				value = ReadUBitLong( COORD_INTEGER_BITS ) + 1;
-			}
+	static const unsigned char numbits_table[8] =
+	{
+		COORD_FRACTIONAL_BITS,
+		COORD_FRACTIONAL_BITS,
+		COORD_FRACTIONAL_BITS + COORD_INTEGER_BITS,
+		COORD_FRACTIONAL_BITS + COORD_INTEGER_BITS_MP,
+		COORD_FRACTIONAL_BITS_MP_LOWPRECISION,
+		COORD_FRACTIONAL_BITS_MP_LOWPRECISION,
+		COORD_FRACTIONAL_BITS_MP_LOWPRECISION + COORD_INTEGER_BITS,
+		COORD_FRACTIONAL_BITS_MP_LOWPRECISION + COORD_INTEGER_BITS_MP
+	};
+	unsigned int bits = ReadUBitLong( numbits_table[ (flags & (INBOUNDS|INTVAL)) + bLowPrecision*4 ] );
+
+	if ( flags & INTVAL )
+	{
+		// Shuffle the bits to remap the integer portion from [0,N] to [1,N+1]
+		// and then paste in front of the fractional parts so we only need one
+		// int-to-float conversion.
+		
+		uint fracbitsMP = bits >> COORD_INTEGER_BITS_MP;
+		uint fracbits = bits >> COORD_INTEGER_BITS;
+
+		uint intmaskMP = ((1<<COORD_INTEGER_BITS_MP)-1);
+		uint intmask = ((1<<COORD_INTEGER_BITS)-1);
+
+		uint selectNotMP = (flags & INBOUNDS) - 1;
+
+		fracbits -= fracbitsMP;
+		fracbits &= selectNotMP;
+		fracbits += fracbitsMP;
+
+		intmask -= intmaskMP;
+		intmask &= selectNotMP;
+		intmask += intmaskMP;
+
+		uint intpart = (bits & intmask) + 1;
+		uint intbitsLow = intpart << COORD_FRACTIONAL_BITS_MP_LOWPRECISION;
+		uint intbits = intpart << COORD_FRACTIONAL_BITS;
+		uint selectNotLow = (uint)bLowPrecision - 1;
+		
+		intbits -= intbitsLow;
+		intbits &= selectNotLow;
+		intbits += intbitsLow;
+
+		bits = fracbits | intbits;
+	}
+
+	return (int)bits * multiply;
+}
+
+unsigned int bf_read::ReadBitCoordBits (void)
+{
+#if defined( BB_PROFILING )
+	VPROF( "bf_read::ReadBitCoordBits" );
+#endif
+
+	unsigned int flags = ReadUBitLong(2);
+	if ( flags == 0 )
+		return 0;
+
+	static const int numbits_table[3] =
+	{
+		COORD_INTEGER_BITS + 1,
+		COORD_FRACTIONAL_BITS + 1,
+		COORD_INTEGER_BITS + COORD_FRACTIONAL_BITS + 1
+	};
+	return ReadUBitLong( numbits_table[ flags-1 ] ) * 4 + flags;
+}
+
+unsigned int bf_read::ReadBitCoordMPBits( bool bIntegral, bool bLowPrecision )
+{
+#if defined( BB_PROFILING )
+	VPROF( "bf_read::ReadBitCoordMPBits" );
+#endif
+
+	unsigned int flags = ReadUBitLong(2);
+	enum { INBOUNDS=1, INTVAL=2 };
+	int numbits = 0;
+
+	if ( bIntegral )
+	{
+		if ( flags & INTVAL )
+		{
+			numbits = (flags & INBOUNDS) ? (1 + COORD_INTEGER_BITS_MP) : (1 + COORD_INTEGER_BITS);
+		}
+		else
+		{
+			return flags; // no extra bits
 		}
 	}
 	else
 	{
-		// Read the required integer and fraction flags
-		intval = ReadOneBit();
-
-		// Read the sign bit
-		signbit = ReadOneBit();
-
-		// If we got either parse them, otherwise it's a zero.
-		if ( intval )
+		static const unsigned char numbits_table[8] =
 		{
-			if ( bInBounds )
-			{
-				intval = ReadUBitLong( COORD_INTEGER_BITS_MP ) + 1;
-			}
-			else
-			{
-				intval = ReadUBitLong( COORD_INTEGER_BITS ) + 1;
-			}
-		}
-
-		// If there's a fraction, read it in
-		fractval = ReadUBitLong( coordType == kCW_LowPrecision ? COORD_FRACTIONAL_BITS_MP_LOWPRECISION : COORD_FRACTIONAL_BITS );
-
-		// Calculate the correct floating point value
-		value = intval + ((float)fractval * ( coordType == kCW_LowPrecision ? COORD_RESOLUTION_LOWPRECISION : COORD_RESOLUTION ) );
+			1 + COORD_FRACTIONAL_BITS,
+			1 + COORD_FRACTIONAL_BITS,
+			1 + COORD_FRACTIONAL_BITS + COORD_INTEGER_BITS,
+			1 + COORD_FRACTIONAL_BITS + COORD_INTEGER_BITS_MP,
+			1 + COORD_FRACTIONAL_BITS_MP_LOWPRECISION,
+			1 + COORD_FRACTIONAL_BITS_MP_LOWPRECISION,
+			1 + COORD_FRACTIONAL_BITS_MP_LOWPRECISION + COORD_INTEGER_BITS,
+			1 + COORD_FRACTIONAL_BITS_MP_LOWPRECISION + COORD_INTEGER_BITS_MP
+		};
+		numbits = numbits_table[ flags + bLowPrecision*4 ];
 	}
 
-	// Fixup the sign if negative.
-	if ( signbit )
-		value = -value;
-
-	return value;
+	return flags + ReadUBitLong(numbits)*4;
 }
 
-void old_bf_read::ReadBitVec3Coord( Vector& fa )
+void bf_read::ReadBitVec3Coord( Vector& fa )
 {
 	int		xflag, yflag, zflag;
 
@@ -1144,7 +1288,7 @@ void old_bf_read::ReadBitVec3Coord( Vector& fa )
 		fa[2] = ReadBitCoord();
 }
 
-float old_bf_read::ReadBitNormal (void)
+float bf_read::ReadBitNormal (void)
 {
 	// Read the sign bit
 	int	signbit = ReadOneBit();
@@ -1162,7 +1306,7 @@ float old_bf_read::ReadBitNormal (void)
 	return value;
 }
 
-void old_bf_read::ReadBitVec3Normal( Vector& fa )
+void bf_read::ReadBitVec3Normal( Vector& fa )
 {
 	int xflag = ReadOneBit();
 	int yflag = ReadOneBit(); 
@@ -1190,39 +1334,14 @@ void old_bf_read::ReadBitVec3Normal( Vector& fa )
 		fa[2] = -fa[2];
 }
 
-void old_bf_read::ReadBitAngles( QAngle& fa )
+void bf_read::ReadBitAngles( QAngle& fa )
 {
 	Vector tmp;
 	ReadBitVec3Coord( tmp );
 	fa.Init( tmp.x, tmp.y, tmp.z );
 }
 
-int old_bf_read::ReadChar()
-{
-	return ReadSBitLong(sizeof(char) << 3);
-}
-
-int old_bf_read::ReadByte()
-{
-	return ReadUBitLong(sizeof(unsigned char) << 3);
-}
-
-int old_bf_read::ReadShort()
-{
-	return ReadSBitLong(sizeof(short) << 3);
-}
-
-int old_bf_read::ReadWord()
-{
-	return ReadUBitLong(sizeof(unsigned short) << 3);
-}
-
-long old_bf_read::ReadLong()
-{
-	return ReadSBitLong(sizeof(long) << 3);
-}
-
-int64 old_bf_read::ReadLongLong()
+int64 bf_read::ReadLongLong()
 {
 	int64 retval;
 	uint *pLongs = (uint*)&retval;
@@ -1236,7 +1355,7 @@ int64 old_bf_read::ReadLongLong()
 	return retval;
 }
 
-float old_bf_read::ReadFloat()
+float bf_read::ReadFloat()
 {
 	float ret;
 	Assert( sizeof(ret) == 4 );
@@ -1247,13 +1366,13 @@ float old_bf_read::ReadFloat()
 	return ret;
 }
 
-bool old_bf_read::ReadBytes(void *pOut, int nBytes)
+bool bf_read::ReadBytes(void *pOut, int nBytes)
 {
 	ReadBits(pOut, nBytes << 3);
 	return !IsOverflowed();
 }
 
-bool old_bf_read::ReadString( char *pStr, int maxLen, bool bLine, int *pOutNumChars )
+bool bf_read::ReadString( char *pStr, int maxLen, bool bLine, int *pOutNumChars )
 {
 	Assert( maxLen != 0 );
 
@@ -1289,7 +1408,7 @@ bool old_bf_read::ReadString( char *pStr, int maxLen, bool bLine, int *pOutNumCh
 }
 
 
-char* old_bf_read::ReadAndAllocateString( bool *pOverflow )
+char* bf_read::ReadAndAllocateString( bool *pOverflow )
 {
 	char str[2048];
 	
@@ -1306,7 +1425,7 @@ char* old_bf_read::ReadAndAllocateString( bool *pOverflow )
 	return pRet;
 }
 
-void old_bf_read::ExciseBits( int startbit, int bitstoremove )
+void bf_read::ExciseBits( int startbit, int bitstoremove )
 {
 	int endbit = startbit + bitstoremove;
 	int remaining_to_end = m_nDataBits - endbit;
@@ -1327,4 +1446,45 @@ void old_bf_read::ExciseBits( int startbit, int bitstoremove )
 	m_nDataBytes = m_nDataBits >> 3;
 }
 
+int bf_read::CompareBitsAt( int offset, bf_read * RESTRICT other, int otherOffset, int numbits ) RESTRICT
+{
+	extern unsigned long g_ExtraMasks[33];
 
+	if ( numbits == 0 )
+		return 0;
+
+	int overflow1 = offset + numbits > m_nDataBits;
+	int overflow2 = otherOffset + numbits > other->m_nDataBits;
+
+	int x = overflow1 | overflow2;
+	if ( x != 0 )
+		return x;
+
+	unsigned int iStartBit1 = offset & 31u;
+	unsigned int iStartBit2 = otherOffset & 31u;
+	unsigned long *pData1 = (unsigned long*)m_pData + (offset >> 5);
+	unsigned long *pData2 = (unsigned long*)other->m_pData + (otherOffset >> 5);
+	unsigned long *pData1End = pData1 + ((offset + numbits - 1) >> 5);
+	unsigned long *pData2End = pData2 + ((otherOffset + numbits - 1) >> 5);
+
+	while ( numbits > 32 )
+	{
+		x  = LoadLittleDWord( (unsigned long*)pData1, 0 ) >> iStartBit1;
+		x ^= LoadLittleDWord( (unsigned long*)pData1, 1 ) << (32 - iStartBit1);
+		x ^= LoadLittleDWord( (unsigned long*)pData2, 0 ) >> iStartBit2;
+		x ^= LoadLittleDWord( (unsigned long*)pData2, 1 ) << (32 - iStartBit2);
+		if ( x != 0 )
+		{
+			return x; 
+		}
+		++pData1;
+		++pData2;
+		numbits -= 32;
+	}
+
+	x  = LoadLittleDWord( (unsigned long*)pData1, 0 ) >> iStartBit1;
+	x ^= LoadLittleDWord( (unsigned long*)pData1End, 0 ) << (32 - iStartBit1);
+	x ^= LoadLittleDWord( (unsigned long*)pData2, 0 ) >> iStartBit2;
+	x ^= LoadLittleDWord( (unsigned long*)pData2End, 0 ) << (32 - iStartBit2);
+	return x & g_ExtraMasks[ numbits ];
+}

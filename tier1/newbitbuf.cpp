@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -24,6 +24,8 @@
 #endif
 
 #include "stdio.h"
+
+#if 0
 
 void CBitWrite::StartWriting( void *pData, int nBytes, int iStartBit, int nBits )
 {
@@ -711,3 +713,5 @@ void CBitRead::ReadBitAngles( QAngle& fa )
 	ReadBitVec3Coord( tmp );
 	fa.Init( tmp.x, tmp.y, tmp.z );
 }
+
+#endif

@@ -1057,32 +1057,23 @@ inline void SwapFloat( float *pOut, const float *pIn )		{ SafeSwapFloat( pOut, p
 
 #endif
 
-#if COMPILER_MSVCX360
-	inline uint32 LoadLittleDWord( uint32 *base, unsigned int dwordIndex )
-	{
-		return __loadwordbytereverse( dwordIndex<<2, base );
-	}
+#if _X360
+FORCEINLINE unsigned long LoadLittleDWord( const unsigned long *base, unsigned int dwordIndex )
+		{
+			return __loadwordbytereverse( dwordIndex<<2, base );
+		}
 
-	inline void StoreLittleDWord( uint32 *base, unsigned int dwordIndex, uint32 dword )
-	{
-		__storewordbytereverse( dword, dwordIndex<<2, base );
-	}
-	inline uint64 LoadLittleInt64( uint64 *base, unsigned int nWordIndex )
-	{
-		return __loaddoublewordbytereverse( nWordIndex<<2, base );
-	}
-
-	inline void StoreLittleInt64( uint64 *base, unsigned int nWordIndex, uint64 nWord )
-	{
-		__storedoublewordbytereverse( nWord, nWordIndex<<2, base );
-	}
+FORCEINLINE void StoreLittleDWord( unsigned long *base, unsigned int dwordIndex, unsigned long dword )
+		{
+			__storewordbytereverse( dword, dwordIndex<<2, base );
+		}
 #else
-	inline uint32 LoadLittleDWord( uint32 *base, unsigned int dwordIndex )
+FORCEINLINE unsigned long LoadLittleDWord( const unsigned long *base, unsigned int dwordIndex )
 	{
 		return LittleDWord( base[dwordIndex] );
 	}
 
-	inline void StoreLittleDWord( uint32 *base, unsigned int dwordIndex, uint32 dword )
+FORCEINLINE void StoreLittleDWord( unsigned long *base, unsigned int dwordIndex, unsigned long dword )
 	{
 		base[dwordIndex] = LittleDWord(dword);
 	}
