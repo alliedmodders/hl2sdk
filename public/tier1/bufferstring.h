@@ -206,7 +206,7 @@ class CBufferStringGrowable : public CBufferString
 	friend class CBufferString;
 
 public:
-	CBufferStringGrowable() : m_nAllocated(STACK_ALLOCATION_MARKER | (MAX_SIZE & LENGTH_MASK)), m_nTotalCount(0), m_Memory()
+	CBufferStringGrowable() : m_nTotalCount(0), m_nAllocated(STACK_ALLOCATION_MARKER | (MAX_SIZE & LENGTH_MASK)), m_Memory()
 	{
 		if (AllowHeapAllocation)
 		{
