@@ -224,6 +224,7 @@ class IFlattenedSerializers;
 class ISource2Client;
 class ISource2ClientPrediction;
 class ISource2Server;
+class ISource2ServerConfig;
 class ISource2ServerSerializers;
 class ISource2Host;
 class ISource2GameClients;
@@ -514,6 +515,9 @@ DECLARE_TIER3_INTERFACE( ISource2ClientPrediction, g_pSource2ClientPrediction );
 
 #define SOURCE2SERVER_INTERFACE_VERSION		"Source2Server001"
 DECLARE_TIER3_INTERFACE( ISource2Server, g_pSource2Server );
+
+#define SOURCE2SERVERCONFIG_INTERFACE_VERSION		"Source2ServerConfig001"
+DECLARE_TIER3_INTERFACE( ISource2ServerConfig, g_pSource2ServerConfig );
 
 #define SOURCE2SERVERSERIALIZERS_INTERFACE_VERSION		"Source2ServerSerializers001"
 DECLARE_TIER3_INTERFACE( ISource2ServerSerializers, g_pSource2ServerSerializers );

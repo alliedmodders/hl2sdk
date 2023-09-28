@@ -102,6 +102,7 @@ IFlattenedSerializers *g_pFlattenedSerializers;
 ISource2Client *g_pSource2Client;
 ISource2ClientPrediction *g_pSource2ClientPrediction;
 ISource2Server *g_pSource2Server;
+ISource2ServerConfig *g_pSource2ServerConfig;
 ISource2ServerSerializers *g_pSource2ServerSerializers;
 ISource2Host *g_pSource2Host;
 ISource2GameClients *g_pSource2GameClients;
@@ -245,6 +246,7 @@ static const InterfaceGlobals_t g_pInterfaceGlobals[] =
 	{ SOURCE2CLIENT_INTERFACE_VERSION, &g_pSource2Client },
 	{ SOURCE2CLIENTPREDICTION_INTERFACE_VERSION, &g_pSource2ClientPrediction },
 	{ SOURCE2SERVER_INTERFACE_VERSION, &g_pSource2Server },
+	{ SOURCE2SERVERCONFIG_INTERFACE_VERSION, &g_pSource2ServerConfig },
 	{ SOURCE2SERVERSERIALIZERS_INTERFACE_VERSION, &g_pSource2ServerSerializers },
 	{ SOURCE2HOST_INTERFACE_VERSION, &g_pSource2Host },
 	{ SOURCE2GAMECLIENTS_INTERFACE_VERSION, &g_pSource2GameClients },
