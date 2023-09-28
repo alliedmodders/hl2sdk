@@ -25,7 +25,7 @@ public:
 	virtual bool	IsInitMessage( void ) const = 0;
 
 	virtual int		GetRecipientCount( void ) const = 0;
-	virtual CEntityIndex	GetRecipientIndex( int slot ) const = 0;
+	virtual CEntityIndex	*GetRecipientIndex( CEntityIndex *pEntIndex, int slot ) const = 0;
 };
 
 #endif // IRECIPIENTFILTER_H
