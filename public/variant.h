@@ -12,8 +12,8 @@
 #include "Color.h"
 #include "entity2/entityidentity.h"
 #include "basehandle.h"
-#include "bufferstring.h"
-#include "utlscratchmemory.h"
+#include "tier1/bufferstring.h"
+#include "tier1/utlscratchmemory.h"
 
 // Forward declaration
 class CEntityInstance;

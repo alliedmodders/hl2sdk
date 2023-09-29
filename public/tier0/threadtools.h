@@ -892,7 +892,7 @@ template <> struct CAutoLockTypeDeducer<sizeof(CAlignedThreadFastMutex)> {	typed
 
 #ifdef COMPILER_GCC
 #define AUTO_LOCK( mutex ) \
-	AUTO_LOCK_( typeof(CAutoLockTypeDeducer<sizeof(mutex)>::Type_t), mutex )
+	AUTO_LOCK_( typename CAutoLockTypeDeducer<sizeof(mutex)>::Type_t, mutex )
 #else
 #define AUTO_LOCK( mutex ) \
 	AUTO_LOCK_( CAutoLockTypeDeducer<sizeof(mutex)>::Type_t, mutex )
@@ -1135,7 +1135,7 @@ private:
 class ALIGN8 PLATFORM_CLASS CThreadSpinRWLock
 {
 public:
-	CThreadSpinRWLock()	{ COMPILE_TIME_ASSERT( sizeof( LockInfo_t ) == sizeof( int64 ) ); Assert( (intp)this % 8 == 0 ); memset( this, 0, sizeof( *this ) ); }
+	CThreadSpinRWLock()	{ COMPILE_TIME_ASSERT( sizeof( LockInfo_t ) == sizeof( int64 ) ); Assert( (intp)this % 8 == 0 ); memset( (void*)this, 0, sizeof( *this ) ); }
 
 	bool TryLockForWrite();
 	bool TryLockForRead();

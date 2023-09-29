@@ -383,7 +383,7 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase<TreeType, CASEINSENSITIVE>::Find
 	// use the string passed in the context
 	int len = Q_strlen( pString ) + 1;
 
-	CUtlSymbolTableLargeBaseTreeEntry_t *search = (CUtlSymbolTableLargeBaseTreeEntry_t *)_alloca( len + sizeof( LargeSymbolTableHashDecoration_t ) );
+	CUtlSymbolTableLargeBaseTreeEntry_t *search = (CUtlSymbolTableLargeBaseTreeEntry_t *)alloca( len + sizeof( LargeSymbolTableHashDecoration_t ) );
 	search->m_Hash = CUtlSymbolLarge_Hash( CASEINSENSITIVE, pString, len );
 	Q_memcpy( (char *)&search->m_String[ 0 ], pString, len );
 

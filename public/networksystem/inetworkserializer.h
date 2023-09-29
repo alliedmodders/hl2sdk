@@ -12,8 +12,20 @@
 #include <tier1/bitbuf.h>
 #include "Color.h"
 
-enum NetworkValidationMode_t;
-enum NetworkSerializationMode_t;
+enum NetworkValidationMode_t
+{
+
+};
+
+enum NetworkSerializationMode_t
+{
+	NET_SERIALIZATION_MODE_0 = 0x0,
+	NET_SERIALIZATION_MODE_1 = 0x1,
+	NET_SERIALIZATION_MODE_COUNT = 0x2,
+	NET_SERIALIZATION_MODE_DEFAULT = 0x0,
+	NET_SERIALIZATION_MODE_SERVER = 0x0,
+	NET_SERIALIZATION_MODE_CLIENT = 0x1,
+};
 
 typedef uint16 NetworkMessageId;
 typedef uint8 NetworkGroupId;
