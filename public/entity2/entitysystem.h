@@ -12,9 +12,9 @@
 #include "entitydatainstantiator.h"
 
 class CEntityKeyValues;
-abstract_class IEntityResourceManifest;
-abstract_class IEntityPrecacheConfiguration;
-abstract_class IEntityResourceManifestBuilder;
+class IEntityResourceManifest;
+class IEntityPrecacheConfiguration;
+class IEntityResourceManifestBuilder;
 class ISpawnGroupEntityFilter;
 
 typedef void (*EntityResourceManifestCreationCallback_t)(struct IEntityResourceManifest*, void*);
@@ -109,6 +109,7 @@ struct CEntityResourceManifestLock
 
 abstract_class IEntityResourceManifestBuilder
 {
+public:
 	virtual void		BuildResourceManifest(EntityResourceManifestCreationCallback_t callback, void* pContext, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) = 0;
 	virtual void		BuildResourceManifest(const char* pManifestNameOrGroupName, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) = 0;
 	virtual void		BuildResourceManifest(SpawnGroupHandle_t hSpawnGroup, const CUtlVector<const CEntityKeyValues*, CUtlMemory<const CEntityKeyValues*, int> >* pEntityKeyValues, const char* pFilterName, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) = 0;
