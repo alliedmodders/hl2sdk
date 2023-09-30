@@ -338,9 +338,14 @@ public:
 	virtual void unk012() = 0;
 	virtual void unk013() = 0;
 
-	virtual void OnKickById( const CCommandContext &context, const CCommand &cmd ) = 0;
+	virtual void OnKickClient( const CCommandContext &context, const CCommand &cmd ) = 0;
 
-	virtual void unk014() = 0;
+	// Kicks the slot with the specified NetworkDisconnectionReason.
+    // Note that the internal reason is never displayed to the user.
+	//
+	// AM TODO: add header ref for ENetworkDisconnectReason from proto header
+    virtual void KickClient( CPlayerSlot slot, const char *szInternalReason, /*ENetworkDisconnectionReason*/ char reason ) = 0;
+
 	virtual void unk015() = 0;
 	virtual void unk016() = 0;
 	virtual void unk017() = 0;
