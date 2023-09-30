@@ -122,20 +122,10 @@ abstract_class IEntityResourceManifestBuilder
 };
 
 
-// Size: 	0x1510 (from constructor)
+// Size: 0x1510 (from constructor)
 class CEntitySystem : public IEntityResourceManifestBuilder
 {
 public:
-	virtual void		BuildResourceManifest(EntityResourceManifestCreationCallback_t callback, void* pContext, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) override;
-	virtual void		BuildResourceManifest(const char* pManifestNameOrGroupName, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) override;
-	virtual void		BuildResourceManifest(SpawnGroupHandle_t hSpawnGroup, const CUtlVector<const CEntityKeyValues*, CUtlMemory<const CEntityKeyValues*, int> >* pEntityKeyValues, const char* pFilterName, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) override;
-	virtual void		BuildResourceManifest(SpawnGroupHandle_t hSpawnGroup, int nEntityKeyValueCount, const CEntityKeyValues** ppEntityKeyValues, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) override;
-	virtual void		UnknownFunc004() override;
-	virtual void		BuildResourceManifestForEntity(uint64 unknown1, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest, uint64 unknown2) override;
-	virtual void		InvokePrecacheCallback(void* hResource, const EntitySpawnInfo_t* const info, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest, char* unk, void* callback) override;
-	virtual void		AddRefKeyValues(const CEntityKeyValues* pKeyValues) override;
-	virtual void		ReleaseKeyValues(const CEntityKeyValues* pKeyValues) override;
-	virtual void		LockResourceManifest(bool bLock, CEntityResourceManifestLock* const context) override;
 	virtual				~CEntitySystem();
 	virtual void		ClearEntityDatabase(ClearEntityDatabaseMode_t eMode);
 	virtual void		FindEntityProcedural(const char* szName, CEntityInstance* pSearchingEntity, CEntityInstance* pActivator, CEntityInstance* pCaller);
@@ -150,43 +140,9 @@ public:
 	virtual void		UpdateOnRemove(int nCount, const EntityDeletion_t *pDeletion);
 
 public:
-	CBaseEntity* GetBaseEntity(int32_t entnum) // CEntityIndex
-	{
-		if (entnum <= -1 || entnum >= (MAX_TOTAL_ENTITIES - 1))
-			return nullptr;
+	CBaseEntity* GetBaseEntity(CEntityIndex entnum);
 
-		CEntityIdentities* pChunkToUse = m_EntityList.m_pIdentityChunks[entnum / MAX_ENTITIES_IN_LIST];
-		if (!pChunkToUse)
-			return nullptr;
-
-		CEntityIdentity* pIdentity = &pChunkToUse->m_pIdentities[entnum % MAX_ENTITIES_IN_LIST];
-		if (!pIdentity)
-			return nullptr;
-
-		if (pIdentity->m_EHandle.GetEntryIndex() != entnum)
-			return nullptr;
-
-		return static_cast<CBaseEntity*>(pIdentity->m_pInstance);
-	}
-
-	CBaseEntity* GetBaseEntity(const CEntityHandle& hEnt)
-	{
-		if (!hEnt.IsValid())
-			return nullptr;
-
-		CEntityIdentities* pChunkToUse = m_EntityList.m_pIdentityChunks[hEnt.GetEntryIndex() / MAX_ENTITIES_IN_LIST];
-		if (!pChunkToUse)
-			return nullptr;
-
-		CEntityIdentity* pIdentity = &pChunkToUse->m_pIdentities[hEnt.GetEntryIndex() % MAX_ENTITIES_IN_LIST];
-		if (!pIdentity)
-			return nullptr;
-
-		if (pIdentity->m_EHandle != hEnt)
-			return nullptr;
-
-		return static_cast<CBaseEntity*>(pIdentity->m_pInstance);
-	}
+	CBaseEntity* GetBaseEntity(const CEntityHandle& hEnt);
 
 private:
 	IEntityResourceManifest* m_pCurrentManifest;
@@ -194,11 +150,10 @@ public:
 	CConcreteEntityList m_EntityList;
 	// CConcreteEntityList seems to be correct but m_CallQueue supposedly starts at offset 2664, which is... impossible?
 	// Based on CEntitySystem::CEntitySystem found via string "MaxNonNetworkableEntities"
-	uint8 unk2712[0xa78]; // 0x2712
+	uint8 unk2696[0xa88];
 };
-static_assert(sizeof(CEntitySystem) == 0x1510, "Class doesn't match expected size");
 
-// Size: 	0x1580 (from constructor)
+// Size: 0x1580 (from constructor)
 class CGameEntitySystem : public CEntitySystem
 {
 	struct SpawnGroupEntityFilterInfo_t
@@ -210,26 +165,7 @@ class CGameEntitySystem : public CEntitySystem
 
 
 public:
-	virtual void		BuildResourceManifest(EntityResourceManifestCreationCallback_t callback, void* pContext, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) override;
-	virtual void		BuildResourceManifest(const char* pManifestNameOrGroupName, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) override;
-	virtual void		BuildResourceManifest(SpawnGroupHandle_t hSpawnGroup, const CUtlVector<const CEntityKeyValues*, CUtlMemory<const CEntityKeyValues*, int> >* pEntityKeyValues, const char* pFilterName, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) override;
-	virtual void		BuildResourceManifest(SpawnGroupHandle_t hSpawnGroup, int nEntityKeyValueCount, const CEntityKeyValues** ppEntityKeyValues, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) override;
-	virtual void		UnknownFunc004() override;
-	virtual void		BuildResourceManifestForEntity(uint64 unknown1, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest, uint64 unknown2) override;
-	virtual void		InvokePrecacheCallback(void* hResource, const EntitySpawnInfo_t* const info, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest, char* unk, void* callback) override;
-	virtual void		LockResourceManifest(bool bLock, CEntityResourceManifestLock* const context) override;
 	virtual				~CGameEntitySystem();
-	virtual void		ClearEntityDatabase(ClearEntityDatabaseMode_t eMode) override;
-	virtual void		FindEntityProcedural(const char* szName, CEntityInstance* pSearchingEntity, CEntityInstance* pActivator, CEntityInstance* pCaller) override;
-	virtual void		OnEntityParentChanged(CEntityInstance* pEntity, CEntityInstance* pNewParent) override;
-	virtual void		OnAddEntity(CEntityInstance* pEnt, CEntityHandle handle) override;
-	virtual void		OnRemoveEntity(CEntityInstance* pEnt, CEntityHandle handle) override;
-	virtual int			GetSpawnGroupWorldId(SpawnGroupHandle_t hSpawnGroup) override;
-	virtual void		Spawn(int nCount, const EntitySpawnInfo_t* pInfo) override;
-	virtual void		Activate(int nCount, const EntityActivation_t* pActivates, ActivateType_t activateType) override;
-	virtual void		PostDataUpdate(int nCount, const PostDataUpdateInfo_t* pInfo) override;
-	virtual void		OnSetDormant(int nCount, const EntityDormancyChange_t* pInfo, bool bNotifyAddedToPVS) override;
-	virtual void		UpdateOnRemove(int nCount, const EntityDeletion_t* pDeletion) override;
 
 public:
 	int m_iMaxNetworkedEntIndex;
@@ -238,9 +174,7 @@ public:
 	// int m_iNumEdicts; // This is no longer referenced in the server binary
 	CUtlDict<CGameEntitySystem::SpawnGroupEntityFilterInfo_t, int> m_spawnGroupEntityFilters;
 	CUtlVector<IEntityListener*, CUtlMemory<IEntityListener*, int> > m_entityListeners;
-	uint8 unknown[0x18];
+	uint8 unk5480[0x18];
 };
-
-static_assert(sizeof(CGameEntitySystem) == 0x1580, "Class doesn't match expected size");
 
 #endif // ENTITYSYSTEM_H

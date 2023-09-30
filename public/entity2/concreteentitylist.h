@@ -9,19 +9,18 @@ class CConcreteEntityList
 	{
 		CEntityIdentity* m_pHead;
 		CEntityIdentity* m_pTail;
-		uint64_t unknown;
+		uint64 unk;
 	};
 public:
-	CEntityIdentities *m_pIdentityChunks[MAX_ENTITY_LISTS];
-	uint8_t unknown[16];
-	CEntityIdentity* m_pFirstActiveEntity; // 528
-	CConcreteEntityList::CList m_usedList;
-	CConcreteEntityList::CList m_dormantList;
-	CConcreteEntityList::CList m_freeNetworkableList;
-	CConcreteEntityList::CList m_freeNonNetworkableList;
-	uint32_t m_nNetworkableEntityLimit; // 0x268
-	uint32_t m_nNonNetworkableEntityLimit; // 0x26c
-	uint32_t m_nMaxPlayers;
+	CEntityIdentity* m_pIdentityChunks[MAX_ENTITY_LISTS];
+	CEntityIdentity* m_pFirstActiveEntity; // 512
+	CConcreteEntityList::CList m_usedList;	// 520
+	CConcreteEntityList::CList m_dormantList; // 544
+	CConcreteEntityList::CList m_freeNetworkableList; // 568
+	CConcreteEntityList::CList m_freeNonNetworkableList; // 592
+	uint32 m_nNetworkableEntityLimit; // 0x268
+	uint32 m_nNonNetworkableEntityLimit; // 0x26c
+	uint32 m_nMaxPlayers;
 	CBitVec<16384> m_PVSBits;
 };
 

@@ -73,8 +73,4 @@ public:
 	CEntityIdentity* m_pNextByClass; // 0x70	
 };
 
-struct CEntityIdentities
-{
-	CEntityIdentity m_pIdentities[MAX_ENTITIES_IN_LIST];
-};
 #endif // ENTITYIDENTITY_H

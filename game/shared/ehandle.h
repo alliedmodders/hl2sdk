@@ -28,7 +28,7 @@ inline IHandleEntity* CEntityHandle::GetHandleEntity() const
 // CHandle.
 // -------------------------------------------------------------------------------------------------- //
 template< class T >
-class CHandle : public CBaseHandle
+class CHandle : public CEntityHandle
 {
 public:
 

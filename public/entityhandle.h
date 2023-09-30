@@ -10,6 +10,7 @@
 #pragma once
 #endif
 
+#include "const.h"
 #include "ihandleentity.h"
 
 
@@ -18,7 +19,7 @@ class CEntityHandle
 public:
 	CEntityHandle();
 	CEntityHandle(const CEntityHandle& other);
-	CEntityHandle(uint32_t value);
+	CEntityHandle(uint32 value);
 	CEntityHandle(int iEntry, int iSerialNumber);
 
 	void Init(int iEntry, int iSerialNumber);
@@ -67,7 +68,7 @@ inline CEntityHandle::CEntityHandle(const CEntityHandle& other)
 	m_Index = other.m_Index;
 }
 
-inline CEntityHandle::CEntityHandle(uint32_t value)
+inline CEntityHandle::CEntityHandle(uint32 value)
 {
 	m_Index = value;
 }
