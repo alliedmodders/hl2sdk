@@ -15,7 +15,7 @@
 #include "hud.h"
 #include "cdll_int.h"
 #include "kbutton.h"
-#include "basehandle.h"
+#include "entityhandle.h"
 #include "usercmd.h"
 #include "input.h"
 #include "iviewrender.h"

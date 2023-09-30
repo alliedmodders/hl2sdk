@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2005, Valve Corporation, All rights reserved. =======
+//====== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. =======
 //
 // Purpose: 
 //
@@ -13,7 +13,7 @@
 #include "tier0/interface.h"
 #include "tier1/utlvector.h"
 #include "Color.h"
-#include "basehandle.h"
+#include "entityhandle.h"
 #include "iclientrenderable.h"
 #include "engine/ishadowmgr.h"
 #include "engine/ivmodelinfo.h"
