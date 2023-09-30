@@ -18,7 +18,7 @@
 // Game-code CBaseHandle implementation.
 // -------------------------------------------------------------------------------------------------- //
 
-inline IHandleEntity* CEntityHandle::GetHandleEntity() const
+inline IHandleEntity* CEntityHandle::Get() const
 {
 	extern CEntitySystem *g_pEntitySystem;
 	return g_pEntitySystem->GetBaseEntity( *this );

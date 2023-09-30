@@ -43,7 +43,7 @@ public:
 
 	// Use this to dereference the handle.
 	// Note: this is implemented in game code (ehandle.h)
-	IHandleEntity* GetHandleEntity() const;
+	IHandleEntity* Get() const;
 
 protected:
 	union
@@ -121,12 +121,12 @@ inline bool CEntityHandle::operator ==(const CEntityHandle& other) const
 
 inline bool CEntityHandle::operator ==(const IHandleEntity* pEnt) const
 {
-	return GetHandleEntity() == pEnt;
+	return Get() == pEnt;
 }
 
 inline bool CEntityHandle::operator !=(const IHandleEntity* pEnt) const
 {
-	return GetHandleEntity() != pEnt;
+	return Get() != pEnt;
 }
 
 inline bool CEntityHandle::operator <(const CEntityHandle& other) const
