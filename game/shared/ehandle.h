@@ -12,7 +12,7 @@
 #endif
 
 #include "entityhandle.h"
-#include "entitysystem.h"
+#include "entity2/entitysystem.h"
 
 // -------------------------------------------------------------------------------------------------- //
 // Game-code CBaseHandle implementation.
