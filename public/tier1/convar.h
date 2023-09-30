@@ -1088,7 +1088,7 @@ public:
 		m_pOwner = pOwner;
 	}
 
-	virtual void CommandCallback( const CCommand &command )
+	virtual void CommandCallback( const CCommandContext &context, const CCommand &command )
 	{
 		Assert( m_pOwner && m_Func );
 		(m_pOwner->*m_Func)( command );
