@@ -10,25 +10,15 @@
 #pragma once
 #endif
 
-
-class CBaseHandle;
-
+class CEntityHandle;
 
 // An IHandleEntity-derived class can go into an entity list and use ehandles.
 class IHandleEntity
 {
+	virtual void Schema_DynamicBinding(void**) = 0;
 public:
-	virtual ~IHandleEntity() {}
-	virtual void SetRefEHandle( const CBaseHandle &handle ) = 0;
-	virtual const CBaseHandle& GetRefEHandle() const = 0;
-#ifdef _X360
-	IHandleEntity() :
-		m_bIsStaticProp( false )
-	{
-	}
-
-	bool m_bIsStaticProp;
-#endif
+	virtual ~IHandleEntity() = 0;
+	virtual const CEntityHandle& GetRefEHandle() const = 0;
 };
 
 

@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -74,7 +74,7 @@
 #define NUM_ENT_ENTRIES			(1 << NUM_ENT_ENTRY_BITS)
 #define INVALID_EHANDLE_INDEX	0xFFFFFFFF
 
-#define NUM_SERIAL_NUM_BITS		16 // (32 - NUM_ENT_ENTRY_BITS)
+#define NUM_SERIAL_NUM_BITS		17 // (32 - NUM_ENT_ENTRY_BITS)
 #define NUM_SERIAL_NUM_SHIFT_BITS (32 - NUM_SERIAL_NUM_BITS)
 #define ENT_ENTRY_MASK			(( 1 << NUM_SERIAL_NUM_BITS) - 1)
 

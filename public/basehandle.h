@@ -13,26 +13,11 @@
 
 #include "const.h"
 #include "tier0/dbg.h"
+#include "ihandleentity.h"
 
+typedef CEntityHandle CBaseHandle;
 
-class IHandleEntity;
-
-// Represents EHANDLE2 class
-// TODO: GAMMACASE: Replace old CBaseHandle with this
-class CEntityHandle
-{
-public:
-	union
-	{
-		uint32 m_Index;
-		struct
-		{
-			uint32 m_EntityIndex : 15;
-			uint32 m_Serial : 17;
-		} m_Parts;
-	};
-};
-
+#if 0
 // -------------------------------------------------------------------------------------------------- //
 // CBaseHandle.
 // -------------------------------------------------------------------------------------------------- //
@@ -82,7 +67,6 @@ protected:
 };
 
 
-#include "ihandleentity.h"
 
 
 inline CBaseHandle::CBaseHandle()
@@ -201,6 +185,6 @@ inline const CBaseHandle& CBaseHandle::Set( const IHandleEntity *pEntity )
 	
 	return *this;
 }
-
+#endif
 
 #endif // BASEHANDLE_H

@@ -15,9 +15,6 @@
 #include "tier1/bufferstring.h"
 #include "tier1/utlscratchmemory.h"
 
-// Forward declaration
-class CEntityInstance;
-
 // Non-implemented classes/structs
 struct ResourceBindingBase_t;
 typedef const ResourceBindingBase_t *ResourceHandle_t;
