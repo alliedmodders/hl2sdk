@@ -159,3 +159,5 @@ inline const CEntityHandle& CEntityHandle::Set(const IHandleEntity* pEntity)
 }
 
 #endif // ENTITYHANDLE_H
+
+typedef CEntityHandle CBaseHandle;

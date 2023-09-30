@@ -1,10 +1,10 @@
-//====== Copyright © 1996-2004, Valve Corporation, All rights reserved. =======
+//====== Copyright ï¿½ 1996-2004, Valve Corporation, All rights reserved. =======
 //
 // Purpose: Force feeback OS level handlers
 //
 //=============================================================================
 #include <windows.h>
-#include "basehandle.h"
+#include "entityhandle.h"
 #include "UtlVector.h"
 #include "usercmd.h"
 #include "cdll_client_int.h"

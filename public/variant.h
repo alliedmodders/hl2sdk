@@ -11,7 +11,7 @@
 #include "vector4d.h"
 #include "Color.h"
 #include "entity2/entityidentity.h"
-#include "basehandle.h"
+#include "entityhandle.h"
 #include "tier1/bufferstring.h"
 #include "tier1/utlscratchmemory.h"
 
