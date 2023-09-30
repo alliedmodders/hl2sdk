@@ -1065,7 +1065,7 @@ template< class T >
 class CConCommandMemberAccessor : public ConCommand, public ICommandCallback, public ICommandCompletionCallback
 {
 	typedef ConCommand BaseClass;
-	typedef void ( T::*FnMemberCommandCallback_t )( const CCommand &command );
+	typedef void ( T::*FnMemberCommandCallback_t )( const CCommandContext &context, const CCommand &command );
 	typedef int  ( T::*FnMemberCommandCompletionCallback_t )( const char *pPartial, CUtlVector< CUtlString > &commands );
 
 public:
@@ -1091,7 +1091,7 @@ public:
 	virtual void CommandCallback( const CCommandContext &context, const CCommand &command )
 	{
 		Assert( m_pOwner && m_Func );
-		(m_pOwner->*m_Func)( command );
+		(m_pOwner->*m_Func)( context, command );
 	}
 
 	virtual int  CommandCompletionCallback( const char *pPartial, CUtlVector< CUtlString > &commands )
