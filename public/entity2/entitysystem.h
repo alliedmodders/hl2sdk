@@ -126,18 +126,18 @@ abstract_class IEntityResourceManifestBuilder
 class CEntitySystem : public IEntityResourceManifestBuilder
 {
 public:
-	virtual				~CEntitySystem();
-	virtual void		ClearEntityDatabase(ClearEntityDatabaseMode_t eMode);
-	virtual void		FindEntityProcedural(const char* szName, CEntityInstance* pSearchingEntity, CEntityInstance* pActivator, CEntityInstance* pCaller);
-	virtual void		OnEntityParentChanged(CEntityInstance* pEntity, CEntityInstance* pNewParent); // empty function
-	virtual void		OnAddEntity(CEntityInstance* pEnt, CEntityHandle handle); // empty function
-	virtual void		OnRemoveEntity(CEntityInstance* pEnt, CEntityHandle handle); // empty function
-	virtual int			GetSpawnGroupWorldId(SpawnGroupHandle_t hSpawnGroup); // returns 0
-	virtual void		Spawn(int nCount, const EntitySpawnInfo_t* pInfo);
-	virtual void		Activate(int nCount, const EntityActivation_t* pActivates, ActivateType_t activateType);
-	virtual void		PostDataUpdate(int nCount, const PostDataUpdateInfo_t *pInfo);
-	virtual void		OnSetDormant(int nCount, const EntityDormancyChange_t* pInfo, bool bNotifyAddedToPVS);
-	virtual void		UpdateOnRemove(int nCount, const EntityDeletion_t *pDeletion);
+	virtual				~CEntitySystem() = 0;
+	virtual void		ClearEntityDatabase(ClearEntityDatabaseMode_t eMode) = 0;
+	virtual void		FindEntityProcedural(const char* szName, CEntityInstance* pSearchingEntity, CEntityInstance* pActivator, CEntityInstance* pCaller) = 0;
+	virtual void		OnEntityParentChanged(CEntityInstance* pEntity, CEntityInstance* pNewParent) = 0; // empty function
+	virtual void		OnAddEntity(CEntityInstance* pEnt, CEntityHandle handle) = 0; // empty function
+	virtual void		OnRemoveEntity(CEntityInstance* pEnt, CEntityHandle handle) = 0; // empty function
+	virtual int			GetSpawnGroupWorldId(SpawnGroupHandle_t hSpawnGroup) = 0; // returns 0
+	virtual void		Spawn(int nCount, const EntitySpawnInfo_t* pInfo) = 0;
+	virtual void		Activate(int nCount, const EntityActivation_t* pActivates, ActivateType_t activateType) = 0;
+	virtual void		PostDataUpdate(int nCount, const PostDataUpdateInfo_t *pInfo) = 0;
+	virtual void		OnSetDormant(int nCount, const EntityDormancyChange_t* pInfo, bool bNotifyAddedToPVS) = 0;
+	virtual void		UpdateOnRemove(int nCount, const EntityDeletion_t *pDeletion) = 0;
 
 public:
 	CBaseEntity* GetBaseEntity(CEntityIndex entnum);
@@ -165,7 +165,7 @@ class CGameEntitySystem : public CEntitySystem
 
 
 public:
-	virtual				~CGameEntitySystem();
+	virtual				~CGameEntitySystem() = 0;
 
 public:
 	int m_iMaxNetworkedEntIndex;
