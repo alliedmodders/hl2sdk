@@ -5,8 +5,11 @@
 // CEntityKeyValues::Serialize
 
 
+__int64 CEntityKeyValues::Unserialize(CUtlBuffer *const buf) {
+  
+}
 
-// CEntityKeyValues::Unserialize
+
 // CEntityKeyValues::UnserializeKeys from world renderer
 
 // more
