@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -22,7 +22,7 @@
 #include "sceneentity.h"
 #include "ai_baseactor.h"
 #include "datacache/imdlcache.h"
-#include "tier1/byteswap.h"
+#include "tier1/cbyteswap.h"
 #include "toolframework/itoolframework.h"
 #include "flexcycler.h"
 

@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2006, Valve LLC, All rights reserved. ============
+//========= Copyright ï¿½ 1996-2006, Valve LLC, All rights reserved. ============
 //
 // Purpose: StudioMDL byteswapping functions.
 //
@@ -11,7 +11,7 @@
 #pragma once
 #endif
 
-#include "byteswap.h"
+#include "cbyteswap.h"
 struct studiohdr_t;
 class IPhysicsCollision;
 

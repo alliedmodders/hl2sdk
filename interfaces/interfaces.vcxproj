@@ -233,7 +233,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\public\tier1\bitbuf.h" />
-    <ClInclude Include="..\public\tier1\byteswap.h" />
+    <ClInclude Include="..\public\tier1\cbyteswap.h" />
     <ClInclude Include="..\public\tier1\callqueue.h" />
     <ClInclude Include="..\public\tier1\characterset.h" />
     <ClInclude Include="..\public\tier1\checksum_crc.h" />

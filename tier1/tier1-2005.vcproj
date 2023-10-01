@@ -217,7 +217,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\byteswap.cpp"
+				RelativePath=".\cbyteswap.cpp"
 				>
 			</File>
 			<File
@@ -346,7 +346,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\public\tier1\byteswap.h"
+				RelativePath="..\public\tier1\cbyteswap.h"
 				>
 			</File>
 			<File
