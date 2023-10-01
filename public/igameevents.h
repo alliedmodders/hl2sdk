@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ?1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -64,7 +64,15 @@ data field should not be broadcasted to clients, use the type "local".
 
 class KeyValues;
 class CGameEvent;
+struct UnkGameEventStruct_t {
+	UnkGameEventStruct_t(const char* keyName) {
+		m_Unk = 0;
+		m_Key = keyName;
+	}
 
+	uint64_t m_Unk;
+	const char* m_Key;
+};
 abstract_class IToolGameEventAPI
 {
 	virtual void unk001( void * ) = 0;
@@ -95,11 +103,11 @@ public:
 	virtual CEntityHandle GetEHandle2( const char *keyName, CEntityHandle defaultValue ) = 0;
 
 	virtual CPlayerSlot *GetPlayerSlot( const char *keyName = NULL ) = 0;
-	virtual CBasePlayer *GetPlayer( const char *keyName = NULL ) = 0;
+	virtual CBasePlayer *GetPlayer( const UnkGameEventStruct_t*keyName = NULL ) = 0;
 
-	virtual void *GetPlayerController( const char *keyName = NULL ) = 0;
-	virtual CEntityHandle GetPlayerControllerEHandle( const char *keyName = NULL ) = 0;
-	virtual CEntityHandle GetPlayerControllerEHandle2( const char *keyName = NULL ) = 0;
+	virtual void *GetPlayerController( const UnkGameEventStruct_t*keyName = NULL ) = 0;
+	virtual CEntityHandle GetPlayerControllerEHandle( const UnkGameEventStruct_t*keyName = NULL ) = 0;
+	virtual CEntityHandle GetPlayerControllerEHandle2( const UnkGameEventStruct_t*keyName = NULL ) = 0;
 	/* ============================================================ */
 
 	virtual void SetBool( const char *keyName, bool value ) = 0;
