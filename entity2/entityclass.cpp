@@ -9,8 +9,8 @@ __int64 CEntityClass::UnserializeKey(
     CEntityInstance* pEntity,
     char* pFieldMemory,
     const ComponentUnserializerFieldInfo_t* pFieldInfo,
-    CEntityVariant* value,
-    /*__m128d a7*/)
+    CEntityVariant* value
+    /*, __m128d a7*/)
 {
 
 
