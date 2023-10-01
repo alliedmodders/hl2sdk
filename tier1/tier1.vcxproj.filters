@@ -14,7 +14,7 @@
     <ClCompile Include="bitbuf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="byteswap.cpp">
+    <ClCompile Include="cbyteswap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="characterset.cpp">
@@ -76,7 +76,7 @@
     <ClInclude Include="..\public\tier1\bitbuf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\tier1\byteswap.h">
+    <ClInclude Include="..\public\tier1\cbyteswap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\public\tier1\callqueue.h">

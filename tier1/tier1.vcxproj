@@ -319,7 +319,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bitbuf.cpp" />
-    <ClCompile Include="byteswap.cpp" />
+    <ClCompile Include="cbyteswap.cpp" />
     <ClCompile Include="characterset.cpp" />
     <ClCompile Include="checksum_crc.cpp" />
     <ClCompile Include="checksum_md5.cpp" />
@@ -346,7 +346,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\tier1\bitbuf.h" />
-    <ClInclude Include="..\public\tier1\byteswap.h" />
+    <ClInclude Include="..\public\tier1\cbyteswap.h" />
     <ClInclude Include="..\public\tier1\callqueue.h" />
     <ClInclude Include="..\public\tier1\characterset.h" />
     <ClInclude Include="..\public\tier1\checksum_crc.h" />

@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -27,7 +27,7 @@
 #include <game/client/iviewport.h>
 #include <stdlib.h> // MAX_PATH define
 #include <stdio.h>
-#include "byteswap.h"
+#include "cbyteswap.h"
 #include "vgui_int.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
