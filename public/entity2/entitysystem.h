@@ -11,6 +11,7 @@
 #include "concreteentitylist.h"
 #include "entitydatainstantiator.h"
 
+class CEntityClass;
 class CEntityKeyValues;
 class IEntityResourceManifest;
 class IEntityPrecacheConfiguration;
