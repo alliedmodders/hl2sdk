@@ -120,7 +120,7 @@ inline uint32 CUtlSymbolLarge_Hash( bool CASEINSENSITIVE, const char *pString, i
 	return ( CASEINSENSITIVE ? HashStringCaseless( pString ) : HashString( pString ) ); 
 }
 
-typedef uint32 LargeSymbolTableHashDecoration_t; 
+typedef uint64 LargeSymbolTableHashDecoration_t; 
 
 // The structure consists of the hash immediately followed by the string data
 struct CUtlSymbolTableLargeBaseTreeEntry_t
