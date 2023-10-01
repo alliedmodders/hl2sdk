@@ -3,8 +3,9 @@
 // idk
 typedef long __int64;
 
-// If it's really __int64 for the function is the other question
-__int64 CEntityClass::Unserialize(/*__int64 a1, __int64 a2, _QWORD *a3*/) {
+// In IDA a __int64 can even be a class
+// still need to figure out wha this returns
+__int64 CEntityClass::Unserialize(CEntityClass *const this, CEntityInstance *pEntity, const CEntityKeyValues *pKeyValues) {
   __int64 entity_index; // v8, e.g. ent_attachments entity_index
   const char* entity_className; // v7, e.g. weapon_glock
 
