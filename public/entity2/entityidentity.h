@@ -70,7 +70,19 @@ public:
 	CEntityIdentity* m_pPrev; // 0x58	
 	CEntityIdentity* m_pNext; // 0x60	
 	CEntityIdentity* m_pPrevByClass; // 0x68	
-	CEntityIdentity* m_pNextByClass; // 0x70	
+	CEntityIdentity* m_pNextByClass; // 0x70
+
+
+	struct EntityNameTable_t {
+		INetworkStringTable* m_pTable;
+		bool m_bServer;
+	};
+
+	struct NetworkVar_m_nameStringableIndex {
+		int8 gap0[1];
+	};
+
+	typedef CEntityIdentity ThisClass;
 };
 
 #endif // ENTITYIDENTITY_H
