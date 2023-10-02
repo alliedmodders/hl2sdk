@@ -322,9 +322,10 @@ public:
 	
 	virtual bool IsClientLowViolence( CEntityIndex clientIndex ) = 0;
 	
-#if 0 // Don't really match the binary
+	// Kicks the slot with the specified NetworkDisconnectionReason
 	virtual void DisconnectClient( CEntityIndex clientIndex, /* ENetworkDisconnectionReason */ int reason ) = 0;
-	
+
+#if 0 // Don't really match the binary
 	virtual void GetAllSpawnGroupsWithPVS( CUtlVector<SpawnGroupHandle_t> *spawnGroups, CUtlVector<IPVS *> *pOut ) = 0;
 	
 	virtual void P2PGroupChanged() = 0;
@@ -345,6 +346,7 @@ public:
     // Note that the internal reason is never displayed to the user.
 	//
 	// AM TODO: add header ref for ENetworkDisconnectReason from proto header
+	// AM TODO: ENetworkDisconnectionReason is ignored, always uses 41 (NETWORK_DISCONNECT_KICKBANADDED). Also, unlike DisconnectClient with reason 41, this also bans the client.
     virtual void KickClient( CPlayerSlot slot, const char *szInternalReason, /*ENetworkDisconnectionReason*/ char reason ) = 0;
 
 	virtual void unk015() = 0;
