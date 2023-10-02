@@ -1,3 +1,6 @@
+#ifndef ENTITYKEYVALUES_H
+#define ENTITYSYSTEM_H
+
 #include "entity2/entitysystem.h"
 
 struct CEntityKeyValues {
@@ -25,3 +28,6 @@ struct CEntityKeyValues::KeyValueInfo_t {
     CEntityVariant m_value;
     const char* m_pAttributeName;
 };
+
+
+#endif // ENTITYKEYVALUES_H
