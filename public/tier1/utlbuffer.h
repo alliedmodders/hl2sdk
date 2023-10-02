@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2005, Valve Corporation, All rights reserved. =======//
+//====== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. =======//
 //
 // Purpose: 
 //
@@ -17,7 +17,7 @@
 #include "unitlib/unitlib.h" // just here for tests - remove before checking in!!!
 
 #include "tier1/utlmemory.h"
-#include "tier1/byteswap.h"
+#include "tier1/cbyteswap.h"
 #include "tier1/bufferstring.h"
 #include <stdarg.h>
 

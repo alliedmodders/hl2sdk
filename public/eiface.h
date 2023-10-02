@@ -111,8 +111,9 @@ struct bbox_t
 	Vector maxs;
 };
 
-struct CEntityIndex
+class CEntityIndex
 {
+public:
 	CEntityIndex( int index )
 	{
 		_index = index;

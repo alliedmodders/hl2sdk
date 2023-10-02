@@ -329,7 +329,7 @@ void inline SinCos( float radians, float *sine, float *cosine )
 		fstp DWORD PTR [eax]
 	}
 #elif defined( GNUC )
-	register double __cosr, __sinr;
+	double __cosr, __sinr;
  	__asm __volatile__ ("fsincos" : "=t" (__cosr), "=u" (__sinr) : "0" (radians));
 
   	*sine = __sinr;
@@ -628,11 +628,6 @@ template <class T> FORCEINLINE T AVG(T a, T b)
 
 // XYZ macro, for printf type functions - ex printf("%f %f %f",XYZ(myvector));
 #define XYZ(v) (v).x,(v).y,(v).z
-
-//
-// Returns a clamped value in the range [min, max].
-//
-#define clamp(val, min, max) (((val) > (max)) ? (max) : (((val) < (min)) ? (min) : (val)))
 
 inline float Sign( float x )
 {
