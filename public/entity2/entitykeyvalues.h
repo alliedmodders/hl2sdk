@@ -1,5 +1,5 @@
 #ifndef ENTITYKEYVALUES_H
-#define ENTITYSYSTEM_H
+#define ENTITYKEYVALUES_H
 
 #include "entity2/entitysystem.h"
 
