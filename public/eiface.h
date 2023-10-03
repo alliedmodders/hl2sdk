@@ -331,7 +331,6 @@ public:
 	virtual void P2PGroupChanged() = 0;
 #endif
 
-	virtual void unk006() = 0;
 	virtual void unk007() = 0;
 	virtual void unk008() = 0;
 	virtual void unk009() = 0;
@@ -342,12 +341,12 @@ public:
 
 	virtual void OnKickClient( const CCommandContext &context, const CCommand &cmd ) = 0;
 
-	// Kicks the slot with the specified NetworkDisconnectionReason.
+	// Kicks and bans the slot.
     // Note that the internal reason is never displayed to the user.
+	// ENetworkDisconnectionReason reason is ignored, client is always kicked with ENetworkDisconnectionReason::NETWORK_DISCONNECT_KICKBANADDED
 	//
 	// AM TODO: add header ref for ENetworkDisconnectReason from proto header
-	// AM TODO: ENetworkDisconnectionReason is ignored, always uses 41 (NETWORK_DISCONNECT_KICKBANADDED). Also, unlike DisconnectClient with reason 41, this also bans the client.
-    virtual void KickClient( CPlayerSlot slot, const char *szInternalReason, /*ENetworkDisconnectionReason*/ char reason ) = 0;
+    virtual void BanClient( CPlayerSlot slot, const char *szInternalReason, /*ENetworkDisconnectionReason*/ char reason ) = 0;
 
 	virtual void unk015() = 0;
 	virtual void unk016() = 0;
