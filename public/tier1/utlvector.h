@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2005, Valve Corporation, All rights reserved. =======//
+//====== Copyright Â© 1996-2005, Valve Corporation, All rights reserved. =======//
 //
 // Purpose: 
 //
@@ -76,6 +76,7 @@ public:
 	// Adds an element, uses default constructor
 	int AddToHead();
 	int AddToTail();
+	T* AddToTailGetPtr();
 	int InsertBefore( int elem );
 	int InsertAfter( int elem );
 
@@ -760,6 +761,12 @@ template< typename T, class A >
 inline int CUtlVector<T, A>::AddToTail()
 {
 	return InsertBefore( m_Size );
+}
+
+template< typename T, class A >
+inline T* CUtlVector<T, A>::AddToTailGetPtr()
+{
+	return &Element(AddToTail());
 }
 
 template< typename T, class A >
