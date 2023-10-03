@@ -185,6 +185,7 @@ public:
 	virtual void		unk003() = 0;
 	virtual void		unk004() = 0;
 	virtual void		unk005() = 0;
+	virtual void		unk006() = 0;
 
 
 	// Tell engine to change level ( "changelevel s1\n" or "changelevel2 s1 s2\n" )
@@ -330,14 +331,14 @@ public:
 	virtual void P2PGroupChanged() = 0;
 #endif
 
-	virtual void unk006() = 0;
-	virtual void unk007() = 0;
-	virtual void unk008() = 0;
-	virtual void unk009() = 0;
-	virtual void unk010() = 0;
-	virtual void unk011() = 0;
-	virtual void unk012() = 0;
-	virtual void unk013() = 0;
+	virtual void unk100() = 0;
+	virtual void unk101() = 0;
+	virtual void unk102() = 0;
+	virtual void unk103() = 0;
+	virtual void unk104() = 0;
+	virtual void unk105() = 0;
+	virtual void unk106() = 0;
+	virtual void unk107() = 0;
 
 	virtual void OnKickClient( const CCommandContext &context, const CCommand &cmd ) = 0;
 
@@ -347,20 +348,20 @@ public:
 	// AM TODO: add header ref for ENetworkDisconnectReason from proto header
     virtual void KickClient( CPlayerSlot slot, const char *szInternalReason, /*ENetworkDisconnectionReason*/ char reason ) = 0;
 
-	virtual void unk015() = 0;
-	virtual void unk016() = 0;
-	virtual void unk017() = 0;
-	virtual void unk018() = 0;
-	virtual void unk019() = 0;
-	virtual void unk020() = 0;
-	virtual void unk021() = 0;
-	virtual void unk022() = 0;
-	virtual void unk023() = 0;
+	virtual void unk200() = 0;
+	virtual void unk201() = 0;
+	virtual void unk202() = 0;
+	virtual void unk203() = 0;
+	virtual void unk204() = 0;
+	virtual void unk205() = 0;
+	virtual void unk206() = 0;
+	virtual void unk207() = 0;
+	virtual void unk208() = 0;
 
 	virtual void SetClientUpdateRate( CEntityIndex clientIndex, float flUpdateRate ) = 0;
 
-	virtual void unk024() = 0;
-	virtual void unk025() = 0;
+	virtual void unk300() = 0;
+	virtual void unk301() = 0;
 };
 
 abstract_class IServerGCLobby
