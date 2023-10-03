@@ -185,8 +185,8 @@ public:
 	virtual void		unk003() = 0;
 	virtual void		unk004() = 0;
 	virtual void		unk005() = 0;
-
-
+	// Some sort of time elapsed in certain parts of MainLoop
+	virtual float		unk006() = 0;
 	// Tell engine to change level ( "changelevel s1\n" or "changelevel2 s1 s2\n" )
 	virtual void		ChangeLevel( const char *s1, const char *s2 ) = 0;
 	
@@ -330,7 +330,6 @@ public:
 	virtual void P2PGroupChanged() = 0;
 #endif
 
-	virtual void unk006() = 0;
 	virtual void unk007() = 0;
 	virtual void unk008() = 0;
 	virtual void unk009() = 0;
@@ -338,6 +337,7 @@ public:
 	virtual void unk011() = 0;
 	virtual void unk012() = 0;
 	virtual void unk013() = 0;
+	virtual void unk014() = 0;
 
 	virtual void OnKickClient( const CCommandContext &context, const CCommand &cmd ) = 0;
 
@@ -356,11 +356,12 @@ public:
 	virtual void unk021() = 0;
 	virtual void unk022() = 0;
 	virtual void unk023() = 0;
+	virtual void unk024() = 0;
 
 	virtual void SetClientUpdateRate( CEntityIndex clientIndex, float flUpdateRate ) = 0;
 
-	virtual void unk024() = 0;
 	virtual void unk025() = 0;
+	virtual void unk026() = 0;
 };
 
 abstract_class IServerGCLobby
