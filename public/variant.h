@@ -19,6 +19,11 @@
 struct ResourceBindingBase_t;
 typedef const ResourceBindingBase_t *ResourceHandle_t;
 
+struct HSCRIPT__ {
+	int unused;
+};
+typedef HSCRIPT__* HSCRIPT;
+
 // ========
 
 class CVariantDefaultAllocator
