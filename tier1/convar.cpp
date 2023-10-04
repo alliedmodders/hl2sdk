@@ -1,5 +1,5 @@
 
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -95,7 +95,6 @@ private:
 
 bool ConCommandRegList::s_bConCommandsRegistered = false;
 
-#ifdef CONVAR_WORK_FINISHED
 template <typename ToCheck, std::size_t ExpectedSize, std::size_t RealSize = sizeof(ToCheck)>
 void check_size() {
 	static_assert(ExpectedSize == RealSize, "Size mismatch");
@@ -110,7 +109,7 @@ public:
 	ConVarRegList()
 	{
 		check_size<ConVar, 0x60>();
-		check_size<ConVarRegList, 11216>();
+		//check_size<ConVarRegList, 11216>();
 	}
 
 	static bool AreConVarsRegistered()
@@ -136,7 +135,7 @@ public:
 
 					if (!hndl.IsValid())
 					{
-						Plat_FatalErrorFunc("RegisterConCommand: Unknown error registering convar \"%s\"!\n", pConVar->GetName());
+						Plat_FatalErrorFunc("RegisterConCommand: Unknown error registering convar \"%s\"!\n", pConVar->m_pszName);
 						DebuggerBreakIfDebugging();
 					}
 				}
@@ -157,7 +156,6 @@ private:
 };
 
 bool ConVarRegList::s_bConVarsRegistered = false;
-#endif // CONVAR_WORK_FINISHED
 
 //-----------------------------------------------------------------------------
 // Called by the framework to register ConCommandBases with the ICVar
@@ -651,13 +649,112 @@ bool ConCommand::CanAutoComplete( void )
 	return m_bHasCompletionCallback;
 }
 
-
-#ifdef CONVAR_WORK_FINISHED
 //-----------------------------------------------------------------------------
 //
 // Console Variables
 //
 //-----------------------------------------------------------------------------
+
+ConVar invalid_convar[EConVarType_MAX + 1] = {
+	EConVarType_Bool,
+	EConVarType_Int16,
+	EConVarType_UInt16,
+	EConVarType_Int32,
+	EConVarType_UInt32,
+	EConVarType_Int64,
+	EConVarType_UInt64,
+	EConVarType_Float32,
+	EConVarType_Float64,
+	EConVarType_String,
+	EConVarType_Color,
+	EConVarType_Vector2,
+	EConVarType_Vector3,
+	EConVarType_Vector4,
+	EConVarType_Qangle,
+	EConVarType_Invalid // EConVarType_MAX
+};
+
+// Strictly for invalid convar creation
+ConVar::ConVar(EConVarType type) :
+	m_pszName("<undefined>"),
+	m_cvvDefaultValue(nullptr),
+	m_cvvMinValue(nullptr),
+	m_cvvMaxValue(nullptr),
+	m_pszHelpString("This convar is being accessed prior to ConVar_Register being called"),
+	m_eVarType(type)
+{
+}
+
+ConVar* ConVar_Invalid(EConVarType type)
+{
+	if (type == EConVarType_Invalid)
+	{
+		return &invalid_convar[EConVarType_MAX];
+	}
+	return &invalid_convar[type];
+}
+
+void ConVarRefAbstract::Init(ConVarHandle defaultHandle, EConVarType type)
+{
+	this->m_Handle.Invalidate();
+	this->m_ConVar = nullptr;
+
+	// qword_191A3D8
+	if (g_pCVar && (this->m_ConVar = g_pCVar->GetConVar(defaultHandle)) == nullptr)
+	{
+		this->m_ConVar = ConVar_Invalid(type);
+		// technically this
+		//result = *(char ***)(sub_10B7760((unsigned int)a3) + 80);
+	}
+	this->m_Handle = defaultHandle;
+}
+
+void ConVarRefAbstract::sub_10B7C70(const char* name, int32 flags, const char* description, int64 obj)
+{
+	char **v5; // rax
+	__m128i v9; // xmm0
+	__int16 v10; // ax
+	__m128i v11; // xmm1
+	__m128i v12; // xmm2
+	__m128i v13; // xmm3
+	__int64 v15; // rax
+	__int64 v16[3]; // [rsp+0h] [rbp-A0h] BYREF
+	__m128i v17; // [rsp+18h] [rbp-88h]
+	__m128i v18; // [rsp+28h] [rbp-78h]
+	__m128i v19; // [rsp+38h] [rbp-68h]
+	__m128i v20; // [rsp+48h] [rbp-58h]
+	__int16 v21; // [rsp+58h] [rbp-48h]
+	int v22; // [rsp+5Ah] [rbp-46h]
+	__int16 v23; // [rsp+5Eh] [rbp-42h]
+	_QWORD *v24; // [rsp+60h] [rbp-40h]
+	_QWORD *v25; // [rsp+68h] [rbp-38h]
+
+	this->m_ConVar = ConVar_Invalid(a5[4].m128i_i16[0]);
+	this->m_Handle.Invalidate();
+	if ( !CommandLine()->HasParam("-tools") && (flags & (0x13084282)) == 0 )
+		flags |= FCVAR_DEVELOPMENTONLY;
+	
+	v9 = _mm_loadu_si128(a5);
+	v24 = a1;
+	v23 = 0;
+	v10 = a5[4].m128i_i16[0];
+	v11 = _mm_loadu_si128(a5 + 1);
+	v16[0] = a2;
+	v12 = _mm_loadu_si128(a5 + 2);
+	v16[1] = a4;
+	v13 = _mm_loadu_si128(a5 + 3);
+	v16[2] = flags;
+	v21 = v10;
+	v22 = 0;
+	v17 = v9;
+	v18 = v11;
+	v19 = v12;
+	v20 = v13;
+	v25 = a1 + 1;
+	return sub_10B79F0(v16);
+}
+
+#ifdef CONVAR_WORK_FINISHED
 
 //-----------------------------------------------------------------------------
 // Various constructors

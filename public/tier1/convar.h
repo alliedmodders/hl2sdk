@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -19,6 +19,7 @@
 #include "tier0/dbg.h"
 #include "tier1/utlvector.h"
 #include "tier1/utlstring.h"
+#include "tier1/characterset.h"
 #include "Color.h"
 #include "mathlib/vector4d.h"
 #include "playerslot.h"
@@ -49,21 +50,39 @@ class ConCommand;
 class ConCommandBase;
 class ConVarRefAbstract;
 class ConCommandRefAbstract;
-struct characterset_t;
 
 class ALIGN8 ConVarHandle
 {
 public:
-    bool IsValid() { return value != kInvalidConVarHandle; }
-	uint32 Get() { return value; }
-	void Set( uint32 _value ) { value = _value; }
+	ConVarHandle() { m_value = 0xFFFFFFFF; };
+
+	bool IsValid() const;
+	void Invalidate();
 
 private:
-    uint32 value = kInvalidConVarHandle;
+	friend bool operator!=(const ConVarHandle& lhs, const ConVarHandle& rhs);
+	friend bool operator==(const ConVarHandle& lhs, const ConVarHandle& rhs);
 
-private:
-	static const uint32 kInvalidConVarHandle = 0xFFFFFFFF;
+	uint32 GetValue() const { return m_value; };
+
+    uint32 m_value;
 } ALIGN8_POST;
+
+inline bool operator!=(const ConVarHandle& lhs, const ConVarHandle& rhs) { return lhs.m_value != rhs.m_value; }
+inline bool operator==(const ConVarHandle& lhs, const ConVarHandle& rhs) { return lhs.m_value == rhs.m_value; }
+
+static const ConVarHandle INVALID_CONVAR_HANDLE = ConVarHandle();
+
+inline bool ConVarHandle::IsValid() const
+{
+	return *this != INVALID_CONVAR_HANDLE;
+}
+
+inline void ConVarHandle::Invalidate()
+{
+	m_value = INVALID_CONVAR_HANDLE.GetValue();
+}
+
 enum CommandTarget_t
 {
 	CT_NO_TARGET = -1,
@@ -97,6 +116,8 @@ private:
 class ALIGN8 ConCommandHandle
 {
 public:
+	ConCommandHandle() { value = kInvalidConCommandHandle; };
+
     bool IsValid() { return value != kInvalidConCommandHandle; }
 	uint16 Get() { return value; }
 	void Set( uint16 _value ) { value = _value; }
@@ -198,7 +219,8 @@ enum EConVarType : short
 	EConVarType_Vector2,
 	EConVarType_Vector3,
 	EConVarType_Vector4,
-	EConVarType_Qangle
+	EConVarType_Qangle,
+	EConVarType_MAX
 };
 
 union CVValue_t
@@ -224,7 +246,6 @@ union CVValue_t
 // Called when a ConVar changes value
 //-----------------------------------------------------------------------------
 typedef void(*FnChangeCallbackGlobal_t)(ConVarRefAbstract *cvar, CSplitScreenSlot nSlot, const char *pNewValue, const char *pOldValue);
-typedef void(*FnChangeCallback_t)(ConVarRefAbstract *cvar, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t *pOldValue);
 
 //-----------------------------------------------------------------------------
 // ConVar & ConCommand creation listener callbacks
@@ -478,6 +499,7 @@ private:
 //-----------------------------------------------------------------------------
 // Purpose: A console variable
 //-----------------------------------------------------------------------------
+#if false
 class ConVar
 {
 friend class CCvar;
@@ -485,7 +507,6 @@ friend class ConVarRef;
 friend class SplitScreenConVarRef;
 
 public:
-#ifdef CONVAR_WORK_FINISHED
 						ConVar( const char *pName, const char *pDefaultValue, int64 flags = 0);
 
 						ConVar( const char *pName, const char *pDefaultValue, int64 flags, 
@@ -584,51 +605,6 @@ private:
 
 
 protected:
-#if 0
-	// Next ConVar in chain
-	// Prior to register, it points to the next convar in the DLL.
-	// Once registered, though, m_pNext is reset to point to the next
-	// convar in the global list
-	ConCommandBase* m_pNext;
-
-	// Has the cvar been added to the global list?
-	bool						m_bRegistered;
-
-	// Static data
-	const char* m_pszName;
-	const char* m_pszHelpString;
-
-	// ConVar flags
-	int64						m_nFlags;
-
-protected:
-	// ConVars add themselves to this list for the executable. 
-	// Then ConVar_Register runs through  all the console variables 
-	// and registers them into a global list stored in vstdlib.dll
-	static ConCommandBase* s_pConCommandBases;
-
-	// ConVars in this executable use this 'global' to access values.
-	static IConCommandBaseAccessor* s_pAccessor;
-	// This either points to "this" or it points to the original declaration of a ConVar.
-	// This allows ConVars to exist in separate modules, and they all use the first one to be declared.
-	// m_pParent->m_pParent must equal m_pParent (ie: m_pParent must be the root, or original, ConVar).
-	ConVar						*m_pParent;
-
-	// Static data
-	const char					*m_pszDefaultValue;
-	
-	CVValue_t					m_Value;
-
-	// Min/Max values
-	bool						m_bHasMin;
-	float						m_fMinVal;
-	bool						m_bHasMax;
-	float						m_fMaxVal;
-	
-	// Call this function when ConVar changes
-	CUtlVector< FnChangeCallback_t > m_fnChangeCallbacks;
-#endif
-#endif // CONVAR_WORK_FINISHED
 	const char* m_pszName;
 	CVValue_t* m_cvvDefaultValue;
 	CVValue_t* m_cvvMinValue;
@@ -653,7 +629,70 @@ protected:
 
 	CVValue_t** values;
 };
+#endif
 
+//-----------------------------------------------------------------
+// Used to read/write/create? convars (replaces the FindVar method)
+//-----------------------------------------------------------------
+class ConVarRefAbstract
+{
+public:
+	// sub_6A66B0
+	ConVarRefAbstract(const char* name, int32 flags, const char* description, int64 obj, float value)
+	{
+		this->Init(INVALID_CONVAR_HANDLE, EConVarType_Float32);
+
+		*(char *)(obj + 4) = 1;
+		*(float *)(obj + 7) = value;
+		this->sub_10B7C70(name, flags & 0xFB, description, obj);
+	}
+
+private:
+	// sub_10B7BC0
+	void Init(ConVarHandle defaultHandle, EConVarType type);
+
+	// sub_10B7C70
+	void sub_10B7C70(const char* name, int32 flags, const char* description, int64 obj);
+
+	// High-speed method to read convar data
+	ConVarHandle m_Handle;
+	ConVar* m_ConVar;
+};
+
+// sub_10B7760
+ConVar* ConVar_Invalid(EConVarType type);
+
+class ConVar
+{
+friend class ConVarRegList;
+friend class ConVarRefAbstract;
+public:
+	ConVar(EConVarType type);
+protected:
+	const char* m_pszName;
+	CVValue_t* m_cvvDefaultValue;
+	CVValue_t* m_cvvMinValue;
+	CVValue_t* m_cvvMaxValue;
+	const char* m_pszHelpString;
+	EConVarType m_eVarType;
+
+	// This gets copied from the ConVarDesc_t on creation
+	short unk1;
+
+	unsigned int timesChanged;
+	int64 m_flags;
+	unsigned int callback_index;
+
+	// Used when setting default, max, min values from the ConVarDesc_t
+	// although that's not the only place of usage
+	// flags seems to be:
+	// (1 << 0) Skip setting value to split screen slots and also something keyvalues related
+	// (1 << 1) Skip setting default value
+	// (1 << 2) Skip setting min/max values
+	int allocation_flag_of_some_sort;
+
+	CVValue_t* m_value[4];
+};
 
 #ifdef CONVAR_WORK_FINISHED
 //-----------------------------------------------------------------------------
@@ -773,54 +812,6 @@ FORCEINLINE_CVAR int CSplitScreenAddedConVar::GetSplitScreenPlayerSlot() const
 	return m_nSplitScreenSlot; 
 }
 
-#endif // CONVAR_WORK_FINISHED
-
-//-----------------------------------------------------------------------------
-// Used to read/write convars that already exist (replaces the FindVar method)
-//-----------------------------------------------------------------------------
-class ConVarRefAbstract
-{
-public:
-#ifdef CONVAR_WORK_FINISHED
-	ConVarRefAbstract( const char *pName );
-	ConVarRefAbstract( const char *pName, bool bIgnoreMissing );
-	ConVarRefAbstract( IConVar *pConVar );
-
-	void Init( const char *pName, bool bIgnoreMissing );
-	bool IsValid() const;
-	bool IsFlagSet( int64 nFlags ) const;
-	IConVar *GetLinkedConVar();
-
-	// Get/Set value
-	float GetFloat( void ) const;
-	int GetInt( void ) const;
-	Color GetColor( void ) const;
-	bool GetBool() const { return !!GetInt(); }
-	const char *GetString( void ) const;
-
-	void SetValue( const char *pValue );
-	void SetValue( float flValue );
-	void SetValue( int nValue );
-	void SetValue( Color value );
-	void SetValue( bool bValue );
-
-	const char *GetName() const;
-
-	const char *GetDefault() const;
-
-	const char *GetBaseName() const;
-
-	int	GetSplitScreenPlayerSlot() const;
-
-private:
-#endif // CONVAR_WORK_FINISHED
-	// High-speed method to read convar data
-	ConVarHandle m_Handle;
-	ConVar *m_pConVarState;
-};
-
-
-#ifdef CONVAR_WORK_FINISHED
 //-----------------------------------------------------------------------------
 // Did we find an existing convar of that name?
 //-----------------------------------------------------------------------------
