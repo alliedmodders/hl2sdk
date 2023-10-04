@@ -323,15 +323,15 @@ public:
 	
 	virtual bool IsClientLowViolence( CEntityIndex clientIndex ) = 0;
 	
-#if 0 // Don't really match the binary
+	// Kicks the slot with the specified NetworkDisconnectionReason
 	virtual void DisconnectClient( CEntityIndex clientIndex, /* ENetworkDisconnectionReason */ int reason ) = 0;
-	
+
+#if 0 // Don't really match the binary
 	virtual void GetAllSpawnGroupsWithPVS( CUtlVector<SpawnGroupHandle_t> *spawnGroups, CUtlVector<IPVS *> *pOut ) = 0;
 	
 	virtual void P2PGroupChanged() = 0;
 #endif
 
-	virtual void unk100() = 0;
 	virtual void unk101() = 0;
 	virtual void unk102() = 0;
 	virtual void unk103() = 0;
@@ -342,11 +342,12 @@ public:
 
 	virtual void OnKickClient( const CCommandContext &context, const CCommand &cmd ) = 0;
 
-	// Kicks the slot with the specified NetworkDisconnectionReason.
+	// Kicks and bans the slot.
     // Note that the internal reason is never displayed to the user.
+	// ENetworkDisconnectionReason reason is ignored, client is always kicked with ENetworkDisconnectionReason::NETWORK_DISCONNECT_KICKBANADDED
 	//
 	// AM TODO: add header ref for ENetworkDisconnectReason from proto header
-    virtual void KickClient( CPlayerSlot slot, const char *szInternalReason, /*ENetworkDisconnectionReason*/ char reason ) = 0;
+    virtual void BanClient( CPlayerSlot slot, const char *szInternalReason, /*ENetworkDisconnectionReason*/ char reason ) = 0;
 
 	virtual void unk200() = 0;
 	virtual void unk201() = 0;
