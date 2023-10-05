@@ -26,25 +26,6 @@
 #endif
 #include "tier0/memdbgon.h"
 
-template <typename T, typename M> M get_member_type(M T::*);
-template <typename T, typename M> T get_class_type(M T::*);
-
-template <typename T,
-          typename R,
-          R T::*M
-         >
-constexpr int32_t* offset_of()
-{
-    return (&(((T*)0)->*M));
-}
-
-#define OFFSET_OF(m) offset_of<decltype(get_class_type(m)), \
-                     decltype(get_member_type(m)), m>()
-
-// Comment this out when we release.
-//#define ALLOW_DEVELOPMENT_CVARS
-
-
 //-----------------------------------------------------------------------------
 // Statically constructed list of ConCommandBases, 
 // used for registering them with the ICVar interface
@@ -107,11 +88,8 @@ private:
 	static bool s_bConCommandsRegistered;
 };
 
-#include <ISmmAPI.h>
-PLUGIN_GLOBALVARS();
 void RegisterConVar(ConVarCreation_t& setup)
 {
-	META_CONPRINTF( "Registering convar: %s!\n", setup.name);
 	g_pCVar->RegisterConVar(setup, s_nCVarFlag, setup.refHandle, setup.refConVar);
 	if (!setup.refHandle->IsValid())
 	{
