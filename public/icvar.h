@@ -72,7 +72,7 @@ public:
 	virtual void	unk2() = 0;
 
 	// Register, unregister vars
-	virtual void	RegisterConVar( ConVar *pConVar, int64 nAdditionalFlags, ConVarHandle &pCvarRef, ConVar &pCvar ) = 0;
+	virtual void	RegisterConVar( const ConVarCreation_t& setup, int64 nAdditionalFlags, ConVarHandle* pCvarRef, ConVar** pCvar ) = 0;
 	virtual void	UnregisterConVar( ConVarHandle handle ) = 0;
 	virtual ConVar*	GetConVar( ConVarHandle handle ) = 0;
 

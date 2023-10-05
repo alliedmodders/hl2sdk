@@ -26,6 +26,20 @@
 #endif
 #include "tier0/memdbgon.h"
 
+template <typename T, typename M> M get_member_type(M T::*);
+template <typename T, typename M> T get_class_type(M T::*);
+
+template <typename T,
+          typename R,
+          R T::*M
+         >
+constexpr int32_t* offset_of()
+{
+    return (&(((T*)0)->*M));
+}
+
+#define OFFSET_OF(m) offset_of<decltype(get_class_type(m)), \
+                     decltype(get_member_type(m)), m>()
 
 // Comment this out when we release.
 //#define ALLOW_DEVELOPMENT_CVARS
@@ -93,12 +107,20 @@ private:
 	static bool s_bConCommandsRegistered;
 };
 
-bool ConCommandRegList::s_bConCommandsRegistered = false;
+#include <ISmmAPI.h>
+PLUGIN_GLOBALVARS();
+void RegisterConVar(ConVarCreation_t& setup)
+{
+	META_CONPRINTF( "Registering convar: %s!\n", setup.name);
+	g_pCVar->RegisterConVar(setup, s_nCVarFlag, setup.refHandle, setup.refConVar);
+	if (!setup.refHandle->IsValid())
+	{
+		Plat_FatalErrorFunc("RegisterConCommand: Unknown error registering convar \"%s\"!\n", setup.name);
+		DebuggerBreakIfDebugging();
+	}
+}
 
-template <typename ToCheck, std::size_t ExpectedSize, std::size_t RealSize = sizeof(ToCheck)>
-void check_size() {
-	static_assert(ExpectedSize == RealSize, "Size mismatch");
-};
+bool ConCommandRegList::s_bConCommandsRegistered = false;
 
 class ConVarRegList;
 static ConVarRegList* s_pConVarRegList = nullptr;
@@ -106,11 +128,7 @@ static ConVarRegList* s_pConVarRegList = nullptr;
 class ConVarRegList
 {
 public:
-	ConVarRegList()
-	{
-		check_size<ConVar, 0x60>();
-		//check_size<ConVarRegList, 11216>();
-	}
+	ConVarRegList() {}
 
 	static bool AreConVarsRegistered()
 	{
@@ -128,16 +146,7 @@ public:
 			{
 				FOR_EACH_VEC(s_pConVarRegList->m_Vec, i)
 				{
-					ConVar* pConVar = &pList->m_Vec[i];
-					ConVarHandle hndl;
-					//g_pCVar->RegisterConVar(pConVar, s_nCVarFlag, hndl);
-					//pConVar->SetHandle(hndl);
-
-					if (!hndl.IsValid())
-					{
-						Plat_FatalErrorFunc("RegisterConCommand: Unknown error registering convar \"%s\"!\n", pConVar->m_pszName);
-						DebuggerBreakIfDebugging();
-					}
+					RegisterConVar(pList->m_Vec[i]);
 				}
 
 				ConVarRegList *pNext = pList->m_pNext;
@@ -148,19 +157,54 @@ public:
 			s_pConVarRegList = nullptr;
 		}
 	}
+
+	int Count() const
+	{
+		return m_Vec.Count();
+	}
+
 private:
-	CUtlVectorFixed<ConVar, 100> m_Vec;
+	friend void ConVar_Add(const ConVarCreation_t& setup);
+
+	void SetNextList(ConVarRegList* list)
+	{
+		m_pNext = list;
+	}
+
+	void Add(const ConVarCreation_t& setup)
+	{
+		m_Vec.AddToTail(setup);
+	}
+
+	CUtlVectorFixed<ConVarCreation_t, 100> m_Vec;
 	ConVarRegList* m_pNext = nullptr;
 
 	static bool s_bConVarsRegistered;
 };
-
 bool ConVarRegList::s_bConVarsRegistered = false;
+
+static_assert(sizeof(ConVarRegList) == 0x2BD0, "Size mismatch");
+
+void ConVar_Add(const ConVarCreation_t& setup)
+{
+	//if ( byte_1919861 )
+		//return sub_10B7990();
+	
+	if (!s_pConVarRegList || s_pConVarRegList->Count() == 100)
+	{
+		ConVarRegList* newList = new ConVarRegList;
+		newList->SetNextList(s_pConVarRegList);
+
+		s_pConVarRegList = newList;
+	}
+
+	s_pConVarRegList->Add(setup);
+}
 
 //-----------------------------------------------------------------------------
 // Called by the framework to register ConCommandBases with the ICVar
 //-----------------------------------------------------------------------------
-void ConVar_Register( int64 nCVarFlag)
+void ConVar_Register( int64 nCVarFlag )
 {
 	if ( !g_pCVar || s_bRegistered )
 		return;
@@ -169,9 +213,7 @@ void ConVar_Register( int64 nCVarFlag)
 	s_nCVarFlag = nCVarFlag;
 
 	ConCommandRegList::RegisterAll();
-#ifdef CONVAR_WORK_FINISHED
 	ConVarRegList::RegisterAll();
-#endif // CONVAR_WORK_FINISHED
 }
 
 void ConVar_Unregister( )
@@ -181,7 +223,6 @@ void ConVar_Unregister( )
 
 	s_bRegistered = false;
 }
-
 
 //-----------------------------------------------------------------------------
 // Purpose: Default constructor
@@ -700,7 +741,7 @@ void ConVarRefAbstract::Init(ConVarHandle defaultHandle, EConVarType type)
 	this->m_ConVar = nullptr;
 
 	// qword_191A3D8
-	if (g_pCVar && (this->m_ConVar = g_pCVar->GetConVar(defaultHandle)) == nullptr)
+	if (g_pCVar && g_pCVar->GetConVar(defaultHandle) == nullptr)
 	{
 		this->m_ConVar = ConVar_Invalid(type);
 		// technically this
@@ -709,29 +750,14 @@ void ConVarRefAbstract::Init(ConVarHandle defaultHandle, EConVarType type)
 	this->m_Handle = defaultHandle;
 }
 
-void ConVarRefAbstract::sub_10B7C70(const char* name, int32 flags, const char* description, int64 obj)
-{
-	char **v5; // rax
-	__m128i v9; // xmm0
-	__int16 v10; // ax
-	__m128i v11; // xmm1
-	__m128i v12; // xmm2
-	__m128i v13; // xmm3
-	__int64 v15; // rax
-	__int64 v16[3]; // [rsp+0h] [rbp-A0h] BYREF
-	__m128i v17; // [rsp+18h] [rbp-88h]
-	__m128i v18; // [rsp+28h] [rbp-78h]
-	__m128i v19; // [rsp+38h] [rbp-68h]
-	__m128i v20; // [rsp+48h] [rbp-58h]
-	__int16 v21; // [rsp+58h] [rbp-48h]
-	int v22; // [rsp+5Ah] [rbp-46h]
-	__int16 v23; // [rsp+5Eh] [rbp-42h]
-	_QWORD *v24; // [rsp+60h] [rbp-40h]
-	_QWORD *v25; // [rsp+68h] [rbp-38h]
+//std::exit((int64_t)(&((ConVarSetup_t*)nullptr)->type));
 
-	this->m_ConVar = ConVar_Invalid(a5[4].m128i_i16[0]);
+void ConVarRefAbstract::sub_10B7C70(const char* name, int32 flags, const char* description, ConVarSetup_t& obj)
+{
+	this->m_ConVar = ConVar_Invalid(obj.type);
 	this->m_Handle.Invalidate();
-	if (!CommandLine()->HasParam("-tools")
+
+	if (!CommandLine()->HasParm("-tools")
 	&& (flags & (FCVAR_DEVELOPMENTONLY
 	|FCVAR_ARCHIVE
 	|FCVAR_USERINFO
@@ -743,25 +769,31 @@ void ConVarRefAbstract::sub_10B7C70(const char* name, int32 flags, const char* d
 	{
 		flags |= FCVAR_DEVELOPMENTONLY;
 	}
+
+	ConVarCreation_t cvar;
 	
-	v9 = _mm_loadu_si128(a5);
-	v24 = a1;
-	v23 = 0;
-	v10 = a5[4].m128i_i16[0];
-	v11 = _mm_loadu_si128(a5 + 1);
-	v16[0] = a2;
-	v12 = _mm_loadu_si128(a5 + 2);
-	v16[1] = a4;
-	v13 = _mm_loadu_si128(a5 + 3);
-	v16[2] = flags;
-	v21 = v10;
-	v22 = 0;
-	v17 = v9;
-	v18 = v11;
-	v19 = v12;
-	v20 = v13;
-	v25 = a1 + 1;
-	return sub_10B79F0(v16);
+	cvar.name = name;
+	cvar.description = description;
+	cvar.flags = flags;
+
+	// 0x0 through 0x28
+	/* 0x18 */ cvar.unk1 = obj.unknown0; // 0x0
+	/* 0x1C */ cvar.has_default = obj.has_default; // 0x4
+	/* 0x1D */ cvar.has_min = obj.has_min; // 0x5
+	/* 0x1E */ cvar.has_max = obj.has_min; // 0x6
+	/* 0x1F */ cvar.default_value = obj.default_value; // 0x7
+
+	/* 0x2F */ // 0x17 ????????????
+
+	/* 0x50 */ cvar.callback = obj.callback; // 0x18
+	/* 0x58 */ cvar.type = obj.type; // 0x20
+	/* 0x5A */ cvar.unk9 = obj.unk1; // 0x22
+	/* 0x5E */ cvar.unk10 = obj.unk2; // 0x28
+
+	cvar.refHandle = &this->m_Handle;
+	cvar.refConVar = &this->m_ConVar;
+
+	ConVar_Add(cvar);
 }
 
 #ifdef CONVAR_WORK_FINISHED

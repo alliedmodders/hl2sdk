@@ -225,6 +225,10 @@ enum EConVarType : short
 
 union CVValue_t
 {
+	CVValue_t() { memset(this, 0, sizeof(*this)); }
+	CVValue_t(CVValue_t const& cp) { memcpy(this, &cp, sizeof(*this)); };
+	CVValue_t& operator=(CVValue_t other) { memcpy(this, &other, sizeof(*this)); return *this; }
+
 	bool		m_bValue;
 	short		m_i16Value;
 	uint16		m_u16Value;
@@ -246,6 +250,8 @@ union CVValue_t
 // Called when a ConVar changes value
 //-----------------------------------------------------------------------------
 typedef void(*FnChangeCallbackGlobal_t)(ConVarRefAbstract *cvar, CSplitScreenSlot nSlot, const char *pNewValue, const char *pOldValue);
+using FnChangeCallback_t = void(*)(ConVarRefAbstract *cvar, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t *pOldValue);
+static_assert(sizeof(FnChangeCallback_t) == 0x8, "Wrong size for FnChangeCallback_t");
 
 //-----------------------------------------------------------------------------
 // ConVar & ConCommand creation listener callbacks
@@ -631,6 +637,61 @@ protected:
 };
 #endif
 
+#pragma pack(push,1)
+struct ConVarSetup_t
+{
+	int32 unknown0; // 0x0
+
+	bool has_default; // 0x4
+	bool has_min; // 0x5
+	bool has_max; // 0x6
+
+	CVValue_t default_value; // 0x7
+
+	char pad3; // 0x17
+
+	FnChangeCallback_t callback; // 0x18
+	EConVarType type; // 0x20
+
+	int32_t unk1; // 0x22
+	int16_t unk2; // 0x26
+};
+#pragma pack(pop)
+
+static_assert(sizeof(ConVarSetup_t) == 0x28, "ConVarSetup_t is of the wrong size!");
+static_assert(sizeof(ConVarSetup_t) % 8 == 0x0, "ConVarSetup_t isn't 8 bytes aligned!");
+
+#pragma pack(push,1)
+struct ConVarCreation_t {
+	const char* name; // 0x0
+	const char* description; // 0x8
+	int64_t flags; // 0x10
+
+	int32_t unk1; // 0x18
+
+	bool has_default; // 0x1C
+	bool has_min; // 0x1D
+	bool has_max; // 0x1E
+	CVValue_t default_value; // 0x1F
+
+	int8_t unk4[33]; // 0x2F
+
+	FnChangeCallback_t callback; // 0x50
+
+	EConVarType type; // 0x58
+
+	int32_t unk9; // 0x5A
+	int16_t unk10; // 0x5E
+
+	ConVarHandle* refHandle; // 0x60
+	ConVar** refConVar; // 0x68
+};
+#pragma pack(pop)
+
+static_assert(sizeof(ConVarCreation_t) == 0x70, "ConVarCreation_t wrong size!");
+static_assert(sizeof(ConVarCreation_t) % 8 == 0x0, "ConVarCreation_t isn't 8 bytes aligned!");
+static_assert(sizeof(CVValue_t) == 0x10, "CVValue_t wrong size!");
+
 //-----------------------------------------------------------------
 // Used to read/write/create? convars (replaces the FindVar method)
 //-----------------------------------------------------------------
@@ -638,12 +699,13 @@ class ConVarRefAbstract
 {
 public:
 	// sub_6A66B0
-	ConVarRefAbstract(const char* name, int32 flags, const char* description, int64 obj, float value)
+	ConVarRefAbstract(const char* name, int32 flags, const char* description, ConVarSetup_t obj, float value) : m_ConVar(nullptr)
 	{
 		this->Init(INVALID_CONVAR_HANDLE, EConVarType_Float32);
 
-		*(char *)(obj + 4) = 1;
-		*(float *)(obj + 7) = value;
+		obj.has_default = true;
+		obj.default_value.m_flValue = value;
+
 		this->sub_10B7C70(name, flags &~ FCVAR_DEVELOPMENTONLY, description, obj);
 	}
 
@@ -652,8 +714,8 @@ private:
 	void Init(ConVarHandle defaultHandle, EConVarType type);
 
 	// sub_10B7C70
-	void sub_10B7C70(const char* name, int32 flags, const char* description, int64 obj);
-
+	void sub_10B7C70(const char* name, int32 flags, const char* description, ConVarSetup_t& obj);
+public:
 	// High-speed method to read convar data
 	ConVarHandle m_Handle;
 	ConVar* m_ConVar;
@@ -661,6 +723,9 @@ private:
 
 // sub_10B7760
 ConVar* ConVar_Invalid(EConVarType type);
+
+// sub_10B79F0
+void ConVar_Add(const ConVarCreation_t& setup);
 
 class ConVar
 {
