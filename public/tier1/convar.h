@@ -644,7 +644,7 @@ public:
 
 		*(char *)(obj + 4) = 1;
 		*(float *)(obj + 7) = value;
-		this->sub_10B7C70(name, flags & 0xFB, description, obj);
+		this->sub_10B7C70(name, flags &~ FCVAR_DEVELOPMENTONLY, description, obj);
 	}
 
 private:

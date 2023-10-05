@@ -731,8 +731,18 @@ void ConVarRefAbstract::sub_10B7C70(const char* name, int32 flags, const char* d
 
 	this->m_ConVar = ConVar_Invalid(a5[4].m128i_i16[0]);
 	this->m_Handle.Invalidate();
-	if ( !CommandLine()->HasParam("-tools") && (flags & (0x13084282)) == 0 )
+	if (!CommandLine()->HasParam("-tools")
+	&& (flags & (FCVAR_DEVELOPMENTONLY
+	|FCVAR_ARCHIVE
+	|FCVAR_USERINFO
+	|FCVAR_CHEAT
+	|FCVAR_RELEASE
+	|FCVAR_SERVER_CAN_EXECUTE
+	|FCVAR_CLIENT_CAN_EXECUTE
+	|FCVAR_CLIENTCMD_CAN_EXECUTE)) == 0)
+	{
 		flags |= FCVAR_DEVELOPMENTONLY;
+	}
 	
 	v9 = _mm_loadu_si128(a5);
 	v24 = a1;
