@@ -301,17 +301,17 @@ unsigned FASTCALL HashBlock( const void *pKey, unsigned size )
 	return (even << 8) | odd;
 }
 
-uint32_t MurmurHash2( const void *key, int len, uint32_t seed )
+uint32 MurmurHash2( const void *key, int len, uint32 seed )
 {
   // 'm' and 'r' are mixing constants generated offline.
   // They're not really 'magic', they just happen to work well.
 
-  const uint32_t m = 0x5bd1e995;
+  const uint32 m = 0x5bd1e995;
   const int r = 24;
 
   // Initialize the hash to a 'random' value
 
-  uint32_t h = seed ^ len;
+  uint32 h = seed ^ len;
 
   // Mix 4 bytes at a time into the hash
 
@@ -319,7 +319,7 @@ uint32_t MurmurHash2( const void *key, int len, uint32_t seed )
 
   while(len >= 4)
   {
-    uint32_t k = getblock((const uint32_t *)data);
+    uint32 k = LittleDWord( *(uint32 *)data );
 
     k *= m;
     k ^= k >> r;
