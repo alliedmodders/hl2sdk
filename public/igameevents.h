@@ -19,6 +19,7 @@
 #include "interfaces/interfaces.h"
 #include "tier1/bitbuf.h"
 #include "tier1/generichash.h"
+#include "tier1/utlstring.h"
 
 class CMsgSource1LegacyGameEvent;
 class CPlayerSlot;
@@ -69,11 +70,11 @@ struct GameEventKeySymbol_t
 
 		size_t len = strlen(keyName);
 
-		CBufferStringGrowable<128> hash;
-		hash.Insert(0, keyName, len);
-		hash.ToLowerFast(0);
+		CUtlString buf( keyName );
 
-		m_nHashCode = MurmurHash2(hash.Get(), len, 0x31415926);
+		buf.ToLowerFast();
+
+		m_nHashCode = MurmurHash2(buf.Get(), strlen(keyName), 0x31415926);
 		m_pszKeyName = keyName;
 
 		hash.Purge(0);
