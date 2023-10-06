@@ -65,6 +65,7 @@ struct EntityDormancyChange_t : EntityNotification_t
 struct EntitySpawnInfo_t : EntityNotification_t
 {
 	const CEntityKeyValues* m_pKeyValues;
+	uint64_t unknown;
 };
 
 struct EntityActivation_t : EntityNotification_t
