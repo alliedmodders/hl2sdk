@@ -88,12 +88,12 @@ private:
 	static bool s_bConCommandsRegistered;
 };
 
-void RegisterConVar(ConVarCreation_t& setup)
+void RegisterConVar( ConVarCreation_t& setup )
 {
-	g_pCVar->RegisterConVar(setup, s_nCVarFlag, setup.refHandle, setup.refConVar);
+	g_pCVar->RegisterConVar( setup, s_nCVarFlag, setup.refHandle, setup.refConVar );
 	if (!setup.refHandle->IsValid())
 	{
-		Plat_FatalErrorFunc("RegisterConCommand: Unknown error registering convar \"%s\"!\n", setup.name);
+		Plat_FatalErrorFunc( "RegisterConCommand: Unknown error registering convar \"%s\"!\n", setup.name );
 		DebuggerBreakIfDebugging();
 	}
 }
@@ -115,21 +115,21 @@ public:
 
 	static void RegisterAll()
 	{
-		if (!s_bConVarsRegistered && g_pCVar)
+		if ( !s_bConVarsRegistered && g_pCVar )
 		{
 			s_bConVarsRegistered = true;
 
-			ConVarRegList* pList = s_pConVarRegList;
-			while (pList != nullptr)
+			ConVarRegList* list = s_pConVarRegList;
+			while ( list != nullptr )
 			{
-				FOR_EACH_VEC(s_pConVarRegList->m_Vec, i)
+				FOR_EACH_VEC( s_pConVarRegList->m_Vec, i )
 				{
-					RegisterConVar(pList->m_Vec[i]);
+					RegisterConVar( list->m_Vec[i] );
 				}
 
-				ConVarRegList *pNext = pList->m_pNext;
-				delete pList;
-				pList = pNext;
+				ConVarRegList *pNext = list->m_pNext;
+				delete list;
+				list = pNext;
 			}
 
 			s_pConVarRegList = nullptr;
@@ -142,16 +142,16 @@ public:
 	}
 
 private:
-	friend void ConVar_Add(const ConVarCreation_t& setup);
+	friend void SetupConVar( ConVarCreation_t& setup );
 
-	void SetNextList(ConVarRegList* list)
+	void SetNextList( ConVarRegList* list )
 	{
 		m_pNext = list;
 	}
 
-	void Add(const ConVarCreation_t& setup)
+	void Add( const ConVarCreation_t& setup )
 	{
-		m_Vec.AddToTail(setup);
+		m_Vec.AddToTail( setup );
 	}
 
 	CUtlVectorFixed<ConVarCreation_t, 100> m_Vec;
@@ -159,24 +159,28 @@ private:
 
 	static bool s_bConVarsRegistered;
 };
-bool ConVarRegList::s_bConVarsRegistered = false;
-
 static_assert(sizeof(ConVarRegList) == 0x2BD0, "Size mismatch");
 
-void ConVar_Add(const ConVarCreation_t& setup)
+bool ConVarRegList::s_bConVarsRegistered = false;
+
+// sub_10B79F0
+void SetupConVar( ConVarCreation_t& setup )
 {
-	//if ( byte_1919861 )
-		//return sub_10B7990();
+	if ( s_bRegistered )
+	{
+		RegisterConVar(setup);
+		return;
+	}
 	
-	if (!s_pConVarRegList || s_pConVarRegList->Count() == 100)
+	if ( !s_pConVarRegList || s_pConVarRegList->Count() == 100 )
 	{
 		ConVarRegList* newList = new ConVarRegList;
-		newList->SetNextList(s_pConVarRegList);
+		newList->SetNextList( s_pConVarRegList );
 
 		s_pConVarRegList = newList;
 	}
 
-	s_pConVarRegList->Add(setup);
+	s_pConVarRegList->Add( setup );
 }
 
 //-----------------------------------------------------------------------------
@@ -185,7 +189,9 @@ void ConVar_Add(const ConVarCreation_t& setup)
 void ConVar_Register( int64 nCVarFlag )
 {
 	if ( !g_pCVar || s_bRegistered )
+	{
 		return;
+	}
 
 	s_bRegistered = true;
 	s_nCVarFlag = nCVarFlag;
@@ -674,7 +680,7 @@ bool ConCommand::CanAutoComplete( void )
 //
 //-----------------------------------------------------------------------------
 
-ConVar invalid_convar[EConVarType_MAX + 1] = {
+IConVar invalid_convar[EConVarType_MAX + 1] = {
 	EConVarType_Bool,
 	EConVarType_Int16,
 	EConVarType_UInt16,
@@ -694,7 +700,7 @@ ConVar invalid_convar[EConVarType_MAX + 1] = {
 };
 
 // Strictly for invalid convar creation
-ConVar::ConVar(EConVarType type) :
+IConVar::IConVar(EConVarType type) :
 	m_pszName("<undefined>"),
 	m_cvvDefaultValue(nullptr),
 	m_cvvMinValue(nullptr),
@@ -704,7 +710,7 @@ ConVar::ConVar(EConVarType type) :
 {
 }
 
-ConVar* ConVar_Invalid(EConVarType type)
+IConVar* ConVar_Invalid(EConVarType type)
 {
 	if (type == EConVarType_Invalid)
 	{
@@ -713,7 +719,7 @@ ConVar* ConVar_Invalid(EConVarType type)
 	return &invalid_convar[type];
 }
 
-void ConVarRefAbstract::Init(ConVarHandle defaultHandle, EConVarType type)
+void ConVar::Init(ConVarHandle defaultHandle, EConVarType type)
 {
 	this->m_Handle.Invalidate();
 	this->m_ConVar = nullptr;
@@ -730,9 +736,9 @@ void ConVarRefAbstract::Init(ConVarHandle defaultHandle, EConVarType type)
 
 //std::exit((int64_t)(&((ConVarSetup_t*)nullptr)->type));
 
-void ConVarRefAbstract::sub_10B7C70(const char* name, int32 flags, const char* description, ConVarSetup_t& obj)
+void ConVar::sub_10B7C70(const char* name, int32 flags, const char* description, const ConVarSetup_t& setup)
 {
-	this->m_ConVar = ConVar_Invalid(obj.type);
+	this->m_ConVar = ConVar_Invalid(setup.type);
 	this->m_Handle.Invalidate();
 
 	if (!CommandLine()->HasParm("-tools")
@@ -754,24 +760,12 @@ void ConVarRefAbstract::sub_10B7C70(const char* name, int32 flags, const char* d
 	cvar.description = description;
 	cvar.flags = flags;
 
-	// 0x0 through 0x28
-	/* 0x18 */ cvar.unk1 = obj.unknown0; // 0x0
-	/* 0x1C */ cvar.has_default = obj.has_default; // 0x4
-	/* 0x1D */ cvar.has_min = obj.has_min; // 0x5
-	/* 0x1E */ cvar.has_max = obj.has_min; // 0x6
-	/* 0x1F */ cvar.default_value = obj.default_value; // 0x7
-
-	/* 0x2F */ // 0x17 ????????????
-
-	/* 0x50 */ cvar.callback = obj.callback; // 0x18
-	/* 0x58 */ cvar.type = obj.type; // 0x20
-	/* 0x5A */ cvar.unk9 = obj.unk1; // 0x22
-	/* 0x5E */ cvar.unk10 = obj.unk2; // 0x28
+	cvar.setup = setup;
 
 	cvar.refHandle = &this->m_Handle;
 	cvar.refConVar = &this->m_ConVar;
 
-	ConVar_Add(cvar);
+	SetupConVar(cvar);
 }
 
 #ifdef CONVAR_WORK_FINISHED
@@ -1201,50 +1195,6 @@ public:
 };
 
 static CEmptyConVar s_EmptyConVar;
-
-ConVarRef::ConVarRef( const char *pName )
-{
-	Init( pName, false );
-}
-
-ConVarRef::ConVarRef( const char *pName, bool bIgnoreMissing )
-{
-	Init( pName, bIgnoreMissing );
-}
-
-void ConVarRef::Init( const char *pName, bool bIgnoreMissing )
-{
-	m_pConVar = g_pCVar ? g_pCVar->FindVar( pName ) : &s_EmptyConVar;
-	if ( !m_pConVar )
-	{
-		m_pConVar = &s_EmptyConVar;
-	}
-	m_pConVarState = static_cast< ConVar * >( m_pConVar );
-	if( !IsValid() )
-	{
-		static bool bFirst = true;
-		if ( g_pCVar || bFirst )
-		{
-			if ( !bIgnoreMissing )
-			{
-				Warning( "ConVarRef %s doesn't point to an existing ConVar\n", pName );
-			}
-			bFirst = false;
-		}
-	}
-}
-
-ConVarRef::ConVarRef( IConVar *pConVar )
-{
-	m_pConVar = pConVar ? pConVar : &s_EmptyConVar;
-	m_pConVarState = static_cast< ConVar * >( m_pConVar );
-}
-
-bool ConVarRef::IsValid() const
-{
-	return m_pConVar != &s_EmptyConVar;
-}
-
 
 //-----------------------------------------------------------------------------
 // Purpose: 

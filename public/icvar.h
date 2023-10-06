@@ -17,14 +17,13 @@
 
 class ConCommandBase;
 class ConCommand;
-class ConVar;
 class Color;
 class IConVarListener;
+class IConVar;
 class CConVarDetail;
 struct ConVarSnapshot_t;
 union CVValue_t;
 class KeyValues;
-class ConVarRefAbstract;
 
 
 //-----------------------------------------------------------------------------
@@ -47,7 +46,7 @@ public:
 	// Install a global change callback (to be called when any convar changes) 
 	virtual void			InstallGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
 	virtual void			RemoveGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
-	virtual void			CallGlobalChangeCallbacks( ConVarRefAbstract *var, CSplitScreenSlot nSlot, const char *pOldString, float flOldValue ) = 0;
+	virtual void			CallGlobalChangeCallbacks( ConVar* var, CSplitScreenSlot nSlot, const char *pOldString, float flOldValue ) = 0;
 
 	// Reverts cvars which contain a specific flag
 	virtual void			RevertFlaggedConVars( int nFlag ) = 0;
@@ -72,16 +71,16 @@ public:
 	virtual void	unk2() = 0;
 
 	// Register, unregister vars
-	virtual void	RegisterConVar( const ConVarCreation_t& setup, int64 nAdditionalFlags, ConVarHandle* pCvarRef, ConVar** pCvar ) = 0;
+	virtual void	RegisterConVar( const ConVarCreation_t& setup, int64 nAdditionalFlags, ConVarHandle* pCvarRef, IConVar** pCvar ) = 0;
 	virtual void	UnregisterConVar( ConVarHandle handle ) = 0;
-	virtual ConVar*	GetConVar( ConVarHandle handle ) = 0;
+	virtual IConVar*	GetConVar( ConVarHandle handle ) = 0;
 
 	// Register, unregister commands
 	virtual ConCommandHandle	RegisterConCommand( ConCommand *pCmd, int64 nAdditionalFlags = 0 ) = 0;
 	virtual void				UnregisterConCommand( ConCommandHandle handle ) = 0;
 	virtual ConCommand*			GetCommand( ConCommandHandle handle ) = 0;
 
-	virtual void QueueThreadSetValue( ConVarRefAbstract *ref, CSplitScreenSlot nSlot, CVValue_t *value ) = 0;
+	virtual void QueueThreadSetValue( ConVar* ref, CSplitScreenSlot nSlot, CVValue_t* value ) = 0;
 };
 
 //-----------------------------------------------------------------------------

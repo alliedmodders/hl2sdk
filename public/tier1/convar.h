@@ -24,6 +24,8 @@
 #include "mathlib/vector4d.h"
 #include "playerslot.h"
 
+#include <cstdint>
+
 #ifdef _WIN32
 #define FORCEINLINE_CVAR FORCEINLINE
 #elif POSIX
@@ -44,11 +46,11 @@
 //-----------------------------------------------------------------------------
 // Forward declarations
 //-----------------------------------------------------------------------------
-class ConVar;
+class IConVar;
 class CCommand;
 class ConCommand;
 class ConCommandBase;
-class ConVarRefAbstract;
+class ConVar;
 class ConCommandRefAbstract;
 
 class ALIGN8 ConVarHandle
@@ -229,28 +231,49 @@ union CVValue_t
 	CVValue_t(CVValue_t const& cp) { memcpy(this, &cp, sizeof(*this)); };
 	CVValue_t& operator=(CVValue_t other) { memcpy(this, &other, sizeof(*this)); return *this; }
 
+	template<typename T>
+	FORCEINLINE_CVAR CVValue_t& operator=(T other);
+
 	bool		m_bValue;
-	short		m_i16Value;
-	uint16		m_u16Value;
-	int			m_i32Value;
-	uint		m_u32Value;
-	int64		m_i64Value;
-	uint64		m_u64Value;
+	int16_t		m_i16Value;
+	uint16_t	m_u16Value;
+	int32_t		m_i32Value;
+	uint32_t	m_u32Value;
+	int64_t		m_i64Value;
+	uint64_t	m_u64Value;
 	float		m_flValue;
 	double		m_dbValue;
-	const char *m_szValue;
+	const char* m_szValue;
 	Color		m_clrValue;
 	Vector2D	m_vec2Value;
 	Vector		m_vec3Value;
 	Vector4D	m_vec4Value;
 	QAngle		m_angValue;
 };
+static_assert(sizeof(float) == sizeof(int32_t), "Wrong float type size for ConVar!");
+static_assert(sizeof(double) == sizeof(int64_t), "Wrong double type size for ConVar!");
+
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<bool>( bool other )					{ m_bValue = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<int16_t>( int16_t other )			{ m_i16Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<uint16_t>( uint16_t other )			{ m_u16Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<int32_t>( int32_t other )			{ m_i32Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<uint32_t>( uint32_t other )			{ m_u32Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<int64_t>( int64_t other )			{ m_i64Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<uint64_t>( uint64_t other )			{ m_u64Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<float>( float other )				{ m_flValue = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<double>( double other )				{ m_dbValue = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const char*>( const char* other )	{ m_szValue = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const Color&>( const Color& other )		{ m_clrValue = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const Vector2D&>( const Vector2D& other )	{ m_vec2Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const Vector&>( const Vector& other )		{ m_vec3Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const Vector4D&>( const Vector4D& other )	{ m_vec4Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const QAngle&>( const QAngle& other )	{ m_angValue = other; return *this; }
 
 //-----------------------------------------------------------------------------
 // Called when a ConVar changes value
 //-----------------------------------------------------------------------------
-typedef void(*FnChangeCallbackGlobal_t)(ConVarRefAbstract *cvar, CSplitScreenSlot nSlot, const char *pNewValue, const char *pOldValue);
-using FnChangeCallback_t = void(*)(ConVarRefAbstract *cvar, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t *pOldValue);
+typedef void(*FnChangeCallbackGlobal_t)(ConVar* cvar, CSplitScreenSlot nSlot, const char *pNewValue, const char *pOldValue);
+using FnChangeCallback_t = void(*)(ConVar* cvar, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t *pOldValue);
 static_assert(sizeof(FnChangeCallback_t) == 0x8, "Wrong size for FnChangeCallback_t");
 
 //-----------------------------------------------------------------------------
@@ -259,7 +282,7 @@ static_assert(sizeof(FnChangeCallback_t) == 0x8, "Wrong size for FnChangeCallbac
 class ICVarListenerCallbacks
 {
 public:
-	virtual void OnConVarCreated( ConVarRefAbstract *pNewCvar ) = 0;
+	virtual void OnConVarCreated( ConVar* pNewCvar ) = 0;
 	virtual void OnConCommandCreated( ConCommandRefAbstract *pNewCommand ) = 0;
 };
 
@@ -509,7 +532,6 @@ private:
 class ConVar
 {
 friend class CCvar;
-friend class ConVarRef;
 friend class SplitScreenConVarRef;
 
 public:
@@ -640,6 +662,20 @@ protected:
 #pragma pack(push,1)
 struct ConVarSetup_t
 {
+	ConVarSetup_t() :
+	unknown0(0),
+	has_default(false),
+	has_min(false),
+	has_max(false),
+	default_value(),
+	min_value(),
+	max_value(),
+	callback(nullptr),
+	type(EConVarType_Invalid),
+	unk1(0),
+	unk2(0)
+	{}
+
 	int32 unknown0; // 0x0
 
 	bool has_default; // 0x4
@@ -647,44 +683,33 @@ struct ConVarSetup_t
 	bool has_max; // 0x6
 
 	CVValue_t default_value; // 0x7
+	CVValue_t min_value; // 0x17
+	CVValue_t max_value; // 0x27
 
-	char pad3; // 0x17
+	char pad; // 0x37
 
-	FnChangeCallback_t callback; // 0x18
-	EConVarType type; // 0x20
+	FnChangeCallback_t callback; // 0x38
+	EConVarType type; // 0x40
 
-	int32_t unk1; // 0x22
-	int16_t unk2; // 0x26
+	int32_t unk1; // 0x42
+	int16_t unk2; // 0x46
 };
 #pragma pack(pop)
-
-static_assert(sizeof(ConVarSetup_t) == 0x28, "ConVarSetup_t is of the wrong size!");
+static_assert(sizeof(ConVarSetup_t) == 0x48, "ConVarSetup_t is of the wrong size!");
 static_assert(sizeof(ConVarSetup_t) % 8 == 0x0, "ConVarSetup_t isn't 8 bytes aligned!");
 
 #pragma pack(push,1)
 struct ConVarCreation_t {
+	ConVarCreation_t() { memset(this, 0, sizeof(*this)); }
+
 	const char* name; // 0x0
 	const char* description; // 0x8
 	int64_t flags; // 0x10
 
-	int32_t unk1; // 0x18
-
-	bool has_default; // 0x1C
-	bool has_min; // 0x1D
-	bool has_max; // 0x1E
-	CVValue_t default_value; // 0x1F
-
-	int8_t unk4[33]; // 0x2F
-
-	FnChangeCallback_t callback; // 0x50
-
-	EConVarType type; // 0x58
-
-	int32_t unk9; // 0x5A
-	int16_t unk10; // 0x5E
+	ConVarSetup_t setup; // 0x18
 
 	ConVarHandle* refHandle; // 0x60
-	ConVar** refConVar; // 0x68
+	IConVar** refConVar; // 0x68
 };
 #pragma pack(pop)
 
@@ -695,44 +720,63 @@ static_assert(sizeof(CVValue_t) == 0x10, "CVValue_t wrong size!");
 //-----------------------------------------------------------------
 // Used to read/write/create? convars (replaces the FindVar method)
 //-----------------------------------------------------------------
-class ConVarRefAbstract
+class ConVar
 {
 public:
 	// sub_6A66B0
-	ConVarRefAbstract(const char* name, int32 flags, const char* description, ConVarSetup_t obj, float value) : m_ConVar(nullptr)
+	template<typename T>
+	ConVar(const char* name, int32 flags, const char* description, T value)
 	{
-		this->Init(INVALID_CONVAR_HANDLE, EConVarType_Float32);
+		this->Init(INVALID_CONVAR_HANDLE, TranslateType<T>());
 
-		obj.has_default = true;
-		obj.default_value.m_flValue = value;
+		ConVarSetup_t setup;
+		setup.has_default = true;
+		setup.default_value = value;
+		setup.type = TranslateType<T>();
 
-		this->sub_10B7C70(name, flags &~ FCVAR_DEVELOPMENTONLY, description, obj);
+		this->sub_10B7C70(name, flags &~ FCVAR_DEVELOPMENTONLY, description, setup);
 	}
 
 private:
+	template<typename T>
+	static constexpr EConVarType TranslateType();
+	
 	// sub_10B7BC0
 	void Init(ConVarHandle defaultHandle, EConVarType type);
 
 	// sub_10B7C70
-	void sub_10B7C70(const char* name, int32 flags, const char* description, ConVarSetup_t& obj);
+	void sub_10B7C70(const char* name, int32 flags, const char* description, const ConVarSetup_t& obj);
 public:
 	// High-speed method to read convar data
 	ConVarHandle m_Handle;
-	ConVar* m_ConVar;
+	IConVar* m_ConVar;
 };
 
+template<> constexpr EConVarType ConVar::TranslateType<bool>( void )		{ return EConVarType_Bool; }
+template<> constexpr EConVarType ConVar::TranslateType<int16_t>( void )		{ return EConVarType_Int16; }
+template<> constexpr EConVarType ConVar::TranslateType<uint16_t>( void )	{ return EConVarType_UInt16; }
+template<> constexpr EConVarType ConVar::TranslateType<int32_t>( void )		{ return EConVarType_Int32; }
+template<> constexpr EConVarType ConVar::TranslateType<uint32_t>( void )	{ return EConVarType_UInt32; }
+template<> constexpr EConVarType ConVar::TranslateType<int64_t>( void )		{ return EConVarType_Int64; }
+template<> constexpr EConVarType ConVar::TranslateType<uint64_t>( void )	{ return EConVarType_UInt64; }
+template<> constexpr EConVarType ConVar::TranslateType<float>( void )		{ return EConVarType_Float32; }
+template<> constexpr EConVarType ConVar::TranslateType<double>( void )		{ return EConVarType_Float64; }
+template<> constexpr EConVarType ConVar::TranslateType<const char*>( void )	{ return EConVarType_String; }
+template<> constexpr EConVarType ConVar::TranslateType<Color>( void )		{ return EConVarType_Color; }
+template<> constexpr EConVarType ConVar::TranslateType<Vector2D>( void )	{ return EConVarType_Vector2; }
+template<> constexpr EConVarType ConVar::TranslateType<Vector>( void )		{ return EConVarType_Vector3; }
+template<> constexpr EConVarType ConVar::TranslateType<Vector4D>( void )	{ return EConVarType_Vector4; }
+template<> constexpr EConVarType ConVar::TranslateType<QAngle>( void )		{ return EConVarType_Qangle; }
+
 // sub_10B7760
-ConVar* ConVar_Invalid(EConVarType type);
+IConVar* ConVar_Invalid(EConVarType type);
 
-// sub_10B79F0
-void ConVar_Add(const ConVarCreation_t& setup);
-
-class ConVar
+class IConVar
 {
 friend class ConVarRegList;
-friend class ConVarRefAbstract;
+friend class ConVar;
 public:
-	ConVar(EConVarType type);
+	IConVar(EConVarType type);
 protected:
 	const char* m_pszName;
 	CVValue_t* m_cvvDefaultValue;
