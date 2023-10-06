@@ -60,11 +60,8 @@ data field should not be broadcasted to clients, use the type "local".
 
 struct GameEventKeySymbol_t
 {
-	inline GameEventKeySymbol_t(const char* keyName)
-	{
-		m_nHashCode = 0;
-		m_pszKeyName = keyName;
-		
+	inline GameEventKeySymbol_t(const char* keyName): m_nHashCode(0), m_pszKeyName(NULL)
+	{		
 		if (!keyName || !keyName[0])
 			return;
 
