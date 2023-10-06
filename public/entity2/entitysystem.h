@@ -17,7 +17,7 @@ class IEntityPrecacheConfiguration;
 class IEntityResourceManifestBuilder;
 class ISpawnGroupEntityFilter;
 
-typedef void (*EntityResourceManifestCreationCallback_t)(struct IEntityResourceManifest*, void*);
+typedef void (*EntityResourceManifestCreationCallback_t)(IEntityResourceManifest *, void *);
 
 enum SpawnGroupEntityFilterType_t
 {
