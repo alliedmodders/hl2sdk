@@ -120,7 +120,7 @@ public:
 	// Data access
 	virtual bool  GetBool(const GameEventKeySymbol_t& keySymbol, bool defaultValue = false) = 0;
 	virtual int GetInt(const GameEventKeySymbol_t& keySymbol, int defaultValue = 0) = 0;
-	virtual uint64_t GetUint64(const GameEventKeySymbol_t& keySymbol, uint64_t defaultValue = 0) = 0;
+	virtual uint64 GetUint64(const GameEventKeySymbol_t& keySymbol, uint64 defaultValue = 0) = 0;
 	virtual float GetFloat(const GameEventKeySymbol_t& keySymbol, float defaultValue = 0.0f) = 0;
 	virtual const char* GetString(const GameEventKeySymbol_t& keySymbol, const char* defaultValue = "") = 0;
 	virtual void* GetPtr(const GameEventKeySymbol_t& keySymbol, void* defaultValue = NULL) = 0;
@@ -141,7 +141,7 @@ public:
 
 	virtual void SetBool(const GameEventKeySymbol_t& keySymbol, bool value) = 0;
 	virtual void SetInt(const GameEventKeySymbol_t& keySymbol, int value) = 0;
-	virtual void SetUint64(const GameEventKeySymbol_t& keySymbol, uint64_t value) = 0;
+	virtual void SetUint64(const GameEventKeySymbol_t& keySymbol, uint64 value) = 0;
 	virtual void SetFloat(const GameEventKeySymbol_t& keySymbol, float value) = 0;
 	virtual void SetString(const GameEventKeySymbol_t& keySymbol, const char* value) = 0;
 	virtual void SetPtr(const GameEventKeySymbol_t& keySymbol, void* value) = 0;
