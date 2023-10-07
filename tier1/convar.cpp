@@ -437,7 +437,7 @@ int DefaultCompletionFunc( const char *partial, CUtlVector< CUtlString > &comman
 	return 0;
 }
 
-ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, FnCommandCallback_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
+ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
 	ConCommandCreation_t creation;
 	creation.callback.fnCommandCallback = callback;
@@ -453,7 +453,7 @@ ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName,
 	Create( pName, pHelpString, flags, creation );
 }
 
-ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, FnCommandCallbackVoid_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
+ConCommand::ConCommand( const char *pName, FnCommandCallbackVoid_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
 	ConCommandCreation_t creation;
 	creation.callback.fnVoidCommandCallback = callback;
@@ -469,7 +469,7 @@ ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName,
 	Create( pName, pHelpString, flags, creation );
 }
 
-ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, FnCommandCallbackNoContext_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
+ConCommand::ConCommand( const char *pName, FnCommandCallbackNoContext_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
 	ConCommandCreation_t creation;
 	creation.callback.fnContextlessCommandCallback = callback;
@@ -485,7 +485,7 @@ ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName,
 	Create( pName, pHelpString, flags, creation );
 }
 
-ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, ICommandCallback *pCallback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, ICommandCompletionCallback *pCompletionCallback /*= 0*/ )
+ConCommand::ConCommand( const char *pName, ICommandCallback *pCallback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, ICommandCompletionCallback *pCompletionCallback /*= 0*/ )
 {
 	ConCommandCreation_t creation;
 	creation.callback.pCommandCallback = pCallback;
@@ -588,7 +588,7 @@ void ConVar::Init(ConVarHandle defaultHandle, EConVarType type)
 	this->m_ConVar = nullptr;
 
 	// qword_191A3D8
-	if (g_pCVar && (this->m_ConVar = g_pCVar->GetConVar(defaultHandle) == nullptr))
+	if (g_pCVar && (this->m_ConVar = g_pCVar->GetConVar(defaultHandle)) == nullptr)
 	{
 		this->m_ConVar = ConVar_Invalid(type);
 		// technically this
