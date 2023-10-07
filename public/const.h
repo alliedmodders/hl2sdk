@@ -356,8 +356,7 @@ enum RenderFx_t : unsigned char
 enum Collision_Group_t
 {
 	COLLISION_GROUP_NONE  = 4,
-	COLLISION_GROUP_DEBRIS,			// Collides with nothing but world and static stuff
-	COLLISION_GROUP_DEBRIS_TRIGGER, // Same as debris, but hits triggers
+	COLLISION_GROUP_DEBRIS,			// Collides with nothing but world, static stuff and triggers
 	COLLISION_GROUP_INTERACTIVE_DEBRIS,	// Collides with everything except other interactive debris or debris
 	COLLISION_GROUP_INTERACTIVE,	// Collides with everything except interactive debris or debris
 	COLLISION_GROUP_PLAYER,
