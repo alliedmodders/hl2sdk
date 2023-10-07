@@ -33,72 +33,117 @@
 static int64 s_nCVarFlag = 0;
 static bool s_bRegistered = false;
 
+void RegisterCommand( ConCommandCreation_t& cmd )
+{
+	*cmd.refHandle = g_pCVar->RegisterConCommand( cmd, s_nCVarFlag );
+	if ( !cmd.refHandle->IsValid() )
+	{
+		Plat_FatalErrorFunc( "RegisterConCommand: Unknown error registering con command \"%s\"!\n", cmd.name );
+		DebuggerBreakIfDebugging( );
+	}
+}
+
+void UnRegisterCommand( ConVarHandle& cmd )
+{
+	if ( cmd.IsValid() )
+	{
+		g_pCVar->UnregisterConCommand( cmd );
+
+		cmd.Invalidate();
+	}
+}
+
 class ConCommandRegList;
+static ConCommandRegList* s_pCommandRegList = nullptr;
+
 class ConCommandRegList
 {
 public:
-	static void RegisterCommand(ConCommand* pCmd)
-	{
-		if (s_bConCommandsRegistered)
-		{
-			ConCommandHandle hndl = g_pCVar->RegisterConCommand(pCmd, s_nCVarFlag);
-			if (!hndl.IsValid())
-			{
-				Plat_FatalErrorFunc("RegisterConCommand: Unknown error registering con command \"%s\"!\n", pCmd->GetName());
-				DebuggerBreakIfDebugging();
-			}
-
-			pCmd->SetHandle(hndl);
-		}
-		else
-		{
-			GetCommandRegList()->AddToTail(pCmd);
-		}
-	}
-
 	static void RegisterAll()
 	{
 		if (!s_bConCommandsRegistered && g_pCVar)
 		{
 			s_bConCommandsRegistered = true;
 
-			for(int i = 0; i < GetCommandRegList()->Count(); i++)
+			ConCommandRegList* list = s_pCommandRegList;
+			while ( list != nullptr )
 			{
-				ConCommand *pCmd = GetCommandRegList()->Element(i);
-				ConCommandHandle hndl = g_pCVar->RegisterConCommand(pCmd, s_nCVarFlag);
-				pCmd->SetHandle(hndl);
-
-				if (!hndl.IsValid())
+				FOR_EACH_VEC( list->m_Vec, i )
 				{
-					Plat_FatalErrorFunc("RegisterConCommand: Unknown error registering con command \"%s\"!\n", pCmd->GetName());
-					DebuggerBreakIfDebugging();
+					RegisterCommand( list->m_Vec[i] );
 				}
+
+				ConCommandRegList *pNext = list->m_pNext;
+				delete list;
+				list = pNext;
 			}
 		}
 	}
 private:
+	friend void AddCommand( ConCommandCreation_t& cmd );
 
-	// GAMMACASE: Required to prevent static initialization order problem https://isocpp.org/wiki/faq/ctors#static-init-order
-	static CUtlVector<ConCommand *> *GetCommandRegList()
+	void SetNextList( ConCommandRegList* list )
 	{
-		static CUtlVector<ConCommand *> s_ConCommandRegList;
-		return &s_ConCommandRegList;
+		m_pNext = list;
 	}
 
+	int Count() const
+	{
+		return m_Vec.Count();
+	}
+
+	void Add( const ConCommandCreation_t& cmd )
+	{
+		m_Vec.AddToTail( cmd );
+	}
+
+	CUtlVectorFixed<ConCommandCreation_t, 100> m_Vec;
+	ConCommandRegList* m_pNext = nullptr;
+public:
 	static bool s_bConCommandsRegistered;
 };
+bool ConCommandRegList::s_bConCommandsRegistered = false;
 
-void RegisterConVar( ConVarCreation_t& setup )
+void AddCommand( ConCommandCreation_t& cmd )
 {
-	g_pCVar->RegisterConVar( setup, s_nCVarFlag, setup.refHandle, setup.refConVar );
-	if (!setup.refHandle->IsValid())
+	if (ConCommandRegList::s_bConCommandsRegistered && s_bRegistered)
 	{
-		Plat_FatalErrorFunc( "RegisterConCommand: Unknown error registering convar \"%s\"!\n", setup.name );
+		RegisterCommand( cmd );
+		return;
+	}
+
+	if ( !s_pCommandRegList || s_pCommandRegList->Count() == 100 )
+	{
+		ConCommandRegList* newList = new ConCommandRegList;
+		newList->SetNextList( s_pCommandRegList );
+
+		s_pCommandRegList = newList;
+	}
+
+	s_pCommandRegList->Add( cmd );
+}
+
+void RegisterConVar( ConVarCreation_t& cvar )
+{
+	ConMsg( "Registering cvar %s\n", cvar.name );
+
+	g_pCVar->RegisterConVar( cvar, s_nCVarFlag, cvar.refHandle, cvar.refConVar );
+	if (!cvar.refHandle->IsValid())
+	{
+		Plat_FatalErrorFunc( "RegisterConVar: Unknown error registering convar \"%s\"!\n", cvar.name );
 		DebuggerBreakIfDebugging();
 	}
 }
 
-bool ConCommandRegList::s_bConCommandsRegistered = false;
+void UnRegisterConVar( ConVarHandle& cvar )
+{
+	if (cvar.IsValid())
+	{
+		g_pCVar->UnregisterConVar( cvar );
+
+		cvar.Invalidate();
+	}
+}
 
 class ConVarRegList;
 static ConVarRegList* s_pConVarRegList = nullptr;
@@ -108,11 +153,6 @@ class ConVarRegList
 public:
 	ConVarRegList() {}
 
-	static bool AreConVarsRegistered()
-	{
-		return s_bConVarsRegistered;
-	}
-
 	static void RegisterAll()
 	{
 		if ( !s_bConVarsRegistered && g_pCVar )
@@ -120,9 +160,9 @@ public:
 			s_bConVarsRegistered = true;
 
 			ConVarRegList* list = s_pConVarRegList;
-			while ( list != nullptr )
+			while ( list )
 			{
-				FOR_EACH_VEC( s_pConVarRegList->m_Vec, i )
+				FOR_EACH_VEC( list->m_Vec, i )
 				{
 					RegisterConVar( list->m_Vec[i] );
 				}
@@ -131,9 +171,15 @@ public:
 				delete list;
 				list = pNext;
 			}
-
-			s_pConVarRegList = nullptr;
 		}
+	}
+
+private:
+	friend void SetupConVar( ConVarCreation_t& cvar );
+
+	void SetNextList( ConVarRegList* list )
+	{
+		m_pNext = list;
 	}
 
 	int Count() const
@@ -141,22 +187,14 @@ public:
 		return m_Vec.Count();
 	}
 
-private:
-	friend void SetupConVar( ConVarCreation_t& setup );
-
-	void SetNextList( ConVarRegList* list )
+	void Add( const ConVarCreation_t& cvar )
 	{
-		m_pNext = list;
-	}
-
-	void Add( const ConVarCreation_t& setup )
-	{
-		m_Vec.AddToTail( setup );
+		m_Vec.AddToTail( cvar );
 	}
 
 	CUtlVectorFixed<ConVarCreation_t, 100> m_Vec;
 	ConVarRegList* m_pNext = nullptr;
-
+public:
 	static bool s_bConVarsRegistered;
 };
 static_assert(sizeof(ConVarRegList) == 0x2BD0, "Size mismatch");
@@ -164,11 +202,11 @@ static_assert(sizeof(ConVarRegList) == 0x2BD0, "Size mismatch");
 bool ConVarRegList::s_bConVarsRegistered = false;
 
 // sub_10B79F0
-void SetupConVar( ConVarCreation_t& setup )
+void SetupConVar( ConVarCreation_t& cvar )
 {
-	if ( s_bRegistered )
+	if ( ConVarRegList::s_bConVarsRegistered )
 	{
-		RegisterConVar(setup);
+		RegisterConVar(cvar);
 		return;
 	}
 	
@@ -180,7 +218,9 @@ void SetupConVar( ConVarCreation_t& setup )
 		s_pConVarRegList = newList;
 	}
 
-	s_pConVarRegList->Add( setup );
+	s_pConVarRegList->Add( cvar );
+
+	ConMsg( "Setting up cvar %s\n", cvar.name );
 }
 
 //-----------------------------------------------------------------------------
@@ -207,83 +247,6 @@ void ConVar_Unregister( )
 
 	s_bRegistered = false;
 }
-
-//-----------------------------------------------------------------------------
-// Purpose: Default constructor
-//-----------------------------------------------------------------------------
-ConCommandBase::ConCommandBase( void )
-{
-	m_pszName       = NULL;
-	m_pszHelpString = NULL;
-
-	m_nFlags = 0;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-ConCommandBase::~ConCommandBase( void )
-{
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Return name of the command/var
-// Output : const char
-//-----------------------------------------------------------------------------
-const char *ConCommandBase::GetName( void ) const
-{
-	return m_pszName;
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : flag - 
-// Output : Returns true on success, false on failure.
-//-----------------------------------------------------------------------------
-bool ConCommandBase::IsFlagSet( int64 flag ) const
-{
-	return ( flag & m_nFlags ) ? true : false;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : flags - 
-//-----------------------------------------------------------------------------
-void ConCommandBase::AddFlags( int64 flags )
-{
-	m_nFlags |= flags;
-
-#ifdef ALLOW_DEVELOPMENT_CVARS
-	m_nFlags &= ~FCVAR_DEVELOPMENTONLY;
-#endif
-}
-
-void ConCommandBase::RemoveFlags( int64 flags )
-{
-	m_nFlags &= ~flags;
-}
-
-int64 ConCommandBase::GetFlags( void ) const
-{
-	return m_nFlags;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Output : const char
-//-----------------------------------------------------------------------------
-const char *ConCommandBase::GetHelpText( void ) const
-{
-	return m_pszHelpString;
-}
-
-//-----------------------------------------------------------------------------
-//
-// Con Commands start here
-//
-//-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 // Global methods
@@ -474,98 +437,68 @@ int DefaultCompletionFunc( const char *partial, CUtlVector< CUtlString > &comman
 	return 0;
 }
 
-
 ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, FnCommandCallback_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
-	m_Callback.m_fnCommandCallback = callback;
-	m_Callback.m_bUsingCommandCallbackInterface = false;
-	m_Callback.m_bHasVoidCommandCallback = false;
-	m_Callback.m_bHasContextlessCommandCallback = false;
+	ConCommandCreation_t creation;
+	creation.callback.fnCommandCallback = callback;
+	creation.callback.is_interface = false;
+	creation.callback.is_voidcallback = false;
+	creation.callback.is_contextless = false;
 
-	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
-	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
-	m_bUsingCommandCompletionInterface = false;
-
-	m_pReference = pReferenceOut;
-	m_pReference->handle.Reset();
+	creation.fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
+	creation.has_complitioncallback = completionFunc != 0 ? true : false;
+	creation.is_interface = false;
 
 	// Setup the rest
-	Create( pName, pHelpString, flags );
+	Create( pName, pHelpString, flags, creation );
 }
 
 ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, FnCommandCallbackVoid_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
-	m_Callback.m_fnVoidCommandCallback = callback;
-	m_Callback.m_bUsingCommandCallbackInterface = false;
-	m_Callback.m_bHasVoidCommandCallback = true;
-	m_Callback.m_bHasContextlessCommandCallback = false;
+	ConCommandCreation_t creation;
+	creation.callback.fnVoidCommandCallback = callback;
+	creation.callback.is_interface = false;
+	creation.callback.is_voidcallback = true;
+	creation.callback.is_contextless = false;
 
-	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
-	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
-	m_bUsingCommandCompletionInterface = false;
-
-	m_pReference = pReferenceOut;
-	m_pReference->handle.Reset();
+	creation.fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
+	creation.has_complitioncallback = completionFunc != nullptr ? true : false;
+	creation.is_interface = false;
 
 	// Setup the rest
-	Create( pName, pHelpString, flags );
+	Create( pName, pHelpString, flags, creation );
 }
 
 ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, FnCommandCallbackNoContext_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
-	m_Callback.m_fnContextlessCommandCallback = callback;
-	m_Callback.m_bUsingCommandCallbackInterface = false;
-	m_Callback.m_bHasVoidCommandCallback = false;
-	m_Callback.m_bHasContextlessCommandCallback = true;
+	ConCommandCreation_t creation;
+	creation.callback.fnContextlessCommandCallback = callback;
+	creation.callback.is_interface = false;
+	creation.callback.is_voidcallback = false;
+	creation.callback.is_contextless = true;
 
-	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
-	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
-	m_bUsingCommandCompletionInterface = false;
-
-	m_pReference = pReferenceOut;
-	m_pReference->handle.Reset();
+	creation.fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
+	creation.has_complitioncallback = completionFunc != nullptr ? true : false;
+	creation.is_interface = false;
 
 	// Setup the rest
-	Create(pName, pHelpString, flags);
+	Create( pName, pHelpString, flags, creation );
 }
 
 ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, ICommandCallback *pCallback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, ICommandCompletionCallback *pCompletionCallback /*= 0*/ )
 {
-	m_Callback.m_pCommandCallback = pCallback;
-	m_Callback.m_bUsingCommandCallbackInterface = true;
-	m_Callback.m_bHasVoidCommandCallback = false;
-	m_Callback.m_bHasContextlessCommandCallback = false;
+	ConCommandCreation_t creation;
+	creation.callback.pCommandCallback = pCallback;
+	creation.callback.is_interface = true;
+	creation.callback.is_voidcallback = false;
+	creation.callback.is_contextless = false;
 
-	m_pCommandCompletionCallback = pCompletionCallback;
-	m_bHasCompletionCallback = true;
-	m_bUsingCommandCompletionInterface = true;
-
-	m_pReference = pReferenceOut;
-	m_pReference->handle.Reset();
+	creation.pCommandCompletionCallback = pCompletionCallback;
+	creation.has_complitioncallback = pCompletionCallback != nullptr ? true : false;
+	creation.is_interface = true;
 
 	// Setup the rest
-	Create( pName, pHelpString, flags );
-}
-
-//-----------------------------------------------------------------------------
-// Destructor
-//-----------------------------------------------------------------------------
-ConCommand::~ConCommand( void )
-{
-	ConCommandRefAbstract *pRef = GetRef();
-	if ( pRef )
-	{
-		pRef->handle.Unregister();
-	}
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: Used internally by OneTimeInit to initialize.
-//-----------------------------------------------------------------------------
-void ConCommand::Init()
-{
-	ConCommandRegList::RegisterCommand( this );
+	Create( pName, pHelpString, flags, creation );
 }
 
 //-----------------------------------------------------------------------------
@@ -575,103 +508,28 @@ void ConCommand::Init()
 //			*pHelpString - 
 //			flags - 
 //-----------------------------------------------------------------------------
-void ConCommand::Create( const char* pName, const char* pHelpString /*= 0*/, int64 flags /*= 0*/ )
+void ConCommand::Create( const char* pName, const char* pHelpString, int64_t flags, ConCommandCreation_t& setup )
 {
 	static const char* empty_string = "";
 
 	// Name should be static data
 	Assert(pName);
-	m_pszName = pName;
-	m_pszHelpString = pHelpString ? pHelpString : empty_string;
+	setup.name = pName;
+	setup.description = pHelpString ? pHelpString : empty_string;
 
-	m_nFlags = flags;
+	setup.flags = flags;
 
 #ifdef ALLOW_DEVELOPMENT_CVARS
-	m_nFlags &= ~FCVAR_DEVELOPMENTONLY;
+	setup.flags &= ~FCVAR_DEVELOPMENTONLY;
 #endif
+	setup.refHandle = &this->m_Handle;
 
-	Init();
+	AddCommand( setup );
 }
 
-void ConCommand::Shutdown()
+void ConCommand::Destroy()
 {
-	GetRef()->handle.Unregister();
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: Invoke the function if there is one
-//-----------------------------------------------------------------------------
-void ConCommandHandle::Dispatch( const CCommandContext &context, const CCommand &command )
-{
-	ConCommand *pCommand = g_pCVar->GetCommand( *this );
-	if ( pCommand->m_Callback.m_fnCommandCallback )
-	{
-		if ( pCommand->m_Callback.m_bUsingCommandCallbackInterface )
-		{
-			pCommand->m_Callback.m_pCommandCallback->CommandCallback( context, command );
-		}
-		else if ( pCommand->m_Callback.m_bHasVoidCommandCallback )
-		{
-			pCommand->m_Callback.m_fnVoidCommandCallback();
-		}
-		else if ( pCommand->m_Callback.m_bHasContextlessCommandCallback )
-		{
-			pCommand->m_Callback.m_fnContextlessCommandCallback( command );
-		}
-		else
-		{
-			pCommand->m_Callback.m_fnCommandCallback( context, command );
-		}
-	}
-
-	// Command without callback!!!
-	AssertMsg(0, ("Encountered ConCommand without a callback!\n"));
-}
-
-bool ConCommandHandle::HasCallback() const
-{
-	ConCommand *pCommand = g_pCVar->GetCommand( *this );
-	return pCommand->m_Callback.m_fnCommandCallback != nullptr;
-}
-
-void ConCommandHandle::Unregister()
-{
-	if (IsValid())
-	{
-		if ( g_pCVar )
-			g_pCVar->UnregisterConCommand( *this );
-
-		Reset();
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Calls the autocompletion method to get autocompletion suggestions
-//-----------------------------------------------------------------------------
-int	ConCommand::AutoCompleteSuggest( const char *partial, CUtlVector< CUtlString > &commands )
-{
-	if (m_bUsingCommandCompletionInterface)
-	{
-		if ( !m_pCommandCompletionCallback )
-			return 0;
-		return m_pCommandCompletionCallback->CommandCompletionCallback( partial, commands );
-	}
-
-	Assert( m_fnCompletionCallback );
-	if ( !m_fnCompletionCallback )
-		return 0;
-
-	return m_fnCompletionCallback( partial, commands );
-}
-
-
-//-----------------------------------------------------------------------------
-// Returns true if the console command can autocomplete 
-//-----------------------------------------------------------------------------
-bool ConCommand::CanAutoComplete( void )
-{
-	return m_bHasCompletionCallback;
+	UnRegisterCommand(this->m_Handle);
 }
 
 //-----------------------------------------------------------------------------
@@ -719,13 +577,18 @@ IConVar* ConVar_Invalid(EConVarType type)
 	return &invalid_convar[type];
 }
 
+ConVar::~ConVar()
+{
+	UnRegisterConVar(this->m_Handle);
+}
+
 void ConVar::Init(ConVarHandle defaultHandle, EConVarType type)
 {
 	this->m_Handle.Invalidate();
 	this->m_ConVar = nullptr;
 
 	// qword_191A3D8
-	if (g_pCVar && g_pCVar->GetConVar(defaultHandle) == nullptr)
+	if (g_pCVar && (this->m_ConVar = g_pCVar->GetConVar(defaultHandle) == nullptr))
 	{
 		this->m_ConVar = ConVar_Invalid(type);
 		// technically this
@@ -734,9 +597,7 @@ void ConVar::Init(ConVarHandle defaultHandle, EConVarType type)
 	this->m_Handle = defaultHandle;
 }
 
-//std::exit((int64_t)(&((ConVarSetup_t*)nullptr)->type));
-
-void ConVar::sub_10B7C70(const char* name, int32 flags, const char* description, const ConVarSetup_t& setup)
+void ConVar::Register(const char* name, int32_t flags, const char* description, const ConVarSetup_t& setup)
 {
 	this->m_ConVar = ConVar_Invalid(setup.type);
 	this->m_Handle.Invalidate();

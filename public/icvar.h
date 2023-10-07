@@ -1,4 +1,4 @@
-﻿//===== Copyright � 1996-2005, Valve Corporation, All rights reserved. ======//
+﻿//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -15,7 +15,6 @@
 #include "tier1/utlvector.h"
 #include "tier0/memalloc.h"
 
-class ConCommandBase;
 class ConCommand;
 class Color;
 class IConVarListener;
@@ -38,10 +37,10 @@ public:
 	virtual ConVarHandle	FindNextConVar( ConVarHandle prev ) = 0;
 	virtual void			SetConVarValue( ConVarHandle cvarid, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t *pOldValue ) = 0;
 
-	virtual ConCommandHandle	FindCommand( const char *name ) = 0;
-	virtual ConCommandHandle	FindFirstCommand() = 0;
-	virtual ConCommandHandle	FindNextCommand( ConCommandHandle prev ) = 0;
-	virtual void				DispatchConCommand( ConCommandHandle cmd, const CCommandContext &ctx, const CCommand &args ) = 0;
+	virtual ConVarHandle	FindCommand( const char *name ) = 0;
+	virtual ConVarHandle	FindFirstCommand() = 0;
+	virtual ConVarHandle	FindNextCommand( ConVarHandle prev ) = 0;
+	virtual void			DispatchConCommand( ConVarHandle cmd, const CCommandContext &ctx, const CCommand &args ) = 0;
 
 	// Install a global change callback (to be called when any convar changes) 
 	virtual void			InstallGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
@@ -71,14 +70,14 @@ public:
 	virtual void	unk2() = 0;
 
 	// Register, unregister vars
-	virtual void	RegisterConVar( const ConVarCreation_t& setup, int64 nAdditionalFlags, ConVarHandle* pCvarRef, IConVar** pCvar ) = 0;
-	virtual void	UnregisterConVar( ConVarHandle handle ) = 0;
+	virtual void		RegisterConVar( const ConVarCreation_t& setup, int64 nAdditionalFlags, ConVarHandle* pCvarRef, IConVar** pCvar ) = 0;
+	virtual void		UnregisterConVar( ConVarHandle handle ) = 0;
 	virtual IConVar*	GetConVar( ConVarHandle handle ) = 0;
 
 	// Register, unregister commands
-	virtual ConCommandHandle	RegisterConCommand( ConCommand *pCmd, int64 nAdditionalFlags = 0 ) = 0;
-	virtual void				UnregisterConCommand( ConCommandHandle handle ) = 0;
-	virtual ConCommand*			GetCommand( ConCommandHandle handle ) = 0;
+	virtual ConVarHandle		RegisterConCommand( const ConCommandCreation_t& setup, int64 nAdditionalFlags = 0 ) = 0;
+	virtual void				UnregisterConCommand( ConVarHandle handle ) = 0;
+	virtual ConCommand*			GetCommand( ConVarHandle handle ) = 0;
 
 	virtual void QueueThreadSetValue( ConVar* ref, CSplitScreenSlot nSlot, CVValue_t* value ) = 0;
 };
