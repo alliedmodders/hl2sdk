@@ -22,7 +22,6 @@
 #include "tier1/characterset.h"
 #include "Color.h"
 #include "cvar.h"
-#include "mathlib/vector4d.h"
 #include "playerslot.h"
 
 #include <cstdint>
@@ -175,66 +174,6 @@ private:
 											// Note: IVEngineClient::ClientCmd_Unrestricted can run any client command.
 
 #define FCVAR_EXECUTE_PER_TICK		(1<<29)
-
-union CVValue_t
-{
-	CVValue_t() { memset(this, 0, sizeof(*this)); }
-	CVValue_t(CVValue_t const& cp) { memcpy(this, &cp, sizeof(*this)); };
-	CVValue_t& operator=(CVValue_t other) { memcpy(this, &other, sizeof(*this)); return *this; }
-
-	template<typename T>
-	FORCEINLINE_CVAR CVValue_t& operator=(T other);
-
-	FORCEINLINE_CVAR operator bool()			{ return m_bValue; }
-	FORCEINLINE_CVAR operator int16_t()			{ return m_i16Value; }
-	FORCEINLINE_CVAR operator uint16_t()		{ return m_u16Value; }
-	FORCEINLINE_CVAR operator int32_t()			{ return m_i32Value; }
-	FORCEINLINE_CVAR operator uint32_t()		{ return m_u32Value; }
-	FORCEINLINE_CVAR operator int64_t()			{ return m_i64Value; }
-	FORCEINLINE_CVAR operator uint64_t()		{ return m_u64Value; }
-	FORCEINLINE_CVAR operator float()			{ return m_flValue; }
-	FORCEINLINE_CVAR operator double()			{ return m_dbValue; }
-	FORCEINLINE_CVAR operator const char*()		{ return m_szValue; }
-	FORCEINLINE_CVAR operator const Color&()	{ return m_clrValue; }
-	FORCEINLINE_CVAR operator const Vector2D&()	{ return m_vec2Value; }
-	FORCEINLINE_CVAR operator const Vector&()	{ return m_vec3Value; }
-	FORCEINLINE_CVAR operator const Vector4D&()	{ return m_vec4Value; }
-	FORCEINLINE_CVAR operator const QAngle&()	{ return m_angValue; }
-
-	bool		m_bValue;
-	int16_t		m_i16Value;
-	uint16_t	m_u16Value;
-	int32_t		m_i32Value;
-	uint32_t	m_u32Value;
-	int64_t		m_i64Value;
-	uint64_t	m_u64Value;
-	float		m_flValue;
-	double		m_dbValue;
-	const char*	m_szValue;
-	Color		m_clrValue;
-	Vector2D	m_vec2Value;
-	Vector		m_vec3Value;
-	Vector4D	m_vec4Value;
-	QAngle		m_angValue;
-};
-static_assert(sizeof(float) == sizeof(int32_t), "Wrong float type size for ConVar!");
-static_assert(sizeof(double) == sizeof(int64_t), "Wrong double type size for ConVar!");
-
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<bool>( const bool other )					{ m_bValue = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<int16_t>( const int16_t other )			{ m_i16Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<uint16_t>( const uint16_t other )			{ m_u16Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<int32_t>( const int32_t other )			{ m_i32Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<uint32_t>( const uint32_t other )			{ m_u32Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<int64_t>( const int64_t other )			{ m_i64Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<uint64_t>( const uint64_t other )			{ m_u64Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<float>( const float other )				{ m_flValue = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<double>( const double other )				{ m_dbValue = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const char*>( const char* other )	{ m_szValue = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const Color&>( const Color& other )		{ m_clrValue = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const Vector2D&>( const Vector2D& other )	{ m_vec2Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const Vector&>( const Vector& other )		{ m_vec3Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const Vector4D&>( const Vector4D& other )	{ m_vec4Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const QAngle&>( const QAngle& other )	{ m_angValue = other; return *this; }
 
 //-----------------------------------------------------------------------------
 // ConVar & ConCommand creation listener callbacks
@@ -536,18 +475,31 @@ public:
 
 	~ConVar();
 
-	template<typename T>
-	void Set(const T value)
-	{
-		*m_ConVar->m_cvvDefaultValue = value;
-	}
+	inline const char*	GetName( ) const			{ return m_ConVar->GetName( ); }
+	inline const char*	GetDescription( ) const		{ return m_ConVar->GetDescription( ); }
+	inline EConVarType	GetType( ) const			{ return m_ConVar->GetType( ); }
+
+	inline CVValue_t*	GetDefaultValue( ) const	{ return m_ConVar->GetDefaultValue( ); }
+	inline CVValue_t*	GetMinValue( ) const		{ return m_ConVar->GetMinValue( ); }
+	inline CVValue_t*	GetMaxValue( ) const		{ return m_ConVar->GetMaxValue( ); }
 
 	template<typename T>
-	T Get()
-	{
-		CVValue_t& val = *m_ConVar->m_cvvDefaultValue;
-		return val;
-	}
+	inline void SetDefaultValue(const T& value)	{ m_ConVar->SetDefaultValue( value ); }
+	template<typename T>
+	inline void SetMinValue(const T& value)		{ m_ConVar->SetMinValue( value ); }
+	template<typename T>
+	inline void SetMaxValue(const T& value)		{ m_ConVar->SetMaxValue( value ); }
+	
+	template<typename T>
+	inline const T			GetValue( int index = 0 ) const	{ return m_ConVar->GetValue<T>( index ); }
+	inline const CVValue_t&	GetValue( int index = 0 ) const	{ return m_ConVar->GetValue( index ); }
+	template<typename T>
+	inline void SetValue(const T& value, int index = 0)	{ m_ConVar->SetValue( value, index ); }
+
+	inline bool		IsFlagSet( int64_t flag ) const		{ return m_ConVar->IsFlagSet( flag ); }
+	inline void		AddFlags( int64_t flags )			{ m_ConVar->AddFlags( flags ); }
+	inline void		RemoveFlags( int64_t flags )		{ return m_ConVar->RemoveFlags( flags ); }
+	inline int64_t	GetFlags( void ) const				{ return m_ConVar->GetFlags( ); }
 
 private:
 	template<typename T>
@@ -558,7 +510,7 @@ private:
 
 	// sub_10B7C70
 	void Register(const char* name, int32_t flags, const char* description, const ConVarSetup_t& obj);
-public:
+
 	// High-speed method to read convar data
 	ConVarHandle m_Handle;
 	IConVar* m_ConVar;
@@ -586,19 +538,6 @@ template<> constexpr EConVarType ConVar::TranslateType<QAngle>( void )		{ return
 IConVar* ConVar_Invalid(EConVarType type);
 
 #ifdef CONVAR_WORK_FINISHED
-//-----------------------------------------------------------------------------
-// Purpose: Return ConVar value as a string, return "" for bogus string pointer, etc.
-// Output : const char *
-//-----------------------------------------------------------------------------
-FORCEINLINE_CVAR const char *ConVar::GetString( void ) const 
-{
-	if ( m_nFlags & FCVAR_NEVER_AS_STRING )
-		return "FCVAR_NEVER_AS_STRING";
-	
-	char const *str = m_pParent->m_Value.m_pszString;
-	return str ? str : "";
-}
-
 class CSplitScreenAddedConVar : public ConVar
 {
 	typedef ConVar BaseClass;
@@ -661,98 +600,6 @@ FORCEINLINE_CVAR void CSplitScreenAddedConVar::SetSplitScreenPlayerSlot( int nSl
 FORCEINLINE_CVAR int CSplitScreenAddedConVar::GetSplitScreenPlayerSlot() const 
 { 
 	return m_nSplitScreenSlot; 
-}
-
-//-----------------------------------------------------------------------------
-// Did we find an existing convar of that name?
-//-----------------------------------------------------------------------------
-FORCEINLINE_CVAR bool ConVarRefAbstract::IsFlagSet( int64 nFlags ) const
-{
-	return ( m_pConVar->IsFlagSet( nFlags ) != 0 );
-}
-
-FORCEINLINE_CVAR IConVar *ConVarRefAbstract::GetLinkedConVar()
-{
-	return m_pConVar;
-}
-
-FORCEINLINE_CVAR const char *ConVarRefAbstract::GetName() const
-{
-	return m_pConVar->GetName();
-}
-
-FORCEINLINE_CVAR const char *ConVarRefAbstract::GetBaseName() const
-{
-	return m_pConVar->GetBaseName();
-}
-
-FORCEINLINE_CVAR int ConVarRefAbstract::GetSplitScreenPlayerSlot() const
-{
-	return m_pConVar->GetSplitScreenPlayerSlot();
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Return ConVar value as a float
-//-----------------------------------------------------------------------------
-FORCEINLINE_CVAR float ConVarRefAbstract::GetFloat( void ) const
-{
-	return m_pConVarState->m_Value.m_fValue;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Return ConVar value as an int
-//-----------------------------------------------------------------------------
-FORCEINLINE_CVAR int ConVarRefAbstract::GetInt( void ) const
-{
-	return m_pConVarState->m_Value.m_nValue;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Return ConVar value as a color
-//-----------------------------------------------------------------------------
-FORCEINLINE_CVAR Color ConVarRefAbstract::GetColor( void ) const
-{
-	return m_pConVarState->GetColor();
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Return ConVar value as a string, return "" for bogus string pointer, etc.
-//-----------------------------------------------------------------------------
-FORCEINLINE_CVAR const char *ConVarRefAbstract::GetString( void ) const
-{
-	Assert( !IsFlagSet( FCVAR_NEVER_AS_STRING ) );
-	return m_pConVarState->m_Value.m_pszString;
-}
-
-
-FORCEINLINE_CVAR void ConVarRefAbstract::SetValue( const char *pValue )
-{
-	m_pConVar->SetValue( pValue );
-}
-
-FORCEINLINE_CVAR void ConVarRefAbstract::SetValue( float flValue )
-{
-	m_pConVar->SetValue( flValue );
-}
-
-FORCEINLINE_CVAR void ConVarRefAbstract::SetValue( int nValue )
-{
-	m_pConVar->SetValue( nValue );
-}
-
-FORCEINLINE_CVAR void ConVarRefAbstract::SetValue( Color value )
-{
-	m_pConVar->SetValue( value );
-}
-
-FORCEINLINE_CVAR void ConVarRefAbstract::SetValue( bool bValue )
-{
-	m_pConVar->SetValue( bValue ? 1 : 0 );
-}
-
-FORCEINLINE_CVAR const char *ConVarRefAbstract::GetDefault() const
-{
-	return m_pConVarState->m_pszDefaultValue;
 }
 
 #if 0
