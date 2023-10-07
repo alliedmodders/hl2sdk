@@ -17,7 +17,7 @@ class IEntityPrecacheConfiguration;
 class IEntityResourceManifestBuilder;
 class ISpawnGroupEntityFilter;
 
-typedef void (*EntityResourceManifestCreationCallback_t)(struct IEntityResourceManifest*, void*);
+typedef void (*EntityResourceManifestCreationCallback_t)(IEntityResourceManifest *, void *);
 
 enum SpawnGroupEntityFilterType_t
 {
@@ -65,6 +65,7 @@ struct EntityDormancyChange_t : EntityNotification_t
 struct EntitySpawnInfo_t : EntityNotification_t
 {
 	const CEntityKeyValues* m_pKeyValues;
+	uint64 unknown;
 };
 
 struct EntityActivation_t : EntityNotification_t
