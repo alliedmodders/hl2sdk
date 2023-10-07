@@ -125,8 +125,6 @@ void AddCommand( ConCommandCreation_t& cmd )
 
 void RegisterConVar( ConVarCreation_t& cvar )
 {
-	ConMsg( "Registering cvar %s\n", cvar.name );
-
 	g_pCVar->RegisterConVar( cvar, s_nCVarFlag, cvar.refHandle, cvar.refConVar );
 	if (!cvar.refHandle->IsValid())
 	{
@@ -219,8 +217,6 @@ void SetupConVar( ConVarCreation_t& cvar )
 	}
 
 	s_pConVarRegList->Add( cvar );
-
-	ConMsg( "Setting up cvar %s\n", cvar.name );
 }
 
 //-----------------------------------------------------------------------------
