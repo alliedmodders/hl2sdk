@@ -351,8 +351,14 @@ struct ConCommandCreation_t : CVarCreationBase_t
 };
 static_assert(sizeof(ConCommandCreation_t) == 0x40, "ConCommandCreation_t is of the wrong size!");
 
-class ConCommandBase {}; // For metamod compatibility only!!!!
-class ConCommand : public ConCommandBase
+// TO-DO: Remove this...
+class ConCommandBase
+{
+public:
+	inline const char* GetName() { return "Please remove the ConCommandBase class..."; }
+}; // For metamod compatibility only!!!!
+
+class ConCommand
 {
 public:
 	ConCommand( const char *pName, FnCommandCallback_t callback,
