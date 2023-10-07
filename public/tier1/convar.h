@@ -21,6 +21,7 @@
 #include "tier1/utlstring.h"
 #include "tier1/characterset.h"
 #include "Color.h"
+#include "cvar.h"
 #include "mathlib/vector4d.h"
 #include "playerslot.h"
 
@@ -93,42 +94,6 @@ inline int64_t CVarCreationBase_t::GetFlags( void ) const
 	return this->flags;
 }
 
-class ConVarHandle
-{
-public:
-	ConVarHandle( uint16_t convarIndex = -1, uint16_t unk = -1, uint32_t handle = -1) :
-	m_convarIndex(convarIndex),
-	m_unknown1(unk),
-	m_handleIndex(handle)
-	{}
-
-	bool IsValid( ) const;
-	void Invalidate( );
-
-	uint16_t GetConVarIndex() const { return m_convarIndex; }
-	uint32_t GetIndex() const { return m_handleIndex; }
-
-private:
-	uint16_t m_convarIndex;
-	uint16_t m_unknown1;
-	uint32_t m_handleIndex;
-};
-static_assert(sizeof(ConVarHandle) == 0x8, "ConVarHandle is of the wrong size!");
-
-static const ConVarHandle INVALID_CONVAR_HANDLE = ConVarHandle();
-
-inline bool ConVarHandle::IsValid() const
-{
-	return m_convarIndex != 0xFFFF;
-}
-
-inline void ConVarHandle::Invalidate()
-{
-	m_convarIndex = 0xFFFF;
-	m_unknown1 = 0xFFFF;
-	m_handleIndex = 0x0;
-}
-
 enum CommandTarget_t
 {
 	CT_NO_TARGET = -1,
@@ -157,21 +122,6 @@ public:
 private:
 	CommandTarget_t m_nTarget;
 	CPlayerSlot m_nPlayerSlot;
-};
-
-struct CSplitScreenSlot
-{
-	CSplitScreenSlot( int index )
-	{
-		m_Data = index;
-	}
-	
-	int Get() const
-	{
-		return m_Data;
-	}
-	
-	int m_Data;
 };
 
 //-----------------------------------------------------------------------------
@@ -226,27 +176,6 @@ struct CSplitScreenSlot
 
 #define FCVAR_EXECUTE_PER_TICK		(1<<29)
 
-enum EConVarType : short
-{
-	EConVarType_Invalid = -1,
-	EConVarType_Bool,
-	EConVarType_Int16,
-	EConVarType_UInt16,
-	EConVarType_Int32,
-	EConVarType_UInt32,
-	EConVarType_Int64,
-	EConVarType_UInt64,
-	EConVarType_Float32,
-	EConVarType_Float64,
-	EConVarType_String,
-	EConVarType_Color,
-	EConVarType_Vector2,
-	EConVarType_Vector3,
-	EConVarType_Vector4,
-	EConVarType_Qangle,
-	EConVarType_MAX
-};
-
 union CVValue_t
 {
 	CVValue_t() { memset(this, 0, sizeof(*this)); }
@@ -255,6 +184,22 @@ union CVValue_t
 
 	template<typename T>
 	FORCEINLINE_CVAR CVValue_t& operator=(T other);
+
+	FORCEINLINE_CVAR operator bool()			{ return m_bValue; }
+	FORCEINLINE_CVAR operator int16_t()			{ return m_i16Value; }
+	FORCEINLINE_CVAR operator uint16_t()		{ return m_u16Value; }
+	FORCEINLINE_CVAR operator int32_t()			{ return m_i32Value; }
+	FORCEINLINE_CVAR operator uint32_t()		{ return m_u32Value; }
+	FORCEINLINE_CVAR operator int64_t()			{ return m_i64Value; }
+	FORCEINLINE_CVAR operator uint64_t()		{ return m_u64Value; }
+	FORCEINLINE_CVAR operator float()			{ return m_flValue; }
+	FORCEINLINE_CVAR operator double()			{ return m_dbValue; }
+	FORCEINLINE_CVAR operator const char*()		{ return m_szValue; }
+	FORCEINLINE_CVAR operator const Color&()	{ return m_clrValue; }
+	FORCEINLINE_CVAR operator const Vector2D&()	{ return m_vec2Value; }
+	FORCEINLINE_CVAR operator const Vector&()	{ return m_vec3Value; }
+	FORCEINLINE_CVAR operator const Vector4D&()	{ return m_vec4Value; }
+	FORCEINLINE_CVAR operator const QAngle&()	{ return m_angValue; }
 
 	bool		m_bValue;
 	int16_t		m_i16Value;
@@ -275,28 +220,21 @@ union CVValue_t
 static_assert(sizeof(float) == sizeof(int32_t), "Wrong float type size for ConVar!");
 static_assert(sizeof(double) == sizeof(int64_t), "Wrong double type size for ConVar!");
 
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<bool>( bool other )					{ m_bValue = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<int16_t>( int16_t other )			{ m_i16Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<uint16_t>( uint16_t other )			{ m_u16Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<int32_t>( int32_t other )			{ m_i32Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<uint32_t>( uint32_t other )			{ m_u32Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<int64_t>( int64_t other )			{ m_i64Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<uint64_t>( uint64_t other )			{ m_u64Value = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<float>( float other )				{ m_flValue = other; return *this; }
-template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<double>( double other )				{ m_dbValue = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<bool>( const bool other )					{ m_bValue = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<int16_t>( const int16_t other )			{ m_i16Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<uint16_t>( const uint16_t other )			{ m_u16Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<int32_t>( const int32_t other )			{ m_i32Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<uint32_t>( const uint32_t other )			{ m_u32Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<int64_t>( const int64_t other )			{ m_i64Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<uint64_t>( const uint64_t other )			{ m_u64Value = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<float>( const float other )				{ m_flValue = other; return *this; }
+template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<double>( const double other )				{ m_dbValue = other; return *this; }
 template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const char*>( const char* other )	{ m_szValue = other; return *this; }
 template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const Color&>( const Color& other )		{ m_clrValue = other; return *this; }
 template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const Vector2D&>( const Vector2D& other )	{ m_vec2Value = other; return *this; }
 template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const Vector&>( const Vector& other )		{ m_vec3Value = other; return *this; }
 template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const Vector4D&>( const Vector4D& other )	{ m_vec4Value = other; return *this; }
 template<> FORCEINLINE_CVAR CVValue_t& CVValue_t::operator=<const QAngle&>( const QAngle& other )	{ m_angValue = other; return *this; }
-
-//-----------------------------------------------------------------------------
-// Called when a ConVar changes value
-//-----------------------------------------------------------------------------
-typedef void(*FnChangeCallbackGlobal_t)(ConVar* cvar, CSplitScreenSlot nSlot, const char *pNewValue, const char *pOldValue);
-using FnChangeCallback_t = void(*)(ConVar* cvar, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t *pOldValue);
-static_assert(sizeof(FnChangeCallback_t) == 0x8, "Wrong size for FnChangeCallback_t");
 
 //-----------------------------------------------------------------------------
 // ConVar & ConCommand creation listener callbacks
@@ -562,7 +500,7 @@ class ConVar
 public:
 	// sub_6A66B0
 	template<typename T>
-	ConVar(const char* name, int32_t flags, const char* description, T value)
+	ConVar(const char* name, int32_t flags, const char* description, T value, FnChangeCallback_t cb = nullptr)
 	{
 		this->Init(INVALID_CONVAR_HANDLE, TranslateType<T>());
 
@@ -570,11 +508,46 @@ public:
 		setup.has_default = true;
 		setup.default_value = value;
 		setup.type = TranslateType<T>();
+		setup.callback = cb;
+
+		this->Register(name, flags &~ FCVAR_DEVELOPMENTONLY, description, setup);
+	}
+
+	template<typename T>
+	ConVar(const char* name, int32_t flags, const char* description, T value, bool min, T minValue, bool max, T maxValue, FnChangeCallback_t cb = nullptr)
+	{
+		this->Init(INVALID_CONVAR_HANDLE, TranslateType<T>());
+
+		ConVarSetup_t setup;
+		setup.has_default = true;
+		setup.default_value = value;
+
+		setup.has_min = min;
+		setup.min_value = minValue;
+
+		setup.has_max = max;
+		setup.max_value = maxValue;
+
+		setup.callback = cb;
+		setup.type = TranslateType<T>();
 
 		this->Register(name, flags &~ FCVAR_DEVELOPMENTONLY, description, setup);
 	}
 
 	~ConVar();
+
+	template<typename T>
+	void Set(const T value)
+	{
+		*m_ConVar->m_cvvDefaultValue = value;
+	}
+
+	template<typename T>
+	T Get()
+	{
+		CVValue_t& val = *m_ConVar->m_cvvDefaultValue;
+		return val;
+	}
 
 private:
 	template<typename T>
@@ -607,82 +580,12 @@ template<> constexpr EConVarType ConVar::TranslateType<Vector>( void )		{ return
 template<> constexpr EConVarType ConVar::TranslateType<Vector4D>( void )	{ return EConVarType_Vector4; }
 template<> constexpr EConVarType ConVar::TranslateType<QAngle>( void )		{ return EConVarType_Qangle; }
 
+//-----------------------------------------------------------------------------
+
 // sub_10B7760
 IConVar* ConVar_Invalid(EConVarType type);
 
-class IConVar
-{
-friend class ConVarRegList;
-friend class ConVar;
-public:
-	IConVar(EConVarType type);
-protected:
-	const char* m_pszName;
-	CVValue_t* m_cvvDefaultValue;
-	CVValue_t* m_cvvMinValue;
-	CVValue_t* m_cvvMaxValue;
-	const char* m_pszHelpString;
-	EConVarType m_eVarType;
-
-	// This gets copied from the ConVarDesc_t on creation
-	short unk1;
-
-	unsigned int timesChanged;
-	int64 m_flags;
-	unsigned int callback_index;
-
-	// Used when setting default, max, min values from the ConVarDesc_t
-	// although that's not the only place of usage
-	// flags seems to be:
-	// (1 << 0) Skip setting value to split screen slots and also something keyvalues related
-	// (1 << 1) Skip setting default value
-	// (1 << 2) Skip setting min/max values
-	int allocation_flag_of_some_sort;
-
-	CVValue_t* m_value[4];
-};
-
 #ifdef CONVAR_WORK_FINISHED
-//-----------------------------------------------------------------------------
-// Purpose: Return ConVar value as a float
-// Output : float
-//-----------------------------------------------------------------------------
-FORCEINLINE_CVAR float ConVar::GetFloat( void ) const
-{
-	return m_pParent->m_Value.m_fValue;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Return ConVar value as an int
-// Output : int
-//-----------------------------------------------------------------------------
-FORCEINLINE_CVAR int ConVar::GetInt( void ) const 
-{
-	return m_pParent->m_Value.m_nValue;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Return ConVar value as a color
-// Output : Color
-//-----------------------------------------------------------------------------
-FORCEINLINE_CVAR Color ConVar::GetColor( void ) const 
-{
-	unsigned char *pColorElement = ((unsigned char *)&m_pParent->m_Value.m_nValue);
-	return Color( pColorElement[0], pColorElement[1], pColorElement[2], pColorElement[3] );
-}
-
-
-//-----------------------------------------------------------------------------
-
-template <> FORCEINLINE_CVAR float			ConVar::Get<float>( void ) const		{ return GetFloat(); }
-template <> FORCEINLINE_CVAR int			ConVar::Get<int>( void ) const			{ return GetInt(); }
-template <> FORCEINLINE_CVAR bool			ConVar::Get<bool>( void ) const			{ return GetBool(); }
-template <> FORCEINLINE_CVAR const char *	ConVar::Get<const char *>( void ) const	{ return GetString(); }
-template <> FORCEINLINE_CVAR float			ConVar::Get<float>( float *p ) const				{ return ( *p = GetFloat() ); }
-template <> FORCEINLINE_CVAR int			ConVar::Get<int>( int *p ) const					{ return ( *p = GetInt() ); }
-template <> FORCEINLINE_CVAR bool			ConVar::Get<bool>( bool *p ) const					{ return ( *p = GetBool() ); }
-template <> FORCEINLINE_CVAR const char *	ConVar::Get<const char *>( char const **p ) const	{ return ( *p = GetString() ); }
-
 //-----------------------------------------------------------------------------
 // Purpose: Return ConVar value as a string, return "" for bogus string pointer, etc.
 // Output : const char *

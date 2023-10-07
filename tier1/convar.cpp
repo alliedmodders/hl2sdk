@@ -534,7 +534,21 @@ void ConCommand::Destroy()
 //
 //-----------------------------------------------------------------------------
 
-IConVar invalid_convar[EConVarType_MAX + 1] = {
+class CInvalidConvar : public IConVar
+{
+public:
+	CInvalidConvar(EConVarType type)
+	{
+		m_pszName = "<undefined>";
+		m_cvvDefaultValue = nullptr;
+		m_cvvMinValue = nullptr;
+		m_cvvMaxValue = nullptr;
+		m_pszHelpString = "This convar is being accessed prior to ConVar_Register being called";
+		m_eVarType = type;
+	}
+};
+
+CInvalidConvar invalid_convar[EConVarType_MAX + 1] = {
 	EConVarType_Bool,
 	EConVarType_Int16,
 	EConVarType_UInt16,
@@ -552,17 +566,6 @@ IConVar invalid_convar[EConVarType_MAX + 1] = {
 	EConVarType_Qangle,
 	EConVarType_Invalid // EConVarType_MAX
 };
-
-// Strictly for invalid convar creation
-IConVar::IConVar(EConVarType type) :
-	m_pszName("<undefined>"),
-	m_cvvDefaultValue(nullptr),
-	m_cvvMinValue(nullptr),
-	m_cvvMaxValue(nullptr),
-	m_pszHelpString("This convar is being accessed prior to ConVar_Register being called"),
-	m_eVarType(type)
-{
-}
 
 IConVar* ConVar_Invalid(EConVarType type)
 {
