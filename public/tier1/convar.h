@@ -355,6 +355,8 @@ struct ConVarCreation_t : CVarCreationBase_t {
 	m_pHandle(nullptr),
 	m_pConVarData(nullptr)
 	{}
+
+	int32_t m_unknown1;
 	
 	#pragma pack(push,1)
 	struct ConVarValueInfo_t
