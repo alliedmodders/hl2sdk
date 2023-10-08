@@ -354,12 +354,6 @@ struct ConVarSetup_t
 {
 	ConVarSetup_t() :
 	m_unknown1(0),
-	m_bHasDefault(false),
-	m_bHasMin(false),
-	m_bHasMax(false),
-	m_defaultValue(),
-	m_minValue(),
-	m_maxValue(),
 	m_fnCallBack(nullptr),
 	m_eVarType(EConVarType_Invalid),
 	m_unknown2(0),
@@ -368,13 +362,22 @@ struct ConVarSetup_t
 
 	int32_t m_unknown1; // 0x0
 
-	bool m_bHasDefault; // 0x4
-	bool m_bHasMin; // 0x5
-	bool m_bHasMax; // 0x6
+	struct ConVarValueInfo_t
+	{
+		ConVarValueInfo_t() :
+		m_bHasDefault(false),
+		m_bHasMin(false),
+		m_bHasMax(false)
+		{}
 
-	CVValue_t m_defaultValue; // 0x7
-	CVValue_t m_minValue; // 0x17
-	CVValue_t m_maxValue; // 0x27
+		bool m_bHasDefault; // 0x4
+		bool m_bHasMin; // 0x5
+		bool m_bHasMax; // 0x6
+
+		CVValue_t m_defaultValue; // 0x7
+		CVValue_t m_minValue; // 0x17
+		CVValue_t m_maxValue; // 0x27
+	} m_valueInfo;
 
 	char pad; // 0x37
 
@@ -429,8 +432,8 @@ public:
 		this->Init(INVALID_CONVAR_HANDLE, TranslateConVarType<T>());
 
 		ConVarSetup_t setup;
-		setup.m_bHasDefault = true;
-		setup.m_defaultValue = value;
+		setup.m_valueInfo.m_bHasDefault = true;
+		setup.m_valueInfo.m_defaultValue = value;
 		setup.m_eVarType = TranslateConVarType<T>();
 		setup.m_fnCallBack = reinterpret_cast<FnGenericChangeCallback_t>(cb);
 
@@ -442,13 +445,13 @@ public:
 		this->Init(INVALID_CONVAR_HANDLE, TranslateConVarType<T>());
 
 		ConVarSetup_t setup;
-		setup.m_bHasDefault = true;
-		setup.m_defaultValue = value;
+		setup.m_valueInfo.m_bHasDefault = true;
+		setup.m_valueInfo.m_defaultValue = value;
 
-		setup.m_bHasMin = min;
-		setup.m_bHasMax = max;
-		setup.m_minValue = minValue;
-		setup.m_maxValue = maxValue;
+		setup.m_valueInfo.m_bHasMin = min;
+		setup.m_valueInfo.m_bHasMax = max;
+		setup.m_valueInfo.m_minValue = minValue;
+		setup.m_valueInfo.m_maxValue = maxValue;
 
 		setup.m_eVarType = TranslateConVarType<T>();
 		setup.m_fnCallBack = reinterpret_cast<FnGenericChangeCallback_t>(cb);
