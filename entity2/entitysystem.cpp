@@ -38,3 +38,16 @@ CBaseEntity* CEntitySystem::GetBaseEntity(const CEntityHandle& hEnt)
 
 	return dynamic_cast<CBaseEntity*>(pIdentity->m_pInstance);
 }
+
+void CGameEntitySystem::AddListenerEntity(IEntityListener* pListener)
+{
+	if (m_entityListeners.Find(pListener) == -1)
+	{
+		m_entityListeners.AddToTail(pListener);
+	}
+}
+
+void CGameEntitySystem::RemoveListenerEntity(IEntityListener* pListener)
+{
+	m_entityListeners.FindAndRemove(pListener);
+}

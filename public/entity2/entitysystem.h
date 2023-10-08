@@ -172,6 +172,9 @@ class CGameEntitySystem : public CEntitySystem
 public:
 	virtual				~CGameEntitySystem() = 0;
 
+	void AddListenerEntity(IEntityListener* pListener);
+	void RemoveListenerEntity(IEntityListener* pListener);
+
 public:
 	int m_iMaxNetworkedEntIndex; // 5392 | 5440
 	int m_iNetworkedEntCount; // 5396 | 5444
