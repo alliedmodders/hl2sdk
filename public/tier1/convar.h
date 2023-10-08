@@ -46,10 +46,8 @@
 //-----------------------------------------------------------------------------
 // Forward declarations
 //-----------------------------------------------------------------------------
-class IConVar;
 class CCommand;
 class ConCommand;
-class ConVar;
 
 struct CVarCreationBase_t
 {
@@ -174,14 +172,13 @@ private:
 											// Note: IVEngineClient::ClientCmd_Unrestricted can run any client command.
 
 #define FCVAR_EXECUTE_PER_TICK		(1<<29)
-
 //-----------------------------------------------------------------------------
 // ConVar & ConCommand creation listener callbacks
 //-----------------------------------------------------------------------------
 class ICVarListenerCallbacks
 {
 public:
-	virtual void OnConVarCreated( ConVar* pNewCvar ) = 0;
+	virtual void OnConVarCreated( BaseConVar* pNewCvar ) = 0;
 	virtual void OnConCommandCreated( ConCommand* pNewCommand ) = 0;
 };
 
@@ -430,38 +427,50 @@ struct ConVarCreation_t : CVarCreationBase_t {
 	ConVarSetup_t setup; // 0x18
 
 	ConVarHandle* refHandle; // 0x60
-	IConVar** refConVar; // 0x68
+	void** refConVar; // 0x68
 };
 
 static_assert(sizeof(ConVarCreation_t) == 0x70, "ConVarCreation_t wrong size!");
 static_assert(sizeof(ConVarCreation_t) % 8 == 0x0, "ConVarCreation_t isn't 8 bytes aligned!");
 static_assert(sizeof(CVValue_t) == 0x10, "CVValue_t wrong size!");
 
+// sub_10B7760
+extern void* invalid_convar[EConVarType_MAX + 1];
+
+template<typename T>
+IConVar<T>* ConVar_Invalid()
+{
+	return (IConVar<T>*)&invalid_convar[TranslateConVarType<T>()];
+}
+
+void SetupConVar( ConVarCreation_t& cvar );
+void UnRegisterConVar( ConVarHandle& cvar );
+void RegisterConVar( ConVarCreation_t& cvar );
+
 //-----------------------------------------------------------------
 // Used to read/write/create? convars (replaces the FindVar method)
 //-----------------------------------------------------------------
-class ConVar
+template<typename T>
+class ConVar : public BaseConVar
 {
 public:
 	// sub_6A66B0
-	template<typename T>
 	ConVar(const char* name, int32_t flags, const char* description, T value, FnChangeCallback_t cb = nullptr)
 	{
-		this->Init(INVALID_CONVAR_HANDLE, TranslateType<T>());
+		this->Init(INVALID_CONVAR_HANDLE, TranslateConVarType<T>());
 
 		ConVarSetup_t setup;
 		setup.has_default = true;
 		setup.default_value = value;
-		setup.type = TranslateType<T>();
+		setup.type = TranslateConVarType<T>();
 		setup.callback = cb;
 
 		this->Register(name, flags &~ FCVAR_DEVELOPMENTONLY, description, setup);
 	}
 
-	template<typename T>
 	ConVar(const char* name, int32_t flags, const char* description, T value, bool min, T minValue, bool max, T maxValue, FnChangeCallback_t cb = nullptr)
 	{
-		this->Init(INVALID_CONVAR_HANDLE, TranslateType<T>());
+		this->Init(INVALID_CONVAR_HANDLE, TranslateConVarType<T>());
 
 		ConVarSetup_t setup;
 		setup.has_default = true;
@@ -474,12 +483,15 @@ public:
 		setup.max_value = maxValue;
 
 		setup.callback = cb;
-		setup.type = TranslateType<T>();
+		setup.type = TranslateConVarType<T>();
 
 		this->Register(name, flags &~ FCVAR_DEVELOPMENTONLY, description, setup);
 	}
 
-	~ConVar();
+	~ConVar()
+	{
+		UnRegisterConVar(this->m_Handle);
+	}
 
 	inline const char*	GetName( ) const			{ return m_ConVar->GetName( ); }
 	inline const char*	GetDescription( ) const		{ return m_ConVar->GetDescription( ); }
@@ -489,18 +501,12 @@ public:
 	inline CVValue_t*	GetMinValue( ) const		{ return m_ConVar->GetMinValue( ); }
 	inline CVValue_t*	GetMaxValue( ) const		{ return m_ConVar->GetMaxValue( ); }
 
-	template<typename T>
 	inline void SetDefaultValue(const T& value)	{ m_ConVar->SetDefaultValue( value ); }
-	template<typename T>
 	inline void SetMinValue(const T& value)		{ m_ConVar->SetMinValue( value ); }
-	template<typename T>
 	inline void SetMaxValue(const T& value)		{ m_ConVar->SetMaxValue( value ); }
 	
-	template<typename T>
-	inline const T			GetValue( int index = 0 ) const	{ return m_ConVar->GetValue<T>( index ); }
-	inline const CVValue_t&	GetValue( int index = 0 ) const	{ return m_ConVar->GetValue( index ); }
-	template<typename T>
-	inline void SetValue(const T& value, int index = 0)	{ m_ConVar->SetValue( value, index ); }
+	inline const T&	GetValue( int index = 0 ) const			{ return m_ConVar->GetValue( index ); }
+	inline void		SetValue(const T& value, int index = 0)	{ m_ConVar->SetValue( value, index ); }
 
 	inline bool		IsFlagSet( int64_t flag ) const		{ return m_ConVar->IsFlagSet( flag ); }
 	inline void		AddFlags( int64_t flags )			{ m_ConVar->AddFlags( flags ); }
@@ -508,40 +514,63 @@ public:
 	inline int64_t	GetFlags( void ) const				{ return m_ConVar->GetFlags( ); }
 
 private:
-	template<typename T>
-	static constexpr EConVarType TranslateType();
-
 	// sub_10B7BC0
-	void Init(ConVarHandle defaultHandle, EConVarType type);
+	void Init(ConVarHandle defaultHandle, EConVarType type)
+	{
+		this->m_Handle.Invalidate();
+		this->m_ConVar = nullptr;
+
+		// qword_191A3D8
+		if (g_pCVar && (this->m_ConVar = g_pCVar->GetConVar<T>(defaultHandle)) == nullptr)
+		{
+			this->m_ConVar = ConVar_Invalid<T>();
+			// technically this
+			//result = *(char ***)(sub_10B7760((unsigned int)a3) + 80);
+		}
+		this->m_Handle = defaultHandle;
+	}
 
 	// sub_10B7C70
-	void Register(const char* name, int32_t flags, const char* description, const ConVarSetup_t& obj);
+	void Register(const char* name, int32_t flags, const char* description, const ConVarSetup_t& setup)
+	{
+		this->m_ConVar = ConVar_Invalid<T>();
+		this->m_Handle.Invalidate();
+
+		if (!CommandLine()->HasParm("-tools")
+		&& (flags & (FCVAR_DEVELOPMENTONLY
+		|FCVAR_ARCHIVE
+		|FCVAR_USERINFO
+		|FCVAR_CHEAT
+		|FCVAR_RELEASE
+		|FCVAR_SERVER_CAN_EXECUTE
+		|FCVAR_CLIENT_CAN_EXECUTE
+		|FCVAR_CLIENTCMD_CAN_EXECUTE)) == 0)
+		{
+			flags |= FCVAR_DEVELOPMENTONLY;
+		}
+
+		ConVarCreation_t cvar;
+		
+		cvar.name = name;
+		cvar.description = description;
+		cvar.flags = flags;
+
+		cvar.setup = setup;
+
+		cvar.refHandle = &this->m_Handle;
+		cvar.refConVar = (void**)&this->m_ConVar;
+
+		SetupConVar(cvar);
+	}
 
 	// High-speed method to read convar data
 	ConVarHandle m_Handle;
-	IConVar* m_ConVar;
+	IConVar<T>* m_ConVar;
 };
-
-template<> constexpr EConVarType ConVar::TranslateType<bool>( void )		{ return EConVarType_Bool; }
-template<> constexpr EConVarType ConVar::TranslateType<int16_t>( void )		{ return EConVarType_Int16; }
-template<> constexpr EConVarType ConVar::TranslateType<uint16_t>( void )	{ return EConVarType_UInt16; }
-template<> constexpr EConVarType ConVar::TranslateType<int32_t>( void )		{ return EConVarType_Int32; }
-template<> constexpr EConVarType ConVar::TranslateType<uint32_t>( void )	{ return EConVarType_UInt32; }
-template<> constexpr EConVarType ConVar::TranslateType<int64_t>( void )		{ return EConVarType_Int64; }
-template<> constexpr EConVarType ConVar::TranslateType<uint64_t>( void )	{ return EConVarType_UInt64; }
-template<> constexpr EConVarType ConVar::TranslateType<float>( void )		{ return EConVarType_Float32; }
-template<> constexpr EConVarType ConVar::TranslateType<double>( void )		{ return EConVarType_Float64; }
-template<> constexpr EConVarType ConVar::TranslateType<const char*>( void )	{ return EConVarType_String; }
-template<> constexpr EConVarType ConVar::TranslateType<Color>( void )		{ return EConVarType_Color; }
-template<> constexpr EConVarType ConVar::TranslateType<Vector2D>( void )	{ return EConVarType_Vector2; }
-template<> constexpr EConVarType ConVar::TranslateType<Vector>( void )		{ return EConVarType_Vector3; }
-template<> constexpr EConVarType ConVar::TranslateType<Vector4D>( void )	{ return EConVarType_Vector4; }
-template<> constexpr EConVarType ConVar::TranslateType<QAngle>( void )		{ return EConVarType_Qangle; }
+static_assert(sizeof(ConVar<int>) == 0x10, "ConVar is of the wrong size!");
+static_assert(sizeof(ConVar<int>) == sizeof(ConVar<Vector>), "Templated ConVar size varies!");
 
 //-----------------------------------------------------------------------------
-
-// sub_10B7760
-IConVar* ConVar_Invalid(EConVarType type);
 
 #ifdef CONVAR_WORK_FINISHED
 class CSplitScreenAddedConVar : public ConVar
@@ -886,6 +915,5 @@ private:
 	};															\
 																\
 	CCommandMemberInitializer_##_funcname m_##_funcname##_register;		\
-
 
 #endif // CONVAR_H

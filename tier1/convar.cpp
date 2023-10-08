@@ -534,99 +534,24 @@ void ConCommand::Destroy()
 //
 //-----------------------------------------------------------------------------
 
-class CInvalidConvar : public IConVar
-{
-public:
-	CInvalidConvar(EConVarType type)
-	{
-		m_pszName = "<undefined>";
-		m_cvvDefaultValue = nullptr;
-		m_cvvMinValue = nullptr;
-		m_cvvMaxValue = nullptr;
-		m_pszHelpString = "This convar is being accessed prior to ConVar_Register being called";
-		m_eVarType = type;
-	}
+void* invalid_convar[EConVarType_MAX + 1] = {
+	new IConVar<bool>(),
+	new IConVar<int16_t>(),
+	new IConVar<uint16_t>(),
+	new IConVar<int32_t>(),
+	new IConVar<uint32_t>(),
+	new IConVar<int64_t>(),
+	new IConVar<uint64_t>(),
+	new IConVar<float>(),
+	new IConVar<double>(),
+	new IConVar<const char*>(),
+	new IConVar<Color>(),
+	new IConVar<Vector2D>(),
+	new IConVar<Vector>(),
+	new IConVar<Vector4D>(),
+	new IConVar<QAngle>(),
+	new IConVar<void*>() // EConVarType_MAX
 };
-
-CInvalidConvar invalid_convar[EConVarType_MAX + 1] = {
-	EConVarType_Bool,
-	EConVarType_Int16,
-	EConVarType_UInt16,
-	EConVarType_Int32,
-	EConVarType_UInt32,
-	EConVarType_Int64,
-	EConVarType_UInt64,
-	EConVarType_Float32,
-	EConVarType_Float64,
-	EConVarType_String,
-	EConVarType_Color,
-	EConVarType_Vector2,
-	EConVarType_Vector3,
-	EConVarType_Vector4,
-	EConVarType_Qangle,
-	EConVarType_Invalid // EConVarType_MAX
-};
-
-IConVar* ConVar_Invalid(EConVarType type)
-{
-	if (type == EConVarType_Invalid)
-	{
-		return &invalid_convar[EConVarType_MAX];
-	}
-	return &invalid_convar[type];
-}
-
-ConVar::~ConVar()
-{
-	UnRegisterConVar(this->m_Handle);
-}
-
-void ConVar::Init(ConVarHandle defaultHandle, EConVarType type)
-{
-	this->m_Handle.Invalidate();
-	this->m_ConVar = nullptr;
-
-	// qword_191A3D8
-	if (g_pCVar && (this->m_ConVar = g_pCVar->GetConVar(defaultHandle)) == nullptr)
-	{
-		this->m_ConVar = ConVar_Invalid(type);
-		// technically this
-		//result = *(char ***)(sub_10B7760((unsigned int)a3) + 80);
-	}
-	this->m_Handle = defaultHandle;
-}
-
-void ConVar::Register(const char* name, int32_t flags, const char* description, const ConVarSetup_t& setup)
-{
-	this->m_ConVar = ConVar_Invalid(setup.type);
-	this->m_Handle.Invalidate();
-
-	if (!CommandLine()->HasParm("-tools")
-	&& (flags & (FCVAR_DEVELOPMENTONLY
-	|FCVAR_ARCHIVE
-	|FCVAR_USERINFO
-	|FCVAR_CHEAT
-	|FCVAR_RELEASE
-	|FCVAR_SERVER_CAN_EXECUTE
-	|FCVAR_CLIENT_CAN_EXECUTE
-	|FCVAR_CLIENTCMD_CAN_EXECUTE)) == 0)
-	{
-		flags |= FCVAR_DEVELOPMENTONLY;
-	}
-
-	ConVarCreation_t cvar;
-	
-	cvar.name = name;
-	cvar.description = description;
-	cvar.flags = flags;
-
-	cvar.setup = setup;
-
-	cvar.refHandle = &this->m_Handle;
-	cvar.refConVar = &this->m_ConVar;
-
-	SetupConVar(cvar);
-}
 
 #ifdef CONVAR_WORK_FINISHED
 

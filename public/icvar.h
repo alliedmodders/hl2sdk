@@ -16,16 +16,19 @@
 #include "mathlib/vector4d.h"
 #include <cstdint>
 
+class BaseConVar {};
 class ConCommand;
 class CCommand;
 class CCommandContext;
 class ICVarListenerCallbacks;
 class IConVarListener;
-class ConVar;
 struct ConVarCreation_t;
 struct ConCommandCreation_t;
 struct ConVarSnapshot_t;
 class KeyValues;
+
+template<typename T>
+class ConVar;
 
 union CVValue_t
 {
@@ -105,8 +108,8 @@ struct CSplitScreenSlot
 //-----------------------------------------------------------------------------
 // Called when a ConVar changes value
 //-----------------------------------------------------------------------------
-typedef void(*FnChangeCallbackGlobal_t)(ConVar* cvar, CSplitScreenSlot nSlot, const char *pNewValue, const char *pOldValue);
-using FnChangeCallback_t = void(*)(ConVar* cvar, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t *pOldValue);
+typedef void(*FnChangeCallbackGlobal_t)(BaseConVar* ref, CSplitScreenSlot nSlot, const char *pNewValue, const char *pOldValue);
+using FnChangeCallback_t = void(*)(BaseConVar* ref, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t *pOldValue);
 static_assert(sizeof(FnChangeCallback_t) == 0x8, "Wrong size for FnChangeCallback_t");
 
 //-----------------------------------------------------------------------------
@@ -172,40 +175,70 @@ enum EConVarType : short
 	EConVarType_MAX
 };
 
-abstract_class IConVar
+template<typename T>
+constexpr EConVarType TranslateConVarType();
+
+template<> constexpr EConVarType TranslateConVarType<bool>( void )		{ return EConVarType_Bool; }
+template<> constexpr EConVarType TranslateConVarType<int16_t>( void )	{ return EConVarType_Int16; }
+template<> constexpr EConVarType TranslateConVarType<uint16_t>( void )	{ return EConVarType_UInt16; }
+template<> constexpr EConVarType TranslateConVarType<int32_t>( void )	{ return EConVarType_Int32; }
+template<> constexpr EConVarType TranslateConVarType<uint32_t>( void )	{ return EConVarType_UInt32; }
+template<> constexpr EConVarType TranslateConVarType<int64_t>( void )	{ return EConVarType_Int64; }
+template<> constexpr EConVarType TranslateConVarType<uint64_t>( void )	{ return EConVarType_UInt64; }
+template<> constexpr EConVarType TranslateConVarType<float>( void )		{ return EConVarType_Float32; }
+template<> constexpr EConVarType TranslateConVarType<double>( void )	{ return EConVarType_Float64; }
+template<> constexpr EConVarType TranslateConVarType<const char*>( void ){ return EConVarType_String; }
+template<> constexpr EConVarType TranslateConVarType<Color>( void )		{ return EConVarType_Color; }
+template<> constexpr EConVarType TranslateConVarType<Vector2D>( void )	{ return EConVarType_Vector2; }
+template<> constexpr EConVarType TranslateConVarType<Vector>( void )	{ return EConVarType_Vector3; }
+template<> constexpr EConVarType TranslateConVarType<Vector4D>( void )	{ return EConVarType_Vector4; }
+template<> constexpr EConVarType TranslateConVarType<QAngle>( void )	{ return EConVarType_Qangle; }
+template<> constexpr EConVarType TranslateConVarType<void*>( void )		{ return EConVarType_Invalid; }
+
+template<typename T>
+class IConVar
 {
-friend class ConVar;
+public:
+friend class ConVar<T>;
+	IConVar() :
+		m_pszName("<undefined>"),
+		m_Default(nullptr),
+		m_Min(nullptr),
+		m_Max(nullptr),
+		m_pszHelpString("This convar is being accessed prior to ConVar_Register being called"),
+		m_eVarType(TranslateConVarType<T>())
+	{
+	}
+
 	inline const char*	GetName( ) const			{ return m_pszName; }
 	inline const char*	GetDescription( ) const		{ return m_pszHelpString; }
 	inline EConVarType	GetType( ) const			{ return m_eVarType; }
 
-	inline CVValue_t*	GetDefaultValue( ) const	{ return m_cvvDefaultValue; }
-	inline CVValue_t*	GetMinValue( ) const		{ return m_cvvMinValue; }
-	inline CVValue_t*	GetMaxValue( ) const		{ return m_cvvMaxValue; }
+	inline const T&	GetDefaultValue( ) const	{ return m_Default->value; }
+	inline const T&	GetMinValue( ) const		{ return m_Min->value; }
+	inline const T&	GetMaxValue( ) const		{ return m_Max->value; }
 
-	template<typename T>
-	inline void SetDefaultValue(const T& value)	{ m_cvvDefaultValue = value; }
-	template<typename T>
-	inline void SetMinValue(const T& value)		{ m_cvvMinValue = value; }
-	template<typename T>
-	inline void SetMaxValue(const T& value)		{ m_cvvMaxValue = value; }
+	inline void SetDefaultValue(const T& value)	{ m_Default->value = value; }
+	inline void SetMinValue(const T& value)		{ m_Min->value = value; }
+	inline void SetMaxValue(const T& value)		{ m_Max->value = value; }
 
-	template<typename T>
-	inline const T	GetValue( int index = 0 ) const	{ return m_value[index]; }
-	inline const CVValue_t&	GetValue( int index = 0 ) const	{ return m_value[index]; }
-	template<typename T>
-	inline void SetValue(const T& value, int index = 0)		{ m_value[index] = value; }
+	inline const T&	GetValue( int index = 0 ) const	{ return m_value[index].value; }
+	inline void SetValue(const T& value, int index = 0)		{ m_value[index].value = value; }
 
 	inline bool		IsFlagSet( int64_t flag ) const		{ return ( flag & m_flags ) ? true : false; }
 	inline void		AddFlags( int64_t flags )			{ m_flags |= flags; }
 	inline void		RemoveFlags( int64_t flags )		{ m_flags &= ~flags; }
 	inline int64_t	GetFlags( void ) const				{ return m_flags; }
 
-protected:
 	const char* m_pszName;
-	CVValue_t* m_cvvDefaultValue;
-	CVValue_t* m_cvvMinValue;
-	CVValue_t* m_cvvMaxValue;
+
+	union TemplatedValue {
+		int8_t pad[sizeof(CVValue_t)];
+		T value = T();
+	};
+	TemplatedValue* m_Default;
+	TemplatedValue* m_Min;
+	TemplatedValue* m_Max;
 	const char* m_pszHelpString;
 	EConVarType m_eVarType;
 
@@ -224,8 +257,10 @@ protected:
 	// (1 << 2) Skip setting min/max values
 	int allocation_flag_of_some_sort;
 
-	CVValue_t m_value[4];
+	TemplatedValue m_value[4];
 };
+static_assert(sizeof(IConVar<float>) == 0x80, "IConVar has wrong size!");
+static_assert(sizeof(IConVar<float>) == sizeof(IConVar<Vector>), "IConVar templated size changes!");
 
 //-----------------------------------------------------------------------------
 // Purpose: DLL interface to ConVars/ConCommands
@@ -247,7 +282,9 @@ public:
 	// Install a global change callback (to be called when any convar changes) 
 	virtual void			InstallGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
 	virtual void			RemoveGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
-	virtual void			CallGlobalChangeCallbacks( ConVar* var, CSplitScreenSlot nSlot, const char *pOldString, float flOldValue ) = 0;
+	virtual void			CallGlobalChangeCallbacks( BaseConVar* ref, CSplitScreenSlot nSlot, const char *pOldString, float flOldValue ) = 0;
+	template<typename T>
+	inline void				CallGlobalChangeCallbacks( ConVar<T>* var, CSplitScreenSlot nSlot, const char *pOldString, float flOldValue ) { this->CallGlobalChangeCallbacks(var, nSlot, pOldString, flOldValue); }
 
 	// Reverts cvars which contain a specific flag
 	virtual void			RevertFlaggedConVars( int nFlag ) = 0;
@@ -272,16 +309,30 @@ public:
 	virtual void	unk2() = 0;
 
 	// Register, unregister vars
-	virtual void		RegisterConVar( const ConVarCreation_t& setup, int64 nAdditionalFlags, ConVarHandle* pCvarRef, IConVar** pCvar ) = 0;
+	virtual void		RegisterConVar( const ConVarCreation_t& setup, int64 nAdditionalFlags, ConVarHandle* pCvarRef, void** pCvar ) = 0;
+	template<typename T>
+	inline void RegisterConVar( const ConVarCreation_t& setup, int64 nAdditionalFlags, ConVarHandle* pCvarRef, IConVar<T>** pCvar ) { this->RegisterConVar(setup, nAdditionalFlags, pCvarRef, (void**)pCvar); }
+	
 	virtual void		UnregisterConVar( ConVarHandle handle ) = 0;
-	virtual IConVar*	GetConVar( ConVarHandle handle ) = 0;
+
+	virtual void*	GetConVarNoType( ConVarHandle handle ) = 0;
+	template<typename T>
+	inline IConVar<T>* GetConVar( ConVarHandle handle )
+	{
+		auto convar = (IConVar<T>*)this->GetConVarNoType( handle );
+		if (convar && convar->GetType() != TranslateConVarType<T>())
+		{
+			return nullptr;
+		}
+		return convar;
+	}
 
 	// Register, unregister commands
 	virtual ConVarHandle		RegisterConCommand( const ConCommandCreation_t& setup, int64 nAdditionalFlags = 0 ) = 0;
 	virtual void				UnregisterConCommand( ConVarHandle handle ) = 0;
 	virtual ConCommand*			GetCommand( ConVarHandle handle ) = 0;
 
-	virtual void QueueThreadSetValue( ConVar* ref, CSplitScreenSlot nSlot, CVValue_t* value ) = 0;
+	virtual void QueueThreadSetValue( BaseConVar* ref, CSplitScreenSlot nSlot, CVValue_t* value ) = 0;
 };
 
 //-----------------------------------------------------------------------------
