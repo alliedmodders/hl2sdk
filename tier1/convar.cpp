@@ -43,7 +43,7 @@ void RegisterCommand( ConCommandCreation_t& cmd )
 	}
 }
 
-void UnRegisterCommand( ConVarHandle& cmd )
+void UnRegisterCommand( ConCommandHandle& cmd )
 {
 	if ( cmd.IsValid() )
 	{

@@ -111,43 +111,57 @@ struct CSplitScreenSlot
 typedef void(*FnChangeCallbackGlobal_t)(BaseConVar* ref, CSplitScreenSlot nSlot, const char *pNewValue, const char *pOldValue);
 
 //-----------------------------------------------------------------------------
-// Purpose: Replaces the ConVar*
+// Purpose: Replaces the ConVar* and ConCommand*
 //-----------------------------------------------------------------------------
 class ConVarHandle
 {
 public:
-	ConVarHandle( uint16_t convarIndex = -1, uint16_t unk = -1, uint32_t handle = -1) :
-	m_convarIndex(convarIndex),
-	m_unknown1(unk),
+	ConVarHandle( uint16_t index = -1, uint32_t handle = -1) :
+	m_convarIndex(index),
 	m_handleIndex(handle)
 	{}
 
-	bool IsValid( ) const;
-	void Invalidate( );
+	bool IsValid( ) const { return m_convarIndex != 0xFFFF; }
+	void Invalidate( )
+	{
+		m_convarIndex = 0xFFFF;
+		m_handleIndex = 0x0;
+	}
 
 	uint16_t GetConVarIndex() const { return m_convarIndex; }
 	uint32_t GetIndex() const { return m_handleIndex; }
 
 private:
 	uint16_t m_convarIndex;
-	uint16_t m_unknown1;
 	uint32_t m_handleIndex;
 };
-static_assert(sizeof(ConVarHandle) == 0x8, "ConVarHandle is of the wrong size!");
 
 static const ConVarHandle INVALID_CONVAR_HANDLE = ConVarHandle();
 
-inline bool ConVarHandle::IsValid() const
+class ConCommandHandle
 {
-	return m_convarIndex != 0xFFFF;
-}
+public:
+	ConCommandHandle( uint16_t index = -1, uint32_t handle = -1) :
+	m_concommandIndex(index),
+	m_handleIndex(handle)
+	{}
 
-inline void ConVarHandle::Invalidate()
-{
-	m_convarIndex = 0xFFFF;
-	m_unknown1 = 0xFFFF;
-	m_handleIndex = 0x0;
-}
+	bool IsValid( ) const { return m_concommandIndex != 0xFFFF; }
+	void Invalidate( )
+	{
+		m_concommandIndex = 0xFFFF;
+		m_handleIndex = 0x0;
+	}
+
+	uint16_t GetConVarIndex() const { return m_concommandIndex; }
+	uint32_t GetIndex() const { return m_handleIndex; }
+
+private:
+	uint32_t m_concommandIndex;
+	uint32_t m_handleIndex;
+};
+
+static const ConCommandHandle INVALID_CONCOMMAND_HANDLE = ConCommandHandle();
 
 //-----------------------------------------------------------------------------
 // Purpose: Internal structure of ConVar objects
@@ -200,9 +214,9 @@ public:
 friend class ConVar<T>;
 	IConVar() :
 		m_pszName("<undefined>"),
-		m_Default(nullptr),
-		m_Min(nullptr),
-		m_Max(nullptr),
+		m_defaultValue(new T()),
+		m_minValue(new T()),
+		m_maxValue(new T()),
 		m_pszHelpString("This convar is being accessed prior to ConVar_Register being called"),
 		m_eVarType(TranslateConVarType<T>())
 	{
@@ -212,40 +226,36 @@ friend class ConVar<T>;
 	inline const char*	GetDescription( ) const		{ return m_pszHelpString; }
 	inline EConVarType	GetType( ) const			{ return m_eVarType; }
 
-	inline const T&	GetDefaultValue( ) const	{ return m_Default->value; }
-	inline const T&	GetMinValue( ) const		{ return m_Min->value; }
-	inline const T&	GetMaxValue( ) const		{ return m_Max->value; }
+	inline const T&	GetDefaultValue( ) const	{ return *m_defaultValue; }
+	inline const T&	GetMinValue( ) const		{ return *m_minValue; }
+	inline const T&	GetMaxValue( ) const		{ return *m_maxValue; }
 
-	inline void SetDefaultValue(const T& value)	{ m_Default->value = value; }
-	inline void SetMinValue(const T& value)		{ m_Min->value = value; }
-	inline void SetMaxValue(const T& value)		{ m_Max->value = value; }
+	inline void SetDefaultValue(const T& value)	{ *m_defaultValue = value; }
+	inline void SetMinValue(const T& value)		{ *m_minValue = value; }
+	inline void SetMaxValue(const T& value)		{ *m_maxValue = value; }
 
-	inline const T&	GetValue( int index = 0 ) const	{ return m_value[index].value; }
-	inline void SetValue(const T& value, int index = 0)		{ m_value[index].value = value; }
+	inline const T&	GetValue( int index = 0 ) const	{ return m_value[index]; }
+	inline void SetValue(const T& value, int index = 0)		{ m_value[index] = value; }
 
-	inline bool		IsFlagSet( int64_t flag ) const		{ return ( flag & m_flags ) ? true : false; }
-	inline void		AddFlags( int64_t flags )			{ m_flags |= flags; }
-	inline void		RemoveFlags( int64_t flags )		{ m_flags &= ~flags; }
-	inline int64_t	GetFlags( void ) const				{ return m_flags; }
+	inline bool		IsFlagSet( int64_t flag ) const		{ return ( flag & m_nFlags ) ? true : false; }
+	inline void		AddFlags( int64_t flags )			{ m_nFlags |= flags; }
+	inline void		RemoveFlags( int64_t flags )		{ m_nFlags &= ~flags; }
+	inline int64_t	GetFlags( void ) const				{ return m_nFlags; }
 
 	const char* m_pszName;
 
-	union TemplatedValue {
-		int8_t pad[sizeof(CVValue_t)];
-		T value = T();
-	};
-	TemplatedValue* m_Default;
-	TemplatedValue* m_Min;
-	TemplatedValue* m_Max;
+	T* m_defaultValue;
+	T* m_minValue;
+	T* m_maxValue;
 	const char* m_pszHelpString;
 	EConVarType m_eVarType;
 
 	// This gets copied from the ConVarDesc_t on creation
 	short unk1;
 
-	unsigned int timesChanged;
-	int64 m_flags;
-	unsigned int callback_index;
+	unsigned int m_iTimesChanged;
+	int64 m_nFlags;
+	unsigned int m_iCallbackIndex;
 
 	// Used when setting default, max, min values from the ConVarDesc_t
 	// although that's not the only place of usage
@@ -253,12 +263,10 @@ friend class ConVar<T>;
 	// (1 << 0) Skip setting value to split screen slots and also something keyvalues related
 	// (1 << 1) Skip setting default value
 	// (1 << 2) Skip setting min/max values
-	int allocation_flag_of_some_sort;
+	int m_nUnknownAllocFlags;
 
-	TemplatedValue m_value[MAX_SPLITSCREEN_CLIENTS];
+	T m_value[MAX_SPLITSCREEN_CLIENTS];
 };
-static_assert(sizeof(IConVar<float>) == 0x50, "IConVar has wrong size!");
-static_assert(sizeof(IConVar<float>) == sizeof(IConVar<Vector>), "IConVar templated size changes!");
 
 //-----------------------------------------------------------------------------
 // Purpose: DLL interface to ConVars/ConCommands
@@ -272,10 +280,10 @@ public:
 	virtual ConVarHandle	FindNextConVar( ConVarHandle prev ) = 0;
 	virtual void			SetConVarValue( ConVarHandle cvarid, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t *pOldValue ) = 0;
 
-	virtual ConVarHandle	FindCommand( const char *name ) = 0;
-	virtual ConVarHandle	FindFirstCommand() = 0;
-	virtual ConVarHandle	FindNextCommand( ConVarHandle prev ) = 0;
-	virtual void			DispatchConCommand( ConVarHandle cmd, const CCommandContext &ctx, const CCommand &args ) = 0;
+	virtual ConCommandHandle	FindCommand( const char *name ) = 0;
+	virtual ConCommandHandle	FindFirstCommand() = 0;
+	virtual ConCommandHandle	FindNextCommand( ConCommandHandle prev ) = 0;
+	virtual void				DispatchConCommand( ConCommandHandle cmd, const CCommandContext &ctx, const CCommand &args ) = 0;
 
 	// Install a global change callback (to be called when any convar changes) 
 	virtual void			InstallGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
@@ -326,9 +334,9 @@ public:
 	}
 
 	// Register, unregister commands
-	virtual ConVarHandle		RegisterConCommand( const ConCommandCreation_t& setup, int64 nAdditionalFlags = 0 ) = 0;
-	virtual void				UnregisterConCommand( ConVarHandle handle ) = 0;
-	virtual ConCommand*			GetCommand( ConVarHandle handle ) = 0;
+	virtual ConCommandHandle	RegisterConCommand( const ConCommandCreation_t& setup, int64 nAdditionalFlags = 0 ) = 0;
+	virtual void				UnregisterConCommand( ConCommandHandle handle ) = 0;
+	virtual ConCommand*			GetCommand( ConCommandHandle handle ) = 0;
 
 	virtual void QueueThreadSetValue( BaseConVar* ref, CSplitScreenSlot nSlot, CVValue_t* value ) = 0;
 };

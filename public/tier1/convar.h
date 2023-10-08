@@ -344,7 +344,7 @@ struct ConCommandCreation_t : CVarCreationBase_t
 	bool has_complitioncallback;
 	bool is_interface;
 
-	ConVarHandle* refHandle;
+	ConCommandHandle* refHandle;
 };
 static_assert(sizeof(ConCommandCreation_t) == 0x40, "ConCommandCreation_t is of the wrong size!");
 
@@ -376,7 +376,7 @@ private:
 	void Create( const char *pName, const char *pHelpString, int64_t flags, ConCommandCreation_t& setup );
 	void Destroy( );
 
-	ConVarHandle m_Handle;
+	ConCommandHandle m_Handle;
 };
 
 #pragma pack(push,1)
