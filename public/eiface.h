@@ -264,7 +264,7 @@ public:
 	virtual bool IsSplitScreenPlayer( CPlayerSlot nSlot ) = 0;
 	virtual edict_t *GetSplitScreenPlayerAttachToEdict( CPlayerSlot nSlot ) = 0;
 	virtual int	GetNumSplitScreenUsersAttachedToEdict( CPlayerSlot nSlot ) = 0;
-	virtual edict_t *GetSplitScreenPlayerForEdict( CPlayerSlot nSlot, int nSlot ) = 0;
+	virtual edict_t *GetSplitScreenPlayerForEdict( CPlayerSlot nSlot, int nSplitScreenSlot ) = 0;
 	
 	// Ret types might be all wrong for these. Haven't researched yet.
 	virtual void	UnloadSpawnGroup( SpawnGroupHandle_t spawnGroup, /*ESpawnGroupUnloadOption*/ int) = 0;
