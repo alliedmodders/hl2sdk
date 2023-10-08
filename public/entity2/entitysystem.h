@@ -65,7 +65,7 @@ struct EntityDormancyChange_t : EntityNotification_t
 struct EntitySpawnInfo_t : EntityNotification_t
 {
 	const CEntityKeyValues* m_pKeyValues;
-	uint64 unknown;
+	uint64 m_Unk1;
 };
 
 struct EntityActivation_t : EntityNotification_t
@@ -80,7 +80,6 @@ struct PostDataUpdateInfo_t : EntityNotification_t
 {
 	DataUpdateType_t m_updateType;
 };
-
 
 struct CEntityPrecacheContext
 {
@@ -124,7 +123,6 @@ public:
 	virtual void		LockResourceManifest(bool bLock, CEntityResourceManifestLock* const context) = 0;
 };
 
-
 // Size: 0x1510 | 0x1540 (from constructor)
 class CEntitySystem : public IEntityResourceManifestBuilder
 {
@@ -153,9 +151,11 @@ public:
 	CConcreteEntityList m_EntityList;
 	// CConcreteEntityList seems to be correct but m_CallQueue supposedly starts at offset 2664, which is... impossible?
 	// Based on CEntitySystem::CEntitySystem found via string "MaxNonNetworkableEntities"
-	uint8 unk2696[0xa88];
+
+private:
+	uint8 pad2696[0xa88];
 #ifdef PLATFORM_LINUX
-	uint8 unk5392[0x30];
+	uint8 pad5392[0x30];
 #endif
 };
 
@@ -180,9 +180,11 @@ public:
 	int m_iNetworkedEntCount; // 5396 | 5444
 	int m_iNonNetworkedSavedEntCount; // 5400 | 5448
 	// int m_iNumEdicts; // This is no longer referenced in the server binary
-	CUtlDict<CGameEntitySystem::SpawnGroupEntityFilterInfo_t> m_spawnGroupEntityFilters; // 5408 | 5456
+	CUtlDict<SpawnGroupEntityFilterInfo_t> m_spawnGroupEntityFilters; // 5408 | 5456
 	CUtlVector<IEntityListener*> m_entityListeners; // 5448 | 5496
-	uint8 unk5480[0x20];
+
+private:
+	uint8 pad5480[0x20];
 };
 
 #endif // ENTITYSYSTEM_H
