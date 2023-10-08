@@ -255,9 +255,9 @@ friend class ConVar<T>;
 	// (1 << 2) Skip setting min/max values
 	int allocation_flag_of_some_sort;
 
-	TemplatedValue m_value[4];
+	TemplatedValue m_value[MAX_SPLITSCREEN_CLIENTS];
 };
-static_assert(sizeof(IConVar<float>) == 0x80, "IConVar has wrong size!");
+static_assert(sizeof(IConVar<float>) == 0x50, "IConVar has wrong size!");
 static_assert(sizeof(IConVar<float>) == sizeof(IConVar<Vector>), "IConVar templated size changes!");
 
 //-----------------------------------------------------------------------------
