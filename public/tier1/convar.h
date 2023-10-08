@@ -428,7 +428,7 @@ struct ConVarCreation_t : CVarCreationBase_t {
 	ConVarSetup_t setup; // 0x18
 
 	ConVarHandle* refHandle; // 0x60
-	void** refConVar; // 0x68
+	ConVarBaseData_t** refConVar; // 0x68
 };
 
 static_assert(sizeof(ConVarCreation_t) == 0x70, "ConVarCreation_t wrong size!");
@@ -439,9 +439,9 @@ static_assert(sizeof(CVValue_t) == 0x10, "CVValue_t wrong size!");
 extern void* invalid_convar[EConVarType_MAX + 1];
 
 template<typename T>
-IConVar<T>* ConVar_Invalid()
+ConVarData_t<T>* ConVar_Invalid()
 {
-	return (IConVar<T>*)&invalid_convar[TranslateConVarType<T>()];
+	return (ConVarData_t<T>*)&invalid_convar[TranslateConVarType<T>()];
 }
 
 void SetupConVar( ConVarCreation_t& cvar );
@@ -523,9 +523,13 @@ private:
 		this->m_ConVar = nullptr;
 
 		// qword_191A3D8
-		if (g_pCVar && (this->m_ConVar = g_pCVar->GetConVar<T>(defaultHandle)) == nullptr)
+		if (g_pCVar)
 		{
-			this->m_ConVar = ConVar_Invalid<T>();
+			this->m_ConVar = g_pCVar->GetConVar(defaultHandle)->Cast<T>();
+			if (!this->m_ConVar)
+			{
+				this->m_ConVar = ConVar_Invalid<T>();
+			}
 			// technically this
 			//result = *(char ***)(sub_10B7760((unsigned int)a3) + 80);
 		}
@@ -560,14 +564,14 @@ private:
 		cvar.setup = setup;
 
 		cvar.refHandle = &this->m_Handle;
-		cvar.refConVar = (void**)&this->m_ConVar;
+		cvar.refConVar = (ConVarBaseData_t**)&this->m_ConVar;
 
 		SetupConVar(cvar);
 	}
 
 	// High-speed method to read convar data
 	ConVarHandle m_Handle;
-	IConVar<T>* m_ConVar;
+	ConVarData_t<T>* m_ConVar;
 };
 static_assert(sizeof(ConVar<int>) == 0x10, "ConVar is of the wrong size!");
 static_assert(sizeof(ConVar<int>) == sizeof(ConVar<Vector>), "Templated ConVar size varies!");

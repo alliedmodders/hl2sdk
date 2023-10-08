@@ -208,45 +208,45 @@ template<> constexpr EConVarType TranslateConVarType<QAngle>( void )	{ return EC
 template<> constexpr EConVarType TranslateConVarType<void*>( void )		{ return EConVarType_Invalid; }
 
 template<typename T>
-class IConVar
+struct ConVarData_t;
+
+struct ConVarBaseData_t
 {
-public:
-friend class ConVar<T>;
-	IConVar() :
+	template<typename T>
+	inline const ConVarData_t<T>* Cast() const
+	{
+		if (this->m_eVarType == TranslateConVarType<T>())
+		{
+			return reinterpret_cast<const ConVarData_t<T>*>(this);
+		}
+		return nullptr;
+	}
+
+	template<typename T>
+	inline ConVarData_t<T>* Cast()
+	{
+		if (this->m_eVarType == TranslateConVarType<T>())
+		{
+			return reinterpret_cast<ConVarData_t<T>*>(this);
+		}
+		return nullptr;
+	}
+
+	ConVarBaseData_t() :
 		m_pszName("<undefined>"),
-		m_defaultValue(new T()),
-		m_minValue(new T()),
-		m_maxValue(new T()),
+		m_defaultValue(nullptr),
+		m_minValue(nullptr),
+		m_maxValue(nullptr),
 		m_pszHelpString("This convar is being accessed prior to ConVar_Register being called"),
-		m_eVarType(TranslateConVarType<T>())
+		m_eVarType(EConVarType_Invalid)
 	{
 	}
 
-	inline const char*	GetName( ) const			{ return m_pszName; }
-	inline const char*	GetDescription( ) const		{ return m_pszHelpString; }
-	inline EConVarType	GetType( ) const			{ return m_eVarType; }
-
-	inline const T&	GetDefaultValue( ) const	{ return *m_defaultValue; }
-	inline const T&	GetMinValue( ) const		{ return *m_minValue; }
-	inline const T&	GetMaxValue( ) const		{ return *m_maxValue; }
-
-	inline void SetDefaultValue(const T& value)	{ *m_defaultValue = value; }
-	inline void SetMinValue(const T& value)		{ *m_minValue = value; }
-	inline void SetMaxValue(const T& value)		{ *m_maxValue = value; }
-
-	inline const T&	GetValue( int index = 0 ) const	{ return m_value[index]; }
-	inline void SetValue(const T& value, int index = 0)		{ m_value[index] = value; }
-
-	inline bool		IsFlagSet( int64_t flag ) const		{ return ( flag & m_nFlags ) ? true : false; }
-	inline void		AddFlags( int64_t flags )			{ m_nFlags |= flags; }
-	inline void		RemoveFlags( int64_t flags )		{ m_nFlags &= ~flags; }
-	inline int64_t	GetFlags( void ) const				{ return m_nFlags; }
-
 	const char* m_pszName;
 
-	T* m_defaultValue;
-	T* m_minValue;
-	T* m_maxValue;
+	void* m_defaultValue;
+	void* m_minValue;
+	void* m_maxValue;
 	const char* m_pszHelpString;
 	EConVarType m_eVarType;
 
@@ -264,6 +264,47 @@ friend class ConVar<T>;
 	// (1 << 1) Skip setting default value
 	// (1 << 2) Skip setting min/max values
 	int m_nUnknownAllocFlags;
+};
+
+template<typename T>
+struct ConVarData_t : ConVarBaseData_t
+{
+public:
+friend class ConVar<T>;
+	ConVarData_t()
+	{
+		m_defaultValue = new T();
+		m_minValue = new T();
+		m_maxValue = new T();
+		m_eVarType = TranslateConVarType<T>();
+	}
+
+	~ConVarData_t()
+	{
+		delete m_defaultValue;
+		delete m_minValue;
+		delete m_eVarType;
+	}
+
+	inline const char*	GetName( ) const			{ return m_pszName; }
+	inline const char*	GetDescription( ) const		{ return m_pszHelpString; }
+	inline EConVarType	GetType( ) const			{ return m_eVarType; }
+
+	inline const T&	GetDefaultValue( ) const	{ return *reinterpret_cast<T*>(m_defaultValue); }
+	inline const T&	GetMinValue( ) const		{ return *reinterpret_cast<T*>(m_minValue); }
+	inline const T&	GetMaxValue( ) const		{ return *reinterpret_cast<T*>(m_maxValue); }
+
+	inline void SetDefaultValue(const T& value)	{ *reinterpret_cast<T*>(m_defaultValue) = value; }
+	inline void SetMinValue(const T& value)		{ *reinterpret_cast<T*>(m_minValue) = value; }
+	inline void SetMaxValue(const T& value)		{ *reinterpret_cast<T*>(m_maxValue) = value; }
+
+	inline const T&	GetValue( int index = 0 ) const	{ return m_value[index]; }
+	inline void SetValue(const T& value, int index = 0)		{ m_value[index] = value; }
+
+	inline bool		IsFlagSet( int64_t flag ) const		{ return ( flag & m_nFlags ) ? true : false; }
+	inline void		AddFlags( int64_t flags )			{ m_nFlags |= flags; }
+	inline void		RemoveFlags( int64_t flags )		{ m_nFlags &= ~flags; }
+	inline int64_t	GetFlags( void ) const				{ return m_nFlags; }
 
 	T m_value[MAX_SPLITSCREEN_CLIENTS];
 };
@@ -289,9 +330,6 @@ public:
 	virtual void			InstallGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
 	virtual void			RemoveGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
 	virtual void			CallGlobalChangeCallbacks( BaseConVar* ref, CSplitScreenSlot nSlot, const char *pOldString, float flOldValue ) = 0;
-	template<typename T>
-	inline void				CallGlobalChangeCallbacks( ConVar<T>* var, CSplitScreenSlot nSlot, const char *pOldString, float flOldValue ) { this->CallGlobalChangeCallbacks(var, nSlot, pOldString, flOldValue); }
-
 	// Reverts cvars which contain a specific flag
 	virtual void			RevertFlaggedConVars( int nFlag ) = 0;
 
@@ -315,23 +353,9 @@ public:
 	virtual void	unk2() = 0;
 
 	// Register, unregister vars
-	virtual void		RegisterConVar( const ConVarCreation_t& setup, int64 nAdditionalFlags, ConVarHandle* pCvarRef, void** pCvar ) = 0;
-	template<typename T>
-	inline void RegisterConVar( const ConVarCreation_t& setup, int64 nAdditionalFlags, ConVarHandle* pCvarRef, IConVar<T>** pCvar ) { this->RegisterConVar(setup, nAdditionalFlags, pCvarRef, (void**)pCvar); }
-	
+	virtual void		RegisterConVar( const ConVarCreation_t& setup, int64 nAdditionalFlags, ConVarHandle* pCvarRef, ConVarBaseData_t** pCvar ) = 0;
 	virtual void		UnregisterConVar( ConVarHandle handle ) = 0;
-
-	virtual void*	GetConVarNoType( ConVarHandle handle ) = 0;
-	template<typename T>
-	inline IConVar<T>* GetConVar( ConVarHandle handle )
-	{
-		auto convar = (IConVar<T>*)this->GetConVarNoType( handle );
-		if (convar && convar->GetType() != TranslateConVarType<T>())
-		{
-			return nullptr;
-		}
-		return convar;
-	}
+	virtual ConVarBaseData_t*	GetConVar( ConVarHandle handle ) = 0;
 
 	// Register, unregister commands
 	virtual ConCommandHandle	RegisterConCommand( const ConCommandCreation_t& setup, int64 nAdditionalFlags = 0 ) = 0;
