@@ -35,10 +35,10 @@ static bool s_bRegistered = false;
 
 void RegisterCommand( ConCommandCreation_t& cmd )
 {
-	*cmd.refHandle = g_pCVar->RegisterConCommand( cmd, s_nCVarFlag );
-	if ( !cmd.refHandle->IsValid() )
+	*cmd.m_pHandle = g_pCVar->RegisterConCommand( cmd, s_nCVarFlag );
+	if ( !cmd.m_pHandle->IsValid() )
 	{
-		Plat_FatalErrorFunc( "RegisterConCommand: Unknown error registering con command \"%s\"!\n", cmd.name );
+		Plat_FatalErrorFunc( "RegisterConCommand: Unknown error registering con command \"%s\"!\n", cmd.m_pszName );
 		DebuggerBreakIfDebugging( );
 	}
 }
@@ -125,10 +125,10 @@ void AddCommand( ConCommandCreation_t& cmd )
 
 void RegisterConVar( ConVarCreation_t& cvar )
 {
-	g_pCVar->RegisterConVar( cvar, s_nCVarFlag, cvar.refHandle, cvar.refConVar );
-	if (!cvar.refHandle->IsValid())
+	g_pCVar->RegisterConVar( cvar, s_nCVarFlag, cvar.m_pHandle, cvar.m_pConVarData );
+	if (!cvar.m_pHandle->IsValid())
 	{
-		Plat_FatalErrorFunc( "RegisterConVar: Unknown error registering convar \"%s\"!\n", cvar.name );
+		Plat_FatalErrorFunc( "RegisterConVar: Unknown error registering convar \"%s\"!\n", cvar.m_pszName );
 		DebuggerBreakIfDebugging();
 	}
 }
@@ -434,14 +434,14 @@ int DefaultCompletionFunc( const char *partial, CUtlVector< CUtlString > &comman
 ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
 	ConCommandCreation_t creation;
-	creation.callback.fnCommandCallback = callback;
-	creation.callback.is_interface = false;
-	creation.callback.is_voidcallback = false;
-	creation.callback.is_contextless = false;
+	creation.m_fnCallback.m_fnCommandCallback = callback;
+	creation.m_fnCallback.m_bIsInterface = false;
+	creation.m_fnCallback.m_bIsVoidCallback = false;
+	creation.m_fnCallback.m_bIsContextLess = false;
 
-	creation.fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
-	creation.has_complitioncallback = completionFunc != 0 ? true : false;
-	creation.is_interface = false;
+	creation.m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
+	creation.m_bHasCompletionCallback = completionFunc != 0 ? true : false;
+	creation.m_bIsInterface = false;
 
 	// Setup the rest
 	Create( pName, pHelpString, flags, creation );
@@ -450,14 +450,14 @@ ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const c
 ConCommand::ConCommand( const char *pName, FnCommandCallbackVoid_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
 	ConCommandCreation_t creation;
-	creation.callback.fnVoidCommandCallback = callback;
-	creation.callback.is_interface = false;
-	creation.callback.is_voidcallback = true;
-	creation.callback.is_contextless = false;
+	creation.m_fnCallback.m_fnVoidCommandCallback = callback;
+	creation.m_fnCallback.m_bIsInterface = false;
+	creation.m_fnCallback.m_bIsVoidCallback = true;
+	creation.m_fnCallback.m_bIsContextLess = false;
 
-	creation.fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
-	creation.has_complitioncallback = completionFunc != nullptr ? true : false;
-	creation.is_interface = false;
+	creation.m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
+	creation.m_bHasCompletionCallback = completionFunc != nullptr ? true : false;
+	creation.m_bIsInterface = false;
 
 	// Setup the rest
 	Create( pName, pHelpString, flags, creation );
@@ -466,14 +466,14 @@ ConCommand::ConCommand( const char *pName, FnCommandCallbackVoid_t callback, con
 ConCommand::ConCommand( const char *pName, FnCommandCallbackNoContext_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
 	ConCommandCreation_t creation;
-	creation.callback.fnContextlessCommandCallback = callback;
-	creation.callback.is_interface = false;
-	creation.callback.is_voidcallback = false;
-	creation.callback.is_contextless = true;
+	creation.m_fnCallback.m_fnContextlessCommandCallback = callback;
+	creation.m_fnCallback.m_bIsInterface = false;
+	creation.m_fnCallback.m_bIsVoidCallback = false;
+	creation.m_fnCallback.m_bIsContextLess = true;
 
-	creation.fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
-	creation.has_complitioncallback = completionFunc != nullptr ? true : false;
-	creation.is_interface = false;
+	creation.m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
+	creation.m_bHasCompletionCallback = completionFunc != nullptr ? true : false;
+	creation.m_bIsInterface = false;
 
 	// Setup the rest
 	Create( pName, pHelpString, flags, creation );
@@ -482,14 +482,14 @@ ConCommand::ConCommand( const char *pName, FnCommandCallbackNoContext_t callback
 ConCommand::ConCommand( const char *pName, ICommandCallback *pCallback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, ICommandCompletionCallback *pCompletionCallback /*= 0*/ )
 {
 	ConCommandCreation_t creation;
-	creation.callback.pCommandCallback = pCallback;
-	creation.callback.is_interface = true;
-	creation.callback.is_voidcallback = false;
-	creation.callback.is_contextless = false;
+	creation.m_fnCallback.m_pCommandCallback = pCallback;
+	creation.m_fnCallback.m_bIsInterface = true;
+	creation.m_fnCallback.m_bIsVoidCallback = false;
+	creation.m_fnCallback.m_bIsContextLess = false;
 
-	creation.pCommandCompletionCallback = pCompletionCallback;
-	creation.has_complitioncallback = pCompletionCallback != nullptr ? true : false;
-	creation.is_interface = true;
+	creation.m_pCommandCompletionCallback = pCompletionCallback;
+	creation.m_bHasCompletionCallback = pCompletionCallback != nullptr ? true : false;
+	creation.m_bIsInterface = true;
 
 	// Setup the rest
 	Create( pName, pHelpString, flags, creation );
@@ -508,15 +508,15 @@ void ConCommand::Create( const char* pName, const char* pHelpString, int64_t fla
 
 	// Name should be static data
 	Assert(pName);
-	setup.name = pName;
-	setup.description = pHelpString ? pHelpString : empty_string;
+	setup.m_pszName = pName;
+	setup.m_pszHelpString = pHelpString ? pHelpString : empty_string;
 
-	setup.flags = flags;
+	setup.m_nFlags = flags;
 
 #ifdef ALLOW_DEVELOPMENT_CVARS
-	setup.flags &= ~FCVAR_DEVELOPMENTONLY;
+	setup.m_nFlags &= ~FCVAR_DEVELOPMENTONLY;
 #endif
-	setup.refHandle = &this->m_Handle;
+	setup.m_pHandle = &this->m_Handle;
 
 	AddCommand( setup );
 }

@@ -52,9 +52,9 @@ class ConCommand;
 struct CVarCreationBase_t
 {
 	CVarCreationBase_t( ) :
-	name( nullptr ),
-	description( nullptr ),
-	flags( 0 )
+	m_pszName( nullptr ),
+	m_pszHelpString( nullptr ),
+	m_nFlags( 0 )
 	{}
 
 	bool				IsFlagSet( int64_t flag ) const;
@@ -62,34 +62,10 @@ struct CVarCreationBase_t
 	void				RemoveFlags( int64_t flags );
 	int64_t				GetFlags() const;
 
-	const char*				name;
-	const char*				description;
-	int64_t					flags;
+	const char*				m_pszName;
+	const char*				m_pszHelpString;
+	int64_t					m_nFlags;
 };
-
-inline bool CVarCreationBase_t::IsFlagSet( int64_t flag ) const
-{
-	return ( flag & this->flags ) ? true : false;
-}
-
-inline void CVarCreationBase_t::AddFlags( int64_t flags )
-{
-	this->flags |= flags;
-
-#ifdef ALLOW_DEVELOPMENT_CVARS
-	this->flags &= ~FCVAR_DEVELOPMENTONLY;
-#endif
-}
-
-inline void CVarCreationBase_t::RemoveFlags( int64_t flags )
-{
-	this->flags &= ~flags;
-}
-
-inline int64_t CVarCreationBase_t::GetFlags( void ) const
-{
-	return this->flags;
-}
 
 enum CommandTarget_t
 {
@@ -298,34 +274,34 @@ inline const char *CCommand::operator[]( int nIndex ) const
 struct ConCommandCreation_t : CVarCreationBase_t
 {
 	ConCommandCreation_t() :
-	has_complitioncallback(false),
-	is_interface(false),
-	refHandle(nullptr)
+	m_bHasCompletionCallback(false),
+	m_bIsInterface(false),
+	m_pHandle(nullptr)
 	{}
 
 	// Call this function when executing the command
 	struct CallbackInfo_t
 	{
 		CallbackInfo_t() :
-		fnCommandCallback(nullptr),
-		is_interface(false),
-		is_voidcallback(false),
-		is_contextless(false)
+		m_fnCommandCallback(nullptr),
+		m_bIsInterface(false),
+		m_bIsVoidCallback(false),
+		m_bIsContextLess(false)
 		{}
 
 		union {
-			FnCommandCallback_t fnCommandCallback;
-			FnCommandCallbackVoid_t fnVoidCommandCallback;
-			FnCommandCallbackNoContext_t fnContextlessCommandCallback;
-			ICommandCallback* pCommandCallback;
+			FnCommandCallback_t m_fnCommandCallback;
+			FnCommandCallbackVoid_t m_fnVoidCommandCallback;
+			FnCommandCallbackNoContext_t m_fnContextlessCommandCallback;
+			ICommandCallback* m_pCommandCallback;
 		};
 
-		bool is_interface;
-		bool is_voidcallback;
-		bool is_contextless;
+		bool m_bIsInterface;
+		bool m_bIsVoidCallback;
+		bool m_bIsContextLess;
 	};
 
-	CallbackInfo_t callback;
+	CallbackInfo_t m_fnCallback;
 
 	// NOTE: To maintain backward compat, we have to be very careful:
 	// All public virtual methods must appear in the same order always
@@ -337,14 +313,14 @@ struct ConCommandCreation_t : CVarCreationBase_t
 
 	union
 	{
-		FnCommandCompletionCallback	fnCompletionCallback;
-		ICommandCompletionCallback* pCommandCompletionCallback;
+		FnCommandCompletionCallback	m_fnCompletionCallback;
+		ICommandCompletionCallback* m_pCommandCompletionCallback;
 	};
 
-	bool has_complitioncallback;
-	bool is_interface;
+	bool m_bHasCompletionCallback;
+	bool m_bIsInterface;
 
-	ConCommandHandle* refHandle;
+	ConCommandHandle* m_pHandle;
 };
 static_assert(sizeof(ConCommandCreation_t) == 0x40, "ConCommandCreation_t is of the wrong size!");
 
@@ -379,56 +355,55 @@ private:
 	ConCommandHandle m_Handle;
 };
 
+using FnGenericChangeCallback_t = void(*)(BaseConVar* ref, CSplitScreenSlot nSlot, CVValue_t* pNewValue, CVValue_t* pOldValue);
 #pragma pack(push,1)
 struct ConVarSetup_t
 {
 	ConVarSetup_t() :
-	unknown0(0),
-	has_default(false),
-	has_min(false),
-	has_max(false),
-	default_value(),
-	min_value(),
-	max_value(),
-	callback(nullptr),
-	type(EConVarType_Invalid),
-	unk1(0),
-	unk2(0)
+	m_unknown1(0),
+	m_bHasDefault(false),
+	m_bHasMin(false),
+	m_bHasMax(false),
+	m_defaultValue(),
+	m_minValue(),
+	m_maxValue(),
+	m_fnCallBack(nullptr),
+	m_eVarType(EConVarType_Invalid),
+	m_unknown2(0),
+	m_unknown3(0)
 	{}
 
-	int32 unknown0; // 0x0
+	int32_t m_unknown1; // 0x0
 
-	bool has_default; // 0x4
-	bool has_min; // 0x5
-	bool has_max; // 0x6
+	bool m_bHasDefault; // 0x4
+	bool m_bHasMin; // 0x5
+	bool m_bHasMax; // 0x6
 
-	CVValue_t default_value; // 0x7
-	CVValue_t min_value; // 0x17
-	CVValue_t max_value; // 0x27
+	CVValue_t m_defaultValue; // 0x7
+	CVValue_t m_minValue; // 0x17
+	CVValue_t m_maxValue; // 0x27
 
 	char pad; // 0x37
 
-	using FnGenericChangeCallback_t = void(*)(BaseConVar* ref, CSplitScreenSlot nSlot, CVValue_t* pNewValue, CVValue_t* pOldValue);
-	FnGenericChangeCallback_t callback; // 0x38
-	EConVarType type; // 0x40
+	FnGenericChangeCallback_t m_fnCallBack; // 0x38
+	EConVarType m_eVarType; // 0x40
 
-	int32_t unk1; // 0x42
-	int16_t unk2; // 0x46
+	int32_t m_unknown2; // 0x42
+	int16_t m_unknown3; // 0x46
 };
 #pragma pack(pop)
-
 static_assert(sizeof(ConVarSetup_t) == 0x48, "ConVarSetup_t is of the wrong size!");
 static_assert(sizeof(ConVarSetup_t) % 8 == 0x0, "ConVarSetup_t isn't 8 bytes aligned!");
 
 struct ConVarCreation_t : CVarCreationBase_t {
 	ConVarCreation_t() :
-	refHandle(nullptr),
-	refConVar(nullptr)
+	m_pHandle(nullptr),
+	m_pConVarData(nullptr)
 	{}
-	ConVarSetup_t setup; // 0x18
+	ConVarSetup_t m_cvarSetup; // 0x18
 
-	ConVarHandle* refHandle; // 0x60
-	ConVarBaseData_t** refConVar; // 0x68
+	ConVarHandle* m_pHandle; // 0x60
+	ConVarBaseData_t** m_pConVarData; // 0x68
 };
 
 static_assert(sizeof(ConVarCreation_t) == 0x70, "ConVarCreation_t wrong size!");
@@ -461,10 +436,10 @@ public:
 		this->Init(INVALID_CONVAR_HANDLE, TranslateConVarType<T>());
 
 		ConVarSetup_t setup;
-		setup.has_default = true;
-		setup.default_value = value;
-		setup.type = TranslateConVarType<T>();
-		setup.callback = reinterpret_cast<decltype(setup.callback)>(cb);
+		setup.m_bHasDefault = true;
+		setup.m_defaultValue = value;
+		setup.m_eVarType = TranslateConVarType<T>();
+		setup.m_fnCallBack = reinterpret_cast<FnGenericChangeCallback_t>(cb);
 
 		this->Register(name, flags &~ FCVAR_DEVELOPMENTONLY, description, setup);
 	}
@@ -474,17 +449,16 @@ public:
 		this->Init(INVALID_CONVAR_HANDLE, TranslateConVarType<T>());
 
 		ConVarSetup_t setup;
-		setup.has_default = true;
-		setup.default_value = value;
+		setup.m_bHasDefault = true;
+		setup.m_defaultValue = value;
 
-		setup.has_min = min;
-		setup.min_value = minValue;
+		setup.m_bHasMin = min;
+		setup.m_bHasMax = max;
+		setup.m_minValue = minValue;
+		setup.m_maxValue = maxValue;
 
-		setup.has_max = max;
-		setup.max_value = maxValue;
-
-		setup.callback = reinterpret_cast<decltype(setup.callback)>(cb);
-		setup.type = TranslateConVarType<T>();
+		setup.m_eVarType = TranslateConVarType<T>();
+		setup.m_fnCallBack = reinterpret_cast<FnGenericChangeCallback_t>(cb);
 
 		this->Register(name, flags &~ FCVAR_DEVELOPMENTONLY, description, setup);
 	}
@@ -494,38 +468,38 @@ public:
 		UnRegisterConVar(this->m_Handle);
 	}
 
-	inline const char*	GetName( ) const			{ return m_ConVar->GetName( ); }
-	inline const char*	GetDescription( ) const		{ return m_ConVar->GetDescription( ); }
-	inline EConVarType	GetType( ) const			{ return m_ConVar->GetType( ); }
+	inline const char*	GetName( ) const			{ return m_ConVarData->GetName( ); }
+	inline const char*	GetDescription( ) const		{ return m_ConVarData->GetDescription( ); }
+	inline EConVarType	GetType( ) const			{ return m_ConVarData->GetType( ); }
 
-	inline CVValue_t*	GetDefaultValue( ) const	{ return m_ConVar->GetDefaultValue( ); }
-	inline CVValue_t*	GetMinValue( ) const		{ return m_ConVar->GetMinValue( ); }
-	inline CVValue_t*	GetMaxValue( ) const		{ return m_ConVar->GetMaxValue( ); }
+	inline CVValue_t*	GetDefaultValue( ) const	{ return m_ConVarData->GetDefaultValue( ); }
+	inline CVValue_t*	GetMinValue( ) const		{ return m_ConVarData->GetMinValue( ); }
+	inline CVValue_t*	GetMaxValue( ) const		{ return m_ConVarData->GetMaxValue( ); }
 
-	inline void SetDefaultValue(const T& value)	{ m_ConVar->SetDefaultValue( value ); }
-	inline void SetMinValue(const T& value)		{ m_ConVar->SetMinValue( value ); }
-	inline void SetMaxValue(const T& value)		{ m_ConVar->SetMaxValue( value ); }
+	inline void SetDefaultValue(const T& value)	{ m_ConVarData->SetDefaultValue( value ); }
+	inline void SetMinValue(const T& value)		{ m_ConVarData->SetMinValue( value ); }
+	inline void SetMaxValue(const T& value)		{ m_ConVarData->SetMaxValue( value ); }
 	
-	inline const T&	GetValue( int index = 0 ) const			{ return m_ConVar->GetValue( index ); }
-	inline void		SetValue(const T& value, int index = 0)	{ m_ConVar->SetValue( value, index ); }
+	inline const T&	GetValue( int index = 0 ) const			{ return m_ConVarData->GetValue( index ); }
+	inline void		SetValue(const T& value, int index = 0)	{ m_ConVarData->SetValue( value, index ); }
 
-	inline bool		IsFlagSet( int64_t flag ) const		{ return m_ConVar->IsFlagSet( flag ); }
-	inline void		AddFlags( int64_t flags )			{ m_ConVar->AddFlags( flags ); }
-	inline void		RemoveFlags( int64_t flags )		{ return m_ConVar->RemoveFlags( flags ); }
-	inline int64_t	GetFlags( void ) const				{ return m_ConVar->GetFlags( ); }
+	inline bool		IsFlagSet( int64_t flag ) const		{ return m_ConVarData->IsFlagSet( flag ); }
+	inline void		AddFlags( int64_t flags )			{ m_ConVarData->AddFlags( flags ); }
+	inline void		RemoveFlags( int64_t flags )		{ return m_ConVarData->RemoveFlags( flags ); }
+	inline int64_t	GetFlags( void ) const				{ return m_ConVarData->GetFlags( ); }
 
 private:
 	void Init(ConVarHandle defaultHandle, EConVarType type)
 	{
 		this->m_Handle.Invalidate();
-		this->m_ConVar = nullptr;
+		this->m_ConVarData = nullptr;
 
 		if (g_pCVar)
 		{
-			this->m_ConVar = g_pCVar->GetConVar(defaultHandle)->Cast<T>();
-			if (!this->m_ConVar)
+			this->m_ConVarData = g_pCVar->GetConVar(defaultHandle)->Cast<T>();
+			if (!this->m_ConVarData)
 			{
-				this->m_ConVar = ConVar_Invalid<T>();
+				this->m_ConVarData = ConVar_Invalid<T>();
 			}
 			// technically this
 			//result = *(char ***)(sub_10B7760((unsigned int)a3) + 80);
@@ -535,7 +509,7 @@ private:
 
 	void Register(const char* name, int32_t flags, const char* description, const ConVarSetup_t& setup)
 	{
-		this->m_ConVar = ConVar_Invalid<T>();
+		this->m_ConVarData = ConVar_Invalid<T>();
 		this->m_Handle.Invalidate();
 
 		if (!CommandLine()->HasParm("-tools")
@@ -553,21 +527,21 @@ private:
 
 		ConVarCreation_t cvar;
 		
-		cvar.name = name;
-		cvar.description = description;
-		cvar.flags = flags;
+		cvar.m_pszName = name;
+		cvar.m_pszHelpString = description;
+		cvar.m_nFlags = flags;
 
-		cvar.setup = setup;
+		cvar.m_cvarSetup = setup;
 
-		cvar.refHandle = &this->m_Handle;
-		cvar.refConVar = (ConVarBaseData_t**)&this->m_ConVar;
+		cvar.m_pHandle = &this->m_Handle;
+		cvar.m_pConVarData = (ConVarBaseData_t**)&this->m_ConVarData;
 
 		SetupConVar(cvar);
 	}
 
 	// High-speed method to read convar data
 	ConVarHandle m_Handle;
-	ConVarData_t<T>* m_ConVar;
+	ConVarData_t<T>* m_ConVarData;
 };
 static_assert(sizeof(ConVar<int>) == 0x10, "ConVar is of the wrong size!");
 static_assert(sizeof(ConVar<int>) == sizeof(ConVar<Vector>), "Templated ConVar size varies!");
