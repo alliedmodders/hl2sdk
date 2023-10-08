@@ -27,6 +27,9 @@ class CBasePlayer;
 class CEntityIndex;
 class CEntityHandle;
 class CBaseEntity;
+class CEntityInstance;
+class CBasePlayerController;
+class CBasePlayerPawn;
 //-----------------------------------------------------------------------------
 // Purpose: Engine interface into global game event management
 //-----------------------------------------------------------------------------
@@ -121,15 +124,15 @@ public:
 	/* These function prototypes and names are very speculative and might be incorrect */
 	virtual CEntityHandle GetEHandle(const GameEventKeySymbol_t& keySymbol, CEntityHandle defaultValue) = 0;
 	virtual CEntityHandle GetStrictEHandle(const GameEventKeySymbol_t& keySymbol, CEntityHandle defaultValue) = 0;
-	virtual CEntityHandle GetEHandle2(const GameEventKeySymbol_t& keySymbol, CEntityHandle defaultValue) = 0;
+	virtual CEntityIndex Maybe__GetPlayerEntityIndex(const GameEventKeySymbol_t& keySymbol) = 0;
 
-	virtual void GetPlayerSlot(CPlayerSlot &slot, const GameEventKeySymbol_t& keySymbol) = 0;
+	virtual CPlayerSlot GetPlayerSlot(const GameEventKeySymbol_t& keySymbol) = 0;
 
-	virtual void* GetPlayerController(const GameEventKeySymbol_t& keySymbol) = 0;
-	virtual void* GetPlayerPawn(const GameEventKeySymbol_t& keySymbol) = 0;
+	virtual CBasePlayerController* GetPlayerController(const GameEventKeySymbol_t& keySymbol) = 0;
+	virtual CBasePlayerPawn* GetPlayerPawn(const GameEventKeySymbol_t& keySymbol) = 0;
 
-	virtual CEntityHandle GetPlayerControllerEHandle(const GameEventKeySymbol_t& keySymbol) = 0;
-	virtual CEntityHandle GetPlayerControllerEHandle2(const GameEventKeySymbol_t& keySymbol) = 0;
+	virtual CEntityHandle Maybe__GetPlayerPawnEHandle(const GameEventKeySymbol_t& keySymbol) = 0;
+	virtual CEntityIndex Maybe__GetPlayerPawnEntityIndex(const GameEventKeySymbol_t& keySymbol) = 0;
 	/* ============================================================ */
 
 	virtual void SetBool(const GameEventKeySymbol_t& keySymbol, bool value) = 0;
@@ -140,13 +143,11 @@ public:
 	virtual void SetPtr(const GameEventKeySymbol_t& keySymbol, void* value) = 0;
 
 	/* These function prototypes and names are very speculative and might be incorrect */
-	virtual void SetEHandleStrict(const GameEventKeySymbol_t& keySymbol, CEntityHandle handle) = 0;
-	virtual void SetEHandle(const GameEventKeySymbol_t& keySymbol, CEntityHandle handle) = 0;
-
-	// Also sets the _pawn key
-	virtual void SetPlayerSlot(const GameEventKeySymbol_t& keySymbol, CPlayerSlot value) = 0;
-	virtual void SetPlayer(const GameEventKeySymbol_t& keySymbol, void* value) = 0;
-	virtual void SetPlayerFromPawn(const GameEventKeySymbol_t& keySymbol, void* value) = 0;
+	virtual void SetEHandle(const GameEventKeySymbol_t& keySymbol, CEntityInstance *value) = 0; // strict
+	virtual void SetEHandle(const GameEventKeySymbol_t& keySymbol, CEntityHandle handle) = 0; // direct set without checks
+	virtual void SetPlayerControllerAndPawn(const GameEventKeySymbol_t& keySymbol, CPlayerSlot value) = 0;
+	virtual void SetPlayerControllerAndPawn(const GameEventKeySymbol_t& keySymbol, CBasePlayerController* value) = 0;
+	virtual void SetPlayerPawn(const GameEventKeySymbol_t& keySymbol, CBasePlayerPawn* value) = 0;
 	/* ============================================================ */
 
 	virtual bool HasKey(const GameEventKeySymbol_t& keySymbol) = 0;
