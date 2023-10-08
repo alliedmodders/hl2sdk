@@ -435,7 +435,6 @@ static_assert(sizeof(ConVarCreation_t) == 0x70, "ConVarCreation_t wrong size!");
 static_assert(sizeof(ConVarCreation_t) % 8 == 0x0, "ConVarCreation_t isn't 8 bytes aligned!");
 static_assert(sizeof(CVValue_t) == 0x10, "CVValue_t wrong size!");
 
-// sub_10B7760
 extern void* invalid_convar[EConVarType_MAX + 1];
 
 template<typename T>
@@ -456,7 +455,7 @@ class ConVar : public BaseConVar
 {
 public:
 	using FnChangeCallback_t = void(*)(ConVar<T>* ref, CSplitScreenSlot nSlot, T* pNewValue, T* pOldValue);
-	// sub_6A66B0
+
 	ConVar(const char* name, int32_t flags, const char* description, T value, FnChangeCallback_t cb = nullptr)
 	{
 		this->Init(INVALID_CONVAR_HANDLE, TranslateConVarType<T>());
@@ -516,13 +515,11 @@ public:
 	inline int64_t	GetFlags( void ) const				{ return m_ConVar->GetFlags( ); }
 
 private:
-	// sub_10B7BC0
 	void Init(ConVarHandle defaultHandle, EConVarType type)
 	{
 		this->m_Handle.Invalidate();
 		this->m_ConVar = nullptr;
 
-		// qword_191A3D8
 		if (g_pCVar)
 		{
 			this->m_ConVar = g_pCVar->GetConVar(defaultHandle)->Cast<T>();
@@ -536,7 +533,6 @@ private:
 		this->m_Handle = defaultHandle;
 	}
 
-	// sub_10B7C70
 	void Register(const char* name, int32_t flags, const char* description, const ConVarSetup_t& setup)
 	{
 		this->m_ConVar = ConVar_Invalid<T>();

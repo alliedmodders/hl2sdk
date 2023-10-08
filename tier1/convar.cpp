@@ -195,11 +195,9 @@ private:
 public:
 	static bool s_bConVarsRegistered;
 };
-static_assert(sizeof(ConVarRegList) == 0x2BD0, "Size mismatch");
 
 bool ConVarRegList::s_bConVarsRegistered = false;
 
-// sub_10B79F0
 void SetupConVar( ConVarCreation_t& cvar )
 {
 	if ( ConVarRegList::s_bConVarsRegistered )
