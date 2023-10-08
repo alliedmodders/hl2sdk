@@ -154,7 +154,7 @@ public:
 	// CConcreteEntityList seems to be correct but m_CallQueue supposedly starts at offset 2664, which is... impossible?
 	// Based on CEntitySystem::CEntitySystem found via string "MaxNonNetworkableEntities"
 	uint8 unk2696[0xa88];
-#ifdef __linux__
+#ifdef PLATFORM_LINUX
 	uint8 unk5392[0x30];
 #endif
 };
