@@ -65,7 +65,7 @@ struct EntityDormancyChange_t : EntityNotification_t
 struct EntitySpawnInfo_t : EntityNotification_t
 {
 	const CEntityKeyValues* m_pKeyValues;
-	uint64 unknown;
+	uint64 m_Unk1;
 };
 
 struct EntityActivation_t : EntityNotification_t
@@ -81,7 +81,6 @@ struct PostDataUpdateInfo_t : EntityNotification_t
 	DataUpdateType_t m_updateType;
 };
 
-
 struct CEntityPrecacheContext
 {
 	const CEntityKeyValues* m_pKeyValues;
@@ -92,9 +91,10 @@ struct CEntityPrecacheContext
 class IEntityListener
 {
 public:
-	virtual void OnEntityCreated(CBaseEntity* pEntity) {};
-	virtual void OnEntitySpawned(CBaseEntity* pEntity) {};
-	virtual void OnEntityDeleted(CBaseEntity* pEntity) {};
+	virtual void OnEntityCreated(CEntityInstance* pEntity) {};
+	virtual void OnEntitySpawned(CEntityInstance* pEntity) {};
+	virtual void OnEntityDeleted(CEntityInstance* pEntity) {};
+	virtual void OnEntityParentChanged(CEntityInstance* pEntity, CEntityInstance* pNewParent) {};
 };
 
 struct CEntityResourceManifestLock
@@ -123,8 +123,7 @@ public:
 	virtual void		LockResourceManifest(bool bLock, CEntityResourceManifestLock* const context) = 0;
 };
 
-
-// Size: 0x1510 (from constructor)
+// Size: 0x1510 | 0x1540 (from constructor)
 class CEntitySystem : public IEntityResourceManifestBuilder
 {
 public:
@@ -152,10 +151,15 @@ public:
 	CConcreteEntityList m_EntityList;
 	// CConcreteEntityList seems to be correct but m_CallQueue supposedly starts at offset 2664, which is... impossible?
 	// Based on CEntitySystem::CEntitySystem found via string "MaxNonNetworkableEntities"
-	uint8 unk2696[0xa88];
+
+private:
+	uint8 pad2696[0xa88];
+#ifdef PLATFORM_LINUX
+	uint8 pad5392[0x30];
+#endif
 };
 
-// Size: 0x1580 (from constructor)
+// Size: 0x1580 | 0x15B0 (from constructor)
 class CGameEntitySystem : public CEntitySystem
 {
 	struct SpawnGroupEntityFilterInfo_t
@@ -165,18 +169,22 @@ class CGameEntitySystem : public CEntitySystem
 	};
 	//typedef SpawnGroupEntityFilterInfo_t CUtlMap<char const*, SpawnGroupEntityFilterInfo_t, int, bool (*)(char const* const&, char const* const&)>::ElemType_t;
 
-
 public:
 	virtual				~CGameEntitySystem() = 0;
 
+	void AddListenerEntity(IEntityListener* pListener);
+	void RemoveListenerEntity(IEntityListener* pListener);
+
 public:
-	int m_iMaxNetworkedEntIndex;
-	int m_iNetworkedEntCount;
-	int m_iNonNetworkedSavedEntCount;
+	int m_iMaxNetworkedEntIndex; // 5392 | 5440
+	int m_iNetworkedEntCount; // 5396 | 5444
+	int m_iNonNetworkedSavedEntCount; // 5400 | 5448
 	// int m_iNumEdicts; // This is no longer referenced in the server binary
-	CUtlDict<CGameEntitySystem::SpawnGroupEntityFilterInfo_t, int> m_spawnGroupEntityFilters;
-	CUtlVector<IEntityListener*, CUtlMemory<IEntityListener*, int> > m_entityListeners;
-	uint8 unk5480[0x18];
+	CUtlDict<SpawnGroupEntityFilterInfo_t> m_spawnGroupEntityFilters; // 5408 | 5456
+	CUtlVector<IEntityListener*> m_entityListeners; // 5448 | 5496
+
+private:
+	uint8 pad5480[0x20];
 };
 
 #endif // ENTITYSYSTEM_H
