@@ -162,7 +162,7 @@ public:
 		m_handleIndex = 0x0;
 	}
 
-	uint16_t GetConCommandIndex() const { return m_concommandIndex; }
+	uint32_t GetConCommandIndex() const { return m_concommandIndex; }
 	uint32_t GetIndex() const { return m_handleIndex; }
 
 private:
