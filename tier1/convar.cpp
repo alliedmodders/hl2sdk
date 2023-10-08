@@ -53,52 +53,38 @@ void UnRegisterCommand( ConCommandHandle& cmd )
 	}
 }
 
-class ConCommandRegList;
-static ConCommandRegList* s_pCommandRegList = nullptr;
-
 class ConCommandRegList
 {
 public:
+	static ConCommandRegList* GetRegList()
+	{
+		static ConCommandRegList* list = new ConCommandRegList();
+		return list;
+	}
+
 	static void RegisterAll()
 	{
 		if (!s_bConCommandsRegistered && g_pCVar)
 		{
 			s_bConCommandsRegistered = true;
 
-			ConCommandRegList* list = s_pCommandRegList;
-			while ( list != nullptr )
+			ConCommandRegList* list = GetRegList();
+			FOR_EACH_VEC( list->m_Vec, i )
 			{
-				FOR_EACH_VEC( list->m_Vec, i )
-				{
-					RegisterCommand( list->m_Vec[i] );
-				}
-
-				ConCommandRegList *pNext = list->m_pNext;
-				delete list;
-				list = pNext;
+				RegisterCommand( list->m_Vec[i] );
 			}
+			delete list;
 		}
 	}
 private:
 	friend void AddCommand( ConCommandCreation_t& cmd );
-
-	void SetNextList( ConCommandRegList* list )
-	{
-		m_pNext = list;
-	}
-
-	int Count() const
-	{
-		return m_Vec.Count();
-	}
 
 	void Add( const ConCommandCreation_t& cmd )
 	{
 		m_Vec.AddToTail( cmd );
 	}
 
-	CUtlVectorFixed<ConCommandCreation_t, 100> m_Vec;
-	ConCommandRegList* m_pNext = nullptr;
+	CUtlVector<ConCommandCreation_t> m_Vec;
 public:
 	static bool s_bConCommandsRegistered;
 };
@@ -112,15 +98,7 @@ void AddCommand( ConCommandCreation_t& cmd )
 		return;
 	}
 
-	if ( !s_pCommandRegList || s_pCommandRegList->Count() == 100 )
-	{
-		ConCommandRegList* newList = new ConCommandRegList;
-		newList->SetNextList( s_pCommandRegList );
-
-		s_pCommandRegList = newList;
-	}
-
-	s_pCommandRegList->Add( cmd );
+	ConCommandRegList::GetRegList()->Add( cmd );
 }
 
 void RegisterConVar( ConVarCreation_t& cvar )
@@ -143,13 +121,14 @@ void UnRegisterConVar( ConVarHandle& cvar )
 	}
 }
 
-class ConVarRegList;
-static ConVarRegList* s_pConVarRegList = nullptr;
-
 class ConVarRegList
 {
 public:
-	ConVarRegList() {}
+	static ConVarRegList* GetRegList()
+	{
+		static ConVarRegList* list = new ConVarRegList();
+		return list;
+	}
 
 	static void RegisterAll()
 	{
@@ -157,41 +136,24 @@ public:
 		{
 			s_bConVarsRegistered = true;
 
-			ConVarRegList* list = s_pConVarRegList;
-			while ( list )
+			ConVarRegList* list = GetRegList();
+			FOR_EACH_VEC( list->m_Vec, i )
 			{
-				FOR_EACH_VEC( list->m_Vec, i )
-				{
-					RegisterConVar( list->m_Vec[i] );
-				}
-
-				ConVarRegList *pNext = list->m_pNext;
-				delete list;
-				list = pNext;
+				RegisterConVar( list->m_Vec[i] );
 			}
+			delete list;
 		}
 	}
 
 private:
 	friend void SetupConVar( ConVarCreation_t& cvar );
 
-	void SetNextList( ConVarRegList* list )
-	{
-		m_pNext = list;
-	}
-
-	int Count() const
-	{
-		return m_Vec.Count();
-	}
-
 	void Add( const ConVarCreation_t& cvar )
 	{
 		m_Vec.AddToTail( cvar );
 	}
 
-	CUtlVectorFixed<ConVarCreation_t, 100> m_Vec;
-	ConVarRegList* m_pNext = nullptr;
+	CUtlVector<ConVarCreation_t> m_Vec;
 public:
 	static bool s_bConVarsRegistered;
 };
@@ -206,15 +168,7 @@ void SetupConVar( ConVarCreation_t& cvar )
 		return;
 	}
 	
-	if ( !s_pConVarRegList || s_pConVarRegList->Count() == 100 )
-	{
-		ConVarRegList* newList = new ConVarRegList;
-		newList->SetNextList( s_pConVarRegList );
-
-		s_pConVarRegList = newList;
-	}
-
-	s_pConVarRegList->Add( cvar );
+	ConVarRegList::GetRegList()->Add( cvar );
 }
 
 //-----------------------------------------------------------------------------
