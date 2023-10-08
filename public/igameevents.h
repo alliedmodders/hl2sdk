@@ -20,6 +20,7 @@
 #include "tier1/bitbuf.h"
 #include "tier1/generichash.h"
 #include "tier1/utlstring.h"
+#include "ihandleentity.h"
 
 class CMsgSource1LegacyGameEvent;
 class CPlayerSlot;
@@ -69,7 +70,6 @@ struct GameEventKeySymbol_t
 			return;
 
 		CUtlString buf( keyName );
-
 		buf.ToLowerFast();
 
 		m_nHashCode = MurmurHash2(buf.Get(), strlen(keyName), 0x31415926);
@@ -78,7 +78,7 @@ struct GameEventKeySymbol_t
 #if 0
 		if (g_bUpdateStringTokenDatabase)
 		{
-			RegisterStringToken(keySymbol, keyName, 0, true);
+			RegisterStringToken(m_nHashCode, keyName, 0, true);
 		}
 #endif
 	}
@@ -106,56 +106,63 @@ abstract_class IGameEvent
 {
 public:
 	virtual ~IGameEvent() {};
-	virtual const char* GetName() const = 0;	// get event name
+	virtual const char *GetName() const = 0;	// get event name
 	virtual int GetID() const = 0;
 
 	virtual bool IsReliable() const = 0; // if event handled reliable
 	virtual bool IsLocal() const = 0; // if event is never networked
-	virtual bool IsEmpty(const GameEventKeySymbol_t& keySymbol) = 0; // check if data field exists
+	virtual bool IsEmpty( const GameEventKeySymbol_t &keySymbol ) = 0; // check if data field exists
 
 	// Data access
-	virtual bool  GetBool(const GameEventKeySymbol_t& keySymbol, bool defaultValue = false) = 0;
-	virtual int GetInt(const GameEventKeySymbol_t& keySymbol, int defaultValue = 0) = 0;
-	virtual uint64 GetUint64(const GameEventKeySymbol_t& keySymbol, uint64 defaultValue = 0) = 0;
-	virtual float GetFloat(const GameEventKeySymbol_t& keySymbol, float defaultValue = 0.0f) = 0;
-	virtual const char* GetString(const GameEventKeySymbol_t& keySymbol, const char* defaultValue = "") = 0;
-	virtual void* GetPtr(const GameEventKeySymbol_t& keySymbol, void* defaultValue = NULL) = 0;
+	virtual bool  GetBool( const GameEventKeySymbol_t &keySymbol, bool defaultValue = false ) = 0;
+	virtual int GetInt( const GameEventKeySymbol_t &keySymbol, int defaultValue = 0 ) = 0;
+	virtual uint64 GetUint64( const GameEventKeySymbol_t &keySymbol, uint64 defaultValue = 0 ) = 0;
+	virtual float GetFloat( const GameEventKeySymbol_t &keySymbol, float defaultValue = 0.0f ) = 0;
+	virtual const char *GetString( const GameEventKeySymbol_t &keySymbol, const char *defaultValue = "" ) = 0;
+	virtual void *GetPtr( const GameEventKeySymbol_t &keySymbol ) = 0;
 
-	/* These function prototypes and names are very speculative and might be incorrect */
-	virtual CEntityHandle GetEHandle(const GameEventKeySymbol_t& keySymbol, CEntityHandle defaultValue) = 0;
-	virtual CEntityHandle GetStrictEHandle(const GameEventKeySymbol_t& keySymbol, CEntityHandle defaultValue) = 0;
-	virtual CEntityIndex Maybe__GetPlayerEntityIndex(const GameEventKeySymbol_t& keySymbol) = 0;
+	virtual CEntityHandle GetEHandle( const GameEventKeySymbol_t &keySymbol, CEntityHandle defaultValue = CEntityHandle() ) = 0;
 
-	virtual CPlayerSlot GetPlayerSlot(const GameEventKeySymbol_t& keySymbol) = 0;
+	// Returns the entity instance, mostly used for _pawn keys, might return 0 if used on any other key (even on a controller).
+	virtual IHandleEntity *GetEntity( const GameEventKeySymbol_t &keySymbol, IHandleEntity *fallbackInstance = NULL ) = 0;
+	virtual CEntityIndex GetEntityIndex( const GameEventKeySymbol_t &keySymbol, CEntityIndex defaultValue = CEntityIndex( -1 ) ) = 0;
 
-	virtual CBasePlayerController* GetPlayerController(const GameEventKeySymbol_t& keySymbol) = 0;
-	virtual CBasePlayerPawn* GetPlayerPawn(const GameEventKeySymbol_t& keySymbol) = 0;
+	virtual CPlayerSlot GetPlayerSlot( const GameEventKeySymbol_t &keySymbol ) = 0;
 
-	virtual CEntityHandle Maybe__GetPlayerPawnEHandle(const GameEventKeySymbol_t& keySymbol) = 0;
-	virtual CEntityIndex Maybe__GetPlayerPawnEntityIndex(const GameEventKeySymbol_t& keySymbol) = 0;
-	/* ============================================================ */
+	virtual IHandleEntity *GetPlayerController( const GameEventKeySymbol_t &keySymbol ) = 0;
+	virtual IHandleEntity *GetPlayerPawn( const GameEventKeySymbol_t &keySymbol ) = 0;
 
-	virtual void SetBool(const GameEventKeySymbol_t& keySymbol, bool value) = 0;
-	virtual void SetInt(const GameEventKeySymbol_t& keySymbol, int value) = 0;
-	virtual void SetUint64(const GameEventKeySymbol_t& keySymbol, uint64 value) = 0;
-	virtual void SetFloat(const GameEventKeySymbol_t& keySymbol, float value) = 0;
-	virtual void SetString(const GameEventKeySymbol_t& keySymbol, const char* value) = 0;
-	virtual void SetPtr(const GameEventKeySymbol_t& keySymbol, void* value) = 0;
+	// Returns the EHandle for the _pawn entity.
+	virtual CEntityHandle GetPawnEHandle( const GameEventKeySymbol_t &keySymbol ) = 0;
+	// Returns the CEntityIndex for the _pawn entity.
+	virtual CEntityIndex GetPawnEntityIndex( const GameEventKeySymbol_t &keySymbol ) = 0;
 
-	/* These function prototypes and names are very speculative and might be incorrect */
-	virtual void SetEHandle(const GameEventKeySymbol_t& keySymbol, CEntityInstance *value) = 0; // strict
-	virtual void SetEHandle(const GameEventKeySymbol_t& keySymbol, CEntityHandle handle) = 0; // direct set without checks
-	virtual void SetPlayerControllerAndPawn(const GameEventKeySymbol_t& keySymbol, CPlayerSlot value) = 0;
-	virtual void SetPlayerControllerAndPawn(const GameEventKeySymbol_t& keySymbol, CBasePlayerController* value) = 0;
-	virtual void SetPlayerPawn(const GameEventKeySymbol_t& keySymbol, CBasePlayerPawn* value) = 0;
-	/* ============================================================ */
+	virtual void SetBool( const GameEventKeySymbol_t &keySymbol, bool value ) = 0;
+	virtual void SetInt( const GameEventKeySymbol_t &keySymbol, int value ) = 0;
+	virtual void SetUint64( const GameEventKeySymbol_t &keySymbol, uint64 value ) = 0;
+	virtual void SetFloat( const GameEventKeySymbol_t &keySymbol, float value ) = 0;
+	virtual void SetString( const GameEventKeySymbol_t &keySymbol, const char *value ) = 0;
+	virtual void SetPtr( const GameEventKeySymbol_t &keySymbol, void *value ) = 0;
 
-	virtual bool HasKey(const GameEventKeySymbol_t& keySymbol) = 0;
+	virtual void SetEntity( const GameEventKeySymbol_t &keySymbol, CEntityIndex value ) = 0;
+	virtual void SetEntity( const GameEventKeySymbol_t &keySymbol, IHandleEntity *value ) = 0;
+
+	// Also sets the _pawn key
+	virtual void SetPlayer( const GameEventKeySymbol_t &keySymbol, CPlayerSlot value ) = 0;
+	// Also sets the _pawn key (Expects pawn entity to be passed)
+	virtual void SetPlayer( const GameEventKeySymbol_t &keySymbol, IHandleEntity *pawn ) = 0;
+
+	// Expects pawn entity to be passed, will set the controller entity as a controllerKeyName
+	// and pawn entity as a pawnKeyName.
+	virtual void SetPlayerRaw( const GameEventKeySymbol_t &controllerKeySymbol, const GameEventKeySymbol_t &pawnKeySymbol, IHandleEntity *pawn ) = 0;
+
+	virtual bool HasKey( const GameEventKeySymbol_t &keySymbol ) = 0;
 
 	// Something script vm related
 	virtual void unk001() = 0;
 
-	virtual KeyValues* GetDataKeys() const = 0;
+	// Not based on keyvalues anymore as it seems like
+	virtual void* GetDataKeys() const = 0;
 };
 
 abstract_class IGameEventListener2
