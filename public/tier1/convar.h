@@ -349,19 +349,16 @@ private:
 };
 
 using FnGenericChangeCallback_t = void(*)(BaseConVar* ref, CSplitScreenSlot nSlot, CVValue_t* pNewValue, CVValue_t* pOldValue);
-#pragma pack(push,1)
-struct ConVarSetup_t
-{
-	ConVarSetup_t() :
-	m_unknown1(0),
-	m_fnCallBack(nullptr),
-	m_eVarType(EConVarType_Invalid),
-	m_unknown2(0),
-	m_unknown3(0)
+
+struct ConVarCreation_t : CVarCreationBase_t {
+	ConVarCreation_t() :
+	m_pHandle(nullptr),
+	m_pConVarData(nullptr)
 	{}
 
-	int32_t m_unknown1; // 0x0
+	int32_t m_unknown1; // 0x18
 
+	#pragma pack(push,1)
 	struct ConVarValueInfo_t
 	{
 		ConVarValueInfo_t() :
@@ -370,38 +367,22 @@ struct ConVarSetup_t
 		m_bHasMax(false)
 		{}
 
-		bool m_bHasDefault; // 0x4
-		bool m_bHasMin; // 0x5
-		bool m_bHasMax; // 0x6
+		bool m_bHasDefault; // 0x22
+		bool m_bHasMin; // 0x23
+		bool m_bHasMax; // 0x24
 
-		CVValue_t m_defaultValue; // 0x7
-		CVValue_t m_minValue; // 0x17
-		CVValue_t m_maxValue; // 0x27
-	} m_valueInfo;
+		CVValue_t m_defaultValue; // 0x25
+		CVValue_t m_minValue; // 0x35
+		CVValue_t m_maxValue; // 0x45
+	} m_valueInfo; // 0x22
+	#pragma pack(pop)
 
-	char pad; // 0x37
-
-	FnGenericChangeCallback_t m_fnCallBack; // 0x38
-	EConVarType m_eVarType; // 0x40
-
-	int32_t m_unknown2; // 0x42
-	int16_t m_unknown3; // 0x46
-};
-#pragma pack(pop)
-static_assert(sizeof(ConVarSetup_t) == 0x48, "ConVarSetup_t is of the wrong size!");
-static_assert(sizeof(ConVarSetup_t) % 8 == 0x0, "ConVarSetup_t isn't 8 bytes aligned!");
-
-struct ConVarCreation_t : CVarCreationBase_t {
-	ConVarCreation_t() :
-	m_pHandle(nullptr),
-	m_pConVarData(nullptr)
-	{}
-	ConVarSetup_t m_cvarSetup; // 0x18
+	FnGenericChangeCallback_t m_fnCallBack; // 0x56
+	EConVarType m_eVarType; // 0x58
 
 	ConVarHandle* m_pHandle; // 0x60
 	ConVarBaseData_t** m_pConVarData; // 0x68
 };
-
 static_assert(sizeof(ConVarCreation_t) == 0x70, "ConVarCreation_t wrong size!");
 static_assert(sizeof(ConVarCreation_t) % 8 == 0x0, "ConVarCreation_t isn't 8 bytes aligned!");
 static_assert(sizeof(CVValue_t) == 0x10, "CVValue_t wrong size!");
@@ -431,7 +412,7 @@ public:
 	{
 		this->Init(INVALID_CONVAR_HANDLE, TranslateConVarType<T>());
 
-		ConVarSetup_t setup;
+		ConVarCreation_t setup;
 		setup.m_valueInfo.m_bHasDefault = true;
 		setup.m_valueInfo.m_defaultValue = value;
 		setup.m_eVarType = TranslateConVarType<T>();
@@ -444,7 +425,7 @@ public:
 	{
 		this->Init(INVALID_CONVAR_HANDLE, TranslateConVarType<T>());
 
-		ConVarSetup_t setup;
+		ConVarCreation_t setup;
 		setup.m_valueInfo.m_bHasDefault = true;
 		setup.m_valueInfo.m_defaultValue = value;
 
@@ -503,7 +484,7 @@ private:
 		this->m_Handle = defaultHandle;
 	}
 
-	void Register(const char* name, int32_t flags, const char* description, const ConVarSetup_t& setup)
+	void Register(const char* name, int32_t flags, const char* description, ConVarCreation_t& cvar)
 	{
 		this->m_ConVarData = ConVar_Invalid<T>();
 		this->m_Handle.Invalidate();
@@ -521,13 +502,9 @@ private:
 			flags |= FCVAR_DEVELOPMENTONLY;
 		}
 
-		ConVarCreation_t cvar;
-		
 		cvar.m_pszName = name;
 		cvar.m_pszHelpString = description;
 		cvar.m_nFlags = flags;
-
-		cvar.m_cvarSetup = setup;
 
 		cvar.m_pHandle = &this->m_Handle;
 		cvar.m_pConVarData = (ConVarBaseData_t**)&this->m_ConVarData;
