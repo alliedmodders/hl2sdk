@@ -242,6 +242,19 @@ struct ConVarBaseData_t
 	{
 	}
 
+	inline const char*	GetName( void ) const			{ return m_pszName; }
+	inline const char*	GetDescription( void ) const	{ return m_pszHelpString; }
+	inline EConVarType	GetType( void ) const			{ return m_eVarType; }
+
+	inline int		GetTimesChanges( void ) const		{ return m_iTimesChanged; }
+
+	inline bool		IsFlagSet( int64_t flag ) const		{ return ( flag & m_nFlags ) ? true : false; }
+	inline void		AddFlags( int64_t flags )			{ m_nFlags |= flags; }
+	inline void		RemoveFlags( int64_t flags )		{ m_nFlags &= ~flags; }
+	inline int64_t	GetFlags( void ) const				{ return m_nFlags; }
+
+	inline int		GetCallbackIndex( void ) const		{ return m_iCallbackIndex; }
+protected:
 	const char* m_pszName;
 
 	void* m_defaultValue;
@@ -286,10 +299,6 @@ friend class ConVar<T>;
 		delete m_eVarType;
 	}
 
-	inline const char*	GetName( ) const			{ return m_pszName; }
-	inline const char*	GetDescription( ) const		{ return m_pszHelpString; }
-	inline EConVarType	GetType( ) const			{ return m_eVarType; }
-
 	inline const T&	GetDefaultValue( ) const	{ return *reinterpret_cast<T*>(m_defaultValue); }
 	inline const T&	GetMinValue( ) const		{ return *reinterpret_cast<T*>(m_minValue); }
 	inline const T&	GetMaxValue( ) const		{ return *reinterpret_cast<T*>(m_maxValue); }
@@ -300,11 +309,6 @@ friend class ConVar<T>;
 
 	inline const T&	GetValue( int index = 0 ) const	{ return m_value[index]; }
 	inline void SetValue(const T& value, int index = 0)		{ m_value[index] = value; }
-
-	inline bool		IsFlagSet( int64_t flag ) const		{ return ( flag & m_nFlags ) ? true : false; }
-	inline void		AddFlags( int64_t flags )			{ m_nFlags |= flags; }
-	inline void		RemoveFlags( int64_t flags )		{ m_nFlags &= ~flags; }
-	inline int64_t	GetFlags( void ) const				{ return m_nFlags; }
 
 	T m_value[MAX_SPLITSCREEN_CLIENTS];
 };
