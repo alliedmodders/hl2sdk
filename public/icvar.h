@@ -109,8 +109,6 @@ struct CSplitScreenSlot
 // Called when a ConVar changes value
 //-----------------------------------------------------------------------------
 typedef void(*FnChangeCallbackGlobal_t)(BaseConVar* ref, CSplitScreenSlot nSlot, const char *pNewValue, const char *pOldValue);
-using FnChangeCallback_t = void(*)(BaseConVar* ref, CSplitScreenSlot nSlot, CVValue_t *pNewValue, CVValue_t *pOldValue);
-static_assert(sizeof(FnChangeCallback_t) == 0x8, "Wrong size for FnChangeCallback_t");
 
 //-----------------------------------------------------------------------------
 // Purpose: Replaces the ConVar*

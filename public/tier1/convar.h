@@ -408,7 +408,8 @@ struct ConVarSetup_t
 
 	char pad; // 0x37
 
-	FnChangeCallback_t callback; // 0x38
+	using FnGenericChangeCallback_t = void(*)(BaseConVar* ref, CSplitScreenSlot nSlot, CVValue_t* pNewValue, CVValue_t* pOldValue);
+	FnGenericChangeCallback_t callback; // 0x38
 	EConVarType type; // 0x40
 
 	int32_t unk1; // 0x42
@@ -454,6 +455,7 @@ template<typename T>
 class ConVar : public BaseConVar
 {
 public:
+	using FnChangeCallback_t = void(*)(ConVar<T>* ref, CSplitScreenSlot nSlot, T* pNewValue, T* pOldValue);
 	// sub_6A66B0
 	ConVar(const char* name, int32_t flags, const char* description, T value, FnChangeCallback_t cb = nullptr)
 	{
@@ -463,7 +465,7 @@ public:
 		setup.has_default = true;
 		setup.default_value = value;
 		setup.type = TranslateConVarType<T>();
-		setup.callback = cb;
+		setup.callback = reinterpret_cast<decltype(setup.callback)>(cb);
 
 		this->Register(name, flags &~ FCVAR_DEVELOPMENTONLY, description, setup);
 	}
@@ -482,7 +484,7 @@ public:
 		setup.has_max = max;
 		setup.max_value = maxValue;
 
-		setup.callback = cb;
+		setup.callback = reinterpret_cast<decltype(setup.callback)>(cb);
 		setup.type = TranslateConVarType<T>();
 
 		this->Register(name, flags &~ FCVAR_DEVELOPMENTONLY, description, setup);
