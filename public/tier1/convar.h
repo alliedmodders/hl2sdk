@@ -25,6 +25,7 @@
 #include "playerslot.h"
 
 #include <cstdint>
+#include <cinttypes>
 
 #ifdef _WIN32
 #define FORCEINLINE_CVAR FORCEINLINE
@@ -355,8 +356,6 @@ struct ConVarCreation_t : CVarCreationBase_t {
 	m_pHandle(nullptr),
 	m_pConVarData(nullptr)
 	{}
-
-	int32_t m_unknown1;
 	
 	#pragma pack(push,1)
 	struct ConVarValueInfo_t
@@ -366,6 +365,8 @@ struct ConVarCreation_t : CVarCreationBase_t {
 		m_bHasMin(false),
 		m_bHasMax(false)
 		{}
+
+		int32_t m_unknown1; // 0x18
 
 		bool m_bHasDefault; // 0x22
 		bool m_bHasMin; // 0x23
@@ -390,7 +391,7 @@ static_assert(sizeof(CVValue_t) == 0x10, "CVValue_t wrong size!");
 extern void* invalid_convar[EConVarType_MAX + 1];
 
 template<typename T>
-ConVarData_t<T>* ConVar_Invalid()
+ConVarData_t<T>* GetInvalidConVar()
 {
 	return (ConVarData_t<T>*)&invalid_convar[TranslateConVarType<T>()];
 }
@@ -406,9 +407,9 @@ template<typename T>
 class ConVar : public BaseConVar
 {
 public:
-	using FnChangeCallback_t = void(*)(ConVar<T>* ref, CSplitScreenSlot nSlot, T* pNewValue, T* pOldValue);
+	using FnChangeCallback_t = void(*)(ConVar<T>* ref, const CSplitScreenSlot nSlot, const T* pNewValue, const T* pOldValue);
 
-	ConVar(const char* name, int32_t flags, const char* description, T value, FnChangeCallback_t cb = nullptr)
+	ConVar(const char* name, int32_t flags, const char* description, const T& value, FnChangeCallback_t cb = nullptr)
 	{
 		this->Init(INVALID_CONVAR_HANDLE, TranslateConVarType<T>());
 
@@ -421,7 +422,7 @@ public:
 		this->Register(name, flags &~ FCVAR_DEVELOPMENTONLY, description, setup);
 	}
 
-	ConVar(const char* name, int32_t flags, const char* description, T value, bool min, T minValue, bool max, T maxValue, FnChangeCallback_t cb = nullptr)
+	ConVar(const char* name, int32_t flags, const char* description, const T& value, bool min, const T& minValue, bool max, const T& maxValue, FnChangeCallback_t cb = nullptr)
 	{
 		this->Init(INVALID_CONVAR_HANDLE, TranslateConVarType<T>());
 
@@ -449,16 +450,46 @@ public:
 	inline const char*	GetDescription( ) const		{ return m_ConVarData->GetDescription( ); }
 	inline EConVarType	GetType( ) const			{ return m_ConVarData->GetType( ); }
 
-	inline CVValue_t*	GetDefaultValue( ) const	{ return m_ConVarData->GetDefaultValue( ); }
-	inline CVValue_t*	GetMinValue( ) const		{ return m_ConVarData->GetMinValue( ); }
-	inline CVValue_t*	GetMaxValue( ) const		{ return m_ConVarData->GetMaxValue( ); }
+	inline bool HasDefaultValue( ) const	{ return m_ConVarData->HasDefaultValue( ); }
+	inline bool HasMinValue( ) const		{ return m_ConVarData->HasMinValue( ); }
+	inline bool HasMaxValue( ) const		{ return m_ConVarData->HasMaxValue( ); }
 
-	inline void SetDefaultValue(const T& value)	{ m_ConVarData->SetDefaultValue( value ); }
-	inline void SetMinValue(const T& value)		{ m_ConVarData->SetMinValue( value ); }
-	inline void SetMaxValue(const T& value)		{ m_ConVarData->SetMaxValue( value ); }
+	inline const T&	GetDefaultValue( ) const	{ return m_ConVarData->GetDefaultValue( ); }
+	inline const T&	GetMinValue( ) const		{ return m_ConVarData->GetMinValue( ); }
+	inline const T&	GetMaxValue( ) const		{ return m_ConVarData->GetMaxValue( ); }
+
+	inline void SetDefaultValue( const T& value )	{ m_ConVarData->SetDefaultValue( value ); }
+	inline void SetMinValue( const T& value )		{ m_ConVarData->SetMinValue( value ); }
+	inline void SetMaxValue( const T& value )		{ m_ConVarData->SetMaxValue( value ); }
+
+	inline void RemoveDefaultValue( )	{ m_ConVarData->RemoveDefaultValue( ); }
+	inline void RemoveMinValue( )		{ m_ConVarData->RemoveMinValue( ); }
+	inline void RemoveMaxValue( )		{ m_ConVarData->RemoveMaxValue( ); }
+
+	inline const T& Clamp(const T& value) const { return m_ConVarData->Clamp( value ); }
 	
-	inline const T&	GetValue( int index = 0 ) const			{ return m_ConVarData->GetValue( index ); }
-	inline void		SetValue(const T& value, int index = 0)	{ m_ConVarData->SetValue( value, index ); }
+	inline const T&	GetValue( const CSplitScreenSlot& index = CSplitScreenSlot() ) const { return m_ConVarData->GetValue( index ); }
+	inline void	SetValue( const T& val, const CSplitScreenSlot& index = CSplitScreenSlot() )
+	{
+		auto newValue = this->Clamp( val );
+
+		char szNewValue[256], szOldValue[256];
+		ConVarData_t<T>::ValueToString( newValue, szNewValue, sizeof(szNewValue) );
+		m_ConVarData->GetStringValue( szOldValue, sizeof(szOldValue), index );
+
+		// Deep copy
+		T oldValue = this->GetValue( );
+		m_ConVarData->SetValue( newValue, index );
+
+		g_pCVar->CallChangeCallback( this->m_Handle, index, (const CVValue_t*)&newValue, (const CVValue_t*)&oldValue );
+		g_pCVar->CallGlobalChangeCallbacks( this, index, szNewValue, szOldValue );
+	}
+
+	inline void GetStringValue( char* dst, size_t len, const CSplitScreenSlot& index = 0 ) const { m_ConVarData->GetStringValue( dst, len, index ); }
+
+	inline void GetStringDefaultValue( char* dst, size_t len ) const	{ m_ConVarData->GetStringDefaultValue( dst, len ); }
+	inline void GetStringMinValue( char* dst, size_t len ) const		{ m_ConVarData->GetStringMinValue( dst, len ); }
+	inline void GetStringMaxValue( char* dst, size_t len ) const		{ m_ConVarData->GetStringMaxValue( dst, len ); }
 
 	inline bool		IsFlagSet( int64_t flag ) const		{ return m_ConVarData->IsFlagSet( flag ); }
 	inline void		AddFlags( int64_t flags )			{ m_ConVarData->AddFlags( flags ); }
@@ -473,10 +504,11 @@ private:
 
 		if (g_pCVar)
 		{
-			this->m_ConVarData = g_pCVar->GetConVar(defaultHandle)->Cast<T>();
+			auto cvar = g_pCVar->GetConVar(defaultHandle);
+			this->m_ConVarData = (cvar) ? g_pCVar->GetConVar(defaultHandle)->Cast<T>() : nullptr;
 			if (!this->m_ConVarData)
 			{
-				this->m_ConVarData = ConVar_Invalid<T>();
+				this->m_ConVarData = GetInvalidConVar<T>();
 			}
 			// technically this
 			//result = *(char ***)(sub_10B7760((unsigned int)a3) + 80);
@@ -486,7 +518,7 @@ private:
 
 	void Register(const char* name, int32_t flags, const char* description, ConVarCreation_t& cvar)
 	{
-		this->m_ConVarData = ConVar_Invalid<T>();
+		this->m_ConVarData = GetInvalidConVar<T>();
 		this->m_Handle.Invalidate();
 
 		if (!CommandLine()->HasParm("-tools")
@@ -518,6 +550,21 @@ private:
 };
 static_assert(sizeof(ConVar<int>) == 0x10, "ConVar is of the wrong size!");
 static_assert(sizeof(ConVar<int>) == sizeof(ConVar<Vector>), "Templated ConVar size varies!");
+
+// Special case for string
+template<> inline void ConVar<const char*>::SetValue( const char*const& val, const CSplitScreenSlot& index )
+{
+	auto newValue = this->Clamp( val );
+
+	char szNewValue[256], szOldValue[256];
+	ConVarData_t<const char*>::ValueToString( newValue, szNewValue, sizeof(szNewValue) );
+	m_ConVarData->GetStringValue( szOldValue, sizeof(szOldValue), index );
+
+	m_ConVarData->SetValue( newValue, index );
+
+	g_pCVar->CallChangeCallback( this->m_Handle, index, (const CVValue_t*)&newValue, (const CVValue_t*)&szOldValue );
+	g_pCVar->CallGlobalChangeCallbacks( this, index, szNewValue, szOldValue );
+}
 
 //-----------------------------------------------------------------------------
 
