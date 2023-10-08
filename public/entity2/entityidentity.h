@@ -11,6 +11,7 @@
 
 #include "eiface.h"
 #include "entitycomponent.h"
+#include "ihandleentity.h"
 #include "entityhandle.h"
 
 class CEntityIdentity;
@@ -21,10 +22,13 @@ struct ChangeAccessorFieldPathIndex_t
 };
 
 typedef CUtlStringToken WorldGroupId_t;
+typedef uint32 SpawnGroupHandle_t;
 
 class CEntityInstance : public IHandleEntity
 {
 public:
+	CEntityHandle GetRefEHandle() const;
+
 	// MNetworkDisable
 	CUtlSymbolLarge m_iszPrivateVScripts; // 0x8	
 	// MNetworkEnable
@@ -38,7 +42,6 @@ public:
 	// MNetworkDisable
 	CScriptComponent* m_CScriptComponent; // 0x28	
 };
-
 
 // Size: 0x78
 class CEntityIdentity
@@ -72,5 +75,10 @@ public:
 	CEntityIdentity* m_pPrevByClass; // 0x68	
 	CEntityIdentity* m_pNextByClass; // 0x70	
 };
+
+inline CEntityHandle CEntityInstance::GetRefEHandle() const
+{
+	return this->m_pEntity->m_EHandle;
+}
 
 #endif // ENTITYIDENTITY_H
