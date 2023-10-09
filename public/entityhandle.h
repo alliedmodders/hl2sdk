@@ -11,8 +11,7 @@
 #endif
 
 #include "const.h"
-
-class CEntityInstance;
+#include "entity2/entityinstance.h"
 
 class CEntityHandle
 {
@@ -58,8 +57,6 @@ protected:
 		} m_Parts;
 	};
 };
-
-#include "entity2/entityinstance.h"
 
 inline CEntityHandle::CEntityHandle()
 {
