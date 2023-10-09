@@ -7,6 +7,7 @@
 
 #include "tier0/platform.h"
 #include "strtools.h"
+#include "utlstring.h"
 
 class CFormatStringElement;
 class IFormatOutputStream;
