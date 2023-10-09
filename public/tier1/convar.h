@@ -366,15 +366,23 @@ struct ConVarCreation_t : CVarCreationBase_t {
 		m_bHasMax(false)
 		{}
 
+		template<typename T>
+		T& DefaultValue()	{ return *reinterpret_cast<T*>(m_defaultValue); }
+		template<typename T>
+		T& MinValue()		{ return *reinterpret_cast<T*>(m_minValue); }
+		template<typename T>
+		T& MaxValue()		{ return *reinterpret_cast<T*>(m_maxValue); }
+
 		int32_t m_unknown1; // 0x18
 
 		bool m_bHasDefault; // 0x22
 		bool m_bHasMin; // 0x23
 		bool m_bHasMax; // 0x24
-
-		CVValue_t m_defaultValue; // 0x25
-		CVValue_t m_minValue; // 0x35
-		CVValue_t m_maxValue; // 0x45
+	private:
+		// Don't use CVValue_t directly, to avoid initialising memory
+		uint8_t m_defaultValue[sizeof(CVValue_t)]; // 0x25
+		uint8_t m_minValue[sizeof(CVValue_t)]; // 0x35
+		uint8_t m_maxValue[sizeof(CVValue_t)]; // 0x45
 	} m_valueInfo; // 0x22
 	#pragma pack(pop)
 
@@ -382,18 +390,38 @@ struct ConVarCreation_t : CVarCreationBase_t {
 	EConVarType m_eVarType; // 0x58
 
 	ConVarHandle* m_pHandle; // 0x60
-	ConVarBaseData_t** m_pConVarData; // 0x68
+	CConVarBaseData** m_pConVarData; // 0x68
 };
 static_assert(sizeof(ConVarCreation_t) == 0x70, "ConVarCreation_t wrong size!");
 static_assert(sizeof(ConVarCreation_t) % 8 == 0x0, "ConVarCreation_t isn't 8 bytes aligned!");
 static_assert(sizeof(CVValue_t) == 0x10, "CVValue_t wrong size!");
 
-extern void* invalid_convar[EConVarType_MAX + 1];
-
-template<typename T>
-ConVarData_t<T>* GetInvalidConVar()
+static CConVarBaseData* GetInvalidConVar( EConVarType type )
 {
-	return (ConVarData_t<T>*)&invalid_convar[TranslateConVarType<T>()];
+	static CConVarBaseData* invalid_convar[EConVarType_MAX + 1] = {
+		new CConVarData<bool>(),
+		new CConVarData<int16_t>(),
+		new CConVarData<uint16_t>(),
+		new CConVarData<int32_t>(),
+		new CConVarData<uint32_t>(),
+		new CConVarData<int64_t>(),
+		new CConVarData<uint64_t>(),
+		new CConVarData<float>(),
+		new CConVarData<double>(),
+		new CConVarData<const char*>(),
+		new CConVarData<Color>(),
+		new CConVarData<Vector2D>(),
+		new CConVarData<Vector>(),
+		new CConVarData<Vector4D>(),
+		new CConVarData<QAngle>(),
+		new CConVarData<void*>() // EConVarType_MAX
+	};
+
+	if (type == EConVarType_Invalid)
+	{
+		return invalid_convar[ EConVarType_MAX ];
+	}
+	return invalid_convar[ type ];
 }
 
 void SetupConVar( ConVarCreation_t& cvar );
@@ -401,8 +429,29 @@ void UnRegisterConVar( ConVarHandle& cvar );
 void RegisterConVar( ConVarCreation_t& cvar );
 
 //-----------------------------------------------------------------
-// Used to read/write/create? convars (replaces the FindVar method)
+// Used to read/write/create convars (replaces the FindVar method)
 //-----------------------------------------------------------------
+class BaseConVar
+{
+public:
+	inline const char*	GetName( ) const			{ return m_ConVarData->GetName( ); }
+	inline const char*	GetDescription( ) const		{ return m_ConVarData->GetDescription( ); }
+	inline EConVarType	GetType( ) const			{ return m_ConVarData->GetType( ); }
+
+	inline bool HasDefaultValue( ) const	{ return m_ConVarData->HasDefaultValue( ); }
+	inline bool HasMinValue( ) const		{ return m_ConVarData->HasMinValue( ); }
+	inline bool HasMaxValue( ) const		{ return m_ConVarData->HasMaxValue( ); }
+
+	inline bool		IsFlagSet( int64_t flag ) const		{ return m_ConVarData->IsFlagSet( flag ); }
+	inline void		AddFlags( int64_t flags )			{ m_ConVarData->AddFlags( flags ); }
+	inline void		RemoveFlags( int64_t flags )		{ return m_ConVarData->RemoveFlags( flags ); }
+	inline int64_t	GetFlags( void ) const				{ return m_ConVarData->GetFlags( ); }
+protected:
+	// High-speed method to read convar data
+	ConVarHandle m_Handle;
+	CConVarBaseData* m_ConVarData;
+};
+
 template<typename T>
 class ConVar : public BaseConVar
 {
@@ -415,7 +464,7 @@ public:
 
 		ConVarCreation_t setup;
 		setup.m_valueInfo.m_bHasDefault = true;
-		setup.m_valueInfo.m_defaultValue = value;
+		setup.m_valueInfo.DefaultValue<T>() = value;
 		setup.m_eVarType = TranslateConVarType<T>();
 		setup.m_fnCallBack = reinterpret_cast<FnGenericChangeCallback_t>(cb);
 
@@ -428,12 +477,12 @@ public:
 
 		ConVarCreation_t setup;
 		setup.m_valueInfo.m_bHasDefault = true;
-		setup.m_valueInfo.m_defaultValue = value;
+		setup.m_valueInfo.DefaultValue<T>() = value;
 
 		setup.m_valueInfo.m_bHasMin = min;
 		setup.m_valueInfo.m_bHasMax = max;
-		setup.m_valueInfo.m_minValue = minValue;
-		setup.m_valueInfo.m_maxValue = maxValue;
+		setup.m_valueInfo.MinValue<T>() = minValue;
+		setup.m_valueInfo.MaxValue<T>() = maxValue;
 
 		setup.m_eVarType = TranslateConVarType<T>();
 		setup.m_fnCallBack = reinterpret_cast<FnGenericChangeCallback_t>(cb);
@@ -446,69 +495,58 @@ public:
 		UnRegisterConVar(this->m_Handle);
 	}
 
-	inline const char*	GetName( ) const			{ return m_ConVarData->GetName( ); }
-	inline const char*	GetDescription( ) const		{ return m_ConVarData->GetDescription( ); }
-	inline EConVarType	GetType( ) const			{ return m_ConVarData->GetType( ); }
+	inline const CConVarData<T>* GetConVarData() const { return reinterpret_cast<const CConVarData<T>*>(m_ConVarData); }
+	inline CConVarData<T>* GetConVarData() { return reinterpret_cast<CConVarData<T>*>(m_ConVarData); }
 
-	inline bool HasDefaultValue( ) const	{ return m_ConVarData->HasDefaultValue( ); }
-	inline bool HasMinValue( ) const		{ return m_ConVarData->HasMinValue( ); }
-	inline bool HasMaxValue( ) const		{ return m_ConVarData->HasMaxValue( ); }
+	inline const T&	GetDefaultValue( ) const	{ return GetConVarData()->GetDefaultValue( ); }
+	inline const T&	GetMinValue( ) const		{ return GetConVarData()->GetMinValue( ); }
+	inline const T&	GetMaxValue( ) const		{ return GetConVarData()->GetMaxValue( ); }
 
-	inline const T&	GetDefaultValue( ) const	{ return m_ConVarData->GetDefaultValue( ); }
-	inline const T&	GetMinValue( ) const		{ return m_ConVarData->GetMinValue( ); }
-	inline const T&	GetMaxValue( ) const		{ return m_ConVarData->GetMaxValue( ); }
+	inline void SetDefaultValue( const T& value )	{ GetConVarData()->SetDefaultValue( value ); }
+	inline void SetMinValue( const T& value )		{ GetConVarData()->SetMinValue( value ); }
+	inline void SetMaxValue( const T& value )		{ GetConVarData()->SetMaxValue( value ); }
 
-	inline void SetDefaultValue( const T& value )	{ m_ConVarData->SetDefaultValue( value ); }
-	inline void SetMinValue( const T& value )		{ m_ConVarData->SetMinValue( value ); }
-	inline void SetMaxValue( const T& value )		{ m_ConVarData->SetMaxValue( value ); }
+	inline void RemoveDefaultValue( )	{ GetConVarData()->RemoveDefaultValue( ); }
+	inline void RemoveMinValue( )		{ GetConVarData()->RemoveMinValue( ); }
+	inline void RemoveMaxValue( )		{ GetConVarData()->RemoveMaxValue( ); }
 
-	inline void RemoveDefaultValue( )	{ m_ConVarData->RemoveDefaultValue( ); }
-	inline void RemoveMinValue( )		{ m_ConVarData->RemoveMinValue( ); }
-	inline void RemoveMaxValue( )		{ m_ConVarData->RemoveMaxValue( ); }
-
-	inline const T& Clamp(const T& value) const { return m_ConVarData->Clamp( value ); }
+	inline const T& Clamp(const T& value) const { return GetConVarData()->Clamp( value ); }
 	
-	inline const T&	GetValue( const CSplitScreenSlot& index = CSplitScreenSlot() ) const { return m_ConVarData->GetValue( index ); }
+	inline const T&	GetValue( const CSplitScreenSlot& index = CSplitScreenSlot() ) const { return GetConVarData()->GetValue( index ); }
 	inline void	SetValue( const T& val, const CSplitScreenSlot& index = CSplitScreenSlot() )
 	{
 		auto newValue = this->Clamp( val );
 
 		char szNewValue[256], szOldValue[256];
-		ConVarData_t<T>::ValueToString( newValue, szNewValue, sizeof(szNewValue) );
-		m_ConVarData->GetStringValue( szOldValue, sizeof(szOldValue), index );
+		CConVarData<T>::ValueToString( newValue, szNewValue, sizeof(szNewValue) );
+		GetConVarData()->GetStringValue( szOldValue, sizeof(szOldValue), index );
 
 		// Deep copy
 		T oldValue = this->GetValue( );
-		m_ConVarData->SetValue( newValue, index );
+		GetConVarData()->SetValue( newValue, index );
 
 		g_pCVar->CallChangeCallback( this->m_Handle, index, (const CVValue_t*)&newValue, (const CVValue_t*)&oldValue );
 		g_pCVar->CallGlobalChangeCallbacks( this, index, szNewValue, szOldValue );
 	}
 
-	inline void GetStringValue( char* dst, size_t len, const CSplitScreenSlot& index = 0 ) const { m_ConVarData->GetStringValue( dst, len, index ); }
+	inline void GetStringValue( char* dst, size_t len, const CSplitScreenSlot& index = 0 ) const { GetConVarData()->GetStringValue( dst, len, index ); }
 
-	inline void GetStringDefaultValue( char* dst, size_t len ) const	{ m_ConVarData->GetStringDefaultValue( dst, len ); }
-	inline void GetStringMinValue( char* dst, size_t len ) const		{ m_ConVarData->GetStringMinValue( dst, len ); }
-	inline void GetStringMaxValue( char* dst, size_t len ) const		{ m_ConVarData->GetStringMaxValue( dst, len ); }
-
-	inline bool		IsFlagSet( int64_t flag ) const		{ return m_ConVarData->IsFlagSet( flag ); }
-	inline void		AddFlags( int64_t flags )			{ m_ConVarData->AddFlags( flags ); }
-	inline void		RemoveFlags( int64_t flags )		{ return m_ConVarData->RemoveFlags( flags ); }
-	inline int64_t	GetFlags( void ) const				{ return m_ConVarData->GetFlags( ); }
-
+	inline void GetStringDefaultValue( char* dst, size_t len ) const	{ GetConVarData()->GetStringDefaultValue( dst, len ); }
+	inline void GetStringMinValue( char* dst, size_t len ) const		{ GetConVarData()->GetStringMinValue( dst, len ); }
+	inline void GetStringMaxValue( char* dst, size_t len ) const		{ GetConVarData()->GetStringMaxValue( dst, len ); }
 private:
 	void Init(ConVarHandle defaultHandle, EConVarType type)
 	{
-		this->m_Handle.Invalidate();
+		this->m_Handle.Invalidate( );
 		this->m_ConVarData = nullptr;
 
-		if (g_pCVar)
+		if ( g_pCVar )
 		{
-			auto cvar = g_pCVar->GetConVar(defaultHandle);
-			this->m_ConVarData = (cvar) ? g_pCVar->GetConVar(defaultHandle)->Cast<T>() : nullptr;
-			if (!this->m_ConVarData)
+			auto cvar = g_pCVar->GetConVar( defaultHandle );
+			this->m_ConVarData = ( cvar && cvar->Cast<T>( ) ) ? cvar : nullptr;
+			if ( !this->m_ConVarData )
 			{
-				this->m_ConVarData = GetInvalidConVar<T>();
+				this->m_ConVarData = GetInvalidConVar( TranslateConVarType<T>( ) );
 			}
 			// technically this
 			//result = *(char ***)(sub_10B7760((unsigned int)a3) + 80);
@@ -518,7 +556,7 @@ private:
 
 	void Register(const char* name, int32_t flags, const char* description, ConVarCreation_t& cvar)
 	{
-		this->m_ConVarData = GetInvalidConVar<T>();
+		this->m_ConVarData = GetInvalidConVar( cvar.m_eVarType );
 		this->m_Handle.Invalidate();
 
 		if (!CommandLine()->HasParm("-tools")
@@ -539,14 +577,10 @@ private:
 		cvar.m_nFlags = flags;
 
 		cvar.m_pHandle = &this->m_Handle;
-		cvar.m_pConVarData = (ConVarBaseData_t**)&this->m_ConVarData;
+		cvar.m_pConVarData = &this->m_ConVarData;
 
 		SetupConVar(cvar);
 	}
-
-	// High-speed method to read convar data
-	ConVarHandle m_Handle;
-	ConVarData_t<T>* m_ConVarData;
 };
 static_assert(sizeof(ConVar<int>) == 0x10, "ConVar is of the wrong size!");
 static_assert(sizeof(ConVar<int>) == sizeof(ConVar<Vector>), "Templated ConVar size varies!");
@@ -557,10 +591,10 @@ template<> inline void ConVar<const char*>::SetValue( const char*const& val, con
 	auto newValue = this->Clamp( val );
 
 	char szNewValue[256], szOldValue[256];
-	ConVarData_t<const char*>::ValueToString( newValue, szNewValue, sizeof(szNewValue) );
-	m_ConVarData->GetStringValue( szOldValue, sizeof(szOldValue), index );
+	CConVarData<const char*>::ValueToString( newValue, szNewValue, sizeof(szNewValue) );
+	GetConVarData()->GetStringValue( szOldValue, sizeof(szOldValue), index );
 
-	m_ConVarData->SetValue( newValue, index );
+	GetConVarData()->SetValue( newValue, index );
 
 	g_pCVar->CallChangeCallback( this->m_Handle, index, (const CVValue_t*)&newValue, (const CVValue_t*)&szOldValue );
 	g_pCVar->CallGlobalChangeCallbacks( this, index, szNewValue, szOldValue );

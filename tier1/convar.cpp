@@ -486,25 +486,6 @@ void ConCommand::Destroy()
 //
 //-----------------------------------------------------------------------------
 
-void* invalid_convar[EConVarType_MAX + 1] = {
-	new ConVarData_t<bool>(),
-	new ConVarData_t<int16_t>(),
-	new ConVarData_t<uint16_t>(),
-	new ConVarData_t<int32_t>(),
-	new ConVarData_t<uint32_t>(),
-	new ConVarData_t<int64_t>(),
-	new ConVarData_t<uint64_t>(),
-	new ConVarData_t<float>(),
-	new ConVarData_t<double>(),
-	new ConVarData_t<const char*>(),
-	new ConVarData_t<Color>(),
-	new ConVarData_t<Vector2D>(),
-	new ConVarData_t<Vector>(),
-	new ConVarData_t<Vector4D>(),
-	new ConVarData_t<QAngle>(),
-	new ConVarData_t<void*>() // EConVarType_MAX
-};
-
 #ifdef CONVAR_WORK_FINISHED
 
 //-----------------------------------------------------------------------------
