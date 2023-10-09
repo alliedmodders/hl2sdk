@@ -240,7 +240,8 @@ public:
 	inline bool HasMinValue( ) const		{ return m_minValue != nullptr; }
 	inline bool HasMaxValue( ) const		{ return m_maxValue  != nullptr; }
 
-	inline int		GetTimesChanges( void ) const		{ return m_iTimesChanged; }
+	inline int	GetTimesChanged( void ) const	{ return m_iTimesChanged; }
+	inline void	SetTimesChanged( int val )		{ m_iTimesChanged = val; }
 
 	inline bool		IsFlagSet( int64_t flag ) const		{ return ( flag & m_nFlags ) ? true : false; }
 	inline void		AddFlags( int64_t flags )			{ m_nFlags |= flags; }
@@ -463,7 +464,7 @@ public:
 	// Install a global change callback (to be called when any convar changes) 
 	virtual void			InstallGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
 	virtual void			RemoveGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
-	virtual void			CallGlobalChangeCallbacks( BaseConVar* ref, CSplitScreenSlot nSlot, const char* newValue, char* oldValue ) = 0;
+	virtual void			CallGlobalChangeCallbacks( BaseConVar* ref, CSplitScreenSlot nSlot, const char* newValue, const char* oldValue ) = 0;
 	// Reverts cvars which contain a specific flag
 	virtual void			RevertFlaggedConVars( int nFlag ) = 0;
 

@@ -523,10 +523,7 @@ public:
 
 		// Deep copy
 		T oldValue = this->GetValue( );
-		GetConVarData()->SetValue( newValue, index );
-
-		g_pCVar->CallChangeCallback( this->m_Handle, index, (const CVValue_t*)&newValue, (const CVValue_t*)&oldValue );
-		g_pCVar->CallGlobalChangeCallbacks( this, index, szNewValue, szOldValue );
+		this->UpdateValue( newValue, index, (const CVValue_t*)&newValue, (const CVValue_t*)&oldValue, szNewValue, szOldValue );
 	}
 
 	inline void GetStringValue( char* dst, size_t len, const CSplitScreenSlot& index = 0 ) const { GetConVarData()->GetStringValue( dst, len, index ); }
@@ -581,6 +578,15 @@ private:
 
 		SetupConVar(cvar);
 	}
+
+	inline void UpdateValue( const T& value, const CSplitScreenSlot& index, const CVValue_t* newValue, const CVValue_t* oldValue, const char* szNewValue, const char* szOldValue )
+	{
+		GetConVarData()->SetValue( value, index );
+
+		GetConVarData()->SetTimesChanged( GetConVarData()->GetTimesChanged( ) + 1 );
+		g_pCVar->CallChangeCallback( this->m_Handle, index, newValue, oldValue );
+		g_pCVar->CallGlobalChangeCallbacks( this, index, szNewValue, szOldValue );
+	}
 };
 static_assert(sizeof(ConVar<int>) == 0x10, "ConVar is of the wrong size!");
 static_assert(sizeof(ConVar<int>) == sizeof(ConVar<Vector>), "Templated ConVar size varies!");
@@ -594,10 +600,7 @@ template<> inline void ConVar<const char*>::SetValue( const char*const& val, con
 	CConVarData<const char*>::ValueToString( newValue, szNewValue, sizeof(szNewValue) );
 	GetConVarData()->GetStringValue( szOldValue, sizeof(szOldValue), index );
 
-	GetConVarData()->SetValue( newValue, index );
-
-	g_pCVar->CallChangeCallback( this->m_Handle, index, (const CVValue_t*)&newValue, (const CVValue_t*)&szOldValue );
-	g_pCVar->CallGlobalChangeCallbacks( this, index, szNewValue, szOldValue );
+	this->UpdateValue( newValue, index, (const CVValue_t*)&newValue, (const CVValue_t*)&szOldValue, szNewValue, szOldValue );
 }
 
 //-----------------------------------------------------------------------------
