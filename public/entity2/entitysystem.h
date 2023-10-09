@@ -154,7 +154,7 @@ public:
 
 private:
 	uint8 pad2696[0xa88];
-#ifdef PLATFORM_LINUX
+#ifdef PLATFORM_POSIX
 	uint8 pad5392[0x30];
 #endif
 };
