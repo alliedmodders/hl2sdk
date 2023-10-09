@@ -30,7 +30,7 @@ inline CEntityInstance* CEntityHandle::Get() const
 inline CEntityHandle CEntityInstance::GetRefEHandle() const
 {
 	CEntityHandle handle = m_pEntity->m_EHandle;
-	handle.m_Parts.m_Serial - (m_pEntity->m_flags & EF_IS_INVALID_EHANDLE);
+	handle.m_Parts.m_Serial -= (m_pEntity->m_flags & EF_IS_INVALID_EHANDLE);
 
 	return handle;
 }
