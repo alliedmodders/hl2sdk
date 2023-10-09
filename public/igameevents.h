@@ -20,7 +20,7 @@
 #include "tier1/bitbuf.h"
 #include "tier1/generichash.h"
 #include "tier1/utlstring.h"
-#include "ihandleentity.h"
+#include "entity2/entityinstance.h"
 
 class CMsgSource1LegacyGameEvent;
 class CPlayerSlot;
@@ -124,13 +124,13 @@ public:
 	virtual CEntityHandle GetEHandle( const GameEventKeySymbol_t &keySymbol, CEntityHandle defaultValue = CEntityHandle() ) = 0;
 
 	// Returns the entity instance, mostly used for _pawn keys, might return 0 if used on any other key (even on a controller).
-	virtual IHandleEntity *GetEntity( const GameEventKeySymbol_t &keySymbol, IHandleEntity *fallbackInstance = NULL ) = 0;
+	virtual CEntityInstance *GetEntity( const GameEventKeySymbol_t &keySymbol, CEntityInstance *fallbackInstance = NULL ) = 0;
 	virtual CEntityIndex GetEntityIndex( const GameEventKeySymbol_t &keySymbol, CEntityIndex defaultValue = CEntityIndex( -1 ) ) = 0;
 
 	virtual CPlayerSlot GetPlayerSlot( const GameEventKeySymbol_t &keySymbol ) = 0;
 
-	virtual IHandleEntity *GetPlayerController( const GameEventKeySymbol_t &keySymbol ) = 0;
-	virtual IHandleEntity *GetPlayerPawn( const GameEventKeySymbol_t &keySymbol ) = 0;
+	virtual CEntityInstance *GetPlayerController( const GameEventKeySymbol_t &keySymbol ) = 0;
+	virtual CEntityInstance *GetPlayerPawn( const GameEventKeySymbol_t &keySymbol ) = 0;
 
 	// Returns the EHandle for the _pawn entity.
 	virtual CEntityHandle GetPawnEHandle( const GameEventKeySymbol_t &keySymbol ) = 0;
@@ -145,16 +145,16 @@ public:
 	virtual void SetPtr( const GameEventKeySymbol_t &keySymbol, void *value ) = 0;
 
 	virtual void SetEntity( const GameEventKeySymbol_t &keySymbol, CEntityIndex value ) = 0;
-	virtual void SetEntity( const GameEventKeySymbol_t &keySymbol, IHandleEntity *value ) = 0;
+	virtual void SetEntity( const GameEventKeySymbol_t &keySymbol, CEntityInstance *value ) = 0;
 
 	// Also sets the _pawn key
 	virtual void SetPlayer( const GameEventKeySymbol_t &keySymbol, CPlayerSlot value ) = 0;
 	// Also sets the _pawn key (Expects pawn entity to be passed)
-	virtual void SetPlayer( const GameEventKeySymbol_t &keySymbol, IHandleEntity *pawn ) = 0;
+	virtual void SetPlayer( const GameEventKeySymbol_t &keySymbol, CEntityInstance *pawn ) = 0;
 
 	// Expects pawn entity to be passed, will set the controller entity as a controllerKeyName
 	// and pawn entity as a pawnKeyName.
-	virtual void SetPlayerRaw( const GameEventKeySymbol_t &controllerKeySymbol, const GameEventKeySymbol_t &pawnKeySymbol, IHandleEntity *pawn ) = 0;
+	virtual void SetPlayerRaw( const GameEventKeySymbol_t &controllerKeySymbol, const GameEventKeySymbol_t &pawnKeySymbol, CEntityInstance *pawn ) = 0;
 
 	virtual bool HasKey( const GameEventKeySymbol_t &keySymbol ) = 0;
 

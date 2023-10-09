@@ -13,7 +13,7 @@
 #endif
 
 
-#include "ihandleentity.h"
+#include "entity2/entityinstance.h"
 
 class ICollideable;
 class IServerNetworkable;
@@ -22,7 +22,7 @@ class CBaseEntity;
 
 // This is the server's version of IUnknown. We may want to use a QueryInterface-like
 // mechanism if this gets big.
-class IServerUnknown : public IHandleEntity
+class IServerUnknown : public CEntityInstance
 {
 public:
 	// Gets the interface to the collideable + networkable representation of the entity

@@ -13,7 +13,7 @@
 
 
 #include "tier0/platform.h"
-#include "ihandleentity.h"
+#include "entity2/entityinstance.h"
 
 class IClientNetworkable;
 class C_BaseEntity;
@@ -28,7 +28,7 @@ class IClientAlphaProperty;
 
 // This is the client's version of IUnknown. We may want to use a QueryInterface-like
 // mechanism if this gets big.
-abstract_class IClientUnknown : public IHandleEntity
+abstract_class IClientUnknown : public CEntityInstance
 {
 public:
 	virtual ICollideable*		GetCollideable() = 0;

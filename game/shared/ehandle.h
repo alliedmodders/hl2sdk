@@ -11,8 +11,8 @@
 #pragma once
 #endif
 
-#include "entityhandle.h"
 #include "entity2/entitysystem.h"
+#include "entityhandle.h"
 
 // -------------------------------------------------------------------------------------------------- //
 // Game-code CBaseHandle implementation.
@@ -22,6 +22,17 @@ inline CEntityInstance* CEntityHandle::Get() const
 {
 	extern CEntitySystem *g_pEntitySystem;
 	return g_pEntitySystem->GetBaseEntity( *this );
+}
+
+// -------------------------------------------------------------------------------------------------- //
+// Game-code CEntityInstance implementation.
+// -------------------------------------------------------------------------------------------------- //
+inline CEntityHandle CEntityInstance::GetRefEHandle() const
+{
+	CEntityHandle handle = m_pEntity->m_EHandle;
+	handle.m_Parts.m_Serial - (m_pEntity->m_flags & EF_IS_INVALID_EHANDLE);
+
+	return handle;
 }
 
 // -------------------------------------------------------------------------------------------------- //
@@ -137,7 +148,7 @@ inline bool CHandle<T>::operator!=( T *val ) const
 template<class T>
 void CHandle<T>::Set( const T* pVal )
 {
-	CBaseHandle::Set( static_cast<const CEntityInstance*>(pVal) );
+	CBaseHandle::Set(pVal);
 }
 
 template<class T>

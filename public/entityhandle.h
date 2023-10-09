@@ -17,6 +17,8 @@ class CEntityInstance;
 class CEntityHandle
 {
 public:
+	friend class CEntityInstance;
+
 	CEntityHandle();
 	CEntityHandle(const CEntityHandle& other);
 	CEntityHandle(uint32 value);
@@ -57,7 +59,7 @@ protected:
 	};
 };
 
-#include "entity2/entityidentity.h"
+#include "entity2/entityinstance.h"
 
 inline CEntityHandle::CEntityHandle()
 {

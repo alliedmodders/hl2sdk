@@ -5,9 +5,9 @@
 #include "tier1/utlmemory.h"
 #include "tier1/utlvector.h"
 #include "tier1/utldict.h"
-#include "entityhandle.h"
-#include "baseentity.h"
 #include "eiface.h"
+#include "baseentity.h"
+#include "entityhandle.h"
 #include "concreteentitylist.h"
 #include "entitydatainstantiator.h"
 
