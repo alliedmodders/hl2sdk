@@ -342,6 +342,7 @@ public:
 		this->Destroy();
 	}
 
+	inline ConCommandHandle GetHandle() const { return m_Handle; };
 private:
 	void Create( const char *pName, const char *pHelpString, int64_t flags, ConCommandCreation_t& setup );
 	void Destroy( );
@@ -446,6 +447,9 @@ public:
 	inline void		AddFlags( int64_t flags )			{ m_ConVarData->AddFlags( flags ); }
 	inline void		RemoveFlags( int64_t flags )		{ return m_ConVarData->RemoveFlags( flags ); }
 	inline int64_t	GetFlags( void ) const				{ return m_ConVarData->GetFlags( ); }
+
+	inline ConVarHandle GetHandle() const { return m_Handle; };
+	inline CConVarBaseData* GetConVarData() const { return m_ConVarData; };
 protected:
 	// High-speed method to read convar data
 	ConVarHandle m_Handle;
