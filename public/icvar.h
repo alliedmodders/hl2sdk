@@ -408,8 +408,8 @@ friend class ConVar<T>;
 	inline void GetStringValue( char* dst, size_t len, const CSplitScreenSlot& index = 0 ) const { ValueToString( GetValue( index ), dst, len ); }
 
 	inline void GetStringDefaultValue( char* dst, size_t len ) const	{ ValueToString( GetDefaultValue( ), dst, len ); }
-	inline void GetStringMinValue( char* dst, size_t len ) const		{ ValueToString( GetMaxValue( ), dst, len ); }
-	inline void GetStringMaxValue( char* dst, size_t len ) const		{ ValueToString( GetValue( index ), dst, len ); }
+	inline void GetStringMinValue( char* dst, size_t len ) const		{ ValueToString( GetMinValue( ), dst, len ); }
+	inline void GetStringMaxValue( char* dst, size_t len ) const		{ ValueToString( GetMaxValue( ), dst, len ); }
 
 	inline void SetStringValue( const char* src, const CSplitScreenSlot& index = 0 ) const { SetValue( ValueFromString( src ), index ); }
 
