@@ -25,7 +25,7 @@ class KeyValues;
 abstract_class ILoopMode
 {
 public:
-	virtual void LoopInit(KeyValues *a2, void *a3) = 0;
+	virtual bool LoopInit(KeyValues *a2, void *a3) = 0;
 	virtual void unk1(void) = 0;
 	virtual void OnLoopActivate(void *a2, void* a3) = 0;
 	virtual void OnLoopDeactivate(void* a2, void* a3) = 0;
