@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ?1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -25,7 +25,7 @@ public:
 	virtual bool	IsInitMessage( void ) const = 0;
 
 	virtual int		GetRecipientCount( void ) const = 0;
-	virtual CEntityIndex	GetRecipientIndex( int slot ) const = 0;
+	virtual CPlayerSlot	GetRecipientIndex( int slot ) const = 0;
 };
 
 #endif // IRECIPIENTFILTER_H
