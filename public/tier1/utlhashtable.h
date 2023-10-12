@@ -340,7 +340,7 @@ void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::DoReal
 			}
 			else
 			{
-				pOldBase = StackAlloc( entry_t, nOldSize );
+				pOldBase = (entry_t *)stackalloc( nBytes );
 			}
 
 			memcpy( pOldBase, m_table.Base(), nBytes );

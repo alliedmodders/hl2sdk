@@ -108,15 +108,7 @@ template<> inline unsigned HashItem<char *>(char * const &pszKey )
 uint32 MurmurHash2( const void * key, int len, uint32 seed );
 
 // return murmurhash2 of a downcased string
-uint32 MurmurHash2LowerCase( char const *pString, int nLength, uint32 nSeed )
-{
-	CBufferStringGrowable<128> buff;
-
-	buff.Insert( 0, pString, nLength );
-	buff.ToLowerFast( 0 );
-
-	return MurmurHash2( buff.Get(), nLength, nSeed );
-}
+uint32 MurmurHash2LowerCase( char const *pString, int nLength, uint32 nSeed );
 
 uint64 MurmurHash64( const void * key, int len, uint32 seed );
 
