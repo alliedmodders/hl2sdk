@@ -69,10 +69,7 @@ struct GameEventKeySymbol_t
 		if (!keyName || !keyName[0])
 			return;
 
-		CUtlString buf( keyName );
-		buf.ToLowerFast();
-
-		m_nHashCode = MurmurHash2(buf.Get(), strlen(keyName), 0x31415926);
+		m_nHashCode = MurmurHash2LowerCase(keyName, strlen(keyName), 0x31415926);
 		m_pszKeyName = keyName;
 
 #if 0
