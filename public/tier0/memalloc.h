@@ -65,6 +65,8 @@ struct _CrtMemState;
 
 typedef size_t (*MemAllocFailHandler_t)( size_t );
 
+PLATFORM_INTERFACE void CMemAllocSystemInitialize();
+
 //-----------------------------------------------------------------------------
 // NOTE! This should never be called directly from leaf code
 // Just use new,delete,malloc,free etc. They will call into this eventually

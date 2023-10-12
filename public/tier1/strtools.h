@@ -139,6 +139,8 @@ inline char *strlwr( char *start )
 // AM TODO: handle this for the rest (above and more) now exported by tier0
 PLATFORM_INTERFACE int V_stricmp_fast(const char* s1, const char* s2);
 
+PLATFORM_INTERFACE int _V_strnicmp_fast(const char* s1, const char* s2, int n);
+
 // Compares two strings with the support of wildcarding only for the first arg (includes '*' for multiple and '?' for single char usages)
 PLATFORM_INTERFACE int V_CompareNameWithWildcards(const char *wildcarded_string, const char *compare_to, bool case_sensitive = false);
 

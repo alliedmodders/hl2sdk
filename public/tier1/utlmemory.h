@@ -19,6 +19,7 @@
 #include "tier0/platform.h"
 
 #include "tier0/memalloc.h"
+#include "tier1/rawallocator.h"
 #include "mathlib/mathlib.h"
 #include "tier0/memdbgon.h"
 
@@ -48,7 +49,7 @@ class CUtlMemory
 {
 public:
 	// constructor, destructor
-	CUtlMemory( int nGrowSize = 0, int nInitSize = 0 );
+	CUtlMemory( int nGrowSize = 0, int nInitSize = 0, RawAllocatorType_t eAllocatorType = RawAllocator_Standard );
 	CUtlMemory( T* pMemory, int numElements );
 	CUtlMemory( const T* pMemory, int numElements );
 	~CUtlMemory();
@@ -128,6 +129,8 @@ public:
 	// Set the size by which the memory grows
 	void SetGrowSize( int size );
 
+	RawAllocatorType_t GetRawAllocatorType() const { return RawAllocator_Standard; };
+
 protected:
 	void ValidateGrowSize()
 	{
@@ -169,14 +172,6 @@ public:
 	CUtlMemoryFixedGrowable( int nGrowSize = 0, int nInitSize = SIZE ) : BaseClass( m_pFixedMemory, SIZE ) 
 	{
 		Assert( nInitSize == 0 || nInitSize == SIZE );
-	}
-
-	void EnsureCapacity( int num )
-	{
-		if ( CUtlMemory<T>::m_nAllocationCount >= num )
-			return;
-
-		BaseClass::EnsureCapacity( num );
 	}
 
 private:
@@ -389,11 +384,10 @@ private:
 //-----------------------------------------------------------------------------
 
 template< class T, class I >
-CUtlMemory<T,I>::CUtlMemory( int nGrowSize, int nInitAllocationCount ) : m_pMemory(0), 
-	m_nAllocationCount( nInitAllocationCount ), m_nGrowSize( nGrowSize )
+CUtlMemory<T,I>::CUtlMemory( int nGrowSize, int nInitAllocationCount, RawAllocatorType_t eAllocatorType ) : m_pMemory(0), 
+	m_nAllocationCount( nInitAllocationCount ), m_nGrowSize( nGrowSize & ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER) )
 {
 	ValidateGrowSize();
-	Assert( nGrowSize >= 0 );
 	if (m_nAllocationCount)
 	{
 		UTLMEMORY_TRACK_ALLOC();
@@ -429,10 +423,9 @@ void CUtlMemory<T,I>::Init( int nGrowSize /*= 0*/, int nInitSize /*= 0*/ )
 {
 	Purge();
 
-	m_nGrowSize = nGrowSize;
+	m_nGrowSize = nGrowSize & ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER);
 	m_nAllocationCount = nInitSize;
 	ValidateGrowSize();
-	Assert( nGrowSize >= 0 );
 	if (m_nAllocationCount)
 	{
 		UTLMEMORY_TRACK_ALLOC();
@@ -462,7 +455,7 @@ void CUtlMemory<T,I>::ConvertToGrowableMemory( int nGrowSize )
 	if ( !IsExternallyAllocated() )
 		return;
 
-	m_nGrowSize = nGrowSize;
+	m_nGrowSize = nGrowSize & ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER);
 	if (m_nAllocationCount)
 	{
 		UTLMEMORY_TRACK_ALLOC();
@@ -518,6 +511,8 @@ void CUtlMemory<T,I>::AssumeMemory( T* pMemory, int numElements )
 	// Simply take the pointer but don't mark us as external
 	m_pMemory = pMemory;
 	m_nAllocationCount = numElements;
+
+	m_nGrowSize &= ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER);
 }
 
 template< class T, class I >
@@ -596,9 +591,7 @@ bool CUtlMemory<T,I>::IsReadOnly() const
 template< class T, class I >
 void CUtlMemory<T,I>::SetGrowSize( int nSize )
 {
-	Assert( !IsExternallyAllocated() );
-	Assert( nSize >= 0 );
-	m_nGrowSize = nSize;
+	m_nGrowSize |= nSize & ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER);
 	ValidateGrowSize();
 }
 
@@ -648,51 +641,27 @@ inline bool CUtlMemory<T,I>::IsIdxValid( I i ) const
 	return ( x >= 0 ) && ( x < m_nAllocationCount );
 }
 
+PLATFORM_INTERFACE int		UtlMemory_CalcNewAllocationCount( int nAllocationCount, int nGrowSize, int nNewSize, int nBytesItem );
+PLATFORM_INTERFACE void*	UtlMemory_Alloc( void* pMem, bool bRealloc, int nNewSize, int nOldSize );
+PLATFORM_INTERFACE void		UtlMemory_FailedAllocation( int nTotalElements, int nNewElements );
+
 //-----------------------------------------------------------------------------
 // Grows the memory
 //-----------------------------------------------------------------------------
-inline int UtlMemory_CalcNewAllocationCount( int nAllocationCount, int nGrowSize, int nNewSize, int nBytesItem )
-{
-	if ( nGrowSize )
-	{ 
-		nAllocationCount = ((1 + ((nNewSize - 1) / nGrowSize)) * nGrowSize);
-	}
-	else 
-	{
-		if ( !nAllocationCount )
-		{
-			// Compute an allocation which is at least as big as a cache line...
-			nAllocationCount = (31 + nBytesItem) / nBytesItem;
-		}
-
-		while (nAllocationCount < nNewSize)
-		{
-#ifndef _X360
-			nAllocationCount *= 2;
-#else
-			int nNewAllocationCount = ( nAllocationCount * 9) / 8; // 12.5 %
-			if ( nNewAllocationCount > nAllocationCount )
-				nAllocationCount = nNewAllocationCount;
-			else
-				nAllocationCount *= 2;
-#endif
-		}
-	}
-
-	return nAllocationCount;
-}
-
 template< class T, class I >
 void CUtlMemory<T,I>::Grow( int num )
 {
 	Assert( num > 0 );
 
-	if ( IsExternallyAllocated() )
+	if ( IsReadOnly() )
 	{
 		// Can't grow a buffer whose memory was externally allocated 
 		Assert(0);
 		return;
 	}
+
+	if ( ( ( int64 )m_nAllocationCount + num ) > INT_MAX )
+		UtlMemory_FailedAllocation( m_nAllocationCount, num );
 
 	// Make sure we have at least numallocated + num allocations.
 	// Use the grow rules specified for this memory (in m_nGrowSize)
@@ -700,7 +669,7 @@ void CUtlMemory<T,I>::Grow( int num )
 
 	UTLMEMORY_TRACK_FREE();
 
-	int nNewAllocationCount = UtlMemory_CalcNewAllocationCount( m_nAllocationCount, m_nGrowSize, nAllocationRequested, sizeof(T) );
+	int nNewAllocationCount = UtlMemory_CalcNewAllocationCount( m_nAllocationCount, m_nGrowSize & ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER), nAllocationRequested, sizeof(T) );
 
 	// if m_nAllocationRequested wraps index type I, recalculate
 	if ( ( int )( I )nNewAllocationCount < nAllocationRequested )
@@ -724,22 +693,16 @@ void CUtlMemory<T,I>::Grow( int num )
 		}
 	}
 
+	MEM_ALLOC_CREDIT_CLASS();
+	m_pMemory = (T*)UtlMemory_Alloc( m_pMemory, !IsExternallyAllocated(), nNewAllocationCount * sizeof(T), m_nAllocationCount * sizeof(T) );
+	Assert( m_pMemory );
+
+	if ( IsExternallyAllocated() )
+		m_nGrowSize &= ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER);
+
 	m_nAllocationCount = nNewAllocationCount;
 
 	UTLMEMORY_TRACK_ALLOC();
-
-	if (m_pMemory)
-	{
-		MEM_ALLOC_CREDIT_CLASS();
-		m_pMemory = (T*)realloc( m_pMemory, m_nAllocationCount * sizeof(T) );
-		Assert( m_pMemory );
-	}
-	else
-	{
-		MEM_ALLOC_CREDIT_CLASS();
-		m_pMemory = (T*)malloc( m_nAllocationCount * sizeof(T) );
-		Assert( m_pMemory );
-	}
 }
 
 
@@ -752,7 +715,7 @@ inline void CUtlMemory<T,I>::EnsureCapacity( int num )
 	if (m_nAllocationCount >= num)
 		return;
 
-	if ( IsExternallyAllocated() )
+	if ( IsReadOnly() )
 	{
 		// Can't grow a buffer whose memory was externally allocated 
 		Assert(0);
@@ -761,20 +724,15 @@ inline void CUtlMemory<T,I>::EnsureCapacity( int num )
 
 	UTLMEMORY_TRACK_FREE();
 
+	MEM_ALLOC_CREDIT_CLASS();
+	m_pMemory = (T*)UtlMemory_Alloc( m_pMemory, !IsExternallyAllocated(), num * sizeof(T), m_nAllocationCount * sizeof(T) );
+
+	if ( IsExternallyAllocated() )
+		m_nGrowSize &= ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER);
+
 	m_nAllocationCount = num;
 
 	UTLMEMORY_TRACK_ALLOC();
-
-	if (m_pMemory)
-	{
-		MEM_ALLOC_CREDIT_CLASS();
-		m_pMemory = (T*)realloc( m_pMemory, m_nAllocationCount * sizeof(T) );
-	}
-	else
-	{
-		MEM_ALLOC_CREDIT_CLASS();
-		m_pMemory = (T*)malloc( m_nAllocationCount * sizeof(T) );
-	}
 }
 
 
@@ -815,7 +773,7 @@ void CUtlMemory<T,I>::Purge( int numElements )
 		return;
 	}
 
-	if ( IsExternallyAllocated() )
+	if ( IsReadOnly() )
 	{
 		// Can't shrink a buffer whose memory was externally allocated, fail silently like purge 
 		return;
@@ -837,13 +795,15 @@ void CUtlMemory<T,I>::Purge( int numElements )
 
 	UTLMEMORY_TRACK_FREE();
 
-	m_nAllocationCount = numElements;
-	
-	UTLMEMORY_TRACK_ALLOC();
-
-	// Allocation count > 0, shrink it down.
 	MEM_ALLOC_CREDIT_CLASS();
-	m_pMemory = (T*)realloc( m_pMemory, m_nAllocationCount * sizeof(T) );
+	m_pMemory = (T*)UtlMemory_Alloc( m_pMemory, !IsExternallyAllocated(), numElements * sizeof(T), m_nAllocationCount * sizeof(T) );
+
+	if ( IsExternallyAllocated() )
+		m_nGrowSize &= ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER);
+
+	m_nAllocationCount = numElements;
+
+	UTLMEMORY_TRACK_ALLOC();
 }
 
 //-----------------------------------------------------------------------------
@@ -1061,6 +1021,294 @@ void CUtlMemoryAligned<T, nAlignment>::Purge()
 			CUtlMemory<T>::m_pMemory = 0;
 		}
 		CUtlMemory<T>::m_nAllocationCount = 0;
+	}
+}
+
+template< class T >
+class CUtlMemory_RawAllocator
+{
+public:
+	// constructor, destructor
+	CUtlMemory_RawAllocator( int nGrowSize = 0, int nInitSize = 0, RawAllocatorType_t eAllocatorType = RawAllocator_Standard );
+	CUtlMemory_RawAllocator( T* pMemory, int numElements ) { Assert( 0 ); }
+	~CUtlMemory_RawAllocator();
+
+	// Can we use this index?
+	bool IsIdxValid( int i ) const						{ return (i >= 0) && (i < NumAllocated()); }
+	static int InvalidIndex()							{ return -1; }
+
+	// Gets the base address (can change when adding elements!)
+	T* Base()											{ return m_pMemory; }
+	const T* Base() const								{ return m_pMemory; }
+
+	// element access
+	T& operator[]( int i )								{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	const T& operator[]( int i ) const					{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	T& Element( int i )									{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	const T& Element( int i ) const						{ Assert( IsIdxValid(i) ); return Base()[i];	}
+
+	// Attaches the buffer to external memory....
+	void SetExternalBuffer( T* pMemory, int numElements ) { Assert( 0 ); }
+	void AssumeMemory( T *pMemory, int nSize, RawAllocatorType_t eAllocatorType = RawAllocator_Standard );
+	T* Detach();
+	void *DetachMemory();
+
+	// Fast swap
+	void Swap( CUtlMemory_RawAllocator< T > &mem );
+
+	// Size
+	int NumAllocated() const							{ return m_nAllocationCount; }
+	int Count() const									{ return m_nAllocationCount; }
+
+	// Grows the memory, so that at least allocated + num elements are allocated
+	void Grow( int num = 1 );
+
+	// Makes sure we've got at least this much memory
+	void EnsureCapacity( int num );
+
+	// Memory deallocation
+	void Purge();
+
+	// Purge all but the given number of elements
+	void Purge( int numElements );
+
+	// is the memory externally allocated?
+	bool IsExternallyAllocated() const						{ return false; }
+
+	// Set the size by which the memory grows
+	void SetGrowSize( int size );
+	
+	RawAllocatorType_t GetRawAllocatorType() const;
+
+	class Iterator_t
+	{
+	public:
+		Iterator_t( int i ) : index( i ) {}
+		int index;
+		bool operator==( const Iterator_t it ) const	{ return index == it.index; }
+		bool operator!=( const Iterator_t it ) const	{ return index != it.index; }
+	};
+	Iterator_t First() const							{ return Iterator_t( IsIdxValid( 0 ) ? 0 : InvalidIndex() ); }
+	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( IsIdxValid( it.index + 1 ) ? it.index + 1 : InvalidIndex() ); }
+	int GetIndex( const Iterator_t &it ) const			{ return it.index; }
+	bool IsIdxAfter( int i, const Iterator_t &it ) const { return i > it.index; }
+	bool IsValidIterator( const Iterator_t &it ) const	{ return IsIdxValid( it.index ); }
+	Iterator_t InvalidIterator() const					{ return Iterator_t( InvalidIndex() ); }
+
+private:
+	void SetRawAllocatorType( RawAllocatorType_t eAllocatorType );
+
+	enum
+	{
+		PLATFORM_ALLOC_MARKER = (1 << 30),
+		UNUSED_MARKER = (1 << 31),
+	};
+
+	T* m_pMemory;
+	int m_nAllocationCount;
+	int m_nGrowSize;
+};
+
+
+//-----------------------------------------------------------------------------
+// constructor, destructor
+//-----------------------------------------------------------------------------
+
+template< class T >
+CUtlMemory_RawAllocator<T>::CUtlMemory_RawAllocator( int nGrowSize, int nInitAllocationCount, RawAllocatorType_t eAllocatorType ) : m_pMemory(0), 
+	m_nAllocationCount(0), m_nGrowSize(nGrowSize & ~(PLATFORM_ALLOC_MARKER | UNUSED_MARKER))
+{
+	SetRawAllocatorType( eAllocatorType );
+	EnsureCapacity( nInitAllocationCount );
+}
+
+template< class T >
+CUtlMemory_RawAllocator<T>::~CUtlMemory_RawAllocator()
+{
+	Purge();
+}
+
+//-----------------------------------------------------------------------------
+// Fast swap
+//-----------------------------------------------------------------------------
+template< class T >
+void CUtlMemory_RawAllocator<T>::Swap( CUtlMemory_RawAllocator<T> &mem )
+{
+	V_swap( m_nGrowSize, mem.m_nGrowSize );
+	V_swap( m_pMemory, mem.m_pMemory );
+	V_swap( m_nAllocationCount, mem.m_nAllocationCount );
+}
+
+template< class T >
+void CUtlMemory_RawAllocator<T>::AssumeMemory( T* pMemory, int numElements, RawAllocatorType_t eAllocatorType )
+{
+	// Blow away any existing allocated memory
+	Purge();
+
+	// Simply take the pointer but don't mark us as external
+	m_pMemory = pMemory;
+	m_nAllocationCount = numElements;
+
+	SetRawAllocatorType( eAllocatorType );
+}
+
+template< class T >
+void *CUtlMemory_RawAllocator<T>::DetachMemory()
+{
+	void *pMemory = m_pMemory;
+	m_pMemory = 0;
+	m_nAllocationCount = 0;
+	return pMemory;
+}
+
+template< class T >
+inline T* CUtlMemory_RawAllocator<T>::Detach()
+{
+	return (T*)DetachMemory();
+}
+
+template< class T >
+void CUtlMemory_RawAllocator<T>::SetGrowSize( int nSize )
+{
+	m_nGrowSize |= nSize & ~(PLATFORM_ALLOC_MARKER | UNUSED_MARKER);
+}
+
+//-----------------------------------------------------------------------------
+// Grows the memory
+//-----------------------------------------------------------------------------
+template< class T >
+void CUtlMemory_RawAllocator<T>::Grow( int num )
+{
+	Assert( num > 0 );
+	
+	if ( ( INT_MAX - m_nAllocationCount ) < num )
+	{
+		Plat_FatalErrorFunc( "%s: Invalid grow amount %d\n", __FUNCTION__, num );
+		DebuggerBreak();
+	}
+	
+	EnsureCapacity( m_nAllocationCount + num );
+}
+
+//-----------------------------------------------------------------------------
+// Makes sure we've got at least this much memory
+//-----------------------------------------------------------------------------
+template< class T >
+inline void CUtlMemory_RawAllocator<T>::EnsureCapacity( int num )
+{
+	if (m_nAllocationCount >= num)
+		return;
+	
+	if ( num > ( SIZE_MAX / sizeof(T) ) )
+	{
+		Plat_FatalErrorFunc( "%s: Invalid capacity %u\n", __FUNCTION__, num );
+		DebuggerBreak();
+	}
+	
+	void *pMemory = m_pMemory;
+	size_t nSize = m_nAllocationCount * sizeof(T);
+	RawAllocatorType_t eAllocatorType = GetRawAllocatorType();
+
+	size_t adjustedSize;
+	m_pMemory = (T*)CRawAllocator::Alloc( eAllocatorType, num * sizeof(T), &adjustedSize );
+	m_nAllocationCount = ( int )( adjustedSize / sizeof(T) );
+
+	if ( pMemory )
+	{
+		memcpy( m_pMemory, pMemory, nSize );
+		CRawAllocator::Free( eAllocatorType, pMemory, nSize );
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Memory deallocation
+//-----------------------------------------------------------------------------
+template< class T >
+void CUtlMemory_RawAllocator<T>::Purge()
+{
+	if (m_pMemory)
+	{
+		CRawAllocator::Free( GetRawAllocatorType(), m_pMemory, m_nAllocationCount * sizeof(T) );
+		m_pMemory = 0;
+		m_nAllocationCount = 0;
+	}
+}
+
+template< class T >
+void CUtlMemory_RawAllocator<T>::Purge( int numElements )
+{
+	Assert( numElements >= 0 );
+
+	if( numElements > m_nAllocationCount )
+	{
+		// Ensure this isn't a grow request in disguise.
+		Assert( numElements <= m_nAllocationCount );
+		return;
+	}
+
+	// If we have zero elements, simply do a purge:
+	if( numElements == 0 )
+	{
+		Purge();
+		return;
+	}
+
+	// If the number of elements is the same as the allocation count, we are done.
+	if( numElements == m_nAllocationCount )
+	{
+		return;
+	}
+
+
+	if( !m_pMemory )
+	{
+		// Allocation count is non zero, but memory is null.
+		Assert( m_pMemory );
+		return;
+	}
+
+	void *pMemory = m_pMemory;
+	size_t nSize = m_nAllocationCount * sizeof(T);
+	RawAllocatorType_t eAllocatorType = GetRawAllocatorType();
+
+	size_t adjustedSize;
+	m_pMemory = (T*)CRawAllocator::Alloc( eAllocatorType, numElements * sizeof(T), &adjustedSize );
+
+	if ( adjustedSize < nSize )
+	{
+		m_nAllocationCount = ( int )( adjustedSize / sizeof(T) );
+		memcpy( m_pMemory, pMemory, adjustedSize );
+		CRawAllocator::Free( eAllocatorType, pMemory, nSize );
+	}
+	else
+	{
+		CRawAllocator::Free( eAllocatorType, m_pMemory, adjustedSize );
+		m_pMemory = pMemory;
+	}
+}
+
+template< class T >
+RawAllocatorType_t CUtlMemory_RawAllocator<T>::GetRawAllocatorType() const
+{
+	return ( RawAllocatorType_t )( ( m_nGrowSize & PLATFORM_ALLOC_MARKER ) != 0 );
+}
+
+template< class T >
+void CUtlMemory_RawAllocator<T>::SetRawAllocatorType( RawAllocatorType_t eAllocatorType )
+{
+	if ( eAllocatorType == RawAllocator_Platform )
+	{
+		m_nGrowSize |= PLATFORM_ALLOC_MARKER;
+	}
+	else
+	{
+		if ( eAllocatorType != RawAllocator_Standard )
+		{
+			Plat_FatalErrorFunc( "%s: Unsupported raw allocator type %u\n", __FUNCTION__, eAllocatorType );
+			DebuggerBreak();
+		}
+		
+		m_nGrowSize &= ~PLATFORM_ALLOC_MARKER;
 	}
 }
 

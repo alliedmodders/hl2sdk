@@ -332,7 +332,7 @@ typedef unsigned int		uint;
 #ifndef UINT32_MAX
 #define  UINT32_MAX			((uint32)~0)
 #endif
-#ifndef UINT16_MAX
+#ifndef UINT64_MAX
 #define  UINT64_MAX			((uint64)~0)
 #endif
 
@@ -547,6 +547,13 @@ typedef unsigned int		uint;
 #endif
 
 
+//-----------------------------------------------------------------------------
+// Convert int<-->pointer, avoiding 32/64-bit compiler warnings:
+//-----------------------------------------------------------------------------
+#define INT_TO_POINTER( i ) (void *)( ( i ) + (char *)NULL )
+#define POINTER_TO_INT( p ) ( (int)(uintp)( p ) )
+
+
 // This can be used to declare an abstract (interface only) class.
 // Classes marked abstract should not be instantiated.  If they are, and access violation will occur.
 //
@@ -650,8 +657,14 @@ typedef unsigned int		uint;
 
 #endif
 
-#define  stackfree( _p )			0
+#define stackalloc_aligned( _size, _align )		(void*)( ( ((uintp)alloca( ALIGN_VALUE( ( _size ) + (_align ),  ( _align ) ) )) + ( _align ) ) & ~( _align - 1 ) )
 
+// We should probably always just align to 16 bytes, stackalloc just causes too many problems without this behavior. Source2 does it already.
+// #define stackalloc( _size )							stackalloc_aligned( _size, 16 )
+
+#define  stackfree( _p )			0
+// two-argument ( type, #elements) stackalloc
+#define StackAlloc( typ, nelements ) ( ( typ * )	stackalloc_aligned( ( nelements ) * sizeof(typ), 16 ) )
 
 //-----------------------------------------------------------------------------
 // Used to break into the debugger
@@ -1333,6 +1346,24 @@ template <class T, typename ARG1, typename ARG2, typename ARG3, typename ARG4, t
 inline T* Construct( T* pMemory, ARG1 a1, ARG2 a2, ARG3 a3, ARG4 a4, ARG5 a5 )
 {
 	return ::new( pMemory ) T( a1, a2, a3, a4, a5 );
+}
+
+template <class T, class P>
+inline void ConstructOneArg( T* pMemory, P const& arg)
+{
+	::new( pMemory ) T(arg);
+}
+
+template <class T, class P1, class P2 >
+inline void ConstructTwoArg( T* pMemory, P1 const& arg1, P2 const& arg2)
+{
+	::new( pMemory ) T(arg1, arg2);
+}
+
+template <class T, class P1, class P2, class P3 >
+inline void ConstructThreeArg( T* pMemory, P1 const& arg1, P2 const& arg2, P3 const& arg3)
+{
+	::new( pMemory ) T(arg1, arg2, arg3);
 }
 
 template <class T>
