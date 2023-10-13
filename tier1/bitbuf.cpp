@@ -1157,7 +1157,7 @@ float bf_read::ReadBitCoordMP( bool bIntegral, bool bLowPrecision )
 		-1.f/(1<<COORD_FRACTIONAL_BITS_MP_LOWPRECISION)
 	};
 	//equivalent to: float multiply = mul_table[ ((flags & SIGN) ? 1 : 0) + bLowPrecision*2 ];
-	float multiply = *(float*)((uintptr_t)&mul_table[0] + (flags & 4) + bLowPrecision*8);
+	float multiply = *(float*)((uintp)&mul_table[0] + (flags & 4) + bLowPrecision*8);
 
 	static const unsigned char numbits_table[8] =
 	{

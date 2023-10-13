@@ -16,6 +16,7 @@
 
 #include "tier0/dbg.h"
 #include <string.h>
+#include <cstdint>
 #include "tier0/platform.h"
 
 #include "tier0/memalloc.h"

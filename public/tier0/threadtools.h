@@ -1436,11 +1436,11 @@ public:
 		{
 			while( ! MessageWaiting() )
 				SignalEvent.Wait();
-			QueueAccessMutex.Lock();
+			QueueAccessMutex.Lock( __FILE__, __LINE__ );
 			if (! Head )
 			{
 				// multiple readers could make this null
-				QueueAccessMutex.Unlock();
+				QueueAccessMutex.Unlock( __FILE__, __LINE__ );
 				continue;
 			}
 			*( pMsg ) = Head->Data;
@@ -1448,7 +1448,7 @@ public:
 			Head = Head->Next;
 			if (! Head)										// if empty, fix tail ptr
 				Tail = NULL;
-			QueueAccessMutex.Unlock();
+			QueueAccessMutex.Unlock( __FILE__, __LINE__ );
 			delete remove_this;
 			break;
 		}
@@ -1459,7 +1459,7 @@ public:
 		MsgNode *new1=new MsgNode;
 		new1->Data=Msg;
 		new1->Next=NULL;
-		QueueAccessMutex.Lock();
+		QueueAccessMutex.Lock( __FILE__, __LINE__ );
 		if ( Tail )
 		{
 			Tail->Next=new1;
@@ -1471,7 +1471,7 @@ public:
 			Tail = new1;
 		}
 		SignalEvent.Set();
-		QueueAccessMutex.Unlock();
+		QueueAccessMutex.Unlock( __FILE__, __LINE__ );
 	}
 };
 
