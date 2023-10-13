@@ -12,6 +12,7 @@
 
 #include <appframework/IAppSystem.h>
 #include <KeyValues.h>
+#include <engine/eventdispatcher.h>
 
 class ISource2WorldSession;
 class ISceneView;
@@ -105,9 +106,9 @@ abstract_class ILoopMode
 public:
 	virtual bool LoopInit( KeyValues *pKeyValues, ILoopModePrerequisiteRegistry *pRegistry ) = 0;
 	virtual void LoopShutdown( void ) = 0;
-	virtual void OnLoopActivate( const EngineLoopState_t &state, /*CEventDispatcher<CEventIDManager_Default> **/void* pEventDispatcher) = 0;
-	virtual void OnLoopDeactivate( const EngineLoopState_t &state, /*CEventDispatcher<CEventIDManager_Default> **/void *pEventDispatcher ) = 0;
-	virtual void RegisterEventMap( /*CEventDispatcher<CEventIDManager_Default> **/void* pEventDispatcher, EventMapRegistrationType_t nRegistrationType) = 0;
+	virtual void OnLoopActivate( const EngineLoopState_t &state, CEventDispatcher<CEventIDManager_Default> *pEventDispatcher) = 0;
+	virtual void OnLoopDeactivate( const EngineLoopState_t &state, CEventDispatcher<CEventIDManager_Default> *pEventDispatcher ) = 0;
+	virtual void RegisterEventMap( CEventDispatcher<CEventIDManager_Default> *pEventDispatcher, EventMapRegistrationType_t nRegistrationType) = 0;
 	virtual InputHandlerResult_t HandleInputEvent( const InputEvent_t &event, CSplitScreenSlot nSplitScreenPlayerSlot ) = 0;
 	virtual ISceneView* AddViewsToSceneSystem( const EngineLoopState_t &state, double flRenderTime, double flRealTime,
 		const RenderViewport_t &viewport, const RHBackColorBuffer_t &backColorBuffer ) = 0;
