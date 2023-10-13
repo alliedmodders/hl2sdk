@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -97,18 +97,19 @@ public:
 	virtual void	StartupServer( const GameSessionConfiguration_t &config, ISource2WorldSession *pWorldSession, const char * ) = 0;
 	virtual void	SetGameSpawnGroupMgr( IGameSpawnGroupMgr *pMgr ) = 0;
 	virtual void	AddServerPrerequisites( const GameSessionConfiguration_t &, const char *, ILoopModePrerequisiteRegistry *, bool ) = 0;
-	virtual void	SetServerSocket( int ) = 0;
+	//virtual void	SetServerSocket( int ) = 0;
 	virtual bool	IsServerRunning( void ) const = 0;
 	virtual void	DisconnectGameNow( /*ENetworkDisconnectionReason*/ int ) = 0;
 	virtual void	PrintSpawnGroupStatus( void ) const = 0;
 	virtual void	SetFinalSimulationTickThisFrame( int ) = 0;
 	virtual void	*GetGameServer( void ) = 0;
-	virtual int		GetTickInterval( void ) const = 0;
-	virtual void	ProcessSocket( void ) = 0;
+	//virtual int		GetTickInterval( void ) const = 0;
+	//virtual void	ProcessSocket( void ) = 0;
 	virtual int		GetServerNetworkAddress( void ) = 0;
 	virtual bool	GameLoadFailed( void ) const = 0;
 	virtual void	SetGameLoadFailed( bool bFailed ) = 0;
 	virtual void	SetGameLoadStarted( void ) = 0;
+	virtual void	unk_18019F5B0( void ) = 0;
 	virtual void	StartChangeLevel( void ) = 0;
 	virtual void	PreserveSteamID( void ) = 0;
 	virtual CRC32_t	GetServerSerializersCRC( void ) = 0;
