@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include "tier0/basetypes.h"
 #include "tier0/platform.h"
+#include "tier1/utlstring.h"
 #include "generichash.h"
 #include <ctype.h>
 
@@ -350,4 +351,13 @@ uint32 MurmurHash2( const void *key, int len, uint32 seed )
   h ^= h >> 15;
 
   return h;
+}
+
+// return murmurhash2 of a downcased string
+uint32 MurmurHash2LowerCase( char const *pString, int nLength, uint32 nSeed )
+{
+	CUtlString buf( pString ); 
+	buf.ToLowerFast(); 
+  
+	return MurmurHash2( buf.Get(), nLength, nSeed ); 
 }
