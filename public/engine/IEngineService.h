@@ -13,8 +13,8 @@
 #include <appframework/IAppSystem.h>
 #include <inputsystem/InputEnums.h>
 #include <iloopmode.h>
-// AM TODO: eventdispatcher.h needs to be added when we get CEventDispatcher ready.
 
+class ISwitchLoopModeStatusNotify;
 class IAddonListChangeNotify;
 
 struct EventClientOutput_t
@@ -30,12 +30,12 @@ public:
 	virtual void		*GetServiceDependencies( void ) = 0;
 	virtual const char	*GetName( void ) const = 0;
 	virtual bool		ShouldActivate( const char * ) = 0;
-	virtual void		OnLoopActivate( const EngineLoopState_t &loopState, /*CEventDispatcher<CEventIDManager_Default> * */void * pEventDispatcher) = 0;
-	virtual void		OnLoopDeactivate( const EngineLoopState_t &loopState, /*CEventDispatcher<CEventIDManager_Default> * */ void *pEventDispatcher) = 0;
+	virtual void		OnLoopActivate( const EngineLoopState_t &loopState, CEventDispatcher<CEventIDManager_Default> *pEventDispatcher) = 0;
+	virtual void		OnLoopDeactivate( const EngineLoopState_t &loopState, CEventDispatcher<CEventIDManager_Default> *pEventDispatcher) = 0;
 	virtual bool		IsActive( void ) const = 0;
 	virtual void		SetActive( bool ) = 0;
 	virtual void		SetName( const char *pszName ) = 0;
-	virtual void		RegisterEventMap( /*CEventDispatcher<CEventIDManager_Default> * */ void *pEventDispatcher, EventMapRegistrationType_t nRegistrationType ) = 0;
+	virtual void		RegisterEventMap( CEventDispatcher<CEventIDManager_Default> *pEventDispatcher, EventMapRegistrationType_t nRegistrationType ) = 0;
 	virtual uint16		GetServiceIndex( void ) = 0;
 	virtual void		SetServiceIndex( uint16 index ) = 0;
 };
@@ -51,15 +51,15 @@ public:
 	virtual const char		*GetActiveLoopName( void ) const = 0;
 	virtual IEngineService	*FindService( const char * ) = 0;
 	virtual PlatWindow_t	GetEngineWindow( void ) const = 0;
-	virtual SwapChainHandle_t	GetEngineSwapChain(void) const = 0;
-	virtual void		*GetEngineInputContext( void ) const = 0;
+	virtual SwapChainHandle_t	GetEngineSwapChain( void ) const = 0;
+	virtual InputContextHandle_t GetEngineInputContext( void ) const = 0;
 	virtual void		*GetEngineDeviceInfo( void ) const = 0;
 	virtual int			GetEngineDeviceWidth( void ) const = 0;
 	virtual int			GetEngineDeviceHeight( void ) const = 0;
 	virtual int			GetEngineSwapChainSize( void ) const = 0;
 	virtual bool		IsLoopSwitchQueued( void ) const = 0;
 	virtual bool		IsLoopSwitchRequested( void ) const = 0;
-	virtual /*CEventDispatcher<CEventIDManager_Default> * */void * GetEventDispatcher(void) = 0;
+	virtual CEventDispatcher<CEventIDManager_Default> *GetEventDispatcher( void ) = 0;
 	virtual void		*GetDebugVisualizerMgr( void ) = 0;
 	virtual int			GetActiveLoopClientServerMode( void ) const = 0;
 	virtual void		EnableMaxFramerate( bool ) = 0;
