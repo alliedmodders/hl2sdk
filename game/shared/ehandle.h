@@ -11,14 +11,14 @@
 #pragma once
 #endif
 
-#include "entityhandle.h"
 #include "entity2/entitysystem.h"
+#include "entityhandle.h"
 
 // -------------------------------------------------------------------------------------------------- //
 // Game-code CBaseHandle implementation.
 // -------------------------------------------------------------------------------------------------- //
 
-inline IHandleEntity* CEntityHandle::Get() const
+inline CEntityInstance* CEntityHandle::Get() const
 {
 	extern CEntitySystem *g_pEntitySystem;
 	return g_pEntitySystem->GetBaseEntity( *this );
@@ -137,7 +137,7 @@ inline bool CHandle<T>::operator!=( T *val ) const
 template<class T>
 void CHandle<T>::Set( const T* pVal )
 {
-	CBaseHandle::Set( reinterpret_cast<const IHandleEntity*>(pVal) );
+	CBaseHandle::Set(pVal);
 }
 
 template<class T>

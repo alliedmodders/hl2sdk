@@ -13,36 +13,47 @@
 #include "entitycomponent.h"
 #include "entityhandle.h"
 
-class CEntityIdentity;
+class CEntityInstance;
 
 struct ChangeAccessorFieldPathIndex_t
 {
 	int16 m_Value;
 };
 
+typedef uint32 SpawnGroupHandle_t;
 typedef CUtlStringToken WorldGroupId_t;
 
-class CEntityInstance : public IHandleEntity
+enum EntityFlags_t : uint32
 {
-public:
-	// MNetworkDisable
-	CUtlSymbolLarge m_iszPrivateVScripts; // 0x8	
-	// MNetworkEnable
-	// MNetworkPriority "56"
-	CEntityIdentity* m_pEntity; // 0x10
-private:
-	void* m_hPrivateScope; // 0x18 - CEntityPrivateScriptScope
-	uint8 unknown[0x8]; // 0x20
-public:
-	// MNetworkEnable
-	// MNetworkDisable
-	CScriptComponent* m_CScriptComponent; // 0x28	
+	EF_IS_INVALID_EHANDLE = 0x1,
+	EF_SPAWN_IN_PROGRESS = 0x2,
+	EF_IN_STAGING_LIST = 0x4,
+	EF_IN_POST_DATA_UPDATE = 0x8,
+	EF_DELETE_IN_PROGRESS = 0x10,
+	EF_IN_STASIS = 0x20,
+	EF_IS_ISOLATED_ALLOCATION_NETWORKABLE = 0x40,
+	EF_IS_DORMANT = 0x80,
+	EF_IS_PRE_SPAWN = 0x100,
+	EF_MARKED_FOR_DELETE = 0x200,
+	EF_IS_CONSTRUCTION_IN_PROGRESS = 0x400,
+	EF_IS_ISOLATED_ALLOCATION = 0x800,
+	EF_HAS_BEEN_UNSERIALIZED = 0x1000,
+	EF_IS_SUSPENDED = 0x2000,
+	EF_IS_ANONYMOUS_ALLOCATION = 0x4000,
 };
-
 
 // Size: 0x78
 class CEntityIdentity
 {
+public:
+	inline CEntityHandle GetRefEHandle() const
+	{
+		CEntityHandle handle = m_EHandle;
+		handle.m_Parts.m_Serial -= (m_flags & EF_IS_INVALID_EHANDLE);
+
+		return handle;
+	}
+
 public:
 	CEntityInstance* m_pInstance; // 0x0
 private:
@@ -55,7 +66,7 @@ public:
 private:
 	uint64 m_hPublicScope; // 0x28 - CEntityPublicScriptScope
 public:
-	uint32 m_flags; // 0x30	
+	EntityFlags_t m_flags; // 0x30	
 private:
 	SpawnGroupHandle_t m_hSpawnGroup; // 0x34
 public:

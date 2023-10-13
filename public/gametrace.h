@@ -13,7 +13,6 @@
 
 #include "cmodel.h"
 #include "tier1/utlvector.h"
-#include "ihandleentity.h"
 #include "ispatialpartition.h"
 
 #if defined( CLIENT_DLL )

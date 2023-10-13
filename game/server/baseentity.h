@@ -11,7 +11,7 @@
 #pragma once
 #endif
 
-#include "entityidentity.h"
+#include "entityinstance.h"
 class CBaseEntity : public CEntityInstance
 {
 };

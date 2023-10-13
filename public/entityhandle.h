@@ -11,12 +11,14 @@
 #endif
 
 #include "const.h"
-#include "ihandleentity.h"
 
+class CEntityInstance;
 
 class CEntityHandle
 {
 public:
+	friend class CEntityIdentity;
+
 	CEntityHandle();
 	CEntityHandle(const CEntityHandle& other);
 	CEntityHandle(uint32 value);
@@ -32,18 +34,18 @@ public:
 
 	bool operator !=(const CEntityHandle& other) const;
 	bool operator ==(const CEntityHandle& other) const;
-	bool operator ==(const IHandleEntity* pEnt) const;
-	bool operator !=(const IHandleEntity* pEnt) const;
+	bool operator ==(const CEntityInstance* pEnt) const;
+	bool operator !=(const CEntityInstance* pEnt) const;
 	bool operator <(const CEntityHandle& other) const;
-	bool operator <(const IHandleEntity* pEnt) const;
+	bool operator <(const CEntityInstance* pEnt) const;
 
 	// Assign a value to the handle.
-	const CEntityHandle& operator=(const IHandleEntity* pEntity);
-	const CEntityHandle& Set(const IHandleEntity* pEntity);
+	const CEntityHandle& operator=(const CEntityInstance* pEntity);
+	const CEntityHandle& Set(const CEntityInstance* pEntity);
 
 	// Use this to dereference the handle.
 	// Note: this is implemented in game code (ehandle.h)
-	IHandleEntity* Get() const;
+	CEntityInstance* Get() const;
 
 protected:
 	union
@@ -56,7 +58,6 @@ protected:
 		} m_Parts;
 	};
 };
-
 
 inline CEntityHandle::CEntityHandle()
 {
@@ -119,12 +120,12 @@ inline bool CEntityHandle::operator ==(const CEntityHandle& other) const
 	return m_Index == other.m_Index;
 }
 
-inline bool CEntityHandle::operator ==(const IHandleEntity* pEnt) const
+inline bool CEntityHandle::operator ==(const CEntityInstance* pEnt) const
 {
 	return Get() == pEnt;
 }
 
-inline bool CEntityHandle::operator !=(const IHandleEntity* pEnt) const
+inline bool CEntityHandle::operator !=(const CEntityInstance* pEnt) const
 {
 	return Get() != pEnt;
 }
@@ -134,31 +135,11 @@ inline bool CEntityHandle::operator <(const CEntityHandle& other) const
 	return m_Index < other.m_Index;
 }
 
-inline bool CEntityHandle::operator <(const IHandleEntity* pEntity) const
+inline const CEntityHandle &CEntityHandle::operator=( const CEntityInstance *pEntity )
 {
-	unsigned long otherIndex = (pEntity) ? pEntity->GetRefEHandle().m_Index : INVALID_EHANDLE_INDEX;
-	return m_Index < otherIndex;
+	return Set( pEntity );
 }
-
-inline const CEntityHandle& CEntityHandle::operator=(const IHandleEntity* pEntity)
-{
-	return Set(pEntity);
-}
-
-inline const CEntityHandle& CEntityHandle::Set(const IHandleEntity* pEntity)
-{
-	if (pEntity)
-	{
-		*this = pEntity->GetRefEHandle();
-	}
-	else
-	{
-		m_Index = INVALID_EHANDLE_INDEX;
-	}
-
-	return *this;
-}
-
-#endif // ENTITYHANDLE_H
 
 typedef CEntityHandle CBaseHandle;
+
+#endif // ENTITYHANDLE_H

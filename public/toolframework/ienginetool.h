@@ -224,7 +224,7 @@ public:
 	virtual void		GetWorldToScreenMatrixForView( const CViewSetup &view, VMatrix *pVMatrix ) = 0;
 
 	// Collision support
-	virtual SpatialPartitionHandle_t CreatePartitionHandle( IHandleEntity *pEntity,
+	virtual SpatialPartitionHandle_t CreatePartitionHandle( CEntityInstance *pEntity,
 		SpatialPartitionListMask_t listMask, const Vector& mins, const Vector& maxs ) = 0;
 	virtual void DestroyPartitionHandle( SpatialPartitionHandle_t hPartition ) = 0;
 	virtual void InstallPartitionQueryCallback( IPartitionQueryCallback *pQuery ) = 0;

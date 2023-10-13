@@ -12,7 +12,7 @@
 #endif
 
 
-#include "ihandleentity.h"
+#include "entity2/entityinstance.h"
 #include "basetypes.h"
 #include "bitvec.h"
 #include "const.h"
@@ -88,7 +88,7 @@ class IServerNetworkable
 // These functions are handled automatically by the server_class macros and CBaseNetworkable.
 public:
 	// Gets at the entity handle associated with the collideable
-	virtual IHandleEntity	*GetEntityHandle() = 0;
+	virtual CEntityInstance	*GetEntityHandle() = 0;
 
 	// Tell the engine which class this object is.
 	virtual ServerClass*	GetServerClass() = 0;

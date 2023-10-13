@@ -5,9 +5,9 @@
 #include "tier1/utlmemory.h"
 #include "tier1/utlvector.h"
 #include "tier1/utldict.h"
-#include "entityhandle.h"
-#include "baseentity.h"
 #include "eiface.h"
+#include "baseentity.h"
+#include "entityhandle.h"
 #include "concreteentitylist.h"
 #include "entitydatainstantiator.h"
 
@@ -154,7 +154,7 @@ public:
 
 private:
 	uint8 pad2696[0xa88];
-#ifdef PLATFORM_LINUX
+#ifdef PLATFORM_POSIX
 	uint8 pad5392[0x30];
 #endif
 };
