@@ -19,7 +19,6 @@ class ISource2WorldSession;
 class ISceneView;
 class IPrerequisite;
 
-DECLARE_POINTER_HANDLE(PlatWindow_t);
 DECLARE_POINTER_HANDLE(SwapChainHandle_t);
 DECLARE_POINTER_HANDLE(HSceneViewRenderTarget);
 DECLARE_POINTER_HANDLE(ActiveLoop_t);
