@@ -20,6 +20,7 @@ struct ChangeAccessorFieldPathIndex_t
 	int16 m_Value;
 };
 
+typedef uint32 SpawnGroupHandle_t;
 typedef CUtlStringToken WorldGroupId_t;
 
 enum EntityFlags_t : uint32
@@ -44,6 +45,15 @@ enum EntityFlags_t : uint32
 // Size: 0x78
 class CEntityIdentity
 {
+public:
+	inline CEntityHandle GetRefEHandle() const
+	{
+		CEntityHandle handle = m_EHandle;
+		handle.m_Parts.m_Serial -= (m_flags & EF_IS_INVALID_EHANDLE);
+
+		return handle;
+	}
+
 public:
 	CEntityInstance* m_pInstance; // 0x0
 private:

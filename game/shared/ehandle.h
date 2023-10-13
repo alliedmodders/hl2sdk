@@ -25,17 +25,6 @@ inline CEntityInstance* CEntityHandle::Get() const
 }
 
 // -------------------------------------------------------------------------------------------------- //
-// Game-code CEntityInstance implementation.
-// -------------------------------------------------------------------------------------------------- //
-inline CEntityHandle CEntityInstance::GetRefEHandle() const
-{
-	CEntityHandle handle = m_pEntity->m_EHandle;
-	handle.m_Parts.m_Serial -= (m_pEntity->m_flags & EF_IS_INVALID_EHANDLE);
-
-	return handle;
-}
-
-// -------------------------------------------------------------------------------------------------- //
 // CHandle.
 // -------------------------------------------------------------------------------------------------- //
 template< class T >

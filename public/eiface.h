@@ -90,7 +90,6 @@ namespace google
 	}
 }
 
-typedef uint32 SpawnGroupHandle_t;
 typedef uint32 SwapChainHandle_t;
 
 //-----------------------------------------------------------------------------

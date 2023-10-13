@@ -11,12 +11,13 @@
 #endif
 
 #include "const.h"
-#include "entity2/entityinstance.h"
+
+class CEntityInstance;
 
 class CEntityHandle
 {
 public:
-	friend class CEntityInstance;
+	friend class CEntityIdentity;
 
 	CEntityHandle();
 	CEntityHandle(const CEntityHandle& other);
@@ -134,29 +135,9 @@ inline bool CEntityHandle::operator <(const CEntityHandle& other) const
 	return m_Index < other.m_Index;
 }
 
-inline bool CEntityHandle::operator <(const CEntityInstance* pEntity) const
+inline const CEntityHandle &CEntityHandle::operator=( const CEntityInstance *pEntity )
 {
-	unsigned long otherIndex = (pEntity) ? pEntity->GetRefEHandle().m_Index : INVALID_EHANDLE_INDEX;
-	return m_Index < otherIndex;
-}
-
-inline const CEntityHandle& CEntityHandle::operator=(const CEntityInstance* pEntity)
-{
-	return Set(pEntity);
-}
-
-inline const CEntityHandle& CEntityHandle::Set(const CEntityInstance* pEntity)
-{
-	if (pEntity)
-	{
-		*this = pEntity->GetRefEHandle();
-	}
-	else
-	{
-		m_Index = INVALID_EHANDLE_INDEX;
-	}
-
-	return *this;
+	return Set( pEntity );
 }
 
 typedef CEntityHandle CBaseHandle;

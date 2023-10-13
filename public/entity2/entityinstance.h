@@ -6,9 +6,7 @@
 
 #include "tier1/utlsymbollarge.h"
 #include "entitycomponent.h"
-
-class CEntityHandle;
-class CEntityIdentity;
+#include "entity2/entityidentity.h"
 
 class CEntityInstance
 {
@@ -16,21 +14,43 @@ class CEntityInstance
 
 public:
 	virtual ~CEntityInstance() = 0;
-	// Note: this is implemented in game code (ehandle.h)
-	CEntityHandle GetRefEHandle() const;
 
-	// MNetworkDisable
-	CUtlSymbolLarge m_iszPrivateVScripts; // 0x8	
-	// MNetworkEnable
-	// MNetworkPriority "56"
+	inline CEntityHandle GetRefEHandle() const
+	{
+		return m_pEntity->GetRefEHandle();
+	}
+
+	CUtlSymbolLarge m_iszPrivateVScripts; // 0x8
 	CEntityIdentity* m_pEntity; // 0x10
 private:
 	void* m_hPrivateScope; // 0x18 - CEntityPrivateScriptScope
-	uint8 unknown[0x8]; // 0x20
+	uint8 __pad001[0x8]; // 0x20
 public:
-	// MNetworkEnable
-	// MNetworkDisable
 	CScriptComponent* m_CScriptComponent; // 0x28	
 };
+
+// -------------------------------------------------------------------------------------------------- //
+// CEntityInstance dependant functions
+// -------------------------------------------------------------------------------------------------- //
+
+inline bool CEntityHandle::operator <( const CEntityInstance *pEntity ) const
+{
+	unsigned long otherIndex = (pEntity) ? pEntity->GetRefEHandle().m_Index : INVALID_EHANDLE_INDEX;
+	return m_Index < otherIndex;
+}
+
+inline const CEntityHandle &CEntityHandle::Set( const CEntityInstance *pEntity )
+{
+	if(pEntity)
+	{
+		*this = pEntity->GetRefEHandle();
+	}
+	else
+	{
+		m_Index = INVALID_EHANDLE_INDEX;
+	}
+
+	return *this;
+}
 
 #endif // ENTITYINSTANCE_H
