@@ -51,8 +51,8 @@ public:
 	virtual const char		*GetActiveLoopName( void ) const = 0;
 	virtual IEngineService	*FindService( const char * ) = 0;
 	virtual PlatWindow_t	GetEngineWindow( void ) const = 0;
-	virtual SwapChainHandle_t	GetEngineSwapChain(void) const = 0;
-	virtual void		*GetEngineInputContext( void ) const = 0;
+	virtual SwapChainHandle_t	GetEngineSwapChain( void ) const = 0;
+	virtual InputContextHandle_t GetEngineInputContext( void ) const = 0;
 	virtual void		*GetEngineDeviceInfo( void ) const = 0;
 	virtual int			GetEngineDeviceWidth( void ) const = 0;
 	virtual int			GetEngineDeviceHeight( void ) const = 0;

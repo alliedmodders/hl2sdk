@@ -11,6 +11,7 @@
 #endif
 
 #include <appframework/IAppSystem.h>
+#include <inputsystem/InputEnums.h>
 #include <KeyValues.h>
 #include <engine/eventdispatcher.h>
 
@@ -19,7 +20,6 @@ class ISceneView;
 class IPrerequisite;
 
 DECLARE_POINTER_HANDLE(PlatWindow_t);
-DECLARE_POINTER_HANDLE(InputContextHandle_t);
 DECLARE_POINTER_HANDLE(SwapChainHandle_t);
 DECLARE_POINTER_HANDLE(HSceneViewRenderTarget);
 DECLARE_POINTER_HANDLE(ActiveLoop_t);
