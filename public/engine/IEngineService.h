@@ -15,6 +15,7 @@
 #include <iloopmode.h>
 // AM TODO: eventdispatcher.h needs to be added when we get CEventDispatcher ready.
 
+class ISwitchLoopModeStatusNotify;
 class IAddonListChangeNotify;
 
 struct EventClientOutput_t

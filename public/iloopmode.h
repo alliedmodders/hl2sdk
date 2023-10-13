@@ -13,7 +13,6 @@
 #include <appframework/IAppSystem.h>
 #include <KeyValues.h>
 
-class ISwitchLoopModeStatusNotify;
 class ISource2WorldSession;
 class ISceneView;
 class IPrerequisite;
