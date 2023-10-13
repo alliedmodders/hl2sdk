@@ -13,7 +13,7 @@
 #include <appframework/IAppSystem.h>
 #include <inputsystem/InputEnums.h>
 #include <iloopmode.h>
-// eventdispatcher.h need to be added when we get CEventDispatcher ready.
+// AM TODO: eventdispatcher.h needs to be added when we get CEventDispatcher ready.
 
 class IAddonListChangeNotify;
 
