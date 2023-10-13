@@ -23,6 +23,26 @@ struct ChangeAccessorFieldPathIndex_t
 typedef uint32 SpawnGroupHandle_t;
 typedef CUtlStringToken WorldGroupId_t;
 
+class CEntityIndex
+{
+public:
+	CEntityIndex( int index )
+	{
+		_index = index;
+	}
+
+	int Get() const
+	{
+		return _index;
+	}
+
+	bool operator==( const CEntityIndex &other ) const { return other._index == _index; }
+	bool operator!=( const CEntityIndex &other ) const { return other._index != _index; }
+	
+private:
+	int _index;
+};
+
 enum EntityFlags_t : uint32
 {
 	EF_IS_INVALID_EHANDLE = 0x1,
@@ -52,6 +72,16 @@ public:
 		handle.m_Parts.m_Serial -= (m_flags & EF_IS_INVALID_EHANDLE);
 
 		return handle;
+	}
+	
+	inline const char *GetClassname() const
+	{
+		return m_designerName.String();
+	}
+
+	inline CEntityIndex GetEntityIndex() const
+	{
+		return m_EHandle.GetEntryIndex();
 	}
 
 public:

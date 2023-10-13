@@ -19,6 +19,16 @@ public:
 	{
 		return m_pEntity->GetRefEHandle();
 	}
+	
+	inline const char *GetClassname() const
+	{
+		return m_pEntity->GetClassname();
+	}
+
+	inline CEntityIndex GetEntityIndex() const
+	{
+		return m_pEntity->GetEntityIndex();
+	}
 
 	CUtlSymbolLarge m_iszPrivateVScripts; // 0x8
 	CEntityIdentity* m_pEntity; // 0x10
