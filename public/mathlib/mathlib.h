@@ -629,7 +629,7 @@ template <class T> FORCEINLINE T AVG(T a, T b)
 //
 // Returns a clamped value in the range [min, max].
 //
-#define clamp(val, min, max) (((val) > (max)) ? (max) : (((val) < (min)) ? (min) : (val)))
+#define V_clamp(val, min, max) (((val) > (max)) ? (max) : (((val) < (min)) ? (min) : (val)))
 
 inline float Sign( float x )
 {
@@ -1066,7 +1066,7 @@ inline float SimpleSplineRemapValClamped( float val, float A, float B, float C, 
 	if ( A == B )
 		return val >= B ? D : C;
 	float cVal = (val - A) / (B - A);
-	cVal = clamp( cVal, 0.0f, 1.0f );
+	cVal = V_clamp( cVal, 0.0f, 1.0f );
 	return C + (D - C) * SimpleSpline( cVal );
 }
 
