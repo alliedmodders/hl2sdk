@@ -632,7 +632,7 @@ template <class T> FORCEINLINE T AVG(T a, T b)
 //
 // Returns a clamped value in the range [min, max].
 //
-#define clamp(val, min, max) (((val) > (max)) ? (max) : (((val) < (min)) ? (min) : (val)))
+#define V_clamp(val, min, max) (((val) > (max)) ? (max) : (((val) < (min)) ? (min) : (val)))
 
 inline float Sign( float x )
 {
@@ -1094,7 +1094,7 @@ inline float SimpleSplineRemapValClamped( float val, float A, float B, float C, 
 	if ( A == B )
 		return val >= B ? D : C;
 	float cVal = (val - A) / (B - A);
-	cVal = clamp( cVal, 0.0f, 1.0f );
+	cVal = V_clamp( cVal, 0.0f, 1.0f );
 	return C + (D - C) * SimpleSpline( cVal );
 }
 
@@ -2136,7 +2136,7 @@ FORCEINLINE void RGB2YUV( int &nR, int &nG, int &nB, float &fY, float &fU, float
 		dX    = 2*( fU - 0.5f );
 		dY    = 2*( fV - 0.5f );
 		sat   = sqrtf( dX*dX + dY*dY );
-		sat   = clamp( ( sat*( 1 + SNAP_TO_GREY ) - SNAP_TO_GREY ), 0, 1 );
+		sat   = V_clamp( ( sat*( 1 + SNAP_TO_GREY ) - SNAP_TO_GREY ), 0, 1 );
 		scale = ( sat == 0 ) ? 0 : MIN( ( sqrtf( sat ) / sat ), 4.0f );
 		fU    = 0.5f + scale*( fU - 0.5f );
 		fV    = 0.5f + scale*( fV - 0.5f );
