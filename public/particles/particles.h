@@ -315,7 +315,7 @@ public:
 	virtual void GetLightingAtPoint( const Vector& vecOrigin, Color &tint ) = 0;
 	virtual void TraceLine( const Vector& vecAbsStart,
 							const Vector& vecAbsEnd, unsigned int mask, 
-							const class IHandleEntity *ignore,
+							const class CEntityInstance *ignore,
 							int collisionGroup,
 							CBaseTrace *ptr ) = 0;
 

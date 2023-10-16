@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -14,7 +14,7 @@
 #include "interface.h"
 #include "mathlib/vector.h"
 #include "utlvector.h"
-#include "basehandle.h"
+#include "entityhandle.h"
 
 
 //-----------------------------------------------------------------------------
@@ -51,7 +51,7 @@ public:
 	virtual void	TraceRayAgainstStaticProp( const Ray_t& ray, int staticPropIndex, trace_t& tr ) = 0;
 
 	// Is a base handle a static prop?
-	virtual bool	IsStaticProp( IHandleEntity *pHandleEntity ) const = 0;
+	virtual bool	IsStaticProp( CEntityInstance *pHandleEntity ) const = 0;
 	virtual bool	IsStaticProp( CBaseHandle handle ) const = 0;
 
 	// returns a collideable interface to static props

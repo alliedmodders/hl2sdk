@@ -332,7 +332,7 @@ typedef unsigned int		uint;
 #ifndef UINT32_MAX
 #define  UINT32_MAX			((uint32)~0)
 #endif
-#ifndef UINT16_MAX
+#ifndef UINT64_MAX
 #define  UINT64_MAX			((uint64)~0)
 #endif
 
@@ -545,6 +545,13 @@ typedef unsigned int		uint;
 #define ALIGN32_POST
 #define ALIGN128_POST
 #endif
+
+
+//-----------------------------------------------------------------------------
+// Convert int<-->pointer, avoiding 32/64-bit compiler warnings:
+//-----------------------------------------------------------------------------
+#define INT_TO_POINTER( i ) (void *)( ( i ) + (char *)NULL )
+#define POINTER_TO_INT( p ) ( (int)(uintp)( p ) )
 
 
 // This can be used to declare an abstract (interface only) class.
@@ -1335,6 +1342,24 @@ inline T* Construct( T* pMemory, ARG1 a1, ARG2 a2, ARG3 a3, ARG4 a4, ARG5 a5 )
 	return ::new( pMemory ) T( a1, a2, a3, a4, a5 );
 }
 
+template <class T, class P>
+inline void ConstructOneArg( T* pMemory, P const& arg)
+{
+	::new( pMemory ) T(arg);
+}
+
+template <class T, class P1, class P2 >
+inline void ConstructTwoArg( T* pMemory, P1 const& arg1, P2 const& arg2)
+{
+	::new( pMemory ) T(arg1, arg2);
+}
+
+template <class T, class P1, class P2, class P3 >
+inline void ConstructThreeArg( T* pMemory, P1 const& arg1, P2 const& arg2, P3 const& arg3)
+{
+	::new( pMemory ) T(arg1, arg2, arg3);
+}
+
 template <class T>
 inline T* CopyConstruct( T* pMemory, T const& src )
 {
@@ -1347,7 +1372,7 @@ inline void Destruct( T* pMemory )
 	pMemory->~T();
 
 #ifdef _DEBUG
-	memset( pMemory, 0xDD, sizeof(T) );
+	memset( (void*)pMemory, 0xDD, sizeof(T) );
 #endif
 }
 

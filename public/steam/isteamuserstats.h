@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2009, Valve Corporation, All rights reserved. =======
+//====== Copyright ï¿½ 1996-2009, Valve Corporation, All rights reserved. =======
 //
 // Purpose: interface to stats, achievements, and leaderboards 
 //
@@ -10,7 +10,8 @@
 #pragma once
 #endif
 
-#include "isteamclient.h"
+#include "steam_api_common.h"
+#include "isteamremotestorage.h"
 
 // size limit on stat or achievement name (UTF-8 encoded)
 enum { k_cchStatNameMax = 128 };
@@ -33,6 +34,7 @@ enum ELeaderboardDataRequest
 	k_ELeaderboardDataRequestGlobal = 0,
 	k_ELeaderboardDataRequestGlobalAroundUser = 1,
 	k_ELeaderboardDataRequestFriends = 2,
+	k_ELeaderboardDataRequestUsers = 3
 };
 
 // the sort order of a leaderboard
@@ -60,7 +62,13 @@ enum ELeaderboardUploadScoreMethod
 };
 
 // a single entry in a leaderboard, as returned by GetDownloadedLeaderboardEntry()
+#if defined( VALVE_CALLBACK_PACK_SMALL )
+#pragma pack( push, 4 )
+#elif defined( VALVE_CALLBACK_PACK_LARGE )
 #pragma pack( push, 8 )
+#else
+#error steam_api_common.h should define VALVE_CALLBACK_PACK_xxx
+#endif 
 
 struct LeaderboardEntry_t
 {
@@ -68,6 +76,7 @@ struct LeaderboardEntry_t
 	int32 m_nGlobalRank;	// [1..N], where N is the number of users with an entry in the leaderboard
 	int32 m_nScore;			// score as set in the leaderboard
 	int32 m_cDetails;		// number of int32 details available for this entry
+	UGCHandle_t m_hUGC;		// handle for UGC attached to the entry
 };
 
 #pragma pack( pop )
@@ -80,15 +89,23 @@ class ISteamUserStats
 {
 public:
 	// Ask the server to send down this user's data and achievements for this game
+	STEAM_CALL_BACK( UserStatsReceived_t )
 	virtual bool RequestCurrentStats() = 0;
 
 	// Data accessors
+	STEAM_FLAT_NAME( GetStatInt32 )
 	virtual bool GetStat( const char *pchName, int32 *pData ) = 0;
+
+	STEAM_FLAT_NAME( GetStatFloat )
 	virtual bool GetStat( const char *pchName, float *pData ) = 0;
 
 	// Set / update data
+	STEAM_FLAT_NAME( SetStatInt32 )
 	virtual bool SetStat( const char *pchName, int32 nData ) = 0;
+
+	STEAM_FLAT_NAME( SetStatFloat )
 	virtual bool SetStat( const char *pchName, float fData ) = 0;
+
 	virtual bool UpdateAvgRateStat( const char *pchName, float flCountThisSession, double dSessionLength ) = 0;
 
 	// Achievement flag accessors
@@ -112,17 +129,26 @@ public:
 
 	// Achievement / GroupAchievement metadata
 
-	// Gets the icon of the achievement, which is a handle to be used in IClientUtils::GetImageRGBA(), or 0 if none set. 
-	// A return value of 0 may indicate we are still fetching data, and you can wait for the UserAchievementIconReady_t callback
-	// which will notify you when the bits are actually read.  If the callback still returns zero, then there is no image set
-	// and there never will be.
+	// Gets the icon of the achievement, which is a handle to be used in ISteamUtils::GetImageRGBA(), or 0 if none set. 
+	// A return value of 0 may indicate we are still fetching data, and you can wait for the UserAchievementIconFetched_t callback
+	// which will notify you when the bits are ready. If the callback still returns zero, then there is no image set for the
+	// specified achievement.
 	virtual int GetAchievementIcon( const char *pchName ) = 0;
-	// Get general attributes (display name / text, etc) for an Achievement
+
+	// Get general attributes for an achievement. Accepts the following keys:
+	// - "name" and "desc" for retrieving the localized achievement name and description (returned in UTF8)
+	// - "hidden" for retrieving if an achievement is hidden (returns "0" when not hidden, "1" when hidden)
 	virtual const char *GetAchievementDisplayAttribute( const char *pchName, const char *pchKey ) = 0;
 
 	// Achievement progress - triggers an AchievementProgress callback, that is all.
 	// Calling this w/ N out of N progress will NOT set the achievement, the game must still do that.
 	virtual bool IndicateAchievementProgress( const char *pchName, uint32 nCurProgress, uint32 nMaxProgress ) = 0;
+
+	// Used for iterating achievements. In general games should not need these functions because they should have a
+	// list of existing achievements compiled into them
+	virtual uint32 GetNumAchievements() = 0;
+	// Get achievement name iAchievement in [0,GetNumAchievements)
+	virtual const char *GetAchievementName( uint32 iAchievement ) = 0;
 
 	// Friends stats & achievements
 
@@ -130,11 +156,16 @@ public:
 	// returns a UserStatsReceived_t received when completed
 	// if the other user has no stats, UserStatsReceived_t.m_eResult will be set to k_EResultFail
 	// these stats won't be auto-updated; you'll need to call RequestUserStats() again to refresh any data
+	STEAM_CALL_RESULT( UserStatsReceived_t )
 	virtual SteamAPICall_t RequestUserStats( CSteamID steamIDUser ) = 0;
 
 	// requests stat information for a user, usable after a successful call to RequestUserStats()
+	STEAM_FLAT_NAME( GetUserStatInt32 )
 	virtual bool GetUserStat( CSteamID steamIDUser, const char *pchName, int32 *pData ) = 0;
+
+	STEAM_FLAT_NAME( GetUserStatFloat )
 	virtual bool GetUserStat( CSteamID steamIDUser, const char *pchName, float *pData ) = 0;
+
 	virtual bool GetUserAchievement( CSteamID steamIDUser, const char *pchName, bool *pbAchieved ) = 0;
 	// See notes for GetAchievementAndUnlockTime above
 	virtual bool GetUserAchievementAndUnlockTime( CSteamID steamIDUser, const char *pchName, bool *pbAchieved, uint32 *punUnlockTime ) = 0;
@@ -146,10 +177,12 @@ public:
 
 	// asks the Steam back-end for a leaderboard by name, and will create it if it's not yet
 	// This call is asynchronous, with the result returned in LeaderboardFindResult_t
+	STEAM_CALL_RESULT(LeaderboardFindResult_t)
 	virtual SteamAPICall_t FindOrCreateLeaderboard( const char *pchLeaderboardName, ELeaderboardSortMethod eLeaderboardSortMethod, ELeaderboardDisplayType eLeaderboardDisplayType ) = 0;
 
 	// as above, but won't create the leaderboard if it's not found
 	// This call is asynchronous, with the result returned in LeaderboardFindResult_t
+	STEAM_CALL_RESULT( LeaderboardFindResult_t )
 	virtual SteamAPICall_t FindLeaderboard( const char *pchLeaderboardName ) = 0;
 
 	// returns the name of a leaderboard
@@ -172,7 +205,14 @@ public:
 	// k_ELeaderboardDataRequestGlobalAroundUser requests rows around the current user, nRangeStart being negate
 	//   e.g. DownloadLeaderboardEntries( hLeaderboard, k_ELeaderboardDataRequestGlobalAroundUser, -3, 3 ) will return 7 rows, 3 before the user, 3 after
 	// k_ELeaderboardDataRequestFriends requests all the rows for friends of the current user 
+	STEAM_CALL_RESULT( LeaderboardScoresDownloaded_t )
 	virtual SteamAPICall_t DownloadLeaderboardEntries( SteamLeaderboard_t hSteamLeaderboard, ELeaderboardDataRequest eLeaderboardDataRequest, int nRangeStart, int nRangeEnd ) = 0;
+	// as above, but downloads leaderboard entries for an arbitrary set of users - ELeaderboardDataRequest is k_ELeaderboardDataRequestUsers
+	// if a user doesn't have a leaderboard entry, they won't be included in the result
+	// a max of 100 users can be downloaded at a time, with only one outstanding call at a time
+	STEAM_CALL_RESULT( LeaderboardScoresDownloaded_t )
+	virtual SteamAPICall_t DownloadLeaderboardEntriesForUsers( SteamLeaderboard_t hSteamLeaderboard,
+															   STEAM_ARRAY_COUNT_D(cUsers, Array of users to retrieve) CSteamID *prgUsers, int cUsers ) = 0;
 
 	// Returns data about a single leaderboard entry
 	// use a for loop from 0 to LeaderboardScoresDownloaded_t::m_cEntryCount to get all the downloaded entries
@@ -194,18 +234,89 @@ public:
 	// This call is asynchronous, with the result returned in LeaderboardScoreUploaded_t
 	// Details are extra game-defined information regarding how the user got that score
 	// pScoreDetails points to an array of int32's, cScoreDetailsCount is the number of int32's in the list
+	STEAM_CALL_RESULT( LeaderboardScoreUploaded_t )
 	virtual SteamAPICall_t UploadLeaderboardScore( SteamLeaderboard_t hSteamLeaderboard, ELeaderboardUploadScoreMethod eLeaderboardUploadScoreMethod, int32 nScore, const int32 *pScoreDetails, int cScoreDetailsCount ) = 0;
+
+	// Attaches a piece of user generated content the user's entry on a leaderboard.
+	// hContent is a handle to a piece of user generated content that was shared using ISteamUserRemoteStorage::FileShare().
+	// This call is asynchronous, with the result returned in LeaderboardUGCSet_t.
+	STEAM_CALL_RESULT( LeaderboardUGCSet_t )
+	virtual SteamAPICall_t AttachLeaderboardUGC( SteamLeaderboard_t hSteamLeaderboard, UGCHandle_t hUGC ) = 0;
 
 	// Retrieves the number of players currently playing your game (online + offline)
 	// This call is asynchronous, with the result returned in NumberOfCurrentPlayers_t
+	STEAM_CALL_RESULT( NumberOfCurrentPlayers_t )
 	virtual SteamAPICall_t GetNumberOfCurrentPlayers() = 0;
+
+	// Requests that Steam fetch data on the percentage of players who have received each achievement
+	// for the game globally.
+	// This call is asynchronous, with the result returned in GlobalAchievementPercentagesReady_t.
+	STEAM_CALL_RESULT( GlobalAchievementPercentagesReady_t )
+	virtual SteamAPICall_t RequestGlobalAchievementPercentages() = 0;
+
+	// Get the info on the most achieved achievement for the game, returns an iterator index you can use to fetch
+	// the next most achieved afterwards.  Will return -1 if there is no data on achievement 
+	// percentages (ie, you haven't called RequestGlobalAchievementPercentages and waited on the callback).
+	virtual int GetMostAchievedAchievementInfo( char *pchName, uint32 unNameBufLen, float *pflPercent, bool *pbAchieved ) = 0;
+
+	// Get the info on the next most achieved achievement for the game. Call this after GetMostAchievedAchievementInfo or another
+	// GetNextMostAchievedAchievementInfo call passing the iterator from the previous call. Returns -1 after the last
+	// achievement has been iterated.
+	virtual int GetNextMostAchievedAchievementInfo( int iIteratorPrevious, char *pchName, uint32 unNameBufLen, float *pflPercent, bool *pbAchieved ) = 0;
+
+	// Returns the percentage of users who have achieved the specified achievement.
+	virtual bool GetAchievementAchievedPercent( const char *pchName, float *pflPercent ) = 0;
+
+	// Requests global stats data, which is available for stats marked as "aggregated".
+	// This call is asynchronous, with the results returned in GlobalStatsReceived_t.
+	// nHistoryDays specifies how many days of day-by-day history to retrieve in addition
+	// to the overall totals. The limit is 60.
+	STEAM_CALL_RESULT( GlobalStatsReceived_t )
+	virtual SteamAPICall_t RequestGlobalStats( int nHistoryDays ) = 0;
+
+	// Gets the lifetime totals for an aggregated stat
+	STEAM_FLAT_NAME( GetGlobalStatInt64 )
+	virtual bool GetGlobalStat( const char *pchStatName, int64 *pData ) = 0;
+
+	STEAM_FLAT_NAME( GetGlobalStatDouble )
+	virtual bool GetGlobalStat( const char *pchStatName, double *pData ) = 0;
+
+	// Gets history for an aggregated stat. pData will be filled with daily values, starting with today.
+	// So when called, pData[0] will be today, pData[1] will be yesterday, and pData[2] will be two days ago, 
+	// etc. cubData is the size in bytes of the pubData buffer. Returns the number of 
+	// elements actually set.
+
+	STEAM_FLAT_NAME( GetGlobalStatHistoryInt64 )
+	virtual int32 GetGlobalStatHistory( const char *pchStatName, STEAM_ARRAY_COUNT(cubData) int64 *pData, uint32 cubData ) = 0;
+
+	STEAM_FLAT_NAME( GetGlobalStatHistoryDouble )
+	virtual int32 GetGlobalStatHistory( const char *pchStatName, STEAM_ARRAY_COUNT(cubData) double *pData, uint32 cubData ) = 0;
+
+	// For achievements that have related Progress stats, use this to query what the bounds of that progress are.
+	// You may want this info to selectively call IndicateAchievementProgress when appropriate milestones of progress
+	// have been made, to show a progress notification to the user.
+	STEAM_FLAT_NAME( GetAchievementProgressLimitsInt32 )
+	virtual bool GetAchievementProgressLimits( const char *pchName, int32 *pnMinProgress, int32 *pnMaxProgress ) = 0;
+
+	STEAM_FLAT_NAME( GetAchievementProgressLimitsFloat )
+	virtual bool GetAchievementProgressLimits( const char *pchName, float *pfMinProgress, float *pfMaxProgress ) = 0;
 
 };
 
-#define STEAMUSERSTATS_INTERFACE_VERSION "STEAMUSERSTATS_INTERFACE_VERSION007"
+#define STEAMUSERSTATS_INTERFACE_VERSION "STEAMUSERSTATS_INTERFACE_VERSION012"
+
+// Global interface accessor
+inline ISteamUserStats *SteamUserStats();
+STEAM_DEFINE_USER_INTERFACE_ACCESSOR( ISteamUserStats *, SteamUserStats, STEAMUSERSTATS_INTERFACE_VERSION );
 
 // callbacks
+#if defined( VALVE_CALLBACK_PACK_SMALL )
+#pragma pack( push, 4 )
+#elif defined( VALVE_CALLBACK_PACK_LARGE )
 #pragma pack( push, 8 )
+#else
+#error steam_api_common.h should define VALVE_CALLBACK_PACK_xxx
+#endif 
 
 //-----------------------------------------------------------------------------
 // Purpose: called when the latests stats and achievements have been received
@@ -296,6 +407,7 @@ struct NumberOfCurrentPlayers_t
 };
 
 
+
 //-----------------------------------------------------------------------------
 // Purpose: Callback indicating that a user's stats have been unloaded.
 //  Call RequestUserStats again to access stats for this user
@@ -318,12 +430,56 @@ struct UserAchievementIconFetched_t
 	CGameID		m_nGameID;				// Game this is for
 	char		m_rgchAchievementName[k_cchStatNameMax];		// name of the achievement
 	bool		m_bAchieved;		// Is the icon for the achieved or not achieved version?
-	int			m_nIconHandle;		// Handle to the image, which can be used in ClientUtils()->GetImageRGBA(), 0 means no image is set for the achievement
+	int			m_nIconHandle;		// Handle to the image, which can be used in SteamUtils()->GetImageRGBA(), 0 means no image is set for the achievement
 };
 
-//
-// IMPORTANT! k_iSteamUserStatsCallbacks + 10 is used, see iclientuserstats.h
-//
+
+//-----------------------------------------------------------------------------
+// Purpose: Callback indicating that global achievement percentages are fetched
+//-----------------------------------------------------------------------------
+struct GlobalAchievementPercentagesReady_t
+{
+	enum { k_iCallback = k_iSteamUserStatsCallbacks + 10 };
+
+	uint64		m_nGameID;				// Game this is for
+	EResult		m_eResult;				// Result of the operation
+};
+
+
+//-----------------------------------------------------------------------------
+// Purpose: call result indicating UGC has been uploaded, returned as a result of SetLeaderboardUGC()
+//-----------------------------------------------------------------------------
+struct LeaderboardUGCSet_t
+{
+	enum { k_iCallback = k_iSteamUserStatsCallbacks + 11 };
+	EResult m_eResult;				// The result of the operation
+	SteamLeaderboard_t m_hSteamLeaderboard;	// the leaderboard handle that was
+};
+
+
+//-----------------------------------------------------------------------------
+// Purpose: callback indicating that PS3 trophies have been installed
+//-----------------------------------------------------------------------------
+struct PS3TrophiesInstalled_t
+{
+	enum { k_iCallback = k_iSteamUserStatsCallbacks + 12 };
+	uint64	m_nGameID;				// Game these stats are for
+	EResult m_eResult;				// The result of the operation
+	uint64 m_ulRequiredDiskSpace;	// If m_eResult is k_EResultDiskFull, will contain the amount of space needed to install trophies
+
+};
+
+
+//-----------------------------------------------------------------------------
+// Purpose: callback indicating global stats have been received.
+//	Returned as a result of RequestGlobalStats()
+//-----------------------------------------------------------------------------
+struct GlobalStatsReceived_t
+{
+	enum { k_iCallback = k_iSteamUserStatsCallbacks + 12 };
+	uint64	m_nGameID;				// Game global stats were requested for
+	EResult	m_eResult;				// The result of the request
+};
 
 #pragma pack( pop )
 

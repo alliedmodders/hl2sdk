@@ -7,6 +7,7 @@
 
 #include "tier0/platform.h"
 #include "strtools.h"
+#include "utlstring.h"
 
 class CFormatStringElement;
 class IFormatOutputStream;
@@ -206,8 +207,9 @@ class CBufferStringGrowable : public CBufferString
 	friend class CBufferString;
 
 public:
-	CBufferStringGrowable() : m_nTotalCount(0), m_nAllocated(STACK_ALLOCATION_MARKER | (MAX_SIZE & LENGTH_MASK)), m_Memory()
+	CBufferStringGrowable() : m_nTotalCount(0), m_nAllocated(STACK_ALLOCATION_MARKER | (MAX_SIZE & LENGTH_MASK))
 	{
+		memset(m_Memory.m_szString, 0, sizeof(m_Memory.m_szString));
 		if (AllowHeapAllocation)
 		{
 			m_nAllocated |= ALLOW_HEAP_ALLOCATION;
@@ -272,8 +274,8 @@ private:
 
 	union
 	{
-		const char *m_pString;
-		const char m_szString[MAX_SIZE];
+		char *m_pString;
+		char m_szString[MAX_SIZE];
 	} m_Memory;
 };
 

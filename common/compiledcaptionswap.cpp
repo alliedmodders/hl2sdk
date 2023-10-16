@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Swap a compiled caption file.
 //
@@ -6,7 +6,7 @@
 //=============================================================================//
 
 #include "utlbuffer.h"
-#include "byteswap.h"
+#include "cbyteswap.h"
 #include "filesystem.h"
 #include "tier2/fileutils.h"
 #include "captioncompiler.h"

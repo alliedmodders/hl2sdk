@@ -22,7 +22,7 @@
     <ProjectName>mathlib</ProjectName>
     <ProjectGuid>{884C66F2-7F84-4570-AE6C-B634C1113D69}</ProjectGuid>
     <RootNamespace>mathlib</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">

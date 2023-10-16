@@ -11,6 +11,9 @@
 #endif
 
 #include "tier0/basetypes.h"
+#include "tier0/platwindow.h"
+
+FORWARD_DECLARE_HANDLE( InputContextHandle_t );
 
 // Standard maximum +/- value of a joystick axis
 #define MAX_BUTTONSAMPLE			32768
@@ -99,9 +102,10 @@ enum InputEventType_t
 
 struct InputEvent_t
 {
+	PlatWindow_t m_hWnd;
 	int m_nType;				// Type of the event (see InputEventType_t)
 	int m_nTick;				// Tick on which the event occurred
-	int m_nData;				// Generic 32-bit data, what it contains depends on the event
+	uint64 m_nData;				// Generic 64-bit data, what it contains depends on the event
 	int m_nData2;				// Generic 32-bit data, what it contains depends on the event
 	int m_nData3;				// Generic 32-bit data, what it contains depends on the event
 };

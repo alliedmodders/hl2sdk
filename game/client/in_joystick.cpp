@@ -7,7 +7,7 @@
 // $NoKeywords: $
 //===========================================================================//
 #include "cbase.h"
-#include "basehandle.h"
+#include "entityhandle.h"
 #include "utlvector.h"
 #include "cdll_client_int.h"
 #include "cdll_util.h"

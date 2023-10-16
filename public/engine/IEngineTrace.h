@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -12,13 +12,13 @@
 #pragma once
 #endif
 
-#include "basehandle.h"
+#include "entityhandle.h"
 #include "utlvector.h" //need CUtlVector for IEngineTrace::GetBrushesIn*()
 #include "mathlib/vector4d.h"
 #include "bspflags.h"
 
 class Vector;
-class IHandleEntity;
+class CEntityInstance;
 struct Ray_t;
 class CGameTrace;
 typedef CGameTrace trace_t;
@@ -43,7 +43,7 @@ enum TraceType_t
 abstract_class ITraceFilter
 {
 public:
-	virtual bool ShouldHitEntity( IHandleEntity *pEntity, int contentsMask ) = 0;
+	virtual bool ShouldHitEntity( CEntityInstance *pEntity, int contentsMask ) = 0;
 	virtual TraceType_t	GetTraceType() const = 0;
 };
 
@@ -78,7 +78,7 @@ public:
 class CTraceFilterWorldOnly : public ITraceFilter
 {
 public:
-	bool ShouldHitEntity( IHandleEntity *pServerEntity, int contentsMask )
+	bool ShouldHitEntity( CEntityInstance *pServerEntity, int contentsMask )
 	{
 		return false;
 	}
@@ -91,7 +91,7 @@ public:
 class CTraceFilterWorldAndPropsOnly : public ITraceFilter
 {
 public:
-	bool ShouldHitEntity( IHandleEntity *pServerEntity, int contentsMask )
+	bool ShouldHitEntity( CEntityInstance *pServerEntity, int contentsMask )
 	{
 		return false;
 	}
@@ -104,7 +104,7 @@ public:
 class CTraceFilterHitAll : public CTraceFilter
 {
 public:
-	virtual bool ShouldHitEntity( IHandleEntity *pServerEntity, int contentsMask )
+	virtual bool ShouldHitEntity( CEntityInstance *pServerEntity, int contentsMask )
 	{ 
 		return true; 
 	}
@@ -124,7 +124,7 @@ abstract_class IEntityEnumerator
 {
 public:
 	// This gets called with each handle
-	virtual bool EnumEntity( IHandleEntity *pHandleEntity ) = 0; 
+	virtual bool EnumEntity( CEntityInstance *pHandleEntity ) = 0; 
 };
 
 
@@ -144,7 +144,7 @@ abstract_class IEngineTrace
 {
 public:
 	// Returns the contents mask + entity at a particular world-space position
-	virtual int		GetPointContents( const Vector &vecAbsPosition, int contentsMask = MASK_ALL, IHandleEntity** ppEntity = NULL ) = 0;
+	virtual int		GetPointContents( const Vector &vecAbsPosition, int contentsMask = MASK_ALL, CEntityInstance** ppEntity = NULL ) = 0;
 	
 	// Returns the contents mask of the world only @ the world-space position (static props are ignored)
 	virtual int		GetPointContents_WorldOnly( const Vector &vecAbsPosition, int contentsMask = MASK_ALL ) = 0;
@@ -157,7 +157,7 @@ public:
 	virtual int		GetPointContents_Collideable( ICollideable *pCollide, const Vector &vecAbsPosition ) = 0;
 
 	// Traces a ray against a particular entity
-	virtual void	ClipRayToEntity( const Ray_t &ray, unsigned int fMask, IHandleEntity *pEnt, trace_t *pTrace ) = 0;
+	virtual void	ClipRayToEntity( const Ray_t &ray, unsigned int fMask, CEntityInstance *pEnt, trace_t *pTrace ) = 0;
 
 	// Traces a ray against a particular entity
 	virtual void	ClipRayToCollideable( const Ray_t &ray, unsigned int fMask, ICollideable *pCollide, trace_t *pTrace ) = 0;
@@ -184,7 +184,7 @@ public:
 	virtual void	EnumerateEntities( const Vector &vecAbsMins, const Vector &vecAbsMaxs, IEntityEnumerator *pEnumerator ) = 0;
 
 	// Convert a handle entity to a collideable.  Useful inside enumer
-	virtual ICollideable *GetCollideable( IHandleEntity *pEntity ) = 0;
+	virtual ICollideable *GetCollideable( CEntityInstance *pEntity ) = 0;
 
 	// HACKHACK: Temp for performance measurments
 	virtual int GetStatByIndex( int index, bool bClear ) = 0;

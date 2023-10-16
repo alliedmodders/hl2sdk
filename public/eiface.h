@@ -13,7 +13,7 @@
 #pragma once
 #endif
 
-#include "convar.h"
+#include "tier1/convar.h"
 #include "icvar.h"
 #include "edict.h"
 #include "mathlib/vplane.h"
@@ -27,6 +27,7 @@
 #include "tier1/bufferstring.h"
 #include <steam/steamclientpublic.h>
 #include "playerslot.h"
+#include <iloopmode.h>
 
 //-----------------------------------------------------------------------------
 // forward declarations
@@ -73,7 +74,6 @@ struct RenderDeviceInfo_t;
 struct RenderMultisampleType_t;
 class GameSessionConfiguration_t;
 struct StringTableDef_t;
-struct HostStateLoopModeType_t;
 class ILoopModePrerequisiteRegistry;
 struct URLArgument_t;
 struct vis_info_t;
@@ -89,9 +89,6 @@ namespace google
 		class Message;
 	}
 }
-
-typedef uint32 SpawnGroupHandle_t;
-typedef uint32 SwapChainHandle_t;
 
 //-----------------------------------------------------------------------------
 // defines
@@ -109,24 +106,6 @@ struct bbox_t
 {
 	Vector mins;
 	Vector maxs;
-};
-
-struct CEntityIndex
-{
-	CEntityIndex( int index )
-	{
-		_index = index;
-	}
-	
-	int Get() const
-	{
-		return _index;
-	}
-	
-	int _index;
-
-	bool operator==( const CEntityIndex &other ) const { return other._index == _index; }
-	bool operator!=( const CEntityIndex &other ) const { return other._index != _index; }
 };
 
 class CPlayerUserId
@@ -184,6 +163,7 @@ public:
 	virtual void		unk003() = 0;
 	virtual void		unk004() = 0;
 	virtual void		unk005() = 0;
+	virtual void		unk006() = 0;
 
 
 	// Tell engine to change level ( "changelevel s1\n" or "changelevel2 s1 s2\n" )
@@ -219,8 +199,8 @@ public:
 	
 	// Returns the server assigned userid for this player.  Useful for logging frags, etc.  
 	//  returns -1 if the edict couldn't be found in the list of players.
-	virtual CPlayerUserId GetPlayerUserId( CPlayerSlot clientSlot ) = 0;
-	virtual const char	*GetPlayerNetworkIDString( CPlayerSlot clientSlot ) = 0;
+	virtual CPlayerUserId GetPlayerUserId( CPlayerSlot nSlot ) = 0;
+	virtual const char	*GetPlayerNetworkIDString( CPlayerSlot nSlot ) = 0;
 	// Get stats info interface for a client netchannel
 	virtual INetChannelInfo* GetPlayerNetInfo( CPlayerSlot nSlot ) = 0;
 	
@@ -253,16 +233,16 @@ public:
 	virtual CPlayerSlot	CreateFakeClient( const char *netname ) = 0;
 	
 	// Get a convar keyvalue for s specified client
-	virtual const char	*GetClientConVarValue( CPlayerSlot clientIndex, const char *name ) = 0;
+	virtual const char	*GetClientConVarValue( CPlayerSlot nSlot, const char *name ) = 0;
 	
 	// Print a message to the server log file
 	virtual void		LogPrint( const char *msg ) = 0;
 	virtual bool		IsLogEnabled() = 0;
 	
-	virtual bool IsSplitScreenPlayer( CPlayerSlot player ) = 0;
-	virtual edict_t *GetSplitScreenPlayerAttachToEdict( CPlayerSlot player ) = 0;
-	virtual int	GetNumSplitScreenUsersAttachedToEdict( CPlayerSlot player ) = 0;
-	virtual edict_t *GetSplitScreenPlayerForEdict( CPlayerSlot player, int nSlot ) = 0;
+	virtual bool IsSplitScreenPlayer( CPlayerSlot nSlot ) = 0;
+	virtual edict_t *GetSplitScreenPlayerAttachToEdict( CPlayerSlot nSlot ) = 0;
+	virtual int	GetNumSplitScreenUsersAttachedToEdict( CPlayerSlot nSlot ) = 0;
+	virtual edict_t *GetSplitScreenPlayerForEdict( CPlayerSlot nSlot, int nSplitScreenSlot ) = 0;
 	
 	// Ret types might be all wrong for these. Haven't researched yet.
 	virtual void	UnloadSpawnGroup( SpawnGroupHandle_t spawnGroup, /*ESpawnGroupUnloadOption*/ int) = 0;
@@ -278,7 +258,7 @@ public:
 	virtual uint32		GetAppID() = 0;
 	
 	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
-	virtual const CSteamID	*GetClientSteamID( CPlayerSlot clientIndex ) = 0;
+	virtual const CSteamID	*GetClientSteamID( CPlayerSlot nSlot ) = 0;
 	
 	// Methods to set/get a gamestats data container so client & server running in same process can send combined data
 	virtual void SetGamestatsData( CGamestatsData *pGamestatsData ) = 0;
@@ -286,19 +266,19 @@ public:
 	
 	// Send a client command keyvalues
 	// keyvalues are deleted inside the function
-	virtual void ClientCommandKeyValues( CPlayerSlot client, KeyValues *pCommand ) = 0;
+	virtual void ClientCommandKeyValues( CPlayerSlot nSlot, KeyValues *pCommand ) = 0;
 	
 	// This makes the host run 1 tick per frame instead of checking the system timer to see how many ticks to run in a certain frame.
 	// i.e. it does the same thing timedemo does.
 	virtual void SetDedicatedServerBenchmarkMode( bool bBenchmarkMode ) = 0;
 	
 	// Returns true if this client has been fully authenticated by Steam
-	virtual bool IsClientFullyAuthenticated( CPlayerSlot slot ) = 0;
+	virtual bool IsClientFullyAuthenticated( CPlayerSlot nSlot ) = 0;
 	
 	virtual CGlobalVars	*GetServerGlobals() = 0;
 	
 	// Sets a USERINFO client ConVar for a fakeclient
-	virtual void		SetFakeClientConVarValue( CPlayerSlot clientIndex, const char *cvar, const char *value ) = 0;
+	virtual void		SetFakeClientConVarValue( CPlayerSlot nSlot, const char *cvar, const char *value ) = 0;
 	
 	virtual CSharedEdictChangeInfo* GetSharedEdictChangeInfo() = 0;
 	
@@ -306,10 +286,10 @@ public:
 	virtual IAchievementMgr *GetAchievementMgr() = 0;
 	
 	// Fill in the player info structure for the specified player index (name, model, etc.)
-	virtual bool GetPlayerInfo( CPlayerSlot clientIndex, google::protobuf::Message &info ) = 0;
+	virtual bool GetPlayerInfo( CPlayerSlot nSlot, google::protobuf::Message &info ) = 0;
 	
 	// Returns the XUID of the specified player. It'll be NULL if the player hasn't connected yet.
-	virtual uint64 GetClientXUID( CPlayerSlot clientIndex ) = 0;
+	virtual uint64 GetClientXUID( CPlayerSlot nSlot ) = 0;
 	
 	virtual void				*GetPVSForSpawnGroup( SpawnGroupHandle_t spawnGroup ) = 0;
 	virtual SpawnGroupHandle_t	FindSpawnGroupByName( const char *szName ) = 0;
@@ -319,42 +299,48 @@ public:
 	
 	virtual int GetBuildVersion( void ) const = 0;
 	
-	virtual bool IsClientLowViolence( CEntityIndex clientIndex ) = 0;
+	virtual bool IsClientLowViolence( CPlayerSlot nSlot ) = 0;
 	
+	// Kicks the slot with the specified NetworkDisconnectionReason
+	virtual void DisconnectClient( CPlayerSlot nSlot, /* ENetworkDisconnectionReason */ int reason ) = 0;
+
 #if 0 // Don't really match the binary
-	virtual void DisconnectClient( CEntityIndex clientIndex, /* ENetworkDisconnectionReason */ int reason ) = 0;
-	
 	virtual void GetAllSpawnGroupsWithPVS( CUtlVector<SpawnGroupHandle_t> *spawnGroups, CUtlVector<IPVS *> *pOut ) = 0;
 	
 	virtual void P2PGroupChanged() = 0;
 #endif
 
-	virtual void unk006() = 0;
-	virtual void unk007() = 0;
-	virtual void unk008() = 0;
-	virtual void unk009() = 0;
-	virtual void unk010() = 0;
-	virtual void unk011() = 0;
-	virtual void unk012() = 0;
-	virtual void unk013() = 0;
+	virtual void unk101() = 0;
+	virtual void unk102() = 0;
+	virtual void unk103() = 0;
+	virtual void unk104() = 0;
+	virtual void unk105() = 0;
+	virtual void unk106() = 0;
+	virtual void unk107() = 0;
 
-	virtual void OnKickById( const CCommandContext &context, const CCommand &cmd ) = 0;
+	virtual void OnKickClient( const CCommandContext &context, const CCommand &cmd ) = 0;
 
-	virtual void unk014() = 0;
-	virtual void unk015() = 0;
-	virtual void unk016() = 0;
-	virtual void unk017() = 0;
-	virtual void unk018() = 0;
-	virtual void unk019() = 0;
-	virtual void unk020() = 0;
-	virtual void unk021() = 0;
-	virtual void unk022() = 0;
-	virtual void unk023() = 0;
+	// Kicks and bans the slot.
+    // Note that the internal reason is never displayed to the user.
+	// ENetworkDisconnectionReason reason is ignored, client is always kicked with ENetworkDisconnectionReason::NETWORK_DISCONNECT_KICKBANADDED
+	//
+	// AM TODO: add header ref for ENetworkDisconnectReason from proto header
+    virtual void BanClient( CPlayerSlot nSlot, const char *szInternalReason, /*ENetworkDisconnectionReason*/ char reason ) = 0;
 
-	virtual void SetClientUpdateRate( CEntityIndex clientIndex, float flUpdateRate ) = 0;
+	virtual void unk200() = 0;
+	virtual void unk201() = 0;
+	virtual void unk202() = 0;
+	virtual void unk203() = 0;
+	virtual void unk204() = 0;
+	virtual void unk205() = 0;
+	virtual void unk206() = 0;
+	virtual void unk207() = 0;
+	virtual void unk208() = 0;
 
-	virtual void unk024() = 0;
-	virtual void unk025() = 0;
+	virtual void SetClientUpdateRate( CPlayerSlot nSlot, float flUpdateRate ) = 0;
+
+	virtual void unk300() = 0;
+	virtual void unk301() = 0;
 };
 
 abstract_class IServerGCLobby
@@ -519,7 +505,7 @@ public:
 	virtual float			GetTickInterval( void ) const = 0;
 	
 	// Get server maxplayers and lower bound for same
-	virtual void			GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers, bool &unknown ) const = 0;
+	virtual void			GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers, bool &bIsMultiplayer ) const = 0;
 	
 	// Returns max splitscreen slot count ( 1 == no splits, 2 for 2-player split screen )
 	virtual int		GetMaxSplitscreenPlayers( void ) = 0;
@@ -531,13 +517,15 @@ public:
 	
 	virtual bool			AllowPlayerToTakeOverBots() = 0;
 	
-	virtual void			OnClientFullyConnect( CEntityIndex index ) = 0;
+	virtual void			OnClientFullyConnect( CEntityIndex nEntityIndex ) = 0;
 	
-	virtual void		GetHostStateLoopModeInfo( HostStateLoopModeType_t, CUtlString &, KeyValues ** ) = 0;
+	virtual void		GetHostStateLoopModeInfo( HostStateLoopModeType_t type, CUtlString &loopModeName, KeyValues **ppLoopModeOptions ) = 0;
 	
 	virtual bool		AllowDedicatedServers( EUniverse universe ) const = 0;
 	
-	virtual void		GetConVarPrefixesToResetToDefaults( CUtlString &prefixes ) const = 0;
+	virtual void		GetConVarPrefixesToResetToDefaults( CUtlString &sSemicolonDelimitedPrefixList ) const = 0;
+
+	virtual bool		AllowSaveRestore() = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMECLIENTS		"Source2GameClients001"

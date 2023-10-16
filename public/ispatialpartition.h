@@ -17,7 +17,7 @@
 
 class Vector;
 struct Ray_t;
-class IHandleEntity;
+class CEntityInstance;
 
 
 #define INTERFACEVERSION_SPATIALPARTITION	"SpatialPartition001"
@@ -85,7 +85,7 @@ typedef int SpatialTempHandle_t;
 class IPartitionEnumerator
 {
 public:
-	virtual IterationRetval_t EnumElement( IHandleEntity *pHandleEntity ) = 0;
+	virtual IterationRetval_t EnumElement( CEntityInstance *pHandleEntity ) = 0;
 };
 
 
@@ -114,10 +114,10 @@ abstract_class ISpatialPartition
 public:
 	// Create/destroy a handle for this dude in our system. Destroy
 	// will also remove it from all lists it happens to be in
-	virtual SpatialPartitionHandle_t CreateHandle( IHandleEntity *pHandleEntity ) = 0;
+	virtual SpatialPartitionHandle_t CreateHandle( CEntityInstance *pHandleEntity ) = 0;
 
 	// A fast method of creating a handle + inserting into the tree in the right place
-	virtual SpatialPartitionHandle_t CreateHandle( IHandleEntity *pHandleEntity,
+	virtual SpatialPartitionHandle_t CreateHandle( CEntityInstance *pHandleEntity,
 		SpatialPartitionListMask_t listMask, const Vector& mins, const Vector& maxs ) = 0; 
 
 	virtual void DestroyHandle( SpatialPartitionHandle_t handle ) = 0;

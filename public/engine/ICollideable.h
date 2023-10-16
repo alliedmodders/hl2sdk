@@ -13,7 +13,7 @@
 
 
 enum SolidType_t : unsigned char;
-class IHandleEntity;
+class CEntityInstance;
 struct Ray_t;
 struct model_t;
 class Vector;
@@ -27,7 +27,7 @@ abstract_class ICollideable
 {
 public:
 	// Gets at the entity handle associated with the collideable
-	virtual IHandleEntity	*GetEntityHandle() = 0;
+	virtual CEntityInstance	*GetEntityHandle() = 0;
 
 	// These methods return the bounds of an OBB measured in "collision" space
 	// which can be retreived through the CollisionToWorldTransform or

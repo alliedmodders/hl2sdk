@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2005, Valve Corporation, All rights reserved. =======//
+//====== Copyright Â© 1996-2005, Valve Corporation, All rights reserved. =======//
 //
 // Purpose: 
 //
@@ -45,7 +45,7 @@ public:
 	typedef T ElemType_t;
 
 	// constructor, destructor
-	CUtlVector( int growSize = 0, int initSize = 0 );
+	CUtlVector( int growSize = 0, int initSize = 0, RawAllocatorType_t allocatorType = RawAllocator_Standard );
 	CUtlVector( T* pMemory, int allocationCount, int numElements = 0 );
 	~CUtlVector();
 	
@@ -76,6 +76,7 @@ public:
 	// Adds an element, uses default constructor
 	int AddToHead();
 	int AddToTail();
+	T* AddToTailGetPtr();
 	int InsertBefore( int elem );
 	int InsertAfter( int elem );
 
@@ -524,7 +525,7 @@ public:
 // constructor, destructor
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-inline CUtlVector<T, A>::CUtlVector( int growSize, int initSize )	: 
+inline CUtlVector<T, A>::CUtlVector( int growSize, int initSize, RawAllocatorType_t allocatorType )	: 
 	m_Size(0), m_Memory(growSize, initSize)
 {
 }
@@ -728,7 +729,7 @@ void CUtlVector<T, A>::ShiftElementsRight( int elem, int num )
 	Assert( IsValidIndex(elem) || ( m_Size == 0 ) || ( num == 0 ));
 	int numToMove = m_Size - elem - num;
 	if ((numToMove > 0) && (num > 0))
-		Q_memmove( &Element(elem+num), &Element(elem), numToMove * sizeof(T) );
+		memmove( &Element(elem+num), &Element(elem), numToMove * sizeof(T) );
 }
 
 template< typename T, class A >
@@ -738,7 +739,7 @@ void CUtlVector<T, A>::ShiftElementsLeft( int elem, int num )
 	int numToMove = m_Size - elem - num;
 	if ((numToMove > 0) && (num > 0))
 	{
-		Q_memmove( &Element(elem), &Element(elem+num), numToMove * sizeof(T) );
+		memmove( &Element(elem), &Element(elem+num), numToMove * sizeof(T) );
 
 #ifdef _DEBUG
 		Q_memset( &Element(m_Size-num), 0xDD, num * sizeof(T) );
@@ -760,6 +761,12 @@ template< typename T, class A >
 inline int CUtlVector<T, A>::AddToTail()
 {
 	return InsertBefore( m_Size );
+}
+
+template< typename T, class A >
+inline T* CUtlVector<T, A>::AddToTailGetPtr()
+{
+	return &Element(AddToTail());
 }
 
 template< typename T, class A >
