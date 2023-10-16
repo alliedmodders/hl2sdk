@@ -108,25 +108,6 @@ struct bbox_t
 	Vector maxs;
 };
 
-class CEntityIndex
-{
-public:
-	CEntityIndex( int index )
-	{
-		_index = index;
-	}
-	
-	int Get() const
-	{
-		return _index;
-	}
-	
-	int _index;
-
-	bool operator==( const CEntityIndex &other ) const { return other._index == _index; }
-	bool operator!=( const CEntityIndex &other ) const { return other._index != _index; }
-};
-
 class CPlayerUserId
 {
 public:
