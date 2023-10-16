@@ -110,6 +110,19 @@ class GameSessionConfiguration_t;
 {
 };*/
 
+abstract_class IPrerequisiteRegistry
+{
+public:
+	virtual void RegisterPrerequisite( IPrerequisite * ) = 0;
+};
+
+abstract_class ILoopModePrerequisiteRegistry : public IPrerequisiteRegistry
+{
+public:
+	virtual void LookupLocalizationToken( const char * ) = 0;
+	virtual void UnregisterPrerequisite( IPrerequisite * ) = 0;
+};
+
 abstract_class ILoopMode
 {
 public:
@@ -132,19 +145,6 @@ public:
 	virtual ILoopMode *CreateLoopMode( void ) =0;
 	virtual void DestroyLoopMode( ILoopMode *pLoopMode ) =0;
 	virtual LoopModeType_t GetLoopModeType( void ) const =0;
-};
-
-abstract_class IPrerequisiteRegistry
-{
-public:
-	virtual void RegisterPrerequisite( IPrerequisite * ) = 0;
-};
-
-abstract_class ILoopModePrerequisiteRegistry : public IPrerequisiteRegistry
-{
-public:
-	virtual void LookupLocalizationToken( const char * ) =0;
-	virtual void UnregisterPrerequisite( IPrerequisite * ) =0;
 };
 
 #endif // ILOOPMODE_H
