@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -7,6 +7,10 @@
 
 #include "tier1/convar.h"
 #include "jigglebones.h"
+#ifdef CLIENT_DLL
+#include "engine/ivdebugoverlay.h"
+#include "cdll_client_int.h"
+#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -15,28 +19,76 @@
 ConVar JiggleBoneDebug( "cl_jiggle_bone_debug", "0", FCVAR_CHEAT, "Display physics-based 'jiggle bone' debugging information" );
 ConVar JiggleBoneDebugYawConstraints( "cl_jiggle_bone_debug_yaw_constraints", "0", FCVAR_CHEAT, "Display physics-based 'jiggle bone' debugging information" );
 ConVar JiggleBoneDebugPitchConstraints( "cl_jiggle_bone_debug_pitch_constraints", "0", FCVAR_CHEAT, "Display physics-based 'jiggle bone' debugging information" );
+ConVar JiggleBoneInvert( "cl_jiggle_bone_invert", "0", FCVAR_CHEAT );
+ConVar JiggleBoneSanity( "cl_jiggle_bone_sanity", "1", 0, "Prevent jiggle bones from pointing directly away from their target in case of numerical instability." );
 
+static int s_id = 2;
+
+#ifdef CLIENT_DLL
+char *VarArgs( const char *format, ... );
+#else
 class CDummyOverlay
 {
 public:
 	void AddLineOverlay(const Vector& origin, const Vector& dest, int r, int g, int b, bool noDepthTest, float duration) {};
+	void AddTextOverlay(const Vector &origin, float duration, const char *text) {}
 };
 
-CDummyOverlay *debugoverlay = new CDummyOverlay;
+SELECTANY CDummyOverlay *debugoverlay = new CDummyOverlay;
+
+char *VarArgs( const char *format, ... )
+{
+	return NULL;
+}
+#endif
 
 //-----------------------------------------------------------------------------
-JiggleData * CJiggleBones::GetJiggleData( int bone, float currenttime, const Vector &initBasePos, const Vector &initTipPos )
+JiggleData *CJiggleBones::GetJiggleData( int bone, float currenttime, const Vector &initBasePos, const Vector &initTipPos )
 {
 	FOR_EACH_LL( m_jiggleBoneState, it )
 	{
 		if ( m_jiggleBoneState[it].bone == bone )
 		{
+			JiggleData *data = &m_jiggleBoneState[it];
+			if ( !IsFinite( data->lastUpdate ) )
+			{
+				Warning( "lastUpdate NaN\n" );
+			}
+			if ( !data->basePos.IsValid() )
+			{
+				Warning( "basePos NaN\n" );
+			}
+			if ( !data->baseLastPos.IsValid() )
+			{
+				Warning( "baseLastPos NaN\n" );
+			}
+			if ( !data->baseVel.IsValid() )
+			{
+				Warning( "baseVel NaN\n" );
+			}
+			if ( !data->baseAccel.IsValid() )
+			{
+				Warning( "baseAccel NaN\n" );
+			}
+			if ( !data->tipPos.IsValid() )
+			{
+				Warning( "tipPos NaN\n" );
+			}
+			if ( !data->tipVel.IsValid() )
+			{
+				Warning( "tipVel NaN\n" );
+			}
+			if ( !data->tipAccel.IsValid() )
+			{
+				Warning( "tipAccel NaN\n" );
+			}
 			return &m_jiggleBoneState[it];
 		}
 	}
 
 	JiggleData data;
 	data.Init( bone, currenttime, initBasePos, initTipPos );
+	data.id = s_id++;
 
 	int idx = m_jiggleBoneState.AddToHead( data );
 	if ( idx == m_jiggleBoneState.InvalidIndex() )
@@ -75,6 +127,45 @@ void CJiggleBones::BuildJiggleTransformations( int boneIndex, float currenttime,
 		data->Init( boneIndex, currenttime, goalBasePosition, goalTip );
 	}
 
+	if ( JiggleBoneInvert.GetBool() )
+	{
+		data->basePos = -data->basePos;
+		data->baseLastPos = -data->baseLastPos;
+		data->baseVel = -data->baseVel;
+		data->baseAccel = -data->baseAccel;
+		data->tipPos = -data->tipPos;
+		data->tipVel = -data->tipVel;
+		data->tipAccel = -data->tipAccel;
+	}
+
+#ifdef CLIENT_DLL
+	if ( data->id == JiggleBoneDebug.GetInt() )
+	{
+		int line = 20;
+		engine->Con_NPrintf( line++, "basePos %f %f %f", data->basePos.x, data->basePos.y, data->basePos.z );
+		engine->Con_NPrintf( line++, "baseLastPos %f %f %f", data->baseLastPos.x, data->baseLastPos.y, data->baseLastPos.z );
+		engine->Con_NPrintf( line++, "baseVel %f %f %f", data->baseVel.x, data->baseVel.y, data->baseVel.z );
+		engine->Con_NPrintf( line++, "baseAccel %f %f %f", data->baseAccel.x, data->baseAccel.y, data->baseAccel.z );
+		engine->Con_NPrintf( line++, "tipPos %f %f %f", data->tipPos.x, data->tipPos.y, data->tipPos.z );
+		engine->Con_NPrintf( line++, "tipVel %f %f %f", data->tipVel.x, data->tipVel.y, data->tipVel.z );
+		engine->Con_NPrintf( line++, "tipAccel %f %f %f", data->tipAccel.x, data->tipAccel.y, data->tipAccel.z );
+	}
+#endif
+
+	if ( JiggleBoneSanity.GetBool() )
+	{
+		Vector goalDir = goalTip - goalBasePosition;
+		goalDir.NormalizeInPlace();
+		Vector dataDir = data->tipPos - goalBasePosition;
+		dataDir.NormalizeInPlace();
+
+		float dot = goalDir.Dot( dataDir );
+		if ( dot < -0.9f ) // if we end up pointing almost completely away, just reset
+		{
+			data->Init( boneIndex, currenttime, goalBasePosition, goalTip );
+		}
+	}
+
 	//Vector bodyVel;
 	//EstimateAbsVelocity( bodyVel );
 
@@ -106,6 +197,7 @@ void CJiggleBones::BuildJiggleTransformations( int boneIndex, float currenttime,
 			Vector localVel;
 			localVel.x = DotProduct( goalLeft, data->tipVel );
 			localVel.y = DotProduct( goalUp, data->tipVel );
+			localVel.z = 0.0f; // TODO: this was uninitialized, but is being used
 
 			// yaw spring
 			float yawAccel = jiggleInfo->yawStiffness * localError.x - jiggleInfo->yawDamping * localVel.x;
@@ -235,6 +327,7 @@ void CJiggleBones::BuildJiggleTransformations( int boneIndex, float currenttime,
 
 					// yaw friction - rubbing along limit plane
 					Vector limitVel;
+					limitVel.x = 0.0f; // TODO: this was uninitialized, and is used when yawBounce is non-zero!
 					limitVel.y = DotProduct( limitUp, data->tipVel );
 					limitVel.z = DotProduct( limitForward, data->tipVel );
 
@@ -335,6 +428,7 @@ void CJiggleBones::BuildJiggleTransformations( int boneIndex, float currenttime,
 
 					// pitch friction - rubbing along limit plane
 					Vector limitVel;
+					limitVel.x = 0.0f; // TODO: this was uninitialized, but is being used
 					limitVel.y = DotProduct( limitUp, data->tipVel );
 					limitVel.z = DotProduct( limitForward, data->tipVel );
 
@@ -510,7 +604,7 @@ void CJiggleBones::BuildJiggleTransformations( int boneIndex, float currenttime,
 
 
 	// debug display
-	if ( JiggleBoneDebug.GetBool() )
+	if ( JiggleBoneDebug.GetInt() == 1 || JiggleBoneDebug.GetInt() == data->id )
 	{
 		float dT = 0.01f;
 		const float axisSize = 5.0f;
@@ -518,6 +612,7 @@ void CJiggleBones::BuildJiggleTransformations( int boneIndex, float currenttime,
 		debugoverlay->AddLineOverlay( goalBasePosition, goalBasePosition + axisSize * goalUp, 0, 255, 0, true, dT );
 		debugoverlay->AddLineOverlay( goalBasePosition, goalBasePosition + axisSize * goalForward, 0, 0, 255, true, dT );
 
+		debugoverlay->AddTextOverlay( goalBasePosition, dT, VarArgs( "%d", data->id ) );
 
 		const float sz = 1.0f;
 

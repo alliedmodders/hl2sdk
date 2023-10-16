@@ -43,8 +43,10 @@ public:
 						ServerClass *p1 = g_pServerClassHead;
 						ServerClass *p2 = p1->m_pNext;
 
-						// use _stricmp because Q_stricmp isn't hooked up properly yet
-						if ( _stricmp( p1->GetName(), pNetworkName ) > 0)
+						// Comment from Alfred on 7/2/2004 6:43:24 PM in CL 91253, //ValveGames/main/src/public/server_class.h#18:
+						// --->  use _stricmp because Q_stricmp isn't hooked up properly yet
+						// [Sergiy, 10/19/2009] hooking up V_stricmp
+						if ( V_stricmp( p1->GetName(), pNetworkName ) > 0)
 						{
 							m_pNext = g_pServerClassHead;
 							g_pServerClassHead = this;
@@ -53,7 +55,7 @@ public:
 
 						while( p1 )
 						{
-							if ( p2 == NULL || _stricmp( p2->GetName(), pNetworkName ) > 0)
+							if ( p2 == NULL || V_stricmp( p2->GetName(), pNetworkName ) > 0)
 							{
 								m_pNext = p2;
 								p1->m_pNext = this;

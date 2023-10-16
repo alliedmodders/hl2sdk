@@ -108,6 +108,8 @@ void GeneratePerspectiveFrustum( const Vector& origin, const Vector &forward, co
 bool R_CullBox( const Vector& mins, const Vector& maxs, const Frustum_t &frustum );
 bool R_CullBoxSkipNear( const Vector& mins, const Vector& maxs, const Frustum_t &frustum );
 
+class matrix3x4a_t;
+
 struct matrix3x4_t
 {
 	matrix3x4_t() {}
@@ -160,6 +162,25 @@ struct matrix3x4_t
 	float m_flMatVal[3][4];
 };
 
+class ALIGN16 matrix3x4a_t : public matrix3x4_t
+{
+public:
+	/*
+	matrix3x4a_t() { if (((size_t)Base()) % 16 != 0) { Error( "matrix3x4a_t missaligned" ); } }
+	*/
+	matrix3x4a_t& operator=( const matrix3x4_t& src ) { memcpy( Base(), src.Base(), sizeof( float ) * 3 * 4 ); return *this; };
+	
+	matrix3x4a_t() {}
+	matrix3x4a_t( 
+		float m00, float m01, float m02, float m03,
+		float m10, float m11, float m12, float m13,
+		float m20, float m21, float m22, float m23 )
+	{
+		m_flMatVal[0][0] = m00;	m_flMatVal[0][1] = m01; m_flMatVal[0][2] = m02; m_flMatVal[0][3] = m03;
+		m_flMatVal[1][0] = m10;	m_flMatVal[1][1] = m11; m_flMatVal[1][2] = m12; m_flMatVal[1][3] = m13;
+		m_flMatVal[2][0] = m20;	m_flMatVal[2][1] = m21; m_flMatVal[2][2] = m22; m_flMatVal[2][3] = m23;
+	}
+};
 
 #ifndef M_PI
 	#define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
@@ -2066,7 +2087,21 @@ void RGBtoHSV( const Vector &rgb, Vector &hsv );
 //-----------------------------------------------------------------------------
 void HSVtoRGB( const Vector &hsv, Vector &rgb );
 
+//-----------------------------------------------------------------------------
+// For testing float equality
+//-----------------------------------------------------------------------------
 
+inline bool CloseEnough( float a, float b, float epsilon = EQUAL_EPSILON )
+{
+	return fabs( a - b ) <= epsilon;
+}
+
+inline bool CloseEnough( const Vector &a, const Vector &b, float epsilon = EQUAL_EPSILON )
+{
+	return fabs( a.x - b.x ) <= epsilon &&
+		fabs( a.y - b.y ) <= epsilon &&
+		fabs( a.z - b.z ) <= epsilon;
+}
 
 #endif	// MATH_BASE_H
 

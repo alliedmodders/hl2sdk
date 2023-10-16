@@ -558,7 +558,7 @@ class CLimitTimer
 {
 public:
 	void SetLimit( uint64 m_cMicroSecDuration );
-	bool BLimitReached( void );
+	bool BLimitReached( void ) const;
 
 private:
 	int64 m_lCycleLimit;
@@ -582,7 +582,7 @@ inline void CLimitTimer::SetLimit( uint64 m_cMicroSecDuration )
 // Purpose: Determines whether our specified time period has passed
 // Output:	true if at least the specified time period has passed
 //-----------------------------------------------------------------------------
-inline bool CLimitTimer::BLimitReached( )
+inline bool CLimitTimer::BLimitReached( ) const
 {
 	CCycleCount cycleCount;
 	cycleCount.Sample( );

@@ -20,6 +20,7 @@
 #include "materialsystem/imaterialsystem.h"
 #include "appframework/IAppSystem.h"
 #include "datacache/imdlcache.h"
+#include "tier0/fasttimer.h"
 #include "studio.h"
 
 
@@ -42,6 +43,9 @@ struct FlashlightState_t;
 class VMatrix;
 namespace OptimizedModel { struct FileHeader_t; }
 class IPooledVBAllocator;
+struct MeshInstanceData_t;
+struct ShaderStencilState_t;
+
 
 // undone: what's the standard for function type naming?
 typedef void (*StudioRender_Printf_t)( const char *fmt, ... );
@@ -113,7 +117,11 @@ enum
 
 	STUDIORENDER_DRAW_ITEM_BLINK		= 0x100,
 
-	STUDIORENDER_SHADOWDEPTHTEXTURE		= 0x200
+	STUDIORENDER_SHADOWDEPTHTEXTURE		= 0x200,
+									
+	STUDIORENDER_NO_SKIN				= 0x400,
+
+	STUDIORENDER_SKIP_DECALS			= 0x800,
 };
 
 
@@ -126,11 +134,7 @@ enum
 #define VERTEX_TEXCOORD0_2D ( ( (uint64) 2 ) << ( TEX_COORD_SIZE_BIT + ( 3*0 ) ) )
 enum MaterialVertexFormat_t
 {
-	MATERIAL_VERTEX_FORMAT_MODEL_SKINNED		= (VertexFormat_t) VERTEX_POSITION | VERTEX_COLOR | VERTEX_NORMAL | VERTEX_TEXCOORD0_2D | VERTEX_BONEWEIGHT(2) | VERTEX_BONE_INDEX | VERTEX_USERDATA_SIZE(4),
-	MATERIAL_VERTEX_FORMAT_MODEL_SKINNED_DX7	= (VertexFormat_t) VERTEX_POSITION | VERTEX_COLOR | VERTEX_NORMAL | VERTEX_TEXCOORD0_2D | VERTEX_BONEWEIGHT(2) | VERTEX_BONE_INDEX,
-	MATERIAL_VERTEX_FORMAT_MODEL				= (VertexFormat_t) VERTEX_POSITION | VERTEX_COLOR | VERTEX_NORMAL | VERTEX_TEXCOORD0_2D | VERTEX_USERDATA_SIZE(4),
-	MATERIAL_VERTEX_FORMAT_MODEL_DX7			= (VertexFormat_t) VERTEX_POSITION | VERTEX_COLOR | VERTEX_NORMAL | VERTEX_TEXCOORD0_2D,
-	MATERIAL_VERTEX_FORMAT_COLOR				= (VertexFormat_t) VERTEX_SPECULAR
+	MATERIAL_VERTEX_FORMAT_MODEL	= (VertexFormat_t) VERTEX_POSITION | VERTEX_COLOR_STREAM_1 | VERTEX_NORMAL | VERTEX_TEXCOORD0_2D | VERTEX_USERDATA_SIZE(4),
 };
 
 
@@ -195,9 +199,64 @@ struct DrawModelInfo_t
 	int				m_Lod;
 	ColorMeshInfo_t	*m_pColorMeshes;
 	bool			m_bStaticLighting;
-	Vector			m_vecAmbientCube[6];		// ambient, and lights that aren't in locallight[]
-	int				m_nLocalLightCount;
-	LightDesc_t		m_LocalLightDescs[4];
+	MaterialLightingState_t	m_LightingState;
+};
+
+enum
+{
+	// This is because we store which flashlights are on which model 
+	// in a 32-bit field (see ModelArrayInstanceData_t::m_nFlashlightUsage)
+	MAX_FLASHLIGHTS_PER_INSTANCE_DRAW_CALL = 32
+};
+
+struct FlashlightInstance_t
+{
+	IMaterial *m_pDebugMaterial;
+	FlashlightState_t m_FlashlightState;
+	VMatrix m_WorldToTexture;
+	ITexture *m_pFlashlightDepthTexture;
+};
+
+struct StudioModelArrayInfo2_t
+{
+	int						m_nFlashlightCount;
+	FlashlightInstance_t	*m_pFlashlights;	// NOTE: Can have at most MAX_FLASHLIGHTS_PER_INSTANCE_DRAW_CALL of these
+};
+
+struct StudioModelArrayInfo_t  : public StudioModelArrayInfo2_t
+{
+	studiohdr_t				*m_pStudioHdr;
+	studiohwdata_t			*m_pHardwareData;
+};
+
+struct StudioArrayData_t
+{
+	studiohdr_t				*m_pStudioHdr;
+	studiohwdata_t			*m_pHardwareData;
+	void					*m_pInstanceData; // See StudioShadowArrayInstanceData_t or StudioArrayInstanceData_t
+	int						m_nCount;
+};
+
+struct StudioShadowArrayInstanceData_t 
+{
+	int m_nLOD;
+	int m_nBody;
+	int m_nSkin;
+	matrix3x4a_t *m_pPoseToWorld;
+	float *m_pFlexWeights;
+	float *m_pDelayedFlexWeights;
+};
+
+struct StudioArrayInstanceData_t : public StudioShadowArrayInstanceData_t 
+{
+	MaterialLightingState_t *m_pLightingState;
+	MaterialLightingState_t *m_pDecalLightingState;
+	ITexture *m_pEnvCubemapTexture;
+	StudioDecalHandle_t m_Decals;
+	uint32 m_nFlashlightUsage;	// Mask indicating which flashlights to use.
+	ShaderStencilState_t *m_pStencilState;
+	ColorMeshInfo_t *m_pColorMeshInfo;
+	Vector4D m_DiffuseModulation;
 };
 
 struct GetTriangles_Vertex_t
@@ -224,14 +283,6 @@ struct GetTriangles_Output_t
 	matrix3x4_t m_PoseToWorld[MAXSTUDIOBONES];
 };
 
-
-struct model_array_instance_t 
-{
-	matrix3x4_t		modelToWorld;
-
-	// UNDONE: Per instance lighting values?
-};
-
 //-----------------------------------------------------------------------------
 // Cache Callback Function
 // implementation can either statically persist data (tools) or lru cache (engine) it.
@@ -252,8 +303,6 @@ public:
 //-----------------------------------------------------------------------------
 // Studio render interface
 //-----------------------------------------------------------------------------
-#define STUDIO_RENDER_INTERFACE_VERSION "VStudioRender025"
-
 abstract_class IStudioRender : public IAppSystem
 {
 public:
@@ -289,15 +338,6 @@ public:
 	// Sets information about the camera location + orientation
 	virtual void SetViewState( const Vector& viewOrigin, const Vector& viewRight, 
 		const Vector& viewUp, const Vector& viewPlaneNormal ) = 0;
-	
-	// Allocates flex weights for use in rendering
-	// NOTE: Pass in a non-null second parameter to lock delayed flex weights
-	virtual void LockFlexWeights( int nWeightCount, float **ppFlexWeights, float **ppFlexDelayedWeights = NULL ) = 0;
-	virtual void UnlockFlexWeights() = 0;
-	
-	// Used to allocate bone matrices to be used to pass into DrawModel
-	virtual matrix3x4_t* LockBoneMatrices( int nBoneCount ) = 0;
-	virtual void UnlockBoneMatrices() = 0;
 	
 	// LOD stuff
 	virtual int GetNumLODs( const studiohwdata_t &hardwareData ) const = 0;
@@ -357,10 +397,21 @@ public:
 	// Returns materials used by a particular model
 	virtual int GetMaterialList( studiohdr_t *pStudioHdr, int count, IMaterial** ppMaterials ) = 0;
 	virtual int GetMaterialListFromBodyAndSkin( MDLHandle_t studio, int nSkin, int nBody, int nCountOutputMaterials, IMaterial** ppOutputMaterials ) = 0;
-	// draw an array of models with the same state
-	virtual void DrawModelArray( const DrawModelInfo_t &drawInfo, int arrayCount, model_array_instance_t *pInstanceData, int instanceStride, int flags = STUDIORENDER_DRAW_ENTIRE_MODEL ) = 0;
-};
 
-extern IStudioRender *g_pStudioRender;
+	// no debug modes, just fastest drawing path
+	virtual void DrawModelArrayStaticProp( const DrawModelInfo_t& drawInfo, int nInstanceCount, const MeshInstanceData_t *pInstanceData, ColorMeshInfo_t **pColorMeshes ) = 0;
+
+	// draw an array of models with the same state
+	virtual void DrawModelArray( const StudioModelArrayInfo_t &drawInfo, int nCount, 
+		StudioArrayInstanceData_t *pInstanceData, int nInstanceStride, int flags = STUDIORENDER_DRAW_ENTIRE_MODEL ) = 0;
+
+	// draw an array of models with the same state
+	virtual void DrawModelShadowArray( int nCount, StudioArrayData_t *pShadowData, 
+		int nInstanceStride, int flags = STUDIORENDER_DRAW_ENTIRE_MODEL ) = 0;
+
+	// draw an array of models with the same state
+	virtual void DrawModelArray( const StudioModelArrayInfo2_t &info, int nCount, StudioArrayData_t *pArrayData, 
+		int nInstanceStride, int flags = STUDIORENDER_DRAW_ENTIRE_MODEL ) = 0;
+};
 
 #endif // ISTUDIORENDER_H

@@ -131,6 +131,8 @@ typedef unsigned __int32 uintp;
 #define __m128 __vector4
 #endif
 
+#define OVERRIDE override
+
 #else // _WIN32
 
 typedef short int16;
@@ -147,8 +149,21 @@ typedef int intp;
 typedef unsigned int uintp;
 #endif
 
+#undef OVERRIDE
+#if __cplusplus >= 201103L
+	#define OVERRIDE override
+	#if defined(__clang__)
+		// warning: 'override' keyword is a C++11 extension [-Wc++11-extensions]
+		// Disabling this warning is less intrusive than enabling C++11 extensions
+		#pragma GCC diagnostic ignored "-Wc++11-extensions"
+	#endif
+#else
+	#define OVERRIDE
+#endif
+
 #endif // else _WIN32
 
+typedef uint32 RTime32;
 
 typedef float  float32;
 typedef double float64;
@@ -159,8 +174,7 @@ typedef unsigned int uint;
 
 #ifdef GNUC
 #undef offsetof
-//#define offsetof( type, var ) __builtin_offsetof( type, var ) 
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+#define offsetof( type, var ) __builtin_offsetof( type, var ) 
 #else
 #include <stddef.h>
 #undef offsetof
@@ -300,11 +314,37 @@ typedef void * HINSTANCE;
         #define DECL_ALIGN(x) /* */
 #endif
 
+#ifdef _MSC_VER
+// MSVC has the align at the start of the struct
+#define ALIGN4 DECL_ALIGN(4)
 #define ALIGN8 DECL_ALIGN(8)
 #define ALIGN16 DECL_ALIGN(16)
 #define ALIGN32 DECL_ALIGN(32)
 #define ALIGN128 DECL_ALIGN(128)
 
+#define ALIGN4_POST
+#define ALIGN8_POST
+#define ALIGN16_POST
+#define ALIGN32_POST
+#define ALIGN128_POST
+#elif defined( GNUC )
+// gnuc has the align decoration at the end
+#define ALIGN4
+#define ALIGN8 
+#define ALIGN16
+#define ALIGN32
+#define ALIGN128
+
+#define ALIGN4_POST DECL_ALIGN(4)
+#define ALIGN8_POST DECL_ALIGN(8)
+#define ALIGN16_POST DECL_ALIGN(16)
+#define ALIGN32_POST DECL_ALIGN(32)
+#define ALIGN128_POST DECL_ALIGN(128)
+#else
+#error
+#endif
+
+#include "annotations.h"
 
 // Linux had a few areas where it didn't construct objects in the same order that Windows does.
 // So when CVProfile::CVProfile() would access g_pMemAlloc, it would crash because the allocator wasn't initalized yet.
@@ -419,8 +459,20 @@ typedef void * HINSTANCE;
 #define  stackfree( _p )
 #elif defined(_LINUX) || defined(__APPLE__)
 // Alloca defined for this platform
-#define  stackalloc( _size ) _alloca( ALIGN_VALUE( _size, 16 ) )
+#define  stackalloc( _size ) alloca( ALIGN_VALUE( _size, 16 ) )
 #define  stackfree( _p )
+#endif
+
+#if defined( GNUC )
+#ifdef _LINUX
+	#define mallocsize( _p )	( malloc_usable_size( _p ) )
+#elif defined(OSX)
+	#define mallocsize( _p )	( malloc_size( _p ) )
+#else
+#error
+#endif
+#elif defined ( _WIN32 )
+	#define mallocsize( _p )		( _msize( _p ) )
 #endif
 
 #ifdef _WIN32

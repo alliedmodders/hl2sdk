@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -17,7 +17,7 @@
 #include "materialsystem/imaterialsystem.h"
 
 //-----------------------------------------------------------------------------
-// forward declaraions
+// Forward declarations
 //-----------------------------------------------------------------------------
 
 class IMaterialVar;
@@ -31,7 +31,7 @@ class Vector;
 enum VertexFormatFlags_t
 {
 	// Indicates an uninitialized VertexFormat_t value
-	VERTEX_FORMAT_INVALID = 0xFFFFFFFFFFFFFFFFLL,
+	VERTEX_FORMAT_INVALID = 0xFFFFFFFFFFFFFFFFull,
 
 	VERTEX_POSITION	= 0x0001,
 	VERTEX_NORMAL	= 0x0002,
@@ -48,8 +48,8 @@ enum VertexFormatFlags_t
 	// Indicates we're using bone indices
 	VERTEX_BONE_INDEX = 0x0080,
 
-	// Indicates this is a vertex shader
-	VERTEX_FORMAT_VERTEX_SHADER = 0x0100,
+	// Indicates this expects a color stream on stream 1
+	VERTEX_COLOR_STREAM_1 = 0x0100,
 
 	// Indicates this format shouldn't be bloated to cache align it
 	// (only used for VertexUsage)
@@ -58,8 +58,11 @@ enum VertexFormatFlags_t
 	// Indicates that compressed vertex elements are to be used (see also VertexCompressionType_t)
 	VERTEX_FORMAT_COMPRESSED = 0x400,
 
+	// Position or normal (if present) should be 4D not 3D
+	VERTEX_FORMAT_PAD_POS_NORM = 0x800,
+
 	// Update this if you add or remove bits...
-	VERTEX_LAST_BIT = 10,
+	VERTEX_LAST_BIT = 11,
 
 	VERTEX_BONE_WEIGHT_BIT = VERTEX_LAST_BIT + 1,
 	USER_DATA_SIZE_BIT = VERTEX_LAST_BIT + 4,
@@ -113,14 +116,9 @@ inline int TexCoordSize( int nTexCoordIndex, VertexFormat_t vertexFormat )
 	return static_cast<int> ( (vertexFormat >> (TEX_COORD_SIZE_BIT + 3*nTexCoordIndex) ) & 0x7 );
 }
 
-inline bool UsesVertexShader( VertexFormat_t vertexFormat )
-{
-	return (vertexFormat & VERTEX_FORMAT_VERTEX_SHADER) != 0;
-}
-
 inline VertexCompressionType_t CompressionType( VertexFormat_t vertexFormat )
 {
-	// This is trivial now, but we may add multiple flavours of compressed vertex later on
+	// This is trivial now, but we may add multiple flavors of compressed vertex later on
 	if ( vertexFormat & VERTEX_FORMAT_COMPRESSED )
 		return VERTEX_COMPRESSION_ON;
 	else
@@ -140,112 +138,116 @@ enum VertexElement_t
 	// #!#!#NOTE#!#!# update GetVertexElementSize, VertexElementToDeclType and
 	//                CVBAllocTracker (elementTable) when you update this!
 	VERTEX_ELEMENT_POSITION		= 0,
-	VERTEX_ELEMENT_NORMAL		= 1,
-	VERTEX_ELEMENT_COLOR		= 2,
-	VERTEX_ELEMENT_SPECULAR		= 3,
-	VERTEX_ELEMENT_TANGENT_S	= 4,
-	VERTEX_ELEMENT_TANGENT_T	= 5,
-	VERTEX_ELEMENT_WRINKLE		= 6,
-	VERTEX_ELEMENT_BONEINDEX	= 7,
-	VERTEX_ELEMENT_BONEWEIGHTS1	= 8,
-	VERTEX_ELEMENT_BONEWEIGHTS2	= 9,
-	VERTEX_ELEMENT_BONEWEIGHTS3	= 10,
-	VERTEX_ELEMENT_BONEWEIGHTS4	= 11,
-	VERTEX_ELEMENT_USERDATA1	= 12,
-	VERTEX_ELEMENT_USERDATA2	= 13,
-	VERTEX_ELEMENT_USERDATA3	= 14,
-	VERTEX_ELEMENT_USERDATA4	= 15,
-	VERTEX_ELEMENT_TEXCOORD1D_0	= 16,
-	VERTEX_ELEMENT_TEXCOORD1D_1	= 17,
-	VERTEX_ELEMENT_TEXCOORD1D_2	= 18,
-	VERTEX_ELEMENT_TEXCOORD1D_3	= 19,
-	VERTEX_ELEMENT_TEXCOORD1D_4	= 20,
-	VERTEX_ELEMENT_TEXCOORD1D_5	= 21,
-	VERTEX_ELEMENT_TEXCOORD1D_6	= 22,
-	VERTEX_ELEMENT_TEXCOORD1D_7	= 23,
-	VERTEX_ELEMENT_TEXCOORD2D_0	= 24,
-	VERTEX_ELEMENT_TEXCOORD2D_1	= 25,
-	VERTEX_ELEMENT_TEXCOORD2D_2	= 26,
-	VERTEX_ELEMENT_TEXCOORD2D_3	= 27,
-	VERTEX_ELEMENT_TEXCOORD2D_4	= 28,
-	VERTEX_ELEMENT_TEXCOORD2D_5	= 29,
-	VERTEX_ELEMENT_TEXCOORD2D_6	= 30,
-	VERTEX_ELEMENT_TEXCOORD2D_7	= 31,
-	VERTEX_ELEMENT_TEXCOORD3D_0	= 32,
-	VERTEX_ELEMENT_TEXCOORD3D_1	= 33,
-	VERTEX_ELEMENT_TEXCOORD3D_2	= 34,
-	VERTEX_ELEMENT_TEXCOORD3D_3	= 35,
-	VERTEX_ELEMENT_TEXCOORD3D_4	= 36,
-	VERTEX_ELEMENT_TEXCOORD3D_5	= 37,
-	VERTEX_ELEMENT_TEXCOORD3D_6	= 38,
-	VERTEX_ELEMENT_TEXCOORD3D_7	= 39,
-	VERTEX_ELEMENT_TEXCOORD4D_0	= 40,
-	VERTEX_ELEMENT_TEXCOORD4D_1	= 41,
-	VERTEX_ELEMENT_TEXCOORD4D_2	= 42,
-	VERTEX_ELEMENT_TEXCOORD4D_3	= 43,
-	VERTEX_ELEMENT_TEXCOORD4D_4	= 44,
-	VERTEX_ELEMENT_TEXCOORD4D_5	= 45,
-	VERTEX_ELEMENT_TEXCOORD4D_6	= 46,
-	VERTEX_ELEMENT_TEXCOORD4D_7	= 47,
+	VERTEX_ELEMENT_POSITION4D	= 1,
+	VERTEX_ELEMENT_NORMAL		= 2,
+	VERTEX_ELEMENT_NORMAL4D		= 3,
+	VERTEX_ELEMENT_COLOR		= 4,
+	VERTEX_ELEMENT_SPECULAR		= 5,
+	VERTEX_ELEMENT_TANGENT_S	= 6,
+	VERTEX_ELEMENT_TANGENT_T	= 7,
+	VERTEX_ELEMENT_WRINKLE		= 8,
+	VERTEX_ELEMENT_BONEINDEX	= 9,
+	VERTEX_ELEMENT_BONEWEIGHTS1	= 10,
+	VERTEX_ELEMENT_BONEWEIGHTS2	= 11,
+	VERTEX_ELEMENT_BONEWEIGHTS3	= 12,
+	VERTEX_ELEMENT_BONEWEIGHTS4	= 13,
+	VERTEX_ELEMENT_USERDATA1	= 14,
+	VERTEX_ELEMENT_USERDATA2	= 15,
+	VERTEX_ELEMENT_USERDATA3	= 16,
+	VERTEX_ELEMENT_USERDATA4	= 17,
+	VERTEX_ELEMENT_TEXCOORD1D_0	= 18,
+	VERTEX_ELEMENT_TEXCOORD1D_1	= 19,
+	VERTEX_ELEMENT_TEXCOORD1D_2	= 20,
+	VERTEX_ELEMENT_TEXCOORD1D_3	= 21,
+	VERTEX_ELEMENT_TEXCOORD1D_4	= 22,
+	VERTEX_ELEMENT_TEXCOORD1D_5	= 23,
+	VERTEX_ELEMENT_TEXCOORD1D_6	= 24,
+	VERTEX_ELEMENT_TEXCOORD1D_7	= 25,
+	VERTEX_ELEMENT_TEXCOORD2D_0	= 26,
+	VERTEX_ELEMENT_TEXCOORD2D_1	= 27,
+	VERTEX_ELEMENT_TEXCOORD2D_2	= 28,
+	VERTEX_ELEMENT_TEXCOORD2D_3	= 29,
+	VERTEX_ELEMENT_TEXCOORD2D_4	= 30,
+	VERTEX_ELEMENT_TEXCOORD2D_5	= 31,
+	VERTEX_ELEMENT_TEXCOORD2D_6	= 32,
+	VERTEX_ELEMENT_TEXCOORD2D_7	= 33,
+	VERTEX_ELEMENT_TEXCOORD3D_0	= 34,
+	VERTEX_ELEMENT_TEXCOORD3D_1	= 35,
+	VERTEX_ELEMENT_TEXCOORD3D_2	= 36,
+	VERTEX_ELEMENT_TEXCOORD3D_3	= 37,
+	VERTEX_ELEMENT_TEXCOORD3D_4	= 38,
+	VERTEX_ELEMENT_TEXCOORD3D_5	= 39,
+	VERTEX_ELEMENT_TEXCOORD3D_6	= 40,
+	VERTEX_ELEMENT_TEXCOORD3D_7	= 41,
+	VERTEX_ELEMENT_TEXCOORD4D_0	= 42,
+	VERTEX_ELEMENT_TEXCOORD4D_1	= 43,
+	VERTEX_ELEMENT_TEXCOORD4D_2	= 44,
+	VERTEX_ELEMENT_TEXCOORD4D_3	= 45,
+	VERTEX_ELEMENT_TEXCOORD4D_4	= 46,
+	VERTEX_ELEMENT_TEXCOORD4D_5	= 47,
+	VERTEX_ELEMENT_TEXCOORD4D_6	= 48,
+	VERTEX_ELEMENT_TEXCOORD4D_7	= 49,
 
-	VERTEX_ELEMENT_NUMELEMENTS	= 48
+	VERTEX_ELEMENT_NUMELEMENTS	= 50
 };
 
 inline void Detect_VertexElement_t_Changes( VertexElement_t element ) // GREPs for VertexElement_t will hit this
 {
 	// Make it harder for someone to change VertexElement_t without noticing that dependent code
 	// (GetVertexElementSize, VertexElementToDeclType, CVBAllocTracker) needs updating
-	Assert( VERTEX_ELEMENT_NUMELEMENTS == 48 );
+	Assert( VERTEX_ELEMENT_NUMELEMENTS == 50 );
 	switch ( element )
 	{
 		case VERTEX_ELEMENT_POSITION:		Assert( VERTEX_ELEMENT_POSITION		== 0	); break;
-		case VERTEX_ELEMENT_NORMAL:			Assert( VERTEX_ELEMENT_NORMAL		== 1	); break;
-		case VERTEX_ELEMENT_COLOR:			Assert( VERTEX_ELEMENT_COLOR		== 2	); break;
-		case VERTEX_ELEMENT_SPECULAR:		Assert( VERTEX_ELEMENT_SPECULAR		== 3	); break;
-		case VERTEX_ELEMENT_TANGENT_S:		Assert( VERTEX_ELEMENT_TANGENT_S	== 4	); break;
-		case VERTEX_ELEMENT_TANGENT_T:		Assert( VERTEX_ELEMENT_TANGENT_T	== 5	); break;
-		case VERTEX_ELEMENT_WRINKLE:		Assert( VERTEX_ELEMENT_WRINKLE		== 6	); break;
-		case VERTEX_ELEMENT_BONEINDEX:		Assert( VERTEX_ELEMENT_BONEINDEX	== 7	); break;
-		case VERTEX_ELEMENT_BONEWEIGHTS1:	Assert( VERTEX_ELEMENT_BONEWEIGHTS1	== 8	); break;
-		case VERTEX_ELEMENT_BONEWEIGHTS2:	Assert( VERTEX_ELEMENT_BONEWEIGHTS2	== 9	); break;
-		case VERTEX_ELEMENT_BONEWEIGHTS3:	Assert( VERTEX_ELEMENT_BONEWEIGHTS3	== 10	); break;
-		case VERTEX_ELEMENT_BONEWEIGHTS4:	Assert( VERTEX_ELEMENT_BONEWEIGHTS4	== 11	); break;
-		case VERTEX_ELEMENT_USERDATA1:		Assert( VERTEX_ELEMENT_USERDATA1	== 12	); break;
-		case VERTEX_ELEMENT_USERDATA2:		Assert( VERTEX_ELEMENT_USERDATA2	== 13	); break;
-		case VERTEX_ELEMENT_USERDATA3:		Assert( VERTEX_ELEMENT_USERDATA3	== 14	); break;
-		case VERTEX_ELEMENT_USERDATA4:		Assert( VERTEX_ELEMENT_USERDATA4	== 15	); break;
-		case VERTEX_ELEMENT_TEXCOORD1D_0:	Assert( VERTEX_ELEMENT_TEXCOORD1D_0	== 16	); break;
-		case VERTEX_ELEMENT_TEXCOORD1D_1:	Assert( VERTEX_ELEMENT_TEXCOORD1D_1	== 17	); break;
-		case VERTEX_ELEMENT_TEXCOORD1D_2:	Assert( VERTEX_ELEMENT_TEXCOORD1D_2	== 18	); break;
-		case VERTEX_ELEMENT_TEXCOORD1D_3:	Assert( VERTEX_ELEMENT_TEXCOORD1D_3	== 19	); break;
-		case VERTEX_ELEMENT_TEXCOORD1D_4:	Assert( VERTEX_ELEMENT_TEXCOORD1D_4	== 20	); break;
-		case VERTEX_ELEMENT_TEXCOORD1D_5:	Assert( VERTEX_ELEMENT_TEXCOORD1D_5	== 21	); break;
-		case VERTEX_ELEMENT_TEXCOORD1D_6:	Assert( VERTEX_ELEMENT_TEXCOORD1D_6	== 22	); break;
-		case VERTEX_ELEMENT_TEXCOORD1D_7:	Assert( VERTEX_ELEMENT_TEXCOORD1D_7	== 23	); break;
-		case VERTEX_ELEMENT_TEXCOORD2D_0:	Assert( VERTEX_ELEMENT_TEXCOORD2D_0	== 24	); break;
-		case VERTEX_ELEMENT_TEXCOORD2D_1:	Assert( VERTEX_ELEMENT_TEXCOORD2D_1	== 25	); break;
-		case VERTEX_ELEMENT_TEXCOORD2D_2:	Assert( VERTEX_ELEMENT_TEXCOORD2D_2	== 26	); break;
-		case VERTEX_ELEMENT_TEXCOORD2D_3:	Assert( VERTEX_ELEMENT_TEXCOORD2D_3	== 27	); break;
-		case VERTEX_ELEMENT_TEXCOORD2D_4:	Assert( VERTEX_ELEMENT_TEXCOORD2D_4	== 28	); break;
-		case VERTEX_ELEMENT_TEXCOORD2D_5:	Assert( VERTEX_ELEMENT_TEXCOORD2D_5	== 29	); break;
-		case VERTEX_ELEMENT_TEXCOORD2D_6:	Assert( VERTEX_ELEMENT_TEXCOORD2D_6	== 30	); break;
-		case VERTEX_ELEMENT_TEXCOORD2D_7:	Assert( VERTEX_ELEMENT_TEXCOORD2D_7	== 31	); break;
-		case VERTEX_ELEMENT_TEXCOORD3D_0:	Assert( VERTEX_ELEMENT_TEXCOORD3D_0	== 32	); break;
-		case VERTEX_ELEMENT_TEXCOORD3D_1:	Assert( VERTEX_ELEMENT_TEXCOORD3D_1	== 33	); break;
-		case VERTEX_ELEMENT_TEXCOORD3D_2:	Assert( VERTEX_ELEMENT_TEXCOORD3D_2	== 34	); break;
-		case VERTEX_ELEMENT_TEXCOORD3D_3:	Assert( VERTEX_ELEMENT_TEXCOORD3D_3	== 35	); break;
-		case VERTEX_ELEMENT_TEXCOORD3D_4:	Assert( VERTEX_ELEMENT_TEXCOORD3D_4	== 36	); break;
-		case VERTEX_ELEMENT_TEXCOORD3D_5:	Assert( VERTEX_ELEMENT_TEXCOORD3D_5	== 37	); break;
-		case VERTEX_ELEMENT_TEXCOORD3D_6:	Assert( VERTEX_ELEMENT_TEXCOORD3D_6	== 38	); break;
-		case VERTEX_ELEMENT_TEXCOORD3D_7:	Assert( VERTEX_ELEMENT_TEXCOORD3D_7	== 39	); break;
-		case VERTEX_ELEMENT_TEXCOORD4D_0:	Assert( VERTEX_ELEMENT_TEXCOORD4D_0	== 40	); break;
-		case VERTEX_ELEMENT_TEXCOORD4D_1:	Assert( VERTEX_ELEMENT_TEXCOORD4D_1	== 41	); break;
-		case VERTEX_ELEMENT_TEXCOORD4D_2:	Assert( VERTEX_ELEMENT_TEXCOORD4D_2	== 42	); break;
-		case VERTEX_ELEMENT_TEXCOORD4D_3:	Assert( VERTEX_ELEMENT_TEXCOORD4D_3	== 43	); break;
-		case VERTEX_ELEMENT_TEXCOORD4D_4:	Assert( VERTEX_ELEMENT_TEXCOORD4D_4	== 44	); break;
-		case VERTEX_ELEMENT_TEXCOORD4D_5:	Assert( VERTEX_ELEMENT_TEXCOORD4D_5	== 45	); break;
-		case VERTEX_ELEMENT_TEXCOORD4D_6:	Assert( VERTEX_ELEMENT_TEXCOORD4D_6	== 46	); break;
-		case VERTEX_ELEMENT_TEXCOORD4D_7:	Assert( VERTEX_ELEMENT_TEXCOORD4D_7	== 47	); break;
+		case VERTEX_ELEMENT_POSITION4D:		Assert( VERTEX_ELEMENT_POSITION4D	== 1	); break;
+		case VERTEX_ELEMENT_NORMAL:			Assert( VERTEX_ELEMENT_NORMAL		== 2	); break;
+		case VERTEX_ELEMENT_NORMAL4D:		Assert( VERTEX_ELEMENT_NORMAL4D		== 3	); break;
+		case VERTEX_ELEMENT_COLOR:			Assert( VERTEX_ELEMENT_COLOR		== 4	); break;
+		case VERTEX_ELEMENT_SPECULAR:		Assert( VERTEX_ELEMENT_SPECULAR		== 5	); break;
+		case VERTEX_ELEMENT_TANGENT_S:		Assert( VERTEX_ELEMENT_TANGENT_S	== 6	); break;
+		case VERTEX_ELEMENT_TANGENT_T:		Assert( VERTEX_ELEMENT_TANGENT_T	== 7	); break;
+		case VERTEX_ELEMENT_WRINKLE:		Assert( VERTEX_ELEMENT_WRINKLE		== 8	); break;
+		case VERTEX_ELEMENT_BONEINDEX:		Assert( VERTEX_ELEMENT_BONEINDEX	== 9	); break;
+		case VERTEX_ELEMENT_BONEWEIGHTS1:	Assert( VERTEX_ELEMENT_BONEWEIGHTS1	== 10	); break;
+		case VERTEX_ELEMENT_BONEWEIGHTS2:	Assert( VERTEX_ELEMENT_BONEWEIGHTS2	== 11	); break;
+		case VERTEX_ELEMENT_BONEWEIGHTS3:	Assert( VERTEX_ELEMENT_BONEWEIGHTS3	== 12	); break;
+		case VERTEX_ELEMENT_BONEWEIGHTS4:	Assert( VERTEX_ELEMENT_BONEWEIGHTS4	== 13	); break;
+		case VERTEX_ELEMENT_USERDATA1:		Assert( VERTEX_ELEMENT_USERDATA1	== 14	); break;
+		case VERTEX_ELEMENT_USERDATA2:		Assert( VERTEX_ELEMENT_USERDATA2	== 15	); break;
+		case VERTEX_ELEMENT_USERDATA3:		Assert( VERTEX_ELEMENT_USERDATA3	== 16	); break;
+		case VERTEX_ELEMENT_USERDATA4:		Assert( VERTEX_ELEMENT_USERDATA4	== 17	); break;
+		case VERTEX_ELEMENT_TEXCOORD1D_0:	Assert( VERTEX_ELEMENT_TEXCOORD1D_0	== 18	); break;
+		case VERTEX_ELEMENT_TEXCOORD1D_1:	Assert( VERTEX_ELEMENT_TEXCOORD1D_1	== 19	); break;
+		case VERTEX_ELEMENT_TEXCOORD1D_2:	Assert( VERTEX_ELEMENT_TEXCOORD1D_2	== 20	); break;
+		case VERTEX_ELEMENT_TEXCOORD1D_3:	Assert( VERTEX_ELEMENT_TEXCOORD1D_3	== 21	); break;
+		case VERTEX_ELEMENT_TEXCOORD1D_4:	Assert( VERTEX_ELEMENT_TEXCOORD1D_4	== 22	); break;
+		case VERTEX_ELEMENT_TEXCOORD1D_5:	Assert( VERTEX_ELEMENT_TEXCOORD1D_5	== 23	); break;
+		case VERTEX_ELEMENT_TEXCOORD1D_6:	Assert( VERTEX_ELEMENT_TEXCOORD1D_6	== 24	); break;
+		case VERTEX_ELEMENT_TEXCOORD1D_7:	Assert( VERTEX_ELEMENT_TEXCOORD1D_7	== 25	); break;
+		case VERTEX_ELEMENT_TEXCOORD2D_0:	Assert( VERTEX_ELEMENT_TEXCOORD2D_0	== 26	); break;
+		case VERTEX_ELEMENT_TEXCOORD2D_1:	Assert( VERTEX_ELEMENT_TEXCOORD2D_1	== 27	); break;
+		case VERTEX_ELEMENT_TEXCOORD2D_2:	Assert( VERTEX_ELEMENT_TEXCOORD2D_2	== 28	); break;
+		case VERTEX_ELEMENT_TEXCOORD2D_3:	Assert( VERTEX_ELEMENT_TEXCOORD2D_3	== 29	); break;
+		case VERTEX_ELEMENT_TEXCOORD2D_4:	Assert( VERTEX_ELEMENT_TEXCOORD2D_4	== 30	); break;
+		case VERTEX_ELEMENT_TEXCOORD2D_5:	Assert( VERTEX_ELEMENT_TEXCOORD2D_5	== 31	); break;
+		case VERTEX_ELEMENT_TEXCOORD2D_6:	Assert( VERTEX_ELEMENT_TEXCOORD2D_6	== 32	); break;
+		case VERTEX_ELEMENT_TEXCOORD2D_7:	Assert( VERTEX_ELEMENT_TEXCOORD2D_7	== 33	); break;
+		case VERTEX_ELEMENT_TEXCOORD3D_0:	Assert( VERTEX_ELEMENT_TEXCOORD3D_0	== 34	); break;
+		case VERTEX_ELEMENT_TEXCOORD3D_1:	Assert( VERTEX_ELEMENT_TEXCOORD3D_1	== 35	); break;
+		case VERTEX_ELEMENT_TEXCOORD3D_2:	Assert( VERTEX_ELEMENT_TEXCOORD3D_2	== 36	); break;
+		case VERTEX_ELEMENT_TEXCOORD3D_3:	Assert( VERTEX_ELEMENT_TEXCOORD3D_3	== 37	); break;
+		case VERTEX_ELEMENT_TEXCOORD3D_4:	Assert( VERTEX_ELEMENT_TEXCOORD3D_4	== 38	); break;
+		case VERTEX_ELEMENT_TEXCOORD3D_5:	Assert( VERTEX_ELEMENT_TEXCOORD3D_5	== 39	); break;
+		case VERTEX_ELEMENT_TEXCOORD3D_6:	Assert( VERTEX_ELEMENT_TEXCOORD3D_6	== 40	); break;
+		case VERTEX_ELEMENT_TEXCOORD3D_7:	Assert( VERTEX_ELEMENT_TEXCOORD3D_7	== 41	); break;
+		case VERTEX_ELEMENT_TEXCOORD4D_0:	Assert( VERTEX_ELEMENT_TEXCOORD4D_0	== 42	); break;
+		case VERTEX_ELEMENT_TEXCOORD4D_1:	Assert( VERTEX_ELEMENT_TEXCOORD4D_1	== 43	); break;
+		case VERTEX_ELEMENT_TEXCOORD4D_2:	Assert( VERTEX_ELEMENT_TEXCOORD4D_2	== 44	); break;
+		case VERTEX_ELEMENT_TEXCOORD4D_3:	Assert( VERTEX_ELEMENT_TEXCOORD4D_3	== 45	); break;
+		case VERTEX_ELEMENT_TEXCOORD4D_4:	Assert( VERTEX_ELEMENT_TEXCOORD4D_4	== 46	); break;
+		case VERTEX_ELEMENT_TEXCOORD4D_5:	Assert( VERTEX_ELEMENT_TEXCOORD4D_5	== 47	); break;
+		case VERTEX_ELEMENT_TEXCOORD4D_6:	Assert( VERTEX_ELEMENT_TEXCOORD4D_6	== 48	); break;
+		case VERTEX_ELEMENT_TEXCOORD4D_7:	Assert( VERTEX_ELEMENT_TEXCOORD4D_7	== 49	); break;
 	default:
 		Assert( 0 ); // Invalid input or VertexElement_t has definitely changed
 		break;
@@ -295,7 +297,9 @@ inline int GetVertexElementSize( VertexElement_t element, VertexCompressionType_
 	switch ( element )
 	{
 		case VERTEX_ELEMENT_POSITION:		return ( 3 * sizeof( float ) );
+		case VERTEX_ELEMENT_POSITION4D:		return ( 4 * sizeof( float ) );
 		case VERTEX_ELEMENT_NORMAL:			return ( 3 * sizeof( float ) );
+		case VERTEX_ELEMENT_NORMAL4D:		return ( 4 * sizeof( float ) );
 		case VERTEX_ELEMENT_COLOR:			return ( 4 * sizeof( unsigned char ) );
 		case VERTEX_ELEMENT_SPECULAR:		return ( 4 * sizeof( unsigned char ) );
 		case VERTEX_ELEMENT_TANGENT_S:		return ( 3 * sizeof( float ) );
@@ -366,7 +370,7 @@ enum MaterialVarFlags_t
 	MATERIAL_VAR_SELFILLUM				  = (1 << 6),
 	MATERIAL_VAR_ADDITIVE				  = (1 << 7),
 	MATERIAL_VAR_ALPHATEST				  = (1 << 8),
-	MATERIAL_VAR_MULTIPASS				  = (1 << 9),
+//	MATERIAL_VAR_UNUSED					  = (1 << 9),
 	MATERIAL_VAR_ZNEARER				  = (1 << 10),
 	MATERIAL_VAR_MODEL					  = (1 << 11),
 	MATERIAL_VAR_FLAT					  = (1 << 12),
@@ -374,19 +378,21 @@ enum MaterialVarFlags_t
 	MATERIAL_VAR_NOFOG					  = (1 << 14),
 	MATERIAL_VAR_IGNOREZ				  = (1 << 15),
 	MATERIAL_VAR_DECAL					  = (1 << 16),
-	MATERIAL_VAR_ENVMAPSPHERE			  = (1 << 17),
-	MATERIAL_VAR_NOALPHAMOD				  = (1 << 18),
-	MATERIAL_VAR_ENVMAPCAMERASPACE	      = (1 << 19),
+	MATERIAL_VAR_ENVMAPSPHERE			  = (1 << 17), // OBSOLETE
+//	MATERIAL_VAR_UNUSED					  = (1 << 18),
+	MATERIAL_VAR_ENVMAPCAMERASPACE	      = (1 << 19), // OBSOLETE
 	MATERIAL_VAR_BASEALPHAENVMAPMASK	  = (1 << 20),
 	MATERIAL_VAR_TRANSLUCENT              = (1 << 21),
 	MATERIAL_VAR_NORMALMAPALPHAENVMAPMASK = (1 << 22),
-	MATERIAL_VAR_NEEDS_SOFTWARE_SKINNING  = (1 << 23),
+	MATERIAL_VAR_NEEDS_SOFTWARE_SKINNING  = (1 << 23), // OBSOLETE
 	MATERIAL_VAR_OPAQUETEXTURE			  = (1 << 24),
-	MATERIAL_VAR_ENVMAPMODE				  = (1 << 25),
+	MATERIAL_VAR_ENVMAPMODE				  = (1 << 25), // OBSOLETE
 	MATERIAL_VAR_SUPPRESS_DECALS		  = (1 << 26),
 	MATERIAL_VAR_HALFLAMBERT			  = (1 << 27),
 	MATERIAL_VAR_WIREFRAME                = (1 << 28),
 	MATERIAL_VAR_ALLOWALPHATOCOVERAGE     = (1 << 29),
+	MATERIAL_VAR_ALPHA_MODIFIED_BY_PROXY  = (1 << 30),
+	MATERIAL_VAR_VERTEXFOG				  = (1 << 31),
 
 	// NOTE: Only add flags here that either should be read from
 	// .vmts or can be set directly from client code. Other, internal
@@ -429,6 +435,10 @@ enum MaterialVarFlags2_t
 	MATERIAL_VAR2_USES_VERTEXID								= (1 << 17),
 	MATERIAL_VAR2_SUPPORTS_HW_SKINNING						= (1 << 18),
 	MATERIAL_VAR2_SUPPORTS_FLASHLIGHT						= (1 << 19),
+	MATERIAL_VAR2_USE_GBUFFER0                              = (1 << 20),
+	MATERIAL_VAR2_USE_GBUFFER1                              = (1 << 21),
+	MATERIAL_VAR2_SELFILLUMMASK								= (1 << 22),
+	MATERIAL_VAR2_SUPPORTS_TESSELLATION						= (1 << 23)
 };
 
 
@@ -581,8 +591,8 @@ public:
 	virtual float			GetAlphaModulation() = 0;
 	virtual void			GetColorModulation( float *r, float *g, float *b ) = 0;
 
-	// Gets the morph format
-	virtual MorphFormat_t	GetMorphFormat() const = 0;
+	// Is this translucent given a particular alpha modulation?
+	virtual bool			IsTranslucentUnderModulation( float fAlphaModulation = 1.0f ) const = 0;
 	
 	// fast find that stores the index of the found var in the string table in local cache
 	virtual IMaterialVar *	FindVarFast( char const *pVarName, unsigned int *pToken ) = 0;
@@ -606,6 +616,47 @@ public:
 inline bool IsErrorMaterial( IMaterial *pMat )
 {
 	return !pMat || pMat->IsErrorMaterial();
+}
+
+
+//
+// Vertex stream specifications
+//
+
+struct VertexStreamSpec_t
+{
+	enum StreamSpec_t
+	{
+		STREAM_DEFAULT,		// stream 0: with position, normal, etc.
+		STREAM_SPECULAR1,	// stream 1: following specular vhv lighting
+		STREAM_FLEXDELTA,	// stream 2: flex deltas
+		STREAM_MORPH,		// stream 3: morph
+		STREAM_UNIQUE_A,	// unique stream 4
+		STREAM_UNIQUE_B,	// unique stream 5
+		STREAM_UNIQUE_C,	// unique stream 6
+		STREAM_UNIQUE_D,	// unique stream 7
+		STREAM_SUBDQUADS,	// stream 8: quad buffer for subd's
+	};
+
+	enum
+	{
+		MAX_UNIQUE_STREAMS = 4
+	};
+
+	VertexFormatFlags_t iVertexDataElement;
+	StreamSpec_t iStreamSpec;
+};
+
+inline VertexStreamSpec_t * FindVertexStreamSpec( VertexFormat_t iElement, VertexStreamSpec_t *arrVertexStreamSpec )
+{
+	for ( ; arrVertexStreamSpec &&
+		    arrVertexStreamSpec->iVertexDataElement != VERTEX_FORMAT_UNKNOWN ;
+		    ++ arrVertexStreamSpec )
+	{
+		if ( arrVertexStreamSpec->iVertexDataElement == iElement )
+			return arrVertexStreamSpec;
+	}
+	return NULL;
 }
 
 

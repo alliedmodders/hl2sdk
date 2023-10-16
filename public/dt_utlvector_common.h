@@ -34,23 +34,30 @@ public:
 			pVec->AddMultipleToTail( len - pVec->Count() );
 		else if ( pVec->Count() > len )
 			pVec->RemoveMultiple( len, pVec->Count()-len );
+
+		// Ensure capacity
+		pVec->EnsureCapacity( len );
+
+		int nNumAllocated = pVec->NumAllocated();
+
+		// This is important to do because EnsureCapacity doesn't actually call the constructors
+		// on the elements, but we need them to be initialized, otherwise it'll have out-of-range
+		// values which will piss off the datatable encoder.
+		UtlVector_InitializeAllocatedElements( pVec->Base() + pVec->Count(), nNumAllocated - pVec->Count() );
 	}
 
 	static void EnsureCapacity( void *pStruct, int offsetToUtlVector, int len )
 	{
 		CUtlVector<T,A> *pVec = (CUtlVector<T,A>*)((char*)pStruct + offsetToUtlVector);
-		
-		int oldNumAllocated = pVec->Count();
 
-		if ( oldNumAllocated < len )
-		{
-			pVec->EnsureCapacity( len );
-			
-			// This is important to do because EnsureCapacity doesn't actually call the constructors
-			// on the elements, but we need them to be initialized, otherwise it'll have out-of-range
-			// values which will piss off the datatable encoder.
-			UtlVector_InitializeAllocatedElements( pVec->Base() + oldNumAllocated, len - oldNumAllocated );
-		}
+		pVec->EnsureCapacity( len );
+		
+		int nNumAllocated = pVec->NumAllocated();
+
+		// This is important to do because EnsureCapacity doesn't actually call the constructors
+		// on the elements, but we need them to be initialized, otherwise it'll have out-of-range
+		// values which will piss off the datatable encoder.
+		UtlVector_InitializeAllocatedElements( pVec->Base() + pVec->Count(), nNumAllocated - pVec->Count() );
 	}
 };
 

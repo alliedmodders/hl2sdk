@@ -190,6 +190,27 @@ bool IsBoxIntersectingSphere( const Vector& boxMin, const Vector& boxMax,
 bool IsBoxIntersectingSphereExtents( const Vector& boxCenter, const Vector& boxHalfDiag, 
 									const Vector& center, float radius );
 
+
+//-----------------------------------------------------------------------------
+// Returns true if a box intersects with a sphere
+// NOTE: f4RadiusSq must have the radius sq in all components
+//-----------------------------------------------------------------------------
+FORCEINLINE bool IsBoxIntersectingSphere( const Vector& boxMin, const Vector& boxMax, 
+											 const fltx4& f4Center, const fltx4& f4RadiusSq )
+{
+	// See Graphics Gems, box-sphere intersection
+	fltx4 f4Mins = LoadUnalignedSIMD( &boxMin.x );
+	fltx4 f4Maxs = LoadUnalignedSIMD( &boxMax.x );
+	fltx4 f4MinDelta = SubSIMD( f4Mins, f4Center );
+	fltx4 f4MaxDelta = SubSIMD( f4Center, f4Maxs );
+	f4MinDelta = MaxSIMD( f4MinDelta, Four_Zeros );
+	f4MaxDelta = MaxSIMD( f4MaxDelta, Four_Zeros );
+	fltx4 f4Delta = AddSIMD( f4MinDelta, f4MaxDelta );
+	fltx4 f4DistSq = Dot3SIMD( f4Delta, f4Delta );
+	return IsAllGreaterThan( f4RadiusSq, f4DistSq );
+}
+
+
 //-----------------------------------------------------------------------------
 // returns true if there's an intersection between ray and sphere
 //-----------------------------------------------------------------------------
@@ -422,6 +443,26 @@ bool RayHasFullyContainedIntersectionWithQuad( const Ray_t &ray,
 											  const Vector &vQuadExtent2_Normalized, float fQuadExtent2Length );
 
 
+
+//-----------------------------------------------------------------------------
+// Compute the intersection of a line and a circle
+//-----------------------------------------------------------------------------
+bool LineCircleIntersection(const Vector2D &center,
+							const float radius,
+							const Vector2D &vLinePt,
+							const Vector2D &vLineDir,
+							float *fIntersection1,
+							float *fIntersection2);
+
+
+//-----------------------------------------------------------------------------
+// Find the intersection of a ray with an axis-aligned cylinder
+//-----------------------------------------------------------------------------
+bool IntersectRayWithAACylinder( const Ray_t &ray, 
+								 const Vector &center, 
+								 float radius, 
+								 float height, 
+								 CBaseTrace *pTrace );
 
 //-----------------------------------------------------------------------------
 // INLINES

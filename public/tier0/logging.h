@@ -83,7 +83,7 @@
 
 class CLoggingSystem;
 
-#if defined(_WIN32) && !defined(THREAD_PROFILER)
+#if !defined(THREAD_PROFILER)
 class CThreadFastMutex;
 #else
 class CThreadMutex;

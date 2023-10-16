@@ -14,16 +14,6 @@
 
 //
 // Commands for the screen shake effect.
-//
-
-struct ScreenShake_t
-{
-	int		command;
-	float	amplitude;
-	float	frequency;
-	float	duration;
-};
-
 enum ShakeCommand_t
 {
 	SHAKE_START = 0,		// Starts the screen shake for all players within the radius.
@@ -34,11 +24,41 @@ enum ShakeCommand_t
 	SHAKE_START_NORUMBLE,	// Starts a shake that does NOT rumble the controller.
 };
 
+// This structure must have a working copy/assignment constructor. 
+// At the time of this writing, the implicit one works properly.
+
+struct ScreenShake_t
+{
+	ShakeCommand_t		command;
+	float	amplitude;
+	float	frequency;
+	float	duration;
+	Vector  direction;
+
+	inline ScreenShake_t() : direction(0,0,0) {};
+	inline ScreenShake_t( ShakeCommand_t _command, float _amplitude, float _frequency, 
+		float _duration, const Vector &_direction );
+};
+
 
 //
 // Screen shake message.
 //
 extern int gmsgShake;
+
+
+//
+// Commands for the screen tilt effect.
+//
+
+struct ScreenTilt_t
+{
+	int		command;
+	bool	easeInOut;
+	QAngle	angle;
+	float	duration;
+	float	time;
+};
 
 // Fade in/out
 extern int gmsgFade;
@@ -59,5 +79,13 @@ struct ScreenFade_t
 	byte			r, g, b, a;		// fade to color ( max alpha )
 };
 
+
+// inline funcs:
+
+inline ScreenShake_t::ScreenShake_t( ShakeCommand_t _command, float _amplitude, float _frequency, 
+									float _duration, const Vector &_direction ) :
+	command(_command), amplitude(_amplitude), frequency(_frequency),
+		duration(_duration), direction(_direction)
+{}
 
 #endif // SHAKE_H

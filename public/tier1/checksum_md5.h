@@ -13,6 +13,18 @@
 
 // 16 bytes == 128 bit digest
 #define MD5_DIGEST_LENGTH 16  
+#define MD5_BIT_LENGTH ( MD5_DIGEST_LENGTH * sizeof(unsigned char) )
+struct MD5Value_t
+{
+	unsigned char bits[MD5_DIGEST_LENGTH];
+
+	void Zero();
+	bool IsZero() const;
+
+	bool operator==( const MD5Value_t &src ) const;
+	bool operator!=( const MD5Value_t &src ) const;
+
+};
 
 // MD5 Hash
 typedef struct
