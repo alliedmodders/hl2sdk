@@ -27,6 +27,7 @@
 #include "tier1/bufferstring.h"
 #include <steam/steamclientpublic.h>
 #include "playerslot.h"
+#include <iloopmode.h>
 
 //-----------------------------------------------------------------------------
 // forward declarations
@@ -61,7 +62,6 @@ class CEntityLump;
 class IPVS;
 class IHLTVDirector;
 struct SpawnGroupDesc_t;
-enum HostStateLoopModeType_t : int;
 class IClassnameForMapClassCallback;
 struct Entity2Networkable_t;
 class CCreateGameServerLoadInfo;
