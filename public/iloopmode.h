@@ -54,6 +54,16 @@ struct RHBackColorBuffer_t
 	HSceneViewRenderTarget m_hBackColorBuffer;
 };
 
+enum HostStateLoopModeType_t
+{
+	HOST_STATE_LOOP_MODE_IDLE = 0,
+	HOST_STATE_LOOP_MODE_GAME,
+	HOST_STATE_LOOP_MODE_SOURCETV_RELAY,
+
+	HOST_STATE_LOOP_MODE_COUNT
+};
+
+
 struct EngineLoopState_t
 {
 	PlatWindow_t m_hWnd;
@@ -111,13 +121,7 @@ public:
 	virtual InputHandlerResult_t HandleInputEvent( const InputEvent_t &event, CSplitScreenSlot nSplitScreenPlayerSlot ) = 0;
 	virtual ISceneView* AddViewsToSceneSystem( const EngineLoopState_t &state, double flRenderTime, double flRealTime,
 		const RenderViewport_t &viewport, const RHBackColorBuffer_t &backColorBuffer ) = 0;
-	virtual ISource2WorldSession* GetWorldSession( void ) = 0;
-	virtual ClientServerMode_t GetClientServerMode( void ) = 0;
-	virtual bool ReceivedServerInfo( const GameSessionConfiguration_t &config, ILoopModePrerequisiteRegistry *pRegistry ) = 0;
-	virtual bool IsInHeadlessMode( void ) = 0;
-	virtual void SetFadeColor( Vector4D vColorNormalized ) = 0;
-	virtual bool IsBackgroundMap( void ) = 0;
-	virtual bool IsLevelTransition( void ) = 0;
+	virtual bool unk001( void ) = 0;
 };
 
 abstract_class ILoopModeFactory

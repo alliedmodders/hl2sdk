@@ -61,6 +61,7 @@ class CEntityLump;
 class IPVS;
 class IHLTVDirector;
 struct SpawnGroupDesc_t;
+enum HostStateLoopModeType_t : int;
 class IClassnameForMapClassCallback;
 struct Entity2Networkable_t;
 class CCreateGameServerLoadInfo;
@@ -73,7 +74,6 @@ struct RenderDeviceInfo_t;
 struct RenderMultisampleType_t;
 class GameSessionConfiguration_t;
 struct StringTableDef_t;
-struct HostStateLoopModeType_t;
 class ILoopModePrerequisiteRegistry;
 struct URLArgument_t;
 struct vis_info_t;
@@ -524,7 +524,7 @@ public:
 	virtual float			GetTickInterval( void ) const = 0;
 	
 	// Get server maxplayers and lower bound for same
-	virtual void			GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers, bool &unknown ) const = 0;
+	virtual void			GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers, bool &bIsMultiplayer ) const = 0;
 	
 	// Returns max splitscreen slot count ( 1 == no splits, 2 for 2-player split screen )
 	virtual int		GetMaxSplitscreenPlayers( void ) = 0;
@@ -536,13 +536,15 @@ public:
 	
 	virtual bool			AllowPlayerToTakeOverBots() = 0;
 	
-	virtual void			OnClientFullyConnect( CEntityIndex index ) = 0;
+	virtual void			OnClientFullyConnect( CEntityIndex nEntityIndex ) = 0;
 	
-	virtual void		GetHostStateLoopModeInfo( HostStateLoopModeType_t, CUtlString &, KeyValues ** ) = 0;
+	virtual void		GetHostStateLoopModeInfo( HostStateLoopModeType_t type, CUtlString &loopModeName, KeyValues **ppLoopModeOptions ) = 0;
 	
 	virtual bool		AllowDedicatedServers( EUniverse universe ) const = 0;
 	
-	virtual void		GetConVarPrefixesToResetToDefaults( CUtlString &prefixes ) const = 0;
+	virtual void		GetConVarPrefixesToResetToDefaults( CUtlString &sSemicolonDelimitedPrefixList ) const = 0;
+
+	virtual bool		AllowSaveRestore() = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMECLIENTS		"Source2GameClients001"
