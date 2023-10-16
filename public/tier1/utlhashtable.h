@@ -740,8 +740,8 @@ UtlHashHandle_t CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, Tabl
 
 
 #if _DEBUG
-template <typename KeyT, typename ValueT, typename KeyHashT, typename KeyIsEqualT, typename AltKeyT>
-void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT>::DbgCheckIntegrity() const
+template <typename KeyT, typename ValueT, typename KeyHashT, typename KeyIsEqualT, typename AltKeyT, typename TableT>
+void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::DbgCheckIntegrity() const
 {
 	// Stress test the hash table as a test of both container functionality
 	// and also the validity of the user's Hash and Equal function objects.

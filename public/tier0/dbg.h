@@ -315,13 +315,10 @@ PLATFORM_INTERFACE void COM_TimestampedLog( char const *fmt, ... ) FMTFUNCTION( 
 //-----------------------------------------------------------------------------
 // Macro to assist in asserting constant invariants during compilation
 
-#ifdef _DEBUG
-#define COMPILE_TIME_ASSERT( pred )	switch(0){case 0:case pred:;}
-#define ASSERT_INVARIANT( pred )	static void UNIQUE_ID() { COMPILE_TIME_ASSERT( pred ) }
-#else
-#define COMPILE_TIME_ASSERT( pred )
-#define ASSERT_INVARIANT( pred )
-#endif
+#define COMPILE_TIME_ASSERT( pred )	static_assert( pred, "Compile time assert constraint is not true: " #pred )
+// ASSERT_INVARIANT used to be needed in order to allow COMPILE_TIME_ASSERTs at global
+// scope. However the new COMPILE_TIME_ASSERT macro supports that by default.
+#define ASSERT_INVARIANT( pred )	COMPILE_TIME_ASSERT( pred )
 
 #ifdef _DEBUG
 template<typename DEST_POINTER_TYPE, typename SOURCE_POINTER_TYPE>
