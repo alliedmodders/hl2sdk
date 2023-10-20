@@ -450,7 +450,12 @@ private:
 };
 
 
+#ifdef PREVENT_DEBUG_USAGE
+#define AttribIfCrt()
+#else
 #define AttribIfCrt() CAttibCRT _attrib(nBlockUse)
+#endif
+
 #elif defined(POSIX)
 #define AttribIfCrt()
 #endif // _WIN32
@@ -976,11 +981,13 @@ void __cdecl _aligned_free_dbg( void * memblock)
     _aligned_free(memblock);
 }
 
+#if 0
 size_t __cdecl _CrtSetDebugFillThreshold( size_t _NewDebugFillThreshold)
 {
 	Assert(0);
     return 0;
 }
+#endif
 
 //===========================================
 // NEW!!! 64-bit

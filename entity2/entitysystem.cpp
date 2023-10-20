@@ -14,7 +14,7 @@ CBaseEntity* CEntitySystem::GetBaseEntity(CEntityIndex entnum)
 	if (!pIdentity)
 		return nullptr;
 
-	if (pIdentity->m_EHandle.GetEntryIndex() != entnum.Get())
+	if (pIdentity->GetEntityIndex() != entnum)
 		return nullptr;
 
 	return static_cast<CBaseEntity*>(pIdentity->m_pInstance);
@@ -33,7 +33,7 @@ CBaseEntity* CEntitySystem::GetBaseEntity(const CEntityHandle& hEnt)
 	if (!pIdentity)
 		return nullptr;
 
-	if (pIdentity->m_EHandle != hEnt)
+	if (pIdentity->GetRefEHandle() != hEnt)
 		return nullptr;
 
 	return static_cast<CBaseEntity*>(pIdentity->m_pInstance);
