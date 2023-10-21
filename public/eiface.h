@@ -211,7 +211,7 @@ public:
 	virtual void		Message_DetermineMulticastRecipients( bool usepas, const Vector& origin, CPlayerBitVec& playerbits ) = 0;
 	
 	// Issue a command to the command parser as if it was typed at the server console.
-	virtual void		ServerCommand( const char *str, ... ) = 0;
+	virtual void		ServerCommand( const char *str, ... ) FMTFUNCTION( 2, 3 ) = 0;
 	// Issue the specified command to the specified client (mimics that client typing the command at the console).
 	virtual void		ClientCommand( CPlayerSlot nSlot, const char *szFmt, ... ) FMTFUNCTION( 3, 4 ) = 0;
 	
