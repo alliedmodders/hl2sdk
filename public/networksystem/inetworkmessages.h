@@ -24,9 +24,23 @@ struct NetworkUnserializerInfo_t;
 struct NetworkableData_t;
 struct NetworkFieldInfo_t;
 struct FieldMetaInfo_t;
-struct NetworkFieldChangedDelegateType_t;
-struct NetworkFieldChangeCallbackPerformType_t;
 class CSchemaType;
+
+enum NetworkFieldChangeCallbackPerformType_t
+{
+	NETWORK_FIELD_CHANGE_CALLBACK_PERFORM_ON_CHANGE,
+	NETWORK_FIELD_CHANGE_CALLBACK_PERFORM_ON_CHANGE_OR_CREATE
+};
+
+enum NetworkFieldChangedDelegateType_t
+{
+	NETWORK_FIELD_CHANGED_NO_VALUE,
+	NETWORK_FIELD_CHANGED_WITH_VALUE,
+	NETWORK_FIELD_CHANGED_ARRAY_WITH_VALUE,
+	NETWORK_FIELD_CHANGED_NO_VALUE_NO_CONTEXT,
+	NETWORK_FIELD_CHANGED_TYPE_NONE,
+	NETWORK_FIELD_CHANGED_COUNT_TYPE
+};
 
 typedef NetworkFieldResult_t ( *NetworkFieldSerializeCB )(NetworkSerializerInfo_t const&, int, NetworkableData_t *);
 typedef NetworkFieldResult_t ( *NetworkFieldUnserializeCB )(NetworkUnserializerInfo_t const&, int, NetworkableData_t *);
@@ -85,7 +99,8 @@ public:
 
 	virtual void unk001() = 0;
 
-	virtual void RegisterNetworkFieldChangeCallbackInternal(char const *, NetworkFieldChangedDelegateType_t, CUtlAbstractDelegate, NetworkFieldChangeCallbackPerformType_t, int) = 0;
+	// Doesn't support duplicated callbacks per field
+	virtual void RegisterNetworkFieldChangeCallbackInternal(char const *szFieldName, uint64, NetworkFieldChangedDelegateType_t fieldType, CUtlAbstractDelegate pCallback, NetworkFieldChangeCallbackPerformType_t cbPerformType, int unkflag ) = 0;
 
 	virtual void AllowAdditionalMessageRegistration(bool bAllow) = 0;
 	virtual bool IsAdditionalMessageRegistrationAllowed() = 0;
