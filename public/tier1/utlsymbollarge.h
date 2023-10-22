@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ? 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: Defines a large symbol table (intp sized handles, can store more than 64k strings)
 //
@@ -183,7 +183,7 @@ private:
 		{
 			CUtlSymbolTableLargeBase* pTable = (CUtlSymbolTableLargeBase*)((uintptr_t)this + m_tableOffset);
 
-			pTable->HashValue( k );
+			return pTable->HashValue( k );
 		}
 	};
 
