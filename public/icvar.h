@@ -12,6 +12,7 @@
 
 #include "appframework/IAppSystem.h"
 #include "tier1/utlvector.h"
+#include "tier1/characterset.h"
 #include "tier0/memalloc.h"
 #include "mathlib/vector4d.h"
 #include <cstdint>
