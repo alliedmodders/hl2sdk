@@ -729,7 +729,7 @@ void CUtlVector<T, A>::ShiftElementsRight( int elem, int num )
 	Assert( IsValidIndex(elem) || ( m_Size == 0 ) || ( num == 0 ));
 	int numToMove = m_Size - elem - num;
 	if ((numToMove > 0) && (num > 0))
-		memmove( &Element(elem+num), &Element(elem), numToMove * sizeof(T) );
+		memmove( (void*)&Element(elem+num), (void*)&Element(elem), numToMove * sizeof(T) );
 }
 
 template< typename T, class A >
@@ -739,10 +739,10 @@ void CUtlVector<T, A>::ShiftElementsLeft( int elem, int num )
 	int numToMove = m_Size - elem - num;
 	if ((numToMove > 0) && (num > 0))
 	{
-		memmove( &Element(elem), &Element(elem+num), numToMove * sizeof(T) );
+		memmove( (void*)&Element(elem), (void*)&Element(elem+num), numToMove * sizeof(T) );
 
 #ifdef _DEBUG
-		Q_memset( &Element(m_Size-num), 0xDD, num * sizeof(T) );
+		Q_memset( (void*)&Element(m_Size-num), 0xDD, num * sizeof(T) );
 #endif
 	}
 }
