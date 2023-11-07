@@ -137,8 +137,8 @@ public:
 class CBaseGameSystem : public IGameSystem
 {
 public:
-	CBaseGameSystem()
-	 :  m_pName("unnamed")
+	CBaseGameSystem(const char* pszInitName = "unnamed")
+	 :  m_pName(pszInitName)
 	{
 	}
 
