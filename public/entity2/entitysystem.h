@@ -11,6 +11,8 @@
 #include "concreteentitylist.h"
 #include "entitydatainstantiator.h"
 
+class CUtlScratchMemoryPool;
+
 class CEntityKeyValues;
 class IEntityResourceManifest;
 class IEntityPrecacheConfiguration;
@@ -111,13 +113,13 @@ struct CEntityResourceManifestLock
 abstract_class IEntityResourceManifestBuilder
 {
 public:
-	virtual void		BuildResourceManifest(EntityResourceManifestCreationCallback_t callback, void* pContext, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) = 0;
+	virtual void		BuildResourceManifest(SpawnGroupHandle_t hSpawnGroup, int nCount, const EntitySpawnInfo_t *pEntities, const matrix3x4a_t *vWorldOffset, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) = 0;
+	virtual void		BuildResourceManifest(SpawnGroupHandle_t hSpawnGroup, const CUtlVector<const CEntityKeyValues*, CUtlMemory<const CEntityKeyValues*> >* pEntityKeyValues, const char* pFilterName, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) = 0;
 	virtual void		BuildResourceManifest(const char* pManifestNameOrGroupName, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) = 0;
-	virtual void		BuildResourceManifest(SpawnGroupHandle_t hSpawnGroup, const CUtlVector<const CEntityKeyValues*, CUtlMemory<const CEntityKeyValues*, int> >* pEntityKeyValues, const char* pFilterName, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) = 0;
-	virtual void		BuildResourceManifest(SpawnGroupHandle_t hSpawnGroup, int nEntityKeyValueCount, const CEntityKeyValues** ppEntityKeyValues, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) = 0;
-	virtual void		UnknownFunc004() = 0; // Another BuildResourceManifest function in 2018, but it is quite different now
-	virtual void		BuildResourceManifestForEntity(uint64 unknown1, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest, uint64 unknown2) = 0;
-	virtual void		InvokePrecacheCallback(void* hResource /* ResourceHandle_t */, const EntitySpawnInfo_t* const info, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest, char* unk, void* callback /* SecondaryPrecacheMemberCallback_t */) = 0;
+	virtual void		BuildResourceManifest(EntityResourceManifestCreationCallback_t callback, void* pContext, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest) = 0;
+	virtual void		BuildResourceManifestForEntity(const char *pEntityDesignerName, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest, CUtlScratchMemoryPool* pKeyValuesMemoryPool) = 0;
+	virtual void		UnkBuildResourceManifest(SpawnGroupHandle_t hSpawnGroup, CUtlMemory<const CEntityKeyValues*>* pEntityKeyValues, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest, CUtlScratchMemoryPool *pUnkMemoryPool, uint64 nUnkVOffset, void *pUnkVPtr) = 0; // Another BuildResourceManifest function in 2018, but it is quite different now
+	virtual void		InvokePrecacheCallback(void *hResource /* ResourceHandle_t */, const EntitySpawnInfo_t *info, IEntityPrecacheConfiguration* pConfig, IEntityResourceManifest* pResourceManifest, char* unk, void* callback /* SecondaryPrecacheMemberCallback_t */) = 0;
 	virtual void		AddRefKeyValues(const CEntityKeyValues* pKeyValues) = 0;
 	virtual void		ReleaseKeyValues(const CEntityKeyValues* pKeyValues) = 0;
 	virtual void		LockResourceManifest(bool bLock, CEntityResourceManifestLock* const context) = 0;
