@@ -222,4 +222,10 @@ private:
 	const char* m_pName;
 };
 
+class CAutoGameSystem : public CBaseGameSystem
+{
+protected:
+	virtual ~CAutoGameSystem() {};
+};
+
 #endif // IGAMESYSTEM_H
