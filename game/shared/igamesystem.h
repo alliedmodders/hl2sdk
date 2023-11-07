@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -11,6 +11,39 @@
 #pragma once
 #endif
 
+#include <string.h>
+
+struct EventGameInit_t;
+struct EventGameShutdown_t;
+struct EventGamePostInit_t;
+struct EventGamePreShutdown_t;
+struct EventBuildGameSessionManifest_t;
+struct EventGameActivate_t;
+struct EventClientFullySignedOn_t;
+struct EventDisconnect_t;
+struct EventGameDeactivate_t;
+struct EventSpawnGroupPrecache_t;
+struct EventSpawnGroupUncache_t;
+struct EventPreSpawnGroupLoad_t;
+struct EventPostSpawnGroupLoad_t;
+struct EventPreSpawnGroupUnload_t;
+struct EventPostSpawnGroupUnload_t;
+struct EventActiveSpawnGroupChanged_t;
+struct EventClientPostDataUpdate_t;
+struct EventClientPreRender_t;
+struct EventClientPreEntityThink_t;
+struct EventClientUpdate_t;
+struct EventClientPostRender_t;
+struct EventServerPreEntityThink_t;
+struct EventServerPostEntityThink_t;
+struct EventServerPreClientUpdate_t;
+struct EventServerGamePostSimulate_t;
+struct EventClientGamePostSimulate_t;
+struct EventGameFrameBoundary_t;
+struct EventOutOfGameFrameBoundary_t;
+struct EventSaveGame_t;
+struct EventRestoreGame_t;
+
 //-----------------------------------------------------------------------------
 // Game systems are singleton objects in the client + server codebase responsible for
 // various tasks
@@ -18,113 +51,85 @@
 // order in which they are initialized and updated. They are shut down in
 // reverse order from which they are initialized.
 //-----------------------------------------------------------------------------
-#ifdef GAME_DLL
-class CBasePlayer;
-class CUserCmd;
-#endif
-
-// UNDONE: Do these need GameInit/GameShutdown as well?
-// UNDONE: Remove the Pre/Post entity semantics and rely on system ordering?
-// FIXME: Remove all ifdef CLIENT_DLL if we can...
 abstract_class IGameSystem
 {
 public:
-	// GameSystems are expected to implement these methods.
-	virtual char const *Name() = 0;
-
 	// Init, shutdown
 	// return true on success. false to abort DLL init!
 	virtual bool Init() = 0;
 	virtual void PostInit() = 0;
 	virtual void Shutdown() = 0;
 
-	// Level init, shutdown
-	virtual void LevelInitPreEntity() = 0;
-	// entities are created / spawned / precached here
-	virtual void LevelInitPostEntity() = 0;
+	// Game init, shutdown
+	virtual void GameInit(const EventGameInit_t* const msg) = 0;
+	virtual void GameShutdown(const EventGameShutdown_t* const msg) = 0;
+	virtual void GamePostInit(const EventGamePostInit_t* const msg) = 0;
+	virtual void GamePreShutdown(const EventGamePreShutdown_t* const msg) = 0;
 
-	virtual void LevelShutdownPreEntity() = 0;
-	// Entities are deleted / released here...
-	virtual void LevelShutdownPostEntity() = 0;
-	// end of level shutdown
-	
-	// Called during game save
-	virtual void OnSave() = 0;
+	virtual void BuildGameSessionManifest(const EventBuildGameSessionManifest_t* const msg) = 0;
 
-	// Called during game restore, after the local player has connected and entities have been fully restored
-	virtual void OnRestore() = 0;
+	virtual void GameActivate(const EventGameActivate_t* const msg) = 0;
 
-	// Called every frame. It's safe to remove an igamesystem from within this callback.
-	virtual void SafeRemoveIfDesired() = 0;
+	virtual void ClientFullySignedOn(const EventClientFullySignedOn_t* const msg) = 0;
+	virtual void ClientDisconnect(const EventDisconnect_t* const msg) = 0;
 
-	virtual bool	IsPerFrame() = 0;
+	virtual void GameDeactivate(const EventGameDeactivate_t* const msg) = 0;
 
-	// destructor, cleans up automagically....
-	virtual ~IGameSystem();
+	virtual void SpawnGroupPrecache(const EventSpawnGroupPrecache_t* const msg) = 0;
+	virtual void SpawnGroupUncache(const EventSpawnGroupUncache_t* const msg) = 0;
+	virtual void PreSpawnGroupLoad(const EventPreSpawnGroupLoad_t* const msg) = 0;
+	virtual void PostSpawnGroupLoad(const EventPostSpawnGroupLoad_t* const msg) = 0;
+	virtual void PreSpawnGroupUnload(const EventPreSpawnGroupUnload_t* const msg) = 0;
+	virtual void PostSpawnGroupUnload(const EventPostSpawnGroupUnload_t* const msg) = 0;
+	virtual void ActiveSpawnGroupChanged(const EventActiveSpawnGroupChanged_t* const msg) = 0;
 
-	// Client systems can use this to get at the map name
-	static char const*	MapName();
+	virtual void PostDataUpdate(EventClientPostDataUpdate_t* const msg) = 0;
 
-	// These methods are used to add and remove server systems from the
-	// main server loop. The systems are invoked in the order in which
-	// they are added.
-	static void Add ( IGameSystem* pSys );
-	static void Remove ( IGameSystem* pSys );
-	static void RemoveAll (  );
-
-	// These methods are used to initialize, shutdown, etc all systems
-	static bool InitAllSystems();
-	static void PostInitAllSystems();
-	static void ShutdownAllSystems();
-	static void LevelInitPreEntityAllSystems( char const* pMapName );
-	static void LevelInitPostEntityAllSystems();
-	static void LevelShutdownPreEntityAllSystems();
-	static void LevelShutdownPostEntityAllSystems();
-
-	static void OnSaveAllSystems();
-	static void OnRestoreAllSystems();
-
-	static void SafeRemoveIfDesiredAllSystems();
-
-#ifdef CLIENT_DLL
-	static void PreRenderAllSystems();
-	static void UpdateAllSystems( float frametime );
-	static void PostRenderAllSystems();
-#else
-	static void FrameUpdatePreEntityThinkAllSystems();
-	static void FrameUpdatePostEntityThinkAllSystems();
-	static void PreClientUpdateAllSystems();
-
-	// Accessors for the above function
-#ifdef GAME_DLL
-	static CBasePlayer *RunCommandPlayer();
-	static CUserCmd *RunCommandUserCmd();
-#endif
-#endif
-};
-
-class IGameSystemPerFrame : public IGameSystem
-{
-public:
-	// destructor, cleans up automagically....
-	virtual ~IGameSystemPerFrame();
-
-#ifdef CLIENT_DLL
 	// Called before rendering
-	virtual void PreRender() = 0;
+	virtual void PreRender(const EventClientPreRender_t* const msg) = 0;
+
+	virtual void ClientPreEntityThink(const EventClientPreEntityThink_t* const msg) = 0;
+
+	virtual void nullsub_1271(const void* const msg) = 0;
 
 	// Gets called each frame
-	virtual void Update( float frametime ) = 0;
+	virtual void Update(const EventClientUpdate_t* const msg) = 0;
 
 	// Called after rendering
-	virtual void PostRender() = 0;
-#else
+	virtual void PostRender(const EventClientPostRender_t* const msg) = 0;
+
 	// Called each frame before entities think
-	virtual void FrameUpdatePreEntityThink() = 0;
+	virtual void FrameUpdatePreEntityThink(const EventServerPreEntityThink_t* const msg) = 0;
 	// called after entities think
-	virtual void FrameUpdatePostEntityThink() = 0;
-	virtual void PreClientUpdate() = 0;
-#endif
+	virtual void FrameUpdatePostEntityThink(const EventServerPostEntityThink_t* const msg) = 0;
+	virtual void PreClientUpdate(const EventServerPreClientUpdate_t* const msg) = 0;
+
+	virtual void nullsub_1277(const void* const msg) = 0;
+	virtual void nullsub_1278(const void* const msg) = 0;
+
+	virtual void OnServerGamePostSimulate(const EventServerGamePostSimulate_t* const msg) = 0;
+	virtual void OnClientGamePostSimulate(const EventClientGamePostSimulate_t* const msg) = 0;
+
+	virtual void nullsub_1281(const void* const msg) = 0;
+
+	virtual void FrameBoundary(const EventGameFrameBoundary_t* const msg) = 0;
+	virtual void OutOfGameFrameBoundary(const EventOutOfGameFrameBoundary_t* const msg) = 0;
+
+	virtual void SaveGame(const EventSaveGame_t* const msg) = 0;
+	virtual void RestoreGame(const EventRestoreGame_t* const msg) = 0;
+
+	virtual void nullsub_1285(const void* const msg) = 0;
+	virtual void nullsub_1286(const void* const msg) = 0;
+	virtual void nullsub_1287(const void* const msg) = 0;
+	virtual void nullsub_1288(const void* const msg) = 0;
+	virtual void nullsub_1289(const void* const msg) = 0;
+
+	virtual const char* GetName() = 0;
+	virtual void SetGameSystemGlobalPtrs(void* pValue) = 0;
+	virtual void SetName(const char* pName) = 0;
+	virtual bool DoesGameSystemReallocate() = 0;
+	virtual ~IGameSystem() = 0;
+	virtual void YouForgot_DECLARE_GAME_SYSTEM_InYourClassDefinition() = 0;
 };
 
 // Quick and dirty server system for users who don't care about precise ordering
@@ -132,54 +137,10 @@ public:
 class CBaseGameSystem : public IGameSystem
 {
 public:
-
-	virtual char const *Name() { return "unnamed"; }
-
-	// Init, shutdown
-	// return true on success. false to abort DLL init!
-	virtual bool Init() { return true; }
-	virtual void PostInit() {}
-	virtual void Shutdown() {}
-
-	// Level init, shutdown
-	virtual void LevelInitPreEntity() {}
-	virtual void LevelInitPostEntity() {}
-	virtual void LevelShutdownPreEntity() {}
-	virtual void LevelShutdownPostEntity() {}
-
-	virtual void OnSave() {}
-	virtual void OnRestore() {}
-	virtual void SafeRemoveIfDesired() {}
-
-	virtual bool	IsPerFrame() { return false; }
-private:
-
-	// Prevent anyone derived from CBaseGameSystem from implementing these, they need
-	//  to derive from CBaseGameSystemPerFrame below!!!
-#ifdef CLIENT_DLL
-	// Called before rendering
-	virtual void PreRender() {}
-
-	// Gets called each frame
-	virtual void Update( float frametime ) {}
-
-	// Called after rendering
-	virtual void PostRender() {}
-#else
-	// Called each frame before entities think
-	virtual void FrameUpdatePreEntityThink() {}
-	// called after entities think
-	virtual void FrameUpdatePostEntityThink() {}
-	virtual void PreClientUpdate() {}
-#endif
-};
-
-// Quick and dirty server system for users who don't care about precise ordering
-// and usually only want to implement a few of the callbacks
-class CBaseGameSystemPerFrame : public IGameSystemPerFrame
-{
-public:
-	virtual char const *Name() { return "unnamed"; }
+	CBaseGameSystem()
+	 :  m_pName("unnamed")
+	{
+	}
 
 	// Init, shutdown
 	// return true on success. false to abort DLL init!
@@ -187,74 +148,78 @@ public:
 	virtual void PostInit() {}
 	virtual void Shutdown() {}
 
-	// Level init, shutdown
-	virtual void LevelInitPreEntity() {}
-	virtual void LevelInitPostEntity() {}
-	virtual void LevelShutdownPreEntity() {}
-	virtual void LevelShutdownPostEntity() {}
+	// Game init, shutdown
+	virtual void GameInit(const EventGameInit_t* const msg) {}
+	virtual void GameShutdown(const EventGameShutdown_t* const msg) {}
+	virtual void GamePostInit(const EventGamePostInit_t* const msg) {}
+	virtual void GamePreShutdown(const EventGamePreShutdown_t* const msg) {}
 
-	virtual void OnSave() {}
-	virtual void OnRestore() {}
-	virtual void SafeRemoveIfDesired() {}
+	virtual void BuildGameSessionManifest(const EventBuildGameSessionManifest_t* const msg) {}
 
-	virtual bool	IsPerFrame() { return true; }
+	virtual void GameActivate(const EventGameActivate_t* const msg) {}
 
-#ifdef CLIENT_DLL
+	virtual void ClientFullySignedOn(const EventClientFullySignedOn_t* const msg) {}
+	virtual void ClientDisconnect(const EventDisconnect_t* const msg) {}
+
+	virtual void GameDeactivate(const EventGameDeactivate_t* const msg) {}
+
+	virtual void SpawnGroupPrecache(const EventSpawnGroupPrecache_t* const msg) {}
+	virtual void SpawnGroupUncache(const EventSpawnGroupUncache_t* const msg) {}
+	virtual void PreSpawnGroupLoad(const EventPreSpawnGroupLoad_t* const msg) {}
+	virtual void PostSpawnGroupLoad(const EventPostSpawnGroupLoad_t* const msg) {}
+	virtual void PreSpawnGroupUnload(const EventPreSpawnGroupUnload_t* const msg) {}
+	virtual void PostSpawnGroupUnload(const EventPostSpawnGroupUnload_t* const msg) {}
+	virtual void ActiveSpawnGroupChanged(const EventActiveSpawnGroupChanged_t* const msg) {}
+
+	virtual void PostDataUpdate(EventClientPostDataUpdate_t* const msg) {}
+
 	// Called before rendering
-	virtual void PreRender () { }
+	virtual void PreRender(const EventClientPreRender_t* const msg) {}
+
+	virtual void ClientPreEntityThink(const EventClientPreEntityThink_t* const msg) {}
+
+	virtual void nullsub_1271(const void* const msg) {}
 
 	// Gets called each frame
-	virtual void Update( float frametime ) { }
+	virtual void Update(const EventClientUpdate_t* const msg) {}
 
 	// Called after rendering
-	virtual void PostRender () { }
-#else
+	virtual void PostRender(const EventClientPostRender_t* const msg) {}
+
 	// Called each frame before entities think
-	virtual void FrameUpdatePreEntityThink() { }
+	virtual void FrameUpdatePreEntityThink(const EventServerPreEntityThink_t* const msg) {}
 	// called after entities think
-	virtual void FrameUpdatePostEntityThink() { }
-	virtual void PreClientUpdate() { }
-#endif
-};
+	virtual void FrameUpdatePostEntityThink(const EventServerPostEntityThink_t* const msg) {}
+	virtual void PreClientUpdate(const EventServerPreClientUpdate_t* const msg) {}
 
-// Quick and dirty server system for users who don't care about precise ordering
-// and usually only want to implement a few of the callbacks
-class CAutoGameSystem : public CBaseGameSystem
-{
-public:
-	CAutoGameSystem( char const *name = NULL );	// hooks in at startup, no need to explicitly add
-	CAutoGameSystem		*m_pNext;
+	virtual void nullsub_1277(const void* const msg) {}
+	virtual void nullsub_1278(const void* const msg) {}
 
-	virtual char const *Name() { return m_pszName ? m_pszName : "unnamed"; }
+	virtual void OnServerGamePostSimulate(const EventServerGamePostSimulate_t* const msg) {}
+	virtual void OnClientGamePostSimulate(const EventClientGamePostSimulate_t* const msg) {}
+
+	virtual void nullsub_1281(const void* const msg) {}
+
+	virtual void FrameBoundary(const EventGameFrameBoundary_t* const msg) {}
+	virtual void OutOfGameFrameBoundary(const EventOutOfGameFrameBoundary_t* const msg) {}
+
+	virtual void SaveGame(const EventSaveGame_t* const msg) {}
+	virtual void RestoreGame(const EventRestoreGame_t* const msg) {}
+
+	virtual void nullsub_1285(const void* const msg) {}
+	virtual void nullsub_1286(const void* const msg) {}
+	virtual void nullsub_1287(const void* const msg) {}
+	virtual void nullsub_1288(const void* const msg) {}
+	virtual void nullsub_1289(const void* const msg) {}
+
+	virtual const char* GetName() { return m_pName; }
+	virtual void SetGameSystemGlobalPtrs(void* pValue) {}
+	virtual void SetName(const char* pName) { m_pName = pName; }
+	virtual bool DoesGameSystemReallocate() { return false; }
+	virtual ~CBaseGameSystem() {}
 
 private:
-	char const *m_pszName;
-};
-
-//-----------------------------------------------------------------------------
-// Purpose: This is a CAutoGameSystem which also cares about the "per frame" hooks
-//-----------------------------------------------------------------------------
-class CAutoGameSystemPerFrame : public CBaseGameSystemPerFrame
-{
-public:
-	CAutoGameSystemPerFrame( char const *name = NULL );
-	CAutoGameSystemPerFrame *m_pNext;
-
-	virtual char const *Name() { return m_pszName ? m_pszName : "unnamed"; }
-	
-private:
-	char const *m_pszName;
-};
-
-
-//-----------------------------------------------------------------------------
-// Purpose: This interface is here to add more hooks than IGameSystemPerFrame exposes,
-// so we don't pollute it with hooks that only the tool cares about
-//-----------------------------------------------------------------------------
-class IToolFrameworkServer
-{
-public:
-	virtual void PreSetupVisibility() = 0;
+	const char* m_pName;
 };
 
 #endif // IGAMESYSTEM_H
