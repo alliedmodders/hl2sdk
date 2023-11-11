@@ -1,6 +1,6 @@
 //========= Copyright 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -38,7 +38,7 @@ DECLARE_POINTER_HANDLE(NetMessageHandle_t);
 struct NetPacket_t
 {
 	netadr_t		from;		// sender IP
-	int				source;		// received source 
+	int				source;		// received source
 	double			received;	// received time
 	unsigned char	*data;		// pointer to raw packet data
 	bf_read			message;	// easy bitbuf data access
@@ -64,18 +64,18 @@ public:
 	virtual size_t 	GetTotalPacketBytes( int, int ) const = 0;
 	virtual size_t 	GetTotalPacketReliableBytes( int, int ) const = 0;
 	virtual void	SetTimeout(float seconds, bool bForceExact = false) = 0;
-	
+
 	virtual void	Reset( void ) = 0;
 	virtual void	Clear( void ) = 0;
 	virtual void	Shutdown(/* ENetworkDisconnectionReason */ int reason) = 0;
-	
+
 	virtual bool	SendData( bf_write &msg, NetChannelBufType_t bufferType ) = 0;
 	virtual void	SetChoked( void ) = 0;
 	virtual bool	Transmit( const char *, bf_write * ) = 0;
 
 	virtual const netadr_t	&GetRemoteAddress( void ) const = 0;
 	virtual int				GetDropNumber( void ) const = 0;
-		
+
 	virtual void	UpdateMessageStats( int msggroup, int bits, bool ) = 0;
 	virtual bool	CanPacket( void ) const = 0;
 	virtual bool	IsOverflowed( void ) const = 0;
@@ -92,12 +92,12 @@ public:
 	virtual void	SetDataRate(float rate) = 0;
 	virtual void	SetUpdateRate( int rate ) = 0;
 	virtual void	SetCommandRate( int rate ) = 0;
-	
+
 	virtual bool	IsTimedOut( void ) const  = 0;
-	
+
 	virtual void	SetRemoteFramerate( float flFrameTime, float flFrameTimeStdDeviation, float flFrameStartTimeStdDeviation ) = 0;
 	virtual bool	IsRemoteDisconnected() const = 0;
-	
+
 	virtual void	SetNetMessageDispatcher( INetMessageDispatcher *pDispatcher ) = 0;
 	virtual INetMessageDispatcher *GetNetMessageDispatcher( void ) const = 0;
 	virtual void	SendNetMessage( NetMessageHandle_t msg, const void *pData, NetChannelBufType_t bufType ) = 0;
@@ -126,10 +126,10 @@ public:
 	virtual void	PostReceivedNetMessage(NetMessageHandle_t, const void *, const NetChannelBufType_t* ) = 0;
 	virtual bool	InsertReplayMessage( InstantReplayMessage_t &msg ) = 0;
 	virtual bool	HasQueuedPackets( void ) const = 0;
-  
-	virtual void	SetPendingDisconnect( /*ENetworkDisconnectReason*/ int reason ) = 0;
+
+	virtual void	SetPendingDisconnect( ENetworkDisconnectReason reason ) = 0;
 	virtual int		GetPendingDisconnect() const = 0;
-	
+
 	virtual bool	IsSuppressingTransmit() const = 0;
 	virtual void	SuppressTransmit( bool ) = 0;
 };
