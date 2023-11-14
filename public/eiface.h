@@ -472,19 +472,19 @@ public:
 	//
 	// This is also where an entity can force other entities to be transmitted if it refers to them
 	// with ehandles.
-	virtual void			CheckTransmit( CCheckTransmitInfo **pInfo, int, CBitVec<16384> &, const Entity2Networkable_t **pNetworkables,
-								const uint16 *pEntityIndicies, int nEntities ) = 0;
-
+	virtual void			CheckTransmit( CCheckTransmitInfo **pInfoInfoList, int nInfoCount, CBitVec<16384> &unionTransmitEdicts, const Entity2Networkable_t **pNetworkables,
+								const uint16 *pEntityIndicies, int nEntityIndices ) = 0;
+	
 	// TERROR: Perform any PVS cleanup before a full update
-	virtual void			PrepareForFullUpdate( CEntityIndex entIndex ) = 0;
-
+	virtual void			PrepareForFullUpdate( CEntityIndex nPlayerEntityIndex ) = 0;
+	
 	// Frees the entity attached to this edict
-	virtual void			FreeContainingEntity( CEntityIndex entIndex ) = 0;
-
-	virtual void			GetWorldspaceCenter( CEntityIndex entIndex, Vector *pOut ) const = 0;
-
-	virtual bool			ShouldClientReceiveStringTableUserData( const INetworkStringTable *pStringTable, int iIndex, const CCheckTransmitInfo *pTransmitInfo ) = 0;
-
+	virtual void			FreeContainingEntity( CEntityIndex nEntityIndex ) = 0;
+	
+	virtual bool			GetWorldspaceCenter( CEntityIndex nEntityIndex, Vector *pCenter ) const = 0;
+	
+	virtual bool			ShouldClientReceiveStringTableUserData( const INetworkStringTable *pTable, int stringNumber, const CCheckTransmitInfo *pInfo ) = 0;
+	
 	virtual void			ResetChangeAccessorsSerialNumbersToZero() = 0;
 };
 
