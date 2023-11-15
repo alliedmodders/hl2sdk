@@ -16,13 +16,16 @@
 
 #include "tier0/dbg.h"
 #include <string.h>
-#include <cstdint>
 #include "tier0/platform.h"
 
 #include "tier0/memalloc.h"
 #include "tier1/rawallocator.h"
 #include "mathlib/mathlib.h"
 #include "tier0/memdbgon.h"
+
+#ifndef SIZE_MAX
+#define SIZE_MAX ((size_t)-1)
+#endif
 
 #ifdef _MSC_VER
 #pragma warning (disable:4100)
