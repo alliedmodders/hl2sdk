@@ -19,9 +19,10 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef schema
-#define schema namespace ValveSchemaMarker {}
-#endif
+// AlliedModders: We don't need this, and it conflicts with generated proto headers
+// #ifndef schema
+// #define schema namespace ValveSchemaMarker {}
+// #endif
 
 #ifdef COMPILING_SCHEMA
 #define UNSCHEMATIZED_METHOD( x )
