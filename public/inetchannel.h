@@ -127,7 +127,7 @@ public:
 	virtual bool	InsertReplayMessage( InstantReplayMessage_t &msg ) = 0;
 	virtual bool	HasQueuedPackets( void ) const = 0;
 
-	virtual void	SetPendingDisconnect( ENetworkDisconnectReason reason ) = 0;
+	virtual void	SetPendingDisconnect( ENetworkDisconnectionReason reason ) = 0;
 	virtual int		GetPendingDisconnect() const = 0;
 
 	virtual bool	IsSuppressingTransmit() const = 0;
