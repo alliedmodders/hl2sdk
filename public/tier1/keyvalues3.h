@@ -163,8 +163,8 @@ enum KV3TypeEx_t : uint8
 	KV3_TYPEEX_DOUBLE,
 
 	KV3_TYPEEX_STRING			= KV3_TYPE_STRING,
-	KV3_TYPEEX_STRING_EXTERN	= (KV3_TYPEEX_STRING|(KV3_TYPEOPT_STRING_EXTERN << 4)),
 	KV3_TYPEEX_STRING_SHORT		= (KV3_TYPEEX_STRING|(KV3_TYPEOPT_STRING_SHORT << 4)),
+	KV3_TYPEEX_STRING_EXTERN	= (KV3_TYPEEX_STRING|(KV3_TYPEOPT_STRING_EXTERN << 4)),
 
 	KV3_TYPEEX_BINARY_BLOB			= KV3_TYPE_BINARY_BLOB,
 	KV3_TYPEEX_BINARY_BLOB_EXTERN	= (KV3_TYPEEX_BINARY_BLOB|(KV3_TYPEOPT_BINARY_BLOB_EXTERN << 4)),
@@ -440,7 +440,7 @@ private:
 	CKeyValues3Cluster* GetCluster() const;
 
 	template < typename T > T FromString( T defaultValue ) const;
-	template < typename T > void SetDirect( T val );
+	template < typename T > void SetDirect( T value );
 
 	template < typename T > T GetValue( T defaultValue ) const;
 	template < typename T > void SetValue( T value, KV3TypeEx_t type, KV3SubType_t subtype );

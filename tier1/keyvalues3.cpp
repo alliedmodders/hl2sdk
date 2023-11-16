@@ -941,7 +941,7 @@ void CKeyValues3Array::CopyFrom( const CKeyValues3Array* pSrc )
 	SetCount( nNewSize );
 
 	for ( int i = 0; i < nNewSize; ++i )
-		m_Elements[i] = pSrc->m_Elements[i];
+		*m_Elements[i] = *pSrc->m_Elements[i];
 }
 
 void CKeyValues3Array::RemoveMultiple( int elem, int num )
@@ -1121,7 +1121,7 @@ void CKeyValues3Table::CopyFrom( const CKeyValues3Table* pSrc )
 
 		m_IsExternalName[i] = false;
 
-		m_Members[i] = pSrc->m_Members[i];
+		*m_Members[i] = *pSrc->m_Members[i];
 	}
 
 	if ( nNewSize >= 128 )
