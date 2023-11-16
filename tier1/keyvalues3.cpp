@@ -442,6 +442,16 @@ int KeyValues3::GetArrayElementCount() const
 		return m_nNumArrayElements;
 }
 
+KeyValues3** KeyValues3::GetArrayBase()
+{
+	if ( GetType() != KV3_TYPE_ARRAY )
+		return NULL;
+
+	NormalizeArray();
+
+	return m_pArray->Base();
+}
+
 KeyValues3* KeyValues3::GetArrayElement( int elem )
 {
 	if ( GetType() != KV3_TYPE_ARRAY )
@@ -462,7 +472,7 @@ KeyValues3* KeyValues3::InsertArrayElementBefore( int elem )
 
 	NormalizeArray();
 
-	return m_pArray->InsertBefore( elem, 1 );
+	return *m_pArray->InsertBefore( elem, 1 );
 }
 
 KeyValues3* KeyValues3::AddArrayElementToTail()
@@ -472,7 +482,7 @@ KeyValues3* KeyValues3::AddArrayElementToTail()
 	else
 		NormalizeArray();
 
-	return m_pArray->InsertBefore( m_pArray->Count(), 1 );
+	return *m_pArray->InsertBefore( m_pArray->Count(), 1 );
 }
 
 void KeyValues3::SetArrayElementCount( int count, KV3TypeEx_t type, KV3SubType_t subtype )
@@ -558,8 +568,9 @@ bool KeyValues3::ReadArrayInt32( int dest_size, int32* data ) const
 			{
 				src_size = m_pArray->Count();
 				int count = MIN( src_size, dest_size );
+				KeyValues3** arr = m_pArray->Base();
 				for ( int i = 0; i < count; ++i )
-					data[ i ] = m_pArray->Element( i )->GetInt();
+					data[ i ] = arr[ i ]->GetInt();
 				break;
 			}
 			case KV3_TYPEEX_ARRAY_INT16:
@@ -625,8 +636,9 @@ bool KeyValues3::ReadArrayFloat32( int dest_size, float32* data ) const
 			{
 				src_size = m_pArray->Count();
 				int count = MIN( src_size, dest_size );
+				KeyValues3** arr = m_pArray->Base();
 				for ( int i = 0; i < count; ++i )
-					data[ i ] = m_pArray->Element( i )->GetFloat();
+					data[ i ] = arr[ i ]->GetFloat();
 				break;
 			}
 			case KV3_TYPEEX_ARRAY_FLOAT32:
@@ -917,7 +929,7 @@ void CKeyValues3Array::SetCount( int count, KV3TypeEx_t type, KV3SubType_t subty
 	}
 }
 
-KeyValues3* CKeyValues3Array::InsertBefore( int elem, int num )
+KeyValues3** CKeyValues3Array::InsertBefore( int elem, int num )
 {
 	KeyValues3** kv = m_Elements.InsertBeforeGetPtr( elem, num );
 
@@ -931,7 +943,7 @@ KeyValues3* CKeyValues3Array::InsertBefore( int elem, int num )
 			m_Elements[ elem + i ] = new KeyValues3;
 	}
 
-	return *kv;
+	return kv;
 }
 
 void CKeyValues3Array::CopyFrom( const CKeyValues3Array* pSrc )

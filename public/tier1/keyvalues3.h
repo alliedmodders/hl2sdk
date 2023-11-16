@@ -401,8 +401,8 @@ public:
 	void SetQAngle( const QAngle &ang )				{ SetVecBasedObj<QAngle>( ang, 3, KV3_SUBTYPE_QANGLE ); }
 
 	int GetArrayElementCount() const;
+	KeyValues3** GetArrayBase();
 	KeyValues3* GetArrayElement( int elem );
-	KeyValues3* GetArrayBase() { return GetArrayElement( 0 ); }
 	KeyValues3* InsertArrayElementBefore( int elem );
 	KeyValues3* InsertArrayElementAfter( int elem ) { return InsertArrayElementBefore( elem + 1 ); }
 	KeyValues3* AddArrayElementToTail();
@@ -510,12 +510,15 @@ public:
 	CKeyValues3ArrayCluster* GetCluster() const;
 	CKeyValues3Context* GetContext() const;
 		
+	KeyValues3** Base() { return m_Elements.Base(); }
+	KeyValues3* const * Base() const { return m_Elements.Base(); }
+
 	KeyValues3* Element( int i ) { return m_Elements[ i ]; }
 	const KeyValues3* Element( int i ) const { return m_Elements[ i ]; }
 
 	int Count() const { return m_Elements.Count(); }
 	void SetCount( int count, KV3TypeEx_t type = KV3_TYPEEX_NULL, KV3SubType_t subtype = KV3_SUBTYPE_UNSPECIFIED );
-	KeyValues3* InsertBefore( int elem, int num );
+	KeyValues3** InsertBefore( int elem, int num );
 	void CopyFrom( const CKeyValues3Array* pSrc );
 	void RemoveMultiple( int elem, int num );
 	void Purge( bool bClearingContext );
@@ -873,8 +876,9 @@ void KeyValues3::NormalizeArray( KV3TypeEx_t type, KV3SubType_t subtype, int siz
 
 	m_pArray->SetCount( size, type, subtype );
 
+	KeyValues3** arr = m_pArray->Base();
 	for ( int i = 0; i < m_pArray->Count(); ++i )
-		m_pArray->Element( i )->SetDirect( data[ i ] );
+		arr[ i ]->SetDirect( data[ i ] );
 
 	if ( bFree )
 		free( (void*)data );
@@ -937,8 +941,9 @@ void KeyValues3::AllocArray( int size, const T* data, KV3ArrayAllocType_t alloc_
 
 		m_pArray->SetCount( size, type_elem, subtype_elem );
 
+		KeyValues3** arr = m_pArray->Base();
 		for ( int i = 0; i < m_pArray->Count(); ++i )
-			m_pArray->Element( i )->SetValue<T>( data[ i ], type_elem, subtype_elem );
+			arr[ i ]->SetValue<T>( data[ i ], type_elem, subtype_elem );
 
 		if ( alloc_type == KV3_ARRAY_ALLOC_EXTERN_FREE )
 			free( (void*)data );
