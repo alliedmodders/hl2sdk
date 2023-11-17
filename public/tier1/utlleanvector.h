@@ -502,10 +502,9 @@ template< class B, class T, class I >
 T* CUtlLeanVectorImpl<B, T, I>::AddToTailGetPtr()
 {
 	this->EnsureCapacity( this->m_Size + 1 );
-	T* elem = &Element( this->m_Size );
-	Construct( elem );
-	this->m_Size++;
-	return elem;
+	T* pBase = this->Base();
+	Construct( &pBase[ this->m_Size ] );
+	return &pBase[ this->m_Size++ ];
 }
 
 //-----------------------------------------------------------------------------
@@ -515,10 +514,9 @@ template< class B, class T, class I >
 int CUtlLeanVectorImpl<B, T, I>::AddToTail( const T& src )
 {
 	this->EnsureCapacity( this->m_Size + 1 );
-	int elem = this->m_Size;
-	CopyConstruct( &Element( elem ), src );
-	this->m_Size++;
-	return elem;
+	T* pBase = this->Base();
+	CopyConstruct( &pBase[ this->m_Size ], src );
+	return this->m_Size++;
 }
 
 //-----------------------------------------------------------------------------
