@@ -1238,6 +1238,8 @@ void CKeyValues3Table::Purge( bool bClearingContext )
 	m_IsExternalName.Purge();
 }
 
+#include "tier0/memdbgoff.h"
+
 KeyValues3* CKeyValues3Cluster::Alloc( KV3TypeEx_t type, KV3SubType_t subtype )
 {
 	int element = BitScanFwd( ~m_nAllocatedElements );
@@ -1246,6 +1248,8 @@ KeyValues3* CKeyValues3Cluster::Alloc( KV3TypeEx_t type, KV3SubType_t subtype )
 	new( kv ) KeyValues3( element, type, subtype );
 	return kv;
 }
+
+#include "tier0/memdbgon.h"
 
 void CKeyValues3Cluster::Free( int element )
 {
