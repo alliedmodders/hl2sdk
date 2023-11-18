@@ -110,8 +110,7 @@ PLATFORM_OVERLOAD bool SaveKV3Text_ToString( const KV3ID_t& format, const KeyVal
 PLATFORM_OVERLOAD bool SaveKV3ToFile( const KV3ID_t& encoding, const KV3ID_t& format, const KeyValues3* kv, CUtlString* error, const char* filename, const char* path, uint flags = KV3_SAVE_TEXT_NONE );
 
 typedef int32 KV3MemberId_t;
-
-#define KV3_INVALID_MEMBER ((KV3MemberId_t)~0)
+#define KV3_INVALID_MEMBER ((KV3MemberId_t)-1)
 
 enum
 {
@@ -519,7 +518,7 @@ public:
 
 	int Count() const { return m_Elements.Count(); }
 	void SetCount( int count, KV3TypeEx_t type = KV3_TYPEEX_NULL, KV3SubType_t subtype = KV3_SUBTYPE_UNSPECIFIED );
-	KeyValues3** InsertBefore( int elem, int num );
+	KeyValues3** InsertBeforeGetPtr( int elem, int num );
 	void CopyFrom( const CKeyValues3Array* pSrc );
 	void RemoveMultiple( int elem, int num );
 	void Purge( bool bClearingContext );
@@ -625,8 +624,8 @@ public:
 	CKeyValues3Cluster* GetNextFree() const { return m_pNextFree; }
 	void SetNextFree( CKeyValues3Cluster* free ) { m_pNextFree = free; }
 
-	KeyValues3* Base() { return &m_KeyValues[ 0 ]; }
-	const KeyValues3* Base() const { return &m_KeyValues[ 0 ]; }
+	KeyValues3* Head() { return &m_KeyValues[ 0 ]; }
+	const KeyValues3* Head() const { return &m_KeyValues[ 0 ]; }
 
 private:
 	CKeyValues3Context*	m_pContext;

@@ -472,7 +472,7 @@ KeyValues3* KeyValues3::InsertArrayElementBefore( int elem )
 
 	NormalizeArray();
 
-	return *m_pArray->InsertBefore( elem, 1 );
+	return *m_pArray->InsertBeforeGetPtr( elem, 1 );
 }
 
 KeyValues3* KeyValues3::AddArrayElementToTail()
@@ -482,7 +482,7 @@ KeyValues3* KeyValues3::AddArrayElementToTail()
 	else
 		NormalizeArray();
 
-	return *m_pArray->InsertBefore( m_pArray->Count(), 1 );
+	return *m_pArray->InsertBeforeGetPtr( m_pArray->Count(), 1 );
 }
 
 void KeyValues3::SetArrayElementCount( int count, KV3TypeEx_t type, KV3SubType_t subtype )
@@ -929,7 +929,7 @@ void CKeyValues3Array::SetCount( int count, KV3TypeEx_t type, KV3SubType_t subty
 	}
 }
 
-KeyValues3** CKeyValues3Array::InsertBefore( int elem, int num )
+KeyValues3** CKeyValues3Array::InsertBeforeGetPtr( int elem, int num )
 {
 	KeyValues3** kv = m_Elements.InsertBeforeGetPtr( elem, num );
 
@@ -1533,7 +1533,7 @@ KeyValues3* CKeyValues3Context::Root()
 		DebuggerBreak();
 	}
 
-	return m_KV3BaseCluster.Base();
+	return m_KV3BaseCluster.Head();
 }
 
 const char* CKeyValues3Context::AllocString( const char* pString )
