@@ -33,6 +33,16 @@ public:
 
 #define DefLessFunc( type ) CDefOps< type >::LessFunc
 
+template <typename T>
+class CDefLess
+{
+public:
+	CDefLess() {}
+	CDefLess( int i ) {}
+	inline bool operator()( const T &lhs, const T &rhs ) const { return ( lhs < rhs );	}
+	inline bool operator!() const { return false; }
+};
+
 //-------------------------------------
 
 inline bool StringLessThan( const char * const &lhs, const char * const &rhs)			{ return ( strcmp( lhs, rhs) < 0 );  }
@@ -656,7 +666,8 @@ I  CUtlRBTree<T, I, L, M>::NewNode()
 			Assert( m_Elements.IsValidIterator( it ) );
 			if ( !m_Elements.IsValidIterator( it ) )
 			{
-				Error( "CUtlRBTree overflow!\n" );
+				Plat_FatalErrorFunc( "CUtlRBTree overflow with %u elements!\n", Count() );
+				DebuggerBreak();
 			}
 		}
 		m_LastAlloc = it;
@@ -1465,7 +1476,7 @@ I CUtlRBTree<T, I, L, M>::Insert( T const &insert )
 	bool leftchild;
 	FindInsertionPosition( insert, parent, leftchild );
 	I newNode = InsertAt( parent, leftchild );
-	CopyConstruct( &Element( newNode ), insert );
+	Element( newNode ) = insert;
 	return newNode;
 }
 
@@ -1507,7 +1518,7 @@ I CUtlRBTree<T, I, L, M>::InsertIfNotFound( T const &insert )
 	}
 
 	I newNode = InsertAt( parent, leftchild );
-	CopyConstruct( &Element( newNode ), insert );
+	Element( newNode ) = insert;
 	return newNode;
 }
 

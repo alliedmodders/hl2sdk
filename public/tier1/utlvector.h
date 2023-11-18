@@ -225,15 +225,6 @@ public:
 	CUtlVectorFixedGrowable( int growSize = 0 ) : BaseClass( growSize, MAX_SIZE ) {}
 };
 
-template< class T, class B = short >
-class CUtlLeanVectorBase
-{
-private:
-	B m_nAllocationCount;
-	B m_nGrowSize;
-	T* m_pMemory;
-};
-
 //-----------------------------------------------------------------------------
 // The CUtlVectorConservative class:
 // A array class with a conservative allocation scheme
@@ -1190,15 +1181,33 @@ public:
 class CSplitString: public CUtlVector<char*, CUtlMemory<char*, int> >
 {
 public:
-	CSplitString(const char *pString, const char *pSeparator);
-	CSplitString(const char *pString, const char **pSeparators, int nSeparators);
-	~CSplitString();
+	CSplitString(const char *pString, const char *pSeparator, bool bIncludeSeparators = false)
+	{
+		Construct( pString, &pSeparator, 1, bIncludeSeparators);
+	}
+
+	CSplitString(const char *pString, const char **pSeparators, int nSeparators, bool bIncludeSeparators = false)
+	{
+		Construct(pString, pSeparators, nSeparators, bIncludeSeparators);
+	}
+
+	~CSplitString()
+	{
+		if (m_szBuffer)
+			delete[] m_szBuffer;
+	}
+
 	//
 	// NOTE: If you want to make Construct() public and implement Purge() here, you'll have to free m_szBuffer there
 	//
 private:
-	void Construct(const char *pString, const char **pSeparators, int nSeparators);
-	void PurgeAndDeleteElements();
+	DLL_CLASS_IMPORT void Construct(const char *pString, const char **pSeparators, int nSeparators, bool bIncludeSeparators);
+
+	void PurgeAndDeleteElements()
+	{
+		Purge();
+	}
+
 private:
 	char *m_szBuffer; // a copy of original string, with '\0' instead of separators
 };

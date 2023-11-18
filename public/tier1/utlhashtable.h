@@ -286,7 +286,7 @@ void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::InitTa
 template <typename KeyT, typename ValueT, typename KeyHashT, typename KeyIsEqualT, typename AltKeyT, typename TableT>
 void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::SetExternalBuffer( byte* pRawBuffer, unsigned int nBytes, bool bAssumeOwnership, bool bGrowable )
 {
-	Assert( ((uintptr_t)pRawBuffer % __alignof(int)) == 0 );
+	Assert( ((uintp)pRawBuffer % __alignof(int)) == 0 );
 	uint32 bestSize = LargestPowerOfTwoLessThanOrEqual( nBytes / sizeof(entry_t) );
 	Assert( bestSize != 0 && bestSize*sizeof(entry_t) <= nBytes );
 	
@@ -747,14 +747,14 @@ void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::DbgChe
 	// and also the validity of the user's Hash and Equal function objects.
 	// NOTE: will fail if function objects require any sort of state!
 	CUtlHashtable clone;
-	unsigned int bytes = sizeof(entry_t)*max(16,m_table.Count());
+	unsigned int bytes = sizeof(entry_t)*max(16,m_nTableSize);
 	byte* tempbuf = (byte*) malloc(bytes);
 	clone.SetExternalBuffer( tempbuf, bytes, false, false );
 	clone = *this;
 
 	int count = 0, roots = 0, ends = 0;
-	int slotmask = m_table.Count() - 1;
-	for (int i = 0; i < m_table.Count(); ++i)
+	int slotmask = m_nTableSize - 1;
+	for (int i = 0; i < m_nTableSize; ++i)
 	{
 		if (!(m_table[i].flags_and_hash & FLAG_FREE)) ++count;
 		if (m_table[i].IdealIndex(slotmask) == (uint)i) ++roots;
@@ -897,9 +897,9 @@ protected:
 		KeyHashT m_hash;
 		unsigned int operator()( IndirectIndex idx ) const
 		{
-			const ptrdiff_t tableoffset = (uintptr_t)(&((Hashtable_t*)1024)->GetHashRef()) - 1024;
+			const ptrdiff_t tableoffset = (uintp)(&((Hashtable_t*)1024)->GetHashRef()) - 1024;
 			const ptrdiff_t owneroffset = offsetof(CUtlStableHashtable, m_table) + tableoffset;
-			CUtlStableHashtable* pOwner = (CUtlStableHashtable*)((uintptr_t)this - owneroffset);
+			CUtlStableHashtable* pOwner = (CUtlStableHashtable*)((uintp)this - owneroffset);
 			return m_hash( pOwner->m_data[ idx.m_index ].m_key );
 		}
 		unsigned int operator()( KeyArg_t k ) const { return m_hash( k ); }
@@ -915,16 +915,16 @@ protected:
 		}
 		unsigned int operator()( IndirectIndex lhs, KeyArg_t rhs ) const
 		{
-			const ptrdiff_t tableoffset = (uintptr_t)(&((Hashtable_t*)1024)->GetEqualRef()) - 1024;
+			const ptrdiff_t tableoffset = (uintp)(&((Hashtable_t*)1024)->GetEqualRef()) - 1024;
 			const ptrdiff_t owneroffset = offsetof(CUtlStableHashtable, m_table) + tableoffset;
-			CUtlStableHashtable* pOwner = (CUtlStableHashtable*)((uintptr_t)this - owneroffset);
+			CUtlStableHashtable* pOwner = (CUtlStableHashtable*)((uintp)this - owneroffset);
 			return m_eq( pOwner->m_data[ lhs.m_index ].m_key, rhs );
 		}
 		unsigned int operator()( IndirectIndex lhs, KeyAlt_t rhs ) const
 		{
-			const ptrdiff_t tableoffset = (uintptr_t)(&((Hashtable_t*)1024)->GetEqualRef()) - 1024;
+			const ptrdiff_t tableoffset = (uintp)(&((Hashtable_t*)1024)->GetEqualRef()) - 1024;
 			const ptrdiff_t owneroffset = offsetof(CUtlStableHashtable, m_table) + tableoffset;
-			CUtlStableHashtable* pOwner = (CUtlStableHashtable*)((uintptr_t)this - owneroffset);
+			CUtlStableHashtable* pOwner = (CUtlStableHashtable*)((uintp)this - owneroffset);
 			return m_eq( pOwner->m_data[ lhs.m_index ].m_key, rhs );
 		}
 	};
