@@ -46,11 +46,6 @@
 #include <malloc/malloc.h>
 #endif
 
-#ifdef LINUX
-#undef offsetof
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
-#endif
-
 #ifdef TIER0_DLL_EXPORT
 #  define MEM_INTERFACE DLL_EXPORT
 #else
