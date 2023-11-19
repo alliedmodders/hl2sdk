@@ -1255,7 +1255,7 @@ void CKeyValues3Cluster::Free( int element )
 {
 	KeyValues3* kv = &m_KeyValues[ element ];
 	Destruct( kv );
-	memset( kv, 0, sizeof( KeyValues3 ) );
+	memset( (void *)kv, 0, sizeof( KeyValues3 ) );
 	m_nAllocatedElements &= ~( 1ull << element );
 }
 
@@ -1340,7 +1340,7 @@ void CKeyValues3ArrayCluster::Free( int element )
 {
 	CKeyValues3Array* arr = &m_Arrays[ element ];
 	Destruct( arr );
-	memset( arr, 0, sizeof( CKeyValues3Array ) );
+	memset( (void *)arr, 0, sizeof( CKeyValues3Array ) );
 	m_nAllocatedElements &= ~( 1ull << element );
 }
 
@@ -1375,7 +1375,7 @@ void CKeyValues3TableCluster::Free( int element )
 {
 	CKeyValues3Table* table = &m_Tables[ element ];
 	Destruct( table );
-	memset( table, 0, sizeof( CKeyValues3Table ) );
+	memset( (void *)table, 0, sizeof( CKeyValues3Table ) );
 	m_nAllocatedElements &= ~( 1ull << element );
 }
 

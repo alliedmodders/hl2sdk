@@ -747,7 +747,7 @@ void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::DbgChe
 	// and also the validity of the user's Hash and Equal function objects.
 	// NOTE: will fail if function objects require any sort of state!
 	CUtlHashtable clone;
-	unsigned int bytes = sizeof(entry_t)*max(16,m_nTableSize);
+	unsigned int bytes = sizeof(entry_t)*MAX(16,m_nTableSize);
 	byte* tempbuf = (byte*) malloc(bytes);
 	clone.SetExternalBuffer( tempbuf, bytes, false, false );
 	clone = *this;

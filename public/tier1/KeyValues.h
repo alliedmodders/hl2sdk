@@ -377,7 +377,7 @@ public:
 
 	KeyValues *Element( int nIndex ) const;
 
-	CKeyValues_Data::types_t GetDataType( const char *keyName = NULL );
+	CKeyValues_Data::types_t GetDataType( const char *keyName = NULL ) const;
 
 	// unpack a key values list into a structure
 	void UnpackIntoStructure( struct KeyValuesUnpackStructure const *pUnpackTable, void *pDest );
