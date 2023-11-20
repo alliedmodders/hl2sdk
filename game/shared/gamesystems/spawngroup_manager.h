@@ -14,6 +14,7 @@
 #include "tier1/utlvector.h"
 
 class matrix3x4a_t;
+class CKeyValues3Cluster;
 class CEntityKeyValues;
 class CGameResourceManifest;
 class ISpawnGroupPrerequisiteRegistry;
@@ -103,7 +104,7 @@ public:
 	virtual void UnkIsManualFlag3() = 0;
 	virtual void UnkIsManualFlag4() = 0;
 	virtual void UnkIsManualFlag5() = 0;
-	virtual void UnkSetter(uint64_t n) = 0;
+	virtual void UnkSetter(uint64 n) = 0;
 	virtual void UnkIsManualFlag6() = 0;
 	virtual void UnkGetter() = 0;
 
@@ -225,7 +226,7 @@ public:
 	virtual bool IsLevelTransition() const = 0;
 	virtual const char *GetLevelTransitionPreviousMap() const = 0;
 	virtual const char *GetLevelTransitionLandmarkName() const = 0;
-	virtual CUtlScratchMemoryPool *GetEntityKeyValuesAllocator() = 0;
+	virtual CKeyValues3Cluster *GetEntityKeyValuesAllocator() = 0;
 	virtual CEntityInstance *CreateEntityToSpawn(SpawnGroupHandle_t hSpawnGroup, const matrix3x4a_t *const vecSpawnOffset, int createType, const CEntityKeyValues *pEntityKeyValues) = 0;
 	virtual void SpawnEntities() = 0;
 	virtual void Release() = 0;
