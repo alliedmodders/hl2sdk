@@ -84,6 +84,11 @@ public:
 		return m_EHandle.GetEntryIndex();
 	}
 
+	inline SpawnGroupHandle_t GetSpawnGroup() const
+	{
+		return m_hSpawnGroup;
+	}
+
 public:
 	CEntityInstance* m_pInstance; // 0x0
 private:
