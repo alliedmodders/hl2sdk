@@ -13,6 +13,8 @@
 #include "tier1/utlscratchmemory.h"
 #include "tier1/utlvector.h"
 
+#define MAX_SPAWN_GROUP_WORLD_NAME_LENGTH 4096
+
 class matrix3x4a_t;
 class CKeyValues3Cluster;
 class CEntityKeyValues;
