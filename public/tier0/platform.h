@@ -175,7 +175,7 @@ typedef void * HINSTANCE;
 //-----------------------------------------------------------------------------
 #if CROSS_PLATFORM_VERSION < 2
 
-#define IsLinux()	IsPlatformLinux() 
+#define IsLinux()	IsPlatformLinux()
 #define IsOSX()		IsPlatformOSX()
 #define IsPosix()	IsPlatformPosix()
 #define IsX360()	IsPlatformX360()
@@ -258,8 +258,8 @@ typedef signed char					int8;
 
 	// intp is an integer that can accomodate a pointer
 	// (ie, sizeof(intp) >= sizeof(int) && sizeof(intp) >= sizeof(void *)
-	typedef intptr_t				intp;		
-	typedef uintptr_t				uintp;		
+	typedef intptr_t				intp;
+	typedef uintptr_t				uintp;
 
 	#if defined( COMPILER_MSVCX360 )
 		#ifdef __m128
@@ -358,14 +358,13 @@ typedef unsigned int		uint;
 #define  FLOAT32_MAX		FLT_MAX
 #define  FLOAT64_MAX		DBL_MAX
 
-#ifdef GNUC
-#undef offsetof
-//#define offsetof( type, var ) __builtin_offsetof( type, var ) 
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
-#else
-#include <stddef.h>
-#undef offsetof
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+#ifndef offsetof
+	#ifdef GNUC
+		#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+	#else
+		#include <stddef.h>
+		#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+	#endif
 #endif
 
 
@@ -435,7 +434,7 @@ typedef unsigned int		uint;
 	// decls for aligning data
 	#define DECL_ALIGN(x)			__declspec( align( x ) )
 
-	// GCC had a few areas where it didn't construct objects in the same order 
+	// GCC had a few areas where it didn't construct objects in the same order
 	// that Windows does. So when CVProfile::CVProfile() would access g_pMemAlloc,
 	// it would crash because the allocator wasn't initalized yet.
 	#define CONSTRUCT_EARLY
@@ -449,7 +448,7 @@ typedef unsigned int		uint;
 
 #if !defined( NO_THREAD_LOCAL )
 	#define DECL_THREAD_LOCAL		__declspec(thread)
-#endif 
+#endif
 
 	#define DISABLE_VC_WARNING( x ) __pragma(warning(disable:4310) )
 	#define DEFAULT_VC_WARNING( x ) __pragma(warning(default:4310) )
@@ -479,7 +478,7 @@ typedef unsigned int		uint;
 	#define EXPLICIT
 	#define NO_VTABLE
 
-	#define NULLTERMINATED			
+	#define NULLTERMINATED
 
 	#define TEMPLATE_STATIC
 
@@ -521,7 +520,7 @@ typedef unsigned int		uint;
 #if defined( GNUC )
 // gnuc has the align decoration at the end
 #define ALIGN4
-#define ALIGN8 
+#define ALIGN8
 #define ALIGN16
 #define ALIGN32
 #define ALIGN128
@@ -772,7 +771,7 @@ PLATFORM_INTERFACE void Plat_Printf ( const tchar *pFmt, ... ) FMTFUNCTION( 1, 2
 //-----------------------------------------------------------------------------
 
 // need macro for constant expression
-#define ALIGN_VALUE( val, alignment ) ( ( val + alignment - 1 ) & ~( alignment - 1 ) ) 
+#define ALIGN_VALUE( val, alignment ) ( ( val + alignment - 1 ) & ~( alignment - 1 ) )
 
 // Force a function call site -not- to inlined. (useful for profiling)
 #define DONT_INLINE(a) (((int)(a)+1)?(a):(a))
@@ -1091,7 +1090,7 @@ FORCEINLINE void StoreLittleDWord( unsigned long *base, unsigned int dwordIndex,
 //
 // It should not be changed after startup unless you really know what you're doing. The only place
 // that should do this is the benchmark code itself so it can output a legit duration.
-PLATFORM_INTERFACE void				Plat_SetBenchmarkMode( bool bBenchmarkMode );	
+PLATFORM_INTERFACE void				Plat_SetBenchmarkMode( bool bBenchmarkMode );
 PLATFORM_INTERFACE bool				Plat_IsInBenchmarkMode();
 
 // Returns true if running in test mode.
@@ -1142,7 +1141,7 @@ PLATFORM_INTERFACE void				Plat_FatalErrorFunc( const tchar* pMsg, ... ) FMTFUNC
 			memcpy( this, &src, sizeof(_classname) );	\
 			return *this;								\
 		}
-	
+
 // Processor Information:
 struct CPUInformation
 {
@@ -1159,12 +1158,12 @@ struct CPUInformation
 
 	uint8 m_nLogicalProcessors;		// Number op logical processors.
 	uint8 m_nPhysicalProcessors;	// Number of physical processors
-	
+
 	bool m_bSSE3 : 1,
 		 m_bSSSE3 : 1,
 		 m_bSSE4a : 1,
 		 m_bSSE41 : 1,
-		 m_bSSE42 : 1;	
+		 m_bSSE42 : 1;
 
 	int64 m_Speed;						// In cycles per second.
 

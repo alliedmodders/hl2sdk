@@ -18,7 +18,7 @@
 
 #include "interfaces/interfaces.h"
 #include "tier1/bitbuf.h"
-#include "tier1/generichash.h"
+#include "tier1/keyvalues3.h"
 #include "tier1/utlstring.h"
 #include "entity2/entityinstance.h"
 
@@ -62,28 +62,7 @@ Valid data types are string, float, long, short, byte & bool. If a
 data field should not be broadcasted to clients, use the type "local".
 */
 
-struct GameEventKeySymbol_t
-{
-	inline GameEventKeySymbol_t(const char* keyName): m_nHashCode(0), m_pszKeyName(NULL)
-	{		
-		if (!keyName || !keyName[0])
-			return;
-
-		m_nHashCode = MurmurHash2LowerCase(keyName, strlen(keyName), 0x31415926);
-		m_pszKeyName = keyName;
-
-#if 0
-		if (g_bUpdateStringTokenDatabase)
-		{
-			RegisterStringToken(m_nHashCode, keyName, 0, true);
-		}
-#endif
-	}
-
-private:
-	unsigned int m_nHashCode;
-	const char* m_pszKeyName;
-};
+typedef CKV3MemberName GameEventKeySymbol_t;
 
 
 #define MAX_EVENT_NAME_LENGTH	32		// max game event name length
@@ -158,8 +137,7 @@ public:
 	// Something script vm related
 	virtual void unk001() = 0;
 
-	// Not based on keyvalues anymore as it seems like
-	virtual void* GetDataKeys() const = 0;
+	virtual KeyValues3* GetDataKeys() const = 0;
 };
 
 abstract_class IGameEventListener2
