@@ -20,7 +20,7 @@ class CKeyValues3Cluster;
 class CEntityKeyValues;
 class CGameResourceManifest;
 class ISpawnGroupPrerequisiteRegistry;
-class IWorldReference;
+class IWorldReference; // See worldrender/iworldreference.h
 
 struct EventGameInit_t;
 
