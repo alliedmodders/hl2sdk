@@ -101,7 +101,7 @@ public:
 public:
 	virtual void UnkSetManualFlag2() = 0;
 	virtual void UnkIsManualFlag2() = 0;
-	virtual void UnkClientOrServerOnGameResourceManifestLoaded(CGameResourceManifest *pManifest, int nResourceCount, void **pResourceHandles /* of ResourceHandle_t */) = 0;
+	virtual void UnkClientOrServerOnGameResourceManifestLoaded(CGameResourceManifest *pManifest, int nResourceCount, ResourceHandle_t *pResourceHandles) = 0;
 	virtual void Unk(SpawnGroupHandle_t h) = 0;
 	virtual void UnkIsManualFlag3() = 0;
 	virtual void UnkIsManualFlag4() = 0;
@@ -112,7 +112,7 @@ public:
 
 	virtual void ComputeWorldOrigin(matrix3x4_t *retstrp) = 0;
 	virtual void Release() = 0;
-	virtual void OnGameResourceManifestLoaded(CGameResourceManifest *pManifest, int nResourceCount, void **pResourceHandles /* of ResourceHandle_t */) = 0;
+	virtual void OnGameResourceManifestLoaded(CGameResourceManifest *pManifest, int nResourceCount, ResourceHandle_t *pResourceHandles) = 0;
 	virtual void Init(IResourceManifestRegistry *pResourceManifest, IEntityPrecacheConfiguration *pConfig, ISpawnGroupPrerequisiteRegistry *pRegistry) = 0;
 	virtual void Shutdown() = 0;
 	virtual bool GetLoadStatus() = 0;
