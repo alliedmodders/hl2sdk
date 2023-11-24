@@ -6,6 +6,9 @@
 #endif
 
 #include <tier0/platform.h>
+#include <tier1/utlstring.h>
+#include <tier1/utlvector.h>
+#include <mathlib/vector.h>
 #include <mathlib/vector2d.h>
 
 // See tier0/basetypes.h :
@@ -35,8 +38,39 @@ public:
 	float m_flMinDrawVolumeSize;
 	bool m_bBuildBakedLighting;
 	Vector2D m_vLightmapUvScale;
+private:
+	uint8 m_padding[3];
+public:
 	uint64 m_nCompileTimestamp;
 	uint64 m_nCompileFingerprint;
+};
+
+schema struct NodeData_t
+{
+public:
+	int32 m_nParent;
+	Vector m_vOrigin;
+	Vector m_vMinBounds;
+	Vector m_vMaxBounds;
+	float m_flMinimumDistance;
+	CUtlVector< int32 > m_ChildNodeIndices;
+private:
+	uint8 m_padding[4];
+public:
+	CUtlString m_worldNodePrefix;
+};
+
+schema struct BakedLightingInfo_t
+{
+public:
+	uint32 m_nLightmapVersionNumber;
+	uint32 m_nLightmapGameVersionNumber;
+	Vector2D m_vLightmapUvScale;
+	bool m_bHasLightmaps;
+private:
+	uint8 m_padding[7];
+public:
+	CUtlVector< void * /* CStrongHandle< InfoForResourceTypeCTextureBase > */ > m_lightMaps;
 };
 
 #include <entity2/entityidentity.h> //TODO: declare CEntityIdentity/CEntityInstance as schema classes here.
