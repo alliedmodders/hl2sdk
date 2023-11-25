@@ -11,12 +11,6 @@
 #include <mathlib/vector.h>
 #include <mathlib/vector2d.h>
 
-// See tier0/basetypes.h :
-//   AlliedModders: We don't need this, and it conflicts with generated proto headers
-#ifndef schema
-#define schema
-#endif
-
 //--------------------------------------------------------------------------------------
 // Enum related
 //--------------------------------------------------------------------------------------
@@ -32,7 +26,7 @@ enum WorldNodeFlags_t
 	WORLD_NODE_MOST_DETAILED					= 0x0080,					// Node is the most detailed node containing the original geometry and textures
 };
 
-schema struct WorldBuilderParams_t
+struct WorldBuilderParams_t
 {
 public:
 	float m_flMinDrawVolumeSize;
@@ -45,7 +39,7 @@ public:
 	uint64 m_nCompileFingerprint;
 };
 
-schema struct NodeData_t
+struct NodeData_t
 {
 public:
 	int32 m_nParent;
@@ -60,7 +54,7 @@ public:
 	CUtlString m_worldNodePrefix;
 };
 
-schema struct BakedLightingInfo_t
+struct BakedLightingInfo_t
 {
 public:
 	uint32 m_nLightmapVersionNumber;
