@@ -9,6 +9,7 @@
 #include "igamesystem.h"
 #include "entity2/entitysystem.h"
 #include "entity2/entityidentity.h"
+#include "mathlib/mathlib.h"
 #include "resourcefile/resourcetype.h"
 #include "tier1/utlstring.h"
 #include "tier1/utlscratchmemory.h"
@@ -21,6 +22,7 @@ class CKeyValues3Cluster;
 class CEntityKeyValues;
 class CGameResourceManifest;
 class ISpawnGroupPrerequisiteRegistry;
+class IComputeWorldOriginCallback;
 class IWorldReference; // See worldrender/iworldreference.h
 
 struct EventGameInit_t;
@@ -51,6 +53,33 @@ enum SpawnGroupState_t
 	SPAWN_GROUP_ENTITY_PRECACHE_END = 6,
 	SPAWN_GROUP_READY_TO_SPAWN_ENTITIES = 7,
 	SPAWN_GROUP_ENTITIES_SPAWNED = 8
+};
+
+struct SpawnGroupDesc_t
+{
+public:
+	matrix3x4a_t m_vecWorldOffset;
+	const char *m_pWorldName;
+	const char *m_pWorldMountName;
+	const char *m_pEntityLumpName;
+	const char *m_pEntityFilterName;
+	const char *m_pDescriptiveName;
+	const char *m_pParentNameFixup;
+	const char *m_pLocalNameFixup;
+	IComputeWorldOriginCallback *m_pWorldOffsetCallback;
+	WorldGroupId_t m_worldGroupId;
+	SpawnGroupHandle_t m_hOwner;
+	int m_iPriorityLoader;
+	ResourceManifestLoadPriority_t m_manifestLoadPriority;
+	float m_flTimeoutInterval;
+	const char *m_pSaveFileName;
+	bool m_bCreateClientEntitiesOnLaterConnectingClients;
+	bool m_bDontSpawnEntities;
+	bool m_bBlockUntilLoaded;
+	bool m_bLoadStreamingData;
+	bool m_bCreateNewSceneWorld;
+	bool m_bManualCompletion;
+	bool m_bSetActivePostLoad;
 };
 
 class ISpawnGroup
