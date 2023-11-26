@@ -116,7 +116,7 @@ public:
 	virtual void UnkIsManualFlag5() = 0;
 	virtual void UnkSetter(uint64 n) = 0;
 	virtual void UnkIsManualFlag6() = 0;
-	virtual WorldGroupId_t GetWorldGroupId() = 0;
+	virtual WorldGroupId_t GetWorldGroupId() const = 0;
 
 	virtual void ComputeWorldOrigin(matrix3x4_t *retstrp) = 0;
 	virtual void Release() = 0;
@@ -140,7 +140,7 @@ public:
 	virtual void TransferOwnershipOfManifestsTo(ISpawnGroup *pTarget) = 0;
 
 public: // CNetworkClientSpawnGroup/CNetworkServerSpawnGroup
-	virtual IGameSpawnGroupMgr *GetSpawnGroupMgr() = 0;
+	virtual IGameSpawnGroupMgr *GetSpawnGroupMgr() const = 0;
 };
 
 class CMapSpawnGroup

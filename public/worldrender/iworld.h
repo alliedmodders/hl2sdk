@@ -47,7 +47,7 @@ public:
 	virtual void PrecacheAllWorldNodes( WorldNodeFlags_t flags, int iCacheNodes = 1, bool bDoNotDeleteManifest = false ) = 0;
 
 	// Entities
-	virtual CUtlVector< const CEntityKeyValues * > *GetEntityList( const char *pSearchLump = NULL ) const = 0;
+	virtual const CUtlVector< const CEntityKeyValues * > *GetEntityList( const char *pSearchLump = NULL ) const = 0; // Can be return NULL value.
 	virtual void FindEntitiesByTargetname( const char *pTargetname, const char *pSearchLump, CUtlVector< const CEntityKeyValues * > &res ) const = 0;
 	virtual bool IsWorldspaceTextureBlend() const = 0;
 	virtual bool IsDisabledInLowQuality() const = 0;
