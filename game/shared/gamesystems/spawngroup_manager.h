@@ -9,6 +9,7 @@
 #include "igamesystem.h"
 #include "entity2/entitysystem.h"
 #include "entity2/entityidentity.h"
+#include "resourcefile/resourcetype.h"
 #include "tier1/utlstring.h"
 #include "tier1/utlscratchmemory.h"
 #include "tier1/utlvector.h"
@@ -35,31 +36,6 @@ struct EventServerPostEntityThink_t
 {
 	bool m_bFirstTick;
 	bool m_bLastTick;
-};
-
-enum ResourceStatus_t
-{
-	RESOURCE_STATUS_UNKNOWN = 0,
-	RESOURCE_STATUS_KNOWN_BUT_NOT_RESIDENT,
-	RESOURCE_STATUS_PARTIALLY_RESIDENT,
-	RESOURCE_STATUS_RESIDENT,
-};
-
-enum ResourceManifestLoadBehavior_t
-{
-	RESOURCE_MANIFEST_LOAD_DEFAULT = -1,
-	RESOURCE_MANIFEST_LOAD_STREAMING_DATA = 0,
-	RESOURCE_MANIFEST_INITIALLY_USE_FALLBACKS,
-};
-
-enum ResourceManifestLoadPriority_t
-{
-	RESOURCE_MANIFEST_LOAD_PRIORITY_DEFAULT = -1,
-	RESOURCE_MANIFEST_LOAD_PRIORITY_LOW = 0,
-	RESOURCE_MANIFEST_LOAD_PRIORITY_MEDIUM,
-	RESOURCE_MANIFEST_LOAD_PRIORITY_HIGH,
-	RESOURCE_MANIFEST_LOAD_PRIORITY_IMMEDIATE,
-	RESOURCE_MANIFEST_LOAD_PRIORITY_COUNT,
 };
 
 typedef int *SaveRestoreDataHandle_t;

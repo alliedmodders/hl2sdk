@@ -7,6 +7,7 @@
 #include "tier1/utlvector.h"
 #include "tier1/utldict.h"
 #include "eiface.h"
+#include "resourcefile/resourcetype.h"
 #include "baseentity.h"
 #include "entityhandle.h"
 #include "concreteentitylist.h"
@@ -92,36 +93,6 @@ struct CEntityPrecacheContext
 	IEntityPrecacheConfiguration* m_pConfig;
 	IEntityResourceManifest* m_pManifest;
 };
-
-// Resource data //
-
-struct ResourceNameInfo_t
-{
-	CUtlSymbolLarge m_ResourceNameSymbol;
-};
-
-typedef const ResourceNameInfo_t *ResourceNameHandle_t;
-
-typedef uint16 LoadingResourceIndex_t;
-
-typedef char ResourceTypeIndex_t;
-
-typedef uint32 ExtRefIndex_t;
-
-struct ResourceBindingBase_t
-{
-	void* m_pData;
-	ResourceNameHandle_t m_Name;
-	uint16 m_nFlags;
-	uint16 m_nReloadCounter;
-	ResourceTypeIndex_t m_nTypeIndex;
-	uint8 m_nPadding;
-	LoadingResourceIndex_t m_nLoadingResource;
-	CInterlockedInt m_nRefCount;
-	ExtRefIndex_t m_nExtRefHandle;
-};
-
-typedef const ResourceBindingBase_t* ResourceHandle_t;
 
 struct SecondaryPrecacheMemberCallback_t
 {

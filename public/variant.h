@@ -12,12 +12,9 @@
 #include "Color.h"
 #include "entity2/entityidentity.h"
 #include "entityhandle.h"
+#include "resourcefile/resourcetype.h"
 #include "tier1/bufferstring.h"
 #include "tier1/utlscratchmemory.h"
-
-// Non-implemented classes/structs
-struct ResourceBindingBase_t;
-typedef const ResourceBindingBase_t *ResourceHandle_t;
 
 // ========
 
