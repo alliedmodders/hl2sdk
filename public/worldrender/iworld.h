@@ -49,8 +49,8 @@ public:
 	// Entities
 	virtual const CUtlVector< const CEntityKeyValues * > *GetEntityList( const char *pSearchLump = NULL ) const = 0; // Can be return NULL value.
 	virtual void FindEntitiesByTargetname( const char *pTargetname, const char *pSearchLump, CUtlVector< const CEntityKeyValues * > &res ) const = 0;
-	virtual bool IsWorldspaceTextureBlend() const = 0;
-	virtual bool IsDisabledInLowQuality() const = 0;
+	virtual bool IsErrorBinging() const = 0;
+	virtual bool HasEverBeenLoaded() const = 0;
 	virtual const BakedLightingInfo_t *GetBakedLightingInfo() const = 0;
 	virtual void FindEntitiesByClassname( const char *pClassname, const char *pSearchLump, CUtlVector< const CEntityKeyValues * > &res ) const = 0;
 };
