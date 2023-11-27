@@ -144,6 +144,13 @@ enum SpawnGroupFlags_t
 	SPAWN_GROUP_CREATE_NEW_SCENE_WORLD = 0x100,
 };
 
+enum CreateSpawnGroupType_t
+{
+	CREATE_SPAWN_GROUP_IMMEDIATELY = 0,
+	CREATE_SPAWN_GROUP_ASYNCHRONOUSLY,
+	CREATE_SPAWN_GROUP_ASYNCHRONOUSLY_CONFIRM_RESOURCES_LOADED,
+};
+
 class ISpawnGroup
 {
 public:
@@ -304,7 +311,7 @@ public:
 	virtual const char *GetLevelTransitionPreviousMap() const = 0;
 	virtual const char *GetLevelTransitionLandmarkName() const = 0;
 	virtual CKeyValues3Cluster *GetEntityKeyValuesAllocator() = 0;
-	virtual CEntityInstance *CreateEntityToSpawn(SpawnGroupHandle_t hSpawnGroup, const matrix3x4a_t *const vecSpawnOffset, int createType, const CEntityKeyValues *pEntityKeyValues) = 0;
+	virtual CEntityInstance *CreateEntityToSpawn(SpawnGroupHandle_t hSpawnGroup, const matrix3x4a_t &vecSpawnOffset, CreateSpawnGroupType_t createType, const CEntityKeyValues *pEntityKeyValues) = 0;
 	virtual void SpawnEntities() = 0;
 	virtual void Release() = 0;
 };
