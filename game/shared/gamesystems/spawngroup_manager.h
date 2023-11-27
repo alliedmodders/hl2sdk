@@ -106,6 +106,29 @@ public:
 	bool m_bUnk2;
 };
 
+struct SpawnGroupDescReceive_t
+{
+public:
+	bool m_bIsInitialSpawnGroup;
+	bool m_bCreateClientOnlyEntities;
+	bool m_bIsSynchronousSpawn;
+private:
+	uint8 m_padding[1];
+
+public:
+	CCompressedResourceManifest *m_pCompressedResource;
+
+public:
+	int32 m_nTickCount;
+	bool m_bManifestInComplete;
+private:
+	uint8 m_padding2[3];
+
+public:
+	SpawnGroupHandle_t m_hSpawnGroupParentHandle;
+	WorldGroupId_t m_hWorldGroupId;
+};
+
 enum SpawnGroupFlags_t
 {
 	SPAWN_GROUP_LOAD_ENTITIES_FROM_SAVE = 0x1,
