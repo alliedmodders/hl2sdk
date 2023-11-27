@@ -77,4 +77,6 @@ struct ResourceBindingBase_t
 
 typedef const ResourceBindingBase_t* ResourceHandle_t;
 
+typedef void* HGameResourceManifest;
+
 #endif // RESOURCETYPE_H

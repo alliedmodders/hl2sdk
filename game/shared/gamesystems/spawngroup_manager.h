@@ -194,14 +194,14 @@ public:
 
 	virtual matrix3x4_t ComputeWorldOrigin(const char *pWorldName, SpawnGroupHandle_t hSpawnGroup, IWorld *pWorld) = 0;
 	virtual void Release() = 0;
-	virtual void OnGameResourceManifestLoaded(void *pManifest /* HGameResourceManifest */, int nResourceCount, ResourceHandle_t *pResourceHandles) = 0;
+	virtual void OnGameResourceManifestLoaded(HGameResourceManifest hManifest, int nResourceCount, ResourceHandle_t *pResourceHandles) = 0;
 	virtual void Init(IResourceManifestRegistry *pResourceManifest, IEntityPrecacheConfiguration *pConfig, ISpawnGroupPrerequisiteRegistry *pRegistry) = 0;
 	virtual void Shutdown() = 0;
 	virtual bool GetLoadStatus() = 0;
 	virtual void ForceBlockingLoad() = 0;
 	virtual bool ShouldBlockUntilLoaded() const = 0;
 	virtual void ServiceBlockingLoads() = 0;
-	virtual bool GetEntityPrerequisites(void *pManifest /* HGameResourceManifest */ ) = 0;
+	virtual bool GetEntityPrerequisites(HGameResourceManifest hManifest) = 0;
 	virtual bool EntityPrerequisitesSatisfied() = 0;
 
 public:

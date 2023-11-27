@@ -12,6 +12,7 @@
 
 #include <inetmsghandler.h>
 #include <edict.h>
+#include <resourcefile/resourcetype.h>
 #include <tier1/checksum_crc.h>
 #include <engine/IEngineService.h>
 
@@ -28,8 +29,6 @@ class ISource2WorldSession;
 class INetworkGameClient;
 class GameSessionConfiguration_t;
 
-typedef int HGameResourceManifest;
-
 enum ESpawnGroupUnloadOption
 {
 
@@ -40,7 +39,7 @@ abstract_class INetworkGameServer : public IConnectionlessPacketHandler
 public:
 	virtual	void	Init( const GameSessionConfiguration_t &, const char * ) = 0;
 	virtual void	SetGameSpawnGroupMgr( IGameSpawnGroupMgr * ) = 0;
-	virtual void	SetGameSessionManifest( HGameResourceManifest * ) = 0;
+	virtual void	SetGameSessionManifest( HGameResourceManifest ) = 0;
 	virtual void	RegisterLoadingSpawnGroups( CUtlVector<unsigned int> & ) = 0;
 	virtual void	Shutdown( void ) = 0;
 	virtual void	AddRef( void ) = 0;
