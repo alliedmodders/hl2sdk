@@ -58,21 +58,42 @@ enum SpawnGroupState_t
 struct SpawnGroupDesc_t
 {
 public:
+	SpawnGroupDesc_t()
+	 :  m_pWorldOffsetCallback(NULL),
+	    m_hOwner(0),
+	    m_iPriorityLoader(-2),
+	    m_manifestLoadPriority(RESOURCE_MANIFEST_LOAD_PRIORITY_DEFAULT),
+	    m_flTimeoutInterval(0.0f),
+	    m_bCreateClientEntitiesOnLaterConnectingClients(false),
+	    m_bDontSpawnEntities(false),
+	    m_bBlockUntilLoaded(false),
+	    m_bLoadStreamingData(true),
+	    m_bCreateNewSceneWorld(false),
+	    m_bManualCompletion(false),
+	    m_bSetActivePostLoad(false),
+	    m_bUnk(true),
+	    m_bLevelTransition(false),
+	    m_bUnk2(false)
+	{
+		SetIdentityMatrix(m_vecWorldOffset);
+	}
+
 	matrix3x4a_t m_vecWorldOffset;
-	const char *m_pWorldName;
-	const char *m_pWorldMountName;
-	const char *m_pEntityLumpName;
-	const char *m_pEntityFilterName;
-	const char *m_pDescriptiveName;
-	const char *m_pParentNameFixup;
-	const char *m_pLocalNameFixup;
+	CUtlString m_sWorldName;
+	CUtlString m_sWorldMountName;
+	CUtlString m_sEntityLumpName;
+	CUtlString m_sEntityFilterName;
+	CUtlString m_sDescriptiveName;
+	CUtlString m_sParentNameFixup;
+	CUtlString m_sLocalNameFixup;
 	IComputeWorldOriginCallback *m_pWorldOffsetCallback;
-	WorldGroupId_t m_worldGroupId;
+	CUtlString m_sWorldGroupname;
 	SpawnGroupHandle_t m_hOwner;
 	int m_iPriorityLoader;
 	ResourceManifestLoadPriority_t m_manifestLoadPriority;
 	float m_flTimeoutInterval;
-	const char *m_pSaveFileName;
+	CUtlString m_sSaveFileName;
+
 	bool m_bCreateClientEntitiesOnLaterConnectingClients;
 	bool m_bDontSpawnEntities;
 	bool m_bBlockUntilLoaded;
@@ -80,6 +101,9 @@ public:
 	bool m_bCreateNewSceneWorld;
 	bool m_bManualCompletion;
 	bool m_bSetActivePostLoad;
+	bool m_bUnk;
+	bool m_bLevelTransition;
+	bool m_bUnk2;
 };
 
 enum SpawnGroupFlags_t
