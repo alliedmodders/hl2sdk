@@ -11,9 +11,11 @@
 #include "entity2/entityidentity.h"
 #include "mathlib/mathlib.h"
 #include "resourcefile/resourcetype.h"
+#include "resourcefile/igameresourcemanifestloadcompletion.h"
 #include "tier1/utlstring.h"
 #include "tier1/utlscratchmemory.h"
 #include "tier1/utlvector.h"
+#include "worldrender/icomputeworldorigin.h"
 
 #define MAX_SPAWN_GROUP_WORLD_NAME_LENGTH 4096
 
@@ -23,7 +25,6 @@ class CEntityKeyValues;
 class ILoadingSpawnGroup;
 class CGameResourceManifest;
 class ISpawnGroupPrerequisiteRegistry;
-class IComputeWorldOriginCallback;
 class IWorld; // See worldrender/iworld.h
 class IWorldReference; // See worldrender/iworldreference.h
 
@@ -346,6 +347,10 @@ public:
 	virtual void FrameBoundary(const EventGameInit_t &msg) = 0;
 	virtual void PreSpawnGroupLoad(const EventPreSpawnGroupLoad_t &msg) = 0;
 	virtual ~IGameSpawnGroupMgr() = 0;
+};
+
+class CBaseSpawnGroup : public ISpawnGroup, public IComputeWorldOriginCallback, public IGameResourceManifestLoadCompletionCallback
+{
 };
 
 class CLoadingSpawnGroup : public ILoadingSpawnGroup
