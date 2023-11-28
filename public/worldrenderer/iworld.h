@@ -20,7 +20,7 @@ class IWorld
 public:
 	// Loading
 	virtual void Init( ISceneWorld *pScene, bool b, int n ) = 0;
-	virtual void CreateAndDispatchLoadRequests( const Vector &vEye ) = 0;
+	virtual void CreateAndDispatchLoadRequests( const Vector &vEye, int n ) = 0;
 	virtual void Shutdown() = 0;
 
 	// Reflection
