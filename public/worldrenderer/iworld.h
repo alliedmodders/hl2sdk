@@ -40,7 +40,7 @@ public:
 	virtual bool GetLoadSun() const = 0;
 
 	// Players
-	virtual bool IsFullyLoadedForPlayer( CSplitScreenSlot nSlot, uint32 nHighMask = 0 ) const = 0;
+	virtual bool IsFullyLoadedForPlayer( WorldGroupId_t hWorldGroupId, CSplitScreenSlot nSlot ) const = 0;
 	virtual void ClearOutstandingLoadRequests() = 0;
 
 	// Precache
