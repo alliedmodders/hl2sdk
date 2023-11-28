@@ -15,7 +15,7 @@
 #include "tier1/utlstring.h"
 #include "tier1/utlscratchmemory.h"
 #include "tier1/utlvector.h"
-#include "worldrender/icomputeworldorigin.h"
+#include "worldrenderer/icomputeworldorigin.h"
 
 #define MAX_SPAWN_GROUP_WORLD_NAME_LENGTH 4096
 
@@ -25,8 +25,8 @@ class CEntityKeyValues;
 class ILoadingSpawnGroup;
 class CGameResourceManifest;
 class ISpawnGroupPrerequisiteRegistry;
-class IWorld; // See worldrender/iworld.h
-class IWorldReference; // See worldrender/iworldreference.h
+class IWorld;
+class IWorldReference;
 
 struct EventGameInit_t;
 
