@@ -61,7 +61,6 @@ public:
 	virtual const char *GetAddonName( void ) const = 0;
 	virtual bool	IsBackgroundMap( void ) const = 0;
 	virtual float	GetTime( void ) const = 0;	// returns game world time
-	virtual int		GetMapVersion( void ) const = 0;
 	virtual void	ActivateServer( void ) = 0;
 	virtual void	PrepareForAssetLoad( void ) = 0;
 	virtual int		GetServerNetworkAddress( void ) = 0;
