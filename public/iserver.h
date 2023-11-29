@@ -29,11 +29,6 @@ class ISource2WorldSession;
 class INetworkGameClient;
 class GameSessionConfiguration_t;
 
-enum ESpawnGroupUnloadOption
-{
-
-};
-
 abstract_class INetworkGameServer : public IConnectionlessPacketHandler
 {
 public:
@@ -57,7 +52,7 @@ public:
 	virtual void	ServerSimulate( const EventServerSimulate_t & ) = 0;
 	virtual void	ServerPostSimulate( const EventServerPostSimulate_t & ) = 0;
 	virtual void	LoadSpawnGroup( const SpawnGroupDesc_t & ) = 0;
-	virtual void	AsyncUnloadSpawnGroup( unsigned int, ESpawnGroupUnloadOption ) = 0;
+	virtual void	AsyncUnloadSpawnGroup( unsigned int, /*ESpawnGroupUnloadOption*/ int ) = 0;
 	virtual void	PrintSpawnGroupStatus( void ) const = 0;
 	virtual float	GetTimescale( void ) const = 0; // returns the game time scale (multiplied in conjunction with host_timescale)
 	virtual bool	IsSaveRestoreAllowed( void ) const = 0;

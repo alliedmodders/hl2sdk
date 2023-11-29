@@ -152,6 +152,13 @@ enum CreateSpawnGroupType_t
 	CREATE_SPAWN_GROUP_ASYNCHRONOUSLY_CONFIRM_RESOURCES_LOADED,
 };
 
+enum ESpawnGroupUnloadOption
+{
+	kSGUO_None = 0,
+	kSGUO_SaveEntities,
+	kSGUO_MergedIntoOwner,
+};
+
 class ISpawnGroup
 {
 public:
