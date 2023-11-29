@@ -70,7 +70,7 @@ public:
 	virtual void	SynchronouslySpawnGroup( SpawnGroupHandle_t ) = 0;
 	virtual void	SetServerState( server_state_t ) = 0;
 	virtual void	SpawnServer( const char * ) = 0;
-	virtual void	GetSpawnGroupLoadingStatus( SpawnGroupHandle_t ) = 0;
+	virtual int 	GetSpawnGroupLoadingStatus( SpawnGroupHandle_t ) = 0;
 	virtual void	SetSpawnGroupDescription( SpawnGroupHandle_t, const char * ) = 0;
 	virtual CUtlVector<INetworkGameClient *> *StartChangeLevel( const char *, const char *pszLandmark, void * ) = 0;
 	virtual void	FinishChangeLevel( CServerChangelevelState * ) = 0;
