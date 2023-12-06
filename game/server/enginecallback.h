@@ -22,8 +22,7 @@
 class IFileSystem;				// include FileSystem.h
 class IUniformRandomStream;		// include vstdlib/random.h
 class IEngineSound;				// include engine/IEngineSound.h
-class IVEngineServer;			
-class IVoiceServer;
+class IVEngineServer;
 class IStaticPropMgrServer;
 class ISpatialPartition;
 class IVModelInfo;
@@ -40,7 +39,6 @@ class CSteamAPIContext;
 class CSteamGameServerAPIContext;
 
 extern IVEngineServer			*engine;
-extern IVoiceServer				*g_pVoiceServer;
 extern IFileSystem				*filesystem;
 extern IStaticPropMgrServer		*staticpropmgr;
 extern ISpatialPartition		*partition;
