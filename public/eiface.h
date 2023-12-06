@@ -313,9 +313,9 @@ public:
 
 	virtual void unk101() = 0;
 	virtual void unk102() = 0;
-	virtual void unk103() = 0;
-	virtual void unk104() = 0;
-	virtual void unk105() = 0;
+	virtual bool GetClientListening(int iReceiver, int iSender) = 0;
+	virtual void SetClientListening(int iReceiver, int iSender, bool bListen) = 0;
+	virtual void SetClientProximity(int iReceiver, int iSender, bool bUseProximity) = 0;
 	virtual void unk106() = 0;
 	virtual void unk107() = 0;
 
