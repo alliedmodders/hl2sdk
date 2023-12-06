@@ -126,7 +126,7 @@ public:
 	bool operator!=( const CPlayerUserId &other ) const { return other._index != _index; }
 
 private:
-	short _index;
+	unsigned short _index;
 };
 
 //-----------------------------------------------------------------------------
