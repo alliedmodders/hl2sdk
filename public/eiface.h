@@ -313,9 +313,12 @@ public:
 
 	virtual void unk101() = 0;
 	virtual void unk102() = 0;
-	virtual bool GetClientListening(int iReceiver, int iSender) = 0;
-	virtual void SetClientListening(int iReceiver, int iSender, bool bListen) = 0;
-	virtual void SetClientProximity(int iReceiver, int iSender, bool bUseProximity) = 0;
+	
+	// Use these to setup who can hear whose voice.
+	// Pass in client indices (which are their ent indices - 1).
+	virtual bool GetClientListening(CPlayerSlot iReceiver, CPlayerSlot iSender) = 0;
+	virtual bool SetClientListening(CPlayerSlot iReceiver, CPlayerSlot iSender, bool bListen) = 0;
+	virtual bool SetClientProximity(CPlayerSlot iReceiver, CPlayerSlot iSender, bool bUseProximity) = 0;
 	virtual void unk106() = 0;
 	virtual void unk107() = 0;
 
