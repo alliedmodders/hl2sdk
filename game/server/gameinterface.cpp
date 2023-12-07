@@ -23,7 +23,6 @@
 #include "ai_saverestore.h"
 #include "ai_networkmanager.h"
 #include "ndebugoverlay.h"
-#include "ivoiceserver.h"
 #include <stdarg.h>
 #include "movehelper_server.h"
 #include "networkstringtable_gamedll.h"
@@ -154,7 +153,6 @@ CUtlLinkedList<CMapEntityRef, unsigned short> g_MapEntityRefs;
 
 // Engine interfaces.
 IVEngineServer	*engine = NULL;
-IVoiceServer	*g_pVoiceServer = NULL;
 #if !defined(_STATIC_LINKED)
 IFileSystem		*filesystem = NULL;
 #else
@@ -654,8 +652,6 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 
 	// init each (seperated for ease of debugging)
 	if ( (engine = (IVEngineServer*)appSystemFactory(INTERFACEVERSION_VENGINESERVER, NULL)) == NULL )
-		return false;
-	if ( (g_pVoiceServer = (IVoiceServer*)appSystemFactory(INTERFACEVERSION_VOICESERVER, NULL)) == NULL )
 		return false;
 	if ( (networkstringtable = (INetworkStringTableContainer *)appSystemFactory(INTERFACENAME_NETWORKSTRINGTABLESERVER,NULL)) == NULL )
 		return false;
