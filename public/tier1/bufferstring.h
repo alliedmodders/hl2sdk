@@ -284,6 +284,18 @@ public:
 		return StringFuncs<char>::EmptyString();
 	}
 
+	inline void Clear()
+	{
+		if (GetAllocatedNumber() != 0)
+		{
+			if (IsStackAllocated())
+				m_Memory.m_szString[0] = '\0';
+			else
+				m_Memory.m_pString[0] = '\0';
+		}
+		m_nTotalCount &= ~LENGTH_MASK;
+	}
+
 private:
 	int m_nTotalCount;
 	int m_nAllocated;

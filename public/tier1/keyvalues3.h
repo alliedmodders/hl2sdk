@@ -60,6 +60,41 @@ const KV3ID_t g_KV3Encoding_Text =
 	0xDAA323A6DA77799ull
 };
 
+const KV3ID_t g_KV3Encoding_Binary = 
+{
+	"binary",
+	0x40C1F7D81B860500ull,
+	0x14E76782A47582ADull
+};
+
+const KV3ID_t g_KV3Encoding_BinaryLZ4 = 
+{
+	"binary_lz4",
+	0x4F5C63A16847348Aull,
+	0x19B1D96F805397A1ull
+};
+
+const KV3ID_t g_KV3Encoding_BinaryZSTD = 
+{
+	"binary_zstd",
+	0x4305FEF06F620A00ull,
+	0x29DBB14623045FA3ull
+};
+
+const KV3ID_t g_KV3Encoding_BinaryBC = 
+{
+	"binary_bc",
+	0x4F6C95BC95791A46ull,
+	0xD2DFB7A1BC050BA7ull
+};
+
+const KV3ID_t g_KV3Encoding_BinaryAuto = 
+{
+	"binary_auto",
+	0x45836B856EB109E6ull,
+	0x8C06046E3A7012A3ull
+};
+
 const KV3ID_t g_KV3Format_Generic = 
 {
 	"generic",
@@ -134,6 +169,8 @@ enum KV3Type_t : uint8
 	KV3_TYPE_BINARY_BLOB,
 	KV3_TYPE_ARRAY,
 	KV3_TYPE_TABLE,
+
+	KV3_TYPE_COUNT,
 };
 
 enum KV3TypeOpt_t : uint8
@@ -226,6 +263,8 @@ enum KV3SubType_t : uint8
 
 	KV3_SUBTYPE_STRING_TOKEN,
 	KV3_SUBTYPE_EHANDLE,
+
+	KV3_SUBTYPE_COUNT,
 };
 
 enum KV3ArrayAllocType_t
@@ -233,6 +272,15 @@ enum KV3ArrayAllocType_t
 	KV3_ARRAY_ALLOC_EXTERN = 0,
 	KV3_ARRAY_ALLOC_NORMAL = 1,
 	KV3_ARRAY_ALLOC_EXTERN_FREE = 2,
+};
+
+enum KV3ToStringFlags_t
+{
+	KV3_TO_STRING_NONE = 0,
+	KV3_TO_STRING_DONT_CLEAR_BUFF = (1 << 0),
+	KV3_TO_STRING_DONT_APPEND_STRINGS = (1 << 1),
+	KV3_TO_STRING_APPEND_ONLY_NUMERICS = (1 << 2),
+	KV3_TO_STRING_RETURN_NON_NUMERICS = (1 << 3),
 };
 
 enum KV3MetaDataFlags_t
@@ -307,14 +355,7 @@ public:
 	}
 
 	inline CKV3MemberName(): m_nHashCode(0), m_pszString("") {}
-	inline CKV3MemberName(unsigned int nHashCode, const char* pszString): m_nHashCode(nHashCode), m_pszString(pszString) {}
-	inline CKV3MemberName(const CKV3MemberName& other): m_nHashCode(other.m_nHashCode), m_pszString(other.m_pszString) {}
-	inline CKV3MemberName& operator=(const CKV3MemberName& src) 
-	{ 
-		m_nHashCode = src.m_nHashCode; 
-		m_pszString = src.m_pszString; 
-		return *this; 
-	}
+	inline CKV3MemberName(unsigned int nHashCode, const char* pszString = ""): m_nHashCode(nHashCode), m_pszString(pszString) {}
 
 	inline unsigned int GetHashCode() const { return m_nHashCode; }
 	inline const char* GetString() const { return m_pszString; }
@@ -336,6 +377,11 @@ public:
 	KV3Type_t GetType() const		{ return ( KV3Type_t )( m_TypeEx & 0xF ); }
 	KV3TypeEx_t GetTypeEx() const	{ return ( KV3TypeEx_t )m_TypeEx; }
 	KV3SubType_t GetSubType() const	{ return ( KV3SubType_t )m_SubType; }
+
+	const char* GetTypeAsString() const;
+	const char* GetSubTypeAsString() const;
+
+	const char* ToString( CBufferString& buff, uint flags = KV3_TO_STRING_NONE ) const;
 
 	void SetToNull() { PrepareForType( KV3_TYPEEX_NULL, KV3_SUBTYPE_NULL ); }
 
@@ -412,12 +458,15 @@ public:
 	void RemoveArrayElement( int elem ) { RemoveArrayElements( elem, 1 ); }
 
 	int GetMemberCount() const;
-	KeyValues3* GetMember( KV3MemberId_t id ) const;
+	KeyValues3* GetMember( KV3MemberId_t id );
+	const KeyValues3* GetMember( KV3MemberId_t id ) const { return const_cast<KeyValues3*>(this)->GetMember( id ); }
 	const char* GetMemberName( KV3MemberId_t id ) const;
 	CKV3MemberName GetMemberNameEx( KV3MemberId_t id ) const;
 	unsigned int GetMemberHash( KV3MemberId_t id ) const;
-	KeyValues3* FindMember( const CKV3MemberName &name, KeyValues3* defaultValue = NULL ) const;
+	KeyValues3* FindMember( const CKV3MemberName &name, KeyValues3* defaultValue = NULL );
 	KeyValues3* FindOrCreateMember( const CKV3MemberName &name, bool *pCreated = NULL );
+	bool TableHasBadNames() const;
+	void SetTableHasBadNames( bool bHasBadNames );
 	void SetToEmptyTable();
 	bool RemoveMember( KV3MemberId_t id );
 	bool RemoveMember( const KeyValues3* kv );
@@ -490,7 +539,7 @@ private:
 		
 		CKeyValues3Table* m_pTable;
 
-		uint64 m_Value;
+		uint64 m_nData;
 		void* m_pData;
 		char m_Data[1];
 	};
@@ -545,13 +594,16 @@ public:
 	CKeyValues3Context* GetContext() const;
 
 	int GetMemberCount() const { return m_Hashes.Count(); }
-	KeyValues3* GetMember( KV3MemberId_t id ) const { return m_Members[ id ]; }
+	KeyValues3* GetMember( KV3MemberId_t id ) { return m_Members[ id ]; }
+	const KeyValues3* GetMember( KV3MemberId_t id ) const { return m_Members[ id ]; }
 	const char* GetMemberName( KV3MemberId_t id ) const { return m_Names[ id ]; }
 	unsigned int GetMemberHash( KV3MemberId_t id ) const { return m_Hashes[ id ]; }
 	void EnableFastSearch();
 	KV3MemberId_t FindMember( const KeyValues3* kv ) const;
 	KV3MemberId_t FindMember( const CKV3MemberName &name );
 	KV3MemberId_t CreateMember( const CKV3MemberName &name );
+	bool HasBadNames() const { return m_bHasBadNames; }
+	void SetHasBadNames( bool bHasBadNames ) { m_bHasBadNames = bHasBadNames; }
 	void CopyFrom( const CKeyValues3Table* pSrc );
 	void RemoveMember( KV3MemberId_t id );
 	void RemoveAll( int nAllocSize = 0 );
@@ -656,7 +708,7 @@ public:
 
 	CKeyValues3Array* Alloc();
 	void Free( int element );
-	void Clear() { Purge(); };
+	void Clear() { Purge(); }
 	void Purge();
 
 	CKeyValues3Context* GetContext() const { return m_pContext; }
@@ -689,7 +741,7 @@ public:
 
 	CKeyValues3Table* Alloc();
 	void Free( int element );
-	void Clear() { Purge(); };
+	void Clear() { Purge(); }
 	void Purge();
 
 	CKeyValues3Context* GetContext() const { return m_pContext; }
@@ -757,16 +809,17 @@ public:
 	
 	// gets the pre-allocated kv if we indicated its existence when creating the context
 	KeyValues3* Root();
+	const KeyValues3* Root() const { return const_cast<CKeyValues3Context*>(this)->Root(); }
 
-	bool IsMetaDataEnabled() const { return m_bMetaDataEnabled; };
+	bool IsMetaDataEnabled() const { return m_bMetaDataEnabled; }
 	// returns true if the desired format was converted to another after loading via LoadKV3*
-	bool IsFormatConverted() const { return m_bFormatConverted; };
-	bool IsRootAvailabe() const { return m_bRootAvailabe; };
+	bool IsFormatConverted() const { return m_bFormatConverted; }
+	bool IsRootAvailabe() const { return m_bRootAvailabe; }
 
 	// filled in after loading via LoadKV3* in binary encoding
-	const CUtlBuffer& GetBinaryData() const { return m_BinaryData; }
+	CUtlBuffer& GetBinaryData() { return m_BinaryData; }
 
-	IParsingErrorListener* GetParsingErrorListener() const { return m_pParsingErrorListener; };
+	IParsingErrorListener* GetParsingErrorListener() const { return m_pParsingErrorListener; }
 	void SetParsingErrorListener( IParsingErrorListener* listener ) { m_pParsingErrorListener = listener; }
 
 	const char* AllocString( const char* pString );
@@ -871,7 +924,7 @@ template< typename T >
 void KeyValues3::NormalizeArray( KV3TypeEx_t type, KV3SubType_t subtype, int size, const T* data, bool bFree )
 {
 	m_TypeEx = KV3_TYPEEX_ARRAY;
-	m_Value = 0;
+	m_nData = 0;
 	Alloc();
 
 	m_pArray->SetCount( size, type, subtype );
@@ -905,7 +958,7 @@ void KeyValues3::AllocArray( int size, const T* data, KV3ArrayAllocType_t alloc_
 
 			m_bFreeArrayMemory = false;
 			m_nNumArrayElements = size;
-			m_Value = 0;
+			m_nData = 0;
 			memcpy( m_Data, data, size * sizeof( T ) );
 
 			if ( alloc_type == KV3_ARRAY_ALLOC_EXTERN_FREE )
@@ -920,19 +973,19 @@ void KeyValues3::AllocArray( int size, const T* data, KV3ArrayAllocType_t alloc_
 
 		if ( alloc_type == KV3_ARRAY_ALLOC_EXTERN )
 		{
-			m_pData = (void*)data;
 			m_bFreeArrayMemory = false;
+			m_pData = (void*)data;
 		}
 		else if ( alloc_type == KV3_ARRAY_ALLOC_EXTERN_FREE )
 		{
-			m_pData = (void*)data;
 			m_bFreeArrayMemory = true;
+			m_pData = (void*)data;
 		}
 		else
 		{
+			m_bFreeArrayMemory = true;	
 			m_pData = malloc( size * sizeof( T ) );
 			memcpy( m_pData, data, size * sizeof( T ) );
-			m_bFreeArrayMemory = true;
 		}
 	}
 	else
@@ -981,6 +1034,8 @@ template< class ELEMENT_TYPE, class CLUSTER_TYPE, class VECTOR_TYPE >
 void CKeyValues3Context::Free( ELEMENT_TYPE *element, CLUSTER_TYPE *base, CLUSTER_TYPE *&head, VECTOR_TYPE &vec )
 {
 	CLUSTER_TYPE* cluster = element->GetCluster();
+
+	Assert( cluster != NULL && cluster->GetContext() == m_pContext );
 
 	cluster->Free( element->GetClusterElement() );
 

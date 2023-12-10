@@ -39,6 +39,24 @@ CBaseEntity* CEntitySystem::GetBaseEntity(const CEntityHandle& hEnt)
 	return static_cast<CBaseEntity*>(pIdentity->m_pInstance);
 }
 
+void CEntitySystem::AddEntityKeyValuesAllocatorRef()
+{
+	++m_nEntityKeyValuesAllocatorRefCount;
+}
+
+void CEntitySystem::ReleaseEntityKeyValuesAllocatorRef()
+{
+	if (--m_nEntityKeyValuesAllocatorRefCount == 0)
+	{
+		m_pEntityKeyValuesAllocator.Clear();
+	}
+}
+
+CKeyValues3Context* CEntitySystem::GetEntityKeyValuesAllocator() 
+{ 
+	return &m_pEntityKeyValuesAllocator; 
+}
+
 void CGameEntitySystem::AddListenerEntity(IEntityListener* pListener)
 {
 	if (m_entityListeners.Find(pListener) == -1)

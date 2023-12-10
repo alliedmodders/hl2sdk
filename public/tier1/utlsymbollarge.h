@@ -47,18 +47,6 @@ public:
 		m_pString = pString;
 	}
 
-	CUtlSymbolLarge( CUtlSymbolLarge const& sym )
-	{
-		m_pString = sym.m_pString; 
-	}
-
-	// operator=
-	CUtlSymbolLarge& operator=( CUtlSymbolLarge const& src ) 
-	{ 
-		m_pString = src.m_pString; 
-		return *this; 
-	}
-
 	// operator==
 	bool operator==( CUtlSymbolLarge const& src ) const 
 	{ 
@@ -85,7 +73,7 @@ public:
 
 private:
 	// Disallowed
-	bool operator==( const char* pStr ) const; // disallow since we don't know if the table this is from was case sensitive or not... maybe we don't care
+	bool operator==( const char* pString ) const; // disallow since we don't know if the table this is from was case sensitive or not... maybe we don't care
 
 	const char* m_pString;
 };
@@ -162,18 +150,20 @@ private:
 
 	struct UtlSymTableLargeAltKey
 	{ 
-		CUtlSymbolTableLargeBase*	m_pTable;
-		const char*					m_pString;
-		int							m_nLength;
+		const CUtlSymbolTableLargeBase*	m_pTable;
+		const char*						m_pString;
+		int								m_nLength;
 	};
 
 	struct UtlSymTableLargeHashFunctor
 	{
-		ptrdiff_t m_tableOffset;
+		ptrdiff_t m_ownerOffset;
 
 		UtlSymTableLargeHashFunctor()
 		{
-			m_tableOffset = 1024 - (uintp)(&((Hashtable_t*)1024)->GetHashRef());
+			const ptrdiff_t tableoffset = (uintp)(&((Hashtable_t*)1024)->GetHashRef()) - 1024;
+			const ptrdiff_t owneroffset = offsetof(CUtlSymbolTableLargeBase, m_HashTable) + tableoffset;
+			m_ownerOffset = -owneroffset;
 		}
 
 		unsigned int operator()( UtlSymTableLargeAltKey k ) const
@@ -183,7 +173,7 @@ private:
 
 		unsigned int operator()( UtlSymLargeId_t k ) const
 		{
-			CUtlSymbolTableLargeBase* pTable = (CUtlSymbolTableLargeBase*)((uintp)this + m_tableOffset);
+			const CUtlSymbolTableLargeBase* pTable = (const CUtlSymbolTableLargeBase*)((uintp)this + m_ownerOffset);
 
 			return pTable->HashValue( k );
 		}
@@ -191,16 +181,18 @@ private:
 
 	struct UtlSymTableLargeEqualFunctor
 	{
-		ptrdiff_t m_tableOffset;
+		ptrdiff_t m_ownerOffset;
 
 		UtlSymTableLargeEqualFunctor()
 		{
-			m_tableOffset = 1024 - (uintp)(&((Hashtable_t*)1024)->GetEqualRef());
+			const ptrdiff_t tableoffset = (uintp)(&((Hashtable_t*)1024)->GetEqualRef()) - 1024;
+			const ptrdiff_t owneroffset = offsetof(CUtlSymbolTableLargeBase, m_HashTable) + tableoffset;
+			m_ownerOffset = -owneroffset;
 		}
 		
 		bool operator()( UtlSymLargeId_t a, UtlSymLargeId_t b ) const 
 		{ 
-			CUtlSymbolTableLargeBase* pTable = (CUtlSymbolTableLargeBase*)((uintp)this + m_tableOffset);
+			const CUtlSymbolTableLargeBase* pTable = (const CUtlSymbolTableLargeBase*)((uintp)this + m_ownerOffset);
 
 			if ( !CASEINSENSITIVE ) 
 				return strcmp( pTable->String( a ), pTable->String( b ) ) == 0; 
@@ -243,7 +235,7 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 {	
 	UtlSymTableLargeAltKey key;
 	
-	key.m_pTable = ( CUtlSymbolTableLargeBase* )this;
+	key.m_pTable = this;
 	key.m_pString = pString;
 	key.m_nLength = nLength;
 
@@ -358,8 +350,8 @@ inline void CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUTEX_TYPE >::
 {	
 	m_Mutex.Lock( __FILE__, __LINE__ );
 
-	m_MemBlocks.RemoveAll();
 	m_HashTable.RemoveAll();
+	m_MemBlocks.RemoveAll();
 	m_MemBlockAllocator.RemoveAll();
 
 	m_Mutex.Unlock( __FILE__, __LINE__ );
@@ -370,8 +362,8 @@ inline void CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUTEX_TYPE >::
 {	
 	m_Mutex.Lock( __FILE__, __LINE__ );
 
-	m_MemBlocks.Purge();
 	m_HashTable.Purge();
+	m_MemBlocks.Purge();
 	m_MemBlockAllocator.Purge();
 
 	m_Mutex.Unlock( __FILE__, __LINE__ );

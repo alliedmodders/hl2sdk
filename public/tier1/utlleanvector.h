@@ -331,16 +331,19 @@ public:
 	// Copy the array.
 	CUtlLeanVectorImpl<B, T, I>& operator=( const CUtlLeanVectorImpl<B, T, I> &other );
 
-	struct Iterator_t
+	class Iterator_t
 	{
-		Iterator_t( T* _elem, const T* _end ) : elem( _elem ), end( _end ) {}
-		T*			elem;
-		const T*	end;
+	public:
+		Iterator_t( const T* _elem, const T* _end ) : elem( _elem ), end( _end ) {}
+		const T* elem;
+		const T* end;
+		bool operator==( const Iterator_t it ) const	{ return elem == it.elem && end == it.end; }
+		bool operator!=( const Iterator_t it ) const	{ return elem != it.elem || end != it.end; }
 	};
-	Iterator_t First() const							{ T* base = const_cast<T*>( this->Base() ); return Iterator_t( base, &base[ this->m_Size ] ); }
+	Iterator_t First() const							{ const T* base = this->Base(); return Iterator_t( base, &base[ this->m_Size ] ); }
 	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( it.elem + 1, it.end ); }
 	bool IsValidIterator( const Iterator_t &it ) const	{ return it.elem != it.end; }
-	T& operator[]( const Iterator_t &it )				{ return *it.elem; }
+	T& operator[]( const Iterator_t &it )				{ return *const_cast<T*>(it.elem); }
 	const T& operator[]( const Iterator_t &it ) const	{ return *it.elem; }
 
 	// element access
@@ -402,10 +405,14 @@ inline CUtlLeanVectorImpl<B, T, I>& CUtlLeanVectorImpl<B, T, I>::operator=( cons
 {
 	int nCount = other.Count();
 	SetSize( nCount );
-	for ( int i = 0; i < nCount; i++ )
-	{
-		(*this)[ i ] = other[ i ];
-	}
+
+	T* pDest = this->Base();
+	const T* pSrc = other.Base();
+	const T* pEnd = &pSrc[ nCount ];
+
+	while ( pSrc != pEnd )
+		*(pDest++) = *(pSrc++);
+
 	return *this;
 }
 

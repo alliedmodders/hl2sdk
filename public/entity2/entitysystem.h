@@ -2,6 +2,7 @@
 #define ENTITYSYSTEM_H
 
 #include "tier0/platform.h"
+#include "tier1/keyvalues3.h"
 #include "tier1/utlmemory.h"
 #include "tier1/utlsymbollarge.h"
 #include "tier1/utlvector.h"
@@ -188,6 +189,11 @@ public:
 
 	CBaseEntity* GetBaseEntity(const CEntityHandle& hEnt);
 
+	void AddEntityKeyValuesAllocatorRef();
+	void ReleaseEntityKeyValuesAllocatorRef();
+
+	CKeyValues3Context* GetEntityKeyValuesAllocator();
+
 private:
 	IEntityResourceManifest* m_pCurrentManifest;
 public:
@@ -196,9 +202,25 @@ public:
 	// Based on CEntitySystem::CEntitySystem found via string "MaxNonNetworkableEntities"
 
 private:
-	uint8 pad2696[0xa88];
+	uint8 pad2696[0x150];
 #ifdef PLATFORM_POSIX
-	uint8 pad5392[0x30];
+	uint8 pad3032[0x10];
+#endif
+
+	int32 m_nEntityKeyValuesAllocatorRefCount; // 3032 | 3048
+
+#ifdef PLATFORM_POSIX
+	uint8 pad3052[0xFC];
+#else
+	uint8 pad3036[0xF4];
+#endif
+
+	CKeyValues3Context m_pEntityKeyValuesAllocator; // 3280 | 3304
+
+#ifdef PLATFORM_POSIX
+	uint8 pad4888[0x228];
+#else
+	uint8 pad4864[0x210];
 #endif
 };
 

@@ -3,11 +3,6 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-#if defined( POSIX )
-#undef offsetof
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
-#endif
-
 // https://www.chessprogramming.org/BitScan
 static int BitScanFwd( uint64 bb ) 
 {
@@ -43,7 +38,7 @@ KeyValues3::KeyValues3( KV3TypeEx_t type, KV3SubType_t subtype ) :
 	m_SubType( subtype ),
 	m_nFlags( 0 ),
 	m_nReserved( 0 ),
-	m_Value( 0 )
+	m_nData( 0 )
 {
 	ResolveUnspecified();
 	Alloc();
@@ -56,7 +51,7 @@ KeyValues3::KeyValues3( int cluster_elem, KV3TypeEx_t type, KV3SubType_t subtype
 	m_nFlags( 0 ),
 	m_nClusterElement( cluster_elem ),
 	m_nReserved( 0 ),
-	m_Value( 0 )
+	m_nData( 0 )
 {
 	ResolveUnspecified();
 	Alloc();
@@ -98,7 +93,7 @@ void KeyValues3::Alloc()
 		{
 			m_bFreeArrayMemory = false;
 			m_nNumArrayElements = 0;
-			m_Value = 0;
+			m_nData = 0;
 			break;
 		}
 		default: 
@@ -183,7 +178,7 @@ void KeyValues3::Free( bool bClearingContext )
 				free( m_pData );
 			m_bFreeArrayMemory = false;
 			m_nNumArrayElements = 0;
-			m_Value = 0;
+			m_nData = 0;
 			break;
 		}
 		default: 
@@ -258,7 +253,7 @@ void KeyValues3::PrepareForType( KV3TypeEx_t type, KV3SubType_t subtype )
 	{
 		Free();
 		m_TypeEx = type;
-		m_Value = 0;
+		m_nData = 0;
 		Alloc();
 	}
 
@@ -269,7 +264,7 @@ void KeyValues3::OnClearContext()
 { 
 	Free( true ); 
 	m_TypeEx = KV3_TYPEEX_NULL; 
-	m_Value = 0; 
+	m_nData = 0; 
 }
 
 CKeyValues3Cluster* KeyValues3::GetCluster() const
@@ -428,7 +423,10 @@ Color KeyValues3::GetColor( Color defaultValue ) const
 
 void KeyValues3::SetColor( const Color &color )
 {
-	AllocArray<uint8>( 4, &color[0], KV3_ARRAY_ALLOC_NORMAL, KV3_TYPEEX_ARRAY_UINT8_SHORT, KV3_TYPEEX_INVALID, KV3_SUBTYPE_COLOR32, KV3_TYPEEX_UINT, KV3_SUBTYPE_UINT8 );
+	if ( color.a() == 255 )
+		AllocArray<uint8>( 3, &color[0], KV3_ARRAY_ALLOC_NORMAL, KV3_TYPEEX_ARRAY_UINT8_SHORT, KV3_TYPEEX_INVALID, KV3_SUBTYPE_COLOR32, KV3_TYPEEX_UINT, KV3_SUBTYPE_UINT8 );
+	else
+		AllocArray<uint8>( 4, &color[0], KV3_ARRAY_ALLOC_NORMAL, KV3_TYPEEX_ARRAY_UINT8_SHORT, KV3_TYPEEX_INVALID, KV3_SUBTYPE_COLOR32, KV3_TYPEEX_UINT, KV3_SUBTYPE_UINT8 );
 }
 
 int KeyValues3::GetArrayElementCount() const
@@ -585,8 +583,7 @@ bool KeyValues3::ReadArrayInt32( int dest_size, int32* data ) const
 			{
 				src_size = m_nNumArrayElements;
 				int count = MIN( src_size, dest_size );
-				for ( int i = 0; i < count; ++i )
-					data[ i ] = m_i32Array[ i ];
+				memcpy( data, m_i32Array, count * sizeof( int32 ) );
 				break;
 			}
 			case KV3_TYPEEX_ARRAY_UINT8_SHORT:
@@ -645,8 +642,7 @@ bool KeyValues3::ReadArrayFloat32( int dest_size, float32* data ) const
 			{
 				src_size = m_nNumArrayElements;
 				int count = MIN( src_size, dest_size );
-				for ( int i = 0; i < count; ++i )
-					data[ i ] = m_f32Array[ i ];
+				memcpy( data, m_f32Array, count * sizeof( float32 ) );
 				break;
 			}
 			case KV3_TYPEEX_ARRAY_FLOAT64:
@@ -676,7 +672,7 @@ int KeyValues3::GetMemberCount() const
 	return m_pTable->GetMemberCount();
 }
 
-KeyValues3* KeyValues3::GetMember( KV3MemberId_t id ) const
+KeyValues3* KeyValues3::GetMember( KV3MemberId_t id )
 {
 	if ( GetType() != KV3_TYPE_TABLE || id < 0 || id >= m_pTable->GetMemberCount() )
 		return NULL;
@@ -708,7 +704,7 @@ unsigned int KeyValues3::GetMemberHash( KV3MemberId_t id ) const
 	return m_pTable->GetMemberHash( id );
 }
 
-KeyValues3* KeyValues3::FindMember( const CKV3MemberName &name, KeyValues3* defaultValue ) const
+KeyValues3* KeyValues3::FindMember( const CKV3MemberName &name, KeyValues3* defaultValue )
 {
 	if ( GetType() != KV3_TYPE_TABLE )
 		return defaultValue;
@@ -742,6 +738,22 @@ KeyValues3* KeyValues3::FindOrCreateMember( const CKV3MemberName &name, bool *pC
 	}
 
 	return m_pTable->GetMember( id );
+}
+
+bool KeyValues3::TableHasBadNames() const
+{
+	if ( GetType() != KV3_TYPE_TABLE )
+		return false;
+
+	return m_pTable->HasBadNames();
+}
+
+void KeyValues3::SetTableHasBadNames( bool bHasBadNames )
+{
+	if ( GetType() != KV3_TYPE_TABLE )
+		return;
+
+	m_pTable->SetHasBadNames( bHasBadNames );
 }
 
 void KeyValues3::SetToEmptyTable()
@@ -788,6 +800,253 @@ bool KeyValues3::RemoveMember( const CKV3MemberName &name )
 	m_pTable->RemoveMember( id );
 
 	return true;
+}
+
+const char* KeyValues3::GetTypeAsString() const
+{
+	static const char* s_Types[] =
+	{
+		"invalid",
+		"null",
+		"bool",
+		"int",
+		"uint",
+		"double",
+		"string",
+		"binary_blob",
+		"array",
+		"table",
+		NULL
+	};
+
+	KV3Type_t type = GetType();
+
+	if ( type < KV3_TYPE_COUNT )
+		return s_Types[type];
+
+	return "<unknown>";
+}
+
+const char* KeyValues3::GetSubTypeAsString() const
+{
+	static const char* s_SubTypes[] =
+	{
+		"invalid",
+		"resource",
+		"resource_name",
+		"panorama",
+		"soundevent",
+		"subclass",
+		"entity_name",
+		"unspecified",
+		"null",
+		"binary_blob",
+		"array",
+		"table",
+		"bool8",
+		"char8",
+		"uchar32",
+		"int8",
+		"uint8",
+		"int16",
+		"uint16",
+		"int32",
+		"uint32",
+		"int64",
+		"uint64",
+		"float32",
+		"float64",
+		"string",
+		"pointer",
+		"color32",
+		"vector",
+		"vector2d",
+		"vector4d",
+		"rotation_vector",
+		"quaternion",
+		"qangle",
+		"matrix3x4",
+		"transform",
+		"string_token",
+		"ehandle",
+		NULL
+	};
+
+	KV3SubType_t subtype = GetSubType();
+
+	if ( subtype < KV3_SUBTYPE_COUNT )
+		return s_SubTypes[subtype];
+
+	return "<unknown>";
+}
+
+const char* KeyValues3::ToString( CBufferString& buff, uint flags ) const
+{
+	if ( ( flags & KV3_TO_STRING_DONT_CLEAR_BUFF ) != 0 )
+		flags &= ~KV3_TO_STRING_DONT_APPEND_STRINGS;
+	else
+		buff.ToGrowable()->Clear();
+
+	KV3Type_t type = GetType();
+
+	switch ( type )
+	{
+		case KV3_TYPE_NULL:
+		{
+			return buff.ToGrowable()->Get();
+		}
+		case KV3_TYPE_BOOL:
+		{
+			const char* str = m_Bool ? "true" : "false";
+
+			if ( ( flags & KV3_TO_STRING_DONT_APPEND_STRINGS ) != 0 )
+				return str;
+
+			buff.Insert( buff.ToGrowable()->GetTotalNumber(), str );
+			return buff.ToGrowable()->Get();
+		}
+		case KV3_TYPE_INT:
+		{
+			buff.AppendFormat( "%lld", m_Int );
+			return buff.ToGrowable()->Get();
+		}
+		case KV3_TYPE_UINT:
+		{
+			if ( GetSubType() == KV3_SUBTYPE_POINTER )
+			{
+				if ( ( flags & KV3_TO_STRING_APPEND_ONLY_NUMERICS ) == 0 )
+					buff.Insert( buff.ToGrowable()->GetTotalNumber(), "<pointer>" );
+
+				if ( ( flags & KV3_TO_STRING_RETURN_NON_NUMERICS ) == 0 )
+					return NULL;
+
+				return buff.ToGrowable()->Get();
+			}
+			
+			buff.AppendFormat( "%llu", m_UInt );
+			return buff.ToGrowable()->Get();
+		}
+		case KV3_TYPE_DOUBLE:
+		{
+			buff.AppendFormat( "%g", m_Double );
+			return buff.ToGrowable()->Get();
+		}
+		case KV3_TYPE_STRING:
+		{
+			const char* str = GetString();
+
+			if ( ( flags & KV3_TO_STRING_DONT_APPEND_STRINGS ) != 0 )
+				return str;
+
+			buff.Insert( buff.ToGrowable()->GetTotalNumber(), str );
+			return buff.ToGrowable()->Get();
+		}
+		case KV3_TYPE_BINARY_BLOB:
+		{
+			if ( ( flags & KV3_TO_STRING_APPEND_ONLY_NUMERICS ) == 0 )
+				buff.AppendFormat( "<binary blob: %u bytes>", GetBinaryBlobSize() );
+
+			if ( ( flags & KV3_TO_STRING_RETURN_NON_NUMERICS ) == 0 )
+				return NULL;
+
+			return buff.ToGrowable()->Get();
+		}
+		case KV3_TYPE_ARRAY:
+		{
+			int elements = GetArrayElementCount();
+
+			if ( elements > 0 && elements <= 4 )
+			{
+				switch ( GetTypeEx() )
+				{
+					case KV3_TYPEEX_ARRAY_FLOAT32:
+					{
+						for ( int i = 0; i < elements; ++i )
+						{
+							buff.AppendFormat( "%g", m_f32Array[i] );
+							if ( i != elements - 1 ) buff.Insert( buff.ToGrowable()->GetTotalNumber(), " " );
+						}
+						return buff.ToGrowable()->Get();
+					}
+					case KV3_TYPEEX_ARRAY_FLOAT64:
+					{
+						for ( int i = 0; i < elements; ++i )
+						{
+							buff.AppendFormat( "%g", m_f64Array[i] );
+							if ( i != elements - 1 ) buff.Insert( buff.ToGrowable()->GetTotalNumber(), " " );
+						}
+						return buff.ToGrowable()->Get();
+					}
+					case KV3_TYPEEX_ARRAY_INT16:
+					{
+						for ( int i = 0; i < elements; ++i )
+						{
+							buff.AppendFormat( "%d", m_i16Array[i] );
+							if ( i != elements - 1 ) buff.Insert( buff.ToGrowable()->GetTotalNumber(), " " );
+						}
+						return buff.ToGrowable()->Get();
+					}
+					case KV3_TYPEEX_ARRAY_INT32:
+					{
+						for ( int i = 0; i < elements; ++i )
+						{
+							buff.AppendFormat( "%d", m_i32Array[i] );
+							if ( i != elements - 1 ) buff.Insert( buff.ToGrowable()->GetTotalNumber(), " " );
+						}
+						return buff.ToGrowable()->Get();
+					}
+					case KV3_TYPEEX_ARRAY_UINT8_SHORT:
+					{
+						for ( int i = 0; i < elements; ++i )
+						{
+							buff.AppendFormat( "%u", m_u8ArrayShort[i] );
+							if ( i != elements - 1 ) buff.Insert( buff.ToGrowable()->GetTotalNumber(), " " );
+						}
+						return buff.ToGrowable()->Get();
+					}
+					case KV3_TYPEEX_ARRAY_INT16_SHORT:
+					{
+						for ( int i = 0; i < elements; ++i )
+						{
+							buff.AppendFormat( "%d", m_i16ArrayShort[i] );
+							if ( i != elements - 1 ) buff.Insert( buff.ToGrowable()->GetTotalNumber(), " " );
+						}
+						return buff.ToGrowable()->Get();
+					}
+					default:
+						break;
+				}
+			}
+
+			if ( ( flags & KV3_TO_STRING_APPEND_ONLY_NUMERICS ) == 0 )
+				buff.AppendFormat( "<array: %u elements>", elements );
+
+			if ( ( flags & KV3_TO_STRING_RETURN_NON_NUMERICS ) == 0 )
+				return NULL;
+
+			return buff.ToGrowable()->Get();
+		}
+		case KV3_TYPE_TABLE:
+		{
+			if ( ( flags & KV3_TO_STRING_APPEND_ONLY_NUMERICS ) == 0 )
+				buff.AppendFormat( "<table: %u members>", ( uint )GetMemberCount() );
+
+			if ( ( flags & KV3_TO_STRING_RETURN_NON_NUMERICS ) == 0 )
+				return NULL;
+
+			return buff.ToGrowable()->Get();
+		}
+		default: 
+		{
+			if ( ( flags & KV3_TO_STRING_APPEND_ONLY_NUMERICS ) == 0 )
+				buff.AppendFormat( "<unknown KV3 basic type '%s' (%d)>", GetTypeAsString(), type );
+
+			if ( ( flags & KV3_TO_STRING_RETURN_NON_NUMERICS ) == 0 )
+				return NULL;
+
+			return buff.ToGrowable()->Get();
+		}
+	}
 }
 
 void KeyValues3::CopyFrom( const KeyValues3* pSrc )
@@ -1242,6 +1501,7 @@ void CKeyValues3Table::Purge( bool bClearingContext )
 
 KeyValues3* CKeyValues3Cluster::Alloc( KV3TypeEx_t type, KV3SubType_t subtype )
 {
+	Assert( IsFree() );
 	int element = BitScanFwd( ~m_nAllocatedElements );
 	m_nAllocatedElements |= ( 1ull << element );
 	KeyValues3* kv = &m_KeyValues[ element ];
@@ -1253,6 +1513,7 @@ KeyValues3* CKeyValues3Cluster::Alloc( KV3TypeEx_t type, KV3SubType_t subtype )
 
 void CKeyValues3Cluster::Free( int element )
 {
+	Assert( element >= 0 && element < KV3_CLUSTER_MAX_ELEMENTS );
 	KeyValues3* kv = &m_KeyValues[ element ];
 	Destruct( kv );
 	memset( (void *)kv, 0, sizeof( KeyValues3 ) );
@@ -1316,6 +1577,8 @@ void CKeyValues3Cluster::FreeMetaData()
 
 KV3MetaData_t* CKeyValues3Cluster::GetMetaData( int element ) const
 {
+	Assert( element >= 0 && element < KV3_CLUSTER_MAX_ELEMENTS );
+
 	if ( !m_pMetaData )
 		return NULL;
 
@@ -1329,6 +1592,7 @@ int CKeyValues3Cluster::NumAllocated() const
 
 CKeyValues3Array* CKeyValues3ArrayCluster::Alloc()
 {
+	Assert( IsFree() );
 	int element = BitScanFwd( ~m_nAllocatedElements );
 	m_nAllocatedElements |= ( 1ull << element );
 	CKeyValues3Array* arr = &m_Arrays[ element ];
@@ -1338,6 +1602,7 @@ CKeyValues3Array* CKeyValues3ArrayCluster::Alloc()
 
 void CKeyValues3ArrayCluster::Free( int element )
 {
+	Assert( element >= 0 && element < KV3_CLUSTER_MAX_ELEMENTS );
 	CKeyValues3Array* arr = &m_Arrays[ element ];
 	Destruct( arr );
 	memset( (void *)arr, 0, sizeof( CKeyValues3Array ) );
@@ -1364,6 +1629,7 @@ int CKeyValues3ArrayCluster::NumAllocated() const
 
 CKeyValues3Table* CKeyValues3TableCluster::Alloc()
 {
+	Assert( IsFree() );
 	int element = BitScanFwd( ~m_nAllocatedElements );
 	m_nAllocatedElements |= ( 1ull << element );
 	CKeyValues3Table* table = &m_Tables[ element ];
@@ -1373,6 +1639,7 @@ CKeyValues3Table* CKeyValues3TableCluster::Alloc()
 
 void CKeyValues3TableCluster::Free( int element )
 {
+	Assert( element >= 0 && element < KV3_CLUSTER_MAX_ELEMENTS );
 	CKeyValues3Table* table = &m_Tables[ element ];
 	Destruct( table );
 	memset( (void *)table, 0, sizeof( CKeyValues3Table ) );
@@ -1602,7 +1869,10 @@ KeyValues3* CKeyValues3Context::AllocKV( KV3TypeEx_t type, KV3SubType_t subtype 
 
 void CKeyValues3Context::FreeKV( KeyValues3* kv )
 {
-	KV3MetaData_t* metadata = kv->GetMetaData();
+	CKeyValues3Context* context;
+	KV3MetaData_t* metadata = kv->GetMetaData( &context );
+
+	Assert( context == m_pContext );
 
 	if ( metadata )
 		metadata->Clear();
