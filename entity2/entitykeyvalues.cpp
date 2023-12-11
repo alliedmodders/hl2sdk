@@ -5,8 +5,6 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-extern CEntitySystem* EntitySystem();
-
 CEntityKeyValues::CEntityKeyValues( CKeyValues3Context* allocator, EntityKVAllocatorType_t allocator_type ) :
 	m_pComplexKeys( NULL ),
 	m_nRefCount( 0 ),
