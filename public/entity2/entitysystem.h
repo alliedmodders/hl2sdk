@@ -22,10 +22,7 @@ class IEntityResourceManifestBuilder;
 class ISpawnGroupEntityFilter;
 class IHandleEntity;
 
-class CEntitySystem;
 class CGameEntitySystem;
-
-extern CEntitySystem* EntitySystem();
 extern CGameEntitySystem* GameEntitySystem();
 
 typedef void (*EntityResourceManifestCreationCallback_t)(IEntityResourceManifest *, void *);

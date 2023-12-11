@@ -16,15 +16,15 @@ CEntityKeyValues::CEntityKeyValues( CKeyValues3Context* allocator, EntityKVAlloc
 	{
 		m_pAllocator = allocator;
 
-		if ( EntitySystem() && m_pAllocator == EntitySystem()->GetEntityKeyValuesAllocator() )
-			EntitySystem()->AddEntityKeyValuesAllocatorRef();
+		if ( GameEntitySystem() && m_pAllocator == GameEntitySystem()->GetEntityKeyValuesAllocator() )
+			GameEntitySystem()->AddEntityKeyValuesAllocatorRef();
 
 		m_pKeyValues = m_pAllocator->AllocKV();
 		m_pAttributes = m_pAllocator->AllocKV();
 	}
 	else
 	{
-		if ( !EntitySystem() && ( m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM1 || m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM2 ) )
+		if ( !GameEntitySystem() && ( m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM1 || m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM2 ) )
 			m_eAllocatorType = EKV_ALLOCATOR_NORMAL;
 
 		m_pAllocator = NULL;
@@ -42,8 +42,8 @@ CEntityKeyValues::~CEntityKeyValues()
 			m_pAllocator->FreeKV( m_pKeyValues );
 			m_pAllocator->FreeKV( m_pAttributes );
 
-			if ( EntitySystem() && m_pAllocator == EntitySystem()->GetEntityKeyValuesAllocator() )
-				EntitySystem()->ReleaseEntityKeyValuesAllocatorRef();
+			if ( GameEntitySystem() && m_pAllocator == GameEntitySystem()->GetEntityKeyValuesAllocator() )
+				GameEntitySystem()->ReleaseEntityKeyValuesAllocatorRef();
 		}
 		else
 		{
@@ -58,9 +58,9 @@ void CEntityKeyValues::ValidateAllocator()
 	{
 		if ( m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM1 || m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM2 )
 		{
-			Assert( EntitySystem() );
-			m_pAllocator = EntitySystem()->GetEntityKeyValuesAllocator();
-			EntitySystem()->AddEntityKeyValuesAllocatorRef();
+			Assert( GameEntitySystem() );
+			m_pAllocator = GameEntitySystem()->GetEntityKeyValuesAllocator();
+			GameEntitySystem()->AddEntityKeyValuesAllocatorRef();
 		}
 		else
 		{
@@ -322,8 +322,8 @@ CEntityHandle CEntityKeyValues::GetEHandle( const EntityKeyId_t &id, WorldGroupI
 			return value->GetEHandle( defaultValue );
 #if 0
 		case KV3_TYPE_STRING:
-			Assert( EntitySystem() );
-			return EntitySystem()->FindFirstEntityHandleByName( value->GetString(), worldGroupId );
+			Assert( GameEntitySystem() );
+			return GameEntitySystem()->FindFirstEntityHandleByName( value->GetString(), worldGroupId );
 #endif
 		default:
 			return defaultValue;
