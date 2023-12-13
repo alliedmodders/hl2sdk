@@ -84,13 +84,13 @@ public:
 
 	class Iterator_t
 	{
-		Iterator_t( const KeyValues3* _kv, int _index ) : kv( _kv ), index( _index ) {}
-		const KeyValues3* kv;
+		Iterator_t( const KeyValues3* _keys, int _index ) : keys( _keys ), index( _index ) {}
+		const KeyValues3* keys;
 		int index;
 		friend class CEntityKeyValues;
 	public:
-		bool operator==( const Iterator_t it ) const { return kv == it.kv && index == it.index; }
-		bool operator!=( const Iterator_t it ) const { return kv != it.kv || index != it.index; }
+		bool operator==( const Iterator_t it ) const { return keys == it.keys && index == it.index; }
+		bool operator!=( const Iterator_t it ) const { return keys != it.keys || index != it.index; }
 	};
 	Iterator_t First() const;
 	Iterator_t Next( const Iterator_t &it ) const;
@@ -206,75 +206,75 @@ private:
 
 inline CEntityKeyValues::Iterator_t CEntityKeyValues::First() const
 {
-	const KeyValues3* kv = NULL;
+	const KeyValues3* keys = NULL;
 
 	if ( m_pAllocator )
 	{
 		if ( m_pValues->GetMemberCount() > 0 )
-			kv = m_pValues;
+			keys = m_pValues;
 		else
-			kv = m_pAttributes;
+			keys = m_pAttributes;
 	}
 
-	return CEntityKeyValues::Iterator_t( kv, 0 );
+	return CEntityKeyValues::Iterator_t( keys, 0 );
 }
 
 inline CEntityKeyValues::Iterator_t CEntityKeyValues::Next( const CEntityKeyValues::Iterator_t &it ) const
 {
-	const KeyValues3* kv = it.kv;
+	const KeyValues3* keys = it.keys;
 	int index = it.index + 1;
 
-	if ( index >= kv->GetMemberCount() )
+	if ( index >= keys->GetMemberCount() )
 	{
-		if ( kv == m_pValues )
+		if ( keys == m_pValues )
 		{
-			kv = m_pAttributes;
+			keys = m_pAttributes;
 			index = 0;
 		}
 		else
 		{
-			index = kv->GetMemberCount();
+			index = keys->GetMemberCount();
 		}
 	}
 
-	return CEntityKeyValues::Iterator_t( kv, index );
+	return CEntityKeyValues::Iterator_t( keys, index );
 }
 
 inline bool CEntityKeyValues::IsValidIterator( const CEntityKeyValues::Iterator_t &it ) const
 {
-	return ( it.kv != NULL ) && ( it.index < it.kv->GetMemberCount() );
+	return ( it.keys != NULL ) && ( it.index < it.keys->GetMemberCount() );
 }
 
 inline const KeyValues3* CEntityKeyValues::GetKeyValue( const CEntityKeyValues::Iterator_t &it ) const
 {
-	if ( it.index >= it.kv->GetMemberCount() )
+	if ( it.index >= it.keys->GetMemberCount() )
 		return NULL;
 
-	return it.kv->GetMember( it.index );
+	return it.keys->GetMember( it.index );
 }
 
 inline EntityKeyId_t CEntityKeyValues::GetEntityKeyId( const CEntityKeyValues::Iterator_t &it ) const
 {
-	if ( it.index >= it.kv->GetMemberCount() )
+	if ( it.index >= it.keys->GetMemberCount() )
 		return EntityKeyId_t();
 
-	return it.kv->GetMemberNameEx( it.index );
+	return it.keys->GetMemberNameEx( it.index );
 }
 
 inline const char* CEntityKeyValues::GetAttributeName( const CEntityKeyValues::Iterator_t &it ) const
 {
-	if ( it.kv == m_pValues )
+	if ( it.keys == m_pValues )
 		return NULL;
 
-	if ( it.index >= it.kv->GetMemberCount() )
+	if ( it.index >= it.keys->GetMemberCount() )
 		return "<none>";
 	
-	return it.kv->GetMemberName( it.index );
+	return it.keys->GetMemberName( it.index );
 }
 
 inline bool CEntityKeyValues::IsAttribute( const CEntityKeyValues::Iterator_t &it ) const
 {
-	return ( it.index < it.kv->GetMemberCount() ) && ( it.kv == m_pAttributes );
+	return ( it.index < it.keys->GetMemberCount() ) && ( it.keys == m_pAttributes );
 }
 
 inline bool CEntityKeyValues::GetBool( const EntityKeyId_t &id, bool defaultValue ) const
