@@ -19,7 +19,7 @@ CEntityKeyValues::CEntityKeyValues( CKeyValues3Context* allocator, EntityKVAlloc
 		if ( GameEntitySystem() && m_pAllocator == GameEntitySystem()->GetEntityKeyValuesAllocator() )
 			GameEntitySystem()->AddEntityKeyValuesAllocatorRef();
 
-		m_pKeyValues = m_pAllocator->AllocKV();
+		m_pValues = m_pAllocator->AllocKV();
 		m_pAttributes = m_pAllocator->AllocKV();
 	}
 	else
@@ -39,7 +39,7 @@ CEntityKeyValues::~CEntityKeyValues()
 	{
 		if ( m_eAllocatorType != EKV_ALLOCATOR_NORMAL )
 		{
-			m_pAllocator->FreeKV( m_pKeyValues );
+			m_pAllocator->FreeKV( m_pValues );
 			m_pAllocator->FreeKV( m_pAttributes );
 
 			if ( GameEntitySystem() && m_pAllocator == GameEntitySystem()->GetEntityKeyValuesAllocator() )
@@ -68,7 +68,7 @@ void CEntityKeyValues::ValidateAllocator()
 			m_pAllocator = new CKeyValues3Context( true );
 		}
 
-		m_pKeyValues = m_pAllocator->AllocKV();
+		m_pValues = m_pAllocator->AllocKV();
 		m_pAttributes = m_pAllocator->AllocKV();
 	}
 }
@@ -92,33 +92,33 @@ void CEntityKeyValues::Release()
 		delete this;
 }
 
-const KeyValues3* CEntityKeyValues::GetValue( const EntityKeyId_t &id, bool* pIsAttribute ) const
+const KeyValues3* CEntityKeyValues::GetKeyValue( const EntityKeyId_t &id, bool* pIsAttribute ) const
 {
 	if ( !m_pAllocator )
 		return NULL;
 
-	const KeyValues3* value = m_pKeyValues->FindMember( id );
+	const KeyValues3* kv = m_pValues->FindMember( id );
 
-	if ( value )
+	if ( kv )
 	{
 		if ( pIsAttribute )
 			*pIsAttribute = false;
 	}
 	else
 	{
-		value = m_pAttributes->FindMember( id );
+		kv = m_pAttributes->FindMember( id );
 
-		if ( value )
+		if ( kv )
 		{
 			if ( pIsAttribute )
 				*pIsAttribute = true;
 		}
 	}
 
-	return value;
+	return kv;
 }
 
-KeyValues3* CEntityKeyValues::SetValue( const EntityKeyId_t &id, const char* pAttributeName )
+KeyValues3* CEntityKeyValues::SetKeyValue( const EntityKeyId_t &id, const char* pAttributeName )
 {
 	if ( m_nQueuedForSpawnCount > 0 )
 		return NULL;
@@ -126,13 +126,13 @@ KeyValues3* CEntityKeyValues::SetValue( const EntityKeyId_t &id, const char* pAt
 	ValidateAllocator();
 
 	bool bIsAttribute;
-	KeyValues3* value = const_cast<KeyValues3*>( GetValue( id, &bIsAttribute ) );
+	KeyValues3* kv = const_cast<KeyValues3*>( GetKeyValue( id, &bIsAttribute ) );
 
-	if ( value )
+	if ( kv )
 	{
 		if ( !bIsAttribute && pAttributeName )
 		{
-			value = NULL;
+			kv = NULL;
 			Warning( "Attempted to set non-attribute value %s as if it was an attribute!\n", pAttributeName );
 		}
 		else if ( bIsAttribute && !pAttributeName )
@@ -141,26 +141,26 @@ KeyValues3* CEntityKeyValues::SetValue( const EntityKeyId_t &id, const char* pAt
 
 			for ( int i = 0; i < m_pAttributes->GetMemberCount(); ++i )
 			{
-				if ( m_pAttributes->GetMember( i ) != value )
+				if ( m_pAttributes->GetMember( i ) != kv )
 					continue;
 
 				pAttributeName = m_pAttributes->GetMemberName( i );
 				break;
 			}
 
-			value = NULL;
+			kv = NULL;
 			Warning( "Attempted to set attribute %s as if it was a non-attribute key!\n", pAttributeName );
 		}
 	}
 	else
 	{
 		if ( pAttributeName )
-			value = m_pAttributes->FindOrCreateMember( id );
+			kv = m_pAttributes->FindOrCreateMember( id );
 		else
-			value = m_pKeyValues->FindOrCreateMember( id );
+			kv = m_pValues->FindOrCreateMember( id );
 	}
 
-	return value;
+	return kv;
 }
 
 void CEntityKeyValues::AddConnectionDesc( 
@@ -209,14 +209,14 @@ void CEntityKeyValues::CopyFrom( const CEntityKeyValues* pSrc, bool bRemoveAllKe
 		}
 		else
 		{
-			if ( bSkipEHandles && pSrc->GetValue( iter )->GetSubType() == KV3_SUBTYPE_EHANDLE )
+			if ( bSkipEHandles && pSrc->GetKeyValue( iter )->GetSubType() == KV3_SUBTYPE_EHANDLE )
 				continue;
 		}
 
-		KeyValues3* value = SetValue( pSrc->GetEntityKeyId( iter ), pAttributeName );
+		KeyValues3* kv = SetKeyValue( pSrc->GetEntityKeyId( iter ), pAttributeName );
 
-		if ( value )
-			*value = *pSrc->GetValue( iter );
+		if ( kv )
+			*kv = *pSrc->GetKeyValue( iter );
 	}
 
 	m_connectionDescs.RemoveAll();
@@ -235,12 +235,12 @@ void CEntityKeyValues::CopyFrom( const CEntityKeyValues* pSrc, bool bRemoveAllKe
 	}
 }
 
-void CEntityKeyValues::RemoveKey( const EntityKeyId_t &id )
+void CEntityKeyValues::RemoveKeyValue( const EntityKeyId_t &id )
 {
 	if ( m_nQueuedForSpawnCount > 0 || !m_pAllocator )
 		return;
 
-	if ( !m_pKeyValues->RemoveMember( id ) )
+	if ( !m_pValues->RemoveMember( id ) )
 		m_pAttributes->RemoveMember( id );
 }
 
@@ -255,13 +255,13 @@ void CEntityKeyValues::RemoveAllKeys()
 	{
 		if ( m_eAllocatorType != EKV_ALLOCATOR_NORMAL )
 		{
-			m_pKeyValues->SetToEmptyTable();
+			m_pValues->SetToEmptyTable();
 			m_pAttributes->SetToEmptyTable();
 		}
 		else
 		{
 			m_pAllocator->Clear();
-			m_pKeyValues = m_pAllocator->AllocKV();
+			m_pValues = m_pAllocator->AllocKV();
 			m_pAttributes = m_pAllocator->AllocKV();
 		}
 	}
@@ -272,18 +272,18 @@ bool CEntityKeyValues::IsEmpty() const
 	if ( !m_pAllocator )
 		return true;
 
-	if ( !m_pKeyValues->GetMemberCount() && !m_pAttributes->GetMemberCount() )
+	if ( !m_pValues->GetMemberCount() && !m_pAttributes->GetMemberCount() )
 		return true;
 
 	return false;
 }
 
-bool CEntityKeyValues::KeysHasBadNames() const
+bool CEntityKeyValues::ValuesHasBadNames() const
 {
 	if ( !m_pAllocator )
 		return false;
 
-	return m_pKeyValues->TableHasBadNames();
+	return m_pValues->TableHasBadNames();
 }
 
 bool CEntityKeyValues::AttributesHasBadNames() const
@@ -311,28 +311,28 @@ void CEntityKeyValues::ReleaseAllComplexKeys()
 
 CEntityHandle CEntityKeyValues::GetEHandle( const EntityKeyId_t &id, WorldGroupId_t worldGroupId, CEntityHandle defaultValue ) const
 {
-	const KeyValues3* value = GetValue( id );
+	const KeyValues3* kv = GetKeyValue( id );
 	
-	if ( !value )
+	if ( !kv )
 		return defaultValue;
 
-	switch ( value->GetType() )
+	switch ( kv->GetType() )
 	{
 		case KV3_TYPE_UINT:
-			return value->GetEHandle( defaultValue );
+			return kv->GetEHandle( defaultValue );
 #if 0
 		case KV3_TYPE_STRING:
 			Assert( GameEntitySystem() );
-			return GameEntitySystem()->FindFirstEntityHandleByName( value->GetString(), worldGroupId );
+			return GameEntitySystem()->FindFirstEntityHandleByName( kv->GetString(), worldGroupId );
 #endif
 		default:
 			return defaultValue;
 	}
 }
 
-void CEntityKeyValues::SetString( KeyValues3* value, const char* string )
+void CEntityKeyValues::SetString( KeyValues3* kv, const char* string )
 {
 	ValidateAllocator();
 
-	value->SetStringExternal( m_pAllocator->AllocString( string ) );
+	kv->SetStringExternal( m_pAllocator->AllocString( string ) );
 }

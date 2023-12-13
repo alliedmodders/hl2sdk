@@ -497,7 +497,7 @@ private:
 	template < typename T > T GetVecBasedObj( int size, T defaultValue ) const;
 	template < typename T > void SetVecBasedObj( const T &obj, int size, KV3SubType_t subtype );
 
-	template< typename T >
+	template < typename T >
 	void NormalizeArray( KV3TypeEx_t type, KV3SubType_t subtype, int size, const T* data, bool bFree );
 	void NormalizeArray();
 
@@ -920,7 +920,7 @@ void KeyValues3::SetValue( T value, KV3TypeEx_t type, KV3SubType_t subtype )
 	SetDirect<T>( value );
 }
 
-template< typename T >
+template < typename T >
 void KeyValues3::NormalizeArray( KV3TypeEx_t type, KV3SubType_t subtype, int size, const T* data, bool bFree )
 {
 	m_TypeEx = KV3_TYPEEX_ARRAY;

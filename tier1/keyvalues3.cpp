@@ -1029,7 +1029,7 @@ const char* KeyValues3::ToString( CBufferString& buff, uint flags ) const
 		case KV3_TYPE_TABLE:
 		{
 			if ( ( flags & KV3_TO_STRING_APPEND_ONLY_NUMERICS ) == 0 )
-				buff.AppendFormat( "<table: %u members>", ( uint )GetMemberCount() );
+				buff.AppendFormat( "<table: %u members>", GetMemberCount() );
 
 			if ( ( flags & KV3_TO_STRING_RETURN_NON_NUMERICS ) == 0 )
 				return NULL;
