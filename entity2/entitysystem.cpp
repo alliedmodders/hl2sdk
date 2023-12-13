@@ -48,13 +48,13 @@ void CEntitySystem::ReleaseEntityKeyValuesAllocatorRef()
 {
 	if (--m_nEntityKeyValuesAllocatorRefCount == 0)
 	{
-		m_pEntityKeyValuesAllocator.Clear();
+		m_EntityKeyValuesAllocator.Clear();
 	}
 }
 
 CKeyValues3Context* CEntitySystem::GetEntityKeyValuesAllocator() 
 { 
-	return &m_pEntityKeyValuesAllocator; 
+	return &m_EntityKeyValuesAllocator; 
 }
 
 void CGameEntitySystem::AddListenerEntity(IEntityListener* pListener)

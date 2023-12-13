@@ -152,6 +152,7 @@ public:
 	Vector4D		GetVector4D( const EntityKeyId_t &id, Vector4D defaultValue = Vector4D( 0.0f, 0.0f, 0.0f, 0.0f ) ) const;
 	Quaternion		GetQuaternion( const EntityKeyId_t &id, Quaternion defaultValue = Quaternion( 0.0f, 0.0f, 0.0f, 0.0f ) ) const;
 	QAngle			GetQAngle( const EntityKeyId_t &id, QAngle defaultValue = QAngle( 0.0f, 0.0f, 0.0f ) ) const;
+	matrix3x4_t		GetMatrix3x4( const EntityKeyId_t &id, matrix3x4_t defaultValue = matrix3x4_t( Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 0.0f ) ) ) const;
 
 	void SetBool( const EntityKeyId_t &id, bool value, bool bAsAttribute = false );
 	void SetInt( const EntityKeyId_t &id, int value, bool bAsAttribute = false );
@@ -162,14 +163,15 @@ public:
 	void SetDouble( const EntityKeyId_t &id, double value, bool bAsAttribute = false );
 	void SetString( const EntityKeyId_t &id, const char* string, bool bAsAttribute = false );
 	void SetPtr( const EntityKeyId_t &id, void* ptr, bool bAsAttribute = false );
-	void SetStringToken( const EntityKeyId_t &id, const CUtlStringToken& token, bool bAsAttribute = false );
-	void SetEHandle( const EntityKeyId_t &id, const CEntityHandle& ehandle, bool bAsAttribute = false );
+	void SetStringToken( const EntityKeyId_t &id, const CUtlStringToken &token, bool bAsAttribute = false );
+	void SetEHandle( const EntityKeyId_t &id, const CEntityHandle &ehandle, bool bAsAttribute = false );
 	void SetColor( const EntityKeyId_t &id, const Color &color, bool bAsAttribute = false );
 	void SetVector( const EntityKeyId_t &id, const Vector &vec, bool bAsAttribute = false );
 	void SetVector2D( const EntityKeyId_t &id, const Vector2D &vec2d, bool bAsAttribute = false );
 	void SetVector4D( const EntityKeyId_t &id, const Vector4D &vec4d, bool bAsAttribute = false );
 	void SetQuaternion( const EntityKeyId_t &id, const Quaternion &quat, bool bAsAttribute = false );
-	void SetQAngle( const EntityKeyId_t &id, const QAngle &ang, bool bAsAttribute = false );	
+	void SetQAngle( const EntityKeyId_t &id, const QAngle &ang, bool bAsAttribute = false );
+	void SetMatrix3x4( const EntityKeyId_t &id, const matrix3x4_t &matrix, bool bAsAttribute = false );	
 
 	CEntityKeyValues& operator=( const CEntityKeyValues& src ) { CopyFrom( &src ); return *this; }
 
@@ -373,6 +375,12 @@ inline QAngle CEntityKeyValues::GetQAngle( const EntityKeyId_t &id, QAngle defau
 	return kv ? kv->GetQAngle( defaultValue ) : defaultValue;
 }
 
+inline matrix3x4_t CEntityKeyValues::GetMatrix3x4( const EntityKeyId_t &id, matrix3x4_t defaultValue ) const
+{
+	const KeyValues3* kv = GetKeyValue( id );
+	return kv ? kv->GetMatrix3x4( defaultValue ) : defaultValue;
+}
+
 inline void CEntityKeyValues::SetBool( const EntityKeyId_t &id, bool value, bool bAsAttribute )
 {
 	KeyValues3* kv = SetKeyValue( id, bAsAttribute ? id.GetString() : NULL );
@@ -427,13 +435,13 @@ inline void CEntityKeyValues::SetPtr( const EntityKeyId_t &id, void* ptr, bool b
 	if ( kv ) kv->SetPointer( ptr );
 }
 
-inline void CEntityKeyValues::SetStringToken( const EntityKeyId_t &id, const CUtlStringToken& token, bool bAsAttribute )
+inline void CEntityKeyValues::SetStringToken( const EntityKeyId_t &id, const CUtlStringToken &token, bool bAsAttribute )
 {
 	KeyValues3* kv = SetKeyValue( id, bAsAttribute ? id.GetString() : NULL );
 	if ( kv ) kv->SetStringToken( token );
 }
 
-inline void CEntityKeyValues::SetEHandle( const EntityKeyId_t &id, const CEntityHandle& ehandle, bool bAsAttribute )
+inline void CEntityKeyValues::SetEHandle( const EntityKeyId_t &id, const CEntityHandle &ehandle, bool bAsAttribute )
 {
 	KeyValues3* kv = SetKeyValue( id, bAsAttribute ? id.GetString() : NULL );
 	if ( kv ) kv->SetEHandle( ehandle );
@@ -473,6 +481,12 @@ inline void CEntityKeyValues::SetQAngle( const EntityKeyId_t &id, const QAngle &
 {
 	KeyValues3* kv = SetKeyValue( id, bAsAttribute ? id.GetString() : NULL );
 	if ( kv ) kv->SetQAngle( ang );
+}
+
+inline void CEntityKeyValues::SetMatrix3x4( const EntityKeyId_t &id, const matrix3x4_t &matrix, bool bAsAttribute )
+{
+	KeyValues3* kv = SetKeyValue( id, bAsAttribute ? id.GetString() : NULL );
+	if ( kv ) kv->SetMatrix3x4( matrix );
 }
 
 #include "tier0/memdbgoff.h"

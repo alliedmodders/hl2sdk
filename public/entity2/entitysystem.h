@@ -218,7 +218,7 @@ private:
 	uint8 pad3036[0xF4];
 #endif
 
-	CKeyValues3Context m_pEntityKeyValuesAllocator; // 3280 | 3304
+	CKeyValues3Context m_EntityKeyValuesAllocator; // 3280 | 3304
 
 #ifdef PLATFORM_POSIX
 	uint8 pad4888[0x228];
