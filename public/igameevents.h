@@ -123,10 +123,10 @@ public:
 	virtual void SetEntity( const GameEventKeySymbol_t &keySymbol, CEntityIndex value ) = 0;
 	virtual void SetEntity( const GameEventKeySymbol_t &keySymbol, CEntityInstance *value ) = 0;
 
-	// Also sets the _pawn key
-	virtual void SetPlayer( const GameEventKeySymbol_t &keySymbol, CPlayerSlot value ) = 0;
 	// Also sets the _pawn key (Expects pawn entity to be passed)
 	virtual void SetPlayer( const GameEventKeySymbol_t &keySymbol, CEntityInstance *pawn ) = 0;
+	// Also sets the _pawn key
+	virtual void SetPlayer( const GameEventKeySymbol_t &keySymbol, CPlayerSlot value ) = 0;
 
 	// Expects pawn entity to be passed, will set the controller entity as a controllerKeyName
 	// and pawn entity as a pawnKeyName.
