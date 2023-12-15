@@ -1203,7 +1203,7 @@ inline void CUtlMemory_RawAllocator<T>::EnsureCapacity( int num )
 	if (m_nAllocationCount >= num)
 		return;
 	
-	if ( num > ( SIZE_MAX / sizeof(T) ) )
+	if ( ( size_t )num > ( SIZE_MAX / sizeof(T) ) )
 	{
 		Plat_FatalErrorFunc( "%s: Invalid capacity %u\n", __FUNCTION__, num );
 		DebuggerBreak();
