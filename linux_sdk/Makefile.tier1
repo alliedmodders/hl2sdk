@@ -50,7 +50,6 @@ LIB_OBJS= \
 	$(LIB_OBJ_DIR)/undiff.o \
 	$(LIB_OBJ_DIR)/uniqueid.o \
 	$(LIB_OBJ_DIR)/utlbufferutil.o \
-	$(LIB_OBJ_DIR)/utlsymbol.o \
 
 all: dirs $(NAME).$(SHLIBEXT)
 
