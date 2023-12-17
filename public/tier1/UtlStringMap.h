@@ -55,9 +55,9 @@ public:
 		return m_SymbolTable.Find( pString );
 	}
 
-	UtlSymId_t AddString( const char *pString, bool &result )
+	UtlSymId_t AddString( const char *pString, bool* created )
 	{
-		CUtlSymbol symbol = m_SymbolTable.AddString( pString, result );
+		CUtlSymbol symbol = m_SymbolTable.AddString( pString, created );
 		int index = ( int )( UtlSymId_t )symbol;
 		if( m_Vector.Count() <= index )
 		{
