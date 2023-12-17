@@ -23,7 +23,7 @@ public:
 	// Get data by the string itself:
 	T& operator[]( const char *pString )
 	{
-		CUtlSymbol symbol = m_SymbolTable.AddString( pString, NULL );
+		CUtlSymbol symbol = m_SymbolTable.AddString( pString );
 		int index = ( int )( UtlSymId_t )symbol;
 		if( m_Vector.Count() <= index )
 		{
