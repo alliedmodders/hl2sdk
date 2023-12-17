@@ -3,35 +3,6 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-// https://www.chessprogramming.org/BitScan
-static int BitScanFwd( uint64 bb ) 
-{
-	static const int index64[64] = {
-		0,  47,  1, 56, 48, 27,  2, 60,
-		57, 49, 41, 37, 28, 16,  3, 61,
-		54, 58, 35, 52, 50, 42, 21, 44,
-		38, 32, 29, 23, 17, 11,  4, 62,
-		46, 55, 26, 59, 40, 36, 15, 53,
-		34, 51, 20, 43, 31, 22, 10, 45,
-		25, 39, 14, 33, 19, 30,  9, 24,
-		13, 18,  8, 12,  7,  6,  5, 63
-	};
-
-	const uint64 debruijn64 = 0x03f79d71b4cb0a89ull;
-	Assert( bb != 0 );
-	return index64[ ( ( bb ^ ( bb - 1 ) ) * debruijn64 ) >> 58 ];
-}
-
-// https://www.chessprogramming.org/Population_Count
-static int PopCount( uint64 x )
-{
-	x =  x - ( ( x >> 1 ) & 0x5555555555555555ull );
-    x = ( x & 0x3333333333333333ull ) + ( ( x >> 2 ) & 0x3333333333333333ull );
-    x = ( x + ( x >> 4 ) ) & 0x0f0f0f0f0f0f0f0full;
-    x = ( x * 0x0101010101010101ull ) >> 56;
-    return ( int )x;
-}
-
 KeyValues3::KeyValues3( KV3TypeEx_t type, KV3SubType_t subtype ) : 
 	m_bExternalStorage( true ),
 	m_TypeEx( type ),
@@ -404,7 +375,7 @@ void KeyValues3::SetToBinaryBlobExternal( const byte* blob, int size, bool free_
 	}
 }
 
-Color KeyValues3::GetColor( Color defaultValue ) const
+Color KeyValues3::GetColor( const Color &defaultValue ) const
 {
 	int32 color[4];
 	if ( ReadArrayInt32( 4, color ) )
@@ -1145,12 +1116,17 @@ KeyValues3& KeyValues3::operator=( const KeyValues3& src )
 	return *this;
 }
 
+CKeyValues3Array::CKeyValues3Array( int cluster_elem ) : 
+	m_nClusterElement( cluster_elem ) 
+{
+}
+
 CKeyValues3ArrayCluster* CKeyValues3Array::GetCluster() const
 {
 	if ( m_nClusterElement == -1 )
 		return NULL;
 
-	return GET_OUTER( CKeyValues3ArrayCluster, m_Arrays[ m_nClusterElement ] );
+	return GET_OUTER( CKeyValues3ArrayCluster, m_Elements[ m_nClusterElement ] );
 }
 
 CKeyValues3Context* CKeyValues3Array::GetContext() const
@@ -1250,12 +1226,19 @@ void CKeyValues3Array::Purge( bool bClearingContext )
 	m_Elements.Purge();
 }
 
+CKeyValues3Table::CKeyValues3Table( int cluster_elem ) :
+	m_nClusterElement( cluster_elem ),
+	m_pFastSearch( NULL ),
+	m_bHasBadNames( false ) 
+{
+}
+
 CKeyValues3TableCluster* CKeyValues3Table::GetCluster() const
 {
 	if ( m_nClusterElement == -1 )
 		return NULL;
 
-	return GET_OUTER( CKeyValues3TableCluster, m_Tables[ m_nClusterElement ] );
+	return GET_OUTER( CKeyValues3TableCluster, m_Elements[ m_nClusterElement ] );
 }
 
 CKeyValues3Context* CKeyValues3Table::GetContext() const
@@ -1497,12 +1480,26 @@ void CKeyValues3Table::Purge( bool bClearingContext )
 	m_IsExternalName.Purge();
 }
 
+CKeyValues3Cluster::CKeyValues3Cluster( CKeyValues3Context* context ) : 
+	m_pContext( context ), 
+	m_nAllocatedElements( 0 ),
+	m_pMetaData( NULL ), 
+	m_pNextFree( NULL ) 
+{
+	memset( &m_KeyValues, 0, sizeof( m_KeyValues ) );
+}
+
+CKeyValues3Cluster::~CKeyValues3Cluster() 
+{
+	FreeMetaData();
+}
+
 #include "tier0/memdbgoff.h"
 
 KeyValues3* CKeyValues3Cluster::Alloc( KV3TypeEx_t type, KV3SubType_t subtype )
 {
 	Assert( IsFree() );
-	int element = BitScanFwd( ~m_nAllocatedElements );
+	int element = KV3Helpers::BitScanFwd( ~m_nAllocatedElements );
 	m_nAllocatedElements |= ( 1ull << element );
 	KeyValues3* kv = &m_KeyValues[ element ];
 	new( kv ) KeyValues3( element, type, subtype );
@@ -1583,85 +1580,6 @@ KV3MetaData_t* CKeyValues3Cluster::GetMetaData( int element ) const
 		return NULL;
 
 	return &m_pMetaData->m_elements[ element ];
-}
-
-int CKeyValues3Cluster::NumAllocated() const 
-{ 
-	return PopCount( m_nAllocatedElements ); 
-}
-
-CKeyValues3Array* CKeyValues3ArrayCluster::Alloc()
-{
-	Assert( IsFree() );
-	int element = BitScanFwd( ~m_nAllocatedElements );
-	m_nAllocatedElements |= ( 1ull << element );
-	CKeyValues3Array* arr = &m_Arrays[ element ];
-	Construct( arr, element );
-	return arr;
-}
-
-void CKeyValues3ArrayCluster::Free( int element )
-{
-	Assert( element >= 0 && element < KV3_CLUSTER_MAX_ELEMENTS );
-	CKeyValues3Array* arr = &m_Arrays[ element ];
-	Destruct( arr );
-	memset( (void *)arr, 0, sizeof( CKeyValues3Array ) );
-	m_nAllocatedElements &= ~( 1ull << element );
-}
-
-void CKeyValues3ArrayCluster::Purge()
-{
-	uint64 mask = 1;
-	for ( int i = 0; i < KV3_CLUSTER_MAX_ELEMENTS; ++i )
-	{
-		if ( ( m_nAllocatedElements & mask ) != 0 )
-			m_Arrays[ i ].Purge( true );
-		mask <<= 1;
-	}
-
-	m_nAllocatedElements = 0;
-}
-
-int CKeyValues3ArrayCluster::NumAllocated() const 
-{ 
-	return PopCount( m_nAllocatedElements ); 
-}
-
-CKeyValues3Table* CKeyValues3TableCluster::Alloc()
-{
-	Assert( IsFree() );
-	int element = BitScanFwd( ~m_nAllocatedElements );
-	m_nAllocatedElements |= ( 1ull << element );
-	CKeyValues3Table* table = &m_Tables[ element ];
-	Construct( table, element );
-	return table;
-}
-
-void CKeyValues3TableCluster::Free( int element )
-{
-	Assert( element >= 0 && element < KV3_CLUSTER_MAX_ELEMENTS );
-	CKeyValues3Table* table = &m_Tables[ element ];
-	Destruct( table );
-	memset( (void *)table, 0, sizeof( CKeyValues3Table ) );
-	m_nAllocatedElements &= ~( 1ull << element );
-}
-
-void CKeyValues3TableCluster::Purge()
-{
-	uint64 mask = 1;
-	for ( int i = 0; i < KV3_CLUSTER_MAX_ELEMENTS; ++i )
-	{
-		if ( ( m_nAllocatedElements & mask ) != 0 )
-			m_Tables[ i ].Purge( true );
-		mask <<= 1;
-	}
-
-	m_nAllocatedElements = 0;
-}
-
-int CKeyValues3TableCluster::NumAllocated() const 
-{ 
-	return PopCount( m_nAllocatedElements ); 
 }
 
 CKeyValues3ContextBase::CKeyValues3ContextBase( CKeyValues3Context* context ) : 	

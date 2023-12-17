@@ -50,7 +50,6 @@ abstract_class IEntityKeyComplex
 {
 public:
 	IEntityKeyComplex() : m_nRefCount( 0 ) {}
-	~IEntityKeyComplex() {}
 
 	void AddRef() { ++m_nRefCount; }
 	void Release() { if ( --m_nRefCount == 0 ) DeleteThis(); }
@@ -67,7 +66,6 @@ class CEntityKeyComplex : public IEntityKeyComplex
 {
 public:
 	CEntityKeyComplex( const T& obj ) : m_Object( obj ) {}
-	~CEntityKeyComplex() {}
 
 private:
 	virtual void DeleteThis() { delete this; }
@@ -146,13 +144,13 @@ public:
 	void*			GetPtr( const EntityKeyId_t &id, void *defaultValue = ( void* )0 ) const;
 	CUtlStringToken	GetStringToken( const EntityKeyId_t &id, CUtlStringToken defaultValue = CUtlStringToken() ) const;
 	CEntityHandle	GetEHandle( const EntityKeyId_t &id, WorldGroupId_t worldGroupId = WorldGroupId_t(), CEntityHandle defaultValue = CEntityHandle() ) const;
-	Color			GetColor( const EntityKeyId_t &id, Color defaultValue = Color( 0, 0, 0, 255 ) ) const;
-	Vector			GetVector( const EntityKeyId_t &id, Vector defaultValue = Vector( 0.0f, 0.0f, 0.0f ) ) const;
-	Vector2D		GetVector2D( const EntityKeyId_t &id, Vector2D defaultValue = Vector2D( 0.0f, 0.0f ) ) const;
-	Vector4D		GetVector4D( const EntityKeyId_t &id, Vector4D defaultValue = Vector4D( 0.0f, 0.0f, 0.0f, 0.0f ) ) const;
-	Quaternion		GetQuaternion( const EntityKeyId_t &id, Quaternion defaultValue = Quaternion( 0.0f, 0.0f, 0.0f, 0.0f ) ) const;
-	QAngle			GetQAngle( const EntityKeyId_t &id, QAngle defaultValue = QAngle( 0.0f, 0.0f, 0.0f ) ) const;
-	matrix3x4_t		GetMatrix3x4( const EntityKeyId_t &id, matrix3x4_t defaultValue = matrix3x4_t( Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 0.0f ) ) ) const;
+	Color			GetColor( const EntityKeyId_t &id, const Color &defaultValue = Color( 0, 0, 0, 255 ) ) const;
+	Vector			GetVector( const EntityKeyId_t &id, const Vector &defaultValue = Vector( 0.0f, 0.0f, 0.0f ) ) const;
+	Vector2D		GetVector2D( const EntityKeyId_t &id, const Vector2D &defaultValue = Vector2D( 0.0f, 0.0f ) ) const;
+	Vector4D		GetVector4D( const EntityKeyId_t &id, const Vector4D &defaultValue = Vector4D( 0.0f, 0.0f, 0.0f, 0.0f ) ) const;
+	Quaternion		GetQuaternion( const EntityKeyId_t &id, const Quaternion &defaultValue = Quaternion( 0.0f, 0.0f, 0.0f, 0.0f ) ) const;
+	QAngle			GetQAngle( const EntityKeyId_t &id, const QAngle &defaultValue = QAngle( 0.0f, 0.0f, 0.0f ) ) const;
+	matrix3x4_t		GetMatrix3x4( const EntityKeyId_t &id, const matrix3x4_t &defaultValue = matrix3x4_t( Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 0.0f ) ) ) const;
 
 	void SetBool( const EntityKeyId_t &id, bool value, bool bAsAttribute = false );
 	void SetInt( const EntityKeyId_t &id, int value, bool bAsAttribute = false );
@@ -163,8 +161,8 @@ public:
 	void SetDouble( const EntityKeyId_t &id, double value, bool bAsAttribute = false );
 	void SetString( const EntityKeyId_t &id, const char* string, bool bAsAttribute = false );
 	void SetPtr( const EntityKeyId_t &id, void* ptr, bool bAsAttribute = false );
-	void SetStringToken( const EntityKeyId_t &id, const CUtlStringToken &token, bool bAsAttribute = false );
-	void SetEHandle( const EntityKeyId_t &id, const CEntityHandle &ehandle, bool bAsAttribute = false );
+	void SetStringToken( const EntityKeyId_t &id, CUtlStringToken token, bool bAsAttribute = false );
+	void SetEHandle( const EntityKeyId_t &id, CEntityHandle ehandle, bool bAsAttribute = false );
 	void SetColor( const EntityKeyId_t &id, const Color &color, bool bAsAttribute = false );
 	void SetVector( const EntityKeyId_t &id, const Vector &vec, bool bAsAttribute = false );
 	void SetVector2D( const EntityKeyId_t &id, const Vector2D &vec2d, bool bAsAttribute = false );
@@ -189,7 +187,6 @@ private:
 	struct EntityComplexKeyListElem_t 
 	{
 		EntityComplexKeyListElem_t( IEntityKeyComplex* pKey, EntityComplexKeyListElem_t* pNext ) : m_pKey( pKey ), m_pNext( pNext ) {}
-		~EntityComplexKeyListElem_t() {}
 
 		IEntityKeyComplex* m_pKey;
 		EntityComplexKeyListElem_t* m_pNext;
@@ -324,7 +321,7 @@ inline double CEntityKeyValues::GetDouble( const EntityKeyId_t &id, double defau
 inline const char* CEntityKeyValues::GetString( const EntityKeyId_t &id, const char *defaultValue ) const
 {
 	const KeyValues3* kv = GetKeyValue( id );
-	return ( kv && kv->GetType() == KV3_TYPE_STRING ) ? kv->GetString( defaultValue ) : defaultValue;
+	return kv ? kv->GetString( defaultValue ) : defaultValue;
 }
 
 inline void* CEntityKeyValues::GetPtr( const EntityKeyId_t &id, void *defaultValue ) const
@@ -339,43 +336,43 @@ inline CUtlStringToken CEntityKeyValues::GetStringToken( const EntityKeyId_t &id
 	return kv ? kv->GetStringToken( defaultValue ) : defaultValue;
 }
 
-inline Color CEntityKeyValues::GetColor( const EntityKeyId_t &id, Color defaultValue ) const
+inline Color CEntityKeyValues::GetColor( const EntityKeyId_t &id, const Color &defaultValue ) const
 {
 	const KeyValues3* kv = GetKeyValue( id );
 	return kv ? kv->GetColor( defaultValue ) : defaultValue;
 }
 
-inline Vector CEntityKeyValues::GetVector( const EntityKeyId_t &id, Vector defaultValue ) const
+inline Vector CEntityKeyValues::GetVector( const EntityKeyId_t &id, const Vector &defaultValue ) const
 {
 	const KeyValues3* kv = GetKeyValue( id );
 	return kv ? kv->GetVector( defaultValue ) : defaultValue;
 }
 
-inline Vector2D CEntityKeyValues::GetVector2D( const EntityKeyId_t &id, Vector2D defaultValue ) const
+inline Vector2D CEntityKeyValues::GetVector2D( const EntityKeyId_t &id, const Vector2D &defaultValue ) const
 {
 	const KeyValues3* kv = GetKeyValue( id );
 	return kv ? kv->GetVector2D( defaultValue ) : defaultValue;
 }
 
-inline Vector4D CEntityKeyValues::GetVector4D( const EntityKeyId_t &id, Vector4D defaultValue ) const
+inline Vector4D CEntityKeyValues::GetVector4D( const EntityKeyId_t &id, const Vector4D &defaultValue ) const
 {
 	const KeyValues3* kv = GetKeyValue( id );
 	return kv ? kv->GetVector4D( defaultValue ) : defaultValue;
 }
 
-inline Quaternion CEntityKeyValues::GetQuaternion( const EntityKeyId_t &id, Quaternion defaultValue ) const
+inline Quaternion CEntityKeyValues::GetQuaternion( const EntityKeyId_t &id, const Quaternion &defaultValue ) const
 {
 	const KeyValues3* kv = GetKeyValue( id );
 	return kv ? kv->GetQuaternion( defaultValue ) : defaultValue;
 }
 
-inline QAngle CEntityKeyValues::GetQAngle( const EntityKeyId_t &id, QAngle defaultValue ) const
+inline QAngle CEntityKeyValues::GetQAngle( const EntityKeyId_t &id, const QAngle &defaultValue ) const
 {
 	const KeyValues3* kv = GetKeyValue( id );
 	return kv ? kv->GetQAngle( defaultValue ) : defaultValue;
 }
 
-inline matrix3x4_t CEntityKeyValues::GetMatrix3x4( const EntityKeyId_t &id, matrix3x4_t defaultValue ) const
+inline matrix3x4_t CEntityKeyValues::GetMatrix3x4( const EntityKeyId_t &id, const matrix3x4_t &defaultValue ) const
 {
 	const KeyValues3* kv = GetKeyValue( id );
 	return kv ? kv->GetMatrix3x4( defaultValue ) : defaultValue;
@@ -435,13 +432,13 @@ inline void CEntityKeyValues::SetPtr( const EntityKeyId_t &id, void* ptr, bool b
 	if ( kv ) kv->SetPointer( ptr );
 }
 
-inline void CEntityKeyValues::SetStringToken( const EntityKeyId_t &id, const CUtlStringToken &token, bool bAsAttribute )
+inline void CEntityKeyValues::SetStringToken( const EntityKeyId_t &id, CUtlStringToken token, bool bAsAttribute )
 {
 	KeyValues3* kv = SetKeyValue( id, bAsAttribute ? id.GetString() : NULL );
 	if ( kv ) kv->SetStringToken( token );
 }
 
-inline void CEntityKeyValues::SetEHandle( const EntityKeyId_t &id, const CEntityHandle &ehandle, bool bAsAttribute )
+inline void CEntityKeyValues::SetEHandle( const EntityKeyId_t &id, CEntityHandle ehandle, bool bAsAttribute )
 {
 	KeyValues3* kv = SetKeyValue( id, bAsAttribute ? id.GetString() : NULL );
 	if ( kv ) kv->SetEHandle( ehandle );
