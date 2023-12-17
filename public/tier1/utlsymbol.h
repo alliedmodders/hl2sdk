@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: Defines a symbol table
 //
@@ -102,7 +102,7 @@ public:
 	~CUtlSymbolTable();
 	
 	// Finds and/or creates a symbol based on the string
-	CUtlSymbol AddString( const char* pString );
+	CUtlSymbol AddString( const char* pString, bool* created = NULL );
 
 	// Finds the symbol for pString
 	CUtlSymbol Find( const char* pString ) const;
@@ -174,7 +174,7 @@ protected:
 
 	// stores the string data
 	CUtlVector<StringPool_t*> m_StringPools;
-
+	uint8 unknown[56];
 private:
 	int FindPoolWithSpace( int len ) const;
 	const char* StringFromIndex( const CStringPoolIndex &index ) const;
@@ -193,10 +193,10 @@ public:
 	{
 	}
 
-	CUtlSymbol AddString( const char* pString )
+	CUtlSymbol AddString( const char* pString, bool* created = NULL )
 	{
 		m_lock.LockForWrite();
-		CUtlSymbol result = CUtlSymbolTable::AddString( pString );
+		CUtlSymbol result = CUtlSymbolTable::AddString( pString, created );
 		m_lock.UnlockWrite();
 		return result;
 	}
