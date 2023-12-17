@@ -342,7 +342,6 @@
     <ClCompile Include="tier1.cpp" />
     <ClCompile Include="uniqueid.cpp" />
     <ClCompile Include="utlbufferutil.cpp" />
-    <ClCompile Include="utlsymbol.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\tier1\bitbuf.h" />
