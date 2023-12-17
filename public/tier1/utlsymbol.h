@@ -102,7 +102,7 @@ public:
 	~CUtlSymbolTable();
 	
 	// Finds and/or creates a symbol based on the string
-	CUtlSymbol AddString( const char* pString, bool* created );
+	CUtlSymbol AddString( const char* pString, bool* created = NULL );
 
 	// Finds the symbol for pString
 	CUtlSymbol Find( const char* pString ) const;
@@ -193,7 +193,7 @@ public:
 	{
 	}
 
-	CUtlSymbol AddString( const char* pString, bool* created )
+	CUtlSymbol AddString( const char* pString, bool* created = NULL )
 	{
 		m_lock.LockForWrite();
 		CUtlSymbol result = CUtlSymbolTable::AddString( pString, created );

@@ -142,8 +142,8 @@ public:
 	~CUtlSymbolTableLargeBase() { }
 
 	// Finds and/or creates a symbol based on the string
-	CUtlSymbolLarge AddString( const char* pString, bool* created );
-	CUtlSymbolLarge AddString( const char* pString, int nLength, bool* created );
+	CUtlSymbolLarge AddString( const char* pString, bool* created = NULL );
+	CUtlSymbolLarge AddString( const char* pString, int nLength, bool* created = NULL );
 
 	// Finds the symbol for pString
 	CUtlSymbolLarge Find( const char* pString ) const;
