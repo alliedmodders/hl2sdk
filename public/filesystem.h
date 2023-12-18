@@ -559,7 +559,7 @@ public:
 	virtual bool			IsOk( FileHandle_t file ) = 0;
 
 	virtual bool			EndOfFile( FileHandle_t file ) = 0;
-#ifdef _WIN32
+#ifdef PLATFORM_WINDOWS
 	virtual CUtlString		ReadLine(FileHandle_t file, bool bStripNewline = true) = 0;
 #endif
 	virtual char			*ReadLine( char *pOutput, int maxChars, FileHandle_t file ) = 0;
