@@ -559,9 +559,7 @@ public:
 	virtual bool			IsOk( FileHandle_t file ) = 0;
 
 	virtual bool			EndOfFile( FileHandle_t file ) = 0;
-#ifdef PLATFORM_WINDOWS
-	virtual CUtlString		ReadLine(FileHandle_t file, bool bStripNewline = true) = 0;
-#endif
+	
 	virtual char			*ReadLine( char *pOutput, int maxChars, FileHandle_t file ) = 0;
 
 	virtual int				FPrintf( FileHandle_t file, const char *pFormat, ... ) FMTFUNCTION( 3, 4 ) = 0;
@@ -772,6 +770,8 @@ public:
 	virtual bool			IsPathInvalidForFilesystem( const char *pFileName ) = 0;
 	
 	virtual void			GetAvailableDrives( CUtlVector<CUtlString> &drives ) = 0;
+
+	virtual CUtlString		ReadLine( FileHandle_t file, bool bStripNewline = true ) = 0;
 
 	virtual void			GetSearchPathsForPathID( const char*, GetSearchPathTypes_t, CUtlVector<CUtlString> & ) = 0;
 
