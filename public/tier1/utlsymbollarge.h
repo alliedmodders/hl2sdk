@@ -130,8 +130,8 @@ public:
 	~CUtlSymbolTableLargeBase() { }
 
 	// Finds and/or creates a symbol based on the string
-	CUtlSymbolLarge AddString( const char* pString );
-	CUtlSymbolLarge AddString( const char* pString, int nLength );
+	CUtlSymbolLarge AddString( const char* pString, bool* created = NULL );
+	CUtlSymbolLarge AddString( const char* pString, int nLength, bool* created = NULL );
 
 	// Finds the symbol for pString
 	CUtlSymbolLarge Find( const char* pString ) const;
@@ -319,7 +319,7 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 }
 
 template < bool CASEINSENSITIVE, size_t PAGE_SIZE, class MUTEX_TYPE >
-inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUTEX_TYPE >::AddString( const char* pString, int nLength )
+inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUTEX_TYPE >::AddString( const char* pString, int nLength, bool* created )
 {	
 	CUtlSymbolLarge sym;
 
@@ -341,9 +341,9 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 }
 
 template < bool CASEINSENSITIVE, size_t PAGE_SIZE, class MUTEX_TYPE >
-inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUTEX_TYPE >::AddString( const char* pString )
+inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUTEX_TYPE >::AddString( const char* pString, bool* created )
 {	
-	return AddString( pString, pString ? strlen( pString ) : 0 );
+	return AddString( pString, pString ? strlen( pString ) : 0, created );
 }
 
 template < bool CASEINSENSITIVE, size_t PAGE_SIZE, class MUTEX_TYPE >

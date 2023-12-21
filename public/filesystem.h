@@ -37,7 +37,11 @@ class ILowLevelFileIO;
 class CSteamID;
 
 typedef void * FileHandle_t;
-typedef int FileFindHandle_t;
+struct FileFindHandle_t
+{
+	IFileSystem *m_pFileSystem;
+	intp m_nFindDataIndex;
+};
 typedef void (*FileSystemLoggingFunc_t)( const char *fileName, const char *accessType );
 typedef int WaitForResourcesHandle_t;
 
@@ -555,8 +559,9 @@ public:
 	virtual bool			IsOk( FileHandle_t file ) = 0;
 
 	virtual bool			EndOfFile( FileHandle_t file ) = 0;
-
-	virtual const char		*ReadLine(FileHandle_t file, bool bStripNewline = true) = 0;
+#ifdef PLATFORM_WINDOWS
+	virtual CUtlString		ReadLine(FileHandle_t file, bool bStripNewline = true) = 0;
+#endif
 	virtual char			*ReadLine( char *pOutput, int maxChars, FileHandle_t file ) = 0;
 
 	virtual int				FPrintf( FileHandle_t file, const char *pFormat, ... ) FMTFUNCTION( 3, 4 ) = 0;
@@ -575,9 +580,9 @@ public:
 
 	// FindFirst/FindNext. Also see FindFirstEx.
 	virtual const char		*FindFirst( const char *pWildCard, FileFindHandle_t *pHandle ) = 0;
-	virtual const char		*FindNext( FileFindHandle_t handle ) = 0;
-	virtual bool			FindIsDirectory( FileFindHandle_t handle ) = 0;
-	virtual void			FindClose( FileFindHandle_t handle ) = 0;
+	virtual const char		*FindNext( FileFindHandle_t &handle ) = 0;
+	virtual bool			FindIsDirectory( FileFindHandle_t &handle ) = 0;
+	virtual void			FindClose( FileFindHandle_t &handle ) = 0;
 
 	// Same as FindFirst, but you can filter by path ID, which can make it faster.
 	virtual const char		*FindFirstEx( const char *pWildCard, const char *pPathID, FileFindHandle_t *pHandle ) = 0;

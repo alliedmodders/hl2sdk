@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -55,9 +55,9 @@ public:
 		return m_SymbolTable.Find( pString );
 	}
 
-	UtlSymId_t AddString( const char *pString )
+	UtlSymId_t AddString( const char *pString, bool* created = NULL )
 	{
-		CUtlSymbol symbol = m_SymbolTable.AddString( pString );
+		CUtlSymbol symbol = m_SymbolTable.AddString( pString, created );
 		int index = ( int )( UtlSymId_t )symbol;
 		if( m_Vector.Count() <= index )
 		{
