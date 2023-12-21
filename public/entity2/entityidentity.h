@@ -9,7 +9,8 @@
 #define MAX_ENTITY_LISTS 64 // 0x3F
 #define MAX_TOTAL_ENTITIES MAX_ENTITIES_IN_LIST * MAX_ENTITY_LISTS // 0x8000
 
-#include "eiface.h"
+#include "tier1/utlstring.h"
+#include "tier1/utlsymbollarge.h"
 #include "entitycomponent.h"
 #include "entityhandle.h"
 
@@ -83,6 +84,8 @@ public:
 	{
 		return m_EHandle.GetEntryIndex();
 	}
+
+	bool NameMatches( const char* szName ) const;
 
 public:
 	CEntityInstance* m_pInstance; // 0x0

@@ -59,7 +59,7 @@ private:
 	static CUtlScratchMemoryPool *sm_pMemoryPool;
 };
 
-inline const char *VariantFieldTypeName(int16 eType)
+inline const char *VariantFieldTypeName(fieldtype_t eType)
 {
 	switch(eType)
 	{
@@ -796,7 +796,7 @@ public:
 	template <typename T>
 	bool AssignTo(T *pDest)
 	{
-		int16 destType = VariantDeduceType(T);
+		fieldtype_t destType = VariantDeduceType(T);
 		if(destType == FIELD_VOID)
 		{
 			return false;
@@ -969,8 +969,7 @@ public:
 		ResourceHandle_t m_hResource;
 	};
 
-	// fieldtype_t
-	int16 m_type;
+	fieldtype_t m_type;
 
 	// CVFlags_t flags
 	uint16 m_flags;

@@ -1,4 +1,3 @@
-#include "entity2/entitysystem.h"
 #include "entity2/entitykeyvalues.h"
 #include "tier0/logging.h"
 
@@ -24,7 +23,7 @@ CEntityKeyValues::CEntityKeyValues( CKeyValues3Context* allocator, EntityKVAlloc
 	}
 	else
 	{
-		if ( !GameEntitySystem() && ( m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM1 || m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM2 ) )
+		if ( !GameEntitySystem() && ( m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM_1 || m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM_2 ) )
 			m_eAllocatorType = EKV_ALLOCATOR_NORMAL;
 
 		m_pAllocator = NULL;
@@ -56,7 +55,7 @@ void CEntityKeyValues::ValidateAllocator()
 {
 	if ( !m_pAllocator )
 	{
-		if ( m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM1 || m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM2 )
+		if ( m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM_1 || m_eAllocatorType == EKV_ALLOCATOR_ENTSYSTEM_2 )
 		{
 			Assert( GameEntitySystem() );
 			m_pAllocator = GameEntitySystem()->GetEntityKeyValuesAllocator();
@@ -320,11 +319,9 @@ CEntityHandle CEntityKeyValues::GetEHandle( const EntityKeyId_t &id, WorldGroupI
 	{
 		case KV3_TYPE_UINT:
 			return kv->GetEHandle( defaultValue );
-#if 0
 		case KV3_TYPE_STRING:
 			Assert( GameEntitySystem() );
 			return GameEntitySystem()->FindFirstEntityHandleByName( kv->GetString(), worldGroupId );
-#endif
 		default:
 			return defaultValue;
 	}

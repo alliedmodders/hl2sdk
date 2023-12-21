@@ -4,8 +4,10 @@
 #pragma once
 #endif
 
-#include "entity2/entityidentity.h"
+#include "tier0/platform.h"
 #include "tier1/keyvalues3.h"
+#include "tier1/utlleanvector.h"
+#include "entity2/entitysystem.h"
 
 #include "tier0/memdbgon.h"
 
@@ -17,22 +19,9 @@ typedef CKV3MemberName EntityKeyId_t;
 enum EntityKVAllocatorType_t : uint8
 {
 	EKV_ALLOCATOR_NORMAL = 0,
-	EKV_ALLOCATOR_ENTSYSTEM1 = 1,
-	EKV_ALLOCATOR_ENTSYSTEM2 = 2,
+	EKV_ALLOCATOR_ENTSYSTEM_1 = 1,
+	EKV_ALLOCATOR_ENTSYSTEM_2 = 2,
 	EKV_ALLOCATOR_EXTERNAL = 3,
-};
-
-enum EntityIOTargetType_t
-{
-	ENTITY_IO_TARGET_INVALID = -1,
-	ENTITY_IO_TARGET_CLASSNAME = 0,
-	ENTITY_IO_TARGET_CLASSNAME_DERIVES_FROM = 1,
-	ENTITY_IO_TARGET_ENTITYNAME = 2,
-	ENTITY_IO_TARGET_CONTAINS_COMPONENT = 3,
-	ENTITY_IO_TARGET_SPECIAL_ACTIVATOR = 4,
-	ENTITY_IO_TARGET_SPECIAL_CALLER = 5,
-	ENTITY_IO_TARGET_EHANDLE = 6,
-	ENTITY_IO_TARGET_ENTITYNAME_OR_CLASSNAME = 7,
 };
 
 struct EntityIOConnectionDescFat_t

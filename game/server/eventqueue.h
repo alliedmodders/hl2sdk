@@ -14,6 +14,9 @@
 #pragma once
 #endif
 
+#include "entity2/entitysystem.h"
+
+#if 0
 #include "mempool.h"
 
 struct EventQueuePrioritizedEvent_t
@@ -78,6 +81,7 @@ private:
 
 extern CEventQueue g_EventQueue;
 
+#endif
 
 #endif // EVENTQUEUE_H
 
