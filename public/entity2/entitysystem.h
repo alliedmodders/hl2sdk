@@ -389,8 +389,9 @@ public:
 	virtual bool ShouldFindEntity(CEntityInstance* pEnt) = 0;
 };
 
-struct EntityInstanceIter_t
+class EntityInstanceIter_t
 {
+public:
 	EntityInstanceIter_t(IEntityFindFilter* pFilter = nullptr, EntityIterType_t eIterType = ENTITY_ITER_OVER_ACTIVE);
 
 	CEntityInstance* First();
@@ -398,14 +399,16 @@ struct EntityInstanceIter_t
 
 	inline void SetWorldGroupId(WorldGroupId_t hWorldGroupId) { m_hWorldGroupId = hWorldGroupId; }
 
+private:
 	CEntityIdentity*	m_pCurrentEnt;
 	IEntityFindFilter*	m_pFilter;
 	EntityIterType_t	m_eIterType;
 	WorldGroupId_t		m_hWorldGroupId;
 };
 
-struct EntityInstanceByNameIter_t
+class EntityInstanceByNameIter_t
 {
+public:
 	EntityInstanceByNameIter_t(const char* szName, CEntityInstance* pSearchingEntity = nullptr, CEntityInstance* pActivator = nullptr, CEntityInstance* pCaller = nullptr, IEntityFindFilter* pFilter = nullptr, EntityIterType_t eIterType = ENTITY_ITER_OVER_ACTIVE);
 
 	CEntityInstance* First();
@@ -413,6 +416,7 @@ struct EntityInstanceByNameIter_t
 
 	inline void SetWorldGroupId(WorldGroupId_t hWorldGroupId) { m_hWorldGroupId = hWorldGroupId; }
 
+private:
 	CEntityIdentity*			m_pCurrentEnt;
 	IEntityFindFilter*			m_pFilter;
 	EntityIterType_t			m_eIterType;
@@ -424,8 +428,9 @@ struct EntityInstanceByNameIter_t
 	CEntityInstance*			m_pProceduralEnt;
 };
 
-struct EntityInstanceByClassIter_t
+class EntityInstanceByClassIter_t
 {
+public:
 	EntityInstanceByClassIter_t(const char* szClassName, IEntityFindFilter* pFilter = nullptr, EntityIterType_t eIterType = ENTITY_ITER_OVER_ACTIVE);
 
 	CEntityInstance* First();
@@ -433,6 +438,7 @@ struct EntityInstanceByClassIter_t
 
 	inline void SetWorldGroupId(WorldGroupId_t hWorldGroupId) { m_hWorldGroupId = hWorldGroupId; }
 
+private:
 	CEntityIdentity*	m_pCurrentEnt;
 	IEntityFindFilter*	m_pFilter;
 	EntityIterType_t	m_eIterType;

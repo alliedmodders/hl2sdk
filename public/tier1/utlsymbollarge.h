@@ -142,7 +142,7 @@ public:
 	void Purge();
 	
 private:
-	CUtlSymbolLarge AddString( unsigned int hash, const char* pString, int nLength );
+	CUtlSymbolLarge AddString( unsigned int hash, const char* pString, int nLength, bool* created );
 	CUtlSymbolLarge Find( unsigned int hash, const char* pString, int nLength ) const;
 
 	const char*		String( UtlSymLargeId_t id ) const;
@@ -249,7 +249,7 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 }
 
 template < bool CASEINSENSITIVE, size_t PAGE_SIZE, class MUTEX_TYPE >
-inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUTEX_TYPE >::AddString( unsigned int hash, const char* pString, int nLength )
+inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUTEX_TYPE >::AddString( unsigned int hash, const char* pString, int nLength, bool* created )
 {	
 	if ( m_MemBlocks.Count() >= m_nElementLimit )
 	{
@@ -260,7 +260,12 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 		}
 
 		Warning( "ERROR: CUtlSymbolTableLarge element limit of %u exceeded\n", m_nElementLimit );
+
+		return CUtlSymbolLarge();
 	}
+
+	if ( created )
+		*created = true;
 
 	MemBlockHandle_t block = m_MemBlockAllocator.Alloc( nLength + sizeof( LargeSymbolTableHashDecoration_t ) + 1 );
 
@@ -321,6 +326,9 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 template < bool CASEINSENSITIVE, size_t PAGE_SIZE, class MUTEX_TYPE >
 inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUTEX_TYPE >::AddString( const char* pString, int nLength, bool* created )
 {	
+	if ( created )
+		*created = false;
+
 	CUtlSymbolLarge sym;
 
 	if ( pString && nLength > 0 && *pString )
@@ -332,7 +340,7 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 		sym = Find( hash, pString, nLength );
 
 		if ( !sym.IsValid() )
-			sym = AddString( hash, pString, nLength );
+			sym = AddString( hash, pString, nLength, created );
 
 		m_Mutex.Unlock( __FILE__, __LINE__ );
 	}
