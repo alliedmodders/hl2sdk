@@ -9,3 +9,8 @@ bool CEntityIdentity::NameMatches( const char* szName ) const
 
 	return V_CompareNameWithWildcards( szName, m_name.String() ) == 0;
 }
+
+bool CEntityIdentity::ClassMatches( const char* szClassName ) const
+{
+	return V_CompareNameWithWildcards( szClassName, m_designerName.String() ) == 0;
+}

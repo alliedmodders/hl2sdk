@@ -421,4 +421,21 @@ struct EntityInstanceByNameIter_t
 	CEntityInstance*			m_pProceduralEnt;
 };
 
+struct EntityInstanceByClassIter_t
+{
+	EntityInstanceByClassIter_t(const char* szClassName, IEntityFindFilter* pFilter = nullptr, EntityIterType_t eIterType = ENTITY_ITER_OVER_ACTIVE);
+
+	CEntityInstance* First();
+	CEntityInstance* Next();
+
+	inline void SetWorldGroupId(WorldGroupId_t hWorldGroupId) { m_hWorldGroupId = hWorldGroupId; }
+
+	CEntityIdentity*	m_pCurrentEnt;
+	IEntityFindFilter*	m_pFilter;
+	EntityIterType_t	m_eIterType;
+	WorldGroupId_t		m_hWorldGroupId;
+	const char*			m_pszClassName;
+	CEntityClass*		m_pEntityClass;
+};
+
 #endif // ENTITYSYSTEM_H

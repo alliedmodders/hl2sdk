@@ -1,5 +1,6 @@
 #include "const.h"
 #include "entity2/entitysystem.h"
+#include "entity2/entityclass.h"
 
 CEntityIdentity* CEntitySystem::GetEntityIdentity(CEntityIndex entnum)
 {
@@ -241,6 +242,97 @@ CEntityInstance* EntityInstanceByNameIter_t::Next()
 				continue;
 
 			if (!m_pCurrentEnt->NameMatches(m_pszEntityName))
+				continue;
+
+			if (m_pFilter && !m_pFilter->ShouldFindEntity(m_pCurrentEnt->m_pInstance))
+				continue;
+
+			if (m_hWorldGroupId != WorldGroupId_t() && m_hWorldGroupId != m_pCurrentEnt->m_worldGroupId)
+				continue;
+
+			break;
+		}
+	}
+
+	if (m_pCurrentEnt)
+		return m_pCurrentEnt->m_pInstance;
+
+	return nullptr;
+}
+
+EntityInstanceByClassIter_t::EntityInstanceByClassIter_t(const char* szClassName, IEntityFindFilter* pFilter, EntityIterType_t eIterType)
+{
+	m_pCurrentEnt = nullptr;
+	m_pFilter = pFilter;
+	m_eIterType = eIterType;
+	m_hWorldGroupId = WorldGroupId_t();
+
+	if (strchr(szClassName, '*') || eIterType == ENTITY_ITER_OVER_DORMANTS)
+	{
+		m_pszClassName = szClassName;
+		m_pEntityClass = nullptr;
+	}
+	else
+	{
+		unsigned short idx = GameEntitySystem()->m_entClassesByClassname.Find(szClassName);
+		if (idx == GameEntitySystem()->m_entClassesByClassname.InvalidIndex())
+		{
+			m_pszClassName = szClassName;
+			m_pEntityClass = nullptr;
+		}
+		else
+		{
+			m_pszClassName = nullptr;
+			m_pEntityClass = GameEntitySystem()->m_entClassesByClassname[ idx ];
+		}
+	}
+}
+
+CEntityInstance* EntityInstanceByClassIter_t::First()
+{
+	m_pCurrentEnt = nullptr;
+	return Next();
+}
+
+CEntityInstance* EntityInstanceByClassIter_t::Next()
+{
+	if (m_pEntityClass)
+	{
+		if (m_pCurrentEnt)
+			m_pCurrentEnt = m_pCurrentEnt->m_pNextByClass;
+		else
+			m_pCurrentEnt = m_pEntityClass->m_pFirstEntity;
+
+		for (; m_pCurrentEnt != nullptr; m_pCurrentEnt = m_pCurrentEnt->m_pNextByClass)
+		{
+			if ((m_pCurrentEnt->m_flags & EF_MARKED_FOR_DELETE) != 0)
+				continue;
+
+			if (m_pFilter && !m_pFilter->ShouldFindEntity(m_pCurrentEnt->m_pInstance))
+				continue;
+
+			if (m_hWorldGroupId != WorldGroupId_t() && m_hWorldGroupId != m_pCurrentEnt->m_worldGroupId)
+				continue;
+
+			break;
+		}
+	}
+	else if (m_pszClassName)
+	{
+		if (m_pCurrentEnt)
+			m_pCurrentEnt = m_pCurrentEnt->m_pNext;
+		else
+			m_pCurrentEnt = (m_eIterType == ENTITY_ITER_OVER_ACTIVE) ? GameEntitySystem()->m_EntityList.m_pFirstActiveEntity : GameEntitySystem()->m_EntityList.m_dormantList.m_pHead;
+
+		for (; m_pCurrentEnt != nullptr; m_pCurrentEnt = m_pCurrentEnt->m_pNext)
+		{
+			if ((m_pCurrentEnt->m_flags & EF_MARKED_FOR_DELETE) != 0)
+				continue;
+
+			if (!m_pCurrentEnt->m_designerName.IsValid())
+				continue;
+
+			if (!m_pCurrentEnt->ClassMatches(m_pszClassName))
 				continue;
 
 			if (m_pFilter && !m_pFilter->ShouldFindEntity(m_pCurrentEnt->m_pInstance))

@@ -14,6 +14,7 @@
 #include "entitycomponent.h"
 #include "entityhandle.h"
 
+class CEntityClass;
 class CEntityInstance;
 
 struct ChangeAccessorFieldPathIndex_t
@@ -86,11 +87,12 @@ public:
 	}
 
 	bool NameMatches( const char* szName ) const;
+	bool ClassMatches( const char* szClassName ) const;
 
 public:
 	CEntityInstance* m_pInstance; // 0x0
 private:
-	void* m_pClass; // 0x8 - CEntityClass
+	CEntityClass* m_pClass; // 0x8
 public:
 	CEntityHandle m_EHandle; // 0x10
 	int32 m_nameStringableIndex; // 0x14	
