@@ -40,6 +40,36 @@ CEntityIdentity* CEntitySystem::GetEntityIdentity(const CEntityHandle& hEnt)
 	return pIdentity;
 }
 
+CEntityClass* CEntitySystem::FindClassByName(const char* szClassName)
+{
+	if (!szClassName || !*szClassName)
+		return nullptr;
+
+	unsigned short idx = m_entClassesByCPPClassname.Find(szClassName);
+	if (idx == m_entClassesByCPPClassname.InvalidIndex())
+	{
+		// vscript stuff is skipped here
+		return nullptr;
+	}
+
+	return m_entClassesByCPPClassname[ idx ];
+}
+
+CEntityClass* CEntitySystem::FindClassByDesignName(const char* szClassName)
+{
+	if (!szClassName || !*szClassName)
+		return nullptr;
+
+	unsigned short idx = m_entClassesByClassname.Find(szClassName);
+	if (idx == m_entClassesByClassname.InvalidIndex())
+	{
+		// vscript stuff is skipped here
+		return nullptr;
+	}
+
+	return m_entClassesByClassname[ idx ];
+}
+
 CEntityHandle CEntitySystem::FindFirstEntityHandleByName(const char* szName, WorldGroupId_t hWorldGroupId)
 {
 	if (!szName || !*szName)
@@ -274,17 +304,12 @@ EntityInstanceByClassIter_t::EntityInstanceByClassIter_t(const char* szClassName
 	}
 	else
 	{
-		unsigned short idx = GameEntitySystem()->m_entClassesByClassname.Find(szClassName);
-		if (idx == GameEntitySystem()->m_entClassesByClassname.InvalidIndex())
-		{
+		m_pEntityClass = GameEntitySystem()->FindClassByDesignName(szClassName);
+
+		if (!m_pEntityClass)
 			m_pszClassName = szClassName;
-			m_pEntityClass = nullptr;
-		}
 		else
-		{
 			m_pszClassName = nullptr;
-			m_pEntityClass = GameEntitySystem()->m_entClassesByClassname[ idx ];
-		}
 	}
 }
 

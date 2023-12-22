@@ -297,6 +297,9 @@ public:
 
 	inline CKeyValues3Context* GetEntityKeyValuesAllocator() { return &m_EntityKeyValuesAllocator; }
 
+	CEntityClass* FindClassByName(const char* szClassName);
+	CEntityClass* FindClassByDesignName(const char* szClassName);
+
 	CEntityHandle FindFirstEntityHandleByName(const char* szName, WorldGroupId_t hWorldGroupId = WorldGroupId_t());
 
 	CUtlSymbolLarge AllocPooledString(const char* pString);
