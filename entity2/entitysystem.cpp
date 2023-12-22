@@ -170,7 +170,7 @@ EntityInstanceByNameIter_t::EntityInstanceByNameIter_t(const char* szName, CEnti
 		m_nNumEntHandles = 0;
 		m_pProceduralEnt = GameEntitySystem()->FindEntityProcedural(szName, pSearchingEntity, pActivator, pCaller);
 	}
-	else if (strchr(szName, '*') || eIterType == ENTITY_ITER_OVER_DORMANTS)
+	else if (strchr(szName, '*') || eIterType == ENTITY_ITER_OVER_DORMANT)
 	{
 		m_pszEntityName = szName;
 		m_pEntityHandles = nullptr;
@@ -297,7 +297,7 @@ EntityInstanceByClassIter_t::EntityInstanceByClassIter_t(const char* szClassName
 	m_eIterType = eIterType;
 	m_hWorldGroupId = WorldGroupId_t();
 
-	if (strchr(szClassName, '*') || eIterType == ENTITY_ITER_OVER_DORMANTS)
+	if (strchr(szClassName, '*') || eIterType == ENTITY_ITER_OVER_DORMANT)
 	{
 		m_pszClassName = szClassName;
 		m_pEntityClass = nullptr;

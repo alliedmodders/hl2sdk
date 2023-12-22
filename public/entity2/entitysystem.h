@@ -59,7 +59,7 @@ enum EntityIOTargetType_t
 enum EntityIterType_t
 {
 	ENTITY_ITER_OVER_ACTIVE = 0x0,
-	ENTITY_ITER_OVER_DORMANTS = 0x1,
+	ENTITY_ITER_OVER_DORMANT = 0x1,
 };
 
 enum SpawnGroupEntityFilterType_t
@@ -297,7 +297,10 @@ public:
 
 	inline CKeyValues3Context* GetEntityKeyValuesAllocator() { return &m_EntityKeyValuesAllocator; }
 
+	// Search for an entity class by its C++ name, case-insensitive
 	CEntityClass* FindClassByName(const char* szClassName);
+	
+	// Search for an entity class by its designer name, case-insensitive
 	CEntityClass* FindClassByDesignName(const char* szClassName);
 
 	CEntityHandle FindFirstEntityHandleByName(const char* szName, WorldGroupId_t hWorldGroupId = WorldGroupId_t());
