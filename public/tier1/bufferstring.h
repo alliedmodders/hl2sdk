@@ -79,15 +79,18 @@ public:
 
 	DLL_CLASS_IMPORT const char *AppendRepeat(char cChar, int nChars, bool bIgnoreAlignment = false);
 
+	// Given a path and a filename, composes "path\filename", inserting the (OS correct) separator if necessary
 	DLL_CLASS_IMPORT const char *ComposeFileName(const char *pPath, const char *pFile, char cSeparator);
 
 	DLL_CLASS_IMPORT const char *ConvertIn(unsigned int const *pData, int nSize, bool bIgnoreAlignment = false);
 	DLL_CLASS_IMPORT const char *ConvertIn(wchar_t const *pData, int nSize, bool bIgnoreAlignment = false);
 
-	DLL_CLASS_IMPORT const char *DefaultExtension(const char *pExt);
+	// Make path end with extension if it doesn't already have an extension
+	DLL_CLASS_IMPORT const char *DefaultExtension(const char *extension);
 
-	DLL_CLASS_IMPORT bool EndsWith(const char *pMatch) const;
-	DLL_CLASS_IMPORT bool EndsWith_FastCaseInsensitive(const char *pMatch) const;
+	// Does string end with 'pSuffix'? (case sensitive/insensitive variants)
+	DLL_CLASS_IMPORT bool EndsWith(const char *pSuffix) const;
+	DLL_CLASS_IMPORT bool EndsWith_FastCaseInsensitive(const char *pSuffix) const;
 
 	// Ensures the nCapacity condition is met and grows the local buffer if needed.
 	// Returns pResultingBuffer pointer to the newly allocated data, as well as resulting capacity that was allocated in bytes.
@@ -102,11 +105,20 @@ public:
 	DLL_CLASS_IMPORT const char *ExtendPath(const char *pPath, char cSeparator);
 
 	DLL_CLASS_IMPORT const char *ExtractFileBase(const char *pPath);
+
+	// Copy out the file extension into dest
 	DLL_CLASS_IMPORT const char *ExtractFileExtension(const char *pPath);
+
+	// Copy out the path except for the stuff after the final pathseparator
 	DLL_CLASS_IMPORT const char *ExtractFilePath(const char *pPath, bool);
+
+
 	DLL_CLASS_IMPORT const char *ExtractFirstDir(const char *pPath);
 
+	// Force slashes of either type to be = separator character
 	DLL_CLASS_IMPORT const char *FixSlashes(char cSeparator = CORRECT_PATH_SEPARATOR);
+
+	// Fixes up a file name, removing dot slashes, fixing slashes, converting to lowercase, etc.
 	DLL_CLASS_IMPORT const char *FixupPathName(char cSeparator);
 
 	DLL_CLASS_IMPORT int Format(const char *pFormat, ...) FMTFUNCTION(2, 3);
@@ -127,11 +139,18 @@ public:
 
 	DLL_CLASS_IMPORT int GrowByChunks(int, int);
 
-	// Wrapper around V_MakeAbsolutePath()
+	// If pPath is a relative path, this function makes it into an absolute path
+	// using the current working directory as the base, or pStartingDir if it's non-NULL.
+	// Returns NULL if it runs out of room in the string, or if pPath tries to ".." past the root directory.
 	DLL_CLASS_IMPORT const char *MakeAbsolutePath(const char *pPath, const char *pStartingDir);
-	// Wrapper around V_MakeAbsolutePath() but also does separator fixup
+
+	// Same as MakeAbsolutePath, but also does separator fixup
 	DLL_CLASS_IMPORT const char *MakeFixedAbsolutePath(const char *pPath, const char *pStartingDir, char cSeparator = CORRECT_PATH_SEPARATOR);
-	// Wrapper around V_MakeRelativePath()
+	
+	// Creates a relative path given two full paths
+	// The first is the full path of the file to make a relative path for.
+	// The second is the full path of the directory to make the first file relative to
+	// Returns NULL if they can't be made relative (on separate drives, for example)
 	DLL_CLASS_IMPORT const char *MakeRelativePath(const char *pFullPath, const char *pDirectory);
 
 	DLL_CLASS_IMPORT void MoveFrom(CBufferString &pOther);
@@ -161,8 +180,8 @@ public:
 
 	DLL_CLASS_IMPORT const char *ReverseChars(int nIndex, int nChars);
 
-	// Appends the pExt to the local buffer, also appends '.' in between even if it wasn't provided in pExt.
-	DLL_CLASS_IMPORT const char *SetExtension(const char *pExt);
+	// Strips any current extension from path and ensures that extension is the new extension
+	DLL_CLASS_IMPORT const char *SetExtension(const char *extension);
 
 	DLL_CLASS_IMPORT char *SetLength(int nLen, bool bIgnoreAlignment = false, int *pNewCapacity = NULL);
 	DLL_CLASS_IMPORT void SetPtr(char *pBuf, int nBufferChars, int, bool, bool);
