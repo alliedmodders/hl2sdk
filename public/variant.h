@@ -5,6 +5,7 @@
 #pragma once
 #endif
 
+#include "string_t.h"
 #include "datamap.h"
 #include "vector.h"
 #include "vector2d.h"
@@ -14,6 +15,8 @@
 #include "entityhandle.h"
 #include "tier1/bufferstring.h"
 #include "tier1/utlscratchmemory.h"
+
+FORWARD_DECLARE_HANDLE( HSCRIPT );
 
 // Non-implemented classes/structs
 struct ResourceBindingBase_t;
