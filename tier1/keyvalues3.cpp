@@ -949,7 +949,10 @@ const char* KeyValues3::ToString( CBufferString& buff, uint flags ) const
 									temp.AppendFormat( "%lld", arr[i]->m_Int );
 									break;
 								case KV3_TYPE_UINT:
-									temp.AppendFormat( "%llu", arr[i]->m_UInt );
+									if ( arr[i]->GetSubType() == KV3_SUBTYPE_POINTER )
+										unprintable = true;
+									else
+										temp.AppendFormat( "%llu", arr[i]->m_UInt );
 									break;
 								case KV3_TYPE_DOUBLE:
 									temp.AppendFormat( "%g", arr[i]->m_Double );
