@@ -3,7 +3,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-#if defined( POSIX )
+// Nasty hack to redefine gcc's offsetof which doesn't like GET_OUTER macro
+#ifdef COMPILER_GCC
 #undef offsetof
 #define offsetof(s,m)	(size_t)&(((s *)0)->m)
 #endif
