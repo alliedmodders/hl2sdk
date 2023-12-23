@@ -3,6 +3,11 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#if defined( POSIX )
+#undef offsetof
+#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+#endif
+
 KeyValues3::KeyValues3( KV3TypeEx_t type, KV3SubType_t subtype ) : 
 	m_bExternalStorage( true ),
 	m_TypeEx( type ),
@@ -930,6 +935,42 @@ const char* KeyValues3::ToString( CBufferString& buff, uint flags ) const
 			{
 				switch ( GetTypeEx() )
 				{
+					case KV3_TYPEEX_ARRAY:
+					{
+						bool unprintable = false;
+						CBufferStringGrowable<128> temp;
+
+						KeyValues3** arr = m_pArray->Base();
+						for ( int i = 0; i < elements; ++i )
+						{
+							switch ( arr[i]->GetType() )
+							{
+								case KV3_TYPE_INT:
+									temp.AppendFormat( "%lld", arr[i]->m_Int );
+									break;
+								case KV3_TYPE_UINT:
+									temp.AppendFormat( "%llu", arr[i]->m_UInt );
+									break;
+								case KV3_TYPE_DOUBLE:
+									temp.AppendFormat( "%g", arr[i]->m_Double );
+									break;
+								default:
+									unprintable = true;
+									break;
+							}
+
+							if ( unprintable )
+								break;
+
+							if ( i != elements - 1 ) temp.Insert( temp.ToGrowable()->GetTotalNumber(), " " );
+						}
+
+						if ( unprintable )
+							break;
+
+						buff.Insert( buff.ToGrowable()->GetTotalNumber(), temp.Get() );
+						return buff.ToGrowable()->Get();
+					}
 					case KV3_TYPEEX_ARRAY_FLOAT32:
 					{
 						for ( int i = 0; i < elements; ++i )
