@@ -20,8 +20,7 @@
 
 inline CEntityInstance* CEntityHandle::Get() const
 {
-	extern CEntitySystem *g_pEntitySystem;
-	return g_pEntitySystem->GetBaseEntity( *this );
+	return GameEntitySystem()->GetBaseEntity( *this );
 }
 
 // -------------------------------------------------------------------------------------------------- //

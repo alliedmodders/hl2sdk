@@ -25,7 +25,7 @@ struct inputdata_t;
 
 #define INVALID_TIME (FLT_MAX * -1.0) // Special value not rebased on save/load
 
-typedef enum _fieldtypes
+typedef enum _fieldtypes : uint8
 {
 	FIELD_VOID = 0,			// No type or value
 	FIELD_FLOAT,			// Any floating point value
