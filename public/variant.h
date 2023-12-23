@@ -132,7 +132,7 @@ DECLARE_DEDUCE_VARIANT_FIELDTYPE(FIELD_EHANDLE, CEntityHandle);
 DECLARE_DEDUCE_VARIANT_FIELDTYPE(FIELD_RESOURCE, ResourceHandle_t);
 DECLARE_DEDUCE_VARIANT_FIELDTYPE(FIELD_UTLSTRINGTOKEN, CUtlStringToken);
 
-#define VariantDeduceType( T ) VariantTypeDeducer<T>::FIELD_TYPE
+#define VariantDeduceType( T ) (fieldtype_t)VariantTypeDeducer<T>::FIELD_TYPE
 #undef DECLARE_DEDUCE_VARIANT_FIELDTYPE
 
 template <typename T>
