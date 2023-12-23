@@ -375,10 +375,7 @@ public:
 		if (!pszString || !pszString[0])
 			return;
 
-		CUtlString buf( pszString );
-		buf.ToLowerFast();
-
-		m_nHashCode = MurmurHash2(buf.Get(), strlen(pszString), 0x31415926);
+		m_nHashCode = MurmurHash2LowerCase(pszString, strlen(pszString), 0x31415926);
 		m_pszString = pszString;
 
 #if 0
