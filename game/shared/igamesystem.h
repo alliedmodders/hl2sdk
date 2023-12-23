@@ -11,36 +11,202 @@
 #pragma once
 #endif
 
-struct EventGameInit_t;
-struct EventGameShutdown_t;
-struct EventGamePostInit_t;
-struct EventGamePreShutdown_t;
-struct EventBuildGameSessionManifest_t;
-struct EventGameActivate_t;
-struct EventClientFullySignedOn_t;
-struct EventDisconnect_t;
-struct EventGameDeactivate_t;
-struct EventSpawnGroupPrecache_t;
-struct EventSpawnGroupUncache_t;
-struct EventPreSpawnGroupLoad_t;
-struct EventPostSpawnGroupLoad_t;
-struct EventPreSpawnGroupUnload_t;
-struct EventPostSpawnGroupUnload_t;
-struct EventActiveSpawnGroupChanged_t;
-struct EventClientPostDataUpdate_t;
-struct EventClientPreRender_t;
-struct EventClientPreEntityThink_t;
-struct EventClientUpdate_t;
-struct EventClientPostRender_t;
-struct EventServerPreEntityThink_t;
-struct EventServerPostEntityThink_t;
-struct EventServerPreClientUpdate_t;
-struct EventServerGamePostSimulate_t;
-struct EventClientGamePostSimulate_t;
-struct EventGameFrameBoundary_t;
-struct EventOutOfGameFrameBoundary_t;
-struct EventSaveGame_t;
-struct EventRestoreGame_t;
+#include "iloopmode.h"
+
+/*
+* AMNOTE: To create your own gamesystem, you need to inherit from CBaseGameSystem or CAutoGameSystem,
+* and define the events that you are interested in receiving via the GS_EVENT macro, example:
+* 
+* class TestGameSystem : CBaseGameSystem
+* {
+*     GS_EVENT( GameInit )
+*     {
+*         // In every event there's a ``msg`` argument provided which is a struct for this particular event
+*         // refer to struct implementation to see what members are available in it, example usage:
+*         msg->m_pConfig;
+*         msg->m_pRegistry;
+*     }
+*     
+*     // Or you can declare the needed events in your gamesystem, and define their body somewhere else
+*     GS_EVENT( GameShutdown );
+* };
+* 
+* GS_EVENT_MEMBER( TestGameSystem, GameShutdown )
+* {
+*     // The same ``msg`` argument would be available in here as well.
+* }
+*/
+
+// Forward declaration
+class GameSessionConfiguration_t;
+class ILoopModePrerequisiteRegistry;
+class IEntityResourceManifest;
+class EngineLoopState_t;
+class ISpawnGroupPrerequisiteRegistry;
+class IEntityPrecacheConfiguration;
+class EntitySpawnInfo_t;
+
+
+#define GS_EVENT_MSG( name ) struct Event##name##_t
+#define GS_EVENT_MSG_CHILD( name, parent ) struct Event##name##_t : Event##parent##_t
+
+GS_EVENT_MSG( GameInit )
+{
+	const GameSessionConfiguration_t *m_pConfig;
+	ILoopModePrerequisiteRegistry *m_pRegistry;
+};
+
+GS_EVENT_MSG( GamePostInit )
+{
+	const GameSessionConfiguration_t *m_pConfig;
+	ILoopModePrerequisiteRegistry *m_pRegistry;
+};
+
+GS_EVENT_MSG( GameShutdown );
+GS_EVENT_MSG( GamePreShutdown );
+
+GS_EVENT_MSG( GameActivate )
+{
+	const EngineLoopState_t *m_pState;
+	bool m_bBackgroundMap;
+};
+
+GS_EVENT_MSG( GameDeactivate )
+{
+	const EngineLoopState_t *m_pState;
+	bool m_bBackgroundMap;
+};
+
+GS_EVENT_MSG( ClientFullySignedOn );
+GS_EVENT_MSG( Disconnect );
+
+GS_EVENT_MSG( BuildGameSessionManifest )
+{
+	IEntityResourceManifest *m_pResourceManifest;
+};
+
+GS_EVENT_MSG( SpawnGroupPrecache )
+{
+	CUtlString m_SpawnGroupName;
+	CUtlString m_EntityLumpName;
+	SpawnGroupHandle_t m_SpawnGroupHandle;
+	int m_nEntityCount;
+	const EntitySpawnInfo_t *m_pEntitiesToSpawn;
+	ISpawnGroupPrerequisiteRegistry *m_pRegistry;
+	IEntityResourceManifest *m_pManifest;
+	IEntityPrecacheConfiguration *m_pConfig;
+};
+
+GS_EVENT_MSG( SpawnGroupUncache )
+{
+	CUtlString m_SpawnGroupName;
+	CUtlString m_EntityLumpName;
+	SpawnGroupHandle_t m_SpawnGroupHandle;
+};
+
+GS_EVENT_MSG( PreSpawnGroupLoad )
+{
+	CUtlString m_SpawnGroupName;
+	CUtlString m_EntityLumpName;
+	SpawnGroupHandle_t m_SpawnGroupHandle;
+};
+
+GS_EVENT_MSG( PostSpawnGroupLoad )
+{
+	CUtlString m_SpawnGroupName;
+	CUtlString m_EntityLumpName;
+	SpawnGroupHandle_t m_SpawnGroupHandle;
+	CUtlVector<CEntityHandle> m_EntityList;
+};
+
+GS_EVENT_MSG( PreSpawnGroupUnload )
+{
+	CUtlString m_SpawnGroupName;
+	CUtlString m_EntityLumpName;
+	SpawnGroupHandle_t m_SpawnGroupHandle;
+	CUtlVector<CEntityHandle> m_EntityList;
+};
+
+GS_EVENT_MSG( PostSpawnGroupUnload )
+{
+	CUtlString m_SpawnGroupName;
+	CUtlString m_EntityLumpName;
+	SpawnGroupHandle_t m_SpawnGroupHandle;
+};
+
+GS_EVENT_MSG( ActiveSpawnGroupChanged )
+{
+	SpawnGroupHandle_t m_SpawnGroupHandle;
+	CUtlString m_SpawnGroupName;
+	SpawnGroupHandle_t m_PreviousHandle;
+};
+
+GS_EVENT_MSG( ClientPostDataUpdate );
+
+GS_EVENT_MSG( ClientPreRender )
+{
+	float m_flFrameTime;
+};
+GS_EVENT_MSG( ClientPostRender );
+
+GS_EVENT_MSG( ClientPreEntityThink )
+{
+	bool m_bFirstTick;
+	bool m_bLastTick;
+};
+
+GS_EVENT_MSG( ClientUpdate )
+{
+	float m_flFrameTime;
+	bool m_bFirstTick;
+	bool m_bLastTick;
+};
+
+GS_EVENT_MSG( ServerPreEntityThink )
+{
+	bool m_bFirstTick;
+	bool m_bLastTick;
+};
+
+GS_EVENT_MSG( ServerPostEntityThink )
+{
+	bool m_bFirstTick;
+	bool m_bLastTick;
+};
+
+GS_EVENT_MSG( ServerPreClientUpdate );
+
+GS_EVENT_MSG( Simulate )
+{
+	EngineLoopState_t m_LoopState;
+	bool m_bFirstTick;
+	bool m_bLastTick;
+};
+
+GS_EVENT_MSG_CHILD( ServerGamePostSimulate, Simulate ) { };
+GS_EVENT_MSG_CHILD( ClientGamePostSimulate, Simulate ) { };
+
+GS_EVENT_MSG( FrameBoundary )
+{
+	float m_flFrameTime;
+};
+
+GS_EVENT_MSG_CHILD( GameFrameBoundary, FrameBoundary ) { };
+GS_EVENT_MSG_CHILD( OutOfGameFrameBoundary, FrameBoundary ) { };
+
+GS_EVENT_MSG( SaveGame )
+{
+	const CUtlVector<CEntityHandle> *m_pEntityList;
+};
+
+GS_EVENT_MSG( RestoreGame )
+{
+	const CUtlVector<CEntityHandle> *m_pEntityList;
+};
+
+#define GS_EVENT_IMPL( name ) virtual void name(const Event##name##_t* const msg) = 0;
+#define GS_EVENT( name ) virtual void name(const Event##name##_t* const msg) override
+#define GS_EVENT_MEMBER( gamesystem, name ) void gamesystem::name(const Event##name##_t* const msg)
 
 //-----------------------------------------------------------------------------
 // Game systems are singleton objects in the client + server codebase responsible for
@@ -59,68 +225,68 @@ public:
 	virtual void Shutdown() = 0;
 
 	// Game init, shutdown
-	virtual void GameInit(const EventGameInit_t* const msg) = 0;
-	virtual void GameShutdown(const EventGameShutdown_t* const msg) = 0;
-	virtual void GamePostInit(const EventGamePostInit_t* const msg) = 0;
-	virtual void GamePreShutdown(const EventGamePreShutdown_t* const msg) = 0;
+	GS_EVENT_IMPL( GameInit );
+	GS_EVENT_IMPL( GameShutdown );
+	GS_EVENT_IMPL( GamePostInit );
+	GS_EVENT_IMPL( GamePreShutdown );
 
-	virtual void BuildGameSessionManifest(const EventBuildGameSessionManifest_t* const msg) = 0;
+	GS_EVENT_IMPL( BuildGameSessionManifest );
 
-	virtual void GameActivate(const EventGameActivate_t* const msg) = 0;
+	GS_EVENT_IMPL( GameActivate );
 
-	virtual void ClientFullySignedOn(const EventClientFullySignedOn_t* const msg) = 0;
-	virtual void ClientDisconnect(const EventDisconnect_t* const msg) = 0;
+	GS_EVENT_IMPL( ClientFullySignedOn );
+	GS_EVENT_IMPL( Disconnect );
 
-	virtual void GameDeactivate(const EventGameDeactivate_t* const msg) = 0;
+	GS_EVENT_IMPL( GameDeactivate );
 
-	virtual void SpawnGroupPrecache(const EventSpawnGroupPrecache_t* const msg) = 0;
-	virtual void SpawnGroupUncache(const EventSpawnGroupUncache_t* const msg) = 0;
-	virtual void PreSpawnGroupLoad(const EventPreSpawnGroupLoad_t* const msg) = 0;
-	virtual void PostSpawnGroupLoad(const EventPostSpawnGroupLoad_t* const msg) = 0;
-	virtual void PreSpawnGroupUnload(const EventPreSpawnGroupUnload_t* const msg) = 0;
-	virtual void PostSpawnGroupUnload(const EventPostSpawnGroupUnload_t* const msg) = 0;
-	virtual void ActiveSpawnGroupChanged(const EventActiveSpawnGroupChanged_t* const msg) = 0;
+	GS_EVENT_IMPL( SpawnGroupPrecache );
+	GS_EVENT_IMPL( SpawnGroupUncache );
+	GS_EVENT_IMPL( PreSpawnGroupLoad );
+	GS_EVENT_IMPL( PostSpawnGroupLoad );
+	GS_EVENT_IMPL( PreSpawnGroupUnload );
+	GS_EVENT_IMPL( PostSpawnGroupUnload );
+	GS_EVENT_IMPL( ActiveSpawnGroupChanged );
 
-	virtual void PostDataUpdate(EventClientPostDataUpdate_t* const msg) = 0;
+	GS_EVENT_IMPL( ClientPostDataUpdate );
 
 	// Called before rendering
-	virtual void PreRender(const EventClientPreRender_t* const msg) = 0;
+	GS_EVENT_IMPL( ClientPreRender );
 
-	virtual void ClientPreEntityThink(const EventClientPreEntityThink_t* const msg) = 0;
+	GS_EVENT_IMPL( ClientPreEntityThink );
 
-	virtual void unk_1271(const void* const msg) = 0;
+	virtual void unk_1271( const void *const msg ) = 0;
 
 	// Gets called each frame
-	virtual void Update(const EventClientUpdate_t* const msg) = 0;
+	GS_EVENT_IMPL( ClientUpdate );
 
 	// Called after rendering
-	virtual void PostRender(const EventClientPostRender_t* const msg) = 0;
+	GS_EVENT_IMPL( ClientPostRender );
 
 	// Called each frame before entities think
-	virtual void FrameUpdatePreEntityThink(const EventServerPreEntityThink_t* const msg) = 0;
+	GS_EVENT_IMPL( ServerPreEntityThink );
 	// called after entities think
-	virtual void FrameUpdatePostEntityThink(const EventServerPostEntityThink_t* const msg) = 0;
-	virtual void PreClientUpdate(const EventServerPreClientUpdate_t* const msg) = 0;
+	GS_EVENT_IMPL( ServerPostEntityThink );
+	GS_EVENT_IMPL( ServerPreClientUpdate );
 
-	virtual void unk_1277(const void* const msg) = 0;
-	virtual void unk_1278(const void* const msg) = 0;
+	virtual void unk_1277( const void *const msg ) = 0;
+	virtual void unk_1278( const void *const msg ) = 0;
 
-	virtual void OnServerGamePostSimulate(const EventServerGamePostSimulate_t* const msg) = 0;
-	virtual void OnClientGamePostSimulate(const EventClientGamePostSimulate_t* const msg) = 0;
+	GS_EVENT_IMPL( ServerGamePostSimulate );
+	GS_EVENT_IMPL( ClientGamePostSimulate );
 
-	virtual void unk_1281(const void* const msg) = 0;
+	virtual void unk_1281( const void *const msg ) = 0;
 
-	virtual void FrameBoundary(const EventGameFrameBoundary_t* const msg) = 0;
-	virtual void OutOfGameFrameBoundary(const EventOutOfGameFrameBoundary_t* const msg) = 0;
+	GS_EVENT_IMPL( GameFrameBoundary );
+	GS_EVENT_IMPL( OutOfGameFrameBoundary );
 
-	virtual void SaveGame(const EventSaveGame_t* const msg) = 0;
-	virtual void RestoreGame(const EventRestoreGame_t* const msg) = 0;
+	GS_EVENT_IMPL( SaveGame );
+	GS_EVENT_IMPL( RestoreGame );
 
-	virtual void unk_1285(const void* const msg) = 0;
-	virtual void unk_1286(const void* const msg) = 0;
-	virtual void unk_1287(const void* const msg) = 0;
-	virtual void unk_1288(const void* const msg) = 0;
-	virtual void unk_1289(const void* const msg) = 0;
+	virtual void unk_1285( const void *const msg ) = 0;
+	virtual void unk_1286( const void *const msg ) = 0;
+	virtual void unk_1287( const void *const msg ) = 0;
+	virtual void unk_1288( const void *const msg ) = 0;
+	virtual void unk_1289( const void *const msg ) = 0;
 
 	virtual const char* GetName() = 0;
 	virtual void SetGameSystemGlobalPtrs(void* pValue) = 0;
@@ -146,68 +312,68 @@ public:
 	virtual void Shutdown() {}
 
 	// Game init, shutdown
-	virtual void GameInit(const EventGameInit_t* const msg) {}
-	virtual void GameShutdown(const EventGameShutdown_t* const msg) {}
-	virtual void GamePostInit(const EventGamePostInit_t* const msg) {}
-	virtual void GamePreShutdown(const EventGamePreShutdown_t* const msg) {}
+	GS_EVENT( GameInit ) {}
+	GS_EVENT( GameShutdown ) {}
+	GS_EVENT( GamePostInit ) {}
+	GS_EVENT( GamePreShutdown ) {}
 
-	virtual void BuildGameSessionManifest(const EventBuildGameSessionManifest_t* const msg) {}
+	GS_EVENT( BuildGameSessionManifest ) {}
 
-	virtual void GameActivate(const EventGameActivate_t* const msg) {}
+	GS_EVENT( GameActivate ) {}
 
-	virtual void ClientFullySignedOn(const EventClientFullySignedOn_t* const msg) {}
-	virtual void ClientDisconnect(const EventDisconnect_t* const msg) {}
+	GS_EVENT( ClientFullySignedOn ) {}
+	GS_EVENT( Disconnect ) {}
 
-	virtual void GameDeactivate(const EventGameDeactivate_t* const msg) {}
+	GS_EVENT( GameDeactivate ) {}
 
-	virtual void SpawnGroupPrecache(const EventSpawnGroupPrecache_t* const msg) {}
-	virtual void SpawnGroupUncache(const EventSpawnGroupUncache_t* const msg) {}
-	virtual void PreSpawnGroupLoad(const EventPreSpawnGroupLoad_t* const msg) {}
-	virtual void PostSpawnGroupLoad(const EventPostSpawnGroupLoad_t* const msg) {}
-	virtual void PreSpawnGroupUnload(const EventPreSpawnGroupUnload_t* const msg) {}
-	virtual void PostSpawnGroupUnload(const EventPostSpawnGroupUnload_t* const msg) {}
-	virtual void ActiveSpawnGroupChanged(const EventActiveSpawnGroupChanged_t* const msg) {}
+	GS_EVENT( SpawnGroupPrecache ) {}
+	GS_EVENT( SpawnGroupUncache ) {}
+	GS_EVENT( PreSpawnGroupLoad ) {}
+	GS_EVENT( PostSpawnGroupLoad ) {}
+	GS_EVENT( PreSpawnGroupUnload ) {}
+	GS_EVENT( PostSpawnGroupUnload ) {}
+	GS_EVENT( ActiveSpawnGroupChanged ) {}
 
-	virtual void PostDataUpdate(EventClientPostDataUpdate_t* const msg) {}
+	GS_EVENT( ClientPostDataUpdate ) {}
 
 	// Called before rendering
-	virtual void PreRender(const EventClientPreRender_t* const msg) {}
+	GS_EVENT( ClientPreRender ) {}
 
-	virtual void ClientPreEntityThink(const EventClientPreEntityThink_t* const msg) {}
+	GS_EVENT( ClientPreEntityThink ) {}
 
-	virtual void unk_1271(const void* const msg) {}
+	virtual void unk_1271( const void *const msg ) {}
 
 	// Gets called each frame
-	virtual void Update(const EventClientUpdate_t* const msg) {}
+	GS_EVENT( ClientUpdate ) {}
 
 	// Called after rendering
-	virtual void PostRender(const EventClientPostRender_t* const msg) {}
+	GS_EVENT( ClientPostRender ) {}
 
 	// Called each frame before entities think
-	virtual void FrameUpdatePreEntityThink(const EventServerPreEntityThink_t* const msg) {}
+	GS_EVENT( ServerPreEntityThink ) {}
 	// called after entities think
-	virtual void FrameUpdatePostEntityThink(const EventServerPostEntityThink_t* const msg) {}
-	virtual void PreClientUpdate(const EventServerPreClientUpdate_t* const msg) {}
+	GS_EVENT( ServerPostEntityThink ) {}
+	GS_EVENT( ServerPreClientUpdate ) {}
 
-	virtual void unk_1277(const void* const msg) {}
-	virtual void unk_1278(const void* const msg) {}
+	virtual void unk_1277( const void *const msg ) {}
+	virtual void unk_1278( const void *const msg ) {}
 
-	virtual void OnServerGamePostSimulate(const EventServerGamePostSimulate_t* const msg) {}
-	virtual void OnClientGamePostSimulate(const EventClientGamePostSimulate_t* const msg) {}
+	GS_EVENT( ServerGamePostSimulate ) {}
+	GS_EVENT( ClientGamePostSimulate ) {}
 
-	virtual void unk_1281(const void* const msg) {}
+	virtual void unk_1281( const void *const msg ) {}
 
-	virtual void FrameBoundary(const EventGameFrameBoundary_t* const msg) {}
-	virtual void OutOfGameFrameBoundary(const EventOutOfGameFrameBoundary_t* const msg) {}
+	GS_EVENT( GameFrameBoundary ) {}
+	GS_EVENT( OutOfGameFrameBoundary ) {}
 
-	virtual void SaveGame(const EventSaveGame_t* const msg) {}
-	virtual void RestoreGame(const EventRestoreGame_t* const msg) {}
+	GS_EVENT( SaveGame ) {}
+	GS_EVENT( RestoreGame ) {}
 
-	virtual void unk_1285(const void* const msg) {}
-	virtual void unk_1286(const void* const msg) {}
-	virtual void unk_1287(const void* const msg) {}
-	virtual void unk_1288(const void* const msg) {}
-	virtual void unk_1289(const void* const msg) {}
+	virtual void unk_1285( const void *const msg ) {}
+	virtual void unk_1286( const void *const msg ) {}
+	virtual void unk_1287( const void *const msg ) {}
+	virtual void unk_1288( const void *const msg ) {}
+	virtual void unk_1289( const void *const msg ) {}
 
 	virtual const char* GetName() { return m_pName; }
 	virtual void SetGameSystemGlobalPtrs(void* pValue) {}

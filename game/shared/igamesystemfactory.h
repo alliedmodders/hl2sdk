@@ -18,11 +18,18 @@
 * AMNOTE: To register your own game system, CGameSystemStaticFactory could be used to register it,
 * but since the actual factory lives inside the game originally and we don't have direct access to it
 * you need provide the CBaseGameSystemFactory::sm_pFirst by whatever means are possible to you.
+* As a starting point you can look for "Game System %s is defined twice" string in the server binary
+* to find it, if that string is missing then this comment is out of date, please, report or update it!
 * 
 * Once CBaseGameSystemFactory::sm_pFirst is initialized and correct address provided,
 * you can create your own gamesystem (refer to igamesystem.h on what it should be like) and register it
-* via ``new CGameSystemStaticFactory<YourGameSystemClass>( "YourGameSystemName", &PointerToYourGameSystemInstance )``
-* the new factory object would be created and if all is done correctly your game system should be viewable to the game
+* via:
+* 
+* // Factory object would be returned, and you are responsible for freeing it inside the ``Shutdown`` method of ``YourGameSystemClass``
+* // common way to do that would be to store the factory as a static member in ``YourGameSystemClass`` and free it when ``Shutdown`` is called.
+* IGameSystemFactory factory = new CGameSystemStaticFactory<YourGameSystemClass>( "YourGameSystemName", &PointerToYourGameSystemInstance );
+* 
+* after the new factory object has been created and if all is done correctly your game system should be viewable to the game
 * and its callbacks should trigger.
 */
 
