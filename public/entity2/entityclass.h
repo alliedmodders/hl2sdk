@@ -7,6 +7,14 @@
 
 #include "tier1/utlsymbollarge.h"
 
+#define FENTCLASS_NETWORKABLE		(1 << 0) // If the EntityClass is networkable
+#define FENTCLASS_ALIAS				(1 << 1) // If the EntityClass is an alias
+#define FENTCLASS_NO_SPAWNGROUP		(1 << 2) // Don't use spawngroups when creating entity
+#define FENTCLASS_FORCE_EHANDLE		(1 << 3) // Forces m_requiredEHandle on created entities
+#define FENTCLASS_UNK004			(1 << 4)
+#define FENTCLASS_UNK005			(1 << 5)
+#define FENTCLASS_ANONYMOUS			(1 << 6) // If the EntityClass is anonymous
+
 class CEntityClassInfo;
 class CEntityIdentity;
 class ServerClass;
@@ -27,6 +35,8 @@ public:
 	CEntityClassInfo* m_pClassInfo; // 0x28
 	CEntityClassInfo* m_pBaseClassInfo; // 0x30
 	CUtlSymbolLarge m_designerName; // 0x38
+
+	// Uses FENTCLASS_* flags
 	uint m_flags; // 0x40
 private:
 	uint8 pad68[0xB4]; // 0x44
