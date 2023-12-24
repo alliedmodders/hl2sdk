@@ -279,14 +279,15 @@ public:
 	virtual void				UpdateOnRemove(int nCount, const EntityDeletion_t *pDeletion) = 0;
 
 public:
-	CEntityIdentity* GetEntityIdentity(CEntityIndex entnum);
-	CEntityIdentity* GetEntityIdentity(const CEntityHandle& hEnt);
+	CEntityIdentity *GetEntityIdentity( CEntityIndex entnum );
+	CEntityIdentity *GetEntityIdentity( const CEntityHandle &hEnt );
 
-	inline CEntityInstance* GetEntityInstance(CEntityIndex entnum) { return GetEntityIdentity(entnum)->m_pInstance; }
-	inline CEntityInstance* GetEntityInstance(const CEntityHandle& hEnt) { return GetEntityIdentity(hEnt)->m_pInstance; }
+	inline CEntityInstance *GetEntityInstance( CEntityIdentity *ident ) { return ident ? ident->m_pInstance : nullptr; }
+	inline CEntityInstance *GetEntityInstance( CEntityIndex entnum ) { return GetEntityInstance( GetEntityIdentity( entnum ) ); }
+	inline CEntityInstance *GetEntityInstance( const CEntityHandle &hEnt ) { return GetEntityInstance( GetEntityIdentity( hEnt ) ); }
 
-	inline CBaseEntity* GetBaseEntity(CEntityIndex entnum) { return static_cast<CBaseEntity*>(GetEntityIdentity(entnum)->m_pInstance); }
-	inline CBaseEntity* GetBaseEntity(const CEntityHandle& hEnt) { return static_cast<CBaseEntity*>(GetEntityIdentity(hEnt)->m_pInstance); }
+	inline CBaseEntity *GetBaseEntity( CEntityIndex entnum ) { return static_cast<CBaseEntity *>(GetEntityInstance( entnum )); }
+	inline CBaseEntity *GetBaseEntity( const CEntityHandle &hEnt ) { return static_cast<CBaseEntity *>(GetEntityInstance( hEnt )); }
 
 	inline void AddEntityKeyValuesAllocatorRef() { ++m_nEntityKeyValuesAllocatorRefCount; }
 	inline void ReleaseEntityKeyValuesAllocatorRef()
