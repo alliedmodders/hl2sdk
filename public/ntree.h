@@ -16,7 +16,7 @@ template <class T> class NTreeNode
 {
 public:
 	// constructor
-	NTreeNode<T>( T data );
+	NTreeNode( T data );
 	
 	NTreeNode<T> *PrependChild( NTreeNode<T> *node );
 	NTreeNode<T> *AppendChild( NTreeNode<T> *node );
