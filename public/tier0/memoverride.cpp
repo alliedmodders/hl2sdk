@@ -288,7 +288,11 @@ int __cdecl _set_sbh_threshold( size_t )
 
 int _heapchk()
 {
-	return g_pMemAlloc->heapchk();
+#ifdef _WIN32
+	return _HEAPOK;
+#else
+	return 1;
+#endif
 }
 
 int _heapmin()
@@ -422,6 +426,12 @@ void __cdecl operator delete[] ( void *pMem )
 #ifndef _STATIC_LINKED
 #ifdef _WIN32
 
+#ifdef PREVENT_DEBUG_USAGE
+
+#define AttribIfCrt()
+
+#else
+
 // This here just hides the internal file names, etc of allocations
 // made in the c runtime library
 #define CRT_INTERNAL_FILE_NAME "C-runtime internal"
@@ -429,31 +439,28 @@ void __cdecl operator delete[] ( void *pMem )
 class CAttibCRT
 {
 public:
-	CAttibCRT(int nBlockUse) : m_nBlockUse(nBlockUse)
+	CAttibCRT( int nBlockUse ) : m_nBlockUse( nBlockUse )
 	{
-		if (m_nBlockUse == _CRT_BLOCK)
+		if(m_nBlockUse == _CRT_BLOCK)
 		{
-			g_pMemAlloc->PushAllocDbgInfo(CRT_INTERNAL_FILE_NAME, 0);
+			g_pMemAlloc->PushAllocDbgInfo( CRT_INTERNAL_FILE_NAME, 0 );
 		}
 	}
-	
+
 	~CAttibCRT()
 	{
-		if (m_nBlockUse == _CRT_BLOCK)
+		if(m_nBlockUse == _CRT_BLOCK)
 		{
 			g_pMemAlloc->PopAllocDbgInfo();
 		}
 	}
-	
+
 private:
 	int m_nBlockUse;
 };
 
-
-#ifdef PREVENT_DEBUG_USAGE
-#define AttribIfCrt()
-#else
 #define AttribIfCrt() CAttibCRT _attrib(nBlockUse)
+
 #endif
 
 #elif defined(POSIX)
@@ -640,7 +647,7 @@ _CRT_DUMP_CLIENT _CrtSetDumpClient( _CRT_DUMP_CLIENT dumpClient )
 
 int _CrtSetDbgFlag( int nNewFlag )
 {
-	return g_pMemAlloc->CrtSetDbgFlag( nNewFlag );
+	return 0;
 }
 
 // 64-bit port.
@@ -674,23 +681,22 @@ _CRT_ALLOC_HOOK __cdecl _CrtSetAllocHook( _CRT_ALLOC_HOOK pfnNewHook )
 
 long __cdecl _CrtSetBreakAlloc( long lNewBreakAlloc )
 {
-	return g_pMemAlloc->CrtSetBreakAlloc( lNewBreakAlloc );
+	return 0;
 }
 					 
 int __cdecl _CrtIsValidHeapPointer( const void *pMem )
 {
-	return g_pMemAlloc->CrtIsValidHeapPointer( pMem );
+	return 1;
 }
 
 int __cdecl _CrtIsValidPointer( const void *pMem, unsigned int size, int access )
 {
-	return g_pMemAlloc->CrtIsValidPointer( pMem, size, access );
+	return 1;
 }
 
 int __cdecl _CrtCheckMemory( void )
 {
-	// FIXME: Remove this when we re-implement the heap
-	return g_pMemAlloc->CrtCheckMemory( );
+	return 1;
 }
 
 int __cdecl _CrtIsMemoryBlock( const void *pMem, unsigned int nSize,
@@ -713,8 +719,6 @@ void __cdecl _CrtMemDumpStatistics( const _CrtMemState *pState )
 
 void __cdecl _CrtMemCheckpoint( _CrtMemState *pState )
 {
-	// FIXME: Remove this when we re-implement the heap
-	g_pMemAlloc->CrtMemCheckpoint( pState );
 }
 
 void __cdecl _CrtMemDumpAllObjectsSince( const _CrtMemState *pState )
@@ -735,17 +739,17 @@ long _crtAssertBusy = -1;
 
 int __cdecl _CrtSetReportMode( int nReportType, int nReportMode )
 {
-	return g_pMemAlloc->CrtSetReportMode( nReportType, nReportMode );
+	return 0;
 }
 
 _HFILE __cdecl _CrtSetReportFile( int nRptType, _HFILE hFile )
 {
-	return (_HFILE)g_pMemAlloc->CrtSetReportFile( nRptType, hFile );
+	return NULL;
 }
 
 _CRT_REPORT_HOOK __cdecl _CrtSetReportHook( _CRT_REPORT_HOOK pfnNewHook )
 {
-	return (_CRT_REPORT_HOOK)g_pMemAlloc->CrtSetReportHook( pfnNewHook );
+	return NULL;
 }
 
 int __cdecl _CrtDbgReport( int nRptType, const char * szFile,
@@ -757,7 +761,7 @@ int __cdecl _CrtDbgReport( int nRptType, const char * szFile,
 	_vsnprintf( output, sizeof( output )-1, szFormat, args );
 	va_end( args );
 
-	return g_pMemAlloc->CrtDbgReport( nRptType, szFile, nLine, szModule, output );
+	return 0;
 }
 
 #if _MSC_VER >= 1400
