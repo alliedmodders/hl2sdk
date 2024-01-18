@@ -95,6 +95,7 @@ struct MemoryInfoState
 };
 
 struct _CrtMemState;
+class CBufferString;
 
 #define MEMALLOC_VERSION 1
 
