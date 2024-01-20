@@ -28,21 +28,6 @@ class ISpawnGroupPrerequisiteRegistry;
 class IWorld;
 class IWorldReference;
 
-struct EventGameInit_t;
-
-struct EventPreSpawnGroupLoad_t
-{
-	CUtlString m_SpawnGroupName;
-	CUtlString m_EntityLumpName;
-	SpawnGroupHandle_t m_SpawnGroupHandle;
-};
-
-struct EventServerPostEntityThink_t
-{
-	bool m_bFirstTick;
-	bool m_bLastTick;
-};
-
 typedef int *SaveRestoreDataHandle_t;
 
 enum SpawnGroupState_t
