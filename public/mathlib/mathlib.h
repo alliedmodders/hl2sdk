@@ -160,7 +160,7 @@ public:
 	matrix3x4a_t() { if (((size_t)Base()) % 16 != 0) { Error( "matrix3x4a_t missaligned" ); } }
 	*/
 	matrix3x4a_t& operator=( const matrix3x4_t& src ) { memcpy( Base(), src.Base(), sizeof( float ) * 3 * 4 ); return *this; };
-};
+} ALIGN16_POST;
 
 #ifndef M_PI
 	#define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h

@@ -85,12 +85,13 @@ protected:
 
 	int			m_GrowMode;	// GROW_ enum.
 
-	// FIXME: Change m_ppMemBlob into a growable array?
-	void			*m_pHeadOfFreeList;
 	int				m_BlocksAllocated;
 	int				m_PeakAlloc;
 	unsigned short	m_nAlignment;
 	unsigned short	m_NumBlobs;
+
+	// FIXME: Change m_ppMemBlob into a growable array?
+	void			*m_pHeadOfFreeList;
 	const char *	m_pszAllocOwner;
 	// CBlob could be not a multiple of 4 bytes so stuff it at the end here to keep us otherwise aligned
 	CBlob			m_BlobHead;

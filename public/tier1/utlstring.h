@@ -45,8 +45,8 @@ class CUtlStringToken
 public:
 	inline CUtlStringToken(): m_nHashCode(0) {}
 	inline CUtlStringToken(unsigned int nHashCode): m_nHashCode(nHashCode) {}
-	inline CUtlStringToken(const CUtlStringToken& other): m_nHashCode(other.m_nHashCode) {}
-	inline CUtlStringToken& operator=(const CUtlStringToken& src) { m_nHashCode = src.m_nHashCode; return *this; }
+	inline bool operator==(CUtlStringToken const &other) const { return (other.m_nHashCode == m_nHashCode); }
+	inline bool operator!=(CUtlStringToken const &other) const { return (other.m_nHashCode != m_nHashCode); }
 
 public:
 	unsigned int m_nHashCode;

@@ -24,6 +24,7 @@
 #include "tier1/bufferstring.h"
 #include "appframework/IAppSystem.h"
 #include "tier2/tier2.h"
+#include "steam/isteamremotestorage.h"
 
 //-----------------------------------------------------------------------------
 // Forward declarations
@@ -37,7 +38,11 @@ class ILowLevelFileIO;
 class CSteamID;
 
 typedef void * FileHandle_t;
-typedef int FileFindHandle_t;
+struct FileFindHandle_t
+{
+	IFileSystem *m_pFileSystem;
+	intp m_nFindDataIndex;
+};
 typedef void (*FileSystemLoggingFunc_t)( const char *fileName, const char *accessType );
 typedef int WaitForResourcesHandle_t;
 
@@ -94,9 +99,10 @@ enum FileWarningLevel_t
 // search path filtering
 enum PathTypeFilter_t
 {
-	FILTER_NONE        = 0,	// no filtering, all search path types match
-	FILTER_CULLPACK    = 1,	// pack based search paths are culled (maps and zips)
-	FILTER_CULLNONPACK = 2,	// non-pack based search paths are culled
+	FILTER_NONE          = 0,	// no filtering, all search path types match
+	FILTER_CULLLOCALIZED = 1,
+	FILTER_CULLPACK      = 2,	// pack based search paths are culled (maps and zips)
+	FILTER_CULLNONPACK   = 3,	// non-pack based search paths are culled
 };
 
 // search path querying (bit flags)
@@ -231,16 +237,18 @@ enum SearchPathAdd_t
 	PATH_ADD_TO_TAIL_ATINDEX,	// First path searched
 };
 
-// ??????
 enum SearchPathPriority_t
 {
-	PRIORITY_UNKNOWN,
+	SEARCH_PATH_PRIORITY_DEFAULT     = 0,
+	SEARCH_PATH_PRIORITY_LOOSE_FILES = 1,
+	SEARCH_PATH_PRIORITY_VPK         = 2,
 };
 
-// ??????
 enum GetSearchPathTypes_t
 {
-	
+	GET_SEARCH_PATH_NO_PACK_FILES   = 0,
+	GET_SEARCH_PATH_NO_AUTO_MOUNTED = 1,
+	GET_SEARCH_PATH_ALL             = 2,
 };
 
 enum FilesystemOpenExFlags_t
@@ -398,48 +406,6 @@ public:
 #define DLCFLAGS_PRESENCE_ONLY			0x0001	// causes no search path loadout
 
 
-
-//-----------------------------------------------------------------------------
-// Base file system interface
-//-----------------------------------------------------------------------------
-
-// This is the minimal interface that can be implemented to provide access to
-// a named set of files.
-abstract_class IBaseFileSystem
-{
-public:
-	virtual int				Read( void* pOutput, int size, FileHandle_t file ) = 0;
-	virtual int				Write( void const* pInput, int size, FileHandle_t file ) = 0;
-
-	// if pathID is NULL, all paths will be searched for the file
-	virtual FileHandle_t	Open( const char *pFileName, const char *pOptions, const char *pathID = 0 ) = 0;
-	virtual void			Close( FileHandle_t file ) = 0;
-
-
-	virtual void			Seek( FileHandle_t file, int pos, FileSystemSeek_t seekType ) = 0;
-	virtual unsigned int	Tell( FileHandle_t file ) = 0;
-	virtual unsigned int	Size( FileHandle_t file ) = 0;
-	virtual unsigned int	Size( const char *pFileName, const char *pPathID = 0 ) = 0;
-
-	virtual void			Flush( FileHandle_t file ) = 0;
-	virtual bool			Precache( const char *pFileName, const char *pPathID = 0 ) = 0;
-
-	virtual bool			FileExists( const char *pFileName, const char *pPathID = 0 ) = 0;
-	virtual bool			IsFileWritable( char const *pFileName, const char *pPathID = 0 ) = 0;
-	virtual bool			SetFileWritable( char const *pFileName, bool writable, const char *pPathID = 0 ) = 0;
-
-	virtual long			GetFileTime( const char *pFileName, const char *pPathID = 0 ) = 0;
-
-	//--------------------------------------------------------
-	// Reads/writes files to utlbuffers. Use this for optimal read performance when doing open/read/close
-	//--------------------------------------------------------
-	virtual bool			ReadFile( const char *pFileName, const char *pPath, CUtlBuffer &buf, int nMaxBytes = 0, int nStartingByte = 0, FSAllocFunc_t pfnAlloc = NULL ) = 0;
-	virtual bool			WriteFile( const char *pFileName, const char *pPath, CUtlBuffer &buf ) = 0;
-	virtual bool			UnzipFile( const char *pFileName, const char *pPath, const char *pDestination ) = 0;
-	virtual bool			CopyAFile( const char *pFileName, const char *pPath, const char *pDestination, bool bDontOverwrite = false ) = 0;
-};
-
-
 //-----------------------------------------------------------------------------
 // Main file system interface
 //-----------------------------------------------------------------------------
@@ -459,8 +425,8 @@ public:
 
 	virtual void			Seek(FileHandle_t file, int pos, FileSystemSeek_t seekType) = 0;
 	virtual unsigned int	Tell(FileHandle_t file) = 0;
-	virtual unsigned int	Size(FileHandle_t file) = 0;
 	virtual unsigned int	Size(const char *pFileName, const char *pPathID = 0) = 0;
+	virtual unsigned int	Size(FileHandle_t file) = 0;
 
 	virtual void			Flush(FileHandle_t file) = 0;
 	virtual bool			Precache(const char *pFileName, const char *pPathID = 0) = 0;
@@ -474,17 +440,17 @@ public:
 	//--------------------------------------------------------
 	// Reads/writes files to utlbuffers. Use this for optimal read performance when doing open/read/close
 	//--------------------------------------------------------
-	virtual bool			ReadFile(const char *pFileName, const char *pPath, CUtlBuffer &buf, int nMaxBytes = 0, int nStartingByte = 0, FSAllocFunc_t pfnAlloc = NULL) = 0;
-	virtual bool			WriteFile(const char *pFileName, const char *pPath, CUtlBuffer &buf) = 0;
-	virtual bool			UnzipFile(const char *pFileName, const char *pPath, const char *pDestination) = 0;
-	virtual bool			CopyAFile(const char *pFileName, const char *pPath, const char *pDestination, bool bDontOverwrite = false) = 0;
+	virtual bool			ReadFile(const char *pFileName, const char *pPathID, CUtlBuffer &buf, int nMaxBytes = 0, int nStartingByte = 0, FSAllocFunc_t pfnAlloc = NULL) = 0;
+	virtual bool			WriteFile(const char *pFileName, const char *pPathID, CUtlBuffer &buf) = 0;
+	virtual bool			UnzipFile(const char *pFileName, const char *pPathID, const char *pDestination) = 0;
+	virtual bool			CopyAFile(const char *pFileName, const char *pPathID, const char *pDestination, bool bDontOverwrite = false) = 0;
+
+	virtual void			unk001( FileHandle_t, bool ) = 0;
+	virtual void			unk001( const char *pFileName, void *pPathID, bool ) = 0;
 
 	//--------------------------------------------------------
 	// Search path manipulation
 	//--------------------------------------------------------
-
-	virtual void unk001() = 0;
-	virtual void unk002() = 0;
 
 	// Add paths in priority order (mod dir, game dir, ....)
 	// If one or more .pak files are in the specified directory, then they are
@@ -493,7 +459,7 @@ public:
 	//  override is cleared and the current .bsp is searched for an embedded PAK file
 	//  and this file becomes the highest priority search path ( i.e., it's looked at first
 	//   even before the mod's file system path ).
-	virtual void			AddSearchPath( const char *pPath, const char *pathID, SearchPathAdd_t addType = PATH_ADD_TO_TAIL, SearchPathPriority_t priority = PRIORITY_UNKNOWN ) = 0;
+	virtual void			AddSearchPath( const char *pPath, const char *pathID, SearchPathAdd_t addType = PATH_ADD_TO_TAIL, SearchPathPriority_t priority = SEARCH_PATH_PRIORITY_DEFAULT, int unknown = 0 ) = 0;
 	virtual bool			RemoveSearchPath( const char *pPath, const char *pathID = 0 ) = 0;
 	
 	virtual SearchPathStateHandle_t		*SaveSearchPathState( const char *pszName ) const = 0;
@@ -523,8 +489,10 @@ public:
 	// Returns the nSearchPathsToGet amount of paths, each path is separated by ;s. Returns true if pathID has any paths
 	virtual bool			GetSearchPath( const char *pathID, GetSearchPathTypes_t pathType, CBufferString &pPath, int nSearchPathsToGet ) = 0;
 	
-	virtual void unk003() = 0;
-	virtual void unk004() = 0;
+	// Returns a class or struct instance by value
+	virtual void unk003( const char *pFileName, const char *pPathID ) = 0;
+
+	virtual void unk004( int, CBufferString & ) = 0;
 
 	//--------------------------------------------------------
 	// File manipulation operations
@@ -538,8 +506,7 @@ public:
 
 	// create a local directory structure
 	virtual void			CreateDirHierarchy( const char *path, const char *pathID = 0 ) = 0;
-
-	virtual void unk005() = 0;
+	virtual void			CreateDirHierarchyForFile( const char *pFileName, const char *pathID ) = 0;
 
 	// File I/O and info
 	virtual bool			IsDirectory( const char *pFileName, const char *pathID = 0 ) = 0;
@@ -555,8 +522,7 @@ public:
 	virtual bool			IsOk( FileHandle_t file ) = 0;
 
 	virtual bool			EndOfFile( FileHandle_t file ) = 0;
-
-	virtual const char		*ReadLine(FileHandle_t file, bool bStripNewline = true) = 0;
+	
 	virtual char			*ReadLine( char *pOutput, int maxChars, FileHandle_t file ) = 0;
 
 	virtual int				FPrintf( FileHandle_t file, const char *pFormat, ... ) FMTFUNCTION( 3, 4 ) = 0;
@@ -575,9 +541,9 @@ public:
 
 	// FindFirst/FindNext. Also see FindFirstEx.
 	virtual const char		*FindFirst( const char *pWildCard, FileFindHandle_t *pHandle ) = 0;
-	virtual const char		*FindNext( FileFindHandle_t handle ) = 0;
-	virtual bool			FindIsDirectory( FileFindHandle_t handle ) = 0;
-	virtual void			FindClose( FileFindHandle_t handle ) = 0;
+	virtual const char		*FindNext( FileFindHandle_t &handle ) = 0;
+	virtual bool			FindIsDirectory( FileFindHandle_t &handle ) = 0;
+	virtual void			FindClose( FileFindHandle_t &handle ) = 0;
 
 	// Same as FindFirst, but you can filter by path ID, which can make it faster.
 	virtual const char		*FindFirstEx( const char *pWildCard, const char *pPathID, FileFindHandle_t *pHandle ) = 0;
@@ -638,13 +604,14 @@ public:
 		TYPE_VMT,
 		TYPE_SOUNDEMITTER,
 		TYPE_SOUNDSCAPE,
+		TYPE_SOUNDOPERATORS,
 		NUM_PRELOAD_TYPES
 	};
 
 	// If the "PreloadedData" hasn't been purged, then this'll try and instance the KeyValues using the fast path of compiled keyvalues loaded during startup.
 	// Otherwise, it'll just fall through to the regular KeyValues loading routines
-	virtual bool		LoadKeyValues( KeyValues& head, KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) = 0;
 	virtual KeyValues	*LoadKeyValues( KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) = 0;
+	virtual bool		LoadKeyValues( KeyValues& head, KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) = 0;
 
 	virtual bool			GetFileTypeForFullPath( char const *pFullPath, wchar_t *buf, size_t bufSizeInBytes ) = 0;
 
@@ -720,41 +687,24 @@ public:
 	virtual int				GetWhitelistSpewFlags() = 0;
 	virtual void			SetWhitelistSpewFlags( int flags ) = 0;
 
-	// Installs a callback used to display a dirty disk dialog
-	// virtual void			InstallDirtyDiskReportFunc( FSDirtyDiskReportFunc_t func ) = 0;
+	virtual void			GetSearchPathID( CBufferString &inout ) = 0;
 
-	// virtual bool			IsLaunchedFromXboxHDD() = 0;
-	// virtual bool			IsInstalledToXboxHDDCache() = 0;
-	// virtual bool			IsDVDHosted() = 0;
-	// virtual bool			IsInstallAllowed() = 0;
+	// File path is "ugc:<UGCHandle_t value>"
+	virtual void AddUGCVPKFile( const char *pszName, const char *pPathID, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) = 0;
+	virtual void RemoveUGCVPKFile( const char *pszName ) = 0;
+	virtual bool IsUGCVPKFileLoaded( const char *pszName ) = 0;
 
-	virtual int				GetSearchPathID( char *pPath, int nMaxLen ) = 0;
-
-	// virtual bool			FixupSearchPathsAfterInstall() = 0;
-	// virtual FSDirtyDiskReportFunc_t		GetDirtyDiskReportFunc() = 0;
-
-	virtual void AddVPKFile( const char *pszName, const char *, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) = 0;
-	virtual void RemoveVPKFile( const char *pszName, const char * ) = 0;
-	virtual bool IsVPKFileLoaded( const char *pszName ) = 0;
 	virtual void EnableAutoVPKFileLoading( bool ) = 0;
-	virtual void GetAutoVPKFileLoading( void ) = 0;
+	virtual bool GetAutoVPKFileLoading( void ) = 0;
+	virtual bool ValidateLoadedVPKs( void ) = 0;
 
-	virtual void unk009() = 0;
-	virtual void unk010() = 0;
-	virtual void unk011() = 0;
-	virtual void unk012() = 0;
+	virtual void LoadUGC( UGCHandle_t ugcId, const char *pFilename, const char *pPathID ) = 0;
+	virtual void UnloadUGC( UGCHandle_t ugcId, const char *pPathID ) = 0;
+	virtual bool IsUGCLoaded( UGCHandle_t ugcId ) const = 0;
 
-	/*
-	//These doesn't particularly match the up to date binary, but leaving a note that they were here before!
-
-	virtual void AddUGCVPKFile( uint64 ugcId, const char *, SearchPathAdd_t ) = 0;
-	virtual void RemoveUGCVPKFile( uint64 ugcId, const char * ) = 0;
-	virtual bool IsUGCVPKFileLoaded( uint64 ugcId ) = 0;
-	*/
-
-	virtual void ParseUGCHandleFromFilename( const char *, char ** )const = 0;
-	virtual void CreateFilenameForUGCFile( char *, int, uint64 ugcId, const char *, char ) const = 0;
-	virtual void OpenUGCFile( uint64 ugcId ) = 0;
+	virtual UGCHandle_t		ParseUGCHandleFromFilename( const char *pFileName, char **ppRemainingFilename = nullptr ) const = 0;
+	virtual void			CreateFilenameForUGCFile( CBufferString &out, UGCHandle_t ugcId, const char *pExtension, char separator = CORRECT_PATH_SEPARATOR ) const = 0;
+	virtual FileHandle_t	OpenUGCFile( UGCHandle_t ugcId ) = 0;
 
 	// call this to look for CPU-hogs during loading processes. When you set this, a breakpoint
 	// will be issued whenever the indicated # of seconds go by without an i/o request.  Passing
@@ -767,6 +717,8 @@ public:
 	virtual bool			IsPathInvalidForFilesystem( const char *pFileName ) = 0;
 	
 	virtual void			GetAvailableDrives( CUtlVector<CUtlString> &drives ) = 0;
+
+	virtual CUtlString		ReadLine( FileHandle_t file, bool bStripNewline = true ) = 0;
 
 	virtual void			GetSearchPathsForPathID( const char*, GetSearchPathTypes_t, CUtlVector<CUtlString> & ) = 0;
 

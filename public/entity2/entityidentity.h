@@ -9,10 +9,12 @@
 #define MAX_ENTITY_LISTS 64 // 0x3F
 #define MAX_TOTAL_ENTITIES MAX_ENTITIES_IN_LIST * MAX_ENTITY_LISTS // 0x8000
 
-#include "eiface.h"
+#include "tier1/utlstring.h"
+#include "tier1/utlsymbollarge.h"
 #include "entitycomponent.h"
 #include "entityhandle.h"
 
+class CEntityClass;
 class CEntityInstance;
 
 struct ChangeAccessorFieldPathIndex_t
@@ -89,10 +91,13 @@ public:
 		return m_hSpawnGroup;
 	}
 
+	bool NameMatches( const char* szName ) const;
+	bool ClassMatches( const char* szClassName ) const;
+
 public:
 	CEntityInstance* m_pInstance; // 0x0
 private:
-	void* m_pClass; // 0x8 - CEntityClass
+	CEntityClass* m_pClass; // 0x8
 public:
 	CEntityHandle m_EHandle; // 0x10
 	int32 m_nameStringableIndex; // 0x14	

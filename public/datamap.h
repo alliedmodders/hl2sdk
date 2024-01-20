@@ -25,7 +25,7 @@ struct inputdata_t;
 
 #define INVALID_TIME (FLT_MAX * -1.0) // Special value not rebased on save/load
 
-typedef enum _fieldtypes
+typedef enum _fieldtypes : uint8
 {
 	FIELD_VOID = 0,			// No type or value
 	FIELD_FLOAT,			// Any floating point value
@@ -257,36 +257,40 @@ extern ISaveRestoreOps *eventFuncs;
 #define DEFINE_FUNCTION( function )			DEFINE_FUNCTION_RAW( function, inputfunc_t )
 
 
-#define FTYPEDESC_GLOBAL			0x0001		// This field is masked for global entity save/restore
-#define FTYPEDESC_SAVE				0x0002		// This field is saved to disk
-#define FTYPEDESC_KEY				0x0004		// This field can be requested and written to by string name at load time
-#define FTYPEDESC_INPUT				0x0008		// This field can be written to by string name at run time, and a function called
-#define FTYPEDESC_OUTPUT			0x0010		// This field propogates it's value to all targets whenever it changes
-#define FTYPEDESC_FUNCTIONTABLE		0x0020		// This is a table entry for a member function pointer
-#define FTYPEDESC_PTR				0x0040		// This field is a pointer, not an embedded object
-#define FTYPEDESC_OVERRIDE			0x0080		// The field is an override for one in a base class (only used by prediction system for now)
+#define FTYPEDESC_GLOBAL			(1 << 0)		// This field is masked for global entity save/restore
+#define FTYPEDESC_SAVE				(1 << 1)		// This field is saved to disk
+#define FTYPEDESC_KEY				(1 << 2)		// This field can be requested and written to by string name at load time
+#define FTYPEDESC_INPUT				(1 << 3)		// This field can be written to by string name at run time, and a function called
+#define FTYPEDESC_OUTPUT			(1 << 4)		// This field propogates it's value to all targets whenever it changes
+#define FTYPEDESC_FUNCTIONTABLE		(1 << 5)		// This is a table entry for a member function pointer
+#define FTYPEDESC_PTR				(1 << 6)		// This field is a pointer, not an embedded object
+#define FTYPEDESC_OVERRIDE			(1 << 7)		// The field is an override for one in a base class (only used by prediction system for now)
 
 // Flags used by other systems (e.g., prediction system)
-#define FTYPEDESC_INSENDTABLE		0x0100		// This field is present in a network SendTable
-#define FTYPEDESC_PRIVATE			0x0200		// The field is local to the client or server only (not referenced by prediction code and not replicated by networking)
-#define FTYPEDESC_NOERRORCHECK		0x0400		// The field is part of the prediction typedescription, but doesn't get compared when checking for errors
+#define FTYPEDESC_INSENDTABLE		(1 << 8)		// This field is present in a network SendTable
+#define FTYPEDESC_PRIVATE			(1 << 9)		// The field is local to the client or server only (not referenced by prediction code and not replicated by networking)
+#define FTYPEDESC_NOERRORCHECK		(1 << 10)		// The field is part of the prediction typedescription, but doesn't get compared when checking for errors
 
-#define FTYPEDESC_MODELINDEX		0x0800		// The field is a model index (used for debugging output)
+#define FTYPEDESC_MODELINDEX		(1 << 11)		// The field is a model index (used for debugging output)
 
-#define FTYPEDESC_INDEX				0x1000		// The field is an index into file data, used for byteswapping. 
+#define FTYPEDESC_INDEX				(1 << 12)		// The field is an index into file data, used for byteswapping. 
 
 // These flags apply to C_BasePlayer derived objects only
-#define FTYPEDESC_VIEW_OTHER_PLAYER		0x2000		// By default you can only view fields on the local player (yourself), 
-													//   but if this is set, then we allow you to see fields on other players
-#define FTYPEDESC_VIEW_OWN_TEAM			0x4000		// Only show this data if the player is on the same team as the local player
-#define FTYPEDESC_VIEW_NEVER			0x8000		// Never show this field to anyone, even the local player (unusual)
+#define FTYPEDESC_VIEW_OTHER_PLAYER		(1 << 13)		// By default you can only view fields on the local player (yourself), 
+														//   but if this is set, then we allow you to see fields on other players
+#define FTYPEDESC_VIEW_OWN_TEAM			(1 << 14)		// Only show this data if the player is on the same team as the local player
+#define FTYPEDESC_VIEW_NEVER			(1 << 15)		// Never show this field to anyone, even the local player (unusual)
+
+#define FTYPEDESC_UNK001				(1 << 16)
+#define FTYPEDESC_UNK002				(1 << 17)
+#define FTYPEDESC_UNK003				(1 << 18)
+#define FTYPEDESC_ALIAS					(1 << 19)		// Used if the typedesc is an alias prop
+#define FTYPEDESC_ENUM					(1 << 20)		// Used if the typedesc is enum, no datamap_t info would be available
 
 #define TD_MSECTOLERANCE		0.001f		// This is a FIELD_FLOAT and should only be checked to be within 0.001 of the networked info
 
-struct typedescription_t;
-
-
 class ISaveRestoreOps;
+class IPredictionCopyOps;
 
 //
 // Function prototype for all input handlers.
@@ -294,9 +298,8 @@ class ISaveRestoreOps;
 typedef void (CBaseEntity::*inputfunc_t)(inputdata_t &data);
 
 struct datamap_t;
-struct typedescription_t;
 
-enum
+enum PredictionCopyType_t
 {
 	PC_NON_NETWORKED_ONLY = 0,
 	PC_NETWORKED_ONLY,
@@ -305,7 +308,7 @@ enum
 	PC_EVERYTHING = PC_COPYTYPE_COUNT,
 };
 
-enum
+enum TypedescriptionOffsetType_t
 {
 	TD_OFFSET_NORMAL = 0,
 	TD_OFFSET_PACKED = 1,
@@ -320,24 +323,23 @@ struct typedescription_t
 	const char			*fieldName;
 	int					fieldOffset; // Local offset value
 	unsigned short		fieldSize;
-	short				flags;
+	int					flags;
 	// the name of the variable in the map/fgd data, or the name of the action
 	const char			*externalName;	
 	// pointer to the function set for save/restoring of custom data types
 	ISaveRestoreOps		*pSaveRestoreOps; 
 	// for associating function with string names
 	inputfunc_t			inputFunc; 
+
 	// For embedding additional datatables inside this one
-	datamap_t			*td;
+	union
+	{
+		datamap_t* td;
+		const char* enumName;
+	};
 
 	// Stores the actual member variable size in bytes
 	int					fieldSizeInBytes;
-
-	// FTYPEDESC_OVERRIDE point to first baseclass instance if chains_validated has occurred
-	struct typedescription_t *override_field;
-
-	// Used to track exclusion of baseclass fields
-	int					override_count;
   
 	// Tolerance for field errors for float fields
 	float				fieldTolerance;
@@ -345,6 +347,9 @@ struct typedescription_t
 	// For raw fields (including children of embedded stuff) this is the flattened offset
 	int					flatOffset[ TD_OFFSET_COUNT ];
 	unsigned short		flatGroup;
+
+	IPredictionCopyOps*	pPredictionCopyOps;
+	datamap_t*			m_pPredictionCopyDataMap;
 };
 
 // See predictioncopy.h for implementation and notes

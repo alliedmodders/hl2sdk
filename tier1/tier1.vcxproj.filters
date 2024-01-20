@@ -68,9 +68,6 @@
     <ClCompile Include="utlbufferutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utlsymbol.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\tier1\bitbuf.h">

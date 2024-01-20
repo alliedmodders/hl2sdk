@@ -870,8 +870,8 @@ private:
 	MUTEX_TYPE &m_lock;
 
 	// Disallow copying
-	CAutoLockT<MUTEX_TYPE>( const CAutoLockT<MUTEX_TYPE> & );
-	CAutoLockT<MUTEX_TYPE> &operator=( const CAutoLockT<MUTEX_TYPE> & );
+	CAutoLockT( const CAutoLockT<MUTEX_TYPE> & );
+	CAutoLockT &operator=( const CAutoLockT<MUTEX_TYPE> & );
 };
 
 typedef CAutoLockT<CThreadMutex> CAutoLock;

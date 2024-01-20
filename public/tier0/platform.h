@@ -360,7 +360,7 @@ typedef unsigned int		uint;
 
 #ifndef offsetof
 	#ifdef GNUC
-		#define offsetof(s,m)	(size_t)&(((s *)0)->m)
+		#define offsetof( type, var ) __builtin_offsetof( type, var )
 	#else
 		#include <stddef.h>
 		#define offsetof(s,m)	(size_t)&(((s *)0)->m)

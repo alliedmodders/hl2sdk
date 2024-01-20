@@ -126,7 +126,7 @@ public:
 	bool operator!=( const CPlayerUserId &other ) const { return other._index != _index; }
 
 private:
-	short _index;
+	unsigned short _index;
 };
 
 //-----------------------------------------------------------------------------
@@ -313,9 +313,12 @@ public:
 
 	virtual void unk101() = 0;
 	virtual void unk102() = 0;
-	virtual void unk103() = 0;
-	virtual void unk104() = 0;
-	virtual void unk105() = 0;
+	
+	// Use these to setup who can hear whose voice.
+	// Pass in client indices (which are their ent indices - 1).
+	virtual bool GetClientListening(CPlayerSlot iReceiver, CPlayerSlot iSender) = 0;
+	virtual bool SetClientListening(CPlayerSlot iReceiver, CPlayerSlot iSender, bool bListen) = 0;
+	virtual bool SetClientProximity(CPlayerSlot iReceiver, CPlayerSlot iSender, bool bUseProximity) = 0;
 	virtual void unk106() = 0;
 	virtual void unk107() = 0;
 
@@ -571,7 +574,7 @@ public:
 	virtual void			ClientSetupVisibility( CPlayerSlot slot, vis_info_t *visinfo ) = 0;
 
 	// A block of CUserCmds has arrived from the user, decode them and buffer for execution during player simulation
-	virtual float			ProcessUsercmds( CPlayerSlot slot, bf_read *buf, int numcmds, bool ignore, bool paused ) = 0;
+	virtual int			ProcessUsercmds( CPlayerSlot slot, bf_read *buf, int numcmds, bool ignore, bool paused ) = 0;
 
 	virtual bool			IsPlayerSlotOccupied( CPlayerSlot slot ) = 0;
 
