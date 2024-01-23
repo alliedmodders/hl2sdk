@@ -73,7 +73,7 @@ public:
 	virtual void ReloadPrivateScripts() = 0;
 	virtual datamap_t* GetDataDescMap() = 0;
 	virtual void unk301() = 0;
-	virtual void GetSchemaBinding(void**) = 0;
+	virtual void Schema_DynamicBinding(void**) = 0;
 
 public:
 	inline CEntityHandle GetRefEHandle() const
