@@ -1438,7 +1438,7 @@ void CKeyValues3Table::RemoveMember( KV3MemberId_t id )
 	else
 	{
 		delete m_Members[ id ];
-		delete m_Names[ id ];
+		free( (void*)m_Names[ id ] );
 	}
 
 	m_Hashes.Remove( id );
@@ -1466,7 +1466,7 @@ void CKeyValues3Table::RemoveAll( int nAllocSize )
 		else
 		{
 			delete m_Members[i]; 
-			delete m_Names[i];
+			free( (void*)m_Names[i] );
 		}
 	}
 
@@ -1511,7 +1511,7 @@ void CKeyValues3Table::Purge( bool bClearingContext )
 		else
 		{
 			delete m_Members[i]; 
-			delete m_Names[i];
+			free( (void*)m_Names[i] );
 		}
 	}
 

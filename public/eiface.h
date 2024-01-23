@@ -410,7 +410,7 @@ public:
 
 	// Give the list of datatable classes to the engine.  The engine matches class names from here with
 	//  edict_t::classname to figure out how to encode a class's data for networking
-	virtual ServerClass		*GetAllServerClasses( void ) = 0;
+	virtual CUtlVector<ServerClass*> *GetAllServerClasses( void ) = 0;
 
 	virtual const char		*GetActiveWorldName( void ) const = 0;
 

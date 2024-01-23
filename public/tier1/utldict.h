@@ -28,17 +28,29 @@ enum EDictCompareType
 	k_eDictCompareTypeFilenames				// Slashes and backslashes count as the same character..
 };
 
+template <int COMPARE_TYPE>	struct CDictCompareTypeDeducer {};
+template <> struct CDictCompareTypeDeducer<k_eDictCompareTypeCaseSensitive> { typedef CDefStringLess Type_t; };
+template <> struct CDictCompareTypeDeducer<k_eDictCompareTypeCaseInsensitive> { typedef CDefCaselessStringLess Type_t; };
+template <> struct CDictCompareTypeDeducer<k_eDictCompareTypeFilenames> { typedef CDefCaselessStringLessIgnoreSlashes Type_t; };
+
+#define FOR_EACH_DICT( dictName, iteratorName ) \
+	for( int iteratorName=dictName.First(); iteratorName != dictName.InvalidIndex(); iteratorName = dictName.Next( iteratorName ) )
+
+// faster iteration, but in an unspecified order
+#define FOR_EACH_DICT_FAST( dictName, iteratorName ) \
+	for ( int iteratorName = 0; iteratorName < dictName.MaxElement(); ++iteratorName ) if ( !dictName.IsValidIndex( iteratorName ) ) continue; else
+	
 //-----------------------------------------------------------------------------
 // A dictionary mapping from symbol to structure
 //-----------------------------------------------------------------------------
-template <class T, class I = int > 
+template <class T, class I = int, int COMPARE_TYPE = k_eDictCompareTypeCaseInsensitive> 
 class CUtlDict
 {
 public:
 	// constructor, destructor
 	// Left at growSize = 0, the memory will first allocate 1 element and double in size
 	// at each increment.
-	CUtlDict( int compareType = k_eDictCompareTypeCaseInsensitive, int growSize = 0, int initSize = 0 );
+	CUtlDict( int growSize = 0, int initSize = 0 );
 	~CUtlDict( );
 
 	void EnsureCapacity( int );
@@ -89,7 +101,7 @@ public:
 	typedef I IndexType_t;
 
 protected:
-	typedef CUtlMap<const char *, T, I> DictElementMap_t;
+	typedef CUtlMap<const char *, T, I, typename CDictCompareTypeDeducer<COMPARE_TYPE>::Type_t> DictElementMap_t;
 	DictElementMap_t m_Elements;
 };
 
@@ -97,31 +109,19 @@ protected:
 //-----------------------------------------------------------------------------
 // constructor, destructor
 //-----------------------------------------------------------------------------
-template <class T, class I>
-CUtlDict<T, I>::CUtlDict( int compareType, int growSize, int initSize ) : m_Elements( growSize, initSize )
+template <class T, class I, int COMPARE_TYPE>
+CUtlDict<T, I, COMPARE_TYPE>::CUtlDict( int growSize, int initSize ) : m_Elements( growSize, initSize )
 {
-	if ( compareType == k_eDictCompareTypeFilenames )
-	{
-		m_Elements.SetLessFunc( CaselessStringLessThanIgnoreSlashes );
-	}
-	else if ( compareType == k_eDictCompareTypeCaseInsensitive )
-	{
-		m_Elements.SetLessFunc( CaselessStringLessThan );
-	}
-	else
-	{
-		m_Elements.SetLessFunc( StringLessThan );
-	}
 }
 
-template <class T, class I> 
-CUtlDict<T, I>::~CUtlDict()
+template <class T, class I, int COMPARE_TYPE> 
+CUtlDict<T, I, COMPARE_TYPE>::~CUtlDict()
 {
 	Purge();
 }
 
-template <class T, class I>
-inline void CUtlDict<T, I>::EnsureCapacity( int num )        
+template <class T, class I, int COMPARE_TYPE>
+inline void CUtlDict<T, I, COMPARE_TYPE>::EnsureCapacity( int num )        
 { 
 	return m_Elements.EnsureCapacity( num ); 
 }
@@ -129,14 +129,14 @@ inline void CUtlDict<T, I>::EnsureCapacity( int num )
 //-----------------------------------------------------------------------------
 // gets particular elements
 //-----------------------------------------------------------------------------
-template <class T, class I>
-inline T& CUtlDict<T, I>::Element( I i )        
+template <class T, class I, int COMPARE_TYPE>
+inline T& CUtlDict<T, I, COMPARE_TYPE>::Element( I i )        
 { 
 	return m_Elements[i]; 
 }
 
-template <class T, class I>
-inline const T& CUtlDict<T, I>::Element( I i ) const  
+template <class T, class I, int COMPARE_TYPE>
+inline const T& CUtlDict<T, I, COMPARE_TYPE>::Element( I i ) const  
 { 
 	return m_Elements[i]; 
 }
@@ -144,32 +144,32 @@ inline const T& CUtlDict<T, I>::Element( I i ) const
 //-----------------------------------------------------------------------------
 // gets element names
 //-----------------------------------------------------------------------------
-template <class T, class I>
-inline char *CUtlDict<T, I>::GetElementName( I i )
+template <class T, class I, int COMPARE_TYPE>
+inline char *CUtlDict<T, I, COMPARE_TYPE>::GetElementName( I i )
 {
 	return (char *)m_Elements.Key( i );
 }
 
-template <class T, class I>
-inline char const *CUtlDict<T, I>::GetElementName( I i ) const
+template <class T, class I, int COMPARE_TYPE>
+inline char const *CUtlDict<T, I, COMPARE_TYPE>::GetElementName( I i ) const
 {
 	return m_Elements.Key( i );
 }
 
-template <class T, class I>
-inline T& CUtlDict<T, I>::operator[]( I i )        
+template <class T, class I, int COMPARE_TYPE>
+inline T& CUtlDict<T, I, COMPARE_TYPE>::operator[]( I i )        
 { 
 	return Element(i); 
 }
 
-template <class T, class I>
-inline const T & CUtlDict<T, I>::operator[]( I i ) const  
+template <class T, class I, int COMPARE_TYPE>
+inline const T & CUtlDict<T, I, COMPARE_TYPE>::operator[]( I i ) const  
 { 
 	return Element(i); 
 }
 
-template <class T, class I>
-inline void CUtlDict<T, I>::SetElementName( I i, char const *pName )
+template <class T, class I, int COMPARE_TYPE>
+inline void CUtlDict<T, I, COMPARE_TYPE>::SetElementName( I i, char const *pName )
 {
 	MEM_ALLOC_CREDIT_CLASS();
 	// TODO:  This makes a copy of the old element
@@ -182,8 +182,8 @@ inline void CUtlDict<T, I>::SetElementName( I i, char const *pName )
 //-----------------------------------------------------------------------------
 // Num elements
 //-----------------------------------------------------------------------------
-template <class T, class I>
-inline	unsigned int CUtlDict<T, I>::Count() const          
+template <class T, class I, int COMPARE_TYPE>
+inline unsigned int CUtlDict<T, I, COMPARE_TYPE>::Count() const          
 { 
 	return m_Elements.Count(); 
 }
@@ -192,8 +192,8 @@ inline	unsigned int CUtlDict<T, I>::Count() const
 //-----------------------------------------------------------------------------
 // Checks if a node is valid and in the tree
 //-----------------------------------------------------------------------------
-template <class T, class I>
-inline	bool CUtlDict<T, I>::IsValidIndex( I i ) const 
+template <class T, class I, int COMPARE_TYPE>
+inline bool CUtlDict<T, I, COMPARE_TYPE>::IsValidIndex( I i ) const 
 {
 	return m_Elements.IsValidIndex(i);
 }
@@ -202,8 +202,8 @@ inline	bool CUtlDict<T, I>::IsValidIndex( I i ) const
 //-----------------------------------------------------------------------------
 // Invalid index
 //-----------------------------------------------------------------------------
-template <class T, class I>
-inline I CUtlDict<T, I>::InvalidIndex()         
+template <class T, class I, int COMPARE_TYPE>
+inline I CUtlDict<T, I, COMPARE_TYPE>::InvalidIndex()         
 { 
 	return DictElementMap_t::InvalidIndex(); 
 }
@@ -212,8 +212,8 @@ inline I CUtlDict<T, I>::InvalidIndex()
 //-----------------------------------------------------------------------------
 // Delete a node from the tree
 //-----------------------------------------------------------------------------
-template <class T, class I>
-void CUtlDict<T, I>::RemoveAt(I elem) 
+template <class T, class I, int COMPARE_TYPE>
+void CUtlDict<T, I, COMPARE_TYPE>::RemoveAt(I elem) 
 {
 	free( (void *)m_Elements.Key( elem ) );
 	m_Elements.RemoveAt(elem);
@@ -223,7 +223,8 @@ void CUtlDict<T, I>::RemoveAt(I elem)
 //-----------------------------------------------------------------------------
 // remove a node in the tree
 //-----------------------------------------------------------------------------
-template <class T, class I> void CUtlDict<T, I>::Remove( const char *search )
+template <class T, class I, int COMPARE_TYPE> 
+void CUtlDict<T, I, COMPARE_TYPE>::Remove( const char *search )
 {
 	I node = Find( search );
 	if (node != InvalidIndex())
@@ -236,8 +237,8 @@ template <class T, class I> void CUtlDict<T, I>::Remove( const char *search )
 //-----------------------------------------------------------------------------
 // Removes all nodes from the tree
 //-----------------------------------------------------------------------------
-template <class T, class I>
-void CUtlDict<T, I>::RemoveAll()
+template <class T, class I, int COMPARE_TYPE>
+void CUtlDict<T, I, COMPARE_TYPE>::RemoveAll()
 {
 	typename DictElementMap_t::IndexType_t index = m_Elements.FirstInorder();
 	while ( index != m_Elements.InvalidIndex() )
@@ -249,15 +250,15 @@ void CUtlDict<T, I>::RemoveAll()
 	m_Elements.RemoveAll();
 }
 
-template <class T, class I>
-void CUtlDict<T, I>::Purge()
+template <class T, class I, int COMPARE_TYPE>
+void CUtlDict<T, I, COMPARE_TYPE>::Purge()
 {
 	RemoveAll();
 }
 
 
-template <class T, class I>
-void CUtlDict<T, I>::PurgeAndDeleteElements()
+template <class T, class I, int COMPARE_TYPE>
+void CUtlDict<T, I, COMPARE_TYPE>::PurgeAndDeleteElements()
 {
 	// Delete all the elements.
 	I index = m_Elements.FirstInorder();
@@ -275,15 +276,15 @@ void CUtlDict<T, I>::PurgeAndDeleteElements()
 //-----------------------------------------------------------------------------
 // inserts a node into the tree
 //-----------------------------------------------------------------------------
-template <class T, class I> 
-I CUtlDict<T, I>::Insert( const char *pName, const T &element )
+template <class T, class I, int COMPARE_TYPE> 
+I CUtlDict<T, I, COMPARE_TYPE>::Insert( const char *pName, const T &element )
 {
 	MEM_ALLOC_CREDIT_CLASS();
 	return m_Elements.Insert( strdup( pName ), element );
 }
 
-template <class T, class I> 
-I CUtlDict<T, I>::Insert( const char *pName )
+template <class T, class I, int COMPARE_TYPE> 
+I CUtlDict<T, I, COMPARE_TYPE>::Insert( const char *pName )
 {
 	MEM_ALLOC_CREDIT_CLASS();
 	return m_Elements.Insert( strdup( pName ) );
@@ -293,8 +294,8 @@ I CUtlDict<T, I>::Insert( const char *pName )
 //-----------------------------------------------------------------------------
 // finds a node in the tree
 //-----------------------------------------------------------------------------
-template <class T, class I> 
-I CUtlDict<T, I>::Find( const char *pName ) const
+template <class T, class I, int COMPARE_TYPE> 
+I CUtlDict<T, I, COMPARE_TYPE>::Find( const char *pName ) const
 {
 	MEM_ALLOC_CREDIT_CLASS();
 	if ( pName )
@@ -307,14 +308,14 @@ I CUtlDict<T, I>::Find( const char *pName ) const
 //-----------------------------------------------------------------------------
 // Iteration methods
 //-----------------------------------------------------------------------------
-template <class T, class I> 
-I CUtlDict<T, I>::First() const
+template <class T, class I, int COMPARE_TYPE> 
+I CUtlDict<T, I, COMPARE_TYPE>::First() const
 {
 	return m_Elements.FirstInorder();
 }
 
-template <class T, class I> 
-I CUtlDict<T, I>::Next( I i ) const
+template <class T, class I, int COMPARE_TYPE> 
+I CUtlDict<T, I, COMPARE_TYPE>::Next( I i ) const
 {
 	return m_Elements.NextInorder(i);
 }
