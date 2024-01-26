@@ -13,7 +13,6 @@
 #include "Color.h"
 #include "entity2/entityidentity.h"
 #include "entityhandle.h"
-#include "resourcefile/resourcetype.h"
 #include "tier1/bufferstring.h"
 #include "tier1/utlscratchmemory.h"
 #include "resourcefile/resourcetype.h"

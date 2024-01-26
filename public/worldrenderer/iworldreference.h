@@ -12,7 +12,7 @@
 class ISceneWorld;
 class Vector;
 
-class IWorldReference
+abstract_class IWorldReference
 {
 public:
 	virtual uint32 AddRef() = 0;

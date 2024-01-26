@@ -15,7 +15,7 @@ class ISceneWorld;
 class Vector;
 class CEntityKeyValues;
 
-class IWorld
+abstract_class IWorld
 {
 public:
 	// Loading

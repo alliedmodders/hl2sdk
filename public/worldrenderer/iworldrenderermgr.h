@@ -14,10 +14,16 @@ struct CreateWorldInfo_t;
 class CThreadRWLock;
 class IWorldReference;
 class CWorldVisibility;
-class IWorldLoadUnloadCallback;
 class IWorldVPKOverrideManager;
 
-class IWorldRendererMgr : public IAppSystem
+abstract_class IWorldLoadUnloadCallback
+{
+public:
+	virtual void OnWorldCreate( const char *pWorldName, IWorldReference *pWorldRef ) = 0;
+	virtual void OnWorldDestroy( const char *pWorldName, IWorldReference *pWorldRef ) = 0;
+};
+
+abstract_class IWorldRendererMgr : public IAppSystem
 {
 public:
 	virtual IWorldReference *CreateWorld( CreateWorldInfo_t &info ) = 0;
@@ -61,9 +67,6 @@ public:
 	virtual int UnkGetCount() = 0;
 	virtual const char *UnkGetStringElm( int i ) const = 0;
 	virtual const char *UnkGetString2Elm( int i ) const = 0;
-
-	// A following functions directly with scenes and vector math.
-	// Continue here when will be reversing the scene system.
 };
 
 #endif // IWORLDRENDERERMGR_H

@@ -33,7 +33,7 @@ public:
 	bool m_bBuildBakedLighting;
 	Vector2D m_vLightmapUvScale;
 private:
-	uint8 m_padding[3];
+	uint8 m_unk001[3];
 public:
 	uint64 m_nCompileTimestamp;
 	uint64 m_nCompileFingerprint;
@@ -49,7 +49,7 @@ public:
 	float m_flMinimumDistance;
 	CUtlVector< int32 > m_ChildNodeIndices;
 private:
-	uint8 m_padding[4];
+	uint8 m_unk001[4];
 public:
 	CUtlString m_worldNodePrefix;
 };
@@ -62,11 +62,9 @@ public:
 	Vector2D m_vLightmapUvScale;
 	bool m_bHasLightmaps;
 private:
-	uint8 m_padding[7];
+	uint8 m_unk001[7];
 public:
 	CUtlVector< void * /* CStrongHandle< InfoForResourceTypeCTextureBase > */ > m_lightMaps;
 };
-
-#include <entity2/entityidentity.h> //TODO: declare CEntityIdentity/CEntityInstance as schema classes here.
 
 #endif // WORLD_SCHEMA_H

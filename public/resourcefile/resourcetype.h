@@ -55,11 +55,8 @@ struct ResourceNameInfo_t
 };
 
 typedef const ResourceNameInfo_t *ResourceNameHandle_t;
-
 typedef uint16 LoadingResourceIndex_t;
-
 typedef char ResourceTypeIndex_t;
-
 typedef uint32 ExtRefIndex_t;
 
 struct ResourceBindingBase_t
@@ -69,14 +66,12 @@ struct ResourceBindingBase_t
 	uint16 m_nFlags;
 	uint16 m_nReloadCounter;
 	ResourceTypeIndex_t m_nTypeIndex;
-	uint8 m_nPadding;
 	LoadingResourceIndex_t m_nLoadingResource;
 	CInterlockedInt m_nRefCount;
 	ExtRefIndex_t m_nExtRefHandle;
 };
 
 typedef const ResourceBindingBase_t* ResourceHandle_t;
-
 typedef void* HGameResourceManifest;
 
 #endif // RESOURCETYPE_H

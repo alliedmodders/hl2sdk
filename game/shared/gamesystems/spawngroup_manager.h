@@ -11,11 +11,9 @@
 #include "entity2/entityidentity.h"
 #include "mathlib/mathlib.h"
 #include "resourcefile/resourcetype.h"
-#include "resourcefile/igameresourcemanifestloadcompletion.h"
 #include "tier1/utlstring.h"
 #include "tier1/utlscratchmemory.h"
 #include "tier1/utlvector.h"
-#include "worldrenderer/icomputeworldorigin.h"
 
 #define MAX_SPAWN_GROUP_WORLD_NAME_LENGTH 4096
 
@@ -27,6 +25,18 @@ class CGameResourceManifest;
 class ISpawnGroupPrerequisiteRegistry;
 class IWorld;
 class IWorldReference;
+
+abstract_class IGameResourceManifestLoadCompletionCallback
+{
+public:
+	virtual void OnGameResourceManifestLoaded( HGameResourceManifest hManifest, int nResourceCount, ResourceHandle_t * pResourceHandles ) = 0;
+};
+
+abstract_class IComputeWorldOriginCallback
+{
+public:
+	virtual matrix3x4_t ComputeWorldOrigin( const char *pWorldName, SpawnGroupHandle_t hSpawnGroup, IWorld * pWorld ) = 0;
+};
 
 typedef int *SaveRestoreDataHandle_t;
 
@@ -100,8 +110,6 @@ public:
 	bool m_bIsInitialSpawnGroup;
 	bool m_bCreateClientOnlyEntities;
 	bool m_bIsSynchronousSpawn;
-private:
-	uint8 m_padding[1];
 
 public:
 	CCompressedResourceManifest *m_pCompressedResource;
@@ -109,8 +117,6 @@ public:
 public:
 	int32 m_nTickCount;
 	bool m_bManifestInComplete;
-private:
-	uint8 m_padding2[3];
 
 public:
 	SpawnGroupHandle_t m_hSpawnGroupParentHandle;
@@ -144,7 +150,7 @@ enum ESpawnGroupUnloadOption
 	kSGUO_MergedIntoOwner,
 };
 
-class ISpawnGroup
+abstract_class ISpawnGroup
 {
 public:
 	virtual const char *GetWorldName() const = 0;
@@ -215,73 +221,73 @@ class CMapSpawnGroup
 public:
 	const char *GetWorldName() const
 	{
-		return this->m_pSpawnGroup->GetWorldName();
+		return m_pSpawnGroup->GetWorldName();
 	}
 
 	const char *GetEntityLumpName() const
 	{
-		return this->m_pSpawnGroup->GetEntityLumpName();
+		return m_pSpawnGroup->GetEntityLumpName();
 	}
 
 	const char *GetEntityFilterName() const
 	{
-		return this->m_pSpawnGroup->GetEntityFilterName();
+		return m_pSpawnGroup->GetEntityFilterName();
 	}
 
 	SpawnGroupHandle_t GetSpawnGroupHandle() const
 	{
-		return this->m_pSpawnGroup->GetHandle();
+		return m_pSpawnGroup->GetHandle();
 	}
 
 	const matrix3x4a_t &GetWorldOffset() const
 	{
-		return this->m_pSpawnGroup->GetWorldOffset();
+		return m_pSpawnGroup->GetWorldOffset();
 	}
 
 	const char *GetParentNameFixup() const
 	{
-		return this->m_pSpawnGroup->GetParentNameFixup();
+		return m_pSpawnGroup->GetParentNameFixup();
 	}
 
 	const char *GetLocalNameFixup() const
 	{
-		return this->m_pSpawnGroup->GetLocalNameFixup();
+		return m_pSpawnGroup->GetLocalNameFixup();
 	}
 
 	SpawnGroupHandle_t GetOwnerSpawnGroup() const
 	{
-		return this->m_pSpawnGroup->GetOwnerSpawnGroup();
+		return m_pSpawnGroup->GetOwnerSpawnGroup();
 	}
 
 	ILoadingSpawnGroup *GetLoadingSpawnGroup() const
 	{
-		return this->m_pSpawnGroup->GetLoadingSpawnGroup();
+		return m_pSpawnGroup->GetLoadingSpawnGroup();
 	}
 
 	void SetLoadingSpawnGroup(ILoadingSpawnGroup *pLoading)
 	{
-		this->m_pSpawnGroup->SetLoadingSpawnGroup(pLoading);
+		m_pSpawnGroup->SetLoadingSpawnGroup(pLoading);
 	}
 
 	int GetCreationTick() const
 	{
-		return this->m_pSpawnGroup->GetCreationTick();
+		return m_pSpawnGroup->GetCreationTick();
 	}
 
 	bool DontSpawnEntities() const
 	{
-		return this->m_pSpawnGroup->DontSpawnEntities();
+		return m_pSpawnGroup->DontSpawnEntities();
 	}
 
 	void GetSpawnGroupDesc(SpawnGroupDesc_t *pDesc) const
 	{
-		this->m_pSpawnGroup->GetSpawnGroupDesc(pDesc);
+		m_pSpawnGroup->GetSpawnGroupDesc(pDesc);
 	}
 
 public:
 	ISpawnGroup *GetSpawnGroup() const
 	{
-		return this->m_pSpawnGroup;
+		return m_pSpawnGroup;
 	}
 
 private:
@@ -292,7 +298,7 @@ private:
 	// CUtlVector<SpawnGroupConnectionInfo_t> m_Connections;
 };
 
-class ILoadingSpawnGroup
+abstract_class ILoadingSpawnGroup
 {
 public:
 	virtual int EntityCount() const = 0;
@@ -309,7 +315,7 @@ public:
 	virtual void Release() = 0;
 };
 
-class IGameSpawnGroupMgr
+abstract_class IGameSpawnGroupMgr
 {
 public:
 	virtual void AllocateSpawnGroup(SpawnGroupHandle_t h, ISpawnGroup *pSpawnGroup) = 0;
@@ -332,15 +338,18 @@ public:
 	virtual void * const UnkGetGameEntitySystemSync1() = 0;
 	virtual void UnkRelease1() = 0;
 	virtual void UnkRelease2() = 0;
+
+	// AMNOTE: Game System related methods
 	virtual void YouForgot_DECLARE_GAME_SYSTEM_InYourClassDefinition() = 0;
 	virtual void UnkSpawnGroupManagerGameSystemMember1() = 0;
 	virtual void GameInit(const EventGameInit_t &msg) = 0;
 	virtual void GameShutdown(const EventGameInit_t &msg) = 0;
 	virtual void FrameBoundary(const EventGameInit_t &msg) = 0;
 	virtual void PreSpawnGroupLoad(const EventPreSpawnGroupLoad_t &msg) = 0;
-	virtual ~IGameSpawnGroupMgr() = 0;
+	virtual ~IGameSpawnGroupMgr() {}
 };
 
+// AMNOTE: Short stubs representing game class hierarchy
 class CBaseSpawnGroup : public ISpawnGroup, public IComputeWorldOriginCallback, public IGameResourceManifestLoadCompletionCallback
 {
 };
