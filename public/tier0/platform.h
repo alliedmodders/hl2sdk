@@ -135,7 +135,9 @@ typedef unsigned char uint8;
 typedef signed char int8;
 
 #ifdef __x86_64__
+#ifndef X64BITS
 #define X64BITS
+#endif
 #endif
 
 #if defined( _WIN32 )

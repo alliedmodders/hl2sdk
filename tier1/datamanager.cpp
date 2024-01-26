@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -8,8 +8,6 @@
 
 #include "basetypes.h"
 #include "datamanager.h"
-
-DECLARE_POINTER_HANDLE( memhandle_t );
 
 #define AUTO_LOCK_DM() AUTO_LOCK_( CDataManagerBase, *this )
 
@@ -320,7 +318,7 @@ memhandle_t CDataManagerBase::ToHandle( unsigned short index )
 	unsigned int hiword = m_memoryLists.Element(index).serial;
 	hiword <<= 16;
 	index++;
-	return (memhandle_t)( hiword|index );
+	return memhandle_t::MakeHandle( hiword|index );
 }
 
 unsigned int CDataManagerBase::TargetSize() 

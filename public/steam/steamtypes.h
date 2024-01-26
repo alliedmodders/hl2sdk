@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2004, Valve LLC, All rights reserved. ============
+//========= Copyright ï¿½ 1996-2004, Valve LLC, All rights reserved. ============
 //
 // Purpose:
 //
@@ -18,7 +18,9 @@ typedef unsigned char uint8;
 
 
 #if defined(__x86_64__) || defined(_WIN64)
+#ifndef X64BITS
 #define X64BITS
+#endif
 #endif
 
 typedef unsigned char uint8;

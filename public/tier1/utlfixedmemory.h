@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -88,9 +88,9 @@ public:
 		if ( !IsValidIterator( it ) )
 			return InvalidIndex();
 
-		return ( int )( HeaderToBlock( it.m_pBlockHeader ) + it.m_nIndex );
+		return ( intp )( HeaderToBlock( it.m_pBlockHeader ) + it.m_nIndex );
 	}
-	bool IsIdxAfter( int i, const Iterator_t &it ) const
+	bool IsIdxAfter( intp i, const Iterator_t &it ) const
 	{
 		Assert( IsValidIterator( it ) );
 		if ( !IsValidIterator( it ) )
@@ -110,8 +110,8 @@ public:
 	Iterator_t InvalidIterator() const					{ return Iterator_t( NULL, -1 ); }
 
 	// element access
-	T& operator[]( int i );
-	const T& operator[]( int i ) const;
+	T& operator[]( intp i );
+	const T& operator[]( intp i ) const;
 	T& Element( int i );
 	const T& Element( int i ) const;
 
@@ -136,7 +136,7 @@ protected:
 	// Fast swap - WARNING: Swap invalidates all ptr-based indices!!!
 	void Swap( CUtlFixedMemory< T > &mem );
 
-	bool IsInBlock( int i, BlockHeader_t *pBlockHeader ) const
+	bool IsInBlock( intp i, BlockHeader_t *pBlockHeader ) const
 	{
 		T *p = ( T* )i;
 		const T *p0 = HeaderToBlock( pBlockHeader );
@@ -209,14 +209,14 @@ void CUtlFixedMemory<T>::Init( int nGrowSize /* = 0 */, int nInitSize /* = 0 */ 
 // element access
 //-----------------------------------------------------------------------------
 template< class T >
-inline T& CUtlFixedMemory<T>::operator[]( int i )
+inline T& CUtlFixedMemory<T>::operator[]( intp i )
 {
 	Assert( IsIdxValid(i) );
 	return *( T* )i;
 }
 
 template< class T >
-inline const T& CUtlFixedMemory<T>::operator[]( int i ) const
+inline const T& CUtlFixedMemory<T>::operator[]( intp i ) const
 {
 	Assert( IsIdxValid(i) );
 	return *( T* )i;

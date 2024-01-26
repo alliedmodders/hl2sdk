@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -14,9 +14,9 @@
 #include "utlmultilist.h"
 #include "utlvector.h"
 
-FORWARD_DECLARE_HANDLE( memhandle_t );
+DECLARE_HANDLE_32BIT( memhandle_t );
 
-#define INVALID_MEMHANDLE ((memhandle_t)0xffffffff)
+#define INVALID_MEMHANDLE (memhandle_t::MakeHandle(~0))
 
 class CDataManagerBase
 {
@@ -251,7 +251,7 @@ private:
 
 inline unsigned short CDataManagerBase::FromHandle( memhandle_t handle )
 {
-	unsigned int fullWord = (unsigned int)handle;
+	unsigned int fullWord = handle.GetHandleValue();
 	unsigned short serial = fullWord>>16;
 	unsigned short index = fullWord & 0xFFFF;
 	index--;

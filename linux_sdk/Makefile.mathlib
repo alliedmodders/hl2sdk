@@ -10,7 +10,7 @@ TIER0_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier0
 TIER1_PUBLIC_SRC_DIR = $(SRC_DIR)/public/tier1
 MATHLIB_PUBLIC_SRC_DIR = $(SRC_DIR)/public/mathlib
 
-LIB_OBJ_DIR = $(BUILD_OBJ_DIR)/$(NAME)_$(ARCH)
+LIB_OBJ_DIR = $(BUILD_OBJ_DIR)/$(NAME) #_$(ARCH)
 
 # Extension of linux static library
 override SHLIBEXT = a
