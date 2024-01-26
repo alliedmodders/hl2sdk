@@ -15,14 +15,10 @@
 
 #include "tier0/dbg.h"
 #include "dt_send.h"
-#include "entityclass.h"
-#include "utlstring.h"
 #include "networkstringtabledefs.h"
+#include "networksystem/iflattenedserializers.h"
 
-DECLARE_POINTER_HANDLE( FlattenedSerializerHandle_t );
-
-// Non-implemented classes/structs
-class INetworkProceduralDataHelper;
+class CEntityClass;
 
 class ServerClass
 {
@@ -30,20 +26,22 @@ public:
 	const char*	GetName()		{ return m_pNetworkName; }
 
 public:
+	const char *m_pDLLClassName; // On the server this matches the m_pNetworkName, on the client it is prefixed with C_*
 	const char *m_pNetworkName;
-	const char *m_pDescription;
+	
 	CEntityClass *m_pEntityClass;
 
-	const char *m_szLibraryName;
+	FlattenedSerializerDesc_t m_flattenedSerializer;
 
-	INetworkProceduralDataHelper *m_pNetworkProceduralDataHelper;
-	FlattenedSerializerHandle_t m_hSerializer;
+	int m_ClassID;
 
 	// This is an index into the network string table (sv.GetInstanceBaselineTable()).
 	int m_InstanceBaselineIndex; // INVALID_STRING_INDEX if not initialized yet.
 
-	int m_ClassID;
-	CUtlString m_ClassIDString;
+	bool m_Unk1;
+	bool m_Unk2; // Set if one of the base classes has the FENTCLASS_UNK008 flag
+	bool m_Unk3; // Set if one of the base classes has the FENTCLASS_UNK009 flag
+	bool m_Unk4;
 };
 
 

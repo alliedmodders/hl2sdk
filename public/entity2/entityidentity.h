@@ -11,7 +11,7 @@
 
 #include "tier1/utlstring.h"
 #include "tier1/utlsymbollarge.h"
-#include "entitycomponent.h"
+#include "entity2/entitycomponent.h"
 #include "entityhandle.h"
 
 class CEntityClass;
@@ -19,6 +19,9 @@ class CEntityInstance;
 
 struct ChangeAccessorFieldPathIndex_t
 {
+	ChangeAccessorFieldPathIndex_t() { m_Value = -1; }
+	ChangeAccessorFieldPathIndex_t( int16 value ) { m_Value = value; }
+	
 	int16 m_Value;
 };
 
@@ -62,6 +65,7 @@ enum EntityFlags_t : uint32
 	EF_HAS_BEEN_UNSERIALIZED = 0x1000,
 	EF_IS_SUSPENDED = 0x2000,
 	EF_IS_ANONYMOUS_ALLOCATION = 0x4000,
+	EF_SUSPEND_OUTSIDE_PVS = 0x8000,
 };
 
 // Size: 0x78
@@ -86,14 +90,12 @@ public:
 		return m_EHandle.GetEntryIndex();
 	}
 
-	bool NameMatches( const char* szName ) const;
-	bool ClassMatches( const char* szClassName ) const;
+	bool NameMatches( const char* pszNameOrWildcard ) const;
+	bool ClassMatches( const char* pszClassOrWildcard ) const;
 
 public:
 	CEntityInstance* m_pInstance; // 0x0
-private:
 	CEntityClass* m_pClass; // 0x8
-public:
 	CEntityHandle m_EHandle; // 0x10
 	int32 m_nameStringableIndex; // 0x14	
 	CUtlSymbolLarge m_name; // 0x18
