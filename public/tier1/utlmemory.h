@@ -273,7 +273,12 @@ private:
 	char m_Memory[ SIZE*sizeof(T) + nAlignment ];
 };
 
-#ifdef _LINUX
+#if defined(POSIX)
+// From Chris Green: Memory is a little fuzzy but I believe this class did
+//	something fishy with respect to msize and alignment that was OK under our
+//	allocator, the glibc allocator, etc but not the valgrind one (which has no
+//	padding because it detects all forms of head/tail overwrite, including
+//	writing 1 byte past a 1 byte allocation).
 #define REMEMBER_ALLOC_SIZE_FOR_VALGRIND 1
 #endif
 
@@ -399,7 +404,6 @@ private:
 #endif
 
 };
-
 
 //-----------------------------------------------------------------------------
 // constructor, destructor

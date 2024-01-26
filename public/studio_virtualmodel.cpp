@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -474,8 +474,8 @@ void virtualmodel_t::AppendPoseParameters( int group, const studiohdr_t *pStudio
 			// duplicate, reset start and end to fit full dynamic range
 			mstudioposeparamdesc_t *pPose1 = pStudioHdr->pLocalPoseParameter( j );
 			mstudioposeparamdesc_t *pPose2 = m_group[ pose[k].group ].GetStudioHdr()->pLocalPoseParameter( pose[k].index );
-			float start =  MIN( pPose2->end, MIN( pPose1->end, MIN( pPose2->start, pPose1->start ) ) );
-			float end =  MAX( pPose2->end, MAX( pPose1->end, MAX( pPose2->start, pPose1->start ) ) );
+			float start =  min( pPose2->end, min( pPose1->end, min( pPose2->start, pPose1->start ) ) );
+			float end =  max( pPose2->end, max( pPose1->end, max( pPose2->start, pPose1->start ) ) );
 			pPose2->start = start;
 			pPose2->end = end;
 		}
@@ -572,4 +572,23 @@ void virtualmodel_t::AppendIKLocks( int group, const studiohdr_t *pStudioHdr )
 	}
 
 	m_iklock = iklock;
+
+	// copy knee directions for uninitialized knees
+	if ( group != 0 )
+	{
+		studiohdr_t *pBaseHdr = (studiohdr_t *)m_group[ 0 ].GetStudioHdr();
+		if ( pStudioHdr->numikchains == pBaseHdr->numikchains )
+		{
+			for (j = 0; j < pStudioHdr->numikchains; j++)
+			{
+				if ( pBaseHdr->pIKChain( j )->pLink(0)->kneeDir.LengthSqr() == 0.0f )
+				{
+					if ( pStudioHdr->pIKChain( j )->pLink(0)->kneeDir.LengthSqr() > 0.0f )
+					{
+						pBaseHdr->pIKChain( j )->pLink(0)->kneeDir = pStudioHdr->pIKChain( j )->pLink(0)->kneeDir;
+					}
+				}
+			}
+		}
+	}
 }

@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -152,7 +152,7 @@ mstudioanim_t *mstudioanimdesc_t::pAnim( int *piFrame, float &flStall ) const
 		float dt = Plat_FloatTime() - zeroframestalltime;
 		if (dt >= 0.0)
 		{
-			flStall = SimpleSpline( clamp( (0.200f - dt) * 5.0, 0.0f, 1.0f ) );
+			flStall = SimpleSpline( clamp( (0.200f - dt) * 5.0f, 0.0f, 1.0f ) );
 		}
 
 		if (flStall == 0.0f)
@@ -342,7 +342,7 @@ int	studiohdr_t::GetNumPoseParameters( void ) const
 // Purpose:
 //-----------------------------------------------------------------------------
 
-const mstudioposeparamdesc_t &studiohdr_t::pPoseParameter( int i ) const
+const mstudioposeparamdesc_t &studiohdr_t::pPoseParameter( int i )
 {
 	if (numincludemodels == 0)
 	{
@@ -391,7 +391,7 @@ int studiohdr_t::GetSharedPoseParameter( int iSequence, int iLocalPose ) const
 // Purpose:
 //-----------------------------------------------------------------------------
 
-int studiohdr_t::EntryNode( int iSequence ) const
+int studiohdr_t::EntryNode( int iSequence )
 {
 	mstudioseqdesc_t &seqdesc = pSeqdesc( iSequence );
 
@@ -414,7 +414,7 @@ int studiohdr_t::EntryNode( int iSequence ) const
 //-----------------------------------------------------------------------------
 
 
-int studiohdr_t::ExitNode( int iSequence ) const
+int studiohdr_t::ExitNode( int iSequence )
 {
 	mstudioseqdesc_t &seqdesc = pSeqdesc( iSequence );
 
@@ -476,7 +476,7 @@ const mstudioattachment_t &studiohdr_t::pAttachment( int i ) const
 // Purpose:
 //-----------------------------------------------------------------------------
 
-int	studiohdr_t::GetAttachmentBone( int i ) const
+int	studiohdr_t::GetAttachmentBone( int i )
 {
 	const mstudioattachment_t &attachment = pAttachment( i );
 
@@ -516,7 +516,7 @@ void studiohdr_t::SetAttachmentBone( int iAttachment, int iBone )
 // Purpose:
 //-----------------------------------------------------------------------------
 
-const char *studiohdr_t::pszNodeName( int iNode ) const
+char *studiohdr_t::pszNodeName( int iNode )
 {
 	if (numincludemodels == 0)
 	{
@@ -555,7 +555,7 @@ int studiohdr_t::GetTransition( int iFrom, int iTo ) const
 }
 
 
-int	studiohdr_t::GetActivityListVersion( void ) const
+int	studiohdr_t::GetActivityListVersion( void )
 {
 	if (numincludemodels == 0)
 	{
@@ -575,7 +575,7 @@ int	studiohdr_t::GetActivityListVersion( void ) const
 
 		Assert( pStudioHdr );
 
-		version = MIN( version, pStudioHdr->activitylistversion );
+		version = min( version, pStudioHdr->activitylistversion );
 	}
 
 	return version;
@@ -624,7 +624,7 @@ int studiohdr_t::GetNumIKAutoplayLocks( void ) const
 	return pVModel->m_iklock.Count();
 }
 
-const mstudioiklock_t &studiohdr_t::pIKAutoplayLock( int i ) const
+const mstudioiklock_t &studiohdr_t::pIKAutoplayLock( int i )
 {
 	if (numincludemodels == 0)
 	{
@@ -799,9 +799,6 @@ const virtualmodel_t * CStudioHdr::ResetVModel( const virtualmodel_t *pVModel ) 
 	if (pVModel != NULL)
 	{
 		m_pVModel = (virtualmodel_t *)pVModel;
-	#if defined(_WIN32) && !defined(THREAD_PROFILER)
-		Assert( !pVModel->m_Lock.GetOwnerId() );
-	#endif
 		m_pStudioHdrCache.SetCount( m_pVModel->m_group.Count() );
 
 		int i;
@@ -819,7 +816,7 @@ const virtualmodel_t * CStudioHdr::ResetVModel( const virtualmodel_t *pVModel ) 
 	}
 }
 
-const studiohdr_t *CStudioHdr::GroupStudioHdr( int i ) const
+const studiohdr_t *CStudioHdr::GroupStudioHdr( int i )
 {
 	if ( !this )
 	{
@@ -840,7 +837,7 @@ const studiohdr_t *CStudioHdr::GroupStudioHdr( int i ) const
 	if ( !m_pStudioHdrCache.IsValidIndex( i ) )
 	{
 		const char *pszName = ( m_pStudioHdr ) ? m_pStudioHdr->pszName() : "<<null>>";
-		ExecuteNTimes( 5, Warning( "Invalid index passed to CStudioHdr(%s)::GroupStudioHdr(): %d, but max is %d [%d]\n", pszName, i, m_pStudioHdrCache.Count() ) );
+		ExecuteNTimes( 5, Warning( "Invalid index passed to CStudioHdr(%s)::GroupStudioHdr(): %d, but max is %d\n", pszName, i, m_pStudioHdrCache.Count() ) );
 		DebuggerBreakIfDebugging();
 		return m_pStudioHdr; // return something known to probably exist, certainly things will be messed up, but hopefully not crash before the warning is noticed
 	}
@@ -849,9 +846,6 @@ const studiohdr_t *CStudioHdr::GroupStudioHdr( int i ) const
 
 	if (pStudioHdr == NULL)
 	{
-	#if defined(_WIN32) && !defined(THREAD_PROFILER)
-		Assert( !m_pVModel->m_Lock.GetOwnerId() );
-	#endif
 		virtualgroup_t *pGroup = &m_pVModel->m_group[ i ];
 		pStudioHdr = pGroup->GetStudioHdr();
 		m_pStudioHdrCache[ i ] = pStudioHdr;
@@ -862,7 +856,7 @@ const studiohdr_t *CStudioHdr::GroupStudioHdr( int i ) const
 }
 
 
-const studiohdr_t *CStudioHdr::pSeqStudioHdr( int sequence ) const
+const studiohdr_t *CStudioHdr::pSeqStudioHdr( int sequence )
 {
 	if (m_pVModel == NULL)
 	{
@@ -875,7 +869,7 @@ const studiohdr_t *CStudioHdr::pSeqStudioHdr( int sequence ) const
 }
 
 
-const studiohdr_t *CStudioHdr::pAnimStudioHdr( int animation ) const
+const studiohdr_t *CStudioHdr::pAnimStudioHdr( int animation )
 {
 	if (m_pVModel == NULL)
 	{
@@ -889,7 +883,7 @@ const studiohdr_t *CStudioHdr::pAnimStudioHdr( int animation ) const
 
 
 
-mstudioanimdesc_t &CStudioHdr::pAnimdesc( int i ) const
+mstudioanimdesc_t &CStudioHdr::pAnimdesc( int i )
 { 
 	if (m_pVModel == NULL)
 	{
@@ -919,11 +913,21 @@ int CStudioHdr::GetNumSeq( void ) const
 // Purpose:
 //-----------------------------------------------------------------------------
 
-mstudioseqdesc_t &CStudioHdr::pSeqdesc( int i ) const
+mstudioseqdesc_t &CStudioHdr::pSeqdesc( int i )
 {
-	Assert( i >= 0 && i < GetNumSeq() );
+	Assert( ( i >= 0 && i < GetNumSeq() ) || ( i == 1 && GetNumSeq() <= 1 ) );
 	if ( i < 0 || i >= GetNumSeq() )
 	{
+		if ( GetNumSeq() <= 0 )
+		{
+			// Return a zero'd out struct reference if we've got nothing.
+			// C_BaseObject::StopAnimGeneratedSounds was crashing due to this function
+			//	returning a reference to garbage. It should now see numevents is 0,
+			//	and bail.
+			static mstudioseqdesc_t s_nil_seq;
+			return s_nil_seq;
+		}
+
 		// Avoid reading random memory.
 		i = 0;
 	}
@@ -981,7 +985,10 @@ int	CStudioHdr::GetNumPoseParameters( void ) const
 {
 	if (m_pVModel == NULL)
 	{
-		return m_pStudioHdr->numlocalposeparameters;
+		if ( m_pStudioHdr )
+			return m_pStudioHdr->numlocalposeparameters;
+		else
+			return 0;
 	}
 
 	Assert( m_pVModel );
@@ -995,7 +1002,7 @@ int	CStudioHdr::GetNumPoseParameters( void ) const
 // Purpose:
 //-----------------------------------------------------------------------------
 
-const mstudioposeparamdesc_t &CStudioHdr::pPoseParameter( int i ) const
+const mstudioposeparamdesc_t &CStudioHdr::pPoseParameter( int i )
 {
 	if (m_pVModel == NULL)
 	{
@@ -1027,9 +1034,10 @@ int CStudioHdr::GetSharedPoseParameter( int iSequence, int iLocalPose ) const
 
 	Assert( m_pVModel );
 
-	virtualgroup_t *pGroup = &m_pVModel->m_group[ m_pVModel->m_seq[iSequence].group ];
+	int group = m_pVModel->m_seq[iSequence].group;
+	virtualgroup_t *pGroup = m_pVModel->m_group.IsValidIndex( group ) ? &m_pVModel->m_group[ group ] : NULL;
 
-	return pGroup->masterPose[iLocalPose];
+	return pGroup ? pGroup->masterPose[iLocalPose] : iLocalPose;
 }
 
 
@@ -1037,7 +1045,7 @@ int CStudioHdr::GetSharedPoseParameter( int iSequence, int iLocalPose ) const
 // Purpose:
 //-----------------------------------------------------------------------------
 
-int CStudioHdr::EntryNode( int iSequence ) const
+int CStudioHdr::EntryNode( int iSequence )
 {
 	mstudioseqdesc_t &seqdesc = pSeqdesc( iSequence );
 
@@ -1059,7 +1067,7 @@ int CStudioHdr::EntryNode( int iSequence ) const
 //-----------------------------------------------------------------------------
 
 
-int CStudioHdr::ExitNode( int iSequence ) const
+int CStudioHdr::ExitNode( int iSequence )
 {
 	mstudioseqdesc_t &seqdesc = pSeqdesc( iSequence );
 
@@ -1098,7 +1106,7 @@ int	CStudioHdr::GetNumAttachments( void ) const
 // Purpose:
 //-----------------------------------------------------------------------------
 
-const mstudioattachment_t &CStudioHdr::pAttachment( int i ) const
+const mstudioattachment_t &CStudioHdr::pAttachment( int i )
 {
 	if (m_pVModel == NULL)
 	{
@@ -1116,7 +1124,7 @@ const mstudioattachment_t &CStudioHdr::pAttachment( int i ) const
 // Purpose:
 //-----------------------------------------------------------------------------
 
-int	CStudioHdr::GetAttachmentBone( int i ) const
+int	CStudioHdr::GetAttachmentBone( int i )
 {
 	if (m_pVModel == 0)
 	{
@@ -1153,7 +1161,7 @@ void CStudioHdr::SetAttachmentBone( int iAttachment, int iBone )
 // Purpose:
 //-----------------------------------------------------------------------------
 
-const char *CStudioHdr::pszNodeName( int iNode ) const
+char *CStudioHdr::pszNodeName( int iNode )
 {
 	if (m_pVModel == NULL)
 	{
@@ -1194,7 +1202,7 @@ int CStudioHdr::GetTransition( int iFrom, int iTo ) const
 // Purpose:
 //-----------------------------------------------------------------------------
 
-int	CStudioHdr::GetActivityListVersion( void ) const
+int	CStudioHdr::GetActivityListVersion( void )
 {
 	if (m_pVModel == NULL)
 	{
@@ -1208,7 +1216,7 @@ int	CStudioHdr::GetActivityListVersion( void ) const
 	{
 		const studiohdr_t *pStudioHdr = GroupStudioHdr( i );
 		Assert( pStudioHdr );
-		version = MIN( version, pStudioHdr->activitylistversion );
+		version = min( version, pStudioHdr->activitylistversion );
 	}
 
 	return version;
@@ -1237,7 +1245,7 @@ void CStudioHdr::SetActivityListVersion( int version )
 // Purpose:
 //-----------------------------------------------------------------------------
 
-int	CStudioHdr::GetEventListVersion( void ) const
+int	CStudioHdr::GetEventListVersion( void )
 {
 	if (m_pVModel == NULL)
 	{
@@ -1251,7 +1259,7 @@ int	CStudioHdr::GetEventListVersion( void ) const
 	{
 		const studiohdr_t *pStudioHdr = GroupStudioHdr( i );
 		Assert( pStudioHdr );
-		version = MIN( version, pStudioHdr->eventsindexed );
+		version = min( version, pStudioHdr->eventsindexed );
 	}
 
 	return version;
@@ -1290,7 +1298,7 @@ int CStudioHdr::GetNumIKAutoplayLocks( void ) const
 	return m_pVModel->m_iklock.Count();
 }
 
-const mstudioiklock_t &CStudioHdr::pIKAutoplayLock( int i ) const
+const mstudioiklock_t &CStudioHdr::pIKAutoplayLock( int i )
 {
 	if (m_pVModel == NULL)
 	{
@@ -1380,7 +1388,7 @@ void CStudioHdr::RunFlexRules( const float *src, float *dest )
 
 	for (i = 0; i < numflexrules(); i++)
 	{
-		float stack[32];
+		float stack[32] = {};
 		int k = 0;
 		mstudioflexrule_t *prule = pFlexRule( i );
 
@@ -1416,8 +1424,8 @@ void CStudioHdr::RunFlexRules( const float *src, float *dest )
 				k--; 
 				break;
 			case STUDIO_NEG: stack[k-1] = -stack[k-1]; break;
-			case STUDIO_MAX: stack[k-2] = MAX( stack[k-2], stack[k-1] ); k--; break;
-			case STUDIO_MIN: stack[k-2] = MIN( stack[k-2], stack[k-1] ); k--; break;
+			case STUDIO_MAX: stack[k-2] = max( stack[k-2], stack[k-1] ); k--; break;
+			case STUDIO_MIN: stack[k-2] = min( stack[k-2], stack[k-1] ); k--; break;
 			case STUDIO_CONST: stack[k] = pops->d.value; k++; break;
 			case STUDIO_FETCH1: 
 				{ 
@@ -1604,6 +1612,7 @@ void CStudioHdr::RunFlexRules( const float *src, float *dest )
 //-----------------------------------------------------------------------------
 #define iabs(i) (( (i) >= 0 ) ? (i) : -(i) )
 
+CUtlSymbolTable g_ActivityModifiersTable;
 
 extern void SetActivityForSequence( CStudioHdr *pstudiohdr, int i );
 void CStudioHdr::CActivityToSequenceMapping::Initialize( CStudioHdr * __restrict pstudiohdr )
@@ -1629,7 +1638,7 @@ void CStudioHdr::CActivityToSequenceMapping::Initialize( CStudioHdr * __restrict
 	
 	// Some studio headers have no activities at all. In those
 	// cases we can avoid a lot of this effort.
-	bool bFoundOne = false;
+	bool bFoundOne = false;	
 
 	// for each sequence in the header...
 	const int NumSeq = pstudiohdr->GetNumSeq();
@@ -1673,7 +1682,7 @@ void CStudioHdr::CActivityToSequenceMapping::Initialize( CStudioHdr * __restrict
 
 	// Now, create starting indices for each activity. For an activity n, 
 	// the starting index is of course the sum of counts [0..n-1]. 
-	register int sequenceCount = 0;
+	int sequenceCount = 0;
 	int topActivity = 0; // this will store the highest seen activity number (used later to make an ad hoc map on the stack)
 	for ( UtlHashHandle_t handle = m_ActToSeqHash.GetFirstHandle() ; 
 		  m_ActToSeqHash.IsValidHandle(handle) ;
@@ -1682,7 +1691,7 @@ void CStudioHdr::CActivityToSequenceMapping::Initialize( CStudioHdr * __restrict
 		HashValueType &element = m_ActToSeqHash[handle];
 		element.startingIdx = sequenceCount;
 		sequenceCount += element.count;
-		topActivity = MAX(topActivity, element.activityIdx);
+		topActivity = max(topActivity, element.activityIdx);
 	}
 	
 
@@ -1720,10 +1729,34 @@ void CStudioHdr::CActivityToSequenceMapping::Initialize( CStudioHdr * __restrict
 			int tupleOffset = seqsPerAct[seqdesc.activity];
 			Assert( tupleOffset < element.count );
 
+			if ( seqdesc.numactivitymodifiers > 0 )
+			{
+				// add entries for this model's activity modifiers
+				(tupleList + element.startingIdx + tupleOffset)->pActivityModifiers = new CUtlSymbol[ seqdesc.numactivitymodifiers ];
+				(tupleList + element.startingIdx + tupleOffset)->iNumActivityModifiers = seqdesc.numactivitymodifiers;
+
+				for ( int k = 0; k < seqdesc.numactivitymodifiers; k++ )
+				{
+					(tupleList + element.startingIdx + tupleOffset)->pActivityModifiers[ k ] = g_ActivityModifiersTable.AddString( seqdesc.pActivityModifier( k )->pszName() );
+				}
+			}
+			else
+			{
+				(tupleList + element.startingIdx + tupleOffset)->pActivityModifiers = NULL;
+				(tupleList + element.startingIdx + tupleOffset)->iNumActivityModifiers = 0;
+			}
+
 			// You might be tempted to collapse this pointer math into a single pointer --
 			// don't! the tuple list is marked __restrict above.
 			(tupleList + element.startingIdx + tupleOffset)->seqnum = i; // store sequence number
 			(tupleList + element.startingIdx + tupleOffset)->weight = iabs(seqdesc.actweight);
+
+			// We can't have weights of 0
+			// Assert( (tupleList + element.startingIdx + tupleOffset)->weight > 0 );
+			if ( (tupleList + element.startingIdx + tupleOffset)->weight == 0 )
+			{
+				(tupleList + element.startingIdx + tupleOffset)->weight = 1;
+			}
 
 			seqsPerAct[seqdesc.activity] += 1;
 		}

@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2005, Valve Corporation, All rights reserved. =======//
+//====== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. =======//
 //
 // Purpose: 
 //
@@ -26,8 +26,6 @@
 
 #define FOR_EACH_VEC( vecName, iteratorName ) \
 	for ( int iteratorName = 0; iteratorName < (vecName).Count(); iteratorName++ )
-#define FOR_EACH_VEC_BACK( vecName, iteratorName ) \
-	for ( int iteratorName = (vecName).Count()-1; iteratorName >= 0; iteratorName-- )
 
 //-----------------------------------------------------------------------------
 // The CUtlVector class:
@@ -68,6 +66,7 @@ public:
 
 	// Returns the number of elements in the vector
 	int Count() const;
+	int Size() const { return Count(); }
 
 	// Is element index valid?
 	bool IsValidIndex( int i ) const;
@@ -236,7 +235,6 @@ public:
 	CUtlVectorFixedGrowable( int growSize = 0 ) : BaseClass( growSize, MAX_SIZE ) {}
 };
 
-
 //-----------------------------------------------------------------------------
 // The CUtlVectorConservative class:
 // A array class with a conservative allocation scheme
@@ -248,8 +246,8 @@ class CUtlVectorConservative : public CUtlVector< T, CUtlMemoryConservative<T> >
 public:
 
 	// constructor, destructor
-	CUtlVectorConservative( int growSize = 0, int initSize = 0 ) : BaseClass( growSize, initSize ) {}
-	CUtlVectorConservative( T* pMemory, int numElements ) : BaseClass( pMemory, numElements ) {}
+	explicit CUtlVectorConservative( int growSize = 0, int initSize = 0 ) : BaseClass( growSize, initSize ) {}
+	explicit CUtlVectorConservative( T* pMemory, int numElements ) : BaseClass( pMemory, numElements ) {}
 };
 
 
@@ -259,7 +257,7 @@ public:
 // Especialy useful if you have a lot of vectors that are sparse, or if you're
 // carefully packing holders of vectors
 //-----------------------------------------------------------------------------
-#ifdef _MSC_VER
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4200) // warning C4200: nonstandard extension used : zero-sized array in struct/union
 #pragma warning(disable : 4815 ) // warning C4815: 'staticData' : zero-sized array in stack object will have no elements
@@ -471,7 +469,7 @@ public:
 	struct Data_t
 	{
 		int m_Size;
-		T m_Elements[];
+		T m_Elements[0];
 	};
 
 	Data_t *m_pData;
@@ -501,7 +499,7 @@ private:
 	}
 };
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #pragma warning(pop)
 #endif
 

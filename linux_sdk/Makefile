@@ -107,7 +107,7 @@ DEFINES +=-DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstricmp=strcasecmp -D_stricm
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
 BASE_CFLAGS = -fno-strict-aliasing -Wall -Wsign-compare -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
-	      -Wno-unknown-pragmas -Wno-unused
+	      -Wno-unknown-pragmas -Wno-unused -Wno-unused-result
 SHLIBCFLAGS = -fPIC
 
 # Clang >= 3 || GCC >= 4.7

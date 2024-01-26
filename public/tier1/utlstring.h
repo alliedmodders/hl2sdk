@@ -109,6 +109,8 @@ public:
 	const char	*Get( ) const;
 	void		Set( const char *pValue );
 
+	void Purge();
+
 	// Converts to c-strings
 	operator const char*() const;
 
@@ -144,7 +146,7 @@ public:
 	int Format( const char *pFormat, ... );
 
 private:
-	CUtlBinaryBlock m_Storage;
+	char *m_pString;
 };
 
 
