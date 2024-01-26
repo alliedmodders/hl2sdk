@@ -257,6 +257,8 @@ extern ISaveRestoreOps *eventFuncs;
 #define DEFINE_FUNCTION( function )			DEFINE_FUNCTION_RAW( function, inputfunc_t )
 
 
+#define FTYPEDESC_NONE				0
+
 #define FTYPEDESC_GLOBAL			(1 << 0)		// This field is masked for global entity save/restore
 #define FTYPEDESC_SAVE				(1 << 1)		// This field is saved to disk
 #define FTYPEDESC_KEY				(1 << 2)		// This field can be requested and written to by string name at load time
@@ -275,17 +277,17 @@ extern ISaveRestoreOps *eventFuncs;
 
 #define FTYPEDESC_INDEX				(1 << 12)		// The field is an index into file data, used for byteswapping. 
 
-// These flags apply to C_BasePlayer derived objects only
-#define FTYPEDESC_VIEW_OTHER_PLAYER		(1 << 13)		// By default you can only view fields on the local player (yourself), 
-														//   but if this is set, then we allow you to see fields on other players
-#define FTYPEDESC_VIEW_OWN_TEAM			(1 << 14)		// Only show this data if the player is on the same team as the local player
-#define FTYPEDESC_VIEW_NEVER			(1 << 15)		// Never show this field to anyone, even the local player (unusual)
-
-#define FTYPEDESC_UNK001				(1 << 16)
-#define FTYPEDESC_UNK002				(1 << 17)
-#define FTYPEDESC_UNK003				(1 << 18)
-#define FTYPEDESC_ALIAS					(1 << 19)		// Used if the typedesc is an alias prop
-#define FTYPEDESC_ENUM					(1 << 20)		// Used if the typedesc is enum, no datamap_t info would be available
+#define FTYPEDESC_OVERRIDE_RECURSIVE	(1 << 13)
+#define FTYPEDESC_SCHEMA_INITIALIZED	(1 << 14)
+#define FTYPEDESC_GEN_ARRAY_KEYNAMES_0	(1 << 15)
+#define FTYPEDESC_GEN_ARRAY_KEYNAMES_1	(1 << 16)
+#define FTYPEDESC_ADDITIONAL_FIELDS		(1 << 17)
+#define FTYPEDESC_EXPLICIT_BASE			(1 << 18)
+#define FTYPEDESC_PROCEDURAL_KEYFIELD	(1 << 19)
+#define FTYPEDESC_ENUM					(1 << 20)	// Used if the typedesc is enum, no datamap_t info would be available
+#define FTYPEDESC_REMOVED_KEYFIELD		(1 << 21)
+#define FTYPEDESC_WAS_INPUT				(1 << 22)
+#define FTYPEDESC_WAS_OUTPUT			(1 << 23)
 
 #define TD_MSECTOLERANCE		0.001f		// This is a FIELD_FLOAT and should only be checked to be within 0.001 of the networked info
 
@@ -366,8 +368,8 @@ struct datamap_t
 	char const			*dataClassName;
 	datamap_t			*baseMap;
 
-	int					m_nPackedSize;
 	optimized_datamap_t	*m_pOptimizedDataMap;
+	int					m_nPackedSize;
 	
 #if defined( _DEBUG )
 	bool				bValidityChecked;

@@ -11,7 +11,7 @@
 #include "tier1/utldict.h"
 #include "tier1/utlmap.h"
 #include "tier1/utlhashtable.h"
-#include <tier1/utldelegate.h>
+#include "tier1/utldelegate.h"
 #include "tier1/utlscratchmemory.h"
 #include "tier1/utlstring.h"
 #include "networksystem/inetworkserializer.h"
@@ -227,8 +227,8 @@ class CEntitySystem : public IEntityResourceManifestBuilder
 
 	struct DormancyChangeInfo_t
 	{
-		CEntityInstance* m_pEnt;
-		bool m_bDormant;
+		CEntityHandle m_hEnt;
+		bool m_bInPVS;
 	};
 
 	struct MurmurHash2HashFunctor
@@ -243,7 +243,7 @@ public:
 	virtual void				OnEntityParentChanged(CEntityInstance* pEntity, CEntityInstance* pNewParent) = 0; // empty function
 	virtual void				OnAddEntity(CEntityInstance* pEnt, CEntityHandle handle) = 0; // empty function
 	virtual void				OnRemoveEntity(CEntityInstance* pEnt, CEntityHandle handle) = 0; // empty function
-	virtual int					GetSpawnGroupWorldId(SpawnGroupHandle_t hSpawnGroup) = 0; // returns 0
+	virtual WorldGroupId_t		GetSpawnGroupWorldId(SpawnGroupHandle_t hSpawnGroup) = 0;
 	virtual void				Spawn(int nCount, const EntitySpawnInfo_t* pInfo) = 0;
 	virtual void				Activate(int nCount, const EntityActivation_t* pActivates, ActivateType_t activateType) = 0;
 	virtual void				PostDataUpdate(int nCount, const PostDataUpdateInfo_t *pInfo) = 0;
@@ -296,21 +296,21 @@ public:
 	CUtlMap<CUtlSymbolLarge, CUtlVector<CEntityHandle>*> m_entityNames; // 2800
 	CEventQueue m_EventQueue; // 2832
 	CUtlVectorFixedGrowable<IEntityIONotify*, 2> m_entityIONotifiers; // 2968 | 2984
-	int m_Unk1; // 3008 | 3024
+	int m_nSuppressDormancyChangeCount; // 3008 | 3024
 	NetworkSerializationMode_t m_eNetworkSerializationMode; // 3012 | 3028
-	int m_Unk2; // 3016 | 3032
-	int m_Unk3; // 3020 | 3036
-	int m_Unk4; // 3024 | 3040
-	int m_Unk5; // 3028 | 3044
+	int m_nExecuteQueuedCreationDepth; // 3016 | 3032
+	int m_nExecuteQueuedDeletionDepth; // 3020 | 3036
+	int m_nSuppressDestroyImmediateCount; // 3024 | 3040
+	int m_nSuppressAutoDeletionExecutionCount; // 3028 | 3044
 	int m_nEntityKeyValuesAllocatorRefCount; // 3032 | 3048
 	float m_flChangeCallbackSpewThreshold; // 3036 | 3052
-	bool m_Unk6; // 3040 | 3056
-	bool m_Unk7; // 3041 | 3057
-	bool m_Unk8; // 3042 | 3058
-	bool m_Unk9; // 3043 | 3059
-	bool m_Unk10; // 3044 | 3060
-	bool m_Unk11; // 3045 | 3061
-	bool m_Unk12; // 3046 | 3062
+	bool m_Unk1; // 3040 | 3056
+	bool m_Unk2; // 3041 | 3057
+	bool m_Unk3; // 3042 | 3058
+	bool m_bEnableAutoDeletionExecution; // 3043 | 3059
+	bool m_Unk4; // 3044 | 3060
+	bool m_Unk5; // 3045 | 3061
+	bool m_Unk6; // 3046 | 3062
 	CUtlVector<CreationInfo_t> m_queuedCreations; // 3048 | 3064
 	CUtlVector<PostDataUpdateInfo_t> m_queuedPostDataUpdates; // 3072 | 3088
 	CUtlVector<DestructionInfo_t> m_queuedDeletions; // 3096 | 3112
@@ -356,7 +356,7 @@ public:
 	CUtlVector<IEntityListener*> m_entityListeners; // 5448 | 5496
 	IEntity2SaveRestore* m_pEntity2SaveRestore; // 5472 | 5520
 	IEntity2Networkables* m_pEntity2Networkables; // 5480 | 5528
-	bool m_Unk13; // 5488 | 5536
+	bool m_Unk7; // 5488 | 5536
 };
 
 abstract_class IEntityFindFilter
