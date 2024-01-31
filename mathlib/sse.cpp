@@ -59,7 +59,7 @@ _PS_EXTERN_CONST(am_pi_o_2, (float)(M_PI / 2.0));
 _PS_EXTERN_CONST(am_2_o_pi, (float)(2.0 / M_PI));
 _PS_EXTERN_CONST(am_pi_o_4, (float)(M_PI / 4.0));
 _PS_EXTERN_CONST(am_4_o_pi, (float)(4.0 / M_PI));
-_PS_EXTERN_CONST_TYPE(am_sign_mask, int32, 0x80000000);
+_PS_EXTERN_CONST_TYPE(am_sign_mask, int32, (int32)0x80000000);
 _PS_EXTERN_CONST_TYPE(am_inv_sign_mask, int32, ~0x80000000);
 _PS_EXTERN_CONST_TYPE(am_min_norm_pos,int32, 0x00800000);
 _PS_EXTERN_CONST_TYPE(am_mant_mask, int32, 0x7f800000);
@@ -82,6 +82,9 @@ void  __cdecl _SSE_VectorMA( const float *start, float scale, const float *direc
 //-----------------------------------------------------------------------------
 float _SSE_Sqrt(float x)
 {
+#if defined( _WIN64 )
+	return std::sqrt(x);
+#else
 	Assert( s_bMathlibInitialized );
 	float	root = 0.f;
 #ifdef _WIN32
@@ -100,6 +103,7 @@ float _SSE_Sqrt(float x)
 	);
 #endif
 	return root;
+#endif // _WIN64
 }
 
 // Single iteration NewtonRaphson reciprocal square root:
@@ -123,6 +127,9 @@ float _SSE_RSqrtAccurate(float x)
 // Intel / Kipps SSE RSqrt.  Significantly faster than above.
 float _SSE_RSqrtAccurate(float a)
 {
+#if defined( _WIN64 )
+	return std::sqrt(a);
+#else
 	float x;
 	float half = 0.5f;
 	float three = 3.f;
@@ -163,6 +170,7 @@ float _SSE_RSqrtAccurate(float a)
 #endif
 
 	return x;
+#endif // _WIN64
 }
 #endif
 
@@ -170,6 +178,9 @@ float _SSE_RSqrtAccurate(float a)
 // or so, so ok for closed transforms.  (ie, computing lighting normals)
 float _SSE_RSqrtFast(float x)
 {
+#if defined( _WIN64 )
+	return std::sqrt(x);
+#else
 	Assert( s_bMathlibInitialized );
 
 	float rroot = 0.0f;
@@ -192,10 +203,18 @@ float _SSE_RSqrtFast(float x)
 #endif
 
 	return rroot;
+#endif // _WIN64
 }
 
 float FASTCALL _SSE_VectorNormalize (Vector& vec)
 {
+#if defined( _WIN64 )
+	float l = std::sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+	vec.x /= l;
+	vec.y /= l;
+	vec.z /= l;
+	return l;
+#else
 	Assert( s_bMathlibInitialized );
 
 	// NOTE: This is necessary to prevent an memory overwrite...
@@ -273,6 +292,7 @@ float FASTCALL _SSE_VectorNormalize (Vector& vec)
 	}
 
 	return radius;
+#endif // _WIN64
 }
 
 void FASTCALL _SSE_VectorNormalizeFast (Vector& vec)
@@ -286,6 +306,10 @@ void FASTCALL _SSE_VectorNormalizeFast (Vector& vec)
 
 float _SSE_InvRSquared(const float* v)
 {
+#if defined( _WIN64 )
+	float	r2 = DotProduct(v, v);
+	return r2 < 1.f ? 1.f : 1/r2;
+#else
 	float	inv_r2 = 1.f;
 #ifdef _WIN32
 	_asm { // Intel SSE only routine
@@ -332,11 +356,15 @@ float _SSE_InvRSquared(const float* v)
 #endif
 
 	return inv_r2;
+#endif // _WIN64
 }
 
 void _SSE_SinCos(float x, float* s, float* c)
 {
-#ifdef _WIN32
+#if defined( _WIN64 )
+	*s = std::sin(x);
+	*c = std::cos(x);
+#elif defined( _WIN32 )
 	float t4, t8, t12;
 
 	__asm
@@ -430,7 +458,9 @@ void _SSE_SinCos(float x, float* s, float* c)
 
 float _SSE_cos( float x )
 {
-#ifdef _WIN32
+#if defined ( _WIN64 )
+	return std::cos(x);
+#elif defined( _WIN32 )
 	float temp;
 	__asm
 	{
@@ -493,7 +523,10 @@ float _SSE_cos( float x )
 //-----------------------------------------------------------------------------
 void _SSE2_SinCos(float x, float* s, float* c)  // any x
 {
-#ifdef _WIN32
+#if defined( _WIN64 )
+	*s = std::sin(x);
+	*c = std::cos(x);
+#elif defined( _WIN32 )
 	__asm
 	{
 		movss	xmm0, x
@@ -578,7 +611,9 @@ void _SSE2_SinCos(float x, float* s, float* c)  // any x
 
 float _SSE2_cos(float x)  
 {
-#ifdef _WIN32
+#if defined ( _WIN64 )
+	return std::cos(x);
+#elif defined( _WIN32 )
 	__asm
 	{
 		movss	xmm0, x
@@ -638,8 +673,11 @@ void VectorTransformSSE(const float *in1, const matrix3x4_t& in2, float *out1)
 {
 	Assert( s_bMathlibInitialized );
 	Assert( in1 != out1 );
-
-#ifdef _WIN32
+#if defined ( _WIN64 )
+	out1[0] = DotProduct(in1, in2[0]) + in2[0][3];
+	out1[1] = DotProduct(in1, in2[1]) + in2[1][3];
+	out1[2] = DotProduct(in1, in2[2]) + in2[2][3];
+#elif defined( _WIN32 )
 	__asm
 	{
 		mov eax, in1;
@@ -695,8 +733,11 @@ void VectorRotateSSE( const float *in1, const matrix3x4_t& in2, float *out1 )
 {
 	Assert( s_bMathlibInitialized );
 	Assert( in1 != out1 );
-
-#ifdef _WIN32
+#if defined ( _WIN64 )
+	out1[0] = DotProduct( in1, in2[0] );
+	out1[1] = DotProduct( in1, in2[1] );
+	out1[2] = DotProduct( in1, in2[2] );
+#elif defined( _WIN32 )
 	__asm
 	{
 		mov eax, in1;
@@ -745,7 +786,7 @@ void VectorRotateSSE( const float *in1, const matrix3x4_t& in2, float *out1 )
 #endif
 }
 
-#ifdef _WIN32
+#if defined( _WIN32 ) && !defined( _WIN64 )
 void _declspec(naked) _SSE_VectorMA( const float *start, float scale, const float *direction, float *dest )
 {
 	// FIXME: This don't work!! It will overwrite memory in the write to dest
@@ -776,7 +817,7 @@ void _declspec(naked) _SSE_VectorMA( const float *start, float scale, const floa
 }
 #endif
 
-#ifdef _WIN32
+#if defined( _WIN32 ) && !defined( _WIN64 )
 #ifdef PFN_VECTORMA
 void _declspec(naked) __cdecl _SSE_VectorMA( const Vector &start, float scale, const Vector &direction, Vector &dest )
 {
@@ -842,4 +883,3 @@ vec_t DotProduct (const vec_t *a, const vec_t *c)
 	}
 }
 */
-

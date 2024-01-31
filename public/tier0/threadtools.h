@@ -113,9 +113,15 @@ extern "C" unsigned long __declspec(dllimport) __stdcall GetCurrentThreadId();
 #define ThreadGetCurrentId GetCurrentThreadId
 #endif
 
+#if defined( _WIN64 )
+#include <immintrin.h> 
+#endif
+
 inline void ThreadPause()
 {
-#if defined( _WIN32 ) && !defined( _X360 )
+#if defined( _WIN64 )
+	_mm_pause();
+#elif defined( _WIN32 ) && !defined( _X360 )
 	__asm pause;
 #elif defined _LINUX || defined __APPLE__
 	__asm __volatile("pause");

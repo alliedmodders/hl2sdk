@@ -60,7 +60,16 @@
 template <typename T>
 inline T AlignValue( T val, unsigned alignment )
 {
-	return (T)( ( (uintp)val + alignment - 1 ) & ~( alignment - 1 ) );
+	uintp align = alignment;
+	return (T)( ( (uintp)val + align - 1 ) & ~( align - 1 ) );
+}
+
+// Tell MSVC to shut the hell up
+template<>
+static inline char* AlignValue( char* val, unsigned alignment )
+{
+	uintptr_t align = alignment;
+	return (char *)( ( reinterpret_cast<uintptr_t>(val) + align - 1 ) & ~( align - 1 ) );
 }
 
 

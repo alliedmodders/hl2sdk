@@ -285,21 +285,12 @@ typedef void * HINSTANCE;
 #define MAX_PATH  260
 #endif
 
-
-#ifdef GNUC
-#undef offsetof
-//#define offsetof( type, var ) __builtin_offsetof( type, var ) 
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
-#else
-#undef offsetof
-#define offsetof(s,m)	(size_t)&(((s *)0)->m)
-#endif
-
-
 #define ALIGN_VALUE( val, alignment ) ( ( val + alignment - 1 ) & ~( alignment - 1 ) ) //  need macro for constant expression
 
 // Used to step into the debugger
-#if defined( _WIN32 ) && !defined( _X360 )
+#if defined( _WIN64 ) && !defined( _X360 )
+#define DebuggerBreak()  {}
+#elif defined( _WIN32 ) && !defined( _X360 )
 #define DebuggerBreak()  __asm { int 3 }
 #elif defined( _X360 )
 #define DebuggerBreak() DebugBreak()
@@ -541,6 +532,7 @@ static FORCEINLINE double fsel(double fComparand, double fValGE, double fLT)
 //-----------------------------------------------------------------------------
 //#define CHECK_FLOAT_EXCEPTIONS 1
 
+#if !defined( _WIN64 )
 #if !defined( _X360 )
 #if defined( _MSC_VER )
 
@@ -628,6 +620,7 @@ inline void SetupFPUControlWord()
 }
 
 #endif // _X360
+#endif // _WIN64
 
 //-----------------------------------------------------------------------------
 // Purpose: Standard functions for handling endian-ness
@@ -686,7 +679,7 @@ inline T DWordSwap360Intr( T dw )
 	return output;
 }
 
-#elif defined( _MSC_VER )
+#elif defined( _MSC_VER ) && !defined( _WIN64 )
 
 #define WordSwap  WordSwapAsm
 #define DWordSwap DWordSwapAsm
@@ -801,7 +794,6 @@ inline uint32 SwapDWord( uint32 val )				{ return DWordSwap( val ); }
 inline void BigFloat( float *pOut, const float *pIn )		{ int test = 1; ( *(char *)&test == 1 ) ? SafeSwapFloat( pOut, pIn ) : ( *pOut = *pIn ); }
 inline void LittleFloat( float *pOut, const float *pIn )	{ int test = 1; ( *(char *)&test == 1 ) ? ( *pOut = *pIn ) : SafeSwapFloat( pOut, pIn ); }
 inline void SwapFloat( float *pOut, const float *pIn )		{ SafeSwapFloat( pOut, pIn ); }
-
 #endif
 
 #if _X360
@@ -825,7 +817,6 @@ inline void StoreLittleDWord( unsigned long *base, unsigned int dwordIndex, unsi
 	base[dwordIndex] = LittleDWord(dword);
 }
 #endif
-
 
 #ifndef STATIC_TIER0
 

@@ -308,7 +308,7 @@ inline void CCycleCount::Sample()
 #else
 	m_Int64 = ++g_dwFakeFastCounter;
 #endif
-#elif defined( _WIN32 )
+#elif defined( _WIN32 ) && !defined( _WIN64 )
 	unsigned long* pSample = (unsigned long *)&m_Int64;
 	__asm
 	{

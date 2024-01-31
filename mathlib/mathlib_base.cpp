@@ -6,6 +6,7 @@
 
 /// FIXME: As soon as all references to mathlib.c are gone, include it in here
 
+#include <algorithm>
 #include <math.h>
 #include <float.h>	// Needed for FLT_EPSILON
 
@@ -2949,9 +2950,9 @@ float CalcSqrDistanceToAABB( const Vector &mins, const Vector &maxs, const Vecto
 
 void CalcClosestPointOnAABB( const Vector &mins, const Vector &maxs, const Vector &point, Vector &closestOut )
 {
-	closestOut.x = clamp( point.x, mins.x, maxs.x );
-	closestOut.y = clamp( point.y, mins.y, maxs.y );
-	closestOut.z = clamp( point.z, mins.z, maxs.z );
+	closestOut.x = std::clamp( point.x, mins.x, maxs.x );
+	closestOut.y = std::clamp( point.y, mins.y, maxs.y );
+	closestOut.z = std::clamp( point.z, mins.z, maxs.z );
 }
 
 void CalcSqrDistAndClosestPointOnAABB( const Vector &mins, const Vector &maxs, const Vector &point, Vector &closestOut, float &distSqrOut )
@@ -3027,7 +3028,7 @@ void CalcClosestPointOnLineSegment( const Vector &P, const Vector &vLineA, const
 {
 	Vector vDir;
 	float t = CalcClosestPointToLineT( P, vLineA, vLineB, vDir );
-	t = clamp( t, 0, 1 );
+	t = std::clamp( t, 0.0f, 1.0f );
 	if ( outT ) 
 	{
 		*outT = t;
@@ -3099,7 +3100,7 @@ void CalcClosestPointOnLineSegment2D( const Vector2D &P, const Vector2D &vLineA,
 {
 	Vector2D vDir;
 	float t = CalcClosestPointToLineT2D( P, vLineA, vLineB, vDir );
-	t = clamp( t, 0, 1 );
+	t = std::clamp( t, 0.0f, 1.0f );
 	if ( outT )
 	{
 		*outT = t;

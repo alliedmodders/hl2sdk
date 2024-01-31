@@ -1,0 +1,47 @@
+# vim: set ts=2 sw=2 tw=99 noet ft=python:
+import os, sys
+
+builder.SetBuildFolder('/')
+
+project = builder.StaticLibraryProject('tier1')
+project.sources = [
+	'bitbuf.cpp',
+	'byteswap.cpp',
+	'characterset.cpp',
+	'checksum_crc.cpp',
+	'checksum_md5.cpp',
+	'commandbuffer.cpp',
+	'convar.cpp',
+	'datamanager.cpp',
+	'diff.cpp',
+	'generichash.cpp',
+	'interface.cpp',
+	'KeyValues.cpp',
+	'mempool.cpp',
+	'memstack.cpp',
+	'NetAdr.cpp',
+	'newbitbuf.cpp',
+	'processor_detect.cpp',
+	'rangecheckedvar.cpp',
+	'stringpool.cpp',
+	'strtools.cpp',
+	'tier1.cpp',
+	'undiff.cpp',
+	'uniqueid.cpp',
+	'utlbuffer.cpp',
+	'utlbufferutil.cpp',
+	'utlstring.cpp',
+	'utlsymbol.cpp'
+]
+
+for cxx in HL2SDK.targets:
+  binary = HL2SDK.ConfigureLibrary(project, cxx, builder)
+  compiler = binary.compiler
+
+  compiler.cxxincludes += [
+    os.path.join(builder.currentSourcePath, '..', 'public'),
+	os.path.join(builder.currentSourcePath, '..', 'public', 'tier0'),
+	os.path.join(builder.currentSourcePath, '..', 'public', 'tier1')
+  ]
+
+HL2SDK.libs += builder.Add(project)
