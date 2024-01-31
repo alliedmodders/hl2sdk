@@ -82,7 +82,8 @@ class SDKConfig(object):
       '-Wall',
       '-Werror',
       '-Wno-overloaded-virtual',
-      '-msse'
+      '-msse',
+      '-fPIC'
     ]
 
     cxx.defines += [
