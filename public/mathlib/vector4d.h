@@ -249,10 +249,10 @@ inline void Vector4D::Init( vec_t ix, vec_t iy, vec_t iz, vec_t iw )
 
 inline void Vector4D::Random( vec_t minVal, vec_t maxVal )
 {
-	x = minVal + ((vec_t)rand() / RAND_MAX) * (maxVal - minVal);
-	y = minVal + ((vec_t)rand() / RAND_MAX) * (maxVal - minVal);
-	z = minVal + ((vec_t)rand() / RAND_MAX) * (maxVal - minVal);
-	w = minVal + ((vec_t)rand() / RAND_MAX) * (maxVal - minVal);
+	x = minVal + ((vec_t)rand() / (float)RAND_MAX) * (maxVal - minVal);
+	y = minVal + ((vec_t)rand() / (float)RAND_MAX) * (maxVal - minVal);
+	z = minVal + ((vec_t)rand() / (float)RAND_MAX) * (maxVal - minVal);
+	w = minVal + ((vec_t)rand() / (float)RAND_MAX) * (maxVal - minVal);
 }
 
 inline void Vector4DClear( Vector4D& a )

@@ -30,14 +30,6 @@ const fltx4 Four_FLT_MAX={FLT_MAX,FLT_MAX,FLT_MAX,FLT_MAX};
 const fltx4 Four_Negative_FLT_MAX={-FLT_MAX,-FLT_MAX,-FLT_MAX,-FLT_MAX};
 const fltx4 g_SIMD_0123 = { 0., 1., 2., 3. };
 
-const fltx4 g_QuatMultRowSign[4] =
-{
-	{  1.0f,  1.0f, -1.0f, 1.0f },
-	{ -1.0f,  1.0f,  1.0f, 1.0f },
-	{  1.0f, -1.0f,  1.0f, 1.0f },
-	{ -1.0f, -1.0f, -1.0f, 1.0f }
-};
-
 const int32 ALIGN16 g_SIMD_clear_signmask[4]= {(int32)0x7fffffff,(int32)0x7fffffff,(int32)0x7fffffff,(int32)0x7fffffff};
 const int32 ALIGN16 g_SIMD_signmask[4]= { (int32)0x80000000, (int32)0x80000000, (int32)0x80000000, (int32)0x80000000 };
 const int32 ALIGN16 g_SIMD_lsbmask[4]= { (int32)0xfffffffe, (int32)0xfffffffe, (int32)0xfffffffe, (int32)0xfffffffe };

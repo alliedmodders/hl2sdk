@@ -69,7 +69,7 @@ class SDKConfig(object):
       cxx.defines += ['DEBUG', '_DEBUG']
 
     if cxx.target.arch == 'x86_64':
-      cxx.defines += ['X64BITS']
+      cxx.defines += ['X64BITS', 'PLATFORM_64BITS']
 
     # Platform-specifics
     if cxx.target.platform == 'linux':
@@ -81,8 +81,12 @@ class SDKConfig(object):
     cxx.cflags += [
       '-Wall',
       '-Werror',
-	  '-Wno-delete-non-virtual-dtor',
-	  '-Wno-narrowing'
+      '-Wno-overloaded-virtual',
+      '-msse'
+    ]
+
+    cxx.defines += [
+      'COMPILER_GCC'
     ]
 
     cxx.cxxflags += [
@@ -94,16 +98,29 @@ class SDKConfig(object):
     return
 
   def configure_msvc(self, cxx):
-
     cxx.cxxflags += [
       '/std:c++17',
       '/WX'
     ]
 
+    
+    if builder.options.opt == '1':
+      cxx.cflags += ['/Ox', '/Zo']
+      cxx.linkflags += ['/OPT:ICF', '/OPT:REF']
+
     return
   
   def configure_linux(self, cxx):
-    cxx.defines += ['_LINUX', 'POSIX']
+    cxx.defines += ['_LINUX', 'POSIX', 'GNUC']
+
+    # Set of defines required by the HL2SDK
+    cxx.defines += [
+      '_finite=finite', 'stricmp=strcasecmp',
+      '_stricmp=strcasecmp', '_strnicmp=strncasecmp',
+	    'strnicmp=strncasecmp', '_vsnprintf=vsnprintf',
+      '_alloca=alloca', 'strcmpi=strcasecmp',
+      'NO_MALLOC_OVERRIDE'
+    ]
     return
   
   def configure_windows(self, cxx):

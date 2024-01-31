@@ -8,6 +8,7 @@
 #ifndef BASETYPES_H
 #define BASETYPES_H
 
+#include <cstdint>
 #include "tier0/platform.h"
 #include "commonmacros.h"
 #include "wchartypes.h"
@@ -66,7 +67,7 @@ inline T AlignValue( T val, unsigned alignment )
 
 // Tell MSVC to shut the hell up
 template<>
-static inline char* AlignValue( char* val, unsigned alignment )
+inline char* AlignValue( char* val, unsigned alignment )
 {
 	uintptr_t align = alignment;
 	return (char *)( ( reinterpret_cast<uintptr_t>(val) + align - 1 ) & ~( align - 1 ) );

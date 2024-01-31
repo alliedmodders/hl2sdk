@@ -6,8 +6,6 @@ parser.options.add_argument('--enable-debug', action='store_const', const='1', d
                         help='Enable debugging symbols')
 parser.options.add_argument('--enable-optimize', action='store_const', const='1', dest='opt',
                         help='Enable optimization')
-parser.options.add_argument('--disable-auto-versioning', action='store_false', dest='disable_auto_versioning',
-                        default=True, help='Disables the auto versioning script')
 parser.options.add_argument('--targets', type=str, dest='targets', default=None,
 		                help="Override the target architecture (use commas to separate multiple targets).")
 parser.Configure()

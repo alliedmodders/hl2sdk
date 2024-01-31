@@ -2882,14 +2882,16 @@ bool KeyValues::Dump( IKeyValuesDumpContext *pDump, int nIndentLevel /* = 0 */ )
 		return false;
 	
 	// Dump values
-	for ( KeyValues *val = this ? GetFirstValue() : NULL; val; val = val->GetNextValue() )
+	KeyValues *val = this;
+	for ( val = val ? GetFirstValue() : val; val; val = val->GetNextValue() )
 	{
 		if ( !pDump->KvWriteValue( val, nIndentLevel + 1 ) )
 			return false;
 	}
 
 	// Dump subkeys
-	for ( KeyValues *sub = this ? GetFirstTrueSubKey() : NULL; sub; sub = sub->GetNextTrueSubKey() )
+	KeyValues *sub = this;
+	for ( sub = sub ? GetFirstTrueSubKey() : sub; sub; sub = sub->GetNextTrueSubKey() )
 	{
 		if ( !sub->Dump( pDump, nIndentLevel + 1 ) )
 			return false;
