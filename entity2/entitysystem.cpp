@@ -313,7 +313,7 @@ EntityInstanceByClassIter_t::EntityInstanceByClassIter_t(const char* szClassName
 	}
 }
 
-EntityInstanceByClassIter_t::EntityInstanceByClassIter_t(CEntityInstance* pStart, char const* szClassName, IEntityFindFilter* pFilter = nullptr, EntityIterType_t eIterType = ENTITY_ITER_OVER_ACTIVE)
+EntityInstanceByClassIter_t::EntityInstanceByClassIter_t(CEntityInstance* pStart, char const* szClassName, IEntityFindFilter* pFilter, EntityIterType_t eIterType)
 {
 	m_pCurrentEnt = pStart ? pStart->m_pEntity : nullptr;
 	m_pFilter = pFilter;
