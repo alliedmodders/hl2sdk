@@ -115,6 +115,7 @@ extern "C" unsigned long __declspec(dllimport) __stdcall GetCurrentThreadId();
 
 #if defined( _WIN64 )
 #include <immintrin.h> 
+#include <intrin.h>
 #endif
 
 inline void ThreadPause()
@@ -192,6 +193,7 @@ inline long ThreadInterlockedExchange( long volatile *p, long value )							{ As
 inline long ThreadInterlockedExchangeAdd( long volatile *p, long value )						{ Assert( (size_t)p % 4 == 0 ); return _InterlockedExchangeAdd( p, value ); }
 inline long ThreadInterlockedCompareExchange( long volatile *p, long value, long comperand )	{ Assert( (size_t)p % 4 == 0 ); return _InterlockedCompareExchange( p, value, comperand ); }
 inline bool ThreadInterlockedAssignIf( long volatile *p, long value, long comperand )			{ Assert( (size_t)p % 4 == 0 ); return ( _InterlockedCompareExchange( p, value, comperand ) == comperand ); }
+
 #else
 TT_INTERFACE long ThreadInterlockedIncrement( long volatile * );
 TT_INTERFACE long ThreadInterlockedDecrement( long volatile * );
@@ -561,7 +563,11 @@ public:
 	}
 
 private:
+#ifdef _WIN64
+	FORCEINLINE bool TryLockInline( const uint64 threadId ) volatile
+#else
 	FORCEINLINE bool TryLockInline( const uint32 threadId ) volatile
+#endif
 	{
 		if ( threadId != m_ownerID && !ThreadInterlockedAssignIf( (volatile long *)&m_ownerID, (long)threadId, 0 ) )
 			return false;
@@ -570,13 +576,20 @@ private:
 		return true;
 	}
 
+#ifdef _WIN64
+	bool TryLock( const uint64 threadId ) volatile
+#else
 	bool TryLock( const uint32 threadId ) volatile
+#endif
 	{
 		return TryLockInline( threadId );
 	}
 
+#ifdef _WIN64
+	TT_CLASS void Lock( const uint64 threadId, unsigned nSpinSleepTime ) volatile;
+#else
 	TT_CLASS void Lock( const uint32 threadId, unsigned nSpinSleepTime ) volatile;
-
+#endif
 public:
 	bool TryLock() volatile
 	{
@@ -595,7 +608,7 @@ public:
 #endif
 	void Lock( unsigned nSpinSleepTime = 0 ) volatile
 	{
-		const uint32 threadId = ThreadGetCurrentId();
+		const auto threadId = ThreadGetCurrentId();
 
 		if ( !TryLockInline( threadId ) )
 		{
@@ -628,8 +641,13 @@ public:
 #endif
 
 		--m_depth;
-		if ( !m_depth )
+		if ( !m_depth ) {
+#ifdef _WIN64
+			_InterlockedExchange64( (int64 volatile*)&m_ownerID, 0 );
+#else
 			ThreadInterlockedExchange( &m_ownerID, 0 );
+#endif
+		}
 	}
 
 	bool TryLock() const volatile							{ return (const_cast<CThreadFastMutex *>(this))->TryLock(); }
@@ -640,10 +658,19 @@ public:
 	bool AssertOwnedByCurrentThread()	{ return true; }
 	void SetTrace( bool )				{}
 
+#ifdef _WIN64
+	uint64 GetOwnerId() const			{ return m_ownerID;	}
+#else
 	uint32 GetOwnerId() const			{ return m_ownerID;	}
+#endif
+
 	int	GetDepth() const				{ return m_depth; }
 private:
+#ifdef WIN64
+	volatile uint64	m_ownerID;
+#else
 	volatile uint32	m_ownerID;
+#endif
 	int				m_depth;
 };
 
