@@ -408,6 +408,7 @@ class EntityInstanceByClassIter_t
 {
 public:
 	EntityInstanceByClassIter_t(const char* szClassName, IEntityFindFilter* pFilter = nullptr, EntityIterType_t eIterType = ENTITY_ITER_OVER_ACTIVE);
+	EntityInstanceByClassIter_t(CEntityInstance* pStart, char const* szClassName, IEntityFindFilter* pFilter = nullptr, EntityIterType_t eIterType = ENTITY_ITER_OVER_ACTIVE);
 
 	CEntityInstance* First();
 	CEntityInstance* Next();
