@@ -258,7 +258,7 @@ public:
 
 	// Find a keyValue, create it if it is not found.
 	// Set bCreate to true to create the key if it doesn't already exist (which ensures a valid pointer will be returned)
-	KeyValues *FindKey( const char *keyName, bool bCreate );
+	KeyValues *FindKey( const char *keyName, bool bCreate = false );
 	const KeyValues *FindKey( const char *keyName ) const;
 	KeyValues *FindKey( HKeySymbol keySymbol );
 	KeyValues *FindKeyAndParent( const char *keyName, KeyValues **pParent, bool );
@@ -495,13 +495,13 @@ inline bool KeyValues::IsEmpty( HKeySymbol keySymbol )
 
 inline const char *KeyValues::GetString( const char *keyName, const char *defaultValue, char *pszOut, size_t maxlen )
 {
-	KeyValues *dat = FindKey( keyName, false );
+	KeyValues *dat = FindKey( keyName );
 	return dat ? dat->Internal_GetString( defaultValue, pszOut, maxlen ) : defaultValue;
 }
 
 inline const wchar_t *KeyValues::GetWString( const char *keyName, const wchar_t *defaultValue, wchar_t *pszOut, size_t maxlen )
 {
-	KeyValues *dat = FindKey( keyName, false );
+	KeyValues *dat = FindKey( keyName );
 	return dat ? dat->Internal_GetWString( defaultValue, pszOut, maxlen ) : defaultValue;
 }
 
