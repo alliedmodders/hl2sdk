@@ -290,10 +290,10 @@ public:
 
 public:
 	CUtlString m_sEntSystemName; // 2696
-	CUtlMap<const char*, CEntityClass*> m_entClassesByCPPClassname; // 2704
-	CUtlMap<const char*, CEntityClass*> m_entClassesByClassname; // 2736
-	CUtlMap<const char*, CEntityComponentHelper*> m_entityComponentHelpers; // 2768
-	CUtlMap<CUtlSymbolLarge, CUtlVector<CEntityHandle>*> m_entityNames; // 2800
+	CUtlMap<const char*, CEntityClass*, uint16, CDefFastCaselessStringLess> m_entClassesByCPPClassname; // 2704
+	CUtlMap<const char*, CEntityClass*, uint16, CDefFastCaselessStringLess> m_entClassesByClassname; // 2736
+	CUtlMap<const char*, CEntityComponentHelper*, uint16, CDefFastCaselessStringLess> m_entityComponentHelpers; // 2768
+	CUtlMap<CUtlSymbolLarge, CUtlVector<CEntityHandle>*, uint16, CDefLess<CUtlSymbolLarge>> m_entityNames; // 2800
 	CEventQueue m_EventQueue; // 2832
 	CUtlVectorFixedGrowable<IEntityIONotify*, 2> m_entityIONotifiers; // 2968 | 2984
 	int m_nSuppressDormancyChangeCount; // 3008 | 3024
@@ -331,7 +331,7 @@ public:
 	CUtlHashtable<CUtlString, void*> m_EntityMaterialAttributes; // 5360 | 5408
 };
 
-// Size: 0x1580 | 0x15B0 (from constructor)
+// Size: 0x1570 | 0x15A0 (from constructor)
 class CGameEntitySystem : public CEntitySystem
 {
 	struct SpawnGroupEntityFilterInfo_t
@@ -356,7 +356,6 @@ public:
 	CUtlVector<IEntityListener*> m_entityListeners; // 5448 | 5496
 	IEntity2SaveRestore* m_pEntity2SaveRestore; // 5472 | 5520
 	IEntity2Networkables* m_pEntity2Networkables; // 5480 | 5528
-	bool m_Unk7; // 5488 | 5536
 };
 
 abstract_class IEntityFindFilter
@@ -408,7 +407,7 @@ class EntityInstanceByClassIter_t
 {
 public:
 	EntityInstanceByClassIter_t(const char* szClassName, IEntityFindFilter* pFilter = nullptr, EntityIterType_t eIterType = ENTITY_ITER_OVER_ACTIVE);
-	EntityInstanceByClassIter_t(CEntityInstance* pStart, char const* szClassName, IEntityFindFilter* pFilter = nullptr, EntityIterType_t eIterType = ENTITY_ITER_OVER_ACTIVE);
+	EntityInstanceByClassIter_t(CEntityInstance* pStart, const char* szClassName, IEntityFindFilter* pFilter = nullptr, EntityIterType_t eIterType = ENTITY_ITER_OVER_ACTIVE);
 
 	CEntityInstance* First();
 	CEntityInstance* Next();

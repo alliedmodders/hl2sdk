@@ -58,6 +58,12 @@ public:
 	{ 
 		return m_pString != src.m_pString; 
 	}
+	
+	// operator<
+	bool operator<( CUtlSymbolLarge const& src ) const
+	{
+		return ( intp )m_pString < ( intp )src.m_pString;
+	}
 
 	inline const char* String() const 
 	{ 

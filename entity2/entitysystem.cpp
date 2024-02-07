@@ -313,11 +313,12 @@ EntityInstanceByClassIter_t::EntityInstanceByClassIter_t(const char* szClassName
 	}
 }
 
-EntityInstanceByClassIter_t::EntityInstanceByClassIter_t(CEntityInstance* pStart, char const* szClassName, IEntityFindFilter* pFilter, EntityIterType_t eIterType)
+EntityInstanceByClassIter_t::EntityInstanceByClassIter_t(CEntityInstance* pStart, const char* szClassName, IEntityFindFilter* pFilter, EntityIterType_t eIterType)
 {
 	m_pCurrentEnt = pStart ? pStart->m_pEntity : nullptr;
 	m_pFilter = pFilter;
 	m_eIterType = eIterType;
+	m_hWorldGroupId = WorldGroupId_t();
 	m_pszClassName = szClassName;
 	m_pEntityClass = NULL;
 }

@@ -25,12 +25,14 @@ enum EDictCompareType
 {
 	k_eDictCompareTypeCaseSensitive=0,
 	k_eDictCompareTypeCaseInsensitive=1,
+	k_eDictCompareTypeCaseInsensitiveFast=2,
 	k_eDictCompareTypeFilenames				// Slashes and backslashes count as the same character..
 };
 
-template <int COMPARE_TYPE>	struct CDictCompareTypeDeducer {};
+template <int COMPARE_TYPE> struct CDictCompareTypeDeducer {};
 template <> struct CDictCompareTypeDeducer<k_eDictCompareTypeCaseSensitive> { typedef CDefStringLess Type_t; };
 template <> struct CDictCompareTypeDeducer<k_eDictCompareTypeCaseInsensitive> { typedef CDefCaselessStringLess Type_t; };
+template <> struct CDictCompareTypeDeducer<k_eDictCompareTypeCaseInsensitiveFast> { typedef CDefFastCaselessStringLess Type_t; };
 template <> struct CDictCompareTypeDeducer<k_eDictCompareTypeFilenames> { typedef CDefCaselessStringLessIgnoreSlashes Type_t; };
 
 #define FOR_EACH_DICT( dictName, iteratorName ) \
@@ -43,7 +45,7 @@ template <> struct CDictCompareTypeDeducer<k_eDictCompareTypeFilenames> { typede
 //-----------------------------------------------------------------------------
 // A dictionary mapping from symbol to structure
 //-----------------------------------------------------------------------------
-template <class T, class I = int, int COMPARE_TYPE = k_eDictCompareTypeCaseInsensitive> 
+template <class T, class I = int, int COMPARE_TYPE = k_eDictCompareTypeCaseInsensitiveFast> 
 class CUtlDict
 {
 public:
