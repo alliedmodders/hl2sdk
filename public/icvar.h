@@ -17,6 +17,9 @@
 #include "mathlib/vector4d.h"
 #include <cstdint>
 
+// TO-DO: Remove Metamod ConVar PR is finished
+class ConCommandBase;
+
 class BaseConVar;
 class ConCommand;
 class CCommand;
