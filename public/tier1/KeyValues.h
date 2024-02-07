@@ -86,8 +86,8 @@ public:
 	};
 
 protected:
-	//	Valve scrapped the public-facing version of these,
-	//	so we have to expose as protected for the scaffolds below in KeyValues.
+	// AMNOTE: Valve scrapped the public-facing version of these,
+	// so we have to expose as protected for the scaffolds below in KeyValues.
 	char const *Internal_GetString( const char *defaultValue, char *szBuf, size_t maxlen );
 	const wchar_t *Internal_GetWString( const wchar_t *defaultValue, wchar_t *szBuf, size_t maxlen );
 
