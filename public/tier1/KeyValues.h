@@ -493,13 +493,13 @@ inline bool KeyValues::IsEmpty( HKeySymbol keySymbol )
 	return dat ? dat->IsEmpty() : true;
 }
 
-inline const char *KeyValues::GetString( const char *keyName, const char *defaultValue = "", char *pszOut = NULL, size_t maxlen = 0 )
+inline const char *KeyValues::GetString( const char *keyName, const char *defaultValue, char *pszOut, size_t maxlen )
 {
 	KeyValues *dat = FindKey( keyName, false );
 	return dat ? dat->Internal_GetString( defaultValue, pszOut, maxlen ) : defaultValue;
 }
 
-inline const wchar_t *KeyValues::GetWString( const char *keyName = NULL, const wchar_t *defaultValue = L"", wchar_t *pszOut = NULL, size_t maxlen = 0 )
+inline const wchar_t *KeyValues::GetWString( const char *keyName, const wchar_t *defaultValue, wchar_t *pszOut, size_t maxlen )
 {
 	KeyValues *dat = FindKey( keyName, false );
 	return dat ? dat->Internal_GetWString( defaultValue, pszOut, maxlen );
