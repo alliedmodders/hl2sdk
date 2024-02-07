@@ -146,7 +146,6 @@ enum MoveType_t : unsigned char
 	MOVETYPE_NONE		= 0,	// never moves
 	MOVETYPE_OBSOLETE,			// Previously isometric movetype
 	MOVETYPE_WALK,				// Player only - moving on the ground
-	MOVETYPE_STEP,				// gravity, special edge handling -- monsters use this
 	MOVETYPE_FLY,				// No gravity, but still collides with stuff
 	MOVETYPE_FLYGRAVITY,		// flies through the air + is affected by gravity
 	MOVETYPE_VPHYSICS,			// uses VPHYSICS for simulation
