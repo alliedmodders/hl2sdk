@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -12,6 +12,7 @@
 
 #include "tier0/platform.h"
 
+class CBufferString;
 
 //-----------------------------------------------------------------------------
 // Purpose: Interface to engine command line
@@ -21,12 +22,11 @@ abstract_class ICommandLine
 public:
 	virtual void		CreateCmdLine( const char *commandline ) = 0;
 	virtual void		CreateCmdLine( int argc, char **argv ) = 0;
-	virtual const char	*GetCmdLine( void ) const = 0;
+	virtual void		CreateCmdLinePrependAppName( const char *commandline ) = 0;
 
 	// Check whether a particular parameter exists
 	virtual	const char	*CheckParm( const char *psz, const char **ppszValue = 0 ) const = 0;
 	virtual bool		HasParm( const char *psz ) const = 0;
-	virtual void		AppendParm( const char *pszParm, const char *pszValues ) = 0;
 	
 	// Gets at particular parameters
 	virtual int			ParmCount() const = 0;
@@ -37,14 +37,16 @@ public:
 	virtual const char	*ParmValue( const char *psz, const char *pDefaultVal = 0 ) const = 0;
 	virtual int			ParmValue( const char *psz, int nDefaultVal ) const = 0;
 	virtual float		ParmValue( const char *psz, float flDefaultVal ) const = 0;
-	virtual bool		ParmValue( const char *psz, const char *pDefaultVal, char *pszOut, unsigned int size ) = 0;
+	virtual bool		ParmValue( const char *psz, const char *pDefaultVal, CBufferString *bufOut ) = 0;
 
-	virtual const char	*ParmValueByIndex( int nIndex, const char *pDefaultVal ) const = 0;
-	
-	virtual void CreateCmdLinePrependAppName( const char *commandline ) = 0;
 	virtual const char **GetParms() const = 0;
+	virtual const char *GetCmdLine( void ) const = 0;
+	virtual void		AppendParm( const char *pszParm, const char *pszValues ) = 0;
 	
-	virtual bool		IsWellInitialized( void ) const = 0;
+	// Returns true if there's atleast one parm available
+	virtual bool		HasParms( void ) const = 0;
+
+	virtual const char *GetUnkString() = 0;
 };
 
 //-----------------------------------------------------------------------------
