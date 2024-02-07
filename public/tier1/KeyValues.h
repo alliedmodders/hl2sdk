@@ -502,7 +502,7 @@ inline const char *KeyValues::GetString( const char *keyName, const char *defaul
 inline const wchar_t *KeyValues::GetWString( const char *keyName, const wchar_t *defaultValue, wchar_t *pszOut, size_t maxlen )
 {
 	KeyValues *dat = FindKey( keyName, false );
-	return dat ? dat->Internal_GetWString( defaultValue, pszOut, maxlen );
+	return dat ? dat->Internal_GetWString( defaultValue, pszOut, maxlen ) : defaultValue;
 }
 
 //
