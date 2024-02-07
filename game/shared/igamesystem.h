@@ -287,6 +287,8 @@ public:
 	virtual void unk_1287( const void *const msg ) = 0;
 	virtual void unk_1288( const void *const msg ) = 0;
 	virtual void unk_1289( const void *const msg ) = 0;
+	virtual void unk_1290( const void *const msg ) = 0;
+	virtual void unk_1291( const void *const msg ) = 0;
 
 	virtual const char* GetName() = 0;
 	virtual void SetGameSystemGlobalPtrs(void* pValue) = 0;
@@ -374,6 +376,8 @@ public:
 	virtual void unk_1287( const void *const msg ) {}
 	virtual void unk_1288( const void *const msg ) {}
 	virtual void unk_1289( const void *const msg ) {}
+	virtual void unk_1290( const void *const msg ) {}
+	virtual void unk_1291( const void *const msg ) {}
 
 	virtual const char* GetName() { return m_pName; }
 	virtual void SetGameSystemGlobalPtrs(void* pValue) {}
