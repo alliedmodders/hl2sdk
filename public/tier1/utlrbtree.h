@@ -45,9 +45,26 @@ public:
 
 //-------------------------------------
 
-inline bool StringLessThan( const char * const &lhs, const char * const &rhs)			{ return ( strcmp( lhs, rhs) < 0 );  }
-inline bool CaselessStringLessThan( const char * const &lhs, const char * const &rhs )	{ return ( V_stricmp_fast( lhs, rhs) < 0 ); }
+inline bool StringLessThan( const char * const &lhs, const char * const &rhs)			
+{
+	if ( !lhs ) return false;
+	if ( !rhs ) return true;
+	return ( strcmp( lhs, rhs ) < 0 );  
+}
 
+inline bool CaselessStringLessThan( const char * const &lhs, const char * const &rhs )	
+{ 
+	if ( !lhs ) return false;
+	if ( !rhs ) return true;
+	return ( stricmp( lhs, rhs ) < 0 ); 
+}
+
+inline bool FastCaselessStringLessThan( const char * const &lhs, const char * const &rhs )	
+{ 
+	if ( !lhs ) return false;
+	if ( !rhs ) return true;
+	return ( V_stricmp_fast( lhs, rhs ) < 0 ); 
+}
 
 // Same as CaselessStringLessThan, but it ignores differences in / and \.
 inline bool CaselessStringLessThanIgnoreSlashes( const char * const &lhs, const char * const &rhs )	
@@ -97,7 +114,7 @@ class CDefStringLess
 public:
 	CDefStringLess() {}
 	CDefStringLess( int i ) {}
-	inline bool operator()( const char * const &lhs, const char * const &rhs ) const { return StringLessThan( lhs, rhs ); }
+	inline bool operator()( const char * const &lhs, const char * const &rhs ) const { return ( strcmp( lhs, rhs ) < 0 ); }
 	inline bool operator!() const { return false; }
 };
 
@@ -106,7 +123,16 @@ class CDefCaselessStringLess
 public:
 	CDefCaselessStringLess() {}
 	CDefCaselessStringLess( int i ) {}
-	inline bool operator()( const char * const &lhs, const char * const &rhs ) const { return CaselessStringLessThan( lhs, rhs ); }
+	inline bool operator()( const char * const &lhs, const char * const &rhs ) const { return ( stricmp( lhs, rhs ) < 0 ); }
+	inline bool operator!() const { return false; }
+};
+
+class CDefFastCaselessStringLess
+{
+public:
+	CDefFastCaselessStringLess() {}
+	CDefFastCaselessStringLess( int i ) {}
+	inline bool operator()( const char * const &lhs, const char * const &rhs ) const { return ( V_stricmp_fast( lhs, rhs ) < 0 ); }
 	inline bool operator!() const { return false; }
 };
 
