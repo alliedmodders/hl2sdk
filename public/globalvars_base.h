@@ -77,7 +77,7 @@ public:
 
 	// Simulation ticks - does not increase when game is paused
 	int tickcount;
-
+	// Non-zero when during movement processing, it's the part after the decimal point of the "when" field in player's subtick moves.
 	float m_flSubtickFraction;
 };
 
