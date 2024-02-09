@@ -77,8 +77,8 @@ public:
 
 	// Simulation ticks - does not increase when game is paused
 	int tickcount;
-	// Simulation tick interval
-	float interval_per_tick;
+
+	float m_flSubtickFraction;
 };
 
 inline CGlobalVarsBase::CGlobalVarsBase()
