@@ -1150,7 +1150,7 @@ FORCEINLINE unsigned char RoundFloatToByte(float f)
 #endif
 }
 
-FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
+FORCEINLINE uint32_t RoundFloatToUnsignedLong(float f)
 {
 #if defined( _WIN64 )
 	return std::round(f);
@@ -1162,7 +1162,7 @@ FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
 	{
 		double flResult;
 		int pIntResult[2];
-		unsigned long pResult[2];
+		uint32_t pResult[2];
 	};
 	flResult = __fctiw( f );
 	Assert( pIntResult[1] >= 0 );
@@ -1183,7 +1183,7 @@ FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
 	);
 #endif
 
-	return *((unsigned long*)nResult);
+	return *((uint32_t*)nResult);
 #endif
 }
 

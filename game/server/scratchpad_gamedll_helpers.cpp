@@ -15,7 +15,7 @@
 
 void ScratchPad_DrawWorldToScratchPad(
 	IScratchPad3D *pPad,
-	unsigned long flags )
+	uint32_t flags )
 {
 	pPad->SetRenderState( IScratchPad3D::RS_FillMode, IScratchPad3D::FillMode_Wireframe );
 
@@ -52,7 +52,7 @@ void ScratchPad_DrawWorldToScratchPad(
 
 void ScratchPad_DrawEntityToScratchPad(
 	IScratchPad3D *pPad,
-	unsigned long flags,
+	uint32_t flags,
 	CBaseEntity *pEnt,
 	const Vector &vColor )
 {

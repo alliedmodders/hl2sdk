@@ -614,8 +614,8 @@ int* AFNAME(_crtDbgFlag)(void)
 	return AFRET(_crtDbgFlag);
 }
 
-long _crtBreakAlloc;      /* Break on this allocation */
-long* AFNAME(_crtBreakAlloc) (void)
+int32_t _crtBreakAlloc;      /* Break on this allocation */
+int32_t* AFNAME(_crtBreakAlloc) (void)
 {
 	return AFRET(_crtBreakAlloc);
 }
@@ -631,7 +631,7 @@ _CRT_ALLOC_HOOK __cdecl _CrtSetAllocHook( _CRT_ALLOC_HOOK pfnNewHook )
 	return NULL;
 }
 
-long __cdecl _CrtSetBreakAlloc( long lNewBreakAlloc )
+int32_t __cdecl _CrtSetBreakAlloc( int32_t lNewBreakAlloc )
 {
 	return g_pMemAlloc->CrtSetBreakAlloc( lNewBreakAlloc );
 }
@@ -653,7 +653,7 @@ int __cdecl _CrtCheckMemory( void )
 }
 
 int __cdecl _CrtIsMemoryBlock( const void *pMem, unsigned int nSize,
-    long *plRequestNumber, char **ppFileName, int *pnLine )
+    int32_t *plRequestNumber, char **ppFileName, int *pnLine )
 {
 	DebuggerBreak();
 	return 1;
@@ -690,7 +690,7 @@ void __cdecl _CrtDoForAllClientObjects( void (*pfn)(void *, void *), void * pCon
 //-----------------------------------------------------------------------------
 // Methods in dbgrpt.cpp 
 //-----------------------------------------------------------------------------
-long _crtAssertBusy = -1;
+int32_t _crtAssertBusy = -1;
 
 int __cdecl _CrtSetReportMode( int nReportType, int nReportMode )
 {
@@ -1165,7 +1165,7 @@ SIZE_T WINAPI XMemSize( PVOID pAddress, DWORD dwAllocAttributes )
 #define MAX_LC_LEN          (MAX_LANG_LEN+MAX_CTRY_LEN+MAX_MODIFIER_LEN+3)
 
 struct _is_ctype_compatible {
-        unsigned long id;
+        uint32_t id;
         int is_clike;
 };
 typedef struct setloc_struct {
@@ -1188,15 +1188,15 @@ typedef struct setloc_struct {
 } _setloc_struct, *_psetloc_struct;
 
 struct _tiddata {
-    unsigned long   _tid;       /* thread ID */
+    uint32_t   _tid;       /* thread ID */
 
 
     uintptr_t _thandle;         /* thread handle */
 
     int     _terrno;            /* errno value */
-    unsigned long   _tdoserrno; /* _doserrno value */
+    uint32_t   _tdoserrno; /* _doserrno value */
     unsigned int    _fpds;      /* Floating Point data segment */
-    unsigned long   _holdrand;  /* rand() seed value */
+    uint32_t   _holdrand;  /* rand() seed value */
     char *      _token;         /* ptr to strtok() token */
     wchar_t *   _wtoken;        /* ptr to wcstok() token */
     unsigned char * _mtoken;    /* ptr to _mbstok() token */
@@ -1235,7 +1235,7 @@ struct _tiddata {
     int         _ownlocale;     /* if 1, this thread owns its own locale */
 
     /* following field is needed by NLG routines */
-    unsigned long   _NLG_dwCode;
+    uint32_t   _NLG_dwCode;
 
     /*
      * Per-Thread data needed by C++ Exception Handling
@@ -1272,7 +1272,7 @@ struct _tiddata {
 
     int _cxxReThrow;        /* Set to True if it's a rethrown C++ Exception */
 
-    unsigned long __initDomain;     /* initial domain used by _beginthread[ex] for managed function */
+    uint32_t __initDomain;     /* initial domain used by _beginthread[ex] for managed function */
 };
 
 typedef struct _tiddata * _ptiddata;

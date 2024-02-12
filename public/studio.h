@@ -1796,7 +1796,7 @@ struct vertexFileHeader_t
 	DECLARE_BYTESWAP_DATADESC();
 	int		id;								// MODEL_VERTEX_FILE_ID
 	int		version;						// MODEL_VERTEX_FILE_VERSION
-	long	checksum;						// same as studiohdr_t, ensures sync
+	int32_t	checksum;						// same as studiohdr_t, ensures sync
 	int		numLODs;						// num of valid lods
 	int		numLODVertexes[MAX_NUM_LODS];	// num verts for desired root lod
 	int		numFixups;						// num of vertexFileFixup_t
@@ -1964,7 +1964,7 @@ struct studiohdr_t
 	int					id;
 	int					version;
 
-	long				checksum;		// this has to be the same in the phy and vtx files to load!
+	int32_t				checksum;		// this has to be the same in the phy and vtx files to load!
 	
 	inline const char *	pszName( void ) const { return name; }
 	char				name[64];

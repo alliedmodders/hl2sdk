@@ -1428,9 +1428,9 @@ public:
 	virtual void GetFogDistances( float *fStart, float *fEnd, float *fFogZ ) = 0;
 
 	// Hooks for firing PIX events from outside the Material System...
-	virtual void BeginPIXEvent( unsigned long color, const char *szName ) = 0;
+	virtual void BeginPIXEvent( uint32_t color, const char *szName ) = 0;
 	virtual void EndPIXEvent() = 0;
-	virtual void SetPIXMarker( unsigned long color, const char *szName ) = 0;
+	virtual void SetPIXMarker( uint32_t color, const char *szName ) = 0;
 
 	// Batch API
 	// from changelist 166623:
@@ -1768,7 +1768,7 @@ private:
 class PIXEvent
 {
 public:
-	PIXEvent( IMatRenderContext *pRenderContext, const char *szName, unsigned long color = PIX_VALVE_ORANGE )
+	PIXEvent( IMatRenderContext *pRenderContext, const char *szName, uint32_t color = PIX_VALVE_ORANGE )
 	{
 		m_pRenderContext = pRenderContext;
 		Assert( m_pRenderContext );

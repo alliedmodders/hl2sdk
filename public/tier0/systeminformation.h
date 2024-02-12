@@ -35,15 +35,15 @@ enum SYSTEM_CALL_RESULT_t
 //
 struct PAGED_POOL_INFO_t
 {
-	unsigned long numPagesUsed;		// Number of Paged Pool pages used
-	unsigned long numPagesFree;		// Number of Paged Pool pages free
+	uint32_t numPagesUsed;		// Number of Paged Pool pages used
+	uint32_t numPagesFree;		// Number of Paged Pool pages free
 };
 
 //
 //	Plat_GetMemPageSize
 //		Returns the size of a memory page in kilobytes.
 //
-PLATFORM_INTERFACE unsigned long Plat_GetMemPageSize();
+PLATFORM_INTERFACE uint32_t Plat_GetMemPageSize();
 
 //
 //	Plat_GetPagedPoolInfo

@@ -132,8 +132,8 @@ public:
 		virtual void	Read( CFileRead *pFile );
 		virtual void	Write( IFileSystem* pFileSystem, FileHandle_t fp );
 
-		unsigned long	m_State;		// One of the RS_ enums.
-		unsigned long	m_Val;
+		uint32_t	m_State;		// One of the RS_ enums.
+		uint32_t	m_Val;
 	};
 
 	class CCommand_Text : public CBaseCommand
@@ -180,7 +180,7 @@ public:
 	virtual void		DrawRectXY( float zPos, Vector2D const &vMin, Vector2D const &vMax, CSPColor const &vColor );
 	virtual void		DrawWireframeBox( Vector const &vMin, Vector const &vMax, Vector const &vColor );
 	virtual void		DrawText( const char *pStr, const CTextParams &params );
-	virtual void		SetRenderState( RenderState state, unsigned long val );
+	virtual void		SetRenderState( RenderState state, uint32_t val );
 	virtual void		Clear();
 	virtual void		Flush();
 	virtual void		DrawImageBW( 

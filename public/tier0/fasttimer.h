@@ -15,9 +15,9 @@
 #include "tier0/platform.h"
 
 PLATFORM_INTERFACE int64 g_ClockSpeed;
-PLATFORM_INTERFACE unsigned long g_dwClockSpeed;
+PLATFORM_INTERFACE uint32_t g_dwClockSpeed;
 #if defined( _X360 ) && defined( _CERT )
-PLATFORM_INTERFACE unsigned long g_dwFakeFastCounter;
+PLATFORM_INTERFACE uint32_t g_dwFakeFastCounter;
 #endif
 
 PLATFORM_INTERFACE double g_ClockSpeedMicrosecondsMultiplier;
@@ -42,15 +42,15 @@ public:
 
 	// Convert to other time representations. These functions are slow, so it's preferable to call them
 	// during display rather than inside a timing block.
-	unsigned long	GetCycles()  const;
+	uint32_t	GetCycles()  const;
 	int64			GetLongCycles() const;
 
-	unsigned long	GetMicroseconds() const;
+	uint32_t	GetMicroseconds() const;
 	uint64			GetUlMicroseconds() const;
 	double			GetMicrosecondsF() const; 	
-	void			SetMicroseconds( unsigned long nMicroseconds );
+	void			SetMicroseconds( uint32_t nMicroseconds );
 
-	unsigned long	GetMilliseconds() const;
+	uint32_t	GetMilliseconds() const;
 	double			GetMillisecondsF() const;
 
 	double			GetSeconds() const;
@@ -85,7 +85,7 @@ public:
 		const CPUInformation& pi = GetCPUInformation();
 
 		g_ClockSpeed = pi.m_Speed;
-		g_dwClockSpeed = (unsigned long)g_ClockSpeed;
+		g_dwClockSpeed = (uint32_t)g_ClockSpeed;
 
 		g_ClockSpeedMicrosecondsMultiplier = 1000000.0 / (double)g_ClockSpeed;
 		g_ClockSpeedMillisecondsMultiplier = 1000.0 / (double)g_ClockSpeed;
@@ -104,7 +104,7 @@ public:
 	CCycleCount 		GetDurationInProgress() const; // Call without ending. Not that cheap.
 
 	// Return number of cycles per second on this processor.
-	static inline unsigned long	GetClockSpeed();
+	static inline uint32_t GetClockSpeed();
 
 private:
 	CCycleCount	m_Duration;
@@ -309,7 +309,7 @@ inline void CCycleCount::Sample()
 	m_Int64 = ++g_dwFakeFastCounter;
 #endif
 #elif defined( _WIN32 ) && !defined( _WIN64 )
-	unsigned long* pSample = (unsigned long *)&m_Int64;
+	uint32_t* pSample = (uint32_t *)&m_Int64;
 	__asm
 	{
 		// force the cpu to synchronize the instruction queue
@@ -323,7 +323,7 @@ inline void CCycleCount::Sample()
 		mov		[ecx+4], edx
 	}
 #elif defined( _LINUX )
-	unsigned long* pSample = (unsigned long *)&m_Int64;
+	uint32_t* pSample = (uint32_t *)&m_Int64;
     __asm__ __volatile__ (  
 		"rdtsc\n\t"
 		"movl %%eax,  (%0)\n\t"
@@ -368,9 +368,9 @@ inline bool CCycleCount::IsLessThan(CCycleCount const &other) const
 }
 
 
-inline unsigned long CCycleCount::GetCycles() const
+inline uint32_t CCycleCount::GetCycles() const
 {
-	return (unsigned long)m_Int64;
+	return (uint32_t)m_Int64;
 }
 
 inline int64 CCycleCount::GetLongCycles() const
@@ -378,9 +378,9 @@ inline int64 CCycleCount::GetLongCycles() const
 	return m_Int64;
 }
 
-inline unsigned long CCycleCount::GetMicroseconds() const
+inline uint32_t CCycleCount::GetMicroseconds() const
 {
-	return (unsigned long)((m_Int64 * 1000000) / g_ClockSpeed);
+	return (uint32_t)((m_Int64 * 1000000) / g_ClockSpeed);
 }
 
 inline uint64 CCycleCount::GetUlMicroseconds() const
@@ -395,15 +395,15 @@ inline double CCycleCount::GetMicrosecondsF() const
 }
 
 
-inline void	CCycleCount::SetMicroseconds( unsigned long nMicroseconds )
+inline void	CCycleCount::SetMicroseconds( uint32_t nMicroseconds )
 {
 	m_Int64 = ((int64)nMicroseconds * g_ClockSpeed) / 1000000;
 }
 
 
-inline unsigned long CCycleCount::GetMilliseconds() const
+inline uint32_t CCycleCount::GetMilliseconds() const
 {
-	return (unsigned long)((m_Int64 * 1000) / g_ClockSpeed);
+	return (uint32_t)((m_Int64 * 1000) / g_ClockSpeed);
 }
 
 
@@ -475,7 +475,7 @@ inline CCycleCount CFastTimer::GetDurationInProgress() const
 }
 
 
-inline unsigned long CFastTimer::GetClockSpeed()
+inline uint32_t CFastTimer::GetClockSpeed()
 {
 	return g_dwClockSpeed;
 }

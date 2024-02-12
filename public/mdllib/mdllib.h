@@ -72,7 +72,7 @@ public:
 	// Returns the checksums that the stripping info was generated for:
 	//	plChecksumOriginal		if non-NULL will hold the checksum of the original model submitted for stripping
 	//	plChecksumStripped		if non-NULL will hold the resulting checksum of the stripped model
-	virtual bool GetCheckSum( long *plChecksumOriginal, long *plChecksumStripped ) const = 0;
+	virtual bool GetCheckSum( int32_t *plChecksumOriginal, int32_t *plChecksumStripped ) const = 0;
 
 	//
 	// Stripping

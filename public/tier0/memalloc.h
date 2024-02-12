@@ -73,7 +73,7 @@ public:
 
 	// FIXME: Remove when we have our own allocator
 	// these methods of the Crt debug code is used in our codebase currently
-	virtual long CrtSetBreakAlloc( long lNewBreakAlloc ) = 0;
+	virtual int32_t CrtSetBreakAlloc( int32_t lNewBreakAlloc ) = 0;
 	virtual	int CrtSetReportMode( int nReportType, int nReportMode ) = 0;
 	virtual int CrtIsValidHeapPointer( const void *pMem ) = 0;
 	virtual int CrtIsValidPointer( const void *pMem, unsigned int size, int access ) = 0;

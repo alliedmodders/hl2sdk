@@ -139,18 +139,18 @@ typedef struct VCR_s
 	tchar*		(*Hook_GetCommandLine)();
 
 	// Registry hooks.
-	long		(*Hook_RegOpenKeyEx)( void *hKey, const tchar *lpSubKey, unsigned long ulOptions, unsigned long samDesired, void *pHKey );
-	long		(*Hook_RegSetValueEx)(void *hKey, tchar const *lpValueName, unsigned long Reserved, unsigned long dwType, uint8 const *lpData, unsigned long cbData);
-	long		(*Hook_RegQueryValueEx)(void *hKey, tchar const *lpValueName, unsigned long *lpReserved, unsigned long *lpType, uint8 *lpData, unsigned long *lpcbData);
-	long		(*Hook_RegCreateKeyEx)(void *hKey, tchar const *lpSubKey, unsigned long Reserved, tchar *lpClass, unsigned long dwOptions, unsigned long samDesired, void *lpSecurityAttributes, void *phkResult, unsigned long *lpdwDisposition);
+	int32_t		(*Hook_RegOpenKeyEx)( void *hKey, const tchar *lpSubKey, uint32_t ulOptions, uint32_t samDesired, void *pHKey );
+	int32_t		(*Hook_RegSetValueEx)(void *hKey, tchar const *lpValueName, uint32_t Reserved, uint32_t dwType, uint8 const *lpData, uint32_t cbData);
+	int32_t		(*Hook_RegQueryValueEx)(void *hKey, tchar const *lpValueName, uint32_t *lpReserved, uint32_t *lpType, uint8 *lpData, uint32_t *lpcbData);
+	int32_t		(*Hook_RegCreateKeyEx)(void *hKey, tchar const *lpSubKey, uint32_t Reserved, tchar *lpClass, uint32_t dwOptions, uint32_t samDesired, void *lpSecurityAttributes, void *phkResult, uint32_t *lpdwDisposition);
 	void		(*Hook_RegCloseKey)(void *hKey);
 
 	// hInput is a HANDLE.
-	int			(*Hook_GetNumberOfConsoleInputEvents)( void *hInput, unsigned long *pNumEvents );
+	int			(*Hook_GetNumberOfConsoleInputEvents)( void *hInput, uint32_t *pNumEvents );
 
 	// hInput is a HANDLE.
 	// pRecs is an INPUT_RECORD pointer.
-	int			(*Hook_ReadConsoleInput)( void *hInput, void *pRecs, int nMaxRecs, unsigned long *pNumRead );
+	int			(*Hook_ReadConsoleInput)( void *hInput, void *pRecs, int nMaxRecs, uint32_t *pNumRead );
 
 	
 	// This calls time() then gives you localtime()'s result.
@@ -186,19 +186,19 @@ typedef struct VCR_s
 	// This mirrors the Windows API CreateThread function and returns a HANDLE the same way.
 	void*		(*Hook_CreateThread)( 
 		void *lpThreadAttributes,
-		unsigned long dwStackSize,
+		uint32_t dwStackSize,
 		void *lpStartAddress,
 		void *lpParameter,
-		unsigned long dwCreationFlags,
-		unsigned long *lpThreadID );
+		uint32_t dwCreationFlags,
+		uint32_t *lpThreadID );
 	
-	unsigned long (*Hook_WaitForSingleObject)(
+	uint32_t (*Hook_WaitForSingleObject)(
 		void *handle,
-		unsigned long dwMilliseconds );
+		uint32_t dwMilliseconds );
 
 	void		(*Hook_EnterCriticalSection)( void *pCS );
 
-	void		(*Hook_Time)( long *pTime );
+	void		(*Hook_Time)( int32_t *pTime );
 
 	// String value. Playback just verifies that the incoming string is the same as it was when recording.
 	void		(*GenericString)( const char *pEventName, const char *pString );
@@ -206,7 +206,7 @@ typedef struct VCR_s
 	// Works like GenericValue, except upon playback it will verify that pData's contents are the same as it was during recording.
 	void		(*GenericValueVerify)( const tchar *pEventName, const void *pData, int maxLen );
 
-	unsigned long (*Hook_WaitForMultipleObjects)( uint32 nHandles, const void **pHandles, int bWaitAll, uint32 timeout );
+	uint32_t (*Hook_WaitForMultipleObjects)( uint32 nHandles, const void **pHandles, int bWaitAll, uint32 timeout );
 
 } VCR_t;
 

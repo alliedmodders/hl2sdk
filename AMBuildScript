@@ -29,12 +29,7 @@ class SDKConfig(object):
     self.targets = []
     self.target_archs = set()
 
-    if builder.options.targets:
-      target_archs = builder.options.targets.split(',')
-    else:
-      target_archs = ['x86', 'x86_64']
-
-    for arch in target_archs:
+    for arch in ['x86', 'x86_64']:
         try:
             cxx = builder.DetectCxx(target_arch = arch)
             self.target_archs.add(cxx.target.arch)
@@ -146,5 +141,5 @@ class SDKConfig(object):
 HL2SDK = SDKConfig()
 HL2SDK.configure()
 
-BuildScripts = ['mathlib/AMBuilder', 'tier1/AMBuilder']
+BuildScripts = ['mathlib/AMBuilder', 'tier1/AMBuilder', 'PackageScript']
 builder.Build(BuildScripts, { 'HL2SDK': HL2SDK })

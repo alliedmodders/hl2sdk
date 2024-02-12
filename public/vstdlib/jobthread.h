@@ -979,7 +979,7 @@ public:
 		m_szDescription = pszDescription;
 	}
 
-	void Run( long lBegin, long nItems, int nMaxParallel = INT_MAX )
+	void Run( int32_t lBegin, int32_t nItems, int nMaxParallel = INT_MAX )
 	{
 		if ( nItems )
 		{
@@ -1015,11 +1015,11 @@ private:
 	{
 		m_ItemProcessor.Begin();
 
-		long lLimit = m_lLimit;
+		int32_t lLimit = m_lLimit;
 
 		for (;;)
 		{
-			long lIndex = m_lIndex ++;
+			int32_t lIndex = m_lIndex ++;
 			if ( lIndex < lLimit )
 			{
 				m_ItemProcessor.Process( lIndex );
@@ -1035,23 +1035,23 @@ private:
 		--m_nActive;
 	}
 	CInterlockedInt				m_lIndex;
-	long						m_lLimit;
+	int32_t						m_lLimit;
 	CInterlockedInt				m_nActive;
 	const char *				m_szDescription;
 };
 
-inline void ParallelLoopProcess( const char *szDescription, long lBegin, unsigned nItems, void (*pfnProcess)( long const & ), void (*pfnBegin)() = NULL, void (*pfnEnd)() = NULL, int nMaxParallel = INT_MAX )
+inline void ParallelLoopProcess( const char *szDescription, int32_t lBegin, unsigned nItems, void (*pfnProcess)( int32_t const & ), void (*pfnBegin)() = NULL, void (*pfnEnd)() = NULL, int nMaxParallel = INT_MAX )
 {
-	CParallelLoopProcessor< CFuncJobItemProcessor< long const > > processor( szDescription );
+	CParallelLoopProcessor< CFuncJobItemProcessor< int32_t const > > processor( szDescription );
 	processor.m_ItemProcessor.Init( pfnProcess, pfnBegin, pfnEnd );
 	processor.Run( lBegin, nItems, nMaxParallel );
 
 }
 
 template < typename OBJECT_TYPE, typename FUNCTION_CLASS > 
-inline void ParallelLoopProcess( const char *szDescription, long lBegin, unsigned nItems, OBJECT_TYPE *pObject, void (FUNCTION_CLASS::*pfnProcess)( long const & ), void (FUNCTION_CLASS::*pfnBegin)() = NULL, void (FUNCTION_CLASS::*pfnEnd)() = NULL, int nMaxParallel = INT_MAX )
+inline void ParallelLoopProcess( const char *szDescription, int32_t lBegin, unsigned nItems, OBJECT_TYPE *pObject, void (FUNCTION_CLASS::*pfnProcess)( long const & ), void (FUNCTION_CLASS::*pfnBegin)() = NULL, void (FUNCTION_CLASS::*pfnEnd)() = NULL, int nMaxParallel = INT_MAX )
 {
-	CParallelLoopProcessor< CMemberFuncJobItemProcessor<long const, OBJECT_TYPE, FUNCTION_CLASS> > processor( szDescription );
+	CParallelLoopProcessor< CMemberFuncJobItemProcessor<int32_t const, OBJECT_TYPE, FUNCTION_CLASS> > processor( szDescription );
 	processor.m_ItemProcessor.Init( pObject, pfnProcess, pfnBegin, pfnEnd );
 	processor.Run( lBegin, nItems, nMaxParallel );
 }

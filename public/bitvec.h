@@ -1403,7 +1403,7 @@ inline void CBitVecAccessor::operator=(int val)
 	if(val)
 		m_pDWords[m_iBit >> 5] |= (1 << (m_iBit & 31));
 	else
-		m_pDWords[m_iBit >> 5] &= ~(unsigned long)(1 << (m_iBit & 31));
+		m_pDWords[m_iBit >> 5] &= ~(uint32_t)(1 << (m_iBit & 31));
 }
 
 inline CBitVecAccessor::operator uint32()

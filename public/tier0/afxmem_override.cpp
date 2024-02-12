@@ -137,10 +137,10 @@ AFX_STATIC_DATA AFX_ALLOC_HOOK pfnAllocHook = _AfxDefaultAllocHook;
 AFX_STATIC_DATA _CRT_ALLOC_HOOK pfnCrtAllocHook = NULL;
 #if _MSC_VER >= 1200
 int __cdecl _AfxAllocHookProxy(int nAllocType, void * pvData, size_t nSize,
-	int nBlockUse, long lRequest, const unsigned char * szFilename, int nLine)
+	int nBlockUse, int32_t lRequest, const unsigned char * szFilename, int nLine)
 #else
 int __cdecl _AfxAllocHookProxy(int nAllocType, void * pvData, size_t nSize,
-	int nBlockUse, long lRequest, const char * szFilename, int nLine)
+	int nBlockUse, int32_t lRequest, const char * szFilename, int nLine)
 #endif
 {
 #if _MSC_VER >= 1200

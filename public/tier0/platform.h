@@ -9,6 +9,14 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
+#include <cstdint>
+
+#ifdef PLATFORM_64BITS
+typedef uint64_t ThreadId_t;
+#else
+typedef uint32_t ThreadId_t;
+#endif
+
 #if defined( _X360 )
 #define NO_STEAM
 #define NO_VOICE
@@ -170,14 +178,14 @@ typedef short int16;
 typedef unsigned short uint16;
 typedef int int32;
 typedef unsigned int uint32;
-typedef long long int64;
-typedef unsigned long long uint64;
+typedef int64_t int64;
+typedef uint64_t uint64;
 #ifdef X64BITS
-typedef long long intp;
-typedef unsigned long long uintp;
+typedef int64_t intp;
+typedef uint64_t uintp;
 #else
-typedef int intp;
-typedef unsigned int uintp;
+typedef int32_t intp;
+typedef uint32_t uintp;
 #endif
 
 #endif // else _WIN32
@@ -779,15 +787,15 @@ inline T DWordSwapAsm( T dw )
 // platform/compiler this should be tested.
 inline short BigShort( short val )		{ int test = 1; return ( *(char *)&test == 1 ) ? WordSwap( val )  : val; }
 inline uint16 BigWord( uint16 val )		{ int test = 1; return ( *(char *)&test == 1 ) ? WordSwap( val )  : val; }
-inline long BigLong( long val )			{ int test = 1; return ( *(char *)&test == 1 ) ? DWordSwap( val ) : val; }
+inline int32_t BigLong( int32_t val )	{ int test = 1; return ( *(char *)&test == 1 ) ? DWordSwap( val ) : val; }
 inline uint32 BigDWord( uint32 val )	{ int test = 1; return ( *(char *)&test == 1 ) ? DWordSwap( val ) : val; }
 inline short LittleShort( short val )	{ int test = 1; return ( *(char *)&test == 1 ) ? val : WordSwap( val ); }
 inline uint16 LittleWord( uint16 val )	{ int test = 1; return ( *(char *)&test == 1 ) ? val : WordSwap( val ); }
-inline long LittleLong( long val )		{ int test = 1; return ( *(char *)&test == 1 ) ? val : DWordSwap( val ); }
+inline int32_t LittleLong( int32_t val )		{ int test = 1; return ( *(char *)&test == 1 ) ? val : DWordSwap( val ); }
 inline uint32 LittleDWord( uint32 val )	{ int test = 1; return ( *(char *)&test == 1 ) ? val : DWordSwap( val ); }
 inline short SwapShort( short val )					{ return WordSwap( val ); }
 inline uint16 SwapWord( uint16 val )				{ return WordSwap( val ); }
-inline long SwapLong( long val )					{ return DWordSwap( val ); }
+inline int32_t SwapLong( int32_t val )					{ return DWordSwap( val ); }
 inline uint32 SwapDWord( uint32 val )				{ return DWordSwap( val ); }
 
 // Pass floats by pointer for swapping to avoid truncation in the fpu
@@ -797,22 +805,22 @@ inline void SwapFloat( float *pOut, const float *pIn )		{ SafeSwapFloat( pOut, p
 #endif
 
 #if _X360
-inline unsigned long LoadLittleDWord( unsigned long *base, unsigned int dwordIndex )
+inline uint32_t LoadLittleDWord( uint32_t *base, unsigned int dwordIndex )
 {
 	return __loadwordbytereverse( dwordIndex<<2, base );
 }
 
-inline void StoreLittleDWord( unsigned long *base, unsigned int dwordIndex, unsigned long dword )
+inline void StoreLittleDWord( uint32_t *base, unsigned int dwordIndex, uint32_t dword )
 {
 	__storewordbytereverse( dword, dwordIndex<<2, base );
 }
 #else
-inline unsigned long LoadLittleDWord( unsigned long *base, unsigned int dwordIndex )
+inline uint32_t LoadLittleDWord( uint32_t *base, unsigned int dwordIndex )
 {
 	return LittleDWord( base[dwordIndex] );
 }
 
-inline void StoreLittleDWord( unsigned long *base, unsigned int dwordIndex, unsigned long dword )
+inline void StoreLittleDWord( uint32_t *base, unsigned int dwordIndex, uint32_t dword )
 {
 	base[dwordIndex] = LittleDWord(dword);
 }
@@ -845,7 +853,7 @@ PLATFORM_INTERFACE bool				Plat_IsInBenchmarkMode();
 
 
 PLATFORM_INTERFACE double			Plat_FloatTime();		// Returns time in seconds since the module was loaded.
-PLATFORM_INTERFACE unsigned long	Plat_MSTime();			// Time in milliseconds.
+PLATFORM_INTERFACE uint32_t			Plat_MSTime();			// Time in milliseconds.
 
 // b/w compatibility
 #define Sys_FloatTime Plat_FloatTime
@@ -898,25 +906,25 @@ PLATFORM_INTERFACE void ShutdownPME();
 //-----------------------------------------------------------------------------
 // Registers the current thread with Tier0's thread management system.
 // This should be called on every thread created in the game.
-PLATFORM_INTERFACE unsigned long Plat_RegisterThread( const tchar *pName = _T("Source Thread"));
+PLATFORM_INTERFACE ThreadId_t Plat_RegisterThread( const tchar *pName = _T("Source Thread"));
 
 // Registers the current thread as the primary thread.
-PLATFORM_INTERFACE unsigned long Plat_RegisterPrimaryThread();
+PLATFORM_INTERFACE ThreadId_t Plat_RegisterPrimaryThread();
 
 // VC-specific. Sets the thread's name so it has a friendly name in the debugger.
 // This should generally only be handled by Plat_RegisterThread and Plat_RegisterPrimaryThread
-PLATFORM_INTERFACE void	Plat_SetThreadName( unsigned long dwThreadID, const tchar *pName );
+PLATFORM_INTERFACE void	Plat_SetThreadName( ThreadId_t dwThreadID, const tchar *pName );
 
 // These would be private if it were possible to export private variables from a .DLL.
 // They need to be variables because they are checked by inline functions at performance
 // critical places.
-PLATFORM_INTERFACE unsigned long Plat_PrimaryThreadID;
+PLATFORM_INTERFACE ThreadId_t Plat_PrimaryThreadID;
 
 // Returns the ID of the currently executing thread.
-PLATFORM_INTERFACE unsigned long Plat_GetCurrentThreadID();
+PLATFORM_INTERFACE ThreadId_t Plat_GetCurrentThreadID();
 
 // Returns the ID of the primary thread.
-inline unsigned long Plat_GetPrimaryThreadID()
+inline ThreadId_t Plat_GetPrimaryThreadID()
 {
 	return Plat_PrimaryThreadID;
 }

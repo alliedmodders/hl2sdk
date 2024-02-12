@@ -219,7 +219,7 @@ bool CScratchPad3D::LoadCommandsFromFile( )
 	if( !fp )
 		return false;
 
-	long fileEndPos = m_pFileSystem->Size( fp );
+	int32_t fileEndPos = m_pFileSystem->Size( fp );
 
 	CFileRead fileRead( m_pFileSystem, fp );
 	while( fileRead.m_Pos != fileEndPos )
@@ -352,12 +352,12 @@ void CScratchPad3D::DrawRectXY( float zPos, const Vector2D &vMin, const Vector2D
 	DrawRectGeneric( 2, 0, 1, zPos, vMin, vMax, vColor );
 }
 
-void CScratchPad3D::SetRenderState( RenderState state, unsigned long val )
+void CScratchPad3D::SetRenderState( RenderState state, uint32_t val )
 {
 	CCommand_RenderState *cmd = new CCommand_RenderState;
 	m_Commands.AddToTail( cmd );
 
-	cmd->m_State = (unsigned long)state;
+	cmd->m_State = (uint32_t)state;
 	cmd->m_Val = val;
 }
 
