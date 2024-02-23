@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -20,6 +20,7 @@
 
 #include "tier0/memalloc.h"
 #include "tier0/memdbgon.h"
+#include "mathlib/mathlib.h"
 
 #ifdef _MSC_VER
 #pragma warning (disable:4100)
