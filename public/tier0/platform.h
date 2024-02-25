@@ -142,7 +142,7 @@ typedef uint32_t ThreadId_t;
 typedef unsigned char uint8;
 typedef signed char int8;
 
-#ifdef __x86_64__
+#if defined( __x86_64__ ) || defined( _WIN64 )
 #ifndef X64BITS
 #define X64BITS
 #endif

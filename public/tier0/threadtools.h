@@ -235,12 +235,23 @@ inline void const *ThreadInterlockedCompareExchangePointerToConst( void const * 
 inline bool ThreadInterlockedAssignPointerToConstIf( void const * volatile *p, void const *value, void const *comperand )			{ return ThreadInterlockedAssignPointerIf( const_cast < void * volatile * > ( p ), const_cast < void * > ( value ), const_cast < void * > ( comperand ) ); }
 
 #if !defined( USE_INTRINSIC_INTERLOCKED ) || ( defined( _WIN32 ) && !defined( PLATFORM_64BITS ) )
+#if defined( _LINUX ) && defined( PLATFORM_64BITS )
+// http://gcc.gnu.org/onlinedocs/gcc-4.4.3/gcc/Atomic-Builtins.html#Atomic-Builtins
+// https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html
+inline int64 ThreadInterlockedIncrement64( int64 volatile * pDest )										{ Assert( (size_t)pDest % 8 == 0 ); return __atomic_add_fetch( pDest, 1, __ATOMIC_ACQ_REL ); }
+inline int64 ThreadInterlockedDecrement64( int64 volatile * pDest )										{ Assert( (size_t)pDest % 8 == 0 ); return __atomic_sub_fetch( pDest, 1, __ATOMIC_ACQ_REL ); }
+inline int64 ThreadInterlockedExchange64( int64 volatile * pDest, int64 value )							{ Assert( (size_t)pDest % 8 == 0 ); return __atomic_exchange_n( pDest, value, __ATOMIC_ACQ_REL ); }
+inline int64 ThreadInterlockedExchangeAdd64( int64 volatile * pDest, int64 value )						{ Assert( (size_t)pDest % 8 == 0 ); return __atomic_fetch_add( pDest, value, __ATOMIC_ACQ_REL ); }
+inline int64 ThreadInterlockedCompareExchange64( int64 volatile * pDest, int64 value, int64 comperand )	{ Assert( (size_t)pDest % 8 == 0 ); int64* alignedComperand = (int64*)aligned_alloc(8, sizeof(int64)); *alignedComperand = comperand; auto initial = __atomic_load_n( pDest, __ATOMIC_ACQUIRE ); __atomic_compare_exchange_n( pDest, alignedComperand, value, false, __ATOMIC_ACQ_REL, __ATOMIC_RELAXED  ); free(alignedComperand); return initial; }
+inline bool ThreadInterlockedAssignIf64( int64 volatile *pDest, int64 value, int64 comperand )			{ Assert( (size_t)pDest % 8 == 0 ); return __atomic_compare_exchange_n( pDest, &comperand, value, false, __ATOMIC_ACQ_REL, __ATOMIC_RELAXED ); }
+#else
 TT_INTERFACE int64 ThreadInterlockedIncrement64( int64 volatile * );
 TT_INTERFACE int64 ThreadInterlockedDecrement64( int64 volatile * );
 TT_INTERFACE int64 ThreadInterlockedCompareExchange64( int64 volatile *, int64 value, int64 comperand );
 TT_INTERFACE int64 ThreadInterlockedExchange64( int64 volatile *, int64 value );
 TT_INTERFACE int64 ThreadInterlockedExchangeAdd64( int64 volatile *, int64 value );
 TT_INTERFACE bool ThreadInterlockedAssignIf64(volatile int64 *pDest, int64 value, int64 comperand );
+#endif
 #endif
 
 inline uint32_t ThreadInterlockedExchangeSubtract( uint32_t volatile *p, uint32_t value )	{ return ThreadInterlockedExchangeAdd( (int32_t volatile *)p, value ); }
