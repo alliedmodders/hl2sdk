@@ -3,19 +3,19 @@ import os
 
 # This is where the files will be output to
 # package is the default
-builder.SetBuildFolder('package')
+builder.SetBuildFolder('lib')
 
 
 folder_list = []
 
 for task in HL2SDK.libs:
   if task.target.platform == 'windows':
-    folder_list += ['lib/public', 'lib/public/x64']
+    folder_list += ['public', 'public/win64']
     break
 
 for task in HL2SDK.libs:
   if task.target.platform == 'linux':
-    folder_list += ['lib/linux', 'lib/linux64']
+    folder_list += ['linux', 'linux64']
     break
 
 # Create the distribution folder hierarchy.
@@ -46,11 +46,11 @@ def CopyDirContent(src, dest):
 for task in HL2SDK.libs:
   if task.target.platform == 'linux':
     if task.target.arch == 'x86_64':
-      builder.AddCopy(task.binary, folder_map['lib/linux64'])
+      builder.AddCopy(task.binary, folder_map['linux64'])
     else:
-      builder.AddCopy(task.binary, folder_map['lib/linux'])
+      builder.AddCopy(task.binary, folder_map['linux'])
   elif task.target.platform == 'windows':
     if task.target.arch == 'x86_64':
-      builder.AddCopy(task.binary, folder_map['lib/public/x64'])
+      builder.AddCopy(task.binary, folder_map['public/win64'])
     else:
-      builder.AddCopy(task.binary, folder_map['lib/public'])
+      builder.AddCopy(task.binary, folder_map['public'])

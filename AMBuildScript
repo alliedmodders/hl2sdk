@@ -1,5 +1,6 @@
 # vim: set ts=2 sw=2 tw=99 noet ft=python: 
 import os, sys, shutil
+from ambuild2 import util
 
 def ResolveEnvPath(env, folder=None):
   if env in os.environ:
@@ -131,8 +132,11 @@ class SDKConfig(object):
     for cxx in self.targets:
       self.configure_cxx(cxx)
 
-  def ConfigureLibrary(self, project, compiler, context):
-    binary = project.Configure(compiler, project.name, '{0} - {1}'.format(self.tag, compiler.target.arch))
+  def ConfigureLibrary(self, project, compiler, context, prefix = ''):
+    name = prefix + project.name
+    if compiler.target.platform == 'linux' and compiler.target.arch == 'x86':
+      name += '_i486'
+    binary = project.Configure(compiler, name, '{0} - {1}'.format(self.tag, compiler.target.arch))
     binary.compiler.cxxincludes += [
       os.path.join(context.currentSourcePath)
     ]
@@ -142,4 +146,6 @@ HL2SDK = SDKConfig()
 HL2SDK.configure()
 
 BuildScripts = ['mathlib/AMBuilder', 'tier1/AMBuilder', 'PackageScript']
+# Turn off the 'lib' prefix for all platform, we will add it if we need to
+util.StaticLibPrefix = ''
 builder.Build(BuildScripts, { 'HL2SDK': HL2SDK })

@@ -4,6 +4,7 @@ import os, sys
 builder.SetBuildFolder('/')
 
 project = builder.StaticLibraryProject('tier1')
+
 project.sources = [
 	'bitbuf.cpp',
 	'byteswap.cpp',
@@ -40,8 +41,8 @@ for cxx in HL2SDK.targets:
 
   compiler.cxxincludes += [
     os.path.join(builder.currentSourcePath, '..', 'public'),
-	os.path.join(builder.currentSourcePath, '..', 'public', 'tier0'),
-	os.path.join(builder.currentSourcePath, '..', 'public', 'tier1')
+    os.path.join(builder.currentSourcePath, '..', 'public', 'tier0'),
+    os.path.join(builder.currentSourcePath, '..', 'public', 'tier1')
   ]
 
 HL2SDK.libs += builder.Add(project)
