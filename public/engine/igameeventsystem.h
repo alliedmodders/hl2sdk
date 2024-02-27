@@ -12,6 +12,7 @@
 #include <tier1/utlsymbol.h>
 #include <irecipientfilter.h>
 #include <inetchannel.h>
+#include <entity2/entityidentity.h>
 
 class CUtlSlot;
 
@@ -22,7 +23,7 @@ abstract_class IGameEventSystem : public IAppSystem
 public:
 	virtual void RegisterGameEvent( INetworkSerializable *pEvent ) = 0;
 
-	virtual void RegisterGameEventHandlerAbstract( CUtlSlot *nSlot, const CUtlAbstractDelegate &delegate, INetworkSerializable *pEvent ) = 0;
+	virtual void RegisterGameEventHandlerAbstract( CUtlSlot *nSlot, const CUtlAbstractDelegate &delegate, INetworkSerializable *pEvent, int nPriority ) = 0;
 	virtual void UnregisterGameEventHandlerAbstract( CUtlSlot *nSlot, const CUtlAbstractDelegate &delegate, INetworkSerializable *pEvent ) = 0;
 
 	// Providing nSize has no effect and is unused.
@@ -42,7 +43,7 @@ public:
 	virtual void PostEntityEventAbstract( const CBaseHandle &hndl, INetworkSerializable *pEvent, const void *pData, unsigned long nSize, NetChannelBufType_t bufType ) = 0;
 
 	virtual void ProcessQueuedEvents() = 0;
-	virtual int GetEventSource() const = 0;
+	virtual CEntityIndex GetEventSource() const = 0;
 	virtual void PurgeQueuedEvents() = 0;
 };
 

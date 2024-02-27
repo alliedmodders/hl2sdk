@@ -322,12 +322,9 @@ public:
 	virtual void unk106() = 0;
 	virtual void unk107() = 0;
 
-	virtual void OnKickClient( const CCommandContext &context, const CCommand &cmd ) = 0;
-
-	// Kicks and bans the slot.
-    // Note that the internal reason is never displayed to the user.
-	// ENetworkDisconnectionReason reason is ignored, client is always kicked with ENetworkDisconnectionReason::NETWORK_DISCONNECT_KICKBANADDED
-    virtual void BanClient( CPlayerSlot nSlot, const char *szInternalReason, ENetworkDisconnectionReason reason ) = 0;
+	virtual void KickClient( CPlayerSlot nSlot, const char *szInternalReason, ENetworkDisconnectionReason reason ) = 0;
+	virtual void BanClient( CPlayerSlot nSlot, float flDuration, bool bKick ) = 0;
+	virtual void BanClient( CSteamID steamId, float flDuration, bool bKick ) = 0;
 
 	virtual void unk200() = 0;
 	virtual void unk201() = 0;
@@ -337,12 +334,19 @@ public:
 	virtual void unk205() = 0;
 	virtual void unk206() = 0;
 	virtual void unk207() = 0;
-	virtual void unk208() = 0;
 
 	virtual void SetClientUpdateRate( CPlayerSlot nSlot, float flUpdateRate ) = 0;
 
 	virtual void unk300() = 0;
 	virtual void unk301() = 0;
+	virtual void unk302() = 0;
+	virtual void unk303() = 0;
+	virtual void unk304() = 0;
+	virtual void unk305() = 0;
+	virtual void unk306() = 0;
+	virtual void unk307() = 0;
+	virtual void unk308() = 0;
+	virtual void unk309() = 0;
 };
 
 abstract_class IServerGCLobby

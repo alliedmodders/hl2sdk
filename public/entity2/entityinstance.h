@@ -7,6 +7,7 @@
 #include "tier1/utlsymbollarge.h"
 #include "entity2/entitycomponent.h"
 #include "entity2/entityidentity.h"
+#include "variant.h"
 
 class CEntityKeyValues;
 class CFieldPath;
@@ -24,19 +25,20 @@ public:
 	virtual ~CEntityInstance() = 0;
 	
 	virtual void Connect() = 0;
-	virtual void unk001() = 0; // Related to memory allocation of services in pawn classes
+	virtual void Disconnect() = 0;
 	virtual void Precache( const CEntityPrecacheContext* pContext ) = 0;
 	virtual void AddedToEntityDatabase() = 0;
 	virtual void Spawn( const CEntityKeyValues* pKeyValues ) = 0;
 	virtual void PostDataUpdate( /*DataUpdateType_t*/int updateType ) = 0;
-	virtual void unk101() = 0; // Does the exact same thing as PostDataUpdate, sets g_bReceivedChainedPostDataUpdate to 1 but this function isn't overridden by any other child class.
+	virtual void OnDataUnchangedInPVS() = 0;
 	virtual void Activate( /*ActivateType_t*/int activateType ) = 0;
 	virtual void UpdateOnRemove() = 0;
 	virtual void OnSetDormant( /*EntityDormancyType_t*/int prevDormancyType, /*EntityDormancyType_t*/int newDormancyType ) = 0;
+
+	virtual void* ScriptEntityIO() = 0;
+	virtual int ScriptAcceptInput( const CUtlSymbolLarge &sInputName, CEntityInstance* pActivator, CEntityInstance* pCaller, const variant_t &value, int nOutputID ) = 0;
 	
-	virtual void unk201() = 0;
-	virtual void unk202() = 0;
-	virtual void unk203() = 0;
+	virtual void PreDataUpdate( /*DataUpdateType_t*/int updateType ) = 0;
 	
 	virtual void DrawEntityDebugOverlays( uint64 debug_bits ) = 0;
 	virtual void DrawDebugTextOverlays( void* unk, uint64 debug_bits, int flags ) = 0;
@@ -65,16 +67,16 @@ public:
 	
 	virtual void LogFieldInfo( const char* pszFieldName, const char* pszInfo ) = 0;
 	virtual bool FullEdictChanged() = 0;
-	virtual void unk301() = 0;
+	virtual void unk001() = 0;
 	virtual ChangeAccessorFieldPathIndex_t AddChangeAccessorPath( const CFieldPath& path ) = 0;
 	virtual void AssignChangeAccessorPathIds() = 0;
 	virtual ChangeAccessorFieldPathIndexInfo_t* GetChangeAccessorPathInfo_1() = 0;
 	virtual ChangeAccessorFieldPathIndexInfo_t* GetChangeAccessorPathInfo_2() = 0;
 	
-	virtual void unk401() = 0;
+	virtual void unk101() = 0;
 	virtual void ReloadPrivateScripts() = 0;
 	virtual datamap_t* GetDataDescMap() = 0;
-	virtual void unk501() = 0;
+	virtual void unk201() = 0;
 	virtual void Schema_DynamicBinding(void**) = 0;
 
 public:
