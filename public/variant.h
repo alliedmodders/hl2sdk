@@ -906,26 +906,26 @@ public:
 		switch(newType)
 		{
 			case FIELD_VOID:			successful = true; Free(); m_type = FIELD_VOID; m_pData = NULL; break;
-			case FIELD_FLOAT:			if(successful = AssignTo((float *)&pData)) { Set(newType, &pData); } break;
-			case FIELD_FLOAT64:			if(successful = AssignTo((float64 *)&pData)) { Set(newType, &pData); } break;
-			case FIELD_INTEGER:			if(successful = AssignTo((int *)&pData)) { Set(newType, &pData); } break;
-			case FIELD_UINT:			if(successful = AssignTo((uint *)&pData)) { Set(newType, &pData); } break;
-			case FIELD_INTEGER64:		if(successful = AssignTo((int64 *)&pData)) { Set(newType, &pData); } break;
-			case FIELD_UINT64:			if(successful = AssignTo((uint64 *)&pData)) { Set(newType, &pData); } break;
-			case FIELD_BOOLEAN:			if(successful = AssignTo((bool *)&pData)) { Set(newType, &pData); } break;
-			case FIELD_CHARACTER:		if(successful = AssignTo((char *)&pData)) { Set(newType, &pData); } break;
-			case FIELD_STRING:			if(successful = AssignTo((string_t *)&pData)) { Set(newType, &pData); } break;
+			case FIELD_FLOAT:			if((successful = AssignTo((float *)&pData))) { Set(newType, &pData); } break;
+			case FIELD_FLOAT64:			if((successful = AssignTo((float64 *)&pData))) { Set(newType, &pData); } break;
+			case FIELD_INTEGER:			if((successful = AssignTo((int *)&pData))) { Set(newType, &pData); } break;
+			case FIELD_UINT:			if((successful = AssignTo((uint *)&pData))) { Set(newType, &pData); } break;
+			case FIELD_INTEGER64:		if((successful = AssignTo((int64 *)&pData))) { Set(newType, &pData); } break;
+			case FIELD_UINT64:			if((successful = AssignTo((uint64 *)&pData))) { Set(newType, &pData); } break;
+			case FIELD_BOOLEAN:			if((successful = AssignTo((bool *)&pData))) { Set(newType, &pData); } break;
+			case FIELD_CHARACTER:		if((successful = AssignTo((char *)&pData))) { Set(newType, &pData); } break;
+			case FIELD_STRING:			if((successful = AssignTo((string_t *)&pData))) { Set(newType, &pData); } break;
 			case FIELD_CSTRING:			successful = true; CopyData(ToString(), true); break;
-			case FIELD_HSCRIPT:			if(successful = AssignTo((HSCRIPT *)&pData)) { Set(newType, &pData); } break;
-			case FIELD_EHANDLE:			if(successful = AssignTo((CEntityHandle *)&pData)) { Set(newType, &pData); } break;
-			case FIELD_RESOURCE:		if(successful = AssignTo((ResourceHandle_t *)&pData)) { Set(newType, &pData); } break;
-			case FIELD_UTLSTRINGTOKEN:	if(successful = AssignTo((CUtlStringToken *)&pData)) { Set(newType, &pData); } break;
-			case FIELD_VECTOR:			{ Vector vec; if(successful = AssignTo(&vec)) { CopyData(vec, true); } break; }
-			case FIELD_VECTOR2D:		{ Vector2D vec; if(successful = AssignTo(&vec)) { CopyData(vec, true); } break; }
-			case FIELD_VECTOR4D:		{ Vector4D vec; if(successful = AssignTo(&vec)) { CopyData(vec, true); } break; }
-			case FIELD_COLOR32:			{ Color clr; if(successful = AssignTo(&clr)) { CopyData(clr, true); } break; }
-			case FIELD_QANGLE:			{ QAngle ang; if(successful = AssignTo(&ang)) { CopyData(ang, true); } break; }
-			case FIELD_QUATERNION:		{ Quaternion quat; if(successful = AssignTo(&quat)) { CopyData(quat, true); } break; }
+			case FIELD_HSCRIPT:			if((successful = AssignTo((HSCRIPT *)&pData))) { Set(newType, &pData); } break;
+			case FIELD_EHANDLE:			if((successful = AssignTo((CEntityHandle *)&pData))) { Set(newType, &pData); } break;
+			case FIELD_RESOURCE:		if((successful = AssignTo((ResourceHandle_t *)&pData))) { Set(newType, &pData); } break;
+			case FIELD_UTLSTRINGTOKEN:	if((successful = AssignTo((CUtlStringToken *)&pData))) { Set(newType, &pData); } break;
+			case FIELD_VECTOR:			{ Vector vec; if((successful = AssignTo(&vec))) { CopyData(vec, true); } break; }
+			case FIELD_VECTOR2D:		{ Vector2D vec; if((successful = AssignTo(&vec))) { CopyData(vec, true); } break; }
+			case FIELD_VECTOR4D:		{ Vector4D vec; if((successful = AssignTo(&vec))) { CopyData(vec, true); } break; }
+			case FIELD_COLOR32:			{ Color clr; if((successful = AssignTo(&clr))) { CopyData(clr, true); } break; }
+			case FIELD_QANGLE:			{ QAngle ang; if((successful = AssignTo(&ang))) { CopyData(ang, true); } break; }
+			case FIELD_QUATERNION:		{ Quaternion quat; if((successful = AssignTo(&quat))) { CopyData(quat, true); } break; }
 		}
 
 		if(successful)
