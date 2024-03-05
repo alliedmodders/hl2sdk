@@ -16,7 +16,9 @@ template <class T>
 class CUtlStringMap
 {
 public:
-	CUtlStringMap( bool caseInsensitive = true ) : m_SymbolTable( 0, 32, caseInsensitive )
+	CUtlStringMap( bool caseInsensitive = true, int initsize = 32 ) : 
+	  m_SymbolTable( 0, 32, caseInsensitive ),
+		  m_Vector( initsize )
 	{
 	}
 

@@ -68,6 +68,13 @@
 #define MEMALLOC_REGION_FREE_5		'='
 #define MEMALLOC_REGION_FREE_6		'?'
 
+enum MemAllocAttribute_t
+{
+	MemAllocAttribute_Unk0 = 0,
+	MemAllocAttribute_Unk1 = 1,
+	MemAllocAttribute_Unk2 = 2
+};
+
 enum MemoryState
 {
 	MemoryState_UnexpectedlyAllocated = 0,
@@ -236,7 +243,7 @@ public:
 	virtual int unk101() = 0;
 
 	// AMNOTE: Stub
-	virtual void unk102() = 0;
+	virtual void unk102( void *pMem, MemAllocAttribute_t alloc_attribute, int unk ) = 0;
 
 	// AMNOTE: Copies data to an unknown struct of byte size 56
 	// Returns true if data was written, false otherwise

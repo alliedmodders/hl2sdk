@@ -8,6 +8,7 @@
 #include "entity2/entitycomponent.h"
 #include "entity2/entityidentity.h"
 #include "variant.h"
+#include "schemasystem/schematypes.h"
 
 class CEntityKeyValues;
 class CFieldPath;
@@ -77,7 +78,7 @@ public:
 	virtual void ReloadPrivateScripts() = 0;
 	virtual datamap_t* GetDataDescMap() = 0;
 	virtual void unk201() = 0;
-	virtual void Schema_DynamicBinding(void**) = 0;
+	virtual SchemaMetaInfoHandle_t<CSchemaClassInfo> Schema_DynamicBinding() = 0;
 
 public:
 	inline CEntityHandle GetRefEHandle() const

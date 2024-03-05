@@ -23,6 +23,7 @@
 #define FENTCLASS_UNK009				(1 << 9)
 #define FENTCLASS_FORCE_WORLDGROUPID	(1 << 10) // Forces worldgroupid to be 1 on created entities
 
+class CSchemaClassInfo;
 class CEntityClass;
 class CEntityIdentity;
 class ServerClass;
@@ -44,7 +45,7 @@ public:
 	const char* m_pszDescription;
 	CEntityClass *m_pClass;
 	CEntityClassInfo *m_pBaseClassInfo;
-	void* m_pSchemaBinding;
+	CSchemaClassInfo* m_pSchemaBinding;
 	datamap_t* m_pDataDescMap;
 	datamap_t* m_pPredDescMap;
 };
@@ -76,6 +77,11 @@ class CEntityClass
 	};
 	
 public:
+	inline CSchemaClassInfo *GetSchemaBinding() const
+	{
+		return m_pClassInfo->m_pSchemaBinding;
+	}
+
 	inline datamap_t *GetDataDescMap() const
 	{
 		return m_pClassInfo->m_pDataDescMap;

@@ -34,13 +34,13 @@ public:
 	DLL_CLASS_IMPORT	void				Purge( void );
 	DLL_CLASS_IMPORT	MemBlockHandle_t	Alloc( unsigned int nSize );
 	DLL_CLASS_IMPORT	MemBlockHandle_t	AllocAndCopy( const char* pBuf, unsigned int nSize );
-	DLL_CLASS_IMPORT	uint64				MemUsage( void );
+	DLL_CLASS_IMPORT	size_t				MemUsage( void ) const;
 	DLL_CLASS_IMPORT	void				SetPageSize( unsigned int nPageSize );
-	DLL_CLASS_IMPORT	MemBlockHandle_t	FindPageWithSpace( unsigned int nSpace );
 
 	void*				GetBlock( MemBlockHandle_t handle ) const;
 
 private:
+	DLL_CLASS_IMPORT	int					FindPageWithSpace( unsigned int nSpace ) const;
 
 	struct MemPage_t
 	{
