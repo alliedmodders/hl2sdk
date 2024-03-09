@@ -187,6 +187,14 @@ void CEntityKeyValues::AddConnectionDesc(
 	desc->m_nTimesToFire		= nTimesToFire;
 }
 
+void CEntityKeyValues::RemoveConnectionDesc( int nDesc )
+{
+	if (m_nQueuedForSpawnCount > 0)
+		return;
+
+	m_connectionDescs.Remove( nDesc );
+}
+
 void CEntityKeyValues::CopyFrom( const CEntityKeyValues* pSrc, bool bRemoveAllKeys, bool bSkipEHandles )
 {
 	if ( bRemoveAllKeys )
