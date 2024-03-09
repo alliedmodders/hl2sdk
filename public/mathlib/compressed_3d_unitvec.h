@@ -8,6 +8,7 @@
 #ifndef _3D_UNITVEC_H
 #define _3D_UNITVEC_H
 
+#include <cstdint>
 
 #define UNITVEC_DECLARE_STATICS \
    float cUnitVector::mUVAdjustment[0x2000]; \
@@ -75,8 +76,8 @@ public:
       // a little slower... old pack was 4 multiplies and 2 adds.
       // This is 2 multiplies, 2 adds, and a divide....
       float w = 126.0f / ( tmp.x + tmp.y + tmp.z );
-      long xbits = (long)( tmp.x * w );
-      long ybits = (long)( tmp.y * w );
+      int32_t xbits = (int32_t)( tmp.x * w );
+      int32_t ybits = (int32_t)( tmp.y * w );
 
       Assert( xbits <  127 );
       Assert( xbits >= 0   );
@@ -110,8 +111,8 @@ public:
       // multiplication
 
       // get the x and y bits
-      long xbits = (( mVec & TOP_MASK ) >> 7 );
-      long ybits = ( mVec & BOTTOM_MASK );
+      int32_t xbits = (( mVec & TOP_MASK ) >> 7 );
+      int32_t ybits = ( mVec & BOTTOM_MASK );
 
       // map the numbers back to the triangle (0,0)-(0,126)-(126,0)
       if (( xbits + ybits ) >= 127 )
@@ -139,8 +140,8 @@ public:
    {
       for ( int idx = 0; idx < 0x2000; idx++ )
       {
-         long xbits = idx >> 7;
-         long ybits = idx & BOTTOM_MASK;
+         int32_t xbits = idx >> 7;
+         int32_t ybits = idx & BOTTOM_MASK;
 
          // map the numbers back to the triangle (0,0)-(0,127)-(127,0)
          if (( xbits + ybits ) >= 127 )

@@ -261,7 +261,7 @@ public:
 	int GetL2CacheMisses();
 
 	// Not used in the common case...
-	void SetCurFrameTime( unsigned long milliseconds );
+	void SetCurFrameTime( uint32_t milliseconds );
 	
 	void SetClientData( int iClientData )	{ m_iClientData = iClientData; }
 	int GetClientData() const				{ return m_iClientData; }

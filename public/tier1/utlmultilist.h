@@ -385,21 +385,6 @@ struct validindex_t<T, unsigned int>
 	}
 };
 
-template <class T>
-struct validindex_t<T, unsigned long>
-{
-	static inline bool IsValidIndex(const CUtlMultiList<T, unsigned long> *list, unsigned long i)
-	{
-		return (i < list->m_MaxElementIndex) && ((list->m_Memory[i].m_Previous != i) ||
-			(list->m_Memory[i].m_Next == i));
-	}
-
-	static inline bool IsInList(const CUtlMultiList<T, unsigned long> *list, unsigned long i)
-	{
-		return (i < list->m_MaxElementIndex) && (list->Previous(i) != i);
-	}
-};
-
 //-----------------------------------------------------------------------------
 // Are nodes in the list or valid?
 //-----------------------------------------------------------------------------

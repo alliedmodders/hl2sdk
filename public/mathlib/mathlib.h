@@ -7,6 +7,7 @@
 #ifndef MATH_LIB_H
 #define MATH_LIB_H
 
+#include <cmath>
 #include <math.h>
 #include "tier0/basetypes.h"
 #include "mathlib/vector.h"
@@ -313,7 +314,10 @@ int Q_log2(int val);
 // Math routines done in optimized assembly math package routines
 void inline SinCos( float radians, float *sine, float *cosine )
 {
-#if defined( _X360 )
+#if defined( _WIN64 )
+	*sine = sinf(radians);
+	*cosine = cosf(radians);
+#elif defined( _X360 )
 	XMScalarSinCos( sine, cosine, radians );
 #elif defined( _WIN32 )
 	_asm
@@ -1072,7 +1076,9 @@ inline float SimpleSplineRemapValClamped( float val, float A, float B, float C, 
 
 FORCEINLINE int RoundFloatToInt(float f)
 {
-#if defined( _X360 )
+#if defined( _WIN64 )
+	return std::round(f);
+#elif defined( _X360 )
 #ifdef Assert
 	Assert( IsFPUControlWordSet() );
 #endif
@@ -1102,7 +1108,9 @@ FORCEINLINE int RoundFloatToInt(float f)
 
 FORCEINLINE unsigned char RoundFloatToByte(float f)
 {
-#if defined( _X360 )
+#if defined( _WIN64 )
+	return std::round(f);
+#elif defined( _X360 )
 #ifdef Assert
 	Assert( IsFPUControlWordSet() );
 #endif
@@ -1142,9 +1150,11 @@ FORCEINLINE unsigned char RoundFloatToByte(float f)
 #endif
 }
 
-FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
+FORCEINLINE uint32_t RoundFloatToUnsignedLong(float f)
 {
-#if defined( _X360 )
+#if defined( _WIN64 )
+	return std::round(f);
+#elif defined( _X360 )
 #ifdef Assert
 	Assert( IsFPUControlWordSet() );
 #endif
@@ -1152,7 +1162,7 @@ FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
 	{
 		double flResult;
 		int pIntResult[2];
-		unsigned long pResult[2];
+		uint32_t pResult[2];
 	};
 	flResult = __fctiw( f );
 	Assert( pIntResult[1] >= 0 );
@@ -1173,7 +1183,7 @@ FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
 	);
 #endif
 
-	return *((unsigned long*)nResult);
+	return *((uint32_t*)nResult);
 #endif
 }
 
@@ -1185,7 +1195,9 @@ FORCEINLINE bool IsIntegralValue( float flValue, float flTolerance = 0.001f )
 // Fast, accurate ftol:
 FORCEINLINE int Float2Int( float a )
 {
-#if defined( _X360 )
+#if defined ( _WIN64 )
+	return a;
+#elif defined( _X360 )
 	union
 	{
 		double flResult;
@@ -1223,8 +1235,10 @@ FORCEINLINE int Float2Int( float a )
 // Over 15x faster than: (int)floor(value)
 inline int Floor2Int( float a )
 {
-   int RetVal;
-
+#if defined ( _WIN64 )
+	return std::floor(a);
+#else
+	int RetVal;
 #if defined( _X360 )
 	RetVal = (int)floor( a );
 #elif defined( _WIN32 )
@@ -1245,8 +1259,8 @@ inline int Floor2Int( float a )
 #elif defined( _LINUX ) || defined( __APPLE__ )
 	RetVal = static_cast<int>( floor(a) );
 #endif
-
 	return RetVal;
+#endif // _WIN64
 }
 
 //-----------------------------------------------------------------------------
@@ -1281,6 +1295,9 @@ inline float ClampToMsec( float in )
 // Over 15x faster than: (int)ceil(value)
 inline int Ceil2Int( float a )
 {
+#if defined ( _WIN64 )
+	return std::ceil(a);
+#else
    int RetVal;
 
 #if defined( _X360 )
@@ -1303,8 +1320,8 @@ inline int Ceil2Int( float a )
 #elif defined( _LINUX ) || defined( __APPLE__ )
 	RetVal = static_cast<int>( ceil(a) );
 #endif
-
 	return RetVal;
+#endif // _WIN64
 }
 
 

@@ -189,7 +189,7 @@ unsigned int CSoundCombiner::ComputeChecksum()
 	//	Msg( "  %i -> sentence %u, startoffset %f fn %s\n",
 	//		i, chk, curitem->entry->startoffset, curitem->entry->wavefile );
 
-		CRC32_ProcessBuffer( &crc, &chk, sizeof( unsigned long ) );
+		CRC32_ProcessBuffer( &crc, &chk, sizeof( uint32_t ) );
 		CRC32_ProcessBuffer( &crc, &curitem->entry->startoffset, sizeof( float ) );
 		CRC32_ProcessBuffer( &crc, curitem->entry->wavefile, Q_strlen( curitem->entry->wavefile ) );
 	}

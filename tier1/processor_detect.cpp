@@ -6,7 +6,14 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#if defined _LINUX || defined __APPLE__
+#if defined ( _WIN64 )
+
+bool CheckMMXTechnology(void) { return true; }
+bool CheckSSETechnology(void) { return true; }
+bool CheckSSE2Technology(void) { return true; }
+bool Check3DNowTechnology(void) { return true; }
+
+#elif defined _LINUX || defined __APPLE__
 
 #include "processor_detect_linux.cpp"
 

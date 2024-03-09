@@ -55,8 +55,8 @@ public:
 	bool	IsValid() const;	// ip & port != 0
 	void    SetFromSocket( int hSocket );
 	// These function names are decorated because the Xbox360 defines macros for ntohl and htonl
- 	unsigned long addr_ntohl() const;
- 	unsigned long addr_htonl() const;
+ 	uint32_t addr_ntohl() const;
+ 	uint32_t addr_htonl() const;
 	bool operator==(const netadr_s &netadr) const {return ( CompareAdr( netadr ) );}
 	bool operator<(const netadr_s &netadr) const;
 

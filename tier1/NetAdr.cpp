@@ -184,12 +184,12 @@ unsigned int netadr_t::GetIP() const
 	return *(unsigned int *)&ip;;
 }
 
-unsigned long netadr_t::addr_ntohl() const
+uint32_t netadr_t::addr_ntohl() const
 {
 	return ntohl( GetIP() );
 }
 
-unsigned long netadr_t::addr_htonl() const
+uint32_t netadr_t::addr_htonl() const
 {
 	return htonl( GetIP() );
 }

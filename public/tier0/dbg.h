@@ -576,7 +576,7 @@ public:
 		va_list arg_ptr;
 
 		va_start(arg_ptr, pszFormat);
-		_vsntprintf(m_szBuf, sizeof(m_szBuf)-1, pszFormat, arg_ptr);
+		_vsnprintf(m_szBuf, sizeof(m_szBuf)-1, pszFormat, arg_ptr);
 		va_end(arg_ptr);
 
 		m_szBuf[sizeof(m_szBuf)-1] = 0;

@@ -162,7 +162,7 @@ bool CVoiceGameMgr::ClientCommand( CBasePlayer *pPlayer, const CCommand &args )
 	{
 		for(int i=1; i < args.ArgC(); i++)
 		{
-			unsigned long mask = 0;
+			uint32_t mask = 0;
 			sscanf( args[i], "%p", (void**)&mask);
 
 			if( i <= VOICE_MAX_PLAYERS_DW )

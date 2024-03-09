@@ -5,6 +5,7 @@
 // $Workfile:     $
 // $NoKeywords: $
 //=============================================================================//
+#include <cstdint>
 
 #define cpuid(in,a,b,c,d)												\
 	asm("pushl %%ebx\n\t" "cpuid\n\t" "movl %%ebx,%%esi\n\t" "pop %%ebx": "=a" (a), "=S" (b), "=c" (c), "=d" (d) : "a" (in));
@@ -12,7 +13,7 @@
 bool CheckMMXTechnology(void)
 {
 #ifndef PLATFORM_64BITS
-    unsigned long eax,ebx,edx,unused;
+    uint32_t eax,ebx,edx,unused;
     cpuid(1,eax,ebx,unused,edx);
 
     return edx & 0x800000;
@@ -24,7 +25,7 @@ bool CheckMMXTechnology(void)
 bool CheckSSETechnology(void)
 {
 #ifndef PLATFORM_64BITS
-    unsigned long eax,ebx,edx,unused;
+    uint32_t eax,ebx,edx,unused;
     cpuid(1,eax,ebx,unused,edx);
 
     return edx & 0x2000000L;
@@ -36,7 +37,7 @@ bool CheckSSETechnology(void)
 bool CheckSSE2Technology(void)
 {
 #ifndef PLATFORM_64BITS
-    unsigned long eax,ebx,edx,unused;
+    uint32_t eax,ebx,edx,unused;
     cpuid(1,eax,ebx,unused,edx);
 
     return edx & 0x04000000;
@@ -48,7 +49,7 @@ bool CheckSSE2Technology(void)
 bool Check3DNowTechnology(void)
 {
 #ifndef PLATFORM_64BITS
-    unsigned long eax, unused;
+    uint32_t eax, unused;
     cpuid(0x80000000,eax,unused,unused,unused);
 
     if ( eax > 0x80000000L )

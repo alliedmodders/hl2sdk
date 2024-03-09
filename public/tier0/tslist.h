@@ -172,7 +172,7 @@ public:
 	TSLNodeBase_t *Detach()
 	{
 #ifdef USE_NATIVE_SLIST
-		TSLNodeBase_t *pBase = (TSLNodeBase_t *)InterlockedFlushSList( &m_Head );
+		TSLNodeBase_t *pBase = (TSLNodeBase_t *)InterlockedFlushSList( (PSLIST_HEADER)&m_Head );
 #ifdef _X360
 		__lwsync(); // read-acquire barrier
 #endif
@@ -201,7 +201,7 @@ public:
 	int Count() const
 	{
 #ifdef USE_NATIVE_SLIST
-		return QueryDepthSList( &m_Head );
+		return QueryDepthSList( (PSLIST_HEADER)&m_Head );
 #else
 		return m_Head.value.Depth;
 #endif

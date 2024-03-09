@@ -27,12 +27,12 @@ class IScratchPad3D;
 // flags is a combination of the SPDRAWWORLD_ flags.
 void ScratchPad_DrawWorldToScratchPad(
 	IScratchPad3D *pPad,
-	unsigned long flags );
+	uint32_t flags );
 
 // Draw a specific entity into the scratch pad.
 void ScratchPad_DrawEntityToScratchPad(
 	IScratchPad3D *pPad,
-	unsigned long flags,
+	uint32_t flags,
 	CBaseEntity *pEnt,
 	const Vector &vColor );
 

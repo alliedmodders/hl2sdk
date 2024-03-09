@@ -1,0 +1,56 @@
+# vim: set ts=8 sts=2 sw=2 tw=99 et ft=python:
+import os
+
+# This is where the files will be output to
+# package is the default
+builder.SetBuildFolder('lib')
+
+
+folder_list = []
+
+for task in HL2SDK.libs:
+  if task.target.platform == 'windows':
+    folder_list += ['public', 'public/win64']
+    break
+
+for task in HL2SDK.libs:
+  if task.target.platform == 'linux':
+    folder_list += ['linux', 'linux64']
+    break
+
+# Create the distribution folder hierarchy.
+folder_map = {}
+for folder in folder_list:
+  norm_folder = os.path.normpath(folder)
+  folder_map[folder] = builder.AddFolder(norm_folder)
+
+# Do all straight-up file copies from the source tree.
+def CopyFiles(src, dest, files):
+  if not dest:
+    dest = src
+  dest_entry = folder_map[dest]
+  for source_file in files:
+    source_path = os.path.join(builder.sourcePath, src, source_file)
+    builder.AddCopy(source_path, dest_entry)
+def CopyFile(src, dest):
+  dest_entry = folder_map[dest]
+  source_path = os.path.join(builder.sourcePath, src)
+  builder.AddCopy(source_path, dest_entry)
+def CopyDirContent(src, dest):
+  dest_entry = folder_map[dest]
+  for item in os.scandir(os.path.join(builder.sourcePath, src)):
+    if item.is_file():
+      builder.AddCopy(item.path, dest_entry)
+
+# Copy binaries.
+for task in HL2SDK.libs:
+  if task.target.platform == 'linux':
+    if task.target.arch == 'x86_64':
+      builder.AddCopy(task.binary, folder_map['linux64'])
+    else:
+      builder.AddCopy(task.binary, folder_map['linux'])
+  elif task.target.platform == 'windows':
+    if task.target.arch == 'x86_64':
+      builder.AddCopy(task.binary, folder_map['public/win64'])
+    else:
+      builder.AddCopy(task.binary, folder_map['public'])

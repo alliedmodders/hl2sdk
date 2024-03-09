@@ -629,7 +629,7 @@ inline void CUtlBuffer::GetTypeBin< float >( float &dest )
 {
 	if ( CheckGet( sizeof( float ) ) )
 	{
-		uintp pData = (uintp)PeekGet();
+		uintptr_t pData = (uintptr_t)PeekGet();
 		if ( IsX360() && ( pData & 0x03 ) )
 		{
 			// handle unaligned read

@@ -159,8 +159,8 @@ public:
 class CRefMT
 {
 public:
-	static int Increment( int *p) { return ThreadInterlockedIncrement( (long *)p ); }
-	static int Decrement( int *p) { return ThreadInterlockedDecrement( (long *)p ); }
+	static int Increment( int *p) { return ThreadInterlockedIncrement( (int32_t *)p ); }
+	static int Decrement( int *p) { return ThreadInterlockedDecrement( (int32_t *)p ); }
 };
 
 class CRefST

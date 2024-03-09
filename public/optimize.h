@@ -226,7 +226,7 @@ struct FileHeader_t
 	int maxBonesPerVert;
 
 	// must match checkSum in the .mdl
-	long checkSum;
+	int32_t checkSum;
 	
 	int numLODs; // garymcthack - this is also specified in ModelHeader_t and should match
 
