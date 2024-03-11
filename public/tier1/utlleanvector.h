@@ -20,6 +20,8 @@
 
 #include <limits>
 
+#include "tier0/memdbgon.h"
+
 #define FOR_EACH_LEANVEC( vecName, iteratorName ) \
 	for ( auto iteratorName = vecName.First(); vecName.IsValidIterator( iteratorName ); iteratorName = vecName.Next( iteratorName ) )
 
@@ -734,5 +736,7 @@ using CUtlLeanVector = CUtlLeanVectorImpl< CUtlLeanVectorBase< T, I >, T, I >;
 
 template < class T, size_t N = 3, class I = short >
 using CUtlLeanVectorFixedGrowable = CUtlLeanVectorImpl< CUtlLeanVectorFixedGrowableBase< T, N, I >, T, I >;
+
+#include "tier0/memdbgoff.h"
 
 #endif // UTLLEANVECTOR_H
