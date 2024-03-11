@@ -94,30 +94,30 @@ enum SchemaBuiltinType_t
 	SCHEMA_BUILTIN_COUNT,
 };
 
-enum SchemaClassHandlerCommand_t
+enum SchemaClassManipulatorAction_t
 {
-	SCHEMA_CLASS_HCMD_REGISTER = 0,
-	SCHEMA_CLASS_HCMD_REGISTER_PRE,
-	SCHEMA_CLASS_HCMD_ALLOCATE,
-	SCHEMA_CLASS_HCMD_DEALLOCATE,
-	SCHEMA_CLASS_HCMD_CONSTRUCT_IN_PLACE,
-	SCHEMA_CLASS_HCMD_DESCTRUCT_IN_PLACE,
-	SCHEMA_CLASS_HCMD_SCHEMA_BINDING,
+	SCHEMA_CLASS_MANIPULATOR_ACTION_REGISTER = 0,
+	SCHEMA_CLASS_MANIPULATOR_ACTION_REGISTER_PRE,
+	SCHEMA_CLASS_MANIPULATOR_ACTION_ALLOCATE,
+	SCHEMA_CLASS_MANIPULATOR_ACTION_DEALLOCATE,
+	SCHEMA_CLASS_MANIPULATOR_ACTION_CONSTRUCT_IN_PLACE,
+	SCHEMA_CLASS_MANIPULATOR_ACTION_DESCTRUCT_IN_PLACE,
+	SCHEMA_CLASS_MANIPULATOR_ACTION_GET_SCHEMA_BINDING,
 };
 
-enum SchemaAtomicTHandlerCommand_t
+enum SchemaAtomicManipulatorAction_t
 {
-	SCHEMA_ATOMIC_T_HCMD_COUNT = 0,
-	SCHEMA_ATOMIC_T_HCMD_ELEMENT_CONST,
-	SCHEMA_ATOMIC_T_HCMD_ELEMENT,
-	SCHEMA_ATOMIC_T_HCMD_SWAP,
-	SCHEMA_ATOMIC_T_HCMD_INSERT_BEFORE,
-	SCHEMA_ATOMIC_T_HCMD_REMOVE_MULTIPLE,
-	SCHEMA_ATOMIC_T_HCMD_SET_COUNT,
+	SCHEMA_ATOMIC_MANIPULATOR_ACTION_GET_COUNT = 0,
+	SCHEMA_ATOMIC_MANIPULATOR_ACTION_GET_ELEMENT_CONST,
+	SCHEMA_ATOMIC_MANIPULATOR_ACTION_GET_ELEMENT,
+	SCHEMA_ATOMIC_MANIPULATOR_ACTION_SWAP_ELEMENTS,
+	SCHEMA_ATOMIC_MANIPULATOR_ACTION_INSERT_BEFORE,
+	SCHEMA_ATOMIC_MANIPULATOR_ACTION_REMOVE_MULTIPLE,
+	SCHEMA_ATOMIC_MANIPULATOR_ACTION_SET_COUNT,
 };
 
-typedef void* (*SchemaClassHandlerFn_t)(SchemaClassHandlerCommand_t, void*, void*);
-typedef void* (*SchemaAtomicTHandlerFn_t)(SchemaAtomicTHandlerCommand_t, void*, void*, void*);
+typedef void* (*SchemaClassManipulatorFn_t)(SchemaClassManipulatorAction_t, void*, void*);
+typedef void* (*SchemaAtomicManipulatorFn_t)(SchemaAtomicManipulatorAction_t, void*, void*, void*);
 
 inline uint32 CSchemaType_Hash( const char *pString, int len )
 {
@@ -204,7 +204,7 @@ public:
 class CSchemaType_Atomic_CollectionOfT : public CSchemaType_Atomic_T
 {
 public:
-	SchemaAtomicTHandlerFn_t m_pfnHandler;
+	SchemaAtomicManipulatorFn_t m_pfnManipulator;
 	uint16 m_nElementSize;
 };
 
@@ -328,7 +328,7 @@ struct SchemaClassInfoData_t
 	uint m_nFlags1;
 	uint m_nFlags2;
 	
-	SchemaClassHandlerFn_t m_pfnHandler;
+	SchemaClassManipulatorFn_t m_pfnManipulator;
 };
 
 class CSchemaClassInfo : public SchemaClassInfoData_t
@@ -387,7 +387,7 @@ struct AtomicTypeInfo_T_t
 {
 	int m_nAtomicID;
 	CSchemaType* m_pTemplateType;
-	SchemaAtomicTHandlerFn_t m_pfnHandler;
+	SchemaAtomicManipulatorFn_t m_pfnManipulator;
 };
 
 struct AtomicTypeInfo_TF_t
