@@ -997,14 +997,6 @@ unsigned int bf_read::ReadUBitLongNoInline( int numbits )
 	return ReadUBitLong( numbits );
 }
 
-unsigned int bf_read::ReadUBitVarInternal( int encodingType )
-{
-	m_iCurBit -= 4;
-	// int bits = { 4, 8, 12, 32 }[ encodingType ];
-	int bits = 4 + encodingType*4 + (((2 - encodingType) >> 31) & 16);
-	return ReadUBitLong( bits );
-}
-
 // Append numbits least significant bits from data to the current bit stream
 int bf_read::ReadSBitLong( int numbits )
 {

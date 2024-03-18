@@ -263,12 +263,11 @@ public:
 	int				m_iCurBit;
 	
 private:
+	const char		*m_pDebugName;
 
 	// Errors?
 	bool			m_bOverflow;
-
 	bool			m_bAssertOnOverflow;
-	const char		*m_pDebugName;
 };
 
 
@@ -440,26 +439,21 @@ BITBUF_INLINE void bf_write::WriteUBitLong( unsigned int curData, int numbits, b
 }
 
 // writes an unsigned integer with variable bit length
-BITBUF_INLINE void bf_write::WriteUBitVar( unsigned int data )
+BITBUF_INLINE void bf_write::WriteUBitVar( unsigned int n )
 {
-	/* Reference:
-	if ( data < 0x10u )
-		WriteUBitLong( 0, 2 ), WriteUBitLong( data, 4 );
-	else if ( data < 0x100u )
-		WriteUBitLong( 1, 2 ), WriteUBitLong( data, 8 );
-	else if ( data < 0x1000u )
-		WriteUBitLong( 2, 2 ), WriteUBitLong( data, 12 );
+	if(n < 16)
+		WriteUBitLong( n, 6 );
 	else
-		WriteUBitLong( 3, 2 ), WriteUBitLong( data, 32 );
-	*/
-	// a < b ? -1 : 0 translates into a CMP, SBB instruction pair
-	// with no flow control. should also be branchless on consoles.
-	int n = (data < 0x10u ? -1 : 0) + (data < 0x100u ? -1 : 0) + (data < 0x1000u ? -1 : 0);
-	WriteUBitLong( data*4 + n + 3, 6 + n*4 + 12 );
-	if ( data >= 0x1000u )
-	{
-		WriteUBitLong( data >> 16, 16 );
-	}
+		if(n < 256)
+			WriteUBitLong( (n & 15) | 16 | ((n & (128 | 64 | 32 | 16)) << 2), 10 );
+		else
+			if(n < 4096)
+				WriteUBitLong( (n & 15) | 32 | ((n & (2048 | 1024 | 512 | 256 | 128 | 64 | 32 | 16)) << 2), 14 );
+			else
+			{
+				WriteUBitLong( (n & 15) | 48, 6 );
+				WriteUBitLong( (n >> 4), 32 - 4 );
+			}
 }
 
 // write raw IEEE float bits in little endian form
@@ -572,7 +566,6 @@ public:
 
 	// reads an unsigned integer with variable bit length
 	unsigned int	ReadUBitVar();
-	unsigned int	ReadUBitVarInternal( int encodingType );
 
 	// reads a varint encoded integer
 	uint32			ReadVarInt32();
@@ -660,13 +653,13 @@ public:
 
 
 private:	
+	const char		*m_pDebugName;
+
 	// Errors?
 	bool			m_bOverflow;
 
 	// For debugging..
 	bool			m_bAssertOnOverflow;
-
-	const char		*m_pDebugName;
 };
 
 //-----------------------------------------------------------------------------
@@ -755,15 +748,24 @@ inline float bf_read::ReadBitFloat()
 
 BITBUF_INLINE unsigned int bf_read::ReadUBitVar()
 {
-	// six bits: low 2 bits for encoding + first 4 bits of value
-	unsigned int sixbits = ReadUBitLong(6);
-	unsigned int encoding = sixbits & 3;
-	if ( encoding )
+	unsigned int ret = ReadUBitLong( 6 );
+	switch(ret & (16 | 32))
 	{
-		// this function will seek back four bits and read the full value
-		return ReadUBitVarInternal( encoding );
+		case 16:
+		ret = (ret & 15) | (ReadUBitLong( 4 ) << 4);
+		Assert( ret >= 16 );
+		break;
+
+		case 32:
+		ret = (ret & 15) | (ReadUBitLong( 8 ) << 4);
+		Assert( ret >= 256 );
+		break;
+		case 48:
+		ret = (ret & 15) | (ReadUBitLong( 32 - 4 ) << 4);
+		Assert( ret >= 4096 );
+		break;
 	}
-	return sixbits >> 2;
+	return ret;
 }
 
 BITBUF_INLINE unsigned int bf_read::ReadUBitLong( int numbits ) RESTRICT
