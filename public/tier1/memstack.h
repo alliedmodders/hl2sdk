@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: A fast stack memory allocator that uses virtual memory if available
 //
@@ -11,6 +11,9 @@
 #pragma once
 #endif
 
+#include "platform.h"
+#include "utlstring.h"
+#include "threadtools.h"
 #include "tier1/utlvector.h"
 
 //-----------------------------------------------------------------------------
@@ -20,28 +23,25 @@ typedef unsigned MemoryStackMark_t;
 class CMemoryStack
 {
 public:
-	CMemoryStack();
-	~CMemoryStack();
+	DLL_CLASS_IMPORT CMemoryStack();
+	DLL_CLASS_IMPORT ~CMemoryStack();
 
-	bool Init( unsigned maxSize = 0, unsigned commitSize = 0, unsigned initialCommit = 0, unsigned alignment = 16 );
-#ifdef _X360
-	bool InitPhysical( uint size, uint nBaseAddrAlignment, uint alignment = 16, uint32 nAdditionalFlags = 0 );
-#endif
-	void Term();
+	DLL_CLASS_IMPORT bool Init( const char *name, unsigned int maxSize = 0, unsigned int commitSize = 0, unsigned int initialCommit = 0, unsigned int alignment = 16 );
+	DLL_CLASS_IMPORT void Term();
 
-	int GetSize();
+	DLL_CLASS_IMPORT int GetSize();
 	int GetMaxSize();
-	int	GetUsed();
+	int GetUsed();
 	
 	void *Alloc( unsigned bytes, bool bClear = false ) RESTRICT;
 
 	MemoryStackMark_t GetCurrentAllocPoint();
-	void FreeToAllocPoint( MemoryStackMark_t mark, bool bDecommit = true );
-	void FreeAll( bool bDecommit = true );
+	DLL_CLASS_IMPORT void FreeToAllocPoint( MemoryStackMark_t mark, bool bDecommit = true );
+	DLL_CLASS_IMPORT void FreeAll( bool bDecommit = true );
 	
-	void Access( void **ppRegion, unsigned *pBytes );
+	DLL_CLASS_IMPORT void Access( void **ppRegion, unsigned int *pBytes );
 
-	void PrintContents();
+	DLL_CLASS_IMPORT void PrintContents();
 
 	void *GetBase();
 	const void *GetBase() const {  return const_cast<CMemoryStack *>(this)->GetBase(); }
@@ -49,26 +49,22 @@ public:
 	bool CommitSize( int );
 
 private:
-	bool CommitTo( byte * ) RESTRICT;
-	void RegisterAllocation();
-	void RegisterDeallocation();
+	DLL_CLASS_IMPORT bool CommitTo( byte * ) RESTRICT;
 
 	byte *m_pNextAlloc;
 	byte *m_pCommitLimit;
 	byte *m_pAllocLimit;
-	
+	byte *m_pHighestAllocLimit;
 	byte *m_pBase;
-	bool m_bRegisteredAllocation;
 
-	unsigned m_maxSize;
-	unsigned m_alignment;
-#ifdef _WIN32
-	unsigned m_commitSize;
-	unsigned m_minCommit;
-#endif
-#ifdef _X360
-	bool m_bPhysical;
-#endif
+	unsigned int m_maxSize;
+	unsigned int m_alignment;
+	unsigned int m_commitIncrement;
+	unsigned int m_minCommit;
+
+	uint32 m_nAllocStatsId;
+	CUtlString m_name;
+	CThreadFastMutex m_allocMutex;
 };
 
 //-------------------------------------
@@ -220,126 +216,5 @@ private:
 	CMemoryStack m_MemoryStack;
 	int m_nAllocated;
 };
-
-
-#ifdef _X360
-//-----------------------------------------------------------------------------
-// A memory stack used for allocating physical memory on the 360
-// Usage pattern anticipates we usually never go over the initial allocation
-// When we do so, we're ok with slightly slower allocation
-//-----------------------------------------------------------------------------
-class CPhysicalMemoryStack
-{
-public:
-	CPhysicalMemoryStack();
-	~CPhysicalMemoryStack();
-
-	// The physical memory stack is allocated in chunks. We will initially
-	// allocate nInitChunkCount chunks, which will always be in memory.
-	// When FreeAll() is called, it will free down to the initial chunk count
-	// but not below it.
-	bool	Init( size_t nChunkSizeInBytes, size_t nAlignment, int nInitialChunkCount, uint32 nAdditionalFlags );
-	void	Term();
-
-	size_t	GetSize() const;
-	size_t	GetPeakUsed() const;
-	size_t	GetUsed() const;
-	size_t	GetFramePeakUsed() const;
-
-	MemoryStackMark_t GetCurrentAllocPoint() const;
-	void	FreeToAllocPoint( MemoryStackMark_t mark, bool bUnused = true ); // bUnused is for interface compat with CMemoryStack
-	void	*Alloc( size_t nSizeInBytes, bool bClear = false ) RESTRICT;
-	void	FreeAll( bool bUnused = true ); // bUnused is for interface compat with CMemoryStack
-
-	void	PrintContents();
-
-private:
-	void *AllocFromOverflow( size_t nSizeInBytes );
-
-	struct PhysicalChunk_t
-	{
-		uint8 *m_pBase;
-		uint8 *m_pNextAlloc;
-		uint8 *m_pAllocLimit;
-	};
-
-	PhysicalChunk_t m_InitialChunk;
-	CUtlVector< PhysicalChunk_t > m_ExtraChunks; 
-	size_t m_nUsage;
-	size_t m_nFramePeakUsage;
-	size_t m_nPeakUsage;
-	size_t m_nAlignment;
-	size_t m_nChunkSizeInBytes;
-	int m_nFirstAvailableChunk;
-	int m_nAdditionalFlags;
-	PhysicalChunk_t *m_pLastAllocedChunk;
-};
-
-//-------------------------------------
-
-FORCEINLINE void *CPhysicalMemoryStack::Alloc( size_t nSizeInBytes, bool bClear ) RESTRICT
-{
-	if ( nSizeInBytes )
-	{
-		nSizeInBytes = AlignValue( nSizeInBytes, m_nAlignment );
-	}
-	else
-	{
-		nSizeInBytes = m_nAlignment;
-	}
-
-	// Can't do an allocation bigger than the chunk size
-	Assert( nSizeInBytes <= m_nChunkSizeInBytes );
-
-	void *pResult = m_InitialChunk.m_pNextAlloc;
-	uint8 *pNextAlloc = m_InitialChunk.m_pNextAlloc + nSizeInBytes;
-	if ( pNextAlloc <= m_InitialChunk.m_pAllocLimit )
-	{
-		m_InitialChunk.m_pNextAlloc = pNextAlloc;
-		m_pLastAllocedChunk = &m_InitialChunk;
-	}
-	else
-	{
-		pResult = AllocFromOverflow( nSizeInBytes );
-	}
-
-	m_nUsage += nSizeInBytes;
-	m_nFramePeakUsage = MAX( m_nUsage, m_nFramePeakUsage ); 
-	m_nPeakUsage = MAX( m_nUsage, m_nPeakUsage );
-
-	if ( bClear )
-	{
-		memset( pResult, 0, nSizeInBytes );
-	}
-
-	return pResult;
-}
-
-//-------------------------------------
-
-inline size_t CPhysicalMemoryStack::GetPeakUsed() const
-{ 
-	return m_nPeakUsage;
-}
-
-//-------------------------------------
-
-inline size_t CPhysicalMemoryStack::GetUsed() const
-{ 
-	return m_nUsage; 
-}
-
-inline size_t CPhysicalMemoryStack::GetFramePeakUsed() const
-{ 
-	return m_nFramePeakUsage; 
-}
-
-inline MemoryStackMark_t CPhysicalMemoryStack::GetCurrentAllocPoint() const
-{
-	Assert( m_pLastAllocedChunk );
-	return ( m_pLastAllocedChunk->m_pNextAlloc - m_pLastAllocedChunk->m_pBase );
-}
-
-#endif // _X360
 
 #endif // MEMSTACK_H

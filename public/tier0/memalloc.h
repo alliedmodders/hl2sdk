@@ -177,14 +177,10 @@ public:
 	// AMNOTE: Stub
 	virtual void unk002() = 0;
 
-	// AMNOTE: Stub, returns false and writes -1 to the ret_out
-	virtual bool unk003( int *ret_out ) = 0;
-
-	// AMNOTE: Stub, returns false
-	virtual bool unk004() = 0;
-
-	// AMNOTE: Stub
-	virtual void unk005() = 0;
+	// AMNOTE: Used by the CMemoryStack::Init
+	virtual void *LockAllocStatsForCurrentStack( uint32 &allocid, bool ) = 0;
+	virtual void *LockAllocStats( uint32 allocid ) = 0;
+	virtual void UnlockAllocStats( uint32 allocid ) = 0;
 
 	virtual void CompactOnFail() = 0;
 
