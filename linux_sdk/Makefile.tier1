@@ -32,13 +32,9 @@ LIB_OBJS= \
 	$(LIB_OBJ_DIR)/bitbuf.o \
 	$(LIB_OBJ_DIR)/commandbuffer.o \
 	$(LIB_OBJ_DIR)/generichash.o \
-	$(LIB_OBJ_DIR)/memstack.o \
-	$(LIB_OBJ_DIR)/NetAdr.o \
 	$(LIB_OBJ_DIR)/rangecheckedvar.o \
-	$(LIB_OBJ_DIR)/stringpool.o \
 	$(LIB_OBJ_DIR)/strtools.o \
 	$(LIB_OBJ_DIR)/tier1.o \
-	$(LIB_OBJ_DIR)/uniqueid.o \
 	$(LIB_OBJ_DIR)/utlbufferutil.o \
 
 all: dirs $(NAME).$(SHLIBEXT)

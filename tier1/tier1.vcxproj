@@ -321,13 +321,9 @@
     <ClCompile Include="bitbuf.cpp" />
     <ClCompile Include="commandbuffer.cpp" />
     <ClCompile Include="generichash.cpp" />
-    <ClCompile Include="memstack.cpp" />
-    <ClCompile Include="NetAdr.cpp" />
     <ClCompile Include="rangecheckedvar.cpp" />
-    <ClCompile Include="stringpool.cpp" />
     <ClCompile Include="strtools.cpp" />
     <ClCompile Include="tier1.cpp" />
-    <ClCompile Include="uniqueid.cpp" />
     <ClCompile Include="utlbufferutil.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -20,25 +20,13 @@
     <ClCompile Include="generichash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="memstack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NetAdr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="rangecheckedvar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="stringpool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="strtools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tier1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="uniqueid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utlbufferutil.cpp">
