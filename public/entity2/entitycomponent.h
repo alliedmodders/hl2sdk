@@ -9,6 +9,7 @@
 #include "tier1/utlsymbollarge.h"
 #include "tier1/utlstring.h"
 #include "datamap.h"
+#include "schemasystem/schematypes.h"
 
 class CEntityIdentity;
 class CEntityComponentHelper;
@@ -22,7 +23,7 @@ struct ComponentUnserializerKeyNamesChunk_t
 
 struct ComponentUnserializerFieldInfo_t
 {
-	void* m_pSchemaEnum;
+	CSchemaEnumInfo* m_pSchemaEnum;
 	const char* m_pKeyName;
 	
 	uint16 m_nOffset;
@@ -72,9 +73,9 @@ struct EntComponentInfo_t
 class CEntityComponentHelper
 {
 public:
-	virtual void Schema_DynamicBinding(void**) = 0;
+	virtual SchemaMetaInfoHandle_t<CSchemaClassInfo> Schema_DynamicBinding() = 0;
 	virtual void Finalize() = 0;
-	virtual void GetSchemaBinding(void**) = 0;
+	virtual SchemaMetaInfoHandle_t<CSchemaClassInfo> GetSchemaBinding() = 0;
 	virtual datamap_t* GetDataDescMap() = 0;
 	virtual bool Allocate( CEntityIdentity* pEntity, void* pComponent ) = 0;
 	virtual void Free( CEntityIdentity* pEntity, void* pComponent ) = 0;

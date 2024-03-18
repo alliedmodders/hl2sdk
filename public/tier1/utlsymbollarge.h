@@ -313,11 +313,9 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 	{
 		unsigned int hash = CUtlSymbolLarge_Hash( CASEINSENSITIVE, pString, nLength );
 
-		m_Mutex.Lock( __FILE__, __LINE__ );
+		AUTO_LOCK( m_Mutex );
 
 		sym = Find( hash, pString, nLength );
-
-		m_Mutex.Unlock( __FILE__, __LINE__ );
 	}
 
 	return sym;
@@ -341,14 +339,12 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 	{
 		unsigned int hash = CUtlSymbolLarge_Hash( CASEINSENSITIVE, pString, nLength );
 
-		m_Mutex.Lock( __FILE__, __LINE__ );
+		AUTO_LOCK( m_Mutex );
 
 		sym = Find( hash, pString, nLength );
 
 		if ( !sym.IsValid() )
 			sym = AddString( hash, pString, nLength, created );
-
-		m_Mutex.Unlock( __FILE__, __LINE__ );
 	}
 
 	return sym;
@@ -363,25 +359,21 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 template < bool CASEINSENSITIVE, size_t PAGE_SIZE, class MUTEX_TYPE >
 inline void CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUTEX_TYPE >::RemoveAll()
 {	
-	m_Mutex.Lock( __FILE__, __LINE__ );
+	AUTO_LOCK( m_Mutex );
 
 	m_HashTable.RemoveAll();
 	m_MemBlocks.RemoveAll();
 	m_MemBlockAllocator.RemoveAll();
-
-	m_Mutex.Unlock( __FILE__, __LINE__ );
 }
 
 template < bool CASEINSENSITIVE, size_t PAGE_SIZE, class MUTEX_TYPE >
 inline void CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUTEX_TYPE >::Purge()
 {	
-	m_Mutex.Lock( __FILE__, __LINE__ );
+	AUTO_LOCK( m_Mutex );
 
 	m_HashTable.Purge();
 	m_MemBlocks.Purge();
 	m_MemBlockAllocator.Purge();
-
-	m_Mutex.Unlock( __FILE__, __LINE__ );
 }
 
 // Case-sensitive

@@ -54,18 +54,18 @@ public:
 	}
 };
 
-template < int BUCKET_COUNT, class KEYTYPE = intp >
+template < class KEYTYPE = intp >
 class CUtlTSHashGenericHash
 {
 public:
 	static int Hash( const KEYTYPE &key, int nBucketMask )
 	{
 		int nHash = HashIntConventional( (intp)key );
-		if ( BUCKET_COUNT <= USHRT_MAX )
+		if ( nBucketMask <= USHRT_MAX )
 		{
 			nHash ^= ( nHash >> 16 );
 		}
-		if ( BUCKET_COUNT <= UCHAR_MAX )
+		if ( nBucketMask <= UCHAR_MAX )
 		{
 			nHash ^= ( nHash >> 8 );
 		}
@@ -78,7 +78,7 @@ public:
 	}
 };
 
-template < int BUCKET_COUNT, class KEYTYPE >
+template < class KEYTYPE >
 class CUtlTSHashUseKeyHashMethod
 {
 public:
@@ -94,7 +94,7 @@ public:
 	}
 };
 
-template< class T, int BUCKET_COUNT, class KEYTYPE = intp, class HashFuncs = CUtlTSHashGenericHash< BUCKET_COUNT, KEYTYPE >, int nAlignment = 0 > 
+template< class T, int BUCKET_COUNT, class KEYTYPE = intp, class HashFuncs = CUtlTSHashGenericHash< KEYTYPE > > 
 class CUtlTSHash
 {
 public:
@@ -161,33 +161,28 @@ private:
 
 	struct HashBucket_t
 	{
+		CThreadSpinRWLock m_AddLock;
 		HashFixedData_t *m_pFirst;
 		HashFixedData_t *m_pFirstUncommitted;
-		CThreadSpinRWLock m_AddLock;
 	};
 
 	UtlTSHashHandle_t Find( KEYTYPE uiKey, HashFixedData_t *pFirstElement, HashFixedData_t *pLastElement );
 	UtlTSHashHandle_t InsertUncommitted( KEYTYPE uiKey, HashBucket_t &bucket );
-	CMemoryPoolMT m_EntryMemory;
+	CUtlMemoryPoolBase m_EntryMemory;
 	HashBucket_t m_aBuckets[BUCKET_COUNT];
 	bool m_bNeedsCommit;
-
-#ifdef _DEBUG
 	CInterlockedInt m_ContentionCheck;
-#endif
 };
 
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::CUtlTSHash( int nAllocationCount ) :
-	m_EntryMemory( sizeof( HashFixedData_t ), nAllocationCount, CUtlMemoryPool::GROW_SLOW, MEM_ALLOC_CLASSNAME( HashFixedData_t ), nAlignment )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::CUtlTSHash( int nAllocationCount ) :
+	m_EntryMemory( sizeof( HashFixedData_t ), nAllocationCount, alignof( HashFixedData_t ), UTLMEMORYPOOL_GROW_SLOW, MEM_ALLOC_CLASSNAME( HashFixedData_t ) )
 {
-#ifdef _DEBUG
 	m_ContentionCheck = 0;
-#endif
 	m_bNeedsCommit = false;
 	for ( int i = 0; i < BUCKET_COUNT; i++ )
 	{
@@ -201,8 +196,8 @@ CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::CUtlTSHash( int nAlloca
 //-----------------------------------------------------------------------------
 // Purpose: Deconstructor
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::~CUtlTSHash()
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::~CUtlTSHash()
 {
 #ifdef _DEBUG
 	if ( m_ContentionCheck != 0 )
@@ -216,8 +211,8 @@ CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::~CUtlTSHash()
 //-----------------------------------------------------------------------------
 // Purpose: Destroy dynamically allocated hash data.
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Purge( void )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::Purge( void )
 {
 	RemoveAll();
 }
@@ -226,8 +221,8 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Purge( void
 //-----------------------------------------------------------------------------
 // Returns the number of elements in the hash table
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline int CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Count() const
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline int CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::Count() const
 {
 	return m_EntryMemory.Count();
 }
@@ -236,14 +231,14 @@ inline int CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Count() cons
 //-----------------------------------------------------------------------------
 // Returns elements in the table
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-int CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::GetElements( int nFirstElement, int nCount, UtlTSHashHandle_t *pHandles ) const
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+int CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::GetElements( int nFirstElement, int nCount, UtlTSHashHandle_t *pHandles ) const
 {
 	int nIndex = 0;
 	for ( int i = 0; i < BUCKET_COUNT; i++ )
 	{
 		const HashBucket_t &bucket = m_aBuckets[ i ];
-		bucket.m_AddLock.LockForRead( );
+		bucket.m_AddLock.LockForRead( __FILE__, __LINE__ );
 		for ( HashFixedData_t *pElement = bucket.m_pFirstUncommitted; pElement; pElement = pElement->m_pNext )
 		{
 			if ( --nFirstElement >= 0 )
@@ -252,11 +247,11 @@ int CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::GetElements( int nF
 			pHandles[ nIndex++ ] = (UtlTSHashHandle_t)pElement;
 			if ( nIndex >= nCount )
 			{
-				bucket.m_AddLock.UnlockRead( );
+				bucket.m_AddLock.UnlockRead( __FILE__, __LINE__ );
 				return nIndex;
 			}
 		}
-		bucket.m_AddLock.UnlockRead( );
+		bucket.m_AddLock.UnlockRead( __FILE__, __LINE__ );
 	}
 	return nIndex;
 }
@@ -266,8 +261,8 @@ int CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::GetElements( int nF
 // Purpose: Insert data into the hash table given its key (KEYTYPE),
 //          without a check to see if the element already exists within the tree.
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::InsertUncommitted( KEYTYPE uiKey, HashBucket_t &bucket )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::InsertUncommitted( KEYTYPE uiKey, HashBucket_t &bucket )
 {
 	m_bNeedsCommit = true;
 	HashFixedData_t *pNewElement = static_cast< HashFixedData_t * >( m_EntryMemory.Alloc() );
@@ -282,8 +277,8 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 // Purpose: Insert data into the hash table given its key, with
 //          a check to see if the element already exists within the tree.
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Insert( KEYTYPE uiKey, const T &data, bool *pDidInsert )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::Insert( KEYTYPE uiKey, const T &data, bool *pDidInsert )
 {
 #ifdef _DEBUG
 	if ( m_ContentionCheck != 0 )
@@ -306,7 +301,7 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 		return h;
 
 	// Now, try again, but only look in uncommitted elements
-	bucket.m_AddLock.LockForWrite( );
+	bucket.m_AddLock.LockForWrite( __FILE__, __LINE__ );
 
 	h = Find( uiKey, bucket.m_pFirstUncommitted, bucket.m_pFirst );
 	if ( h == InvalidHandle() )
@@ -319,12 +314,12 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 		}
 	}
 
-	bucket.m_AddLock.UnlockWrite( );
+	bucket.m_AddLock.UnlockWrite( __FILE__, __LINE__ );
 	return h;
 }
 
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Insert( KEYTYPE uiKey, ITSHashConstructor<T> *pConstructor, bool *pDidInsert )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::Insert( KEYTYPE uiKey, ITSHashConstructor<T> *pConstructor, bool *pDidInsert )
 {
 #ifdef _DEBUG
 	if ( m_ContentionCheck != 0 )
@@ -346,7 +341,7 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 	// Now, try again, but only look in uncommitted elements
 	int iBucket = HashFuncs::Hash( uiKey, BUCKET_MASK );
 	HashBucket_t &bucket = m_aBuckets[ iBucket ];
-	bucket.m_AddLock.LockForWrite( );
+	bucket.m_AddLock.LockForWrite( __FILE__, __LINE__ );
 
 	h = Find( uiKey, bucket.m_pFirstUncommitted, bucket.m_pFirst );
 	if ( h == InvalidHandle() )
@@ -361,7 +356,7 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 		}
 	}
 
-	bucket.m_AddLock.UnlockWrite( );
+	bucket.m_AddLock.UnlockWrite( __FILE__, __LINE__ );
 	return h;
 }
 
@@ -370,8 +365,8 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 // Purpose: Insert data into the hash table given its key
 //          without a check to see if the element already exists within the tree.
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::FastInsert( KEYTYPE uiKey, const T &data )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::FastInsert( KEYTYPE uiKey, const T &data )
 {
 #ifdef _DEBUG
 	if ( m_ContentionCheck != 0 )
@@ -381,15 +376,15 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 #endif
 	int iBucket = HashFuncs::Hash( uiKey, BUCKET_MASK );
 	HashBucket_t &bucket = m_aBuckets[ iBucket ];
-	bucket.m_AddLock.LockForWrite( );
+	bucket.m_AddLock.LockForWrite( __FILE__, __LINE__ );
 	UtlTSHashHandle_t h = InsertUncommitted( uiKey, bucket );
 	CopyConstruct( &Element(h), data );
-	bucket.m_AddLock.UnlockWrite( );
+	bucket.m_AddLock.UnlockWrite( __FILE__, __LINE__ );
 	return h;
 }
 
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::FastInsert( KEYTYPE uiKey, ITSHashConstructor<T> *pConstructor )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::FastInsert( KEYTYPE uiKey, ITSHashConstructor<T> *pConstructor )
 {
 #ifdef _DEBUG
 	if ( m_ContentionCheck != 0 )
@@ -399,10 +394,10 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 #endif
 	int iBucket = HashFuncs::Hash( uiKey, BUCKET_MASK );
 	HashBucket_t &bucket = m_aBuckets[ iBucket ];
-	bucket.m_AddLock.LockForWrite( );
+	bucket.m_AddLock.LockForWrite( __FILE__, __LINE__ );
 	UtlTSHashHandle_t h = InsertUncommitted( uiKey, bucket );
 	pConstructor->Construct( &Element(h) );
-	bucket.m_AddLock.UnlockWrite( );
+	bucket.m_AddLock.UnlockWrite( __FILE__, __LINE__ );
 	return h;
 }
 
@@ -410,8 +405,8 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 //-----------------------------------------------------------------------------
 // Purpose: Commits all uncommitted insertions
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Commit( )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::Commit( )
 {
 	// FIXME: Is this legal? Want this to be lock-free
 	if ( !m_bNeedsCommit )
@@ -425,9 +420,9 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Commit( )
 	for ( int i = 0; i < BUCKET_COUNT; i++ )
 	{
 		HashBucket_t &bucket = m_aBuckets[ i ];
-		bucket.m_AddLock.LockForRead( );
+		bucket.m_AddLock.LockForRead( __FILE__, __LINE__ );
 		bucket.m_pFirst = bucket.m_pFirstUncommitted;
-		bucket.m_AddLock.UnlockRead( );
+		bucket.m_AddLock.UnlockRead( __FILE__, __LINE__ );
 	}
 
 	m_bNeedsCommit = false;
@@ -441,8 +436,8 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Commit( )
 //-----------------------------------------------------------------------------
 // Purpose: Remove a single element from the hash
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::FindAndRemove( KEYTYPE uiKey )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::FindAndRemove( KEYTYPE uiKey )
 {
 	if ( m_EntryMemory.Count() == 0 )
 		return;
@@ -454,7 +449,7 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::FindAndRemo
 
 	int iBucket = HashFuncs::Hash( uiKey, BUCKET_MASK );
 	HashBucket_t &bucket = m_aBuckets[ iBucket ];
-	bucket.m_AddLock.LockForWrite( );
+	bucket.m_AddLock.LockForWrite( __FILE__, __LINE__ );
 
 	HashFixedData_t *pPrev = NULL;
 	for ( HashFixedData_t *pElement = bucket.m_pFirstUncommitted; pElement; pPrev = pElement, pElement = pElement->m_pNext )
@@ -487,7 +482,7 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::FindAndRemo
 		break;
 	}
 
-	bucket.m_AddLock.UnlockWrite( );
+	bucket.m_AddLock.UnlockWrite( __FILE__, __LINE__ );
 
 #ifdef _DEBUG
 	m_ContentionCheck--;
@@ -498,8 +493,8 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::FindAndRemo
 //-----------------------------------------------------------------------------
 // Purpose: Remove all elements from the hash
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::RemoveAll( void )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::RemoveAll( void )
 {
 	m_bNeedsCommit = false;
 	if ( m_EntryMemory.Count() == 0 )
@@ -514,7 +509,7 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::RemoveAll( 
 	{
 		HashBucket_t &bucket = m_aBuckets[ i ];
 
-		bucket.m_AddLock.LockForWrite( );
+		bucket.m_AddLock.LockForWrite( __FILE__, __LINE__ );
 
 		for ( HashFixedData_t *pElement = bucket.m_pFirstUncommitted; pElement; pElement = pElement->m_pNext )
 		{
@@ -523,7 +518,7 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::RemoveAll( 
 
 		bucket.m_pFirst = NULL;
 		bucket.m_pFirstUncommitted = NULL;
-		bucket.m_AddLock.UnlockWrite( );
+		bucket.m_AddLock.UnlockWrite( __FILE__, __LINE__ );
 	}
 
 	m_EntryMemory.Clear();
@@ -536,8 +531,8 @@ inline void CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::RemoveAll( 
 //-----------------------------------------------------------------------------
 // Finds an element, but only in the committed elements
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Find( KEYTYPE uiKey, HashFixedData_t *pFirstElement, HashFixedData_t *pLastElement )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::Find( KEYTYPE uiKey, HashFixedData_t *pFirstElement, HashFixedData_t *pLastElement )
 {
 #ifdef _DEBUG
 	if ( m_ContentionCheck != 0 )
@@ -558,8 +553,8 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 //-----------------------------------------------------------------------------
 // Finds an element, but only in the committed elements
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Find( KEYTYPE uiKey )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::Find( KEYTYPE uiKey )
 {
 	int iBucket = HashFuncs::Hash( uiKey, BUCKET_MASK );
 	const HashBucket_t &bucket = m_aBuckets[iBucket];
@@ -567,10 +562,13 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 	if ( h != InvalidHandle() )
 		return h;
 
-	// Didn't find it in the fast ( committed ) list. Let's try the slow ( uncommitted ) one
-	bucket.m_AddLock.LockForRead( );
-	h = Find( uiKey, bucket.m_pFirstUncommitted, bucket.m_pFirst );
-	bucket.m_AddLock.UnlockRead( );
+	if ( bucket.m_pFirstUncommitted && bucket.m_pFirstUncommitted != bucket.m_pFirst )
+	{
+		// Didn't find it in the fast ( committed ) list. Let's try the slow ( uncommitted ) one
+		bucket.m_AddLock.LockForRead( __FILE__, __LINE__ );
+		h = Find( uiKey, bucket.m_pFirstUncommitted, bucket.m_pFirst );
+		bucket.m_AddLock.UnlockRead( __FILE__, __LINE__ );
+	}
 
 	return h;
 }
@@ -579,41 +577,41 @@ inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>
 //-----------------------------------------------------------------------------
 // Purpose: Return data given a hash handle.
 //-----------------------------------------------------------------------------
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline T &CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Element( UtlTSHashHandle_t hHash )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline T &CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::Element( UtlTSHashHandle_t hHash )
 {
 	return ((HashFixedData_t *)hHash)->m_Data;
 }
 
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline T const &CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::Element( UtlTSHashHandle_t hHash ) const
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline T const &CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::Element( UtlTSHashHandle_t hHash ) const
 {
 	return ((HashFixedData_t *)hHash)->m_Data;
 }
 
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline T &CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::operator[]( UtlTSHashHandle_t hHash )
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline T &CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::operator[]( UtlTSHashHandle_t hHash )
 {
 	return ((HashFixedData_t *)hHash)->m_Data;
 }
 
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline T const &CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::operator[]( UtlTSHashHandle_t hHash ) const
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline T const &CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::operator[]( UtlTSHashHandle_t hHash ) const
 {
 	return ((HashFixedData_t *)hHash)->m_Data;
 }
 
 
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline KEYTYPE CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::GetID( UtlTSHashHandle_t hHash ) const
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline KEYTYPE CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::GetID( UtlTSHashHandle_t hHash ) const
 {
 	return ((HashFixedData_t *)hHash)->m_uiKey;
 }
 
 
 // Convert element * to hashHandle
-template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs, int nAlignment> 
-inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs,nAlignment>::ElementPtrToHandle( T* pElement ) const
+template<class T, int BUCKET_COUNT, class KEYTYPE, class HashFuncs> 
+inline UtlTSHashHandle_t CUtlTSHash<T,BUCKET_COUNT,KEYTYPE,HashFuncs>::ElementPtrToHandle( T* pElement ) const
 {
 	Assert( pElement );
 	HashFixedData_t *pFixedData = (HashFixedData_t*)( (uint8*)pElement - offsetof( HashFixedData_t, m_Data ) );
