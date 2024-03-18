@@ -14,40 +14,16 @@
     <ClCompile Include="bitbuf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cbyteswap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="characterset.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="checksum_crc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="checksum_md5.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="commandbuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="datamanager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="diff.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="generichash.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mempool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="memstack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NetAdr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="processor_detect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="rangecheckedvar.cpp">

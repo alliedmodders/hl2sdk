@@ -30,24 +30,14 @@ DO_CC += -o $@ -c $<
 
 LIB_OBJS= \
 	$(LIB_OBJ_DIR)/bitbuf.o \
-	$(LIB_OBJ_DIR)/cbyteswap.o \
-	$(LIB_OBJ_DIR)/characterset.o \
-	$(LIB_OBJ_DIR)/checksum_crc.o \
-	$(LIB_OBJ_DIR)/checksum_md5.o \
 	$(LIB_OBJ_DIR)/commandbuffer.o \
-	$(LIB_OBJ_DIR)/convar.o \
-	$(LIB_OBJ_DIR)/datamanager.o \
-	$(LIB_OBJ_DIR)/diff.o \
 	$(LIB_OBJ_DIR)/generichash.o \
-	$(LIB_OBJ_DIR)/mempool.o \
 	$(LIB_OBJ_DIR)/memstack.o \
 	$(LIB_OBJ_DIR)/NetAdr.o \
-	$(LIB_OBJ_DIR)/processor_detect.o \
 	$(LIB_OBJ_DIR)/rangecheckedvar.o \
 	$(LIB_OBJ_DIR)/stringpool.o \
 	$(LIB_OBJ_DIR)/strtools.o \
 	$(LIB_OBJ_DIR)/tier1.o \
-	$(LIB_OBJ_DIR)/undiff.o \
 	$(LIB_OBJ_DIR)/uniqueid.o \
 	$(LIB_OBJ_DIR)/utlbufferutil.o \
 
