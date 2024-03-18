@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2006, Valve LLC, All rights reserved. ============
+//========= Copyright ï¿½ 1996-2006, Valve LLC, All rights reserved. ============
 //
 // Purpose: Low level byte swapping routines.
 //
@@ -25,12 +25,12 @@ public:
 	//-----------------------------------------------------------------------------
 	// Write a single field.
 	//-----------------------------------------------------------------------------
-	void SwapFieldToTargetEndian( void* pOutputBuffer, void *pData, typedescription_t *pField );
+	DLL_CLASS_IMPORT void SwapFieldToTargetEndian( void* pOutputBuffer, void *pData, typedescription_t *pField );
 
 	//-----------------------------------------------------------------------------
 	// Write a block of fields.  Works a bit like the saverestore code.  
 	//-----------------------------------------------------------------------------
-	void SwapFieldsToTargetEndian( void *pOutputBuffer, void *pBaseData, datamap_t *pDataMap );
+	DLL_CLASS_IMPORT void SwapFieldsToTargetEndian( void *pOutputBuffer, void *pBaseData, datamap_t *pDataMap );
 
 	// Swaps fields for the templated type to the output buffer.
 	template<typename T> inline void SwapFieldsToTargetEndian( T* pOutputBuffer, void *pBaseData, unsigned int objectCount = 1 )
