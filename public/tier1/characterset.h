@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: Shared code for parsing / searching for characters in a string
 //			using lookup tables
@@ -15,6 +15,7 @@
 #pragma once
 #endif
 
+#include "platform.h"
 
 struct characterset_t
 {
@@ -28,7 +29,7 @@ struct characterset_t
 // Input  : *pSetBuffer - pointer to the buffer for the group
 //			*pSetString - list of characters to flag
 //-----------------------------------------------------------------------------
-extern void CharacterSetBuild( characterset_t *pSetBuffer, const char *pSetString );
+PLATFORM_INTERFACE void CharacterSetBuild( characterset_t *pSetBuffer, const char *pSetString );
 
 
 //-----------------------------------------------------------------------------
