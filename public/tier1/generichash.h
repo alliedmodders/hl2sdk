@@ -1,4 +1,4 @@
-//======= Copyright © 2005, , Valve Corporation, All rights reserved. =========
+//======= Copyright ï¿½ 2005, , Valve Corporation, All rights reserved. =========
 //
 // Purpose: Variant Pearson Hash general purpose hashing algorithm described
 //			by Cargill in C++ Report 1994. Generates a 16-bit result.
@@ -12,11 +12,13 @@
 #pragma once
 #endif
 
+#include "platform.h"
+
 //-----------------------------------------------------------------------------
 
 unsigned FASTCALL HashString( const char *pszKey );
 unsigned FASTCALL HashStringCaseless( const char *pszKey );
-unsigned FASTCALL HashStringCaselessConventional( const char *pszKey );
+unsigned FASTCALL HashStringFastCaselessConventional( const char *pszKey );
 unsigned FASTCALL Hash4( const void *pKey );
 unsigned FASTCALL Hash8( const void *pKey );
 unsigned FASTCALL Hash12( const void *pKey );
@@ -105,12 +107,16 @@ template<> inline unsigned HashItem<char *>(char * const &pszKey )
 //-----------------------------------------------------------------------------
 // Murmur hash
 //-----------------------------------------------------------------------------
-uint32 MurmurHash2( const void * key, int len, uint32 seed );
+uint32 MurmurHash2( const void *key, int len, uint32 seed );
 
 // return murmurhash2 of a downcased string
+uint32 MurmurHash2LowerCase( char const *pString, uint32 nSeed );
 uint32 MurmurHash2LowerCase( char const *pString, int nLength, uint32 nSeed );
 
-uint64 MurmurHash64( const void * key, int len, uint32 seed );
+PLATFORM_INTERFACE uint32 MurmurHash3_32( void const *key, size_t len, uint32 seed, bool bCaselessStringVariant = false );
+
+// MurmurHash2, 64-bit version
+uint64 MurmurHash64( const void *key, int len, uint32 seed );
 
 
 #endif /* !GENERICHASH_H */

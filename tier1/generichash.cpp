@@ -78,21 +78,7 @@ static unsigned g_nRandomValues[256] =
 //-----------------------------------------------------------------------------
 unsigned FASTCALL HashString( const char *pszKey )
 {
-	const uint8 *k =   (const uint8 *)pszKey;
-	unsigned 	even = 0,
-				odd  = 0,
-				n;
-
-	while ((n = *k++) != 0)
-	{
-		even = g_nRandomValues[odd ^ n];
-		if ((n = *k++) != 0)
-			odd = g_nRandomValues[even ^ n];
-		else
-			break;
-	}
-
-	return (even << 8) | odd ;
+	return MurmurHash2( pszKey, strlen( pszKey ), 0x3501A674 );
 }
 
 
@@ -101,33 +87,34 @@ unsigned FASTCALL HashString( const char *pszKey )
 //-----------------------------------------------------------------------------
 unsigned FASTCALL HashStringCaseless( const char *pszKey )
 {
-	const uint8 *k = (const uint8 *) pszKey;
-	unsigned	even = 0,
-				odd  = 0,
-				n;
-
-	while ((n = toupper(*k++)) != 0)
-	{
-		even = g_nRandomValues[odd ^ n];
-		if ((n = toupper(*k++)) != 0)
-			odd = g_nRandomValues[even ^ n];
-		else
-			break;
-	}
-
-	return (even << 8) | odd;
+	return MurmurHash2LowerCase( pszKey, 0x3501A674 );
 }
 
 //-----------------------------------------------------------------------------
 // 32 bit conventional case-insensitive string 
 //-----------------------------------------------------------------------------
-unsigned FASTCALL HashStringCaselessConventional( const char *pszKey )
+unsigned FASTCALL HashStringFastCaselessConventional( const char *pszKey )
 {
 	unsigned hash = 0xAAAAAAAA; // Alternating 1's and 0's to maximize the effect of the later multiply and add
 
 	for( ; *pszKey ; pszKey++ )
 	{
 		hash = ( ( hash << 5 ) + hash ) + (uint8)tolower(*pszKey);
+	}
+
+	return hash;
+}
+
+//-----------------------------------------------------------------------------
+// 32 bit conventional case-sensitive string 
+//-----------------------------------------------------------------------------
+unsigned FASTCALL HashStringConventional( const char *pszKey )
+{
+	unsigned hash = 0xAAAAAAAA; // Alternating 1's and 0's to maximize the effect of the later multiply and add
+
+	for(; *pszKey; pszKey++)
+	{
+		hash = ((hash << 5) + hash) + (uint8)*pszKey;
 	}
 
 	return hash;
@@ -302,58 +289,69 @@ unsigned FASTCALL HashBlock( const void *pKey, unsigned size )
 	return (even << 8) | odd;
 }
 
+//-----------------------------------------------------------------------------
+// MurmurHash variants
+//-----------------------------------------------------------------------------
 uint32 MurmurHash2( const void *key, int len, uint32 seed )
 {
-  // 'm' and 'r' are mixing constants generated offline.
-  // They're not really 'magic', they just happen to work well.
+	// 'm' and 'r' are mixing constants generated offline.
+	// They're not really 'magic', they just happen to work well.
 
-  const uint32 m = 0x5bd1e995;
-  const int r = 24;
+	const uint32 m = 0x5bd1e995;
+	const int r = 24;
 
-  // Initialize the hash to a 'random' value
+	// Initialize the hash to a 'random' value
 
-  uint32 h = seed ^ len;
+	uint32 h = seed ^ len;
 
-  // Mix 4 bytes at a time into the hash
+	// Mix 4 bytes at a time into the hash
 
-  const unsigned char * data = (const unsigned char *)key;
+	const unsigned char *data = (const unsigned char *)key;
 
-  while(len >= 4)
-  {
-    uint32 k = LittleDWord( *(uint32 *)data );
+	while(len >= 4)
+	{
+		uint32 k = LittleDWord( *(uint32 *)data );
 
-    k *= m;
-    k ^= k >> r;
-    k *= m;
+		k *= m;
+		k ^= k >> r;
+		k *= m;
 
-    h *= m;
-    h ^= k;
+		h *= m;
+		h ^= k;
 
-    data += 4;
-    len -= 4;
-  }
+		data += 4;
+		len -= 4;
+	}
 
-  // Handle the last few bytes of the input array
+	// Handle the last few bytes of the input array
 
-  switch(len)
-  {
-  case 3: h ^= data[2] << 16;
-  case 2: h ^= data[1] << 8;
-  case 1: h ^= data[0];
-      h *= m;
-  };
+	switch(len)
+	{
+		case 3: h ^= data[2] << 16;
+		case 2: h ^= data[1] << 8;
+		case 1: h ^= data[0];
+			h *= m;
+	};
 
-  // Do a few final mixes of the hash to ensure the last few
-  // bytes are well-incorporated.
+	// Do a few final mixes of the hash to ensure the last few
+	// bytes are well-incorporated.
 
-  h ^= h >> 13;
-  h *= m;
-  h ^= h >> 15;
+	h ^= h >> 13;
+	h *= m;
+	h ^= h >> 15;
 
-  return h;
+	return h;
 }
 
 // return murmurhash2 of a downcased string
+uint32 MurmurHash2LowerCase( char const *pString, uint32 nSeed )
+{
+	CUtlString buf( pString );
+	buf.ToLowerFast();
+
+	return MurmurHash2( buf.Get(), buf.Length(), nSeed );
+}
+
 uint32 MurmurHash2LowerCase( char const *pString, int nLength, uint32 nSeed )
 {
 	CUtlString buf( pString ); 
