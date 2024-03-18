@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Generic CRC functions
 //
@@ -10,12 +10,25 @@
 #pragma once
 #endif
 
+#include "platform.h"
+
+#define CRC32_INIT_VALUE 0xFFFFFFFFUL
+#define CRC32_XOR_VALUE  0xFFFFFFFFUL
+
 typedef unsigned long CRC32_t;
 
-void CRC32_Init( CRC32_t *pulCRC );
-void CRC32_ProcessBuffer( CRC32_t *pulCRC, const void *p, int len );
-void CRC32_Final( CRC32_t *pulCRC );
-CRC32_t	CRC32_GetTableEntry( unsigned int slot );
+inline void CRC32_Init( CRC32_t *pulCRC )
+{
+	*pulCRC = CRC32_INIT_VALUE;
+}
+
+inline void CRC32_Final( CRC32_t *pulCRC )
+{
+	*pulCRC ^= CRC32_XOR_VALUE;
+}
+
+PLATFORM_INTERFACE void CRC32_ProcessBuffer( CRC32_t *pulCRC, const void *p, int len );
+PLATFORM_INTERFACE CRC32_t CRC32_GetTableEntry( unsigned int slot );
 
 inline CRC32_t CRC32_ProcessSingleBuffer( const void *p, int len )
 {
