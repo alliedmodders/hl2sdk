@@ -92,8 +92,14 @@ TT_INTERFACE bool ReleaseThreadHandle( ThreadHandle_t );
 
 //-----------------------------------------------------------------------------
 
-TT_INTERFACE void ThreadSleep(unsigned duration = 0);
+#if defined( PLATFORM_WINDOWS ) && !defined( PLATFORM_64BITS )
+extern "C" unsigned long __declspec(dllimport) __stdcall GetCurrentThreadId();
+inline ThreadId_t ThreadGetCurrentId() { return GetCurrentThreadId(); };
+#else
 TT_INTERFACE ThreadId_t ThreadGetCurrentId();
+#endif
+
+TT_INTERFACE void ThreadSleep(unsigned duration = 0);
 TT_INTERFACE ThreadHandle_t ThreadGetCurrentHandle();
 TT_INTERFACE int ThreadGetPriority( ThreadHandle_t hThread = NULL );
 TT_INTERFACE bool ThreadSetPriority( ThreadHandle_t hThread, int priority );
