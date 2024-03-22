@@ -68,8 +68,8 @@ public:
 	virtual bool SerializeAbstract(bf_write &pBuf, INetworkSerializable *pNetMessage, void const *pData) = 0;
 
 	// Returns true if the buffer is fully read, false if there's still data left
-	virtual bool UnserializeAbstract(bf_read &pBuf, INetworkSerializable **pNetMessage, void **pData) = 0;
 	virtual bool UnserializeAbstract(bf_read &pBuf, INetworkSerializable *pNetMessage, void *pData) = 0;
+	virtual bool UnserializeAbstract(bf_read &pBuf, INetworkSerializable **pNetMessage, void **pData) = 0;
 
 	virtual void *AllocateNetMessageAbstract(INetworkSerializable *pNetMessage) = 0;
 	virtual void *AllocateAndCopyConstructNetMessageAbstract(INetworkSerializable *pNetMessage, void const *pFrom) = 0;
