@@ -129,6 +129,7 @@ public:
 	}
 
 	vec_t	NormalizeInPlace();
+	Vector	Normalized() const;
 	bool	IsLengthGreaterThan( float val ) const;
 	bool	IsLengthLessThan( float val ) const;
 
@@ -2218,6 +2219,13 @@ FORCEINLINE void VectorNormalizeFast( Vector &vec )
 inline vec_t Vector::NormalizeInPlace()
 {
 	return VectorNormalize( *this );
+}
+
+inline Vector Vector::Normalized() const
+{
+	Vector norm = *this;
+	VectorNormalize( norm );
+	return norm;
 }
 
 inline bool Vector::IsLengthGreaterThan( float val ) const
