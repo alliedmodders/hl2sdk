@@ -49,10 +49,11 @@ struct NetPacket_t
 };
 #endif // NET_PACKET_ST_DEFINED
 
-enum NetChannelBufType_t
+enum NetChannelBufType_t : int8
 {
-	BUF_RELIABLE = 0,
-	BUF_UNRELIABLE,
+	BUF_DEFAULT = -1,
+	BUF_UNRELIABLE = 0,
+	BUF_RELIABLE,
 	BUF_VOICE,
 };
 
