@@ -86,7 +86,6 @@ public:
 	virtual ~INetworkServerService() {}
 	virtual INetworkGameServer	*GetIGameServer( void ) = 0;
 	virtual bool	IsActiveInGame( void ) const = 0;
-	virtual bool	unk001( void ) const = 0;
 	virtual bool	IsMultiplayer( void ) const = 0;
 	virtual void	StartupServer( const GameSessionConfiguration_t &config, ISource2WorldSession *pWorldSession, const char * ) = 0;
 	virtual void	SetGameSpawnGroupMgr( IGameSpawnGroupMgr *pMgr ) = 0;
