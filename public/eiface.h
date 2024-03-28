@@ -584,7 +584,7 @@ public:
 
 	virtual bool			IsPlayerAlive( CPlayerSlot slot) = 0;
 
-	virtual int				GetPlayerScore( CPlayerSlot slot ) = 0;
+	virtual int				GetPlayerFrags( CPlayerSlot slot ) = 0;
 
 	// Get the ear position for a specified client
 	virtual void			ClientEarPosition( CPlayerSlot slot, Vector *pEarOrigin ) = 0;
