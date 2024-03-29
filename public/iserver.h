@@ -35,6 +35,7 @@ class CServerSideClientBase;
 class CCLCMsg_SplitPlayerConnect_t;
 
 typedef int ChallengeType_t;
+typedef int PauseGroup_t;
 
 abstract_class INetworkGameServer : public IConnectionlessPacketHandler
 {
@@ -126,12 +127,12 @@ public:
 	virtual void	unk201() = 0;
 	virtual void	unk202() = 0;
 	virtual void	unk203() = 0;
-	virtual void	unk204() = 0;
+	
+	virtual void	SetMaxClients( int nMaxClients ) = 0;
+	
 	virtual void	unk205() = 0;
 
-	// Always returns -1 (0xFFFF) as a userid
 	virtual CPlayerUserId GetPlayerUserId( CPlayerSlot slot ) = 0;
-	// Always returns "GetPlayerNetworkIDString"
 	virtual const char *GetPlayerNetworkIDString( CPlayerSlot slot ) = 0;
 	
 	// Returns udp port of this server instance
@@ -146,7 +147,8 @@ public:
 	virtual void	FillKV3ServerInfo( KeyValues3 *out ) = 0;
 
 	virtual void	unk301() = 0;
-	virtual void	unk302() = 0;
+	
+	virtual bool	IsPausable( PauseGroup_t ) = 0;
 
 	// Returns sv_password cvar value, if it's set to "none" nullptr would be returned!
 	virtual const char *GetPassword() = 0;
@@ -164,9 +166,9 @@ public:
 
 	virtual CServerSideClientBase *ConnectClient( const char *pszName, ns_address *pAddr, int socket, CCLCMsg_SplitPlayerConnect_t *pSplitPlayer,
 												  const char *pszChallenge, const byte *pAuthTicket, int nAuthTicketLength, bool bIsLowViolence ) = 0;
-
-	virtual void	unk601() = 0;
-	virtual void	unk602() = 0;
+	virtual CServerSideClientBase *CreateNewClient( CPlayerSlot slot ) = 0;
+	
+	virtual bool	FinishCertificateCheck( const ns_address *pAddr, int socket, byte ) = 0;
 
 	virtual ChallengeType_t	GetChallengeType( const ns_address &addr ) = 0;
 	virtual bool	CheckChallenge( const ns_address &addr, const char *pszChallenge ) = 0;
