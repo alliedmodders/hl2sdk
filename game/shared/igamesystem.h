@@ -41,10 +41,10 @@
 class GameSessionConfiguration_t;
 class ILoopModePrerequisiteRegistry;
 class IEntityResourceManifest;
-class EngineLoopState_t;
 class ISpawnGroupPrerequisiteRegistry;
 class IEntityPrecacheConfiguration;
-class EntitySpawnInfo_t;
+struct EngineLoopState_t;
+struct EntitySpawnInfo_t;
 
 
 #define GS_EVENT_MSG( name ) struct Event##name##_t
