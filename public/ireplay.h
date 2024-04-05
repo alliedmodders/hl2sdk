@@ -18,7 +18,7 @@
 class IServer;
 class IReplayDirector;
 class IGameEvent;
-struct netadr_s;
+struct netadr_t;
 
 //-----------------------------------------------------------------------------
 // Interface the Replay module exposes to the engine

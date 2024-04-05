@@ -18,7 +18,7 @@
 class IServer;
 class IHLTVDirector;
 class IGameEvent;
-struct netadr_s;
+struct netadr_t;
 class CGameInfo;
 
 //-----------------------------------------------------------------------------
@@ -38,7 +38,7 @@ public:
 	virtual void	GetLocalStats( int &proxies, int &slots, int &specs ) = 0; 
 	virtual void	GetGlobalStats( int &proxies, int &slots, int &specs ) = 0; 
 
-	virtual const netadr_s *GetRelayAddress( void ) = 0; // returns relay address
+	virtual const netadr_t *GetRelayAddress( void ) = 0; // returns relay address
 
 	virtual bool	IsMasterProxy( void ) = 0; // true, if this is the HLTV master proxy
 	virtual bool	IsDemoPlayback( void ) = 0; // true if this is a HLTV demo
