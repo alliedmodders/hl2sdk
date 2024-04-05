@@ -24,12 +24,12 @@ typedef enum
 	NA_IP,
 } netadrtype_t;
 
-typedef struct netadr_s
+struct netadr_t
 {
 public:
-	netadr_s() { SetIP( 0 ); SetPort( 0 ); SetType( NA_IP ); }
-	netadr_s( uint unIP, uint16 usPort ) { SetIP( unIP ); SetPort( usPort ); SetType( NA_IP ); }
-	netadr_s( const char *pch ) { SetFromString( pch ); }
+	netadr_t() { SetIP( 0 ); SetPort( 0 ); SetType( NA_IP ); }
+	netadr_t( uint unIP, uint16 usPort ) { SetIP( unIP ); SetPort( usPort ); SetType( NA_IP ); }
+	netadr_t( const char *pch ) { SetFromString( pch ); }
 
 	// invalids Address
 	DLL_CLASS_IMPORT void	Clear();
@@ -41,14 +41,14 @@ public:
 	DLL_CLASS_IMPORT void	SetIP( uint8 b1, uint8 b2, uint8 b3, uint8 b4 );
 	// unIP is in host order (little-endian)
 	DLL_CLASS_IMPORT void	SetIP( uint unIP );
-	DLL_CLASS_IMPORT void   SetIPAndPort( uint unIP, unsigned short usPort ) { SetIP( unIP ); SetPort( usPort ); }
+	void   SetIPAndPort( uint unIP, unsigned short usPort ) { SetIP( unIP ); SetPort( usPort ); }
 
 	// if bUseDNS is true then do a DNS lookup if needed
 	DLL_CLASS_IMPORT void	SetFromString( const char *pch, bool bUseDNS = false );
 
-	DLL_CLASS_IMPORT bool	CompareAdr( const netadr_s &a, bool onlyBase = false ) const;
-	DLL_CLASS_IMPORT bool	CompareClassBAdr( const netadr_s &a ) const;
-	DLL_CLASS_IMPORT bool	CompareClassCAdr( const netadr_s &a ) const;
+	DLL_CLASS_IMPORT bool	CompareAdr( const netadr_t &a, bool onlyBase = false ) const;
+	DLL_CLASS_IMPORT bool	CompareClassBAdr( const netadr_t &a ) const;
+	DLL_CLASS_IMPORT bool	CompareClassCAdr( const netadr_t &a ) const;
 
 	DLL_CLASS_IMPORT netadrtype_t	GetType() const;
 	DLL_CLASS_IMPORT unsigned short	GetPort() const;
@@ -79,14 +79,14 @@ public:
 	DLL_CLASS_IMPORT bool    Serialize( bf_write &writeBuf );
 	DLL_CLASS_IMPORT bool    Unserialize( bf_read &readBuf );
 
-	bool operator==( const netadr_s &netadr ) const { return (CompareAdr( netadr )); }
-	DLL_CLASS_IMPORT bool operator<( const netadr_s &netadr ) const;
+	bool operator==( const netadr_t &netadr ) const { return (CompareAdr( netadr )); }
+	DLL_CLASS_IMPORT bool operator<( const netadr_t &netadr ) const;
 
 public:	// members are public to avoid to much changes
 
 	netadrtype_t	type;
 	unsigned char	ip[4];
 	unsigned short	port;
-} netadr_t;
+};
 
 #endif // NETADR_H
