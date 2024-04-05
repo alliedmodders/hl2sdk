@@ -76,8 +76,8 @@ public:
 	virtual void MarkEnumAsRequiringGlobalPromotion( const CSchemaEnumInfo* pEnumInfo ) = 0;
 
 	virtual void ResolveAtomicInfoThreadsafe( const SchemaAtomicTypeInfo_t** ppAtomicInfo, const char* pszAtomicName, int nAtomicID ) = 0;
-	virtual void ResolveEnumInfoThreadsafe( const CSchemaEnumInfo** pEnumInfo, const char* pszEnumName ) = 0;
-	virtual void ResolveClassInfoThreadsafe( const CSchemaClassInfo** pClassInfo, const char* pszClassName ) = 0;
+	virtual void ResolveEnumInfoThreadsafe( const CSchemaEnumInfo** ppEnumInfo, const char* pszEnumName ) = 0;
+	virtual void ResolveClassInfoThreadsafe( const CSchemaClassInfo** ppClassInfo, const char* pszClassName ) = 0;
 };
 
 class CSchemaSystemTypeScope : public ISchemaSystemTypeScope

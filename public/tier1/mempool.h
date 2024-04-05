@@ -34,7 +34,6 @@ enum MemoryPoolGrowType_t
 	UTLMEMORYPOOL_GROW_NONE=0,	// Don't allow new blobs.
 	UTLMEMORYPOOL_GROW_FAST=1,	// New blob size is numElements * (i+1)  (ie: the blocks it allocates get larger and larger each time it allocates one).
 	UTLMEMORYPOOL_GROW_SLOW=2,	// New blob size is numElements.
-	UTLMEMORYPOOL_GROW_RBTREE=3	// No blobs. All blocks are stored in RBTree.
 };
 
 class CUtlMemoryPoolBase
@@ -51,22 +50,20 @@ public:
 	DLL_CLASS_IMPORT void		Free( void *pMem );
 	
 	// Frees everything
-	DLL_CLASS_IMPORT void		Clear();
-
+	void Clear() { ClearDestruct( NULL ); }
+	
 	// returns number of allocated blocks
 	int Count() const		{ return m_BlocksAllocated; }
 	int PeakCount() const	{ return m_PeakAlloc; }
 	int BlockSize() const	{ return m_BlockSize; }
-	int Size() const		{ return m_NumBlobs * m_BlocksPerBlob * m_BlockSize; }
+	int Size() const		{ return m_TotalSize; }
 
 	DLL_CLASS_IMPORT bool		IsAllocationWithinPool( void *pMem ) const;
 
 protected:
-	struct FreeList_t
-	{
-		FreeList_t *m_pNext;
-	};
+	DLL_CLASS_IMPORT void		ClearDestruct( void (*)( void* ) );
 
+private:
 	class CBlob
 	{
 	public:
@@ -76,10 +73,8 @@ protected:
 		char	m_Padding[3]; // to int align the struct
 	};
 
-	DLL_CLASS_IMPORT FreeList_t*	AddNewBlob();
-	DLL_CLASS_IMPORT void			ResetAllocationCounts();
-	DLL_CLASS_IMPORT void			InternalClear( CBlob *blob, FreeList_t *free_list );
-	DLL_CLASS_IMPORT void			ClearDestruct( void (*)( void* ) );
+	DLL_CLASS_IMPORT bool AddNewBlob();
+	DLL_CLASS_IMPORT void ResetAllocationCounts();
 
 	int			m_BlockSize;
 	int			m_BlocksPerBlob;
@@ -90,16 +85,15 @@ protected:
 	CInterlockedInt	m_PeakAlloc;
 	unsigned short	m_nAlignment;
 	unsigned short	m_NumBlobs;
-
-	FreeList_t**	m_ppTailOfFreeList;
-	FreeList_t*		m_pHeadOfFreeList;
-
-	CBlob**			m_ppBlobTail;
-	CBlob*			m_pBlobHead;
-
+	
+	CTSListBase		m_FreeBlocks;
+	
 	MemAllocAttribute_t m_AllocAttribute;
-
-	bool m_Unk1;
+	
+	bool 			m_Unk1;
+	CThreadMutex	m_Mutex;
+	CBlob*			m_pBlobHead;
+	int				m_TotalSize;
 };
 
 

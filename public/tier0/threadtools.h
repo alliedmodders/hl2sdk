@@ -288,8 +288,10 @@ inline bool ThreadInterlockedAssignIf128( volatile int128 *pDest, const int128 &
 	volatile int64 *pDest64 = ( volatile int64 * )pDest;
 	int64 *pValue64 = ( int64 * )&value;
 	int64 *pComperand64 = ( int64 * )&comperand;
+	
+	int64 local_comperand[2] = { pComperand64[0], pComperand64[1] };
 
-	return _InterlockedCompareExchange128( pDest64, pValue64[1], pValue64[0], pComperand64 ) == 1;
+	return _InterlockedCompareExchange128( pDest64, pValue64[1], pValue64[0], local_comperand ) == 1;
 }
 #else
 typedef __int128_t int128;
@@ -298,7 +300,10 @@ typedef __int128_t int128;
 inline bool ThreadInterlockedAssignIf128( volatile int128 *pDest, const int128 &value, const int128 &comperand )
 {
 	Assert( (size_t)pDest % 16 == 0 );
-	return __sync_bool_compare_and_swap( pDest, comperand, value );
+	
+	int128 local_comperand = comperand;
+	
+	return __sync_bool_compare_and_swap( pDest, local_comperand, value );
 }
 #endif
 #endif
