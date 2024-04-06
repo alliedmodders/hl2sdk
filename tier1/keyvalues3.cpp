@@ -1796,10 +1796,7 @@ void CKeyValues3Context::CopyMetaData( KV3MetaData_t* pDest, const KV3MetaData_t
 
 	FOR_EACH_MAP_FAST( pSrc->m_Comments, iter )
 	{
-		CBufferStringGrowable<8> buff;
-		buff.Insert( 0, pSrc->m_Comments[ iter ].Get() );
-
-		pDest->m_Comments.Insert( pSrc->m_Comments.Key( iter ), buff );
+		pDest->m_Comments.Insert( pSrc->m_Comments.Key( iter ), pSrc->m_Comments.Element( iter ) );
 	}
 }
 

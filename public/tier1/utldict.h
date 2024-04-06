@@ -72,6 +72,9 @@ public:
 	// Number of elements
 	unsigned int Count() const;
 	
+	// Number of allocated slots
+	I MaxElement() const;
+	
 	// Checks if a node is valid and in the tree
 	bool  IsValidIndex( I i ) const;
 	
@@ -190,7 +193,15 @@ inline unsigned int CUtlDict<T, I, COMPARE_TYPE>::Count() const
 	return m_Elements.Count(); 
 }
 
-	
+//-----------------------------------------------------------------------------
+// Number of allocated slots
+//-----------------------------------------------------------------------------
+template <class T, class I, int COMPARE_TYPE>
+inline I CUtlDict<T, I, COMPARE_TYPE>::MaxElement() const
+{
+	return m_Elements.MaxElement();
+}
+
 //-----------------------------------------------------------------------------
 // Checks if a node is valid and in the tree
 //-----------------------------------------------------------------------------

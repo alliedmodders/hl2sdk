@@ -153,6 +153,7 @@ public:
 	// Returns NULL if they can't be made relative (on separate drives, for example)
 	DLL_CLASS_IMPORT const char *MakeRelativePath(const char *pFullPath, const char *pDirectory);
 
+	// Copies data from pOther and then purges it
 	DLL_CLASS_IMPORT void MoveFrom(CBufferString &pOther);
 
 	DLL_CLASS_IMPORT void Purge(int nLength);
@@ -242,7 +243,7 @@ public:
 		{
 			m_nAllocated |= ALLOW_HEAP_ALLOCATION;
 		}
-		MoveFrom(const_cast<CBufferStringGrowable&>(other));
+		Insert(0, other.Get());
 	}
 
 	~CBufferStringGrowable()
@@ -259,7 +260,8 @@ public:
 
 	inline CBufferStringGrowable& operator=(const CBufferStringGrowable& src)
 	{
-		MoveFrom(const_cast<CBufferStringGrowable&>(src));
+		Clear();
+		Insert(0, src.Get());
 		return *this;
 	}
 
