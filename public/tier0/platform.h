@@ -983,6 +983,16 @@ PLATFORM_INTERFACE void Plat_DebugString( const char * );
 #define Plat_DebugString(s) ((void)0)
 #endif
 
+#if defined(_WIN32)
+PLATFORM_INTERFACE bool Plat_IsChromeOS();
+PLATFORM_INTERFACE bool Plat_IsGamescope();
+PLATFORM_INTERFACE bool Plat_IsSteamConsoleMode();
+PLATFORM_INTERFACE bool Plat_IsSteamDeck();
+PLATFORM_INTERFACE bool Plat_IsSteamOS();
+PLATFORM_INTERFACE bool Plat_IsSteamOS3();
+PLATFORM_INTERFACE bool Plat_IsTesla();
+#endif
+
 //-----------------------------------------------------------------------------
 // XBOX Components valid in PC compilation space
 //-----------------------------------------------------------------------------

@@ -208,13 +208,15 @@ inline int64 ThreadInterlockedCompareExchange64( int64 volatile *p, int64 value,
 inline bool ThreadInterlockedAssignIf64( int64 volatile *p, int64 value, int64 comperand )			{ Assert( (size_t)p % 8 == 0 ); return ( _InterlockedCompareExchange64( p, value, comperand ) == comperand ); }
 #endif
 
-#else
-TT_INTERFACE int32_t ThreadInterlockedIncrement( int32_t volatile * );
-TT_INTERFACE int32_t ThreadInterlockedDecrement( int32_t volatile * );
-TT_INTERFACE int32_t ThreadInterlockedExchange( int32_t volatile *, int32_t value );
-TT_INTERFACE int32_t ThreadInterlockedExchangeAdd( int32_t volatile *, int32_t value );
-TT_INTERFACE int32_t ThreadInterlockedCompareExchange( int32_t volatile *, int32_t value, int32_t comperand );
-TT_INTERFACE bool ThreadInterlockedAssignIf( int32_t volatile *, int32_t value, int32_t comperand );
+#else // USE_INTRINSIC_INTERLOCKED
+
+inline int32_t ThreadInterlockedIncrement( int32_t volatile * pDest )                                         { Assert( (size_t)pDest % 4 == 0 ); return __atomic_add_fetch( pDest, 1, __ATOMIC_ACQ_REL ); }
+inline int32_t ThreadInterlockedDecrement( int32_t volatile * pDest )                                         { Assert( (size_t)pDest % 4 == 0 ); return __atomic_sub_fetch( pDest, 1, __ATOMIC_ACQ_REL ); }
+inline int32_t ThreadInterlockedExchange( int32_t volatile * pDest, int32_t value )                           { Assert( (size_t)pDest % 4 == 0 ); return __atomic_exchange_n( pDest, value, __ATOMIC_ACQ_REL ); }
+inline int32_t ThreadInterlockedExchangeAdd( int32_t volatile * pDest, int32_t value )                        { Assert( (size_t)pDest % 4 == 0 ); return __atomic_fetch_add( pDest, value, __ATOMIC_ACQ_REL ); }
+inline int32_t ThreadInterlockedCompareExchange( int32_t volatile * pDest, int32_t value, int32_t comperand ) { Assert( (size_t)pDest % 4 == 0 ); int32* alignedComperand = (int32*)aligned_alloc(4, sizeof(int32)); *alignedComperand = comperand; auto initial = __atomic_load_n( pDest, __ATOMIC_ACQUIRE ); __atomic_compare_exchange_n( pDest, alignedComperand, value, false, __ATOMIC_ACQ_REL, __ATOMIC_RELAXED  ); free(alignedComperand); return initial; }
+inline bool ThreadInterlockedAssignIf( int32_t volatile * pDest, int32_t value, int32_t comperand )           { Assert( (size_t)pDest % 4 == 0 ); return __atomic_compare_exchange_n( pDest, &comperand, value, false, __ATOMIC_ACQ_REL, __ATOMIC_RELAXED ); }
+
 #endif
 
 inline int32_t ThreadInterlockedExchangeSubtract( int32_t volatile *p, int32_t value )	{ return ThreadInterlockedExchangeAdd( (int32_t volatile *)p, -value ); }

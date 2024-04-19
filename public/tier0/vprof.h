@@ -269,8 +269,10 @@ public:
 #ifdef DBGFLAG_VALIDATE
 	void Validate( CValidator &validator, tchar *pchName );		// Validate our internal structures
 #endif // DBGFLAG_VALIDATE
-
-
+protected:
+#ifdef _WIN32
+	void DumpSingleNode(CVProfNode *, CVProfNode *, int, bool);
+#endif
 // Used by vprof record/playback.
 private:
 
@@ -386,6 +388,11 @@ enum CounterGroup_t
 	COUNTER_GROUP_TEXTURE_PER_FRAME		// Per-frame texture usage counters.
 }; 
 
+class DBG_CLASS CVProfManager
+{
+
+};
+
 class DBG_CLASS CVProfile 
 {
 public:
@@ -450,6 +457,8 @@ public:
 	const char *SetCPUTraceFilename(const char *filename); ///< set the filename the trace should write into. (don't specify the extension; I'll do that.)
 
 #endif
+
+	void RegisterNode(CVProfNode *pNode); 
 
 	void EnterScope( const tchar *pszName, int detailLevel, const tchar *pBudgetGroupName, bool bAssertAccounted );
 	void EnterScope( const tchar *pszName, int detailLevel, const tchar *pBudgetGroupName, bool bAssertAccounted, int budgetFlags );
