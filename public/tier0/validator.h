@@ -52,6 +52,8 @@ public:
 
 	void Validate( CValidator &validator, tchar *pchName );		// Validate our internal structures
 
+	BOOL IsClaimed(void const *) const;
+
 
 private:
 	CValObject *m_pValObjectFirst;	// Linked list of all ValObjects
