@@ -100,11 +100,16 @@ class SDKConfig(object):
     return
 
   def configure_msvc(self, cxx):
+    cxx.defines += ['COMPILER_MSVC']
+    if cxx.target.arch == 'x86':
+      cxx.defines += ['COMPILER_MSVC32']
+    elif cxx.target.arch == 'x86_64':
+      cxx.defines += ['COMPILER_MSVC64']
+    
     cxx.cxxflags += [
       '/std:c++17',
       '/WX'
     ]
-
     
     if builder.options.opt == '1':
       cxx.cflags += ['/Ox', '/Zo']
