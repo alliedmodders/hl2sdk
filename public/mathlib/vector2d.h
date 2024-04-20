@@ -239,8 +239,8 @@ inline void Vector2D::Init( vec_t ix, vec_t iy )
 
 inline void Vector2D::Random( float minVal, float maxVal )
 {
-	x = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
-	y = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
+	x = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
+	y = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
 }
 
 inline void Vector2DClear( Vector2D& a )

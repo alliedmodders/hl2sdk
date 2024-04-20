@@ -44,10 +44,11 @@ typedef uint32_t ThreadId_t;
 // feature enables
 #define NEW_SOFTWARE_LIGHTING
 
-#if defined(_LINUX) || defined(__APPLE__)
+#ifdef POSIX
 // need this for _alloca
 #include <alloca.h>
-#endif // _LINUX
+#include <time.h>
+#endif
 
 #if defined __APPLE__
 #include <stdlib.h>
@@ -234,6 +235,14 @@ typedef unsigned int uint;
 #define abstract_class class NO_VTABLE
 #endif
 
+
+// MSVC CRT uses 0x7fff while gcc uses MAX_INT, leading to mismatches between platforms
+// As a result, we pick the least common denominator here.  This should be used anywhere
+// you might typically want to use RAND_MAX
+#define VALVE_RAND_MAX 0x7fff
+
+
+
 /*
 FIXME: Enable this when we no longer fear change =)
 
@@ -242,32 +251,32 @@ FIXME: Enable this when we no longer fear change =)
 #include <float.h>
 
 // Maximum and minimum representable values
-#define  INT8_MAX    SCHAR_MAX
-#define  INT16_MAX   SHRT_MAX
-#define  INT32_MAX   LONG_MAX
-#define  INT64_MAX   (((int64)~0) >> 1)
+#define  INT8_MAX			SCHAR_MAX
+#define  INT16_MAX			SHRT_MAX
+#define  INT32_MAX			LONG_MAX
+#define  INT64_MAX			(((int64)~0) >> 1)
 
-#define  INT8_MIN    SCHAR_MIN
-#define  INT16_MIN   SHRT_MIN
-#define  INT32_MIN   LONG_MIN
-#define  INT64_MIN   (((int64)1) << 63)
+#define  INT8_MIN			SCHAR_MIN
+#define  INT16_MIN			SHRT_MIN
+#define  INT32_MIN			LONG_MIN
+#define  INT64_MIN			(((int64)1) << 63)
 
-#define  UINT8_MAX   ((uint8)~0)
-#define  UINT16_MAX  ((uint16)~0)
-#define  UINT32_MAX  ((uint32)~0)
-#define  UINT64_MAX  ((uint64)~0)
+#define  UINT8_MAX			((uint8)~0)
+#define  UINT16_MAX			((uint16)~0)
+#define  UINT32_MAX			((uint32)~0)
+#define  UINT64_MAX			((uint64)~0)
 
-#define  UINT8_MIN   0
-#define  UINT16_MIN  0
-#define  UINT32_MIN  0
-#define  UINT64_MIN  0
+#define  UINT8_MIN			0
+#define  UINT16_MIN			0
+#define  UINT32_MIN			0
+#define  UINT64_MIN			0
 
 #ifndef  UINT_MIN
-#define  UINT_MIN    UINT32_MIN
+#define  UINT_MIN			UINT32_MIN
 #endif
 
-#define  FLOAT32_MAX FLT_MAX
-#define  FLOAT64_MAX DBL_MAX
+#define  FLOAT32_MAX		FLT_MAX
+#define  FLOAT64_MAX		DBL_MAX
 
 #define  FLOAT32_MIN FLT_MIN
 #define  FLOAT64_MIN DBL_MIN
@@ -332,11 +341,35 @@ typedef void * HINSTANCE;
         #define DECL_ALIGN(x) /* */
 #endif
 
+#ifdef _MSC_VER
+// MSVC has the align at the start of the struct
+#define ALIGN4 DECL_ALIGN(4)
 #define ALIGN8 DECL_ALIGN(8)
 #define ALIGN16 DECL_ALIGN(16)
 #define ALIGN32 DECL_ALIGN(32)
 #define ALIGN128 DECL_ALIGN(128)
 
+#define ALIGN4_POST
+#define ALIGN8_POST
+#define ALIGN16_POST
+#define ALIGN32_POST
+#define ALIGN128_POST
+#elif defined( GNUC )
+// gnuc has the align decoration at the end
+#define ALIGN4
+#define ALIGN8 
+#define ALIGN16
+#define ALIGN32
+#define ALIGN128
+
+#define ALIGN4_POST DECL_ALIGN(4)
+#define ALIGN8_POST DECL_ALIGN(8)
+#define ALIGN16_POST DECL_ALIGN(16)
+#define ALIGN32_POST DECL_ALIGN(32)
+#define ALIGN128_POST DECL_ALIGN(128)
+#else
+#error
+#endif
 
 // Pull in the /analyze code annotations.
 #include "annotations.h"
@@ -829,17 +862,20 @@ inline void StoreLittleDWord( uint32_t *base, unsigned int dwordIndex, uint32_t 
 #ifndef STATIC_TIER0
 
 #ifdef TIER0_DLL_EXPORT
-	#define PLATFORM_INTERFACE	DLL_EXPORT
-	#define PLATFORM_OVERLOAD	DLL_GLOBAL_EXPORT
+#define PLATFORM_INTERFACE	DLL_EXPORT
+#define PLATFORM_OVERLOAD	DLL_GLOBAL_EXPORT
+#define PLATFORM_CLASS		DLL_CLASS_EXPORT
 #else
-	#define PLATFORM_INTERFACE	DLL_IMPORT
-	#define PLATFORM_OVERLOAD	DLL_GLOBAL_IMPORT
+#define PLATFORM_INTERFACE	DLL_IMPORT
+#define PLATFORM_OVERLOAD	DLL_GLOBAL_IMPORT
+#define PLATFORM_CLASS		DLL_CLASS_IMPORT
 #endif
 
 #else	// BUILD_AS_DLL
 
 #define PLATFORM_INTERFACE	extern
 #define PLATFORM_OVERLOAD
+#define PLATFORM_CLASS
 
 #endif	// BUILD_AS_DLL
 
@@ -854,6 +890,41 @@ PLATFORM_INTERFACE bool				Plat_IsInBenchmarkMode();
 
 PLATFORM_INTERFACE double			Plat_FloatTime();		// Returns time in seconds since the module was loaded.
 PLATFORM_INTERFACE uint32_t			Plat_MSTime();			// Time in milliseconds.
+PLATFORM_INTERFACE char *			Plat_ctime( const time_t *timep, char *buf, size_t bufsize );
+PLATFORM_INTERFACE struct tm *		Plat_gmtime( const time_t *timep, struct tm *result );
+PLATFORM_INTERFACE time_t			Plat_timegm( struct tm *timeptr );
+PLATFORM_INTERFACE struct tm *		Plat_localtime( const time_t *timep, struct tm *result );
+
+#if defined( _WIN32 ) && defined( _MSC_VER ) && ( _MSC_VER >= 1400 )
+	extern "C" unsigned __int64 __rdtsc();
+	#pragma intrinsic(__rdtsc)
+#endif
+
+inline uint64 Plat_Rdtsc()
+{
+#if defined( _X360 )
+	return ( uint64 )__mftb32();
+#elif defined( _WIN64 )
+	return ( uint64 )__rdtsc();
+#elif defined( _WIN32 )
+  #if defined( _MSC_VER ) && ( _MSC_VER >= 1400 )
+	return ( uint64 )__rdtsc();
+  #else
+    __asm rdtsc;
+	__asm ret;
+  #endif
+#elif defined( __i386__ )
+	uint64 val;
+	__asm__ __volatile__ ( "rdtsc" : "=A" (val) );
+	return val;
+#elif defined( __x86_64__ )
+	uint32 lo, hi;
+	__asm__ __volatile__ ( "rdtsc" : "=a" (lo), "=d" (hi));
+	return ( ( ( uint64 )hi ) << 32 ) | lo;
+#else
+	#error
+#endif
+}
 
 // b/w compatibility
 #define Sys_FloatTime Plat_FloatTime
@@ -901,13 +972,10 @@ struct CPUInformation // Size: Win32=64, Win64=72
 	CPUInformation(): m_Size(0){}
 };
 
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
-#endif
 
-PLATFORM_INTERFACE const CPUInformation& GetCPUInformation();
+// Have to return a pointer, not a reference, because references are not compatible with the
+// extern "C" implied by PLATFORM_INTERFACE.
+PLATFORM_INTERFACE const CPUInformation* GetCPUInformation();
 
 
 PLATFORM_INTERFACE void GetCurrentDate( int *pDay, int *pMonth, int *pYear );

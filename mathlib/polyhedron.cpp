@@ -34,7 +34,6 @@ CPolyhedron *ConvertLinkedGeometryToPolyhedron( GeneratePolyhedronFromPlanes_Uno
 //#define DEBUG_DUMP_POLYHEDRONS_TO_NUMBERED_GLVIEWS //dumps successfully generated polyhedrons
 
 #ifdef _DEBUG
-#include "filesystem.h"
 void DumpPolyhedronToGLView( const CPolyhedron *pPolyhedron, const char *pFilename, const VMatrix *pTransform );
 void DumpPlaneToGlView( const float *pPlane, float fGrayScale, const char *pszFileName, const VMatrix *pTransform );
 void DumpLineToGLView( const Vector &vPoint1, const Vector &vColor1, const Vector &vPoint2, const Vector &vColor2, float fThickness, FILE *pFile );
@@ -103,19 +102,19 @@ CPolyhedron_AllocByNew *CPolyhedron_AllocByNew::Allocate( unsigned short iVertic
 class CPolyhedron_TempMemory : public CPolyhedron
 {
 public:
-#ifdef _DEBUG
+#ifdef DBGFLAG_ASSERT
 	int iReferenceCount;
 #endif
 
 	virtual void Release( void )
 	{
-#ifdef _DEBUG
+#ifdef DBGFLAG_ASSERT
 		--iReferenceCount;
 #endif
 	}
 
 	CPolyhedron_TempMemory( void )
-#ifdef _DEBUG
+#ifdef DBGFLAG_ASSERT
 		: iReferenceCount( 0 )
 #endif
 	{ };
@@ -128,7 +127,7 @@ static CPolyhedron_TempMemory s_TempMemoryPolyhedron;
 CPolyhedron *GetTempPolyhedron( unsigned short iVertices, unsigned short iLines, unsigned short iIndices, unsigned short iPolygons ) //grab the temporary polyhedron. Avoids new/delete for quick work. Can only be in use by one chunk of code at a time
 {
 	AssertMsg( s_TempMemoryPolyhedron.iReferenceCount == 0, "Temporary polyhedron memory being rewritten before released" );
-#ifdef _DEBUG
+#ifdef DBGFLAG_ASSERT
 	++s_TempMemoryPolyhedron.iReferenceCount;
 #endif
 	s_TempMemoryPolyhedron_Buffer.SetCount( (sizeof( Vector ) * iVertices) +
@@ -857,8 +856,8 @@ const char * DumpPolyhedronCutHistory( const CUtlVector<CPolyhedron *> &DumpedHi
 
 #else
 
-#define AssertMsg_DumpPolyhedron(condition, message)
-#define Assert_DumpPolyhedron(condition)
+#define AssertMsg_DumpPolyhedron(condition, message) NULL;
+#define Assert_DumpPolyhedron(condition) NULL;
 
 #endif
 

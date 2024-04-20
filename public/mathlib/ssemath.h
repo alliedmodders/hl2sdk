@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: - defines SIMD "structure of arrays" classes and functions.
 //
@@ -15,7 +15,7 @@
 #include <mathlib/vector.h>
 #include <mathlib/mathlib.h>
 
-#if defined(_LINUX) || defined(__APPLE__)
+#if defined(GNUC)
 #define USE_STDC_FOR_SIMD 0
 #else
 #define USE_STDC_FOR_SIMD 0
@@ -108,7 +108,7 @@ struct ALIGN16 intx4
 			m_i32[2] == other.m_i32[2] &&
 			m_i32[3] == other.m_i32[3] 	;
 	}
-};
+} ALIGN16_POST;
 
 
 #if defined( _DEBUG ) && defined( _X360 )
@@ -136,13 +136,13 @@ FORCEINLINE void TestVPUFlags() {}
 // miss.)
 #ifndef _X360
 extern const fltx4 Four_Zeros;									// 0 0 0 0
-extern const fltx4 Four_Ones;										// 1 1 1 1
-extern const fltx4 Four_Twos;										// 2 2 2 2
+extern const fltx4 Four_Ones;									// 1 1 1 1
+extern const fltx4 Four_Twos;									// 2 2 2 2
 extern const fltx4 Four_Threes;									// 3 3 3 3
 extern const fltx4 Four_Fours;									// guess.
 extern const fltx4 Four_Point225s;								// .225 .225 .225 .225
 extern const fltx4 Four_PointFives;								// .5 .5 .5 .5
-extern const fltx4 Four_Epsilons;									// FLT_EPSILON FLT_EPSILON FLT_EPSILON FLT_EPSILON
+extern const fltx4 Four_Epsilons;								// FLT_EPSILON FLT_EPSILON FLT_EPSILON FLT_EPSILON
 extern const fltx4 Four_2ToThe21s;								// (1<<21)..
 extern const fltx4 Four_2ToThe22s;								// (1<<22)..
 extern const fltx4 Four_2ToThe23s;								// (1<<23)..
@@ -157,7 +157,7 @@ extern const fltx4 Four_Threes;									// 3 3 3 3
 extern const fltx4 Four_Fours;									// guess.
 extern const fltx4 Four_Point225s;								// .225 .225 .225 .225
 extern const fltx4 Four_PointFives;								// .5 .5 .5 .5
-extern const fltx4 Four_Epsilons;									// FLT_EPSILON FLT_EPSILON FLT_EPSILON FLT_EPSILON
+extern const fltx4 Four_Epsilons;								// FLT_EPSILON FLT_EPSILON FLT_EPSILON FLT_EPSILON
 extern const fltx4 Four_2ToThe21s;								// (1<<21)..
 extern const fltx4 Four_2ToThe22s;								// (1<<22)..
 extern const fltx4 Four_2ToThe23s;								// (1<<23)..
@@ -167,20 +167,20 @@ extern const fltx4 Four_NegativeOnes;							// -1 -1 -1 -1
 #endif
 extern const fltx4 Four_FLT_MAX;								// FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX
 extern const fltx4 Four_Negative_FLT_MAX;						// -FLT_MAX, -FLT_MAX, -FLT_MAX, -FLT_MAX
-extern const fltx4 g_SIMD_0123;								// 0 1 2 3 as float
+extern const fltx4 g_SIMD_0123;									// 0 1 2 3 as float
 
 // external aligned integer constants
-extern const ALIGN16 int32 g_SIMD_clear_signmask[];			// 0x7fffffff x 4
-extern const ALIGN16 int32 g_SIMD_signmask[];				// 0x80000000 x 4
-extern const ALIGN16 int32 g_SIMD_lsbmask[];				// 0xfffffffe x 4
-extern const ALIGN16 int32 g_SIMD_clear_wmask[];			// -1 -1 -1 0
-extern const ALIGN16 int32 g_SIMD_ComponentMask[4][4];		// [0xFFFFFFFF 0 0 0], [0 0xFFFFFFFF 0 0], [0 0 0xFFFFFFFF 0], [0 0 0 0xFFFFFFFF]
-extern const ALIGN16 int32 g_SIMD_AllOnesMask[];			// ~0,~0,~0,~0
-extern const ALIGN16 int32 g_SIMD_Low16BitsMask[];			// 0xffff x 4
+extern const ALIGN16 int32 g_SIMD_clear_signmask[] ALIGN16_POST;			// 0x7fffffff x 4
+extern const ALIGN16 int32 g_SIMD_signmask[] ALIGN16_POST;				// 0x80000000 x 4
+extern const ALIGN16 int32 g_SIMD_lsbmask[] ALIGN16_POST;				// 0xfffffffe x 4
+extern const ALIGN16 int32 g_SIMD_clear_wmask[] ALIGN16_POST;			// -1 -1 -1 0
+extern const ALIGN16 int32 g_SIMD_ComponentMask[4][4] ALIGN16_POST;		// [0xFFFFFFFF 0 0 0], [0 0xFFFFFFFF 0 0], [0 0 0xFFFFFFFF 0], [0 0 0 0xFFFFFFFF]
+extern const ALIGN16 int32 g_SIMD_AllOnesMask[] ALIGN16_POST;			// ~0,~0,~0,~0
+extern const ALIGN16 int32 g_SIMD_Low16BitsMask[] ALIGN16_POST;			// 0xffff x 4
 
 // this mask is used for skipping the tail of things. If you have N elements in an array, and wish
 // to mask out the tail, g_SIMD_SkipTailMask[N & 3] what you want to use for the last iteration.
-extern const int32 ALIGN16 g_SIMD_SkipTailMask[4][4];
+extern const int32 ALIGN16 g_SIMD_SkipTailMask[4][4] ALIGN16_POST;
 
 // Define prefetch macros.
 // The characteristics of cache and prefetch are completely 
@@ -436,23 +436,23 @@ FORCEINLINE fltx4 ArcTan2SIMD( const fltx4 &a, const fltx4 &b )
 	return result;
 }
 
-FORCEINLINE fltx4 MaxSIMD( const fltx4 & a, const fltx4 & b )				// MAX(a,b)
+FORCEINLINE fltx4 MaxSIMD( const fltx4 & a, const fltx4 & b )				// max(a,b)
 {
 	fltx4 retVal;
-	SubFloat( retVal, 0 ) = MAX( SubFloat( a, 0 ), SubFloat( b, 0 ) );
-	SubFloat( retVal, 1 ) = MAX( SubFloat( a, 1 ), SubFloat( b, 1 ) );
-	SubFloat( retVal, 2 ) = MAX( SubFloat( a, 2 ), SubFloat( b, 2 ) );
-	SubFloat( retVal, 3 ) = MAX( SubFloat( a, 3 ), SubFloat( b, 3 ) );
+	SubFloat( retVal, 0 ) = max( SubFloat( a, 0 ), SubFloat( b, 0 ) );
+	SubFloat( retVal, 1 ) = max( SubFloat( a, 1 ), SubFloat( b, 1 ) );
+	SubFloat( retVal, 2 ) = max( SubFloat( a, 2 ), SubFloat( b, 2 ) );
+	SubFloat( retVal, 3 ) = max( SubFloat( a, 3 ), SubFloat( b, 3 ) );
 	return retVal;
 }
 
-FORCEINLINE fltx4 MinSIMD( const fltx4 & a, const fltx4 & b )				// MIN(a,b)
+FORCEINLINE fltx4 MinSIMD( const fltx4 & a, const fltx4 & b )				// min(a,b)
 {
 	fltx4 retVal;
-	SubFloat( retVal, 0 ) = MIN( SubFloat( a, 0 ), SubFloat( b, 0 ) );
-	SubFloat( retVal, 1 ) = MIN( SubFloat( a, 1 ), SubFloat( b, 1 ) );
-	SubFloat( retVal, 2 ) = MIN( SubFloat( a, 2 ), SubFloat( b, 2 ) );
-	SubFloat( retVal, 3 ) = MIN( SubFloat( a, 3 ), SubFloat( b, 3 ) );
+	SubFloat( retVal, 0 ) = min( SubFloat( a, 0 ), SubFloat( b, 0 ) );
+	SubFloat( retVal, 1 ) = min( SubFloat( a, 1 ), SubFloat( b, 1 ) );
+	SubFloat( retVal, 2 ) = min( SubFloat( a, 2 ), SubFloat( b, 2 ) );
+	SubFloat( retVal, 3 ) = min( SubFloat( a, 3 ), SubFloat( b, 3 ) );
 	return retVal;
 }
 
@@ -858,7 +858,7 @@ FORCEINLINE void TransposeSIMD( fltx4 & x, fltx4 & y, fltx4 & z, fltx4 & w )
 // and replicate it to the whole return value.
 FORCEINLINE fltx4 FindLowestSIMD3( const fltx4 & a )
 {
-	float lowest = MIN( MIN( SubFloat(a, 0), SubFloat(a, 1) ), SubFloat(a, 2));
+	float lowest = min( min( SubFloat(a, 0), SubFloat(a, 1) ), SubFloat(a, 2));
 	return ReplicateX4(lowest);
 }
 
@@ -866,7 +866,7 @@ FORCEINLINE fltx4 FindLowestSIMD3( const fltx4 & a )
 // and replicate it to the whole return value.
 FORCEINLINE fltx4 FindHighestSIMD3( const fltx4 & a )
 {
-	float highest = MAX( MAX( SubFloat(a, 0), SubFloat(a, 1) ), SubFloat(a, 2));
+	float highest = max( max( SubFloat(a, 0), SubFloat(a, 1) ), SubFloat(a, 2));
 	return ReplicateX4(highest);
 }
 
@@ -1067,12 +1067,12 @@ FORCEINLINE fltx4 ArcTan2SIMD( const fltx4 &a, const fltx4 &b )
 
 // DivSIMD defined further down, since it uses ReciprocalSIMD
 
-FORCEINLINE fltx4 MaxSIMD( const fltx4 & a, const fltx4 & b )				// MAX(a,b)
+FORCEINLINE fltx4 MaxSIMD( const fltx4 & a, const fltx4 & b )				// max(a,b)
 {
 	return __vmaxfp( a, b );
 }
 
-FORCEINLINE fltx4 MinSIMD( const fltx4 & a, const fltx4 & b )				// MIN(a,b)
+FORCEINLINE fltx4 MinSIMD( const fltx4 & a, const fltx4 & b )				// min(a,b)
 {
 	return __vminfp( a, b );
 }
@@ -1520,11 +1520,11 @@ FORCEINLINE fltx4 FindLowestSIMD3( const fltx4 & a )
 	compareOne = __vrlimi( compareOne, a, 8 | 4 , 1 );
 	// compareOne is [y,z,G,G]
 	fltx4 retval = MinSIMD( a, compareOne );
-	// retVal is [MIN(x,y), MIN(y,z), G, G]
+	// retVal is [min(x,y), min(y,z), G, G]
 	compareOne = __vrlimi( compareOne, a, 8 , 2);
 	// compareOne is [z, G, G, G]
 	retval = MinSIMD( retval, compareOne );
-	// retVal = [ MIN(MIN(x,y),z), G, G, G ]
+	// retVal = [ min(min(x,y),z), G, G, G ]
 	
 	// splat the x component out to the whole vector and return
 	return SplatXSIMD( retval );
@@ -1544,11 +1544,11 @@ FORCEINLINE fltx4 FindHighestSIMD3( const fltx4 & a )
 	compareOne = __vrlimi( compareOne, a, 8 | 4 , 1 );
 	// compareOne is [y,z,G,G]
 	fltx4 retval = MaxSIMD( a, compareOne );
-	// retVal is [MAX(x,y), MAX(y,z), G, G]
+	// retVal is [max(x,y), max(y,z), G, G]
 	compareOne = __vrlimi( compareOne, a, 8 , 2);
 	// compareOne is [z, G, G, G]
 	retval = MaxSIMD( retval, compareOne );
-	// retVal = [ MAX(MAX(x,y),z), G, G, G ]
+	// retVal = [ max(max(x,y),z), G, G, G ]
 
 	// splat the x component out to the whole vector and return
 	return SplatXSIMD( retval );
@@ -1757,7 +1757,7 @@ FORCEINLINE fltx4 AndSIMD( const fltx4 & a, const fltx4 & b )				// a & b
 	return _mm_and_ps( a, b );
 }
 
-FORCEINLINE fltx4 AndNotSIMD( const fltx4 & a, const fltx4 & b )			// a & ~b
+FORCEINLINE fltx4 AndNotSIMD( const fltx4 & a, const fltx4 & b )			// ~a & b
 {
 	return _mm_andnot_ps( a, b );
 }
@@ -1813,7 +1813,7 @@ FORCEINLINE fltx4 ReplicateX4( float flValue )
 FORCEINLINE float SubFloat( const fltx4 & a, int idx )
 {
 	// NOTE: if the output goes into a register, this causes a Load-Hit-Store stall (don't mix fpu/vpu math!)
-#if !defined _LINUX && !defined __APPLE__
+#ifndef POSIX
 	return a.m128_f32[ idx ];
 #else
 	return (reinterpret_cast<float const *>(&a))[idx];
@@ -1822,7 +1822,7 @@ FORCEINLINE float SubFloat( const fltx4 & a, int idx )
 
 FORCEINLINE float & SubFloat( fltx4 & a, int idx )
 {
-#if !defined _LINUX && !defined __APPLE__
+#ifndef POSIX
 	return a.m128_f32[ idx ];
 #else
 	return (reinterpret_cast<float *>(&a))[idx];
@@ -1836,7 +1836,7 @@ FORCEINLINE uint32 SubFloatConvertToInt( const fltx4 & a, int idx )
 
 FORCEINLINE uint32 SubInt( const fltx4 & a, int idx )
 {
-#if !defined _LINUX && !defined __APPLE__
+#ifndef POSIX
 	return a.m128_u32[idx];
 #else
 	return (reinterpret_cast<uint32 const *>(&a))[idx];
@@ -1845,7 +1845,7 @@ FORCEINLINE uint32 SubInt( const fltx4 & a, int idx )
 
 FORCEINLINE uint32 & SubInt( fltx4 & a, int idx )
 {
-#if !defined _LINUX && !defined __APPLE__
+#ifndef POSIX
 	return a.m128_u32[idx];
 #else
 	return (reinterpret_cast<uint32 *>(&a))[idx];
@@ -2120,12 +2120,12 @@ FORCEINLINE fltx4 CmpInBoundsSIMD( const fltx4 & a, const fltx4 & b )		// (a <= 
 	return AndSIMD( CmpLeSIMD(a,b), CmpGeSIMD(a, NegSIMD(b)) );
 }
 
-FORCEINLINE fltx4 MinSIMD( const fltx4 & a, const fltx4 & b )				// MIN(a,b)
+FORCEINLINE fltx4 MinSIMD( const fltx4 & a, const fltx4 & b )				// min(a,b)
 {
 	return _mm_min_ps( a, b );
 }
 
-FORCEINLINE fltx4 MaxSIMD( const fltx4 & a, const fltx4 & b )				// MAX(a,b)
+FORCEINLINE fltx4 MaxSIMD( const fltx4 & a, const fltx4 & b )				// max(a,b)
 {
 	return _mm_max_ps( a, b );
 }
@@ -2271,11 +2271,11 @@ FORCEINLINE fltx4 FindLowestSIMD3( const fltx4 &a )
 	fltx4 compareOne = RotateLeft( a );
 	// compareOne is [y,z,G,x]
 	fltx4 retval = MinSIMD( a, compareOne );
-	// retVal is [MIN(x,y), ... ]
+	// retVal is [min(x,y), ... ]
 	compareOne = RotateLeft2( a );
 	// compareOne is [z, G, x, y]
 	retval = MinSIMD( retval, compareOne );
-	// retVal = [ MIN(MIN(x,y),z)..]
+	// retVal = [ min(min(x,y),z)..]
 	// splat the x component out to the whole vector and return
 	return SplatXSIMD( retval );
 	
@@ -2288,11 +2288,11 @@ FORCEINLINE fltx4 FindHighestSIMD3( const fltx4 &a )
 	fltx4 compareOne = RotateLeft( a );
 	// compareOne is [y,z,G,x]
 	fltx4 retval = MaxSIMD( a, compareOne );
-	// retVal is [MAX(x,y), ... ]
+	// retVal is [max(x,y), ... ]
 	compareOne = RotateLeft2( a );
 	// compareOne is [z, G, x, y]
 	retval = MaxSIMD( retval, compareOne );
-	// retVal = [ MAX(MAX(x,y),z)..]
+	// retVal = [ max(max(x,y),z)..]
 	// splat the x component out to the whole vector and return
 	return SplatXSIMD( retval );
 	

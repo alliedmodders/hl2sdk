@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: Math primitives.
 //
@@ -17,7 +17,7 @@
 #include "tier0/vprof.h"
 //#define _VPROF_MATHLIB
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #pragma warning(disable:4244)   // "conversion from 'const int' to 'float', possible loss of data"
 #pragma warning(disable:4730)	// "mixing _m64 and floating point expressions may result in incorrect code"
 #endif
@@ -25,6 +25,7 @@
 #include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
 #if !defined( _X360 )
+#include "mathlib/amd3dx.h"
 #include "sse.h"
 #endif
 
@@ -426,6 +427,33 @@ void MatrixSetColumn( const Vector &in, int column, matrix3x4_t& out )
 	out[2][column] = in.z;
 }
 
+void MatrixScaleBy ( const float flScale, matrix3x4_t &out )
+{
+	out[0][0] *= flScale;
+	out[1][0] *= flScale;
+	out[2][0] *= flScale;
+	out[0][1] *= flScale;
+	out[1][1] *= flScale;
+	out[2][1] *= flScale;
+	out[0][2] *= flScale;
+	out[1][2] *= flScale;
+	out[2][2] *= flScale;
+}
+
+void MatrixScaleByZero ( matrix3x4_t &out )
+{
+	out[0][0] = 0.0f;
+	out[1][0] = 0.0f;
+	out[2][0] = 0.0f;
+	out[0][1] = 0.0f;
+	out[1][1] = 0.0f;
+	out[2][1] = 0.0f;
+	out[0][2] = 0.0f;
+	out[1][2] = 0.0f;
+	out[2][2] = 0.0f;
+}
+
+
 
 int VectorCompare (const float *v1, const float *v2)
 {
@@ -565,53 +593,128 @@ void ConcatRotations (const float in1[3][3], const float in2[3][3], float out[3]
 				in1[2][2] * in2[2][2];
 }
 
+void ConcatTransforms_Aligned( const matrix3x4_t &m0, const matrix3x4_t &m1, matrix3x4_t &out )
+{
+	Assert( (((size_t)&m0) % 16) == 0 );
+	Assert( (((size_t)&m1) % 16) == 0 );
+	Assert( (((size_t)&out) % 16) == 0 );
+
+	fltx4 lastMask = *(fltx4 *)(&g_SIMD_ComponentMask[3]);
+	fltx4 rowA0 = LoadAlignedSIMD( m0.m_flMatVal[0] );
+	fltx4 rowA1 = LoadAlignedSIMD( m0.m_flMatVal[1] );
+	fltx4 rowA2 = LoadAlignedSIMD( m0.m_flMatVal[2] );
+
+	fltx4 rowB0 = LoadAlignedSIMD( m1.m_flMatVal[0] );
+	fltx4 rowB1 = LoadAlignedSIMD( m1.m_flMatVal[1] );
+	fltx4 rowB2 = LoadAlignedSIMD( m1.m_flMatVal[2] );
+
+	// now we have the rows of m0 and the columns of m1
+	// first output row
+	fltx4 A0 = SplatXSIMD(rowA0);
+	fltx4 A1 = SplatYSIMD(rowA0);
+	fltx4 A2 = SplatZSIMD(rowA0);
+	fltx4 mul00 = MulSIMD( A0, rowB0 );
+	fltx4 mul01 = MulSIMD( A1, rowB1 );
+	fltx4 mul02 = MulSIMD( A2, rowB2 );
+	fltx4 out0 = AddSIMD( mul00, AddSIMD(mul01,mul02) );
+
+	// second output row
+	A0 = SplatXSIMD(rowA1);
+	A1 = SplatYSIMD(rowA1);
+	A2 = SplatZSIMD(rowA1);
+	fltx4 mul10 = MulSIMD( A0, rowB0 );
+	fltx4 mul11 = MulSIMD( A1, rowB1 );
+	fltx4 mul12 = MulSIMD( A2, rowB2 );
+	fltx4 out1 = AddSIMD( mul10, AddSIMD(mul11,mul12) );
+
+	// third output row
+	A0 = SplatXSIMD(rowA2);
+	A1 = SplatYSIMD(rowA2);
+	A2 = SplatZSIMD(rowA2);
+	fltx4 mul20 = MulSIMD( A0, rowB0 );
+	fltx4 mul21 = MulSIMD( A1, rowB1 );
+	fltx4 mul22 = MulSIMD( A2, rowB2 );
+	fltx4 out2 = AddSIMD( mul20, AddSIMD(mul21,mul22) );
+
+	// add in translation vector
+	A0 = AndSIMD(rowA0,lastMask);
+	A1 = AndSIMD(rowA1,lastMask);
+	A2 = AndSIMD(rowA2,lastMask);
+	out0 = AddSIMD(out0, A0);
+	out1 = AddSIMD(out1, A1);
+	out2 = AddSIMD(out2, A2);
+
+	StoreAlignedSIMD( out.m_flMatVal[0], out0 );
+	StoreAlignedSIMD( out.m_flMatVal[1], out1 );
+	StoreAlignedSIMD( out.m_flMatVal[2], out2 );
+}
 
 /*
 ================
 R_ConcatTransforms
 ================
 */
+
 void ConcatTransforms (const matrix3x4_t& in1, const matrix3x4_t& in2, matrix3x4_t& out)
 {
-	Assert( s_bMathlibInitialized );
-	if ( &in1 == &out )
+#if 0
+	// test for ones that'll be 2x faster
+	if ( (((size_t)&in1) % 16) == 0 && (((size_t)&in2) % 16) == 0 && (((size_t)&out) % 16) == 0 )
 	{
-		matrix3x4_t in1b;
-		MatrixCopy( in1, in1b );
-		ConcatTransforms( in1b, in2, out );
+		ConcatTransforms_Aligned( in1, in2, out );
 		return;
 	}
-	if ( &in2 == &out )
-	{
-		matrix3x4_t in2b;
-		MatrixCopy( in2, in2b );
-		ConcatTransforms( in1, in2b, out );
-		return;
-	}
-	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] +
-				in1[0][2] * in2[2][0];
-	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] +
-				in1[0][2] * in2[2][1];
-	out[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] +
-				in1[0][2] * in2[2][2];
-	out[0][3] = in1[0][0] * in2[0][3] + in1[0][1] * in2[1][3] +
-				in1[0][2] * in2[2][3] + in1[0][3];
-	out[1][0] = in1[1][0] * in2[0][0] + in1[1][1] * in2[1][0] +
-				in1[1][2] * in2[2][0];
-	out[1][1] = in1[1][0] * in2[0][1] + in1[1][1] * in2[1][1] +
-				in1[1][2] * in2[2][1];
-	out[1][2] = in1[1][0] * in2[0][2] + in1[1][1] * in2[1][2] +
-				in1[1][2] * in2[2][2];
-	out[1][3] = in1[1][0] * in2[0][3] + in1[1][1] * in2[1][3] +
-				in1[1][2] * in2[2][3] + in1[1][3];
-	out[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] +
-				in1[2][2] * in2[2][0];
-	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] +
-				in1[2][2] * in2[2][1];
-	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] +
-				in1[2][2] * in2[2][2];
-	out[2][3] = in1[2][0] * in2[0][3] + in1[2][1] * in2[1][3] +
-				in1[2][2] * in2[2][3] + in1[2][3];
+#endif
+
+	fltx4 lastMask = *(fltx4 *)(&g_SIMD_ComponentMask[3]);
+	fltx4 rowA0 = LoadUnalignedSIMD( in1.m_flMatVal[0] );
+	fltx4 rowA1 = LoadUnalignedSIMD( in1.m_flMatVal[1] );
+	fltx4 rowA2 = LoadUnalignedSIMD( in1.m_flMatVal[2] );
+
+	fltx4 rowB0 = LoadUnalignedSIMD( in2.m_flMatVal[0] );
+	fltx4 rowB1 = LoadUnalignedSIMD( in2.m_flMatVal[1] );
+	fltx4 rowB2 = LoadUnalignedSIMD( in2.m_flMatVal[2] );
+
+	// now we have the rows of m0 and the columns of m1
+	// first output row
+	fltx4 A0 = SplatXSIMD(rowA0);
+	fltx4 A1 = SplatYSIMD(rowA0);
+	fltx4 A2 = SplatZSIMD(rowA0);
+	fltx4 mul00 = MulSIMD( A0, rowB0 );
+	fltx4 mul01 = MulSIMD( A1, rowB1 );
+	fltx4 mul02 = MulSIMD( A2, rowB2 );
+	fltx4 out0 = AddSIMD( mul00, AddSIMD(mul01,mul02) );
+
+	// second output row
+	A0 = SplatXSIMD(rowA1);
+	A1 = SplatYSIMD(rowA1);
+	A2 = SplatZSIMD(rowA1);
+	fltx4 mul10 = MulSIMD( A0, rowB0 );
+	fltx4 mul11 = MulSIMD( A1, rowB1 );
+	fltx4 mul12 = MulSIMD( A2, rowB2 );
+	fltx4 out1 = AddSIMD( mul10, AddSIMD(mul11,mul12) );
+
+	// third output row
+	A0 = SplatXSIMD(rowA2);
+	A1 = SplatYSIMD(rowA2);
+	A2 = SplatZSIMD(rowA2);
+	fltx4 mul20 = MulSIMD( A0, rowB0 );
+	fltx4 mul21 = MulSIMD( A1, rowB1 );
+	fltx4 mul22 = MulSIMD( A2, rowB2 );
+	fltx4 out2 = AddSIMD( mul20, AddSIMD(mul21,mul22) );
+
+	// add in translation vector
+	A0 = AndSIMD(rowA0,lastMask);
+	A1 = AndSIMD(rowA1,lastMask);
+	A2 = AndSIMD(rowA2,lastMask);
+	out0 = AddSIMD(out0, A0);
+	out1 = AddSIMD(out1, A1);
+	out2 = AddSIMD(out2, A2);
+
+	// write to output
+	StoreUnalignedSIMD( out.m_flMatVal[0], out0 );
+	StoreUnalignedSIMD( out.m_flMatVal[1], out1 );
+	StoreUnalignedSIMD( out.m_flMatVal[2], out2 );
 }
 
 
@@ -1358,7 +1461,9 @@ float Bias( float x, float biasAmt )
 	{
 		lastExponent = log( biasAmt ) * -1.4427f; // (-1.4427 = 1 / log(0.5))
 	}
-	return pow( x, lastExponent );
+	float fRet = pow( x, lastExponent );
+	Assert ( !IS_NAN( fRet ) );
+	return fRet;
 }
 
 
@@ -1374,7 +1479,9 @@ float Gain( float x, float biasAmt )
 
 float SmoothCurve( float x )
 {
-	return (1 - cos( x * M_PI )) * 0.5f;
+	// Actual smooth curve. Visualization:
+	// http://www.wolframalpha.com/input/?i=plot%5B+0.5+*+%281+-+cos%5B2+*+pi+*+x%5D%29+for+x+%3D+%280%2C+1%29+%5D
+	return 0.5f * (1 - cos( 2.0f * M_PI * x ) );
 }
 
 
@@ -1566,7 +1673,9 @@ float QuaternionAngleDiff( const Quaternion &p, const Quaternion &q )
 	QuaternionConjugate( q, qInv );
 	QuaternionMult( p, qInv, diff );
 
-	float sinang = sqrt( diff.x * diff.x + diff.y * diff.y + diff.z * diff.z );
+	// Note if the quaternion is slightly non-normalized the square root below may be more than 1,
+	// the value is clamped to one otherwise it may result in asin() returning an undefined result.
+	float sinang = MIN( 1.0f, sqrt( diff.x * diff.x + diff.y * diff.y + diff.z * diff.z ) );
 	float angle = RAD2DEG( 2 * asin( sinang ) );
 	return angle;
 #else
@@ -1666,7 +1775,7 @@ void QuaternionScale( const Quaternion &p, float t, Quaternion &q )
 	// FIXME: nick, this isn't overly sensitive to accuracy, and it may be faster to 
 	// use the cos part (w) of the quaternion (sin(omega)*N,cos(omega)) to figure the new scale.
 	float sinom = sqrt( DotProduct( &p.x, &p.x ) );
-	sinom = MIN( sinom, 1.f );
+	sinom = V_min( sinom, 1.f );
 
 	float sinsom = sin( asin( sinom ) * t );
 
@@ -1751,7 +1860,13 @@ void QuaternionMult( const Quaternion &p, const Quaternion &q, Quaternion &qt )
 
 void QuaternionMatrix( const Quaternion &q, const Vector &pos, matrix3x4_t& matrix )
 {
-	Assert( pos.IsValid() );
+#ifdef DBGFLAG_ASSERT
+	static bool s_bHushAsserts = !!CommandLine()->FindParm("-hushasserts");
+	if (!s_bHushAsserts)
+	{
+		Assert( pos.IsValid() );
+	}
+#endif
 
 	QuaternionMatrix( q, matrix );
 
@@ -1763,7 +1878,13 @@ void QuaternionMatrix( const Quaternion &q, const Vector &pos, matrix3x4_t& matr
 void QuaternionMatrix( const Quaternion &q, matrix3x4_t& matrix )
 {
 	Assert( s_bMathlibInitialized );
-	Assert( q.IsValid() );
+#ifdef DBGFLAG_ASSERT
+	static bool s_bHushAsserts = !!CommandLine()->FindParm("-hushasserts");
+	if ( !s_bHushAsserts )
+	{
+		Assert( q.IsValid() );
+	}
+#endif
 
 #ifdef _VPROF_MATHLIB
 	VPROF_BUDGET( "QuaternionMatrix", "Mathlib" );
@@ -3211,7 +3332,7 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 
 #if !defined( _X360 )
 	// Grab the processor information:
-	const CPUInformation& pi = GetCPUInformation();
+	const CPUInformation& pi = *GetCPUInformation();
 
 	// Select the default generic routines.
 	pfSqrt = _sqrtf;
@@ -3240,6 +3361,8 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 	{
 		s_bSSEEnabled = true;
 
+#ifndef PLATFORM_WINDOWS_PC64
+		// These are not yet available.
 		// Select the SSE specific routines if available
 		pfVectorNormalize = _VectorNormalize;
 		pfVectorNormalizeFast = _SSE_VectorNormalizeFast;
@@ -3247,7 +3370,8 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 		pfSqrt = _SSE_Sqrt;
 		pfRSqrt = _SSE_RSqrtAccurate;
 		pfRSqrtFast = _SSE_RSqrtFast;
-#ifdef _WIN32
+#endif
+#ifdef PLATFORM_WINDOWS_PC32
 		pfFastSinCos = _SSE_SinCos;
 		pfFastCos = _SSE_cos;
 #endif
@@ -3260,7 +3384,7 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 	if ( bAllowSSE2 && pi.m_bSSE2 )
 	{
 		s_bSSE2Enabled = true;
-#ifdef _WIN32
+#ifdef PLATFORM_WINDOWS_PC32
 		pfFastSinCos = _SSE2_SinCos;
 		pfFastCos = _SSE2_cos;
 #endif
@@ -3269,7 +3393,7 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 	{
 		s_bSSE2Enabled = false;
 	}
-#endif
+#endif // !_X360
 
 	s_bMathlibInitialized = true;
 
@@ -3920,10 +4044,10 @@ void CalcTriangleTangentSpace( const Vector &p0, const Vector &p1, const Vector 
 //-----------------------------------------------------------------------------
 void RGBtoHSV( const Vector &rgb, Vector &hsv )
 {
-	float flMax = MAX( rgb.x, rgb.y );
-	flMax = MAX( flMax, rgb.z );
-	float flMin = MIN( rgb.x, rgb.y );
-	flMin = MIN( flMin, rgb.z );
+	float flMax = V_max( rgb.x, rgb.y );
+	flMax = V_max( flMax, rgb.z );
+	float flMin = V_min( rgb.x, rgb.y );
+	flMin = V_min( flMin, rgb.z );
 
 	// hsv.z is the value
 	hsv.z = flMax;
@@ -4069,4 +4193,45 @@ void GetInterpolationData( float const *pKnotPositions,
 	*pValueB = pKnotValues[nKnot2];
 	*pInterpolationValue = FLerp( 0, 1, 0, flSizeOfGap, flOffsetFromStartOfGap );
 	return;
+}
+
+float RandomVectorInUnitSphere( Vector *pVector )
+{
+	// Guarantee uniform random distribution within a sphere
+	// Graphics gems III contains this algorithm ("Nonuniform random point sets via warping")
+	float u = ((float)rand() / VALVE_RAND_MAX);
+	float v = ((float)rand() / VALVE_RAND_MAX);
+	float w = ((float)rand() / VALVE_RAND_MAX);
+
+	float flPhi = acos( 1 - 2 * u );
+	float flTheta = 2 * M_PI * v;
+	float flRadius = powf( w, 1.0f / 3.0f );
+
+	float flSinPhi, flCosPhi;
+	float flSinTheta, flCosTheta;
+	SinCos( flPhi, &flSinPhi, &flCosPhi );
+	SinCos( flTheta, &flSinTheta, &flCosTheta );
+
+	pVector->x = flRadius * flSinPhi * flCosTheta;
+	pVector->y = flRadius * flSinPhi * flSinTheta;
+	pVector->z = flRadius * flCosPhi;
+	return flRadius;
+}
+
+float RandomVectorInUnitCircle( Vector2D *pVector )
+{
+	// Guarantee uniform random distribution within a sphere
+	// Graphics gems III contains this algorithm ("Nonuniform random point sets via warping")
+	float u = ((float)rand() / VALVE_RAND_MAX);
+	float v = ((float)rand() / VALVE_RAND_MAX);
+
+	float flTheta = 2 * M_PI * v;
+	float flRadius = powf( u, 1.0f / 2.0f );
+
+	float flSinTheta, flCosTheta;
+	SinCos( flTheta, &flSinTheta, &flCosTheta );
+
+	pVector->x = flRadius * flCosTheta;
+	pVector->y = flRadius * flSinTheta;
+	return flRadius;
 }

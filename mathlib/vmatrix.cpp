@@ -306,7 +306,7 @@ bool MatrixInverseGeneral(const VMatrix& src, VMatrix& dst)
 	for(iRow=0; iRow < 4; iRow++)
 	{
 		// Find the row with the largest element in this column.
-		fLargest = 0.001f;
+		fLargest = 0.00001f;
 		iLargest = -1;
 		for(iTest=iRow; iTest < 4; iTest++)
 		{
@@ -509,7 +509,7 @@ bool VMatrix::IsRotationMatrix() const
 		FloatMakePositive( v2.Dot(v3) ) < 0.01f;
 }
 
-void VMatrix::SetupMatrixOrgAngles( const Vector &origin, const QAngle &vAngles )
+static void SetupMatrixAnglesInternal( vec_t m[4][4], const QAngle & vAngles )
 {
 	float		sr, sp, sy, cr, cp, cy;
 
@@ -530,11 +530,31 @@ void VMatrix::SetupMatrixOrgAngles( const Vector &origin, const QAngle &vAngles 
 	m[0][3] = 0.f;
 	m[1][3] = 0.f;
 	m[2][3] = 0.f;
+}
+
+void VMatrix::SetupMatrixOrgAngles( const Vector &origin, const QAngle &vAngles )
+{
+	SetupMatrixAnglesInternal( m, vAngles );
 	
 	// Add translation
 	m[0][3] = origin.x;
 	m[1][3] = origin.y;
 	m[2][3] = origin.z;
+	m[3][0] = 0.0f;
+	m[3][1] = 0.0f;
+	m[3][2] = 0.0f;
+	m[3][3] = 1.0f;
+}
+
+
+void	VMatrix::SetupMatrixAngles( const QAngle &vAngles )
+{
+	SetupMatrixAnglesInternal( m, vAngles );
+
+	// Zero everything else
+	m[0][3] = 0.0f;
+	m[1][3] = 0.0f;
+	m[2][3] = 0.0f;
 	m[3][0] = 0.0f;
 	m[3][1] = 0.0f;
 	m[3][2] = 0.0f;
@@ -728,7 +748,7 @@ void Vector4DMultiplyPosition( const VMatrix& src1, Vector const& src2, Vector4D
 {
 	// Make sure it works if src2 == dst
 	Vector tmp;
-	Vector const&v = ( &src2 == &dst.AsVector3D() ) ? tmp : src2;
+	Vector const&v = ( &src2 == &dst.AsVector3D() ) ? static_cast<const Vector&>(tmp) : src2;
 
 	if (&src2 == &dst.AsVector3D())
 	{
@@ -751,7 +771,7 @@ void Vector3DMultiply( const VMatrix &src1, const Vector &src2, Vector &dst )
 {
 	// Make sure it works if src2 == dst
 	Vector tmp;
-	const Vector &v = (&src2 == &dst) ?  tmp : src2;
+	const Vector &v = (&src2 == &dst) ?  static_cast<const Vector&>(tmp) : src2;
 
 	if( &src2 == &dst )
 	{
@@ -772,7 +792,7 @@ void Vector3DMultiplyPositionProjective( const VMatrix& src1, const Vector &src2
 {
 	// Make sure it works if src2 == dst
 	Vector tmp;
-	const Vector &v = (&src2 == &dst) ? tmp: src2;
+	const Vector &v = (&src2 == &dst) ? static_cast<const Vector&>(tmp): src2;
 	if( &src2 == &dst )
 	{
 		VectorCopy( src2, tmp );
@@ -799,7 +819,7 @@ void Vector3DMultiplyProjective( const VMatrix& src1, const Vector &src2, Vector
 {
 	// Make sure it works if src2 == dst
 	Vector tmp;
-	const Vector &v = (&src2 == &dst) ? tmp : src2;
+	const Vector &v = (&src2 == &dst) ? static_cast<const Vector&>(tmp) : src2;
 	if( &src2 == &dst )
 	{
 		VectorCopy( src2, tmp );
@@ -852,7 +872,7 @@ void Vector3DMultiplyTranspose( const VMatrix& src1, const Vector& src2, Vector&
 	bool srcEqualsDst = (&src2 == &dst);
 
 	Vector tmp;
-	const Vector&v = srcEqualsDst ? tmp : src2;
+	const Vector&v = srcEqualsDst ? static_cast<const Vector&>(tmp) : src2;
 
 	if (srcEqualsDst)
 	{
@@ -937,7 +957,7 @@ void MatrixBuildTranslation( VMatrix& dst, const Vector &translation )
 //-----------------------------------------------------------------------------
 void MatrixBuildRotationAboutAxis( VMatrix &dst, const Vector &vAxisOfRot, float angleDegrees )
 {
-	MatrixBuildRotationAboutAxis( vAxisOfRot, angleDegrees, dst.As3x4() );
+	MatrixBuildRotationAboutAxis( vAxisOfRot, angleDegrees, const_cast< matrix3x4_t &> ( dst.As3x4() ) );
 	dst[3][0] = 0;
 	dst[3][1] = 0;
 	dst[3][2] = 0;
@@ -1233,19 +1253,29 @@ void MatrixBuildOrtho( VMatrix& dst, double left, double top, double right, doub
 				0.0f,						0.0f,						0.0f,								1.0f );
 }
 
+void MatrixBuildPerspectiveZRange( VMatrix& dst, double flZNear, double flZFar )
+{
+	dst.m[2][0] = 0.0f;
+	dst.m[2][1] = 0.0f;
+	dst.m[2][2] = flZFar / ( flZNear - flZFar );
+	dst.m[2][3] = flZNear * flZFar / ( flZNear - flZFar );
+}
+
 void MatrixBuildPerspectiveX( VMatrix& dst, double flFovX, double flAspect, double flZNear, double flZFar )
 {
-	float flWidth = 2.0f * flZNear * tanf( flFovX * M_PI / 360.0f );
-	float flHeight = flWidth / flAspect;
-	dst.Init(   2.0f * flZNear / flWidth,						0.0f,							0.0f,										0.0f,
-				0.0f,  2.0f  * flZNear/ flHeight,							0.0f,										0.0f,
-				0.0f,						0.0f,  flZFar / ( flZNear - flZFar ),	 flZNear * flZFar / ( flZNear - flZFar ),
+	float flWidthScale = 1.0f / tanf( flFovX * M_PI / 360.0f );
+	float flHeightScale = flAspect * flWidthScale;
+	dst.Init(   flWidthScale,				0.0f,							0.0f,										0.0f,
+				0.0f,						flHeightScale,					0.0f,										0.0f,
+				0.0f,						0.0f,							0.0f,										0.0f,
 				0.0f,						0.0f,						   -1.0f,										0.0f );
+
+	MatrixBuildPerspectiveZRange ( dst, flZNear, flZFar );
 }
 
 void MatrixBuildPerspectiveOffCenterX( VMatrix& dst, double flFovX, double flAspect, double flZNear, double flZFar, double bottom, double top, double left, double right )
 {
-	float flWidth = 2.0f * flZNear * tanf( flFovX * M_PI / 360.0f );
+	float flWidth = tanf( flFovX * M_PI / 360.0f );
 	float flHeight = flWidth / flAspect;
 
 	// bottom, top, left, right are 0..1 so convert to -<val>/2..<val>/2
@@ -1254,10 +1284,12 @@ void MatrixBuildPerspectiveOffCenterX( VMatrix& dst, double flFovX, double flAsp
 	float flBottom = -(flHeight/2.0f) * (1.0f - bottom) + bottom * (flHeight/2.0f);
 	float flTop    = -(flHeight/2.0f) * (1.0f - top)    + top    * (flHeight/2.0f);
 
-	dst.Init(   (2.0f * flZNear) / (flRight-flLeft),                           0.0f, (flLeft+flRight)/(flRight-flLeft),                            0.0f,
-				0.0f,  2.0f*flZNear/(flTop-flBottom), (flTop+flBottom)/(flTop-flBottom),                            0.0f,
-				0.0f,                           0.0f,           flZFar/(flZNear-flZFar),  flZNear*flZFar/(flZNear-flZFar),
-				0.0f,                           0.0f,                             -1.0f,                            0.0f );
+	dst.Init(   1.0f / (flRight-flLeft),        0.0f,                           (flLeft+flRight)/(flRight-flLeft),  0.0f,
+				0.0f,                           1.0f /(flTop-flBottom),         (flTop+flBottom)/(flTop-flBottom),  0.0f,
+				0.0f,                           0.0f,							0.0f,								0.0f,
+				0.0f,                           0.0f,                           -1.0f,								0.0f );
+
+	MatrixBuildPerspectiveZRange ( dst, flZNear, flZFar );
 }
 #endif // !_STATIC_LINKED || _SHARED_LIB
 

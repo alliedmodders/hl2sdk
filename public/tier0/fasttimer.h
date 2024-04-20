@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -11,11 +11,14 @@
 #pragma once
 #endif
 
+#ifdef _WIN32
+#include <intrin.h>
+#endif
+
 #include <assert.h>
 #include "tier0/platform.h"
 
-PLATFORM_INTERFACE int64 g_ClockSpeed;
-PLATFORM_INTERFACE uint32_t g_dwClockSpeed;
+PLATFORM_INTERFACE uint64 g_ClockSpeed;
 #if defined( _X360 ) && defined( _CERT )
 PLATFORM_INTERFACE uint32_t g_dwFakeFastCounter;
 #endif
@@ -30,20 +33,20 @@ friend class CFastTimer;
 
 public:
 					CCycleCount();
-					CCycleCount( int64 cycles );
+					CCycleCount( uint64 cycles );
 
 	void			Sample();	// Sample the clock. This takes about 34 clocks to execute (or 26,000 calls per millisecond on a P900).
 
 	void			Init();		// Set to zero.
 	void			Init( float initTimeMsec );
 	void			Init( double initTimeMsec )		{ Init( (float)initTimeMsec ); }
-	void			Init( int64 cycles );
+	void			Init( uint64 cycles );
 	bool			IsLessThan( CCycleCount const &other ) const;					// Compare two counts.
 
 	// Convert to other time representations. These functions are slow, so it's preferable to call them
 	// during display rather than inside a timing block.
 	uint32_t	GetCycles()  const;
-	int64			GetLongCycles() const;
+	uint64			GetLongCycles() const;
 
 	uint32_t	GetMicroseconds() const;
 	uint64			GetUlMicroseconds() const;
@@ -63,12 +66,12 @@ public:
 	// dest = rSrc1 - rSrc2
 	static void		Sub( CCycleCount const &rSrc1, CCycleCount const &rSrc2, CCycleCount &dest );	// Add two samples together.
 
-	static int64	GetTimestamp();
+	static uint64	GetTimestamp();
 
-	int64			m_Int64;
+	uint64			m_Int64;
 };
 
-class CClockSpeedInit
+class PLATFORM_CLASS CClockSpeedInit
 {
 public:
 	CClockSpeedInit()
@@ -76,21 +79,7 @@ public:
 		Init();
 	}
 
-	static void Init()
-	{
-#if defined( _X360 ) && !defined( _CERT )
-		PMCStart();
-		PMCInitIntervalTimer( 0 );
-#endif
-		const CPUInformation& pi = GetCPUInformation();
-
-		g_ClockSpeed = pi.m_Speed;
-		g_dwClockSpeed = (uint32_t)g_ClockSpeed;
-
-		g_ClockSpeedMicrosecondsMultiplier = 1000000.0 / (double)g_ClockSpeed;
-		g_ClockSpeedMillisecondsMultiplier = 1000.0 / (double)g_ClockSpeed;
-		g_ClockSpeedSecondsMultiplier = 1.0f / (double)g_ClockSpeed;
-	}
+	static void Init();
 };
 
 class CFastTimer
@@ -104,7 +93,7 @@ public:
 	CCycleCount 		GetDurationInProgress() const; // Call without ending. Not that cheap.
 
 	// Return number of cycles per second on this processor.
-	static inline uint32_t GetClockSpeed();
+	static inline int64	GetClockSpeed();
 
 private:
 	CCycleCount	m_Duration;
@@ -233,8 +222,6 @@ private:
 	unsigned	m_nIters;
 	CCycleCount m_Total;
 	CCycleCount	m_Peak;
-//	bool		m_fReport;
-//	const tchar *m_pszName;
 };
 
 // -------------------------------------------------------------------------- // 
@@ -257,86 +244,36 @@ private:
 
 inline CCycleCount::CCycleCount()
 {
-	Init( (int64)0 );
+	Init( (uint64)0 );
 }
 
-inline CCycleCount::CCycleCount( int64 cycles )
+inline CCycleCount::CCycleCount( uint64 cycles )
 {
 	Init( cycles );
 }
 
 inline void CCycleCount::Init()
 {
-	Init( (int64)0 );
+	Init( (uint64)0 );
 }
 
 inline void CCycleCount::Init( float initTimeMsec )
 {
 	if ( g_ClockSpeedMillisecondsMultiplier > 0 )
-		Init( (int64)(initTimeMsec / g_ClockSpeedMillisecondsMultiplier) );
+		Init( (uint64)(initTimeMsec / g_ClockSpeedMillisecondsMultiplier) );
 	else
-		Init( (int64)0 );
+		Init( (uint64)0 );
 }
 
-inline void CCycleCount::Init( int64 cycles )
+inline void CCycleCount::Init( uint64 cycles )
 {
 	m_Int64 = cycles;
 }
 
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4189) // warning C4189: local variable is initialized but not referenced
-#endif
-
 inline void CCycleCount::Sample()
 {
-#if defined( _X360 )
-#if !defined( _CERT )
-	// read the highest resolution timer directly (ticks at native 3.2GHz), bypassing any calls into PMC
-	// can only resolve 32 bits, rollover is ~1.32 secs
-	// based on PMCGetIntervalTimer() from the April 2007 XDK
-	int64 temp;
-	__asm 
-	{
-		lis		r11,08FFFh
-		ld		r11,011E0h(r11)
-		rldicl	r11,r11,32,32
-		// unforunate can't get the inline assembler to write directly into desired target
-		std		r11,temp
-	}
-	m_Int64 = temp;
-#else
-	m_Int64 = ++g_dwFakeFastCounter;
-#endif
-#elif defined( _WIN32 ) && !defined( _WIN64 )
-	uint32_t* pSample = (uint32_t *)&m_Int64;
-	__asm
-	{
-		// force the cpu to synchronize the instruction queue
-		// NJS: CPUID can really impact performance in tight loops.
-		//cpuid
-		//cpuid
-		//cpuid
-		mov		ecx, pSample
-		rdtsc
-		mov		[ecx], eax
-		mov		[ecx+4], edx
-	}
-#elif defined( _LINUX )
-	uint32_t* pSample = (uint32_t *)&m_Int64;
-    __asm__ __volatile__ (  
-		"rdtsc\n\t"
-		"movl %%eax,  (%0)\n\t"
-		"movl %%edx, 4(%0)\n\t"
-		: /* no output regs */
-		: "D" (pSample)
-		: "%eax", "%edx" );
-#endif
+	m_Int64 = Plat_Rdtsc();
 }
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
 
 inline CCycleCount& CCycleCount::operator+=( CCycleCount const &other )
 {
@@ -355,7 +292,7 @@ inline void CCycleCount::Sub( CCycleCount const &rSrc1, CCycleCount const &rSrc2
 	dest.m_Int64 = rSrc1.m_Int64 - rSrc2.m_Int64;
 }
 
-inline int64 CCycleCount::GetTimestamp()
+inline uint64 CCycleCount::GetTimestamp()
 {
 	CCycleCount c;
 	c.Sample();
@@ -373,7 +310,7 @@ inline uint32_t CCycleCount::GetCycles() const
 	return (uint32_t)m_Int64;
 }
 
-inline int64 CCycleCount::GetLongCycles() const
+inline uint64 CCycleCount::GetLongCycles() const
 {
 	return m_Int64;
 }
@@ -397,7 +334,7 @@ inline double CCycleCount::GetMicrosecondsF() const
 
 inline void	CCycleCount::SetMicroseconds( uint32_t nMicroseconds )
 {
-	m_Int64 = ((int64)nMicroseconds * g_ClockSpeed) / 1000000;
+	m_Int64 = ((uint64)nMicroseconds * g_ClockSpeed) / 1000000;
 }
 
 
@@ -438,10 +375,10 @@ inline void CFastTimer::End()
 	if ( IsX360() )
 	{
 		// have to handle rollover, hires timer is only accurate to 32 bits
-		// more than one overflow should not have occured, otherwise caller should use a slower timer
+		// more than one overflow should not have occurred, otherwise caller should use a slower timer
 		if ( (uint64)cnt.m_Int64 <= (uint64)m_Duration.m_Int64 )
 		{
-			// rollover occured	
+			// rollover occurred	
 			cnt.m_Int64 += 0x100000000LL;	
 		}
 	}
@@ -460,10 +397,10 @@ inline CCycleCount CFastTimer::GetDurationInProgress() const
 	if ( IsX360() )
 	{
 		// have to handle rollover, hires timer is only accurate to 32 bits
-		// more than one overflow should not have occured, otherwise caller should use a slower timer
+		// more than one overflow should not have occurred, otherwise caller should use a slower timer
 		if ( (uint64)cnt.m_Int64 <= (uint64)m_Duration.m_Int64 )
 		{
-			// rollover occured	
+			// rollover occurred	
 			cnt.m_Int64 += 0x100000000LL;	
 		}
 	}
@@ -475,9 +412,9 @@ inline CCycleCount CFastTimer::GetDurationInProgress() const
 }
 
 
-inline uint32_t CFastTimer::GetClockSpeed()
+inline int64 CFastTimer::GetClockSpeed()
 {
-	return g_dwClockSpeed;
+	return g_ClockSpeed;
 }
 
 
@@ -553,15 +490,20 @@ inline CAverageTimeMarker::~CAverageTimeMarker()
 
 // CLimitTimer
 // Use this to time whether a desired interval of time has passed.  It's extremely fast
-// to check while running.
+// to check while running.  NOTE: CMicroSecOverage() and CMicroSecLeft() are not as fast to check.
 class CLimitTimer
 {
 public:
+	CLimitTimer() {}
+	CLimitTimer( uint64 cMicroSecDuration ) { SetLimit( cMicroSecDuration ); }
 	void SetLimit( uint64 m_cMicroSecDuration );
-	bool BLimitReached( void );
+	bool BLimitReached() const;
+
+	int CMicroSecOverage() const;
+	uint64 CMicroSecLeft() const; 
 
 private:
-	int64 m_lCycleLimit;
+	uint64 m_lCycleLimit;
 };
 
 
@@ -569,9 +511,9 @@ private:
 // Purpose: Initializes the limit timer with a period of time to measure.
 // Input  : cMicroSecDuration -		How long a time period to measure
 //-----------------------------------------------------------------------------
-inline void CLimitTimer::SetLimit( uint64 m_cMicroSecDuration )
+inline void CLimitTimer::SetLimit( uint64 cMicroSecDuration )
 {
-	int64 dlCycles = ( ( uint64 ) m_cMicroSecDuration * ( int64 ) g_dwClockSpeed ) / ( int64 ) 1000000L;
+	uint64 dlCycles = ( ( uint64 ) cMicroSecDuration * g_ClockSpeed ) / ( uint64 ) 1000000L;
 	CCycleCount cycleCount;
 	cycleCount.Sample( );
 	m_lCycleLimit = cycleCount.GetLongCycles( ) + dlCycles;
@@ -582,13 +524,46 @@ inline void CLimitTimer::SetLimit( uint64 m_cMicroSecDuration )
 // Purpose: Determines whether our specified time period has passed
 // Output:	true if at least the specified time period has passed
 //-----------------------------------------------------------------------------
-inline bool CLimitTimer::BLimitReached( )
+inline bool CLimitTimer::BLimitReached() const
 {
 	CCycleCount cycleCount;
 	cycleCount.Sample( );
 	return ( cycleCount.GetLongCycles( ) >= m_lCycleLimit );
 }
 
+
+//-----------------------------------------------------------------------------
+// Purpose: If we're over our specified time period, return the amount of the overage.
+// Output:	# of microseconds since we reached our specified time period.
+//-----------------------------------------------------------------------------
+inline int CLimitTimer::CMicroSecOverage() const
+{
+	CCycleCount cycleCount;
+	cycleCount.Sample();
+	uint64 lcCycles = cycleCount.GetLongCycles();
+
+	if ( lcCycles < m_lCycleLimit )
+		return 0;
+
+	return( ( int ) ( ( lcCycles - m_lCycleLimit ) * ( uint64 ) 1000000L / g_ClockSpeed ) );
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: If we're under our specified time period, return the amount under.
+// Output:	# of microseconds until we reached our specified time period, 0 if we've passed it
+//-----------------------------------------------------------------------------
+inline uint64 CLimitTimer::CMicroSecLeft() const
+{
+	CCycleCount cycleCount;
+	cycleCount.Sample();
+	uint64 lcCycles = cycleCount.GetLongCycles();
+
+	if ( lcCycles >= m_lCycleLimit )
+		return 0;
+
+	return( ( uint64 ) ( ( m_lCycleLimit - lcCycles ) * ( uint64 ) 1000000L / g_ClockSpeed ) );
+}
 
 
 #endif // FASTTIMER_H

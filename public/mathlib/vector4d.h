@@ -132,11 +132,7 @@ const Vector4D vec4_invalid( FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX );
 // SSE optimized routines
 //-----------------------------------------------------------------------------
 
-#ifdef _WIN32
-class __declspec(align(16)) Vector4DAligned : public Vector4D
-#elif defined _LINUX || defined __APPLE__
-class __attribute__((aligned(16))) Vector4DAligned : public Vector4D
-#endif
+class ALIGN16 Vector4DAligned : public Vector4D
 {
 public:
 	Vector4DAligned(void) {}
@@ -154,7 +150,7 @@ private:
 
 	// No assignment operators either...
 	Vector4DAligned& operator=( Vector4DAligned const& src );
-};
+} ALIGN16_POST;
 
 //-----------------------------------------------------------------------------
 // Vector4D related operations
@@ -249,10 +245,10 @@ inline void Vector4D::Init( vec_t ix, vec_t iy, vec_t iz, vec_t iw )
 
 inline void Vector4D::Random( vec_t minVal, vec_t maxVal )
 {
-	x = minVal + ((vec_t)rand() / (float)RAND_MAX) * (maxVal - minVal);
-	y = minVal + ((vec_t)rand() / (float)RAND_MAX) * (maxVal - minVal);
-	z = minVal + ((vec_t)rand() / (float)RAND_MAX) * (maxVal - minVal);
-	w = minVal + ((vec_t)rand() / (float)RAND_MAX) * (maxVal - minVal);
+	x = minVal + ((vec_t)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
+	y = minVal + ((vec_t)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
+	z = minVal + ((vec_t)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
+	w = minVal + ((vec_t)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
 }
 
 inline void Vector4DClear( Vector4D& a )

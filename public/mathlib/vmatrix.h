@@ -54,6 +54,7 @@ public:
 	// Creates a matrix where the X axis = forward
 	// the Y axis = left, and the Z axis = up
 	VMatrix( const Vector& forward, const Vector& left, const Vector& up );
+	VMatrix( const Vector& forward, const Vector& left, const Vector& up, const Vector& translation );
 	
 	// Construct from a 3x4 matrix
 	VMatrix( const matrix3x4_t& matrix3x4 );
@@ -106,7 +107,6 @@ public:
 	void		PreTranslate(const Vector &vTrans);
 	void		PostTranslate(const Vector &vTrans);
 
-	matrix3x4_t& As3x4();
 	const matrix3x4_t& As3x4() const;
 	void		CopyFrom3x4( const matrix3x4_t &m3x4 );
 	void		Set3x4( matrix3x4_t& matrix3x4 ) const;
@@ -199,6 +199,9 @@ public:
 	// Setup a matrix for origin and angles.
 	void		SetupMatrixOrgAngles( const Vector &origin, const QAngle &vAngles );
 	
+	// Setup a matrix for angles and no translation.
+	void		SetupMatrixAngles( const QAngle &vAngles );
+
 	// General inverse. This may fail so check the return!
 	bool		InverseGeneral(VMatrix &vInverse) const;
 	
@@ -457,6 +460,16 @@ inline VMatrix::VMatrix( const Vector& xAxis, const Vector& yAxis, const Vector&
 		);
 }
 
+inline VMatrix::VMatrix( const Vector& xAxis, const Vector& yAxis, const Vector& zAxis, const Vector& translation )
+{
+	Init(
+		xAxis.x, yAxis.x, zAxis.x, translation.x,
+		xAxis.y, yAxis.y, zAxis.y, translation.y,
+		xAxis.z, yAxis.z, zAxis.z, translation.z,
+		0.0f, 0.0f, 0.0f, 1.0f
+		);
+}
+
 
 inline void VMatrix::Init(
 	vec_t m00, vec_t m01, vec_t m02, vec_t m03,
@@ -614,11 +627,6 @@ inline void VMatrix::PostTranslate(const Vector &vTrans)
 inline const matrix3x4_t& VMatrix::As3x4() const
 {
 	return *((const matrix3x4_t*)this);
-}
-
-inline matrix3x4_t& VMatrix::As3x4()
-{
-	return *((matrix3x4_t*)this);
 }
 
 inline void VMatrix::CopyFrom3x4( const matrix3x4_t &m3x4 )

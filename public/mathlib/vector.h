@@ -31,6 +31,7 @@
 #include "tier0/threadtools.h"
 #include "mathlib/vector2d.h"
 #include "mathlib/math_pfns.h"
+#include "minmax.h"
 
 // Uncomment this to add extra Asserts to check for NANs, uninitialized vecs, etc.
 //#define VECTOR_PARANOIA	1
@@ -48,7 +49,11 @@
 #ifdef VECTOR_PARANOIA
 #define CHECK_VALID( _v)	Assert( (_v).IsValid() )
 #else
+#ifdef GNUC
 #define CHECK_VALID( _v)
+#else
+#define CHECK_VALID( _v)	0
+#endif
 #endif
 
 #define VecToString(v)	(static_cast<const char *>(CFmtStr("(%f, %f, %f)", (v).x, (v).y, (v).z))) // ** Note: this generates a temporary, don't hold reference!
@@ -129,6 +134,7 @@ public:
 	}
 
 	vec_t	NormalizeInPlace();
+	Vector	Normalized() const;
 	bool	IsLengthGreaterThan( float val ) const;
 	bool	IsLengthLessThan( float val ) const;
 
@@ -202,6 +208,7 @@ private:
 #endif
 };
 
+FORCEINLINE void NetworkVarConstruct( Vector &v ) { v.Zero(); }
 
 #if ( ( !defined( _X360 ) ) && ( ! defined( _LINUX) ) )
     #define USE_M64S 1
@@ -260,7 +267,7 @@ private:
 	// No assignment operators either...
 //	ShortVector& operator=( ShortVector const& src );
 
-};
+} ALIGN8_POST;
 
 
 
@@ -396,7 +403,7 @@ public:
 	
 #endif
 	float w;	// this space is used anyway
-};
+} ALIGN16_POST;
 
 //-----------------------------------------------------------------------------
 // Vector related operations
@@ -416,7 +423,9 @@ FORCEINLINE void VectorMultiply( const Vector& a, const Vector& b, Vector& resul
 FORCEINLINE void VectorDivide( const Vector& a, vec_t b, Vector& result );
 FORCEINLINE void VectorDivide( const Vector& a, const Vector& b, Vector& result );
 inline void VectorScale ( const Vector& in, vec_t scale, Vector& result );
-inline void VectorMA( const Vector& start, float scale, const Vector& direction, Vector& dest );
+// Don't mark this as inline in its function declaration. That's only necessary on its
+// definition, and 'inline' here leads to gcc warnings.
+void VectorMA( const Vector& start, float scale, const Vector& direction, Vector& dest );
 
 // Vector equality with tolerance
 bool VectorsAreEqual( const Vector& src1, const Vector& src2, float tolerance = 0.0f );
@@ -443,6 +452,31 @@ void VectorMax( const Vector &a, const Vector &b, Vector &result );
 
 // Linearly interpolate between two vectors
 void VectorLerp(const Vector& src1, const Vector& src2, vec_t t, Vector& dest );
+Vector VectorLerp(const Vector& src1, const Vector& src2, vec_t t );
+
+FORCEINLINE Vector ReplicateToVector( float x )
+{
+	return Vector( x, x, x );
+}
+
+// check if a point is in the field of a view of an object. supports up to 180 degree fov.
+FORCEINLINE bool PointWithinViewAngle( Vector const &vecSrcPosition, 
+									   Vector const &vecTargetPosition, 
+									   Vector const &vecLookDirection, float flCosHalfFOV )
+{
+	Vector vecDelta = vecTargetPosition - vecSrcPosition;
+	float cosDiff = DotProduct( vecLookDirection, vecDelta );
+
+	if ( cosDiff < 0 ) 
+		return false;
+
+	float flLen2 = vecDelta.LengthSqr();
+
+	// a/sqrt(b) > c  == a^2 > b * c ^2
+	return ( cosDiff * cosDiff > flLen2 * flCosHalfFOV * flCosHalfFOV );
+	
+}
+
 
 #ifndef VECTOR_NO_SLOW_OPERATIONS
 
@@ -453,6 +487,10 @@ Vector CrossProduct( const Vector& a, const Vector& b );
 Vector RandomVector( vec_t minVal, vec_t maxVal );
 
 #endif
+
+float RandomVectorInUnitSphere( Vector *pVector );
+float RandomVectorInUnitCircle( Vector2D *pVector );
+
 
 //-----------------------------------------------------------------------------
 //
@@ -517,9 +555,9 @@ inline void Vector::Init( vec_t ix, vec_t iy, vec_t iz )
 
 inline void Vector::Random( vec_t minVal, vec_t maxVal )
 {
-	x = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
-	y = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
-	z = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
+	x = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
+	y = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
+	z = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
 	CHECK_VALID(*this);
 }
 
@@ -1082,14 +1120,6 @@ inline void VectorScale ( const Vector& in, vec_t scale, Vector& result )
 	VectorMultiply( in, scale, result );
 }
 
-inline void VectorMA( const Vector& start, float scale, const Vector& direction, Vector& dest )
-{
-	CHECK_VALID(start);
-	CHECK_VALID(direction);
-	dest.x = start.x + scale * direction.x;
-	dest.y = start.y + scale * direction.y;
-	dest.z = start.z + scale * direction.z;
-}
 
 FORCEINLINE void VectorDivide( const Vector& a, vec_t b, Vector& c )
 {
@@ -1131,6 +1161,12 @@ inline void VectorLerp(const Vector& src1, const Vector& src2, vec_t t, Vector& 
 	dest.z = src1.z + (src2.z - src1.z) * t;
 }
 
+inline Vector VectorLerp(const Vector& src1, const Vector& src2, vec_t t )
+{
+	Vector result;
+	VectorLerp( src1, src2, t, result );
+	return result;
+}
 
 //-----------------------------------------------------------------------------
 // Temporary storage for vector results so const Vector& results can be returned
@@ -1431,6 +1467,13 @@ inline void VectorMax( const Vector &a, const Vector &b, Vector &result )
 	result.z = fpmax(a.z, b.z);
 }
 
+inline float ComputeVolume( const Vector &vecMins, const Vector &vecMaxs )
+{
+	Vector vecDelta;
+	VectorSubtract( vecMaxs, vecMins, vecDelta );
+	return DotProduct( vecDelta, vecDelta );
+}
+
 // Get a random vector.
 inline Vector RandomVector( float minVal, float maxVal )
 {
@@ -1610,7 +1653,7 @@ public:
 	}
 
 #endif
-};
+} ALIGN16_POST;
 
 
 //-----------------------------------------------------------------------------
@@ -1643,6 +1686,9 @@ public:
 
 extern void AngleQuaternion( RadianEuler const &angles, Quaternion &qt );
 extern void QuaternionAngles( Quaternion const &q, RadianEuler &angles );
+
+FORCEINLINE void NetworkVarConstruct( Quaternion &q ) { q.x = q.y = q.z = q.w = 0.0f; }
+
 inline Quaternion::Quaternion(RadianEuler const &angle)
 {
 	AngleQuaternion( angle, *this );
@@ -1790,6 +1836,8 @@ private:
 #endif
 };
 
+FORCEINLINE void NetworkVarConstruct( QAngle &q ) { q.x = q.y = q.z = 0.0f; }
+
 //-----------------------------------------------------------------------------
 // Allows us to specifically pass the vector by value when we need to
 //-----------------------------------------------------------------------------
@@ -1853,9 +1901,9 @@ inline void QAngle::Init( vec_t ix, vec_t iy, vec_t iz )
 
 inline void QAngle::Random( vec_t minVal, vec_t maxVal )
 {
-	x = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
-	y = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
-	z = minVal + ((float)rand() / (float)RAND_MAX) * (maxVal - minVal);
+	x = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
+	y = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
+	z = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
 	CHECK_VALID(*this);
 }
 
@@ -2128,11 +2176,16 @@ inline void AngularImpulseToQAngle( const AngularImpulse &impulse, QAngle &angle
 }
 
 #if !defined( _X360 )
-extern float (*pfInvRSquared)( const float *v );
 
 FORCEINLINE vec_t InvRSquared( float const *v )
 {
-	return (*pfInvRSquared)(v);
+#if defined(__i386__) || defined(_M_IX86)
+	float sqrlen = v[0]*v[0]+v[1]*v[1]+v[2]*v[2] + 1.0e-10f, result;
+	_mm_store_ss(&result, _mm_rcp_ss( _mm_max_ss( _mm_set_ss(1.0f), _mm_load_ss(&sqrlen) ) ));
+	return result;
+#else
+	return 1.f/fpmax(1.f, v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);
+#endif
 }
 
 FORCEINLINE vec_t InvRSquared( const Vector &v )
@@ -2140,35 +2193,62 @@ FORCEINLINE vec_t InvRSquared( const Vector &v )
 	return InvRSquared(&v.x);
 }
 
-#else
-
-// call directly
-FORCEINLINE float _VMX_InvRSquared( const Vector &v )
+#if defined(__i386__) || defined(_M_IX86)
+inline void _SSE_RSqrtInline( float a, float* out )
 {
-	XMVECTOR xmV = XMVector3ReciprocalLength( XMLoadVector3( v.Base() ) );
-	xmV = XMVector3Dot( xmV, xmV );
-	return xmV.x;
+	__m128  xx = _mm_load_ss( &a );
+	__m128  xr = _mm_rsqrt_ss( xx );
+	__m128  xt;
+	xt = _mm_mul_ss( xr, xr );
+	xt = _mm_mul_ss( xt, xx );
+	xt = _mm_sub_ss( _mm_set_ss(3.f), xt );
+	xt = _mm_mul_ss( xt, _mm_set_ss(0.5f) );
+	xr = _mm_mul_ss( xr, xt );
+	_mm_store_ss( out, xr );
 }
-
-#define InvRSquared(x) _VMX_InvRSquared(x)
-
-#endif // _X360
-
-#if !defined( _X360 )
-extern float (FASTCALL *pfVectorNormalize)(Vector& v);
+#endif
 
 // FIXME: Change this back to a #define once we get rid of the vec_t version
-FORCEINLINE float VectorNormalize( Vector& v )
+FORCEINLINE float VectorNormalize( Vector& vec )
 {
-	return (*pfVectorNormalize)(v);
+#ifndef DEBUG // stop crashing my edit-and-continue!
+	#if defined(__i386__) || defined(_M_IX86)
+		#define DO_SSE_OPTIMIZATION
+	#endif
+#endif
+
+#if defined( DO_SSE_OPTIMIZATION )
+	float sqrlen = vec.LengthSqr() + 1.0e-10f, invlen;
+	_SSE_RSqrtInline(sqrlen, &invlen);
+	vec.x *= invlen;
+	vec.y *= invlen;
+	vec.z *= invlen;
+	return sqrlen * invlen;
+#else
+	extern float (FASTCALL *pfVectorNormalize)(Vector& v);
+	return (*pfVectorNormalize)(vec);
+#endif
 }
+
 // FIXME: Obsolete version of VectorNormalize, once we remove all the friggin float*s
 FORCEINLINE float VectorNormalize( float * v )
 {
 	return VectorNormalize(*(reinterpret_cast<Vector *>(v)));
 }
 
+FORCEINLINE void VectorNormalizeFast( Vector &vec )
+{
+	VectorNormalize(vec);
+}
+
 #else
+
+FORCEINLINE float _VMX_InvRSquared( const Vector &v )
+{
+	XMVECTOR xmV = XMVector3ReciprocalLength( XMLoadVector3( v.Base() ) );
+	xmV = XMVector3Dot( xmV, xmV );
+	return xmV.x;
+}
 
 // call directly
 FORCEINLINE float _VMX_VectorNormalize( Vector &vec )
@@ -2180,6 +2260,9 @@ FORCEINLINE float _VMX_VectorNormalize( Vector &vec )
 	vec.z *= den;
 	return mag;
 }
+
+#define InvRSquared(x) _VMX_InvRSquared(x)
+
 // FIXME: Change this back to a #define once we get rid of the vec_t version
 FORCEINLINE float VectorNormalize( Vector& v )
 {
@@ -2190,18 +2273,6 @@ FORCEINLINE float VectorNormalize( float *pV )
 {
 	return _VMX_VectorNormalize(*(reinterpret_cast<Vector*>(pV)));
 }
-
-#endif // _X360
-
-#if !defined( _X360 )
-extern void (FASTCALL *pfVectorNormalizeFast)(Vector& v);
-
-FORCEINLINE void VectorNormalizeFast( Vector& v )
-{
-	(*pfVectorNormalizeFast)(v);
-}
-
-#else
 
 // call directly
 FORCEINLINE void VectorNormalizeFast( Vector &vec )
@@ -2215,9 +2286,17 @@ FORCEINLINE void VectorNormalizeFast( Vector &vec )
 
 #endif // _X360
 
+
 inline vec_t Vector::NormalizeInPlace()
 {
 	return VectorNormalize( *this );
+}
+
+inline Vector Vector::Normalized() const
+{
+	Vector norm = *this;
+	VectorNormalize( norm );
+	return norm;
 }
 
 inline bool Vector::IsLengthGreaterThan( float val ) const

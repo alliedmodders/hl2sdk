@@ -10,7 +10,7 @@
 
 void LightDesc_t::RecalculateDerivedValues(void)
 {
-	m_Flags=0;
+	m_Flags = LIGHTTYPE_OPTIMIZATIONFLAGS_DERIVED_VALUES_CALCED;
 	if (m_Attenuation0)
 		m_Flags|=LIGHTTYPE_OPTIMIZATIONFLAGS_HAS_ATTENUATION0;
 	if (m_Attenuation1)

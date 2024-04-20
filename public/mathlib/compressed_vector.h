@@ -58,8 +58,8 @@ inline Vector32& Vector32::operator=(const Vector &vOther)
 
 	static float expScale[4] = { 4.0f, 16.0f, 32.f, 64.f };
 
-	float fmax = MAX( fabs( vOther.x ), fabs( vOther.y ) );
-	fmax = fpmax( fmax, fabs( vOther.z ) );
+	float fmax = Max( fabs( vOther.x ), fabs( vOther.y ) );
+	fmax = Max( fmax, (float)fabs( vOther.z ) );
 
 	for (exp = 0; exp < 3; exp++)
 	{
@@ -70,9 +70,9 @@ inline Vector32& Vector32::operator=(const Vector &vOther)
 
 	float fexp = 512.0f / expScale[exp];
 
-	x = clamp( (int)(vOther.x * fexp) + 512, 0, 1023 );
-	y = clamp( (int)(vOther.y * fexp) + 512, 0, 1023 );
-	z = clamp( (int)(vOther.z * fexp) + 512, 0, 1023 );
+	x = Clamp( (int)(vOther.x * fexp) + 512, 0, 1023 );
+	y = Clamp( (int)(vOther.y * fexp) + 512, 0, 1023 );
+	z = Clamp( (int)(vOther.z * fexp) + 512, 0, 1023 );
 	return *this; 
 }
 
@@ -118,8 +118,8 @@ inline Normal32& Normal32::operator=(const Vector &vOther)
 {
 	CHECK_VALID(vOther);
 
-	x = clamp( (int)(vOther.x * 16384) + 16384, 0, 32767 );
-	y = clamp( (int)(vOther.y * 16384) + 16384, 0, 32767 );
+	x = Clamp( (int)(vOther.x * 16384) + 16384, 0, 32767 );
+	y = Clamp( (int)(vOther.y * 16384) + 16384, 0, 32767 );
 	zneg = (vOther.z < 0);
 	//x = vOther.x; 
 	//y = vOther.y; 
@@ -182,9 +182,9 @@ inline Quaternion64& Quaternion64::operator=(const Quaternion &vOther)
 {
 	CHECK_VALID(vOther);
 
-	x = clamp( (int)(vOther.x * 1048576) + 1048576, 0, 2097151 );
-	y = clamp( (int)(vOther.y * 1048576) + 1048576, 0, 2097151 );
-	z = clamp( (int)(vOther.z * 1048576) + 1048576, 0, 2097151 );
+	x = Clamp( (int)(vOther.x * 1048576) + 1048576, 0, 2097151 );
+	y = Clamp( (int)(vOther.y * 1048576) + 1048576, 0, 2097151 );
+	z = Clamp( (int)(vOther.z * 1048576) + 1048576, 0, 2097151 );
 	wneg = (vOther.w < 0);
 	return *this; 
 }
@@ -229,9 +229,9 @@ inline Quaternion48& Quaternion48::operator=(const Quaternion &vOther)
 {
 	CHECK_VALID(vOther);
 
-	x = clamp( (int)(vOther.x * 32768) + 32768, 0, 65535 );
-	y = clamp( (int)(vOther.y * 32768) + 32768, 0, 65535 );
-	z = clamp( (int)(vOther.z * 16384) + 16384, 0, 32767 );
+	x = Clamp( (int)(vOther.x * 32768) + 32768, 0, 65535 );
+	y = Clamp( (int)(vOther.y * 32768) + 32768, 0, 65535 );
+	z = Clamp( (int)(vOther.z * 16384) + 16384, 0, 32767 );
 	wneg = (vOther.w < 0);
 	return *this; 
 }
@@ -276,9 +276,9 @@ inline Quaternion32& Quaternion32::operator=(const Quaternion &vOther)
 {
 	CHECK_VALID(vOther);
 
-	x = clamp( (int)(vOther.x * 1024) + 1024, 0, 2047 );
-	y = clamp( (int)(vOther.y * 512) + 512, 0, 1023 );
-	z = clamp( (int)(vOther.z * 512) + 512, 0, 1023 );
+	x = Clamp( (int)(vOther.x * 1024) + 1024, 0, 2047 );
+	y = Clamp( (int)(vOther.y * 512) + 512, 0, 1023 );
+	z = Clamp( (int)(vOther.z * 512) + 512, 0, 1023 );
 	wneg = (vOther.w < 0);
 	return *this; 
 }

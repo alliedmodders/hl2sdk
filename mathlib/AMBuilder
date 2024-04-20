@@ -11,6 +11,7 @@ builder.SetBuildFolder('/')
 
 project = builder.StaticLibraryProject('mathlib')
 project.sources = [
+	'almostequal.cpp',
 	'anorms.cpp',
 	'bumpvects.cpp',
 	'color_conversion.cpp',
@@ -25,6 +26,7 @@ project.sources = [
 	'randsse.cpp',
 	'simdvectormatrix.cpp',
 	'sparse_convolution_noise.cpp',
+	'spherical.cpp',
 	'sse.cpp',
 	'sseconst.cpp',
 	'ssenoise.cpp',

@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -30,24 +30,33 @@ const fltx4 Four_FLT_MAX={FLT_MAX,FLT_MAX,FLT_MAX,FLT_MAX};
 const fltx4 Four_Negative_FLT_MAX={-FLT_MAX,-FLT_MAX,-FLT_MAX,-FLT_MAX};
 const fltx4 g_SIMD_0123 = { 0., 1., 2., 3. };
 
-const int32 ALIGN16 g_SIMD_clear_signmask[4]= {(int32)0x7fffffff,(int32)0x7fffffff,(int32)0x7fffffff,(int32)0x7fffffff};
-const int32 ALIGN16 g_SIMD_signmask[4]= { (int32)0x80000000, (int32)0x80000000, (int32)0x80000000, (int32)0x80000000 };
-const int32 ALIGN16 g_SIMD_lsbmask[4]= { (int32)0xfffffffe, (int32)0xfffffffe, (int32)0xfffffffe, (int32)0xfffffffe };
-const int32 ALIGN16 g_SIMD_clear_wmask[4]= { (int32)0xffffffff, (int32)0xffffffff, (int32)0xffffffff, 0 };
-const int32 ALIGN16 g_SIMD_AllOnesMask[4]= { (int32)0xffffffff, (int32)0xffffffff, (int32)0xffffffff, (int32)0xffffffff }; // ~0,~0,~0,~0
-const int32 ALIGN16 g_SIMD_Low16BitsMask[4]= { (int32)0xffff, (int32)0xffff,(int32) 0xffff, (int32)0xffff }; // 0xffff x 4
-
-const int32 ALIGN16 g_SIMD_ComponentMask[4][4] =
+extern const fltx4 g_QuatMultRowSign[4];
+const fltx4 g_QuatMultRowSign[4] =
 {
-	{ (int32)0xFFFFFFFF, 0, 0, 0 }, { 0, (int32)0xFFFFFFFF, 0, 0 }, { 0, 0, (int32)0xFFFFFFFF, 0 }, { 0, 0, 0, (int32)0xFFFFFFFF }
+	{  1.0f,  1.0f, -1.0f, 1.0f },
+	{ -1.0f,  1.0f,  1.0f, 1.0f },
+	{  1.0f, -1.0f,  1.0f, 1.0f },
+	{ -1.0f, -1.0f, -1.0f, 1.0f }
 };
 
-const int32 ALIGN16 g_SIMD_SkipTailMask[4][4] =
+const int32 ALIGN16 g_SIMD_clear_signmask[4] ALIGN16_POST = {static_cast<int32>(0x7fffffff), static_cast<int32>(0x7fffffff), static_cast<int32>(0x7fffffff), static_cast<int32>(0x7fffffff)};
+const int32 ALIGN16 g_SIMD_signmask[4] ALIGN16_POST = { static_cast<int32>(0x80000000), static_cast<int32>(0x80000000), static_cast<int32>(0x80000000), static_cast<int32>(0x80000000) };
+const int32 ALIGN16 g_SIMD_lsbmask[4] ALIGN16_POST = { static_cast<int32>(0xfffffffe), static_cast<int32>(0xfffffffe), static_cast<int32>(0xfffffffe), static_cast<int32>(0xfffffffe) };
+const int32 ALIGN16 g_SIMD_clear_wmask[4] ALIGN16_POST = { static_cast<int32>(0xffffffff), static_cast<int32>(0xffffffff), static_cast<int32>(0xffffffff), 0 };
+const int32 ALIGN16 g_SIMD_AllOnesMask[4] ALIGN16_POST = { static_cast<int32>(0xffffffff), static_cast<int32>(0xffffffff), static_cast<int32>(0xffffffff), static_cast<int32>(0xffffffff) }; // ~0,~0,~0,~0
+const int32 ALIGN16 g_SIMD_Low16BitsMask[4] ALIGN16_POST = { 0xffff, 0xffff, 0xffff, 0xffff }; // 0xffff x 4
+
+const int32 ALIGN16 g_SIMD_ComponentMask[4][4] ALIGN16_POST =
 {
-	{ (int32)0xffffffff, (int32)0xffffffff, (int32)0xffffffff, (int32)0xffffffff },
-	{ (int32)0xffffffff, (int32)0x00000000, (int32)0x00000000, (int32)0x00000000 },
-	{ (int32)0xffffffff, (int32)0xffffffff, (int32)0x00000000, (int32)0x00000000 },
-	{ (int32)0xffffffff, (int32)0xffffffff, (int32)0xffffffff, (int32)0x00000000 },
+	{ static_cast<int32>(0xFFFFFFFF), 0, 0, 0 }, { 0, static_cast<int32>(0xFFFFFFFF), 0, 0 }, { 0, 0, static_cast<int32>(0xFFFFFFFF), 0 }, { 0, 0, 0, static_cast<int32>(0xFFFFFFFF) }
+};
+
+const int32 ALIGN16 g_SIMD_SkipTailMask[4][4] ALIGN16_POST =
+{
+	{ static_cast<int32>(0xffffffff), static_cast<int32>(0xffffffff), static_cast<int32>(0xffffffff), static_cast<int32>(0xffffffff) },
+	{ static_cast<int32>(0xffffffff), static_cast<int32>(0x00000000), static_cast<int32>(0x00000000), static_cast<int32>(0x00000000) },
+	{ static_cast<int32>(0xffffffff), static_cast<int32>(0xffffffff), static_cast<int32>(0x00000000), static_cast<int32>(0x00000000) },
+	{ static_cast<int32>(0xffffffff), static_cast<int32>(0xffffffff), static_cast<int32>(0xffffffff), static_cast<int32>(0x00000000) },
 };
 
 

@@ -28,6 +28,7 @@ enum LightType_OptimizationFlags_t
 	LIGHTTYPE_OPTIMIZATIONFLAGS_HAS_ATTENUATION0 = 1,
 	LIGHTTYPE_OPTIMIZATIONFLAGS_HAS_ATTENUATION1 = 2,
 	LIGHTTYPE_OPTIMIZATIONFLAGS_HAS_ATTENUATION2 = 4,
+	LIGHTTYPE_OPTIMIZATIONFLAGS_DERIVED_VALUES_CALCED = 8,
 };
 
 struct LightDesc_t 
@@ -101,6 +102,11 @@ public:
 	bool IsDirectionWithinLightCone(const Vector &rdir) const
 	{
 		return ((m_Type!=MATERIAL_LIGHT_SPOT) || (rdir.Dot(m_Direction)>=m_PhiDot));
+	}
+
+	float OneOverThetaDotMinusPhiDot() const
+	{
+		return OneOver_ThetaDot_Minus_PhiDot;
 	}
 };
 
