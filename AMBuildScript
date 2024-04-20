@@ -30,16 +30,21 @@ class SDKConfig(object):
     self.targets = []
     self.target_archs = set()
 
-    for arch in ['x86', 'x86_64']:
-        try:
-            cxx = builder.DetectCxx(target_arch = arch)
-            self.target_archs.add(cxx.target.arch)
-        except Exception as e:
-            if builder.options.targets:
-                raise
-            print('Skipping target {}: {}'.format(arch, e))
-            continue
-        self.targets.append(cxx)
+    if builder.options.targets:
+      target_archs = builder.options.targets.split(',')
+    else:
+      target_archs = ['x86', 'x86_64']
+
+    for arch in target_archs:
+      try:
+        cxx = builder.DetectCxx(target_arch = arch)
+        self.target_archs.add(cxx.target.arch)
+      except Exception as e:
+        if builder.options.targets:
+            raise
+        print('Skipping target {}: {}'.format(arch, e))
+        continue
+      self.targets.append(cxx)
 
     if not self.targets:
       raise Exception('No suitable C/C++ compiler was found.')
