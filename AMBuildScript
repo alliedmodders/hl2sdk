@@ -118,7 +118,7 @@ class SDKConfig(object):
     return
   
   def configure_linux(self, cxx):
-    cxx.defines += ['_LINUX', 'POSIX', 'GNUC']
+    cxx.defines += ['_LINUX', 'LINUX', 'POSIX', 'GNUC']
 
     # Set of defines required by the HL2SDK
     cxx.defines += [
