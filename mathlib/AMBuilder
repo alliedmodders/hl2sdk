@@ -11,6 +11,7 @@ builder.SetBuildFolder('/')
 
 project = builder.StaticLibraryProject('mathlib')
 project.sources = [
+	'3dnow.cpp',
 	'almostequal.cpp',
 	'anorms.cpp',
 	'bumpvects.cpp',

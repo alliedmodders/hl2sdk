@@ -72,7 +72,7 @@ public:
 	// Construction/destruction:
 	Vector(void); 
 	Vector(vec_t X, vec_t Y, vec_t Z);
-	Vector(vec_t XYZ); // TODO (Ilya): is this potentially a bad idea?
+	explicit Vector(vec_t XYZ); ///< broadcast initialize
 
 	// Initialization
 	void Init(vec_t ix=0.0f, vec_t iy=0.0f, vec_t iz=0.0f);

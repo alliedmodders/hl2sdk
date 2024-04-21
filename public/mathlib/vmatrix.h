@@ -910,6 +910,7 @@ inline bool MatricesAreEqual( const VMatrix &src1, const VMatrix &src2, float fl
 void MatrixBuildOrtho( VMatrix& dst, double left, double top, double right, double bottom, double zNear, double zFar );
 void MatrixBuildPerspectiveX( VMatrix& dst, double flFovX, double flAspect, double flZNear, double flZFar );
 void MatrixBuildPerspectiveOffCenterX( VMatrix& dst, double flFovX, double flAspect, double flZNear, double flZFar, double bottom, double top, double left, double right );
+void MatrixBuildPerspectiveZRange( VMatrix& dst, double flZNear, double flZFar );
 
 inline void MatrixOrtho( VMatrix& dst, double left, double top, double right, double bottom, double zNear, double zFar )
 {

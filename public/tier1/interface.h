@@ -36,21 +36,16 @@
 #pragma once
 #endif
 
-#if defined _LINUX || defined __APPLE__
+#ifdef _LINUX
 #include <dlfcn.h> // dlopen,dlclose, et al
 #include <unistd.h>
 
-#ifndef HMODULE
-#define HMODULE void *
-#endif
-
-#ifndef GetProcAddress
 #define GetProcAddress dlsym
-#endif
 
-#ifndef _snprintf
-#define _snprintf snprintf
+#ifdef _snprintf
+#undef _snprintf
 #endif
+#define _snprintf snprintf
 #endif
 
 // TODO: move interface.cpp into tier0 library.
@@ -125,17 +120,20 @@ public:
 
 // Use this to expose a singleton interface with a global variable you've created.
 #if !defined(_STATIC_LINKED) || !defined(_SUBSYSTEM)
-#define EXPOSE_SINGLE_INTERFACE_GLOBALVAR(className, interfaceName, versionName, globalVarName) \
-	static void* __Create##className##interfaceName##_interface() {return static_cast<interfaceName *>( &globalVarName );} \
+#define EXPOSE_SINGLE_INTERFACE_GLOBALVAR_WITH_NAMESPACE(className, interfaceNamespace, interfaceName, versionName, globalVarName) \
+	static void* __Create##className##interfaceName##_interface() {return static_cast<interfaceNamespace interfaceName *>( &globalVarName );} \
 	static InterfaceReg __g_Create##className##interfaceName##_reg(__Create##className##interfaceName##_interface, versionName);
 #else
-#define EXPOSE_SINGLE_INTERFACE_GLOBALVAR(className, interfaceName, versionName, globalVarName) \
+#define EXPOSE_SINGLE_INTERFACE_GLOBALVAR_WITH_NAMESPACE(className, interfaceNamespace, interfaceName, versionName, globalVarName) \
 	namespace _SUBSYSTEM \
 	{ \
-		static void* __Create##className##interfaceName##_interface() {return static_cast<interfaceName *>( &globalVarName );} \
+		static void* __Create##className##interfaceName##_interface() {return static_cast<interfaceNamespace interfaceName *>( &globalVarName );} \
 		static InterfaceReg __g_Create##className##interfaceName##_reg(__Create##className##interfaceName##_interface, versionName); \
 	}
 #endif
+
+#define EXPOSE_SINGLE_INTERFACE_GLOBALVAR(className, interfaceName, versionName, globalVarName) \
+	EXPOSE_SINGLE_INTERFACE_GLOBALVAR_WITH_NAMESPACE(className, , interfaceName, versionName, globalVarName)
 
 // Use this to expose a singleton interface. This creates the global variable for you automatically.
 #if !defined(_STATIC_LINKED) || !defined(_SUBSYSTEM)

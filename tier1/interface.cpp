@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -27,12 +27,15 @@
 #include "tier0/threadtools.h"
 #ifdef _WIN32
 #include <direct.h> // getcwd
-#elif defined _LINUX || defined __APPLE__
+#elif POSIX
+#include <dlfcn.h>
+#include <unistd.h>
 #define _getcwd getcwd
 #endif
 #if defined( _X360 )
 #include "xbox/xbox_win32stubs.h"
 #endif
+
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -54,8 +57,15 @@ InterfaceReg::InterfaceReg( InstantiateInterfaceFn fn, const char *pName ) :
 // CreateInterface.
 // This is the primary exported function by a dll, referenced by name via dynamic binding
 // that exposes an opqaue function pointer to the interface.
+//
+// We have the Internal variant so Sys_GetFactoryThis() returns the correct internal 
+// symbol under GCC/Linux/Mac as CreateInterface is DLL_EXPORT so its global so the loaders
+// on those OS's pick exactly 1 of the CreateInterface symbols to be the one that is process wide and 
+// all Sys_GetFactoryThis() calls find that one, which doesn't work. Using the internal walkthrough here
+// makes sure Sys_GetFactoryThis() has the dll specific symbol and GetProcAddress() returns the module specific
+// function for CreateInterface again getting the dll specific symbol we need.
 // ------------------------------------------------------------------------------------ //
-void* CreateInterface( const char *pName, int *pReturnCode )
+void* CreateInterfaceInternal( const char *pName, int *pReturnCode )
 {
 	InterfaceReg *pCur;
 	
@@ -78,8 +88,14 @@ void* CreateInterface( const char *pName, int *pReturnCode )
 	return NULL;	
 }
 
+void* CreateInterface( const char *pName, int *pReturnCode )
+{
+    return CreateInterfaceInternal( pName, pReturnCode );
+}
 
-#if defined _LINUX || defined __APPLE__
+
+
+#ifdef POSIX
 // Linux doesn't have this function so this emulates its functionality
 void *GetModuleHandle(const char *name)
 {
@@ -119,14 +135,24 @@ void *GetModuleHandle(const char *name)
 //-----------------------------------------------------------------------------
 static void *Sys_GetProcAddress( const char *pModuleName, const char *pName )
 {
-	HMODULE hModule = GetModuleHandle( pModuleName );
-	return GetProcAddress( hModule, pName );
+	HMODULE hModule = (HMODULE)GetModuleHandle( pModuleName );
+#ifdef WIN32
+	return (void *)GetProcAddress( hModule, pName );
+#else
+	return (void *)dlsym( (void *)hModule, pName );
+#endif
 }
 
+#if !defined(LINUX)
 static void *Sys_GetProcAddress( HMODULE hModule, const char *pName )
 {
-	return GetProcAddress( hModule, pName );
+#ifdef WIN32
+	return (void *)GetProcAddress( hModule, pName );
+#else
+	return (void *)dlsym( (void *)hModule, pName );
+#endif
 }
+#endif
 
 bool Sys_IsDebuggerPresent()
 {
@@ -247,7 +273,7 @@ CSysModule *Sys_LoadModule( const char *pModuleName, Sys_Flags flags /* = SYS_NO
 	// file in the depot (MFP) or a filesystem GetLocalCopy() call must be made
 	// prior to the call to this routine.
 	char szCwd[1024];
-	HMODULE hDLL = NULL;
+	HMODULE hDLL = 0;
 
 	if ( !Q_IsAbsolutePath( pModuleName ) )
 	{
@@ -383,7 +409,7 @@ void Sys_UnloadModule( CSysModule *pModule )
 
 #ifdef _WIN32
 	FreeLibrary( hDLL );
-#elif defined(_LINUX) || defined(__APPLE__)
+#elif defined(POSIX)
 	dlclose((void *)hDLL);
 #endif
 }
@@ -402,7 +428,7 @@ CreateInterfaceFn Sys_GetFactory( CSysModule *pModule )
 	HMODULE	hDLL = reinterpret_cast<HMODULE>(pModule);
 #ifdef _WIN32
 	return reinterpret_cast<CreateInterfaceFn>(GetProcAddress( hDLL, CREATEINTERFACE_PROCNAME ));
-#elif defined(_LINUX) || defined (__APPLE__)
+#elif defined(POSIX)
 	// Linux gives this error:
 	//../public/interface.cpp: In function `IBaseInterface *(*Sys_GetFactory
 	//(CSysModule *)) (const char *, int *)':
@@ -410,7 +436,7 @@ CreateInterfaceFn Sys_GetFactory( CSysModule *pModule )
 	//pointer-to-function and pointer-to-object
 	//
 	// so lets get around it :)
-	return (CreateInterfaceFn)(GetProcAddress( hDLL, CREATEINTERFACE_PROCNAME ));
+	return (CreateInterfaceFn)(GetProcAddress( (void *)hDLL, CREATEINTERFACE_PROCNAME ));
 #endif
 }
 
@@ -420,7 +446,7 @@ CreateInterfaceFn Sys_GetFactory( CSysModule *pModule )
 //-----------------------------------------------------------------------------
 CreateInterfaceFn Sys_GetFactoryThis( void )
 {
-	return CreateInterface;
+	return &CreateInterfaceInternal;
 }
 
 //-----------------------------------------------------------------------------
@@ -432,7 +458,7 @@ CreateInterfaceFn Sys_GetFactory( const char *pModuleName )
 {
 #ifdef _WIN32
 	return static_cast<CreateInterfaceFn>( Sys_GetProcAddress( pModuleName, CREATEINTERFACE_PROCNAME ) );
-#elif defined(_LINUX) || defined(__APPLE__)
+#elif defined(POSIX)
 	// see Sys_GetFactory( CSysModule *pModule ) for an explanation
 	return (CreateInterfaceFn)( Sys_GetProcAddress( pModuleName, CREATEINTERFACE_PROCNAME ) );
 #endif
@@ -516,3 +542,26 @@ void CDllDemandLoader::Unload()
 		m_hModule = 0;
 	}
 }
+
+#if defined( STAGING_ONLY ) && defined( _WIN32 )
+
+typedef USHORT( WINAPI RtlCaptureStackBackTrace_FUNC )(
+	ULONG frames_to_skip,
+	ULONG frames_to_capture,
+	PVOID *backtrace,
+	PULONG backtrace_hash );
+
+extern "C" int backtrace( void **buffer, int size )
+{
+	HMODULE hNTDll = GetModuleHandleA( "ntdll.dll" );
+	static RtlCaptureStackBackTrace_FUNC * const pfnRtlCaptureStackBackTrace =
+		( RtlCaptureStackBackTrace_FUNC * )GetProcAddress( hNTDll, "RtlCaptureStackBackTrace" );
+
+	if ( !pfnRtlCaptureStackBackTrace )
+		return 0;
+
+	return (int)pfnRtlCaptureStackBackTrace( 2, size, buffer, 0 );
+}
+
+#endif // STAGING_ONLY && _WIN32
+
