@@ -936,12 +936,9 @@ inline uint64 Plat_Rdtsc()
 
 
 // Processor Information:
-struct CPUInformation // Size: Win32=64, Win64=72
+struct CPUInformation
 {
 	int	 m_Size;		// Size of this structure, for forward compatability.
-
-	uint8 m_nLogicalProcessors;		// Number op logical processors.
-	uint8 m_nPhysicalProcessors;	// Number of physical processors
 
 	bool m_bRDTSC : 1,	// Is RDTSC supported?
 		 m_bCMOV  : 1,  // Is CMOV supported?
@@ -952,31 +949,24 @@ struct CPUInformation // Size: Win32=64, Win64=72
 		 m_bMMX   : 1,	// Is MMX supported?
 		 m_bHT	  : 1;	// Is HyperThreading supported?
 
-
+	uint8 m_nLogicalProcessors;		// Number op logical processors.
+	uint8 m_nPhysicalProcessors;	// Number of physical processors
+	
 	bool m_bSSE3 : 1,
 		 m_bSSSE3 : 1,
 		 m_bSSE4a : 1,
 		 m_bSSE41 : 1,
-		 m_bSSE42 : 1,
-		 m_bAVX   : 1;
+		 m_bSSE42 : 1;	
 
 	int64 m_Speed;						// In cycles per second.
 
 	tchar* m_szProcessorID;				// Processor vendor Identification.
-	tchar* m_szProcessorBrand;
 
 	uint32 m_nModel;
-	uint32 m_nFeatures[ 3 ];
-	uint32 m_nL1CacheSizeKb;
-	uint32 m_nL1CacheDesc;
-	uint32 m_nL2CacheSizeKb;
-	uint32 m_nL2CacheDesc;
-	uint32 m_nL3CacheSizeKb;
-	uint32 m_nL3CacheDesc;
+	uint32 m_nFeatures[3];
 
 	CPUInformation(): m_Size(0){}
 };
-
 
 // Have to return a pointer, not a reference, because references are not compatible with the
 // extern "C" implied by PLATFORM_INTERFACE.
