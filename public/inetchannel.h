@@ -58,6 +58,7 @@ enum NetChannelBufType_t : int8
 abstract_class INetworkMessageProcessingPreFilter
 {
 public:
+	// Filter incoming messages from the netchan, return true to filter out (block) the further processing of the message
 	virtual bool FilterMessage( INetworkSerializable *pNetMessage, const void *pData, INetChannel *pChannel ) = 0;
 };
 
