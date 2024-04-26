@@ -47,17 +47,21 @@ public:
 	void Purge();
 
 protected:
-	I m_nSize;
-	I m_nAllocationCount;
-	T* m_pMemory;
+
+	struct
+	{
+		I m_nCount;
+		I m_nAllocated;
+		T* m_pElements;
+	};
 };
 
 //-----------------------------------------------------------------------------
 // constructor, destructor
 //-----------------------------------------------------------------------------
 template< class T, class I >
-inline CUtlLeanVectorBase<T, I>::CUtlLeanVectorBase() : m_nSize(0),
-	m_nAllocationCount(0), m_pMemory(0)
+inline CUtlLeanVectorBase<T, I>::CUtlLeanVectorBase() : m_nCount(0),
+	m_nAllocated(0), m_pElements(NULL)
 {
 }
 
@@ -73,13 +77,13 @@ inline CUtlLeanVectorBase<T, I>::~CUtlLeanVectorBase()
 template< class T, class I >
 inline T* CUtlLeanVectorBase<T, I>::Base()
 {
-	return m_nAllocationCount ? m_pMemory : NULL;
+	return m_nAllocated ? m_pElements : NULL;
 }
 
 template< class T, class I >
 inline const T* CUtlLeanVectorBase<T, I>::Base() const
 {
-	return m_nAllocationCount ? m_pMemory : NULL;
+	return m_nAllocated ? m_pElements : NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -88,45 +92,45 @@ inline const T* CUtlLeanVectorBase<T, I>::Base() const
 template< class T, class I >
 void CUtlLeanVectorBase<T, I>::EnsureCapacity( int num, bool force )
 {
-	I nMinAllocationCount = ( 31 + sizeof( T ) ) / sizeof( T );
-	I nMaxAllocationCount = (std::numeric_limits<I>::max)();
-	I nNewAllocationCount = m_nAllocationCount;
+	I nMinAllocated = ( 31 + sizeof( T ) ) / sizeof( T );
+	I nMaxAllocated = (std::numeric_limits<I>::max)();
+	I nNewAllocated = m_nAllocated;
 	
 	if ( force )
 	{
-		if ( num == m_nAllocationCount )
+		if ( num == m_nAllocated )
 			return;
 	}
 	else
 	{
-		if ( num <= m_nAllocationCount )
+		if ( num <= m_nAllocated )
 			return;
 	}
 	
-	if ( num > nMaxAllocationCount )
+	if ( num > nMaxAllocated )
 	{
-		Msg( "%s allocation count overflow( %llu > %llu )\n", __FUNCTION__, ( uint64 )num, ( uint64 )nMaxAllocationCount );
+		Msg( "%s allocation count overflow( %llu > %llu )\n", __FUNCTION__, ( uint64 )num, ( uint64 )nMaxAllocated );
 		Plat_FatalErrorFunc( "%s allocation count overflow", __FUNCTION__ );
 		DebuggerBreak();
 	}
 	
 	if ( force )
 	{
-		nNewAllocationCount = num;
+		nNewAllocated = num;
 	}
 	else
 	{
-		while ( nNewAllocationCount < num )
+		while ( nNewAllocated < num )
 		{
-			if ( nNewAllocationCount < nMaxAllocationCount/2 )
-				nNewAllocationCount = MAX( nNewAllocationCount*2, nMinAllocationCount );
+			if ( nNewAllocated < nMaxAllocated/2 )
+				nNewAllocated = MAX( nNewAllocated*2, nMinAllocated );
 			else
-				nNewAllocationCount = nMaxAllocationCount;
+				nNewAllocated = nMaxAllocated;
 		}
 	}
 	
-	m_pMemory = (T*)realloc( m_pMemory, nNewAllocationCount * sizeof(T) );
-	m_nAllocationCount = nNewAllocationCount;
+	m_pElements = (T*)realloc( m_pElements, nNewAllocated * sizeof(T) );
+	m_nAllocated = nNewAllocated;
 }
 
 //-----------------------------------------------------------------------------
@@ -136,11 +140,11 @@ template< class T, class I >
 void CUtlLeanVectorBase<T, I>::RemoveAll()
 {
 	T* pElement = Base();
-	const T* pEnd = &pElement[ m_nSize ];
+	const T* pEnd = &pElement[ m_nCount ];
 	while ( pElement != pEnd )
 		Destruct( pElement++ );
 
-	m_nSize = 0;
+	m_nCount = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -151,13 +155,13 @@ inline void CUtlLeanVectorBase<T, I>::Purge()
 {
 	RemoveAll();
 	
-	if ( m_nAllocationCount > 0 )
+	if ( m_nAllocated > 0 )
 	{
-		free( (void*)m_pMemory );
-		m_pMemory = 0;
+		free( (void*)m_pElements );
+		m_pElements = NULL;
 	}
 	
-	m_nAllocationCount = 0;
+	m_nAllocated = 0;
 }
 
 template< class T, size_t N, class I >
@@ -182,13 +186,28 @@ public:
 	void Purge();
 
 protected:
-	I m_nSize;
-	I m_nAllocationCount;
-	
+
 	union
 	{
-		T* m_pMemory;
-		T m_Memory[ N ];
+		struct
+		{
+			I m_nCount;
+			I m_nAllocated;
+		};
+		
+		struct
+		{
+			I m_nFixedCount;
+			I m_nFixedAllocated;
+			T m_FixedAlloc[ N ];
+		};
+		
+		struct
+		{
+			I m_nAllocCount;
+			I m_nAllocAllocated;
+			T* m_pElements;
+		};
 	};
 };
 
@@ -196,8 +215,8 @@ protected:
 // constructor, destructor
 //-----------------------------------------------------------------------------
 template< class T, size_t N, class I >
-inline CUtlLeanVectorFixedGrowableBase<T, N, I>::CUtlLeanVectorFixedGrowableBase() : m_nSize(0),
-	m_nAllocationCount(N)
+inline CUtlLeanVectorFixedGrowableBase<T, N, I>::CUtlLeanVectorFixedGrowableBase() : m_nCount(0),
+	m_nAllocated(N)
 {
 }
 
@@ -213,12 +232,12 @@ inline CUtlLeanVectorFixedGrowableBase<T, N, I>::~CUtlLeanVectorFixedGrowableBas
 template< class T, size_t N, class I >
 inline T* CUtlLeanVectorFixedGrowableBase<T, N, I>::Base()
 {
-	if ( m_nAllocationCount )
+	if ( m_nAllocated )
 	{
-		if ( ( size_t )m_nAllocationCount > N )
-			return m_pMemory;
+		if ( ( size_t )m_nAllocated > N )
+			return m_pElements;
 		else
-			return &m_Memory[ 0 ];
+			return &m_FixedAlloc[ 0 ];
 	}
 	
 	return NULL;
@@ -227,12 +246,12 @@ inline T* CUtlLeanVectorFixedGrowableBase<T, N, I>::Base()
 template< class T, size_t N, class I >
 inline const T* CUtlLeanVectorFixedGrowableBase<T, N, I>::Base() const
 {
-	if ( m_nAllocationCount )
+	if ( m_nAllocated )
 	{
-		if ( ( size_t )m_nAllocationCount > N )
-			return m_pMemory;
+		if ( ( size_t )m_nAllocated > N )
+			return m_pElements;
 		else
-			return &m_Memory[ 0 ];
+			return &m_FixedAlloc[ 0 ];
 	}
 	
 	return NULL;
@@ -244,54 +263,54 @@ inline const T* CUtlLeanVectorFixedGrowableBase<T, N, I>::Base() const
 template< class T, size_t N, class I >
 void CUtlLeanVectorFixedGrowableBase<T, N, I>::EnsureCapacity( int num, bool force )
 {
-	I nMinAllocationCount = ( 31 + sizeof( T ) ) / sizeof( T );
-	I nMaxAllocationCount = (std::numeric_limits<I>::max)();
-	I nNewAllocationCount = m_nAllocationCount;
+	I nMinAllocated = ( 31 + sizeof( T ) ) / sizeof( T );
+	I nMaxAllocated = (std::numeric_limits<I>::max)();
+	I nNewAllocated = m_nAllocated;
 	
-	if ( num <= m_nAllocationCount )
+	if ( num <= m_nAllocated )
 		return;
 	
 	if ( ( size_t )num > N )
 	{
-		if ( num > nMaxAllocationCount )
+		if ( num > nMaxAllocated )
 		{
-			Msg( "%s allocation count overflow( %llu > %llu )\n", __FUNCTION__, ( uint64 )num, ( uint64 )nMaxAllocationCount );
+			Msg( "%s allocation count overflow( %llu > %llu )\n", __FUNCTION__, ( uint64 )num, ( uint64 )nMaxAllocated );
 			Plat_FatalErrorFunc( "%s allocation count overflow", __FUNCTION__ );
 			DebuggerBreak();
 		}
 		
 		if ( force )
 		{
-			nNewAllocationCount = num;
+			nNewAllocated = num;
 		}
 		else
 		{
-			while ( nNewAllocationCount < num )
+			while ( nNewAllocated < num )
 			{
-				if ( nNewAllocationCount < nMaxAllocationCount/2 )
-					nNewAllocationCount = MAX( nNewAllocationCount*2, nMinAllocationCount );
+				if ( nNewAllocated < nMaxAllocated/2 )
+					nNewAllocated = MAX( nNewAllocated*2, nMinAllocated );
 				else
-					nNewAllocationCount = nMaxAllocationCount;
+					nNewAllocated = nMaxAllocated;
 			}
 		}
 	}
 	else
 	{
-		nNewAllocationCount = num;
+		nNewAllocated = num;
 	}
 	
-	if ( ( size_t )m_nAllocationCount > N )
+	if ( ( size_t )m_nAllocated > N )
 	{
-		m_pMemory = (T*)realloc( m_pMemory, nNewAllocationCount * sizeof(T) );
+		m_pElements = (T*)realloc( m_pElements, nNewAllocated * sizeof(T) );
 	}
-	else if ( ( size_t )nNewAllocationCount > N )
+	else if ( ( size_t )nNewAllocated > N )
 	{
-		T* pNew = (T*)malloc( nNewAllocationCount * sizeof(T) );
-		memcpy( pNew, Base(), m_nSize * sizeof(T) );
-		m_pMemory = pNew;
+		T* pNew = (T*)malloc( nNewAllocated * sizeof(T) );
+		memcpy( pNew, Base(), m_nCount * sizeof(T) );
+		m_pElements = pNew;
 	}
 	
-	m_nAllocationCount = nNewAllocationCount;
+	m_nAllocated = nNewAllocated;
 }
 
 //-----------------------------------------------------------------------------
@@ -301,11 +320,11 @@ template< class T, size_t N, class I >
 void CUtlLeanVectorFixedGrowableBase<T, N, I>::RemoveAll()
 {
 	T* pElement = Base();
-	const T* pEnd = &pElement[ m_nSize ];
+	const T* pEnd = &pElement[ m_nCount ];
 	while ( pElement != pEnd )
 		Destruct( pElement++ );
 
-	m_nSize = 0;
+	m_nCount = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -316,10 +335,10 @@ inline void CUtlLeanVectorFixedGrowableBase<T, N, I>::Purge()
 {
 	RemoveAll();
 	
-	if ( ( size_t )m_nAllocationCount > N )
-		free( (void*)m_pMemory );
+	if ( ( size_t )m_nAllocated > N )
+		free( (void*)m_pElements );
 	
-	m_nAllocationCount = N;
+	m_nAllocated = N;
 }
 
 template< class B, class T, class I >
@@ -342,7 +361,7 @@ public:
 		bool operator==( const Iterator_t it ) const	{ return elem == it.elem && end == it.end; }
 		bool operator!=( const Iterator_t it ) const	{ return elem != it.elem || end != it.end; }
 	};
-	Iterator_t First() const							{ const T* base = this->Base(); return Iterator_t( base, &base[ this->m_nSize ] ); }
+	Iterator_t First() const							{ const T* base = this->Base(); return Iterator_t( base, &base[ this->m_nCount ] ); }
 	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( it.elem + 1, it.end ); }
 	bool IsValidIterator( const Iterator_t &it ) const	{ return it.elem != it.end; }
 	T& operator[]( const Iterator_t &it )				{ return *const_cast<T*>(it.elem); }
@@ -424,57 +443,57 @@ inline CUtlLeanVectorImpl<B, T, I>& CUtlLeanVectorImpl<B, T, I>::operator=( cons
 template< class B, class T, class I >
 inline T& CUtlLeanVectorImpl<B, T, I>::operator[]( int i )
 {
-	Assert( i < this->m_nSize );
+	Assert( i < this->m_nCount );
 	return this->Base()[ i ];
 }
 
 template< class B, class T, class I >
 inline const T& CUtlLeanVectorImpl<B, T, I>::operator[]( int i ) const
 {
-	Assert( i < this->m_nSize );
+	Assert( i < this->m_nCount );
 	return this->Base()[ i ];
 }
 
 template< class B, class T, class I >
 inline T& CUtlLeanVectorImpl<B, T, I>::Element( int i )
 {
-	Assert( i < this->m_nSize );
+	Assert( i < this->m_nCount );
 	return this->Base()[ i ];
 }
 
 template< class B, class T, class I >
 inline const T& CUtlLeanVectorImpl<B, T, I>::Element( int i ) const
 {
-	Assert( i < this->m_nSize );
+	Assert( i < this->m_nCount );
 	return this->Base()[ i ];
 }
 
 template< class B, class T, class I >
 inline T& CUtlLeanVectorImpl<B, T, I>::Head()
 {
-	Assert( this->m_nSize > 0 );
+	Assert( this->m_nCount > 0 );
 	return this->Base()[ 0 ];
 }
 
 template< class B, class T, class I >
 inline const T& CUtlLeanVectorImpl<B, T, I>::Head() const
 {
-	Assert( this->m_nSize > 0 );
+	Assert( this->m_nCount > 0 );
 	return this->Base()[ 0 ];
 }
 
 template< class B, class T, class I >
 inline T& CUtlLeanVectorImpl<B, T, I>::Tail()
 {
-	Assert( this->m_nSize > 0 );
-	return this->Base()[ this->m_nSize - 1 ];
+	Assert( this->m_nCount > 0 );
+	return this->Base()[ this->m_nCount - 1 ];
 }
 
 template< class B, class T, class I >
 inline const T& CUtlLeanVectorImpl<B, T, I>::Tail() const
 {
-	Assert( this->m_nSize > 0 );
-	return this->Base()[ this->m_nSize - 1 ];
+	Assert( this->m_nCount > 0 );
+	return this->Base()[ this->m_nCount - 1 ];
 }
 
 //-----------------------------------------------------------------------------
@@ -483,7 +502,7 @@ inline const T& CUtlLeanVectorImpl<B, T, I>::Tail() const
 template< class B, class T, class I >
 inline int CUtlLeanVectorImpl<B, T, I>::Count() const
 {
-	return this->m_nSize;
+	return this->m_nCount;
 }
 
 //-----------------------------------------------------------------------------
@@ -492,7 +511,7 @@ inline int CUtlLeanVectorImpl<B, T, I>::Count() const
 template< class B, class T, class I >
 inline bool CUtlLeanVectorImpl<B, T, I>::IsValidIndex( int i ) const
 {
-	return (i >= 0) && (i < this->m_nSize);
+	return (i >= 0) && (i < this->m_nCount);
 }
 
 //-----------------------------------------------------------------------------
@@ -510,10 +529,10 @@ inline int CUtlLeanVectorImpl<B, T, I>::InvalidIndex()
 template< class B, class T, class I >
 T* CUtlLeanVectorImpl<B, T, I>::AddToTailGetPtr()
 {
-	this->EnsureCapacity( this->m_nSize + 1 );
+	this->EnsureCapacity( this->m_nCount + 1 );
 	T* pBase = this->Base();
-	Construct( &pBase[ this->m_nSize ] );
-	return &pBase[ this->m_nSize++ ];
+	Construct( &pBase[ this->m_nCount ] );
+	return &pBase[ this->m_nCount++ ];
 }
 
 //-----------------------------------------------------------------------------
@@ -522,10 +541,10 @@ T* CUtlLeanVectorImpl<B, T, I>::AddToTailGetPtr()
 template< class B, class T, class I >
 int CUtlLeanVectorImpl<B, T, I>::AddToTail( const T& src )
 {
-	this->EnsureCapacity( this->m_nSize + 1 );
+	this->EnsureCapacity( this->m_nCount + 1 );
 	T* pBase = this->Base();
-	CopyConstruct( &pBase[ this->m_nSize ], src );
-	return this->m_nSize++;
+	CopyConstruct( &pBase[ this->m_nCount ], src );
+	return this->m_nCount++;
 }
 
 //-----------------------------------------------------------------------------
@@ -534,7 +553,7 @@ int CUtlLeanVectorImpl<B, T, I>::AddToTail( const T& src )
 template< class B, class T, class I >
 int CUtlLeanVectorImpl<B, T, I>::AddMultipleToTail( int nSize )
 {
-	int nOldSize = this->m_nSize;
+	int nOldSize = this->m_nCount;
 
 	if ( nSize > 0 )
 	{
@@ -555,7 +574,7 @@ int CUtlLeanVectorImpl<B, T, I>::AddMultipleToTail( int nSize )
 
 		ConstructElements( &pBase[ nOldSize ], &pBase[ nNewSize ] );
 
-		this->m_nSize = nNewSize;
+		this->m_nCount = nNewSize;
 	}
 
 	return nOldSize;
@@ -567,7 +586,7 @@ int CUtlLeanVectorImpl<B, T, I>::AddMultipleToTail( int nSize )
 template< class B, class T, class I >
 T* CUtlLeanVectorImpl<B, T, I>::InsertBeforeGetPtr( int nBeforeIndex, int nSize )
 {
-	int nOldSize = this->m_nSize;
+	int nOldSize = this->m_nCount;
 
 	if ( nBeforeIndex < 0 || nBeforeIndex > nOldSize )
 	{
@@ -599,7 +618,7 @@ T* CUtlLeanVectorImpl<B, T, I>::InsertBeforeGetPtr( int nBeforeIndex, int nSize 
 	ShiftElements( &pBase[ nBeforeIndex + nSize ], &pBase[ nBeforeIndex ], &pBase[ nOldSize ] );
 	ConstructElements( &pBase[ nBeforeIndex ], &pBase[ nBeforeIndex + nSize ] );
 
-	this->m_nSize = nNewSize;
+	this->m_nCount = nNewSize;
 
 	return &pBase[ nBeforeIndex ];
 }
@@ -611,12 +630,12 @@ void CUtlLeanVectorImpl<B, T, I>::SetCount( int count )
 
 	T* pBase = this->Base();
 
-	if ( this->m_nSize < count )
-		ConstructElements( &pBase[ this->m_nSize ], &pBase[ count ] );
-	else if ( this->m_nSize > count )
-		DestructElements( &pBase[ count ], &pBase[ this->m_nSize ] );
+	if ( this->m_nCount < count )
+		ConstructElements( &pBase[ this->m_nCount ], &pBase[ count ] );
+	else if ( this->m_nCount > count )
+		DestructElements( &pBase[ count ], &pBase[ this->m_nCount ] );
 
-	this->m_nSize = count;
+	this->m_nCount = count;
 }
 
 template< class B, class T, class I >
@@ -650,11 +669,11 @@ void CUtlLeanVectorImpl<B, T, I>::FastRemove( int elem )
 
 	T* pBase = this->Base();
 	Destruct( &pBase[ elem ] );
-	if ( this->m_nSize > 0 )
+	if ( this->m_nCount > 0 )
 	{
-		if ( elem != this->m_nSize - 1 )
-			memcpy( &pBase[ elem ], &pBase[ this->m_nSize - 1 ], sizeof( T ) );
-		--this->m_nSize;
+		if ( elem != this->m_nCount - 1 )
+			memcpy( &pBase[ elem ], &pBase[ this->m_nCount - 1 ], sizeof( T ) );
+		--this->m_nCount;
 	}
 }
 
@@ -663,8 +682,8 @@ void CUtlLeanVectorImpl<B, T, I>::Remove( int elem )
 {
 	T* pBase = this->Base();
 	Destruct( &pBase[ elem ] );
-	ShiftElements( &pBase[ elem ], &pBase[ elem + 1 ], &pBase[ this->m_nSize ] );
-	--this->m_nSize;
+	ShiftElements( &pBase[ elem ], &pBase[ elem + 1 ], &pBase[ this->m_nCount ] );
+	--this->m_nCount;
 }
 
 template< class B, class T, class I >
@@ -699,8 +718,8 @@ void CUtlLeanVectorImpl<B, T, I>::RemoveMultiple( int elem, int num )
 
 	T* pBase = this->Base();
 	DestructElements( &pBase[ elem ], &pBase[ elem + num ] );
-	ShiftElements( &pBase[ elem ], &pBase[ elem + num ], &pBase[ this->m_nSize ] );
-	this->m_nSize -= num;
+	ShiftElements( &pBase[ elem ], &pBase[ elem + num ], &pBase[ this->m_nCount ] );
+	this->m_nCount -= num;
 }
 
 //-----------------------------------------------------------------------------

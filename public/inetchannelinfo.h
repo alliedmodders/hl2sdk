@@ -22,7 +22,14 @@
 #define MAX_FLOWS		2		// in & out
 
 struct SNetChannelLatencyStats;
-struct NetChanStat_t;
+
+struct NetChanStat_t
+{
+	float m_flAvg;
+	float m_flMin;
+	float m_flMax;
+	float m_flStdDev;
+};
 
 class INetChannelInfo
 {

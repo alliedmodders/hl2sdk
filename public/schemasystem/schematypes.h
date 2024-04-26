@@ -38,7 +38,7 @@ enum SchemaClassFlags1_t
 	SCHEMA_CF1_INFO_TAG_MClassHasEntityLimitedDataDesc = (1 << 14),
 	SCHEMA_CF1_INFO_TAG_MClassHasCustomAlignedNewDelete = (1 << 15),
 	SCHEMA_CF1_UNK016 = (1 << 16),
-	SCHEMA_CF1_UNK017 = (1 << 17),
+	SCHEMA_CF1_INFO_TAG_MConstructibleClassBase = (1 << 17),
 	SCHEMA_CF1_INFO_TAG_MHasKV3TransferPolymorphicClassname = (1 << 18),
 };
 
