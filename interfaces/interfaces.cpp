@@ -34,6 +34,7 @@ ISteamAudio *g_pSteamAudio;
 IP4 *g_pP4;
 ILocalize *g_pLocalize;
 IMediaFoundation *g_pMediaFoundation;
+IGameTypes *g_pGameTypes;
 IAvi *g_pAVI;
 IBik *g_pBIK;
 IMeshSystem *g_pMeshSystem;

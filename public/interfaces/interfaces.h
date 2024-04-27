@@ -243,6 +243,7 @@ class IGameResourceService;
 class IVEngineClient2;
 class IVEngineServer2;
 class INetworkStringTableContainer;
+class IGameTypes;
 
 class IPanoramaUIEngine;
 class IPanoramaUIClient;
@@ -330,6 +331,9 @@ DECLARE_TIER2_INTERFACE( ILocalize, g_pLocalize );
 
 #define MEDIA_FOUNDATION_INTERFACE_VERSION			"VMediaFoundation001"
 DECLARE_TIER2_INTERFACE( IMediaFoundation, g_pMediaFoundation );
+
+#define GAMETYPES_INTERFACE_VERSION			"GameTypes001"
+DECLARE_TIER2_INTERFACE(IGameTypes, g_pGameTypes);
 
 #define AVI_INTERFACE_VERSION					"VAvi001"
 DECLARE_TIER3_INTERFACE( IAvi, g_pAVI );
