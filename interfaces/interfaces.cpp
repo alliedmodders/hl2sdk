@@ -34,6 +34,7 @@ ISteamAudio *g_pSteamAudio;
 IP4 *g_pP4;
 ILocalize *g_pLocalize;
 IMediaFoundation *g_pMediaFoundation;
+IGameTypes *g_pGameTypes;
 IAvi *g_pAVI;
 IBik *g_pBIK;
 IMeshSystem *g_pMeshSystem;
@@ -161,6 +162,7 @@ static const InterfaceGlobals_t g_pInterfaceGlobals[] =
 	{ P4_INTERFACE_VERSION, &g_pP4 },
 	{ LOCALIZE_INTERFACE_VERSION, &g_pLocalize },
 	{ MEDIA_FOUNDATION_INTERFACE_VERSION, &g_pMediaFoundation },
+	{ GAMETYPES_INTERFACE_VERSION, &g_pGameTypes },
 	{ AVI_INTERFACE_VERSION, &g_pAVI },
 	{ BIK_INTERFACE_VERSION, &g_pBIK },
 	{ MESHSYSTEM_INTERFACE_VERSION, &g_pMeshSystem },
