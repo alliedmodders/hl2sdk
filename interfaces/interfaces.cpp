@@ -162,7 +162,6 @@ static const InterfaceGlobals_t g_pInterfaceGlobals[] =
 	{ P4_INTERFACE_VERSION, &g_pP4 },
 	{ LOCALIZE_INTERFACE_VERSION, &g_pLocalize },
 	{ MEDIA_FOUNDATION_INTERFACE_VERSION, &g_pMediaFoundation },
-	{ GAMETYPES_INTERFACE_VERSION, &g_pGameTypes },
 	{ AVI_INTERFACE_VERSION, &g_pAVI },
 	{ BIK_INTERFACE_VERSION, &g_pBIK },
 	{ MESHSYSTEM_INTERFACE_VERSION, &g_pMeshSystem },
