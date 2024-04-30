@@ -166,6 +166,9 @@ public:
 	virtual void		unk005() = 0;
 	virtual void		unk006() = 0;
 
+	virtual void		SetFrameTimeAmnesty( const char *amnesty, int, float frametime ) = 0;
+	virtual const char *GetFrameTimeAmnesty( bool check_cvar ) = 0;
+	virtual void		ShowFrameTimeReport( void *, bool ) = 0;
 
 	// Tell engine to change level ( "changelevel s1\n" or "changelevel2 s1 s2\n" )
 	virtual void		ChangeLevel( const char *s1, const char *s2 ) = 0;
