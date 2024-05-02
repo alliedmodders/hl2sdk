@@ -74,10 +74,8 @@
 
 #define VPROF_ONLY( expression )	expression
 
-// You only need to use VPROF_ENTER_SCOPE right before the desired code, it will exit the scope when the profiled function returns
-// Unless you want to manually exit the scope earlier, in which case you can use VPROF_EXIT_SCOPE
-#define VPROF_ENTER_SCOPE(name)				VProfScopeHelper vprofHelper(name)
-#define VPROF_EXIT_SCOPE()					vprofHelper.ExitScope()
+#define VPROF_ENTER_SCOPE( name )			g_VProfCurrentProfile.EnterScope( name, 1, VPROF_BUDGETGROUP_OTHER_UNACCOUNTED, false, 0 )
+#define VPROF_EXIT_SCOPE()					g_VProfCurrentProfile.ExitScope()
 
 #define VPROF_BUDGET_GROUP_ID_UNACCOUNTED 0
 
