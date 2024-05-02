@@ -14,10 +14,8 @@
 #include "tier0/threadtools.h"
 
 // VProf is enabled by default in all configurations -except- X360 Retail.
-#ifndef _LINUX
 #if !( defined( _X360 ) && defined( _CERT ) )
 #define VPROF_ENABLED
-#endif
 #endif
 
 #if defined(_X360) && defined(VPROF_ENABLED)
@@ -76,8 +74,10 @@
 
 #define VPROF_ONLY( expression )	expression
 
-#define VPROF_ENTER_SCOPE( name )			g_VProfCurrentProfile.EnterScope( name, 1, VPROF_BUDGETGROUP_OTHER_UNACCOUNTED, false, 0 )
-#define VPROF_EXIT_SCOPE()					g_VProfCurrentProfile.ExitScope()
+// You only need to use VPROF_ENTER_SCOPE right before the desired code, it will exit the scope when the profiled function returns
+// Unless you want to manually exit the scope earlier, in which case you can use VPROF_EXIT_SCOPE
+#define VPROF_ENTER_SCOPE(name)				VProfScopeHelper vprofHelper(name)
+#define VPROF_EXIT_SCOPE()					vprofHelper.ExitScope()
 
 #define VPROF_BUDGET_GROUP_ID_UNACCOUNTED 0
 
@@ -147,28 +147,28 @@
 #define VPROF_LEVEL 0
 #endif
 
-#define	VPROF_0(name,group,assertAccounted,budgetFlags)	CVProfScope VProf_(name, 0, group, assertAccounted, budgetFlags);
+#define	VPROF_0(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<0, assertAccounted> vprofHelper(name, group, budgetFlags);
 
 #if VPROF_LEVEL > 0 
-#define	VPROF_1(name,group,assertAccounted,budgetFlags)	CVProfScope VProf_(name, 1, group, assertAccounted, budgetFlags);
+#define	VPROF_1(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<1, assertAccounted> vprofHelper(name, group, budgetFlags);
 #else
 #define	VPROF_1(name,group,assertAccounted,budgetFlags)	((void)0)
 #endif
 
 #if VPROF_LEVEL > 1 
-#define	VPROF_2(name,group,assertAccounted,budgetFlags)	CVProfScope VProf_(name, 2, group, assertAccounted, budgetFlags);
+#define	VPROF_2(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<2, assertAccounted> vprofHelper(name, group, budgetFlags);
 #else
 #define	VPROF_2(name,group,assertAccounted,budgetFlags)	((void)0)
 #endif
 
 #if VPROF_LEVEL > 2 
-#define	VPROF_3(name,group,assertAccounted,budgetFlags)	CVProfScope VProf_(name, 3, group, assertAccounted, budgetFlags);
+#define	VPROF_3(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<3, assertAccounted> vprofHelper(name, group, budgetFlags);
 #else
 #define	VPROF_3(name,group,assertAccounted,budgetFlags)	((void)0)
 #endif
 
 #if VPROF_LEVEL > 3 
-#define	VPROF_4(name,group,assertAccounted,budgetFlags)	CVProfScope VProf_(name, 4, group, assertAccounted, budgetFlags);
+#define	VPROF_4(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<4, assertAccounted> vprofHelper(name, group, budgetFlags);
 #else
 #define	VPROF_4(name,group,assertAccounted,budgetFlags)	((void)0)
 #endif
@@ -735,11 +735,53 @@ inline void CVProfile::PopGroup( void )
 
 //-----------------------------------------------------------------------------
 
-class CVProfScope
+using VProfScope = void(__cdecl *)();
+
+struct VProfBudgetGroupCallSite
+{
+	const char *m_pGroupName;
+	int m_nFlags;
+	int m_nGroupId;
+};
+
+template <int T = 0, bool U = false>
+class VProfScopeHelper
 {
 public:
-	CVProfScope( const tchar * pszName, int detailLevel, const tchar *pBudgetGroupName, bool bAssertAccounted, int budgetFlags );
-	~CVProfScope();
+	VProfScopeHelper(char const *pszName)
+	{
+		m_scope = EnterScopeInternal(pszName);
+	}
+
+	VProfScopeHelper(char const *pszName, char const *pszGroupName, int nFlags)
+	{
+		m_budgetGroup.m_pGroupName = pszGroupName;
+		m_budgetGroup.m_nFlags = nFlags;
+		m_budgetGroup.m_nGroupId = 0;
+
+		m_scope = EnterScopeInternalBudgetFlags(pszName, m_budgetGroup);
+	}
+
+	~VProfScopeHelper()
+	{
+		ExitScope();
+	}
+
+	void ExitScope()
+	{
+		if (!m_scope)
+			return;
+
+		m_scope();
+		m_scope = nullptr;
+	}
+
+	static DLL_CLASS_IMPORT VProfScope EnterScopeInternal(char const *pszName);
+	static DLL_CLASS_IMPORT VProfScope EnterScopeInternalBudgetFlags(char const *pszName, VProfBudgetGroupCallSite &budgetGroup);
+
+private:
+	VProfScope m_scope = nullptr;
+	VProfBudgetGroupCallSite m_budgetGroup;
 };
 
 //-----------------------------------------------------------------------------
@@ -1247,17 +1289,6 @@ inline unsigned int CVProfile::GetMultiTraceIndex()
 
 //-----------------------------------------------------------------------------
 
-inline CVProfScope::CVProfScope( const tchar * pszName, int detailLevel, const tchar *pBudgetGroupName, bool bAssertAccounted, int budgetFlags )
-{ 
-	g_VProfCurrentProfile.EnterScope( pszName, detailLevel, pBudgetGroupName, bAssertAccounted, budgetFlags ); 
-}
-
-//-------------------------------------
-
-inline CVProfScope::~CVProfScope()					
-{ 
-	g_VProfCurrentProfile.ExitScope(); 
-}
 
 class CVProfCounter
 {
