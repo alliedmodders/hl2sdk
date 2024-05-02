@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Real-Time Hierarchical Profiling
 //
@@ -145,28 +145,28 @@
 #define VPROF_LEVEL 0
 #endif
 
-#define	VPROF_0(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<0, assertAccounted> vprofHelper(name, group, budgetFlags);
+#define	VPROF_0(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<0, assertAccounted> vprofHelper_(name, group, budgetFlags);
 
 #if VPROF_LEVEL > 0 
-#define	VPROF_1(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<1, assertAccounted> vprofHelper(name, group, budgetFlags);
+#define	VPROF_1(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<1, assertAccounted> vprofHelper_(name, group, budgetFlags);
 #else
 #define	VPROF_1(name,group,assertAccounted,budgetFlags)	((void)0)
 #endif
 
 #if VPROF_LEVEL > 1 
-#define	VPROF_2(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<2, assertAccounted> vprofHelper(name, group, budgetFlags);
+#define	VPROF_2(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<2, assertAccounted> vprofHelper_(name, group, budgetFlags);
 #else
 #define	VPROF_2(name,group,assertAccounted,budgetFlags)	((void)0)
 #endif
 
 #if VPROF_LEVEL > 2 
-#define	VPROF_3(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<3, assertAccounted> vprofHelper(name, group, budgetFlags);
+#define	VPROF_3(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<3, assertAccounted> vprofHelper_(name, group, budgetFlags);
 #else
 #define	VPROF_3(name,group,assertAccounted,budgetFlags)	((void)0)
 #endif
 
 #if VPROF_LEVEL > 3 
-#define	VPROF_4(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<4, assertAccounted> vprofHelper(name, group, budgetFlags);
+#define	VPROF_4(name,group,assertAccounted,budgetFlags)	VProfScopeHelper<4, assertAccounted> vprofHelper_(name, group, budgetFlags);
 #else
 #define	VPROF_4(name,group,assertAccounted,budgetFlags)	((void)0)
 #endif
@@ -733,31 +733,36 @@ inline void CVProfile::PopGroup( void )
 
 //-----------------------------------------------------------------------------
 
-using VProfScope = void(__cdecl *)();
+typedef void (*VProfExitScopeCB)();
 
 struct VProfBudgetGroupCallSite
 {
+	VProfBudgetGroupCallSite( const char *group_name, int flags, int group_id = VPROF_BUDGET_GROUP_ID_UNACCOUNTED ) :
+		m_pGroupName( group_name ), m_nFlags( flags ), m_nGroupId( group_id ) { }
+
 	const char *m_pGroupName;
 	int m_nFlags;
 	int m_nGroupId;
 };
 
-template <int T = 0, bool U = false>
+template <int DETAIL_LEVEL, bool ASSERT_ACCOUNTED>
 class VProfScopeHelper
 {
 public:
-	VProfScopeHelper(char const *pszName)
+	VProfScopeHelper( const char *pszName )
 	{
-		m_scope = EnterScopeInternal(pszName);
+		m_pExitScope = EnterScopeInternal( pszName );
 	}
 
-	VProfScopeHelper(char const *pszName, char const *pszGroupName, int nFlags)
+	VProfScopeHelper( const char *pszName, const char *pszGroupName, int nFlags )
 	{
-		m_budgetGroup.m_pGroupName = pszGroupName;
-		m_budgetGroup.m_nFlags = nFlags;
-		m_budgetGroup.m_nGroupId = 0;
+		VProfBudgetGroupCallSite budget_group( pszGroupName, nFlags );
+		m_pExitScope = EnterScopeInternalBudgetFlags( pszName, budget_group );
+	}
 
-		m_scope = EnterScopeInternalBudgetFlags(pszName, m_budgetGroup);
+	VProfScopeHelper( VProfScopeHelper &other )
+	{
+		m_pExitScope = other.m_pExitScope;
 	}
 
 	~VProfScopeHelper()
@@ -767,19 +772,21 @@ public:
 
 	void ExitScope()
 	{
-		if (!m_scope)
+		if(!m_pExitScope)
 			return;
 
-		m_scope();
-		m_scope = nullptr;
+		m_pExitScope();
+		m_pExitScope = nullptr;
 	}
 
-	static DLL_CLASS_IMPORT VProfScope EnterScopeInternal(char const *pszName);
-	static DLL_CLASS_IMPORT VProfScope EnterScopeInternalBudgetFlags(char const *pszName, VProfBudgetGroupCallSite &budgetGroup);
+	DLL_CLASS_IMPORT VProfScopeHelper &operator=( const VProfScopeHelper &other );
+	DLL_CLASS_IMPORT VProfScopeHelper &operator=( VProfScopeHelper &&other );
+
+	static DLL_CLASS_IMPORT VProfExitScopeCB EnterScopeInternal( const char *pszName );
+	static DLL_CLASS_IMPORT VProfExitScopeCB EnterScopeInternalBudgetFlags( const char *pszName, VProfBudgetGroupCallSite &budgetGroup );
 
 private:
-	VProfScope m_scope = nullptr;
-	VProfBudgetGroupCallSite m_budgetGroup;
+	VProfExitScopeCB m_pExitScope = nullptr;
 };
 
 //-----------------------------------------------------------------------------
