@@ -42,12 +42,7 @@ public:
 
 	static void *Allocate(int nSize)
 	{
-		// GAMMACASE: Remove #if condition once CUtlScratchMemoryPool is finished.
-#if defined(UTLSCRATCHMEMORYPOOL_FINISHED)
-		return sm_pMemoryPool.AllocAligned(nSize, 8 * (nSize >= 16) + 8);
-#else
-		return NULL;
-#endif
+		return sm_pMemoryPool->AllocAligned(nSize, 8 * (nSize >= 16) + 8);
 	}
 
 	static void Activate(CUtlScratchMemoryPool *pMemoryPool, bool bEnable)
