@@ -18,7 +18,6 @@
 #include "vscript/ivscript.h"
 #include "eiface.h"
 #include "resourcefile/resourcetype.h"
-#include "baseentity.h"
 #include "entityhandle.h"
 #include "concreteentitylist.h"
 #include "entitydatainstantiator.h"
@@ -257,9 +256,6 @@ public:
 	inline CEntityInstance *GetEntityInstance( CEntityIdentity *ident ) { return ident ? ident->m_pInstance : nullptr; }
 	inline CEntityInstance *GetEntityInstance( CEntityIndex entnum ) { return GetEntityInstance( GetEntityIdentity( entnum ) ); }
 	inline CEntityInstance *GetEntityInstance( const CEntityHandle &hEnt ) { return GetEntityInstance( GetEntityIdentity( hEnt ) ); }
-
-	inline CBaseEntity *GetBaseEntity( CEntityIndex entnum ) { return static_cast<CBaseEntity *>(GetEntityInstance( entnum )); }
-	inline CBaseEntity *GetBaseEntity( const CEntityHandle &hEnt ) { return static_cast<CBaseEntity *>(GetEntityInstance( hEnt )); }
 
 	inline void AddEntityKeyValuesAllocatorRef() { ++m_nEntityKeyValuesAllocatorRefCount; }
 	inline void ReleaseEntityKeyValuesAllocatorRef()

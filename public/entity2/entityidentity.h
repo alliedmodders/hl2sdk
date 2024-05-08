@@ -116,7 +116,6 @@ public:
 	uint32 m_fDataObjectTypes; // 0x3c	
 	ChangeAccessorFieldPathIndex_t m_PathIndex; // 0x40
 private:
-	uint16 m_Padding; // 0x42
 	void* m_pAttributes; // 0x48 - CUtlObjectAttributeTable<CEntityIdentity, CUtlStringToken>
 	void* m_pRenderAttrs; // 0x50 - CRenderAttributesDoubleBuffered
 public:
