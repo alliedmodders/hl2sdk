@@ -72,7 +72,19 @@ struct EconItemInfo_t;
 struct EconControlPointInfo_t;
 class CEntityHandle;
 struct RenderDeviceInfo_t;
-struct RenderMultisampleType_t;
+
+enum RenderMultisampleType_t : uint8
+{
+	RENDER_MULTISAMPLE_INVALID = 0xFF,
+	RENDER_MULTISAMPLE_NONE = 0,
+	RENDER_MULTISAMPLE_2X,
+	RENDER_MULTISAMPLE_4X,
+	RENDER_MULTISAMPLE_6X,
+	RENDER_MULTISAMPLE_8X,
+	RENDER_MULTISAMPLE_16X,
+	RENDER_MULTISAMPLE_TYPE_COUNT
+};
+
 class GameSessionConfiguration_t;
 struct StringTableDef_t;
 class ILoopModePrerequisiteRegistry;

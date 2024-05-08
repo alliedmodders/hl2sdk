@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose:
 //
@@ -117,22 +117,35 @@ enum soundlevel_t
 //-----------------------------------------------------------------------------
 enum SoundFlags_t
 {
-	SND_NOFLAGS			= 0,			// to keep the compiler happy
-	SND_CHANGE_VOL		= (1<<0),		// change sound vol
-	SND_CHANGE_PITCH	= (1<<1),		// change sound pitch
-	SND_STOP			= (1<<2),		// stop the sound
-	SND_SPAWNING		= (1<<3),		// we're spawning, used in some cases for ambients
-										// not sent over net, only a param between dll and server.
-	SND_DELAY			= (1<<4),		// sound has an initial delay
-	SND_STOP_LOOPING	= (1<<5),		// stop all looping sounds on the entity.
-	SND_SPEAKER			= (1<<6),		// being played again by a microphone through a speaker
- 
-	SND_SHOULDPAUSE		= (1<<7),		// this sound should be paused if the game is paused
-	SND_IGNORE_PHONEMES	= (1<<8),
-	SND_IGNORE_NAME		= (1<<9),		// used to change all sounds emitted by an entity, regardless of scriptname
-};
+	SOUND_NONE			= 0,			// to keep the compiler happy
 
-#define SND_FLAG_BITS_ENCODE 9
+	SOUND_COMBAT		= (1<<0),
+	SOUND_WORLD			= (1<<1),
+	SOUND_PLAYER		= (1<<2),
+	SOUND_DANGER		= (1<<3),
+	SOUND_BULLET_IMPACT	= (1<<4),
+	SOUND_THUMPER		= (1<<5),
+	SOUND_PHYSICS_DANGER= (1<<6),
+	SOUND_MOVE_AWAY		= (1<<7),
+	SOUND_PLAYER_VEHICLE= (1<<8),
+	SOUND_GLASS_BREAK	= (1<<9),
+	SOUND_PHYSICS_OBJECT= (1<<10),
+
+	SOUND_CONTEXT_START				= (1<<20),
+
+	SOUND_CONTEXT_GUNFIRE			= SOUND_CONTEXT_START,
+	SOUND_CONTEXT_COMBINE_ONLY		= (1<<21),
+	SOUND_CONTEXT_REACT_TO_SOURCE	= (1<<22),
+	SOUND_CONTEXT_EXPLOSION			= (1<<23),
+	SOUND_CONTEXT_EXCLUDE_COMBINE	= (1<<24),
+	SOUND_CONTEXT_DANGER_APPROACH	= (1<<25),
+	SOUND_CONTEXT_ALLIES_ONLY		= (1<<26),
+	SOUND_CONTEXT_PANIC_NPCS		= (1<<27),
+
+	ALL_SCENTS			= 0,
+	ALL_SOUNDS			= SOUND_CONTEXT_START - 1,
+	ALL_CONTEXTS		= ~ALL_SOUNDS
+};
 
 #define MAX_SOUND_INDEX_BITS	13
 #define	MAX_SOUNDS				(1<<MAX_SOUND_INDEX_BITS)

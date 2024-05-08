@@ -120,6 +120,7 @@ typedef enum _fieldtypes : uint8
 	FIELD_ENGINE_TIME,
 	FIELD_ENGINE_TICK,
 	FIELD_WORLD_GROUP_ID,
+	FIELD_GLOBALSYMBOL,
 	
 	FIELD_TYPECOUNT
 } fieldtype_t;
