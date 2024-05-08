@@ -1,4 +1,4 @@
-//========== Copyright © 2005, Valve Corporation, All rights reserved. ========
+//========== Copyright Â© 2005, Valve Corporation, All rights reserved. ========
 //
 // Purpose: A collection of utility classes to simplify thread handling, and
 //			as much as possible contain portability problems. Here avoiding 
@@ -929,8 +929,8 @@ private:
 	MUTEX_TYPE &m_lock;
 
 	// Disallow copying
-	CAutoLockT<MUTEX_TYPE>( const CAutoLockT<MUTEX_TYPE> & );
-	CAutoLockT<MUTEX_TYPE> &operator=( const CAutoLockT<MUTEX_TYPE> & );
+	CAutoLockT( const CAutoLockT<MUTEX_TYPE> & );
+	CAutoLockT &operator=( const CAutoLockT<MUTEX_TYPE> & );
 };
 
 typedef CAutoLockT<CThreadMutex> CAutoLock;
