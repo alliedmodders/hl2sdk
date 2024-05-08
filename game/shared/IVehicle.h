@@ -12,12 +12,13 @@
 #pragma once
 #endif
 
-#include "baseplayer_shared.h"
+#include "tier0/platform.h"
 
 class CUserCmd;
 class IMoveHelper;
 class CMoveData;
 class CBaseCombatCharacter;
+class CBasePlayer;
 
 // This is used by the player to access vehicles. It's an interface so the
 // vehicles are not restricted in what they can derive from.
