@@ -10,6 +10,8 @@
 #define UTLCOMMON_H
 #pragma once
 
+#include "utlstring.h"
+
 //-----------------------------------------------------------------------------
 // Henry Goffin (henryg) was here. Questions? Bugs? Go slap him around a bit.
 //-----------------------------------------------------------------------------
