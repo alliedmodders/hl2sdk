@@ -1161,6 +1161,11 @@ public:
 class CUtlStringList : public CUtlVectorAutoPurge< char *>
 {
 public:
+	~CUtlStringList()
+	{
+		PurgeAndDeleteElements();
+	}
+
 	void CopyAndAddToTail( char const *pString )			// clone the string and add to the end
 	{
 		char *pNewStr = new char[1 + strlen( pString )];
@@ -1173,6 +1178,14 @@ public:
 		return strcmp( *sz1, *sz2 );
 	}
 
+	inline void PurgeAndDeleteElements()
+	{
+		for( int i = 0; i < m_Size; i++ )
+		{
+			delete[] Element(i);
+		}
+		Purge();
+	}
 };
 
 
