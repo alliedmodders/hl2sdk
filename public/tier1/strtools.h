@@ -435,6 +435,8 @@ bool V_StrSubst( const char *pIn, const char *pMatch, const char *pReplaceWith,
 	char *pOut, int outLen, bool bCaseSensitive=false );
 
 
+// If possible, use CSplitString instead
+// AM TODO: These are exported by tier0, but will require changes to CUtlVector
 // Split the specified string on the specified separator.
 // Returns a list of strings separated by pSeparator.
 // You are responsible for freeing the contents of outStrings (call outStrings.PurgeAndDeleteElements).
