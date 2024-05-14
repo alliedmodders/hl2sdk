@@ -32,9 +32,9 @@ CPLUS = /usr/bin/clang++
 CLINK = /usr/bin/clang
 CPP_LIB =
 else
-CC = /usr/bin/gcc
-CPLUS = /usr/bin/g++
-CLINK = /usr/bin/gcc
+CC = /usr/bin/clang
+CPLUS = /usr/bin/clang++
+CLINK = /usr/bin/clang
 CPP_LIB = $(SRCDS_DIR)/bin/libstdc++.so.6
 endif
 
@@ -96,7 +96,7 @@ DEFINES +=-DGNUC -DPOSIX -D_POSIX -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -Dstri
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
 BASE_CFLAGS = -fno-strict-aliasing -Wall -Wsign-compare -Werror -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
-	      -Wno-delete-non-virtual-dtor
+	      -Wno-delete-non-virtual-dtor -Wno-deprecated-register
 SHLIBCFLAGS = -fPIC
 
 # Flags passed to the c compiler

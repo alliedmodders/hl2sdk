@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -17,6 +17,7 @@
 #include "tier0/dbg.h"
 #include <string.h>
 #include "tier0/platform.h"
+#include "mathlib/mathlib.h"
 
 #include "tier0/memalloc.h"
 #include "tier0/memdbgon.h"
