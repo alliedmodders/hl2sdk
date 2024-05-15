@@ -2306,6 +2306,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 			{
 				dat->m_sValue = KVStringAlloc<char>(sizeof(uint64));
 				*((double *)dat->m_sValue) = buffer.GetDouble();
+				break;
 			}
 
 		case TYPE_FLOAT:
@@ -2324,6 +2325,31 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 		case TYPE_PTR:
 			{
 				dat->m_pValue = (void*)buffer.GetUnsignedInt();
+				break;
+			}
+
+		case TYPE_COMPILED_INT_0:
+			{
+				// only for dense storage purposes, flip back to preferred internal format
+				dat->m_iDataType = TYPE_INT;
+				dat->m_iValue = 0;
+				break;
+			}
+
+		case TYPE_COMPILED_INT_1:
+			{
+				// only for dense storage purposes, flip back to preferred internal format
+				dat->m_iDataType = TYPE_INT;
+				dat->m_iValue = 1;
+				break;
+			}
+
+		case TYPE_COMPILED_INT_BYTE:
+			{
+				// only for dense storage purposes, flip back to preferred internal format
+				dat->m_iDataType = TYPE_INT;
+				dat->m_iValue = buffer.GetChar();
+				break;
 			}
 
 		default:
