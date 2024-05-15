@@ -25,6 +25,7 @@
 #include "utlvector.h"
 #include "Color.h"
 
+class IKeyValuesSystem;
 class IBaseFileSystem;
 class CUtlBuffer;
 class Color;
@@ -276,10 +277,15 @@ private:
 	char	   m_iDataType;
 	char	   m_bHasEscapeSequences; // true, if while parsing this KeyValue, Escape Sequences are used (default false)
 	char	   unused[2];
+	
+	IKeyValuesSystem* m_pKeyValuesSystem;
+	bool m_bHasCustomKeyvalueSystem;	
 
 	KeyValues *m_pPeer;	// pointer to next key in list
 	KeyValues *m_pSub;	// pointer to Start of a new sub key list
 	KeyValues *m_pChain;// Search here if it's not in our list
+	
+	void* m_pExpressionGetSymbolProc;
 };
 
 enum KeyValuesUnpackDestinationTypes_t

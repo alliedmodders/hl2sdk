@@ -301,6 +301,10 @@ void KeyValues::Init()
 
 	// for future proof
 	memset( unused, 0, sizeof(unused) );
+	
+	m_pKeyValuesSystem = NULL;
+	m_bHasCustomKeyvalueSystem = false;
+	m_pExpressionGetSymbolProc = NULL;
 }
 
 //-----------------------------------------------------------------------------
