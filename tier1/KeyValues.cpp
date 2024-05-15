@@ -2310,6 +2310,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 			{
 				dat->m_sValue = KVStringAlloc<char>(sizeof(uint64));
 				*((double *)dat->m_sValue) = buffer.GetDouble();
+				break;
 			}
 
 		case TYPE_FLOAT:

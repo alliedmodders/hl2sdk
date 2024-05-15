@@ -204,6 +204,9 @@ public:
 		TYPE_WSTRING,
 		TYPE_COLOR,
 		TYPE_UINT64,
+		TYPE_COMPILED_INT_BYTE,			// hack to collapse 1 byte ints in the compiled format
+		TYPE_COMPILED_INT_0,			// hack to collapse 0 in the compiled format
+		TYPE_COMPILED_INT_1,			// hack to collapse 1 in the compiled format
 		TYPE_NUMTYPES, 
 	};
 	types_t GetDataType(const char *keyName = NULL);
