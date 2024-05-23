@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -12,8 +12,6 @@
 #pragma once
 #endif
 
-// #include <vgui/VGUI.h>
-
 #ifndef NULL
 #ifdef __cplusplus
 #define NULL    0
@@ -22,14 +20,32 @@
 #endif
 #endif
 
+#include <vstdlib/IKeyValuesSystem.h>
+
 #include "utlvector.h"
 #include "Color.h"
 
-class IKeyValuesSystem;
 class IBaseFileSystem;
 class CUtlBuffer;
 class Color;
+class KeyValues;
+class IKeyValuesDumpContext;
 typedef void * FileHandle_t;
+
+// single byte identifies a xbox kv file in binary format
+// strings are pooled from a searchpath/zip mounted symbol table
+#define KV_BINARY_POOLED_FORMAT 0xAA
+
+
+#define FOR_EACH_SUBKEY( kvRoot, kvSubKey ) \
+	for ( KeyValues * kvSubKey = kvRoot->GetFirstSubKey(); kvSubKey != NULL; kvSubKey = kvSubKey->GetNextKey() )
+
+#define FOR_EACH_TRUE_SUBKEY( kvRoot, kvSubKey ) \
+	for ( KeyValues * kvSubKey = kvRoot->GetFirstTrueSubKey(); kvSubKey != NULL; kvSubKey = kvSubKey->GetNextTrueSubKey() )
+
+#define FOR_EACH_VALUE( kvRoot, kvValue ) \
+	for ( KeyValues * kvValue = kvRoot->GetFirstValue(); kvValue != NULL; kvValue = kvValue->GetNextValue() )
+
 
 //-----------------------------------------------------------------------------
 // Purpose: Simple recursive data access class
@@ -55,26 +71,42 @@ typedef void * FileHandle_t;
 class KeyValues
 {
 public:
-	KeyValues( const char *setName );
+	KeyValues( const char *setName, IKeyValuesSystem *customSystem = NULL, bool ownsCustomSystem = false );
 
 	//
 	// AutoDelete class to automatically free the keyvalues.
 	// Simply construct it with the keyvalues you allocated and it will free them when falls out of scope.
 	// When you decide that keyvalues shouldn't be deleted call Assign(NULL) on it.
 	// If you constructed AutoDelete(NULL) you can later assign the keyvalues to be deleted with Assign(pKeyValues).
-	// You can also pass temporary KeyValues object as an argument to a function by wrapping it into KeyValues::AutoDelete
-	// instance:   call_my_function( KeyValues::AutoDelete( new KeyValues( "test" ) ) )
 	//
 	class AutoDelete
 	{
 	public:
 		explicit inline AutoDelete( KeyValues *pKeyValues ) : m_pKeyValues( pKeyValues ) {}
+		explicit inline AutoDelete( const char *pchKVName ) : m_pKeyValues( new KeyValues( pchKVName ) ) {}
 		inline ~AutoDelete( void ) { if( m_pKeyValues ) m_pKeyValues->deleteThis(); }
 		inline void Assign( KeyValues *pKeyValues ) { m_pKeyValues = pKeyValues; }
+		KeyValues *operator->()	{ return m_pKeyValues; }
+		operator KeyValues *()	{ return m_pKeyValues; }
 	private:
 		AutoDelete( AutoDelete const &x ); // forbid
 		AutoDelete & operator= ( AutoDelete const &x ); // forbid
+	protected:
 		KeyValues *m_pKeyValues;
+	};
+
+	//
+	// AutoDeleteInline is useful when you want to hold your keyvalues object inside
+	// and delete it right after using.
+	// You can also pass temporary KeyValues object as an argument to a function by wrapping it into KeyValues::AutoDeleteInline
+	// instance:   call_my_function( KeyValues::AutoDeleteInline( new KeyValues( "test" ) ) )
+	//
+	class AutoDeleteInline : public AutoDelete
+	{
+	public:
+		explicit inline AutoDeleteInline( KeyValues *pKeyValues ) : AutoDelete( pKeyValues ) {}
+		inline operator KeyValues *() const { return m_pKeyValues; }
+		inline KeyValues * Get() const { return m_pKeyValues; }
 	};
 
 	// Quick setup constructors
@@ -146,16 +178,19 @@ public:
 	const char *GetString( const char *keyName = NULL, const char *defaultValue = "" );
 	const wchar_t *GetWString( const char *keyName = NULL, const wchar_t *defaultValue = L"" );
 	void *GetPtr( const char *keyName = NULL, void *defaultValue = (void*)0 );
-	Color GetColor( const char *keyName = NULL /* default value is all black */);
+	Color GetColor( const char *keyName = NULL , const Color &defaultColor = Color( 0, 0, 0, 0 ) );
+	bool GetBool( const char *keyName = NULL, bool defaultValue = false ) { return GetInt( keyName, defaultValue ? 1 : 0 ) ? true : false; }
 	bool  IsEmpty(const char *keyName = NULL);
 
 	// Data access
 	int   GetInt( int keySymbol, int defaultValue = 0 );
+	uint64 GetUint64( int keySymbol, uint64 defaultValue = 0 );
 	float GetFloat( int keySymbol, float defaultValue = 0.0f );
 	const char *GetString( int keySymbol, const char *defaultValue = "" );
 	const wchar_t *GetWString( int keySymbol, const wchar_t *defaultValue = L"" );
 	void *GetPtr( int keySymbol, void *defaultValue = (void*)0 );
 	Color GetColor( int keySymbol /* default value is all black */);
+	bool GetBool( int keySymbol, bool defaultValue = false ) { return GetInt( keySymbol, defaultValue ? 1 : 0 ) ? true : false; }
 	bool  IsEmpty( int keySymbol );
 
 	// Key writing
@@ -166,6 +201,7 @@ public:
 	void SetFloat( const char *keyName, float value );
 	void SetPtr( const char *keyName, void *value );
 	void SetColor( const char *keyName, Color value);
+	void SetBool( const char *keyName, bool value ) { SetInt( keyName, value ? 1 : 0 ); }
 
 	// Memory allocation (optimized)
 	void *operator new( size_t iAllocSize );
@@ -221,6 +257,22 @@ public:
 
 	// Process conditional keys for widescreen support.
 	bool ProcessResolutionKeys( const char *pResString );
+
+	// Dump keyvalues recursively into a dump context
+	bool Dump( IKeyValuesDumpContext *pDump, int nIndentLevel = 0 );
+
+	// Merge operations describing how two keyvalues can be combined
+	enum MergeKeyValuesOp_t
+	{
+		MERGE_KV_ALL,
+		MERGE_KV_UPDATE,	// update values are copied into storage, adding new keys to storage or updating existing ones
+		MERGE_KV_DELETE,	// update values specify keys that get deleted from storage
+		MERGE_KV_BORROW,	// update values only update existing keys in storage, keys in update that do not exist in storage are discarded
+	};
+	void MergeFrom( KeyValues *kvMerge, MergeKeyValuesOp_t eOp = MERGE_KV_ALL );
+
+	// Assign keyvalues from a string
+	// static KeyValues * FromString( char const *szName, char const *szStringVal, char const **ppEndOfParse = NULL );
 		
 private:
 	KeyValues( KeyValues& );	// prevent copy constructor being used
@@ -242,7 +294,7 @@ private:
 	
 	void RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &buf );
 
-	// For handling #include "filename"
+	// for handling #include "filename"
 	void AppendIncludedKeys( CUtlVector< KeyValues * >& includedKeys );
 	void ParseIncludedKeys( char const *resourceName, const char *filetoinclude, 
 		IBaseFileSystem* pFileSystem, const char *pPathID, CUtlVector< KeyValues * >& includedKeys );
@@ -255,12 +307,28 @@ private:
 	// If filesystem is null, it'll ignore f.
 	void InternalWrite( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, const void *pData, int len );
 	
-	void Init();
+	void Init(IKeyValuesSystem *customSystem = NULL, bool ownsCustomSystem = false);
 	const char * ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasConditional );
 	void WriteIndents( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, int indentLevel );
 
 	void FreeAllocatedValue();
 	void AllocateValueBlock(int size);
+
+	bool ReadAsBinaryPooledFormat( CUtlBuffer &buf, IBaseFileSystem *pFileSystem, unsigned int poolKey );
+
+	bool EvaluateConditional( const char *pExpressionString );
+
+	inline IKeyValuesSystem *GetKeyValuesSystem() const {
+		if (m_pKeyValuesSystem) {
+			return m_pKeyValuesSystem;
+		}
+
+		return KeyValuesSystem();
+	}
+
+	IKeyValuesSystem *KVSystem() const {
+		return GetKeyValuesSystem();
+	}
 
 	int m_iKeyName;	// keyname is a symbol defined in KeyValuesSystem
 
@@ -280,16 +348,18 @@ private:
 	char	   m_iDataType;
 	char	   m_bHasEscapeSequences; // true, if while parsing this KeyValue, Escape Sequences are used (default false)
 	char	   unused[2];
-	
+
 	IKeyValuesSystem* m_pKeyValuesSystem;
-	bool m_bHasCustomKeyvalueSystem;	
+	bool m_bOwnsCustomKeyValuesSystem;	
 
 	KeyValues *m_pPeer;	// pointer to next key in list
 	KeyValues *m_pSub;	// pointer to Start of a new sub key list
 	KeyValues *m_pChain;// Search here if it's not in our list
-	
+
 	void* m_pExpressionGetSymbolProc;
 };
+
+typedef KeyValues::AutoDelete KeyValuesAD;
 
 enum KeyValuesUnpackDestinationTypes_t
 {
@@ -322,6 +392,12 @@ inline int   KeyValues::GetInt( int keySymbol, int defaultValue )
 {
 	KeyValues *dat = FindKey( keySymbol );
 	return dat ? dat->GetInt( (const char *)NULL, defaultValue ) : defaultValue;
+}
+
+inline uint64 KeyValues::GetUint64( int keySymbol, uint64 defaultValue )
+{
+	KeyValues *dat = FindKey( keySymbol );
+	return dat ? dat->GetUint64( (const char *)NULL, defaultValue ) : defaultValue;
 }
 
 inline float KeyValues::GetFloat( int keySymbol, float defaultValue )
@@ -361,6 +437,50 @@ inline bool  KeyValues::IsEmpty( int keySymbol )
 	return dat ? dat->IsEmpty( ) : true;
 }
 
-bool EvaluateConditional( const char *str );
+
+//
+// KeyValuesDumpContext and generic implementations
+//
+
+// class IKeyValuesDumpContext
+// {
+// public:
+// 	virtual bool KvBeginKey( KeyValues *pKey, int nIndentLevel ) = 0;
+// 	virtual bool KvWriteValue( KeyValues *pValue, int nIndentLevel ) = 0;
+// 	virtual bool KvEndKey( KeyValues *pKey, int nIndentLevel ) = 0;
+// };
+
+// class IKeyValuesDumpContextAsText : public IKeyValuesDumpContext
+// {
+// public:
+// 	virtual bool KvBeginKey( KeyValues *pKey, int nIndentLevel );
+// 	virtual bool KvWriteValue( KeyValues *pValue, int nIndentLevel );
+// 	virtual bool KvEndKey( KeyValues *pKey, int nIndentLevel );
+
+// public:
+// 	virtual bool KvWriteIndent( int nIndentLevel );
+// 	virtual bool KvWriteText( char const *szText ) = 0;
+// };
+
+// class CKeyValuesDumpContextAsDevMsg : public IKeyValuesDumpContextAsText
+// {
+// public:
+// 	// Overrides developer level to dump in DevMsg, zero to dump as Msg
+// 	CKeyValuesDumpContextAsDevMsg( int nDeveloperLevel = 1 ) : m_nDeveloperLevel( nDeveloperLevel ) {}
+
+// public:
+// 	virtual bool KvBeginKey( KeyValues *pKey, int nIndentLevel );
+// 	virtual bool KvWriteText( char const *szText );
+
+// protected:
+// 	int m_nDeveloperLevel;
+// };
+
+// inline bool KeyValuesDumpAsDevMsg( KeyValues *pKeyValues, int nIndentLevel = 0, int nDeveloperLevel = 1 )
+// {
+// 	CKeyValuesDumpContextAsDevMsg ctx( nDeveloperLevel );
+// 	return pKeyValues->Dump( &ctx, nIndentLevel );
+// }
+
 
 #endif // KEYVALUES_H
