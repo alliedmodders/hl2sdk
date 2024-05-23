@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -211,11 +211,11 @@ static CLeakTrack track;
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName )
+KeyValues::KeyValues( const char *setName, IKeyValuesSystem *customSystem, bool ownsCustomSystem )
 {
 	TRACK_KV_ADD( this, setName );
 
-	Init();
+	Init( customSystem, ownsCustomSystem );
 	SetName ( setName );
 }
 
@@ -284,7 +284,7 @@ KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue,
 //-----------------------------------------------------------------------------
 // Purpose: Initialize member variables
 //-----------------------------------------------------------------------------
-void KeyValues::Init()
+void KeyValues::Init(IKeyValuesSystem *customSystem, bool ownsCustomSystem)
 {
 	m_iKeyName = INVALID_KEY_SYMBOL;
 	m_iDataType = TYPE_NONE;
@@ -301,9 +301,9 @@ void KeyValues::Init()
 
 	// for future proof
 	memset( unused, 0, sizeof(unused) );
-	
-	m_pKeyValuesSystem = NULL;
-	m_bHasCustomKeyvalueSystem = false;
+
+	m_pKeyValuesSystem = customSystem;
+	m_bOwnsCustomKeyValuesSystem = ownsCustomSystem;
 	m_pExpressionGetSymbolProc = NULL;
 }
 
@@ -315,6 +315,11 @@ KeyValues::~KeyValues()
 	TRACK_KV_REMOVE( this );
 
 	RemoveEverything();
+
+	if (m_pKeyValuesSystem && m_bOwnsCustomKeyValuesSystem) {
+		delete m_pKeyValuesSystem;
+		m_pKeyValuesSystem = NULL;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -369,7 +374,10 @@ void KeyValues::ChainKeyValue( KeyValues* pChain )
 //-----------------------------------------------------------------------------
 const char *KeyValues::GetName( void ) const
 {
-	return KeyValuesSystem()->GetStringForSymbol(m_iKeyName);
+	if (!this)
+		return "";
+
+	return GetKeyValuesSystem()->GetStringForSymbol(m_iKeyName);
 }
 
 //-----------------------------------------------------------------------------
@@ -377,6 +385,9 @@ const char *KeyValues::GetName( void ) const
 //-----------------------------------------------------------------------------
 int KeyValues::GetNameSymbol() const
 {
+	if (!this)
+		return INVALID_KEY_SYMBOL;
+
 	return m_iKeyName;
 }
 
@@ -691,7 +702,7 @@ void KeyValues::RecursiveSaveToFile( IBaseFileSystem *filesystem, FileHandle_t f
 
 					char buf[32];
 					// write "0x" + 16 char 0-padded hex encoded 64 bit value
-					Q_snprintf( buf, sizeof( buf ), "0x%016I64X", *( (uint64 *)dat->m_sValue ) );
+					Q_snprintf( buf, sizeof( buf ), "0x%016llX", *( (uint64 *)dat->m_sValue ) );
 
 					INTERNALWRITE(buf, Q_strlen(buf));
 					INTERNALWRITE("\"\n", 2);
@@ -748,6 +759,9 @@ KeyValues *KeyValues::FindKey(int keySymbol) const
 //-----------------------------------------------------------------------------
 KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 {
+	if (!this)
+		return NULL;
+
 	// return the current key if a NULL subkey is asked for
 	if (!keyName || !keyName[0])
 		return this;
@@ -767,7 +781,7 @@ KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 	}
 
 	// lookup the symbol for the search string
-	HKeySymbol iSearchStr = KeyValuesSystem()->GetSymbolForString( searchStr, bCreate );
+	HKeySymbol iSearchStr = GetKeyValuesSystem()->GetSymbolForString( searchStr, bCreate );
 	if ( iSearchStr == INVALID_KEY_SYMBOL )
 	{
 		// not found, couldn't possibly be in key value list
@@ -799,7 +813,7 @@ KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 		if (bCreate)
 		{
 			// we need to create a new key
-			dat = new KeyValues( searchStr );
+			dat = new KeyValues( searchStr, m_pKeyValuesSystem );
 //			Assert(dat != NULL);
 
 			// insert new key at end of list
@@ -866,7 +880,7 @@ KeyValues *KeyValues::CreateNewKey()
 KeyValues* KeyValues::CreateKey( const char *keyName )
 {
 	// key wasn't found so just create a new one
-	KeyValues* dat = new KeyValues( keyName );
+	KeyValues* dat = new KeyValues( keyName, m_pKeyValuesSystem );
 
 	dat->UsesEscapeSequences( m_bHasEscapeSequences != 0 ); // use same format as parent does
 	
@@ -943,6 +957,9 @@ void KeyValues::RemoveSubKey(KeyValues *subKey)
 //-----------------------------------------------------------------------------
 KeyValues *KeyValues::GetFirstSubKey()
 {
+	if (!this)
+		return NULL;
+	
 	return m_pSub;
 }
 
@@ -951,6 +968,9 @@ KeyValues *KeyValues::GetFirstSubKey()
 //-----------------------------------------------------------------------------
 KeyValues *KeyValues::GetNextKey()
 {
+	if (!this)
+		return NULL;
+	
 	return m_pPeer;
 }
 
@@ -965,6 +985,9 @@ void KeyValues::SetNextKey( KeyValues *pDat )
 
 KeyValues* KeyValues::GetFirstTrueSubKey()
 {
+	if (!this)
+		return NULL;
+
 	KeyValues *pRet = m_pSub;
 	while ( pRet && pRet->m_iDataType != TYPE_NONE )
 		pRet = pRet->m_pPeer;
@@ -974,6 +997,9 @@ KeyValues* KeyValues::GetFirstTrueSubKey()
 
 KeyValues* KeyValues::GetNextTrueSubKey()
 {
+	if (!this)
+		return NULL;
+
 	KeyValues *pRet = m_pPeer;
 	while ( pRet && pRet->m_iDataType != TYPE_NONE )
 		pRet = pRet->m_pPeer;
@@ -983,6 +1009,9 @@ KeyValues* KeyValues::GetNextTrueSubKey()
 
 KeyValues* KeyValues::GetFirstValue()
 {
+	if (!this)
+		return NULL;
+
 	KeyValues *pRet = m_pSub;
 	while ( pRet && pRet->m_iDataType == TYPE_NONE )
 		pRet = pRet->m_pPeer;
@@ -992,6 +1021,9 @@ KeyValues* KeyValues::GetFirstValue()
 
 KeyValues* KeyValues::GetNextValue()
 {
+	if (!this)
+		return NULL;
+
 	KeyValues *pRet = m_pPeer;
 	while ( pRet && pRet->m_iDataType == TYPE_NONE )
 		pRet = pRet->m_pPeer;
@@ -1151,7 +1183,7 @@ const char *KeyValues::GetString( const char *keyName, const char *defaultValue 
 			SetString( keyName, buf );
 			break;
 		case TYPE_UINT64:
-			Q_snprintf( buf, sizeof( buf ), "%I64i", *((uint64 *)(dat->m_sValue)) );
+			Q_snprintf( buf, sizeof( buf ), "%lld", *((uint64 *)(dat->m_sValue)) );
 			SetString( keyName, buf );
 			break;
 
@@ -1240,9 +1272,9 @@ const wchar_t *KeyValues::GetWString( const char *keyName, const wchar_t *defaul
 //-----------------------------------------------------------------------------
 // Purpose: Gets a color
 //-----------------------------------------------------------------------------
-Color KeyValues::GetColor( const char *keyName )
+Color KeyValues::GetColor( const char *keyName, const Color &defaultColor )
 {
-	Color color(0, 0, 0, 0);
+	Color color = defaultColor;
 	KeyValues *dat = FindKey( keyName, false );
 	if ( dat )
 	{
@@ -1424,7 +1456,7 @@ void KeyValues::SetFloat( const char *keyName, float value )
 
 void KeyValues::SetName( const char * setName )
 {
-	m_iKeyName = KeyValuesSystem()->GetSymbolForString( setName );
+	m_iKeyName = GetKeyValuesSystem()->GetSymbolForString( setName );
 }
 
 //-----------------------------------------------------------------------------
@@ -1533,14 +1565,14 @@ void KeyValues::RecursiveCopyKeyValues( KeyValues& src )
 	// Handle the immediate child
 	if( src.m_pSub )
 	{
-		m_pSub = new KeyValues( NULL );
+		m_pSub = new KeyValues( NULL, m_pKeyValuesSystem );
 		m_pSub->RecursiveCopyKeyValues( *src.m_pSub );
 	}
 
 	// Handle the immediate peer
 	if( src.m_pPeer )
 	{
-		m_pPeer = new KeyValues( NULL );
+		m_pPeer = new KeyValues( NULL, m_pKeyValuesSystem );
 		m_pPeer->RecursiveCopyKeyValues( *src.m_pPeer );
 	}
 }
@@ -1756,7 +1788,7 @@ void KeyValues::ParseIncludedKeys( char const *resourceName, const char *filetoi
 	// Append included file
 	Q_strncat( fullpath, filetoinclude, sizeof( fullpath ), COPY_ALL_CHARACTERS );
 
-	KeyValues *newKV = new KeyValues( fullpath );
+	KeyValues *newKV = new KeyValues( fullpath, m_pKeyValuesSystem );
 
 	// CUtlSymbol save = s_CurrentFileSymbol;	// did that had any use ???
 
@@ -1833,7 +1865,7 @@ void KeyValues::RecursiveMergeKeyValues( KeyValues *baseKV )
 // Returns whether a keyvalues conditional evaluates to true or false
 // Needs more flexibility with conditionals, checking convars would be nice.
 //-----------------------------------------------------------------------------
-bool EvaluateConditional( const char *str )
+bool KeyValues::EvaluateConditional( const char *str )
 {
 	bool bResult = false;
 	bool bXboxUI = IsX360();
@@ -1907,7 +1939,7 @@ bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBase
 
 		if ( !pCurrentKey )
 		{
-			pCurrentKey = new KeyValues( s );
+			pCurrentKey = new KeyValues( s, m_pKeyValuesSystem );
 			Assert( pCurrentKey );
 
 			pCurrentKey->UsesEscapeSequences( m_bHasEscapeSequences != 0 ); // same format has parent use
@@ -2279,7 +2311,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 		{
 		case TYPE_NONE:
 			{
-				dat->m_pSub = new KeyValues("");
+				dat->m_pSub = new KeyValues("", m_pKeyValuesSystem);
 				dat->m_pSub->ReadAsBinary( buffer );
 				break;
 			}
@@ -2344,7 +2376,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 			break;
 
 		// new peer follows
-		dat->m_pPeer = new KeyValues("");
+		dat->m_pPeer = new KeyValues("", m_pKeyValuesSystem);
 		dat = dat->m_pPeer;
 	}
 
@@ -2492,6 +2524,11 @@ bool KeyValues::ProcessResolutionKeys( const char *pResString )
 	if ( !pResString )
 	{
 		// not for pc, console only
+		return false;
+	}
+
+	if ( !this )
+	{
 		return false;
 	}
 
