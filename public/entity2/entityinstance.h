@@ -70,6 +70,7 @@ public:
 	virtual void LogFieldInfo( const char* pszFieldName, const char* pszInfo ) = 0;
 	virtual bool FullEdictChanged() = 0;
 	virtual void unk101() = 0;
+	virtual void unk102() = 0;
 	virtual ChangeAccessorFieldPathIndex_t AddChangeAccessorPath( const CFieldPath& path ) = 0;
 	virtual void AssignChangeAccessorPathIds() = 0;
 	virtual ChangeAccessorFieldPathIndexInfo_t* GetChangeAccessorPathInfo_1() = 0;
