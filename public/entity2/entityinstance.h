@@ -49,6 +49,7 @@ public:
 	virtual void OnSave() = 0;
 	virtual void OnRestore() = 0;
 	
+	virtual void unk001() = 0;
 	virtual int ObjectCaps() = 0;
 	virtual CEntityIndex RequiredEdictIndex() = 0;
 	
@@ -68,16 +69,17 @@ public:
 	
 	virtual void LogFieldInfo( const char* pszFieldName, const char* pszInfo ) = 0;
 	virtual bool FullEdictChanged() = 0;
-	virtual void unk001() = 0;
+	virtual void unk101() = 0;
+	virtual void unk102() = 0;
 	virtual ChangeAccessorFieldPathIndex_t AddChangeAccessorPath( const CFieldPath& path ) = 0;
 	virtual void AssignChangeAccessorPathIds() = 0;
 	virtual ChangeAccessorFieldPathIndexInfo_t* GetChangeAccessorPathInfo_1() = 0;
 	virtual ChangeAccessorFieldPathIndexInfo_t* GetChangeAccessorPathInfo_2() = 0;
 	
-	virtual void unk101() = 0;
+	virtual void unk201() = 0;
 	virtual void ReloadPrivateScripts() = 0;
 	virtual datamap_t* GetDataDescMap() = 0;
-	virtual void unk201() = 0;
+	virtual void unk301() = 0;
 	virtual SchemaMetaInfoHandle_t<CSchemaClassInfo> Schema_DynamicBinding() = 0;
 
 public:

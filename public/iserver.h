@@ -37,7 +37,7 @@ class CCLCMsg_SplitPlayerConnect_t;
 typedef int ChallengeType_t;
 typedef int PauseGroup_t;
 
-abstract_class INetworkGameServer : public IConnectionlessPacketHandler
+abstract_class INetworkGameServer 
 {
 public:
 	virtual	void	Init( const GameSessionConfiguration_t &, const char * ) = 0;
