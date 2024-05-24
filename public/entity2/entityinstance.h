@@ -49,6 +49,7 @@ public:
 	virtual void OnSave() = 0;
 	virtual void OnRestore() = 0;
 	
+	virtual void unk001() = 0;
 	virtual int ObjectCaps() = 0;
 	virtual CEntityIndex RequiredEdictIndex() = 0;
 	
