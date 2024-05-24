@@ -44,6 +44,9 @@ public:
 	// zer0k: Command queue related
 	int unknown1;
 	int unknown2;
+	int unknown3;
+	int unknown4;
+	int unknown5;
 
 	FnGlobalVarsWarningFunc m_pfnWarningFunc;
 
@@ -69,8 +72,8 @@ public:
 	float rendertime;
 
 	// zer0k: Command queue + interpolation related 
-	float unknown3;
-	float unknown4;
+	float unknown6;
+	float unknown7;
 
 	bool m_bInSimulation;
 	bool m_bEnableAssertions;
