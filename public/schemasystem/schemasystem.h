@@ -86,7 +86,7 @@ public:
 	bool m_bBuiltinTypesInitialized;
 	CSchemaType_Builtin m_BuiltinTypes[SCHEMA_BUILTIN_COUNT];
 	
-	CSchemaPtrMap<CSchemaType*, CSchemaType_Ptr*>					m_Ptrs;
+	CSchemaPtrMap<SchemaMetaInfoHandle_t<CSchemaType>, CSchemaType_Ptr*> m_Ptrs;
 	CSchemaPtrMap<int, CSchemaType_Atomic*>							m_Atomics;
 	CSchemaPtrMap<AtomicTypeInfo_T_t, CSchemaType_Atomic_T*>		m_AtomicsT;
 	CSchemaPtrMap<AtomicTypeInfo_T_t, CSchemaType_Atomic_CollectionOfT*> m_AtomicsCollectionOfT;
@@ -94,7 +94,7 @@ public:
 	CSchemaPtrMap<AtomicTypeInfo_I_t, CSchemaType_Atomic_I*>		m_AtomicsI;
 	CSchemaPtrMap<uint, CSchemaType_DeclaredClass*>					m_DeclaredClasses;
 	CSchemaPtrMap<uint, CSchemaType_DeclaredEnum*> 					m_DeclaredEnums;
-	CSchemaPtrMap<int, const SchemaAtomicTypeInfo_t*> 				m_AtomicInfos;
+	CSchemaPtrMap<int, SchemaMetaInfoHandle_t<SchemaAtomicTypeInfo_t>> m_AtomicInfos;
 	CSchemaPtrMap<TypeAndCountInfo_t, CSchemaType_FixedArray*> 		m_FixedArrays;
 	CSchemaPtrMap<int, CSchemaType_Bitfield*> 						m_Bitfields;
 	
