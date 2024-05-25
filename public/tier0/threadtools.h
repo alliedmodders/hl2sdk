@@ -711,8 +711,7 @@ class CThreadSpinMutex
 public:
 	CThreadSpinMutex( const char* pDebugName = NULL )
 	  :	m_ownerID( 0 ),
-	  	m_depth( 0 ),
-		m_pDebugName( NULL/*pDebugName*/ )
+	  	m_depth( 0 )
 	{
 	}
 	
@@ -814,7 +813,6 @@ public:
 private:
 	volatile ThreadId_t m_ownerID;
 	int					m_depth;
-	const char*			m_pDebugName;
 };
 
 class ALIGN128 CAlignedThreadFastMutex : public CThreadSpinMutex

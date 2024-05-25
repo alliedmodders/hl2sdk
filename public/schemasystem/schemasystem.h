@@ -94,9 +94,7 @@ public:
 	CSchemaPtrMap<int, CSchemaType_Atomic*>							m_Atomics;
 	CSchemaPtrMap<AtomicTypeInfo_T_t, CSchemaType_Atomic_T*>		m_AtomicsT;
 	CSchemaPtrMap<AtomicTypeInfo_T_t, CSchemaType_Atomic_CollectionOfT*> m_AtomicsCollectionOfT;
-	CSchemaPtrMap<AtomicTypeInfo_TF_t, CSchemaType_Atomic_TF*>		m_AtomicsTF;
 	CSchemaPtrMap<AtomicTypeInfo_TT_t, CSchemaType_Atomic_TT*>		m_AtomicsTT;
-	CSchemaPtrMap<AtomicTypeInfo_TTF_t, CSchemaType_Atomic_TTF*>	m_AtomicsTTF;
 	CSchemaPtrMap<AtomicTypeInfo_I_t, CSchemaType_Atomic_I*>		m_AtomicsI;
 	CSchemaPtrMap<uint, CSchemaType_DeclaredClass*>					m_DeclaredClasses;
 	CSchemaPtrMap<uint, CSchemaType_DeclaredEnum*> 					m_DeclaredEnums;
