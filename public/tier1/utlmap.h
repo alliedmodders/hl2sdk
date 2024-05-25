@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -199,5 +199,10 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
+
+// AMNOTE: Currently a stub over CUtlMap, needs a complete implementation
+template <typename K, typename T, typename I = unsigned short, typename LF = CDefLess<K>>
+struct CUtlOrderedMap : public CUtlMap<K, T, I, LF>
+{};
 
 #endif // UTLMAP_H

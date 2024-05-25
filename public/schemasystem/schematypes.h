@@ -138,7 +138,7 @@ template <class K, class V>
 class CSchemaPtrMap
 {
 public:
-	CUtlMap<K, V> m_Map;
+	CUtlOrderedMap<K, V> m_Map;
 	CThreadFastMutex m_Mutex;
 };
 
