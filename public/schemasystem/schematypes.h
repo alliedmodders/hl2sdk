@@ -208,22 +208,10 @@ public:
 	uint16 m_nElementSize;
 };
 
-class CSchemaType_Atomic_TF : public CSchemaType_Atomic_T
-{
-public:
-	int m_nFuncPtrSize;
-};
-
 class CSchemaType_Atomic_TT : public CSchemaType_Atomic_T
 {
 public:
 	CSchemaType* m_pTemplateType2;
-};
-
-class CSchemaType_Atomic_TTF : public CSchemaType_Atomic_TT
-{
-public:
-	int m_nFuncPtrSize;
 };
 
 class CSchemaType_Atomic_I : public CSchemaType_Atomic
