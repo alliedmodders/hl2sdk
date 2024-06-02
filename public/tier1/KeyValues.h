@@ -331,6 +331,8 @@ private:
 		return GetKeyValuesSystem();
 	}
 
+	void SetExpressionHandler( GetSymbolProc_t pExpSymbolProc );
+
 	int m_iKeyName;	// keyname is a symbol defined in KeyValuesSystem
 
 	// These are needed out of the union because the API returns string pointers
