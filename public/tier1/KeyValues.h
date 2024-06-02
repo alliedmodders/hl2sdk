@@ -1,4 +1,4 @@
-//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -24,6 +24,7 @@
 
 #include "utlvector.h"
 #include "Color.h"
+#include "exprevaluator.h"
 
 class IBaseFileSystem;
 class CUtlBuffer;
@@ -356,7 +357,7 @@ private:
 	KeyValues *m_pSub;	// pointer to Start of a new sub key list
 	KeyValues *m_pChain;// Search here if it's not in our list
 
-	void* m_pExpressionGetSymbolProc;
+	GetSymbolProc_t m_pExpressionGetSymbolProc;
 };
 
 typedef KeyValues::AutoDelete KeyValuesAD;
@@ -437,6 +438,10 @@ inline bool  KeyValues::IsEmpty( int keySymbol )
 	return dat ? dat->IsEmpty( ) : true;
 }
 
+inline void KeyValues::SetExpressionHandler( GetSymbolProc_t pExpSymbolProc )
+{
+	m_pExpressionGetSymbolProc = pExpSymbolProc;
+}
 
 //
 // KeyValuesDumpContext and generic implementations
