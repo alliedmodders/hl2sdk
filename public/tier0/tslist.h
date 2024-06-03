@@ -127,7 +127,7 @@ union TSLIST_HEAD_ALIGN TSLHead_t
 #endif
 
 //-------------------------------------
-class TSLIST_HEAD_ALIGN CTSListBase
+class TSLIST_HEAD_ALIGN PLATFORM_CLASS CTSListBase
 {
 public:
 
@@ -159,153 +159,18 @@ private:
 	static void * operator new[] ( size_t size );
 	static void operator delete [] ( void *p);
 	
+	void InternalPush( TSLNodeBase_t *pNode );
+	TSLNodeBase_t *InternalPop();
+	
 public:
 
-	CTSListBase()
-	{
-		if ( ((size_t)&m_Head) % TSLIST_HEAD_ALIGNMENT != 0 )
-		{
-			Plat_FatalErrorFunc( "CTSListBase: Misaligned list\n" );
-			DebuggerBreak();
-		}
+	CTSListBase();
+	~CTSListBase();
 
-#ifdef USE_NATIVE_SLIST
-		InitializeSListHead( &m_Head );
-#elif defined(PLATFORM_64BITS)
-		m_Head.value64x128 = int128_zero();
-#else
-		m_Head.value64x128 = (int64)0;
-#endif
-	}
+	void Push( TSLNodeBase_t *pNode ) { InternalPush( pNode ); }
+	TSLNodeBase_t *Pop() { return InternalPop(); }
 
-	~CTSListBase()
-	{
-		Detach();
-	}
-
-	TSLNodeBase_t *Push( TSLNodeBase_t *pNode )
-	{
-#ifdef _DEBUG
-		if ( (size_t)pNode % TSLIST_NODE_ALIGNMENT != 0 )
-		{
-			Plat_FatalErrorFunc( "CTSListBase: Misaligned node\n" );
-			DebuggerBreak();
-		}
-#endif
-
-#ifdef USE_NATIVE_SLIST
-#ifdef _X360
-		// integrated write-release barrier
-		return (TSLNodeBase_t *)InterlockedPushEntrySListRelease( &m_Head, pNode );
-#else
-		return (TSLNodeBase_t *)InterlockedPushEntrySList( &m_Head, pNode );
-#endif
-#else
-		TSLHead_t oldHead;
-		TSLHead_t newHead;
-
-		#if defined( PLATFORM_PS3 ) || defined( PLATFORM_X360 )
-		__lwsync(); // write-release barrier
-		#endif
-
-#ifdef PLATFORM_64BITS
-		newHead.value.Padding = 0;
-#endif
-		for (;;)
-		{
-			oldHead.value64x128 = m_Head.value64x128;
-			pNode->Next = oldHead.value.Next;
-			newHead.value.Next = pNode;
-			
-			newHead.value32.DepthAndSequence = oldHead.value32.DepthAndSequence + 0x10001;
-			
-			
-			if ( ThreadInterlockedAssignIf64x128( &m_Head.value64x128, newHead.value64x128, oldHead.value64x128 ) )
-			{
-				break;
-			}
-			ThreadPause();
-		};
-
-		return (TSLNodeBase_t *)oldHead.value.Next;
-#endif
-	}
-
-	TSLNodeBase_t *Pop()
-	{
-#ifdef USE_NATIVE_SLIST
-#ifdef _X360
-		// integrated read-acquire barrier
-		TSLNodeBase_t *pNode = (TSLNodeBase_t *)InterlockedPopEntrySListAcquire( &m_Head );
-#else
-		TSLNodeBase_t *pNode = (TSLNodeBase_t *)InterlockedPopEntrySList( &m_Head );
-#endif
-		return pNode;
-#else
-		TSLHead_t oldHead;
-		TSLHead_t newHead;
-
-#ifdef PLATFORM_64BITS
-		newHead.value.Padding = 0;
-#endif
-		for (;;)
-		{
-			oldHead.value64x128 = m_Head.value64x128;
-			if ( !oldHead.value.Next )
-				return NULL;
-
-			newHead.value.Next = oldHead.value.Next->Next;
-			newHead.value32.DepthAndSequence = oldHead.value32.DepthAndSequence	- 1;
-
-
-			if ( ThreadInterlockedAssignIf64x128( &m_Head.value64x128, newHead.value64x128, oldHead.value64x128 ) )
-			{
-				#if defined( PLATFORM_PS3 ) || defined( PLATFORM_X360 )
-					__lwsync(); // read-acquire barrier
-				#endif
-				break;
-			}
-			ThreadPause();
-		};
-
-		return (TSLNodeBase_t *)oldHead.value.Next;
-#endif
-	}
-
-	TSLNodeBase_t *Detach()
-	{
-#ifdef USE_NATIVE_SLIST
-		TSLNodeBase_t *pBase = (TSLNodeBase_t *)InterlockedFlushSList( &m_Head );
-#if defined( _X360 ) || defined( _PS3 )
-		__lwsync(); // read-acquire barrier
-#endif
-		return pBase;
-#else
-		TSLHead_t oldHead;
-		TSLHead_t newHead;
-
-#ifdef PLATFORM_64BITS
-		newHead.value.Padding = 0;
-#endif
-		do
-		{
-			ThreadPause();
-
-			oldHead.value64x128 = m_Head.value64x128;
-			if ( !oldHead.value.Next )
-				return NULL;
-
-			newHead.value.Next = NULL;
-			// <sergiy> the reason for AND'ing it instead of poking a short into memory 
-			//          is probably to avoid store forward issues, but I'm not sure because
-			//          I didn't construct this code. In any case, leaving it as is on big-endian
-			newHead.value32.DepthAndSequence = oldHead.value32.DepthAndSequence & 0xffff0000;
-
-		} while( !ThreadInterlockedAssignIf64x128( &m_Head.value64x128, newHead.value64x128, oldHead.value64x128 ) );
-
-		return (TSLNodeBase_t *)oldHead.value.Next;
-#endif
-	}
+	TSLNodeBase_t *Detach();
 
 	TSLHead_t *AccessUnprotected()
 	{

@@ -54,44 +54,42 @@ enum SchemaEnumFlags_t
 enum SchemaTypeCategory_t : uint8
 {
 	SCHEMA_TYPE_BUILTIN = 0,
-	SCHEMA_TYPE_PTR,
+	SCHEMA_TYPE_POINTER,
 	SCHEMA_TYPE_BITFIELD,
 	SCHEMA_TYPE_FIXED_ARRAY,
 	SCHEMA_TYPE_ATOMIC,
 	SCHEMA_TYPE_DECLARED_CLASS,
 	SCHEMA_TYPE_DECLARED_ENUM,
-	SCHEMA_TYPE_NONE,
+	SCHEMA_TYPE_INVALID,
 };
 
 enum SchemaAtomicCategory_t : uint8
 {
-	SCHEMA_ATOMIC_BASIC = 0,
+	SCHEMA_ATOMIC_PLAIN = 0,
 	SCHEMA_ATOMIC_T,
 	SCHEMA_ATOMIC_COLLECTION_OF_T,
-	SCHEMA_ATOMIC_TF,
 	SCHEMA_ATOMIC_TT,
-	SCHEMA_ATOMIC_TTF,
 	SCHEMA_ATOMIC_I,
-	SCHEMA_ATOMIC_NONE,
+	SCHEMA_ATOMIC_INVALID,
 };
 
 enum SchemaBuiltinType_t
 {
-	SCHEMA_BUILTIN_INVALID = 0,
-	SCHEMA_BUILTIN_VOID,
-	SCHEMA_BUILTIN_CHAR,
-	SCHEMA_BUILTIN_INT8,
-	SCHEMA_BUILTIN_UINT8,
-	SCHEMA_BUILTIN_INT16,
-	SCHEMA_BUILTIN_UINT16,
-	SCHEMA_BUILTIN_INT32,
-	SCHEMA_BUILTIN_UINT32,
-	SCHEMA_BUILTIN_INT64,
-	SCHEMA_BUILTIN_UINT64,
-	SCHEMA_BUILTIN_FLOAT32,
-	SCHEMA_BUILTIN_FLOAT64,
-	SCHEMA_BUILTIN_BOOL,
-	SCHEMA_BUILTIN_COUNT,
+	SCHEMA_BUILTIN_TYPE_INVALID = 0,
+	SCHEMA_BUILTIN_TYPE_VOID,
+	SCHEMA_BUILTIN_TYPE_CHAR,
+	SCHEMA_BUILTIN_TYPE_INT8,
+	SCHEMA_BUILTIN_TYPE_UINT8,
+	SCHEMA_BUILTIN_TYPE_INT16,
+	SCHEMA_BUILTIN_TYPE_UINT16,
+	SCHEMA_BUILTIN_TYPE_INT32,
+	SCHEMA_BUILTIN_TYPE_UINT32,
+	SCHEMA_BUILTIN_TYPE_INT64,
+	SCHEMA_BUILTIN_TYPE_UINT64,
+	SCHEMA_BUILTIN_TYPE_FLOAT32,
+	SCHEMA_BUILTIN_TYPE_FLOAT64,
+	SCHEMA_BUILTIN_TYPE_BOOL,
+	SCHEMA_BUILTIN_TYPE_COUNT,
 };
 
 enum SchemaClassManipulatorAction_t
@@ -105,19 +103,19 @@ enum SchemaClassManipulatorAction_t
 	SCHEMA_CLASS_MANIPULATOR_ACTION_GET_SCHEMA_BINDING,
 };
 
-enum SchemaAtomicManipulatorAction_t
+enum SchemaCollectionManipulatorAction_t
 {
-	SCHEMA_ATOMIC_MANIPULATOR_ACTION_GET_COUNT = 0,
-	SCHEMA_ATOMIC_MANIPULATOR_ACTION_GET_ELEMENT_CONST,
-	SCHEMA_ATOMIC_MANIPULATOR_ACTION_GET_ELEMENT,
-	SCHEMA_ATOMIC_MANIPULATOR_ACTION_SWAP_ELEMENTS,
-	SCHEMA_ATOMIC_MANIPULATOR_ACTION_INSERT_BEFORE,
-	SCHEMA_ATOMIC_MANIPULATOR_ACTION_REMOVE_MULTIPLE,
-	SCHEMA_ATOMIC_MANIPULATOR_ACTION_SET_COUNT,
+	SCHEMA_COLLECTION_MANIPULATOR_ACTION_GET_COUNT = 0,
+	SCHEMA_COLLECTION_MANIPULATOR_ACTION_GET_ELEMENT_CONST,
+	SCHEMA_COLLECTION_MANIPULATOR_ACTION_GET_ELEMENT,
+	SCHEMA_COLLECTION_MANIPULATOR_ACTION_SWAP_ELEMENTS,
+	SCHEMA_COLLECTION_MANIPULATOR_ACTION_INSERT_BEFORE,
+	SCHEMA_COLLECTION_MANIPULATOR_ACTION_REMOVE_MULTIPLE,
+	SCHEMA_COLLECTION_MANIPULATOR_ACTION_SET_COUNT,
 };
 
 typedef void* (*SchemaClassManipulatorFn_t)(SchemaClassManipulatorAction_t, void*, void*);
-typedef void* (*SchemaAtomicManipulatorFn_t)(SchemaAtomicManipulatorAction_t, void*, void*, void*);
+typedef void* (*SchemaCollectionManipulatorFn_t)(SchemaCollectionManipulatorAction_t, void*, void*, void*);
 
 inline uint32 CSchemaType_Hash( const char *pString, int len )
 {
@@ -129,7 +127,8 @@ struct SchemaMetaInfoHandle_t
 {
 	SchemaMetaInfoHandle_t() : m_pObj( NULL ) {}
 	SchemaMetaInfoHandle_t( T *obj ) : m_pObj( obj ) {}
-	T* Get() { return m_pObj; }
+	T* Get() const { return m_pObj; }
+	bool operator<( const SchemaMetaInfoHandle_t& rhs ) const { return m_pObj < rhs.m_pObj; }
 
 	T* m_pObj;
 };
@@ -204,7 +203,7 @@ public:
 class CSchemaType_Atomic_CollectionOfT : public CSchemaType_Atomic_T
 {
 public:
-	SchemaAtomicManipulatorFn_t m_pfnManipulator;
+	SchemaCollectionManipulatorFn_t m_pfnManipulator;
 	uint16 m_nElementSize;
 };
 
@@ -246,7 +245,7 @@ public:
 class CSchemaType_Bitfield : public CSchemaType
 {
 public:
-	int m_nSize;
+	int m_nBitfieldCount;
 };
 
 struct SchemaMetadataEntryData_t
@@ -362,8 +361,8 @@ class CSchemaEnumInfo : public SchemaEnumInfoData_t
 
 struct SchemaAtomicTypeInfo_t
 {
-	const char* m_pszName1;
-	const char* m_pszName2;
+	const char* m_pszName;
+	const char* m_pszTokenName;
 	
 	int m_nAtomicID;
 	
@@ -373,41 +372,64 @@ struct SchemaAtomicTypeInfo_t
 
 struct AtomicTypeInfo_T_t
 {
+	bool operator<( const AtomicTypeInfo_T_t& rhs ) const 
+	{ 
+		if ( m_nAtomicID != rhs.m_nAtomicID )
+			return m_nAtomicID < rhs.m_nAtomicID;
+		
+		if ( m_pTemplateType != rhs.m_pTemplateType )
+			return m_pTemplateType < rhs.m_pTemplateType;
+		
+		return m_pfnManipulator < rhs.m_pfnManipulator;
+	}
+	
 	int m_nAtomicID;
 	CSchemaType* m_pTemplateType;
-	SchemaAtomicManipulatorFn_t m_pfnManipulator;
-};
-
-struct AtomicTypeInfo_TF_t
-{
-	int m_nAtomicID;
-	CSchemaType* m_pTemplateType;
-	int m_nFuncPtrSize;
+	SchemaCollectionManipulatorFn_t m_pfnManipulator;
 };
 
 struct AtomicTypeInfo_TT_t
 {
+	bool operator<( const AtomicTypeInfo_TT_t& rhs ) const 
+	{ 
+		if ( m_nAtomicID != rhs.m_nAtomicID )
+			return m_nAtomicID < rhs.m_nAtomicID;
+		
+		if ( m_pTemplateType != rhs.m_pTemplateType )
+			return m_pTemplateType < rhs.m_pTemplateType;
+		
+		return m_pTemplateType2 < rhs.m_pTemplateType2;
+	}
+	
 	int m_nAtomicID;
 	CSchemaType* m_pTemplateType;
 	CSchemaType* m_pTemplateType2;
-};
-
-struct AtomicTypeInfo_TTF_t
-{
-	int m_nAtomicID;
-	CSchemaType* m_pTemplateType;
-	CSchemaType* m_pTemplateType2;
-	int m_nFuncPtrSize;
 };
 
 struct AtomicTypeInfo_I_t
 {
+	bool operator<( const AtomicTypeInfo_I_t& rhs ) const 
+	{ 
+		if ( m_nAtomicID != rhs.m_nAtomicID )
+			return m_nAtomicID < rhs.m_nAtomicID;
+
+		return m_nInteger < rhs.m_nInteger;
+	}
+	
 	int m_nAtomicID;
 	int m_nInteger;
 };
 
 struct TypeAndCountInfo_t
 {
+	bool operator<( const TypeAndCountInfo_t& rhs ) const 
+	{ 
+		if ( m_nElementCount != rhs.m_nElementCount )
+			return m_nElementCount < rhs.m_nElementCount;
+		
+		return m_pElementType < rhs.m_pElementType;
+	}
+	
 	int m_nElementCount;
 	CSchemaType* m_pElementType;
 };
