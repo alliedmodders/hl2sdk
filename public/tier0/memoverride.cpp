@@ -163,6 +163,12 @@ void *_realloc_base( void *pMem, size_t nSize )
 	return ReallocUnattributed( pMem, nSize );
 }
 
+#if 0
+// AMNOTE: Disabled due to causing issues/crashes on library unload, direct cause is unknown
+// but _recalloc_base by itself calls to _realloc_base which we also override above
+// thus still preserving the memory allocation to the game's allocator.
+// As a side note _msize_base is also called from it, so now it should be also maintained!
+
 #if ( defined ( _MSC_VER ) && _MSC_VER >= 1900 )
 void *_recalloc_base( void *pMem, size_t nCount, size_t nSize )
 {
@@ -177,6 +183,7 @@ void *_recalloc_base(void *pMem, size_t nSize)
 	memset(pMemOut, 0, nSize);
 	return pMemOut;
 }
+#endif
 #endif
 
 void _free_base( void *pMem )
@@ -224,12 +231,16 @@ void * __cdecl _recalloc_crt(void *ptr, size_t count, size_t size)
 	
 }
 
+#if 0
+// AMNOTE: Read the comment on _recalloc_base to see the reason of this being disabled
+
 ALLOC_CALL void * __cdecl _recalloc ( void * memblock, size_t count, size_t size )
 {
 	void *pMem = ReallocUnattributed( memblock, size * count );
 	memset( pMem, 0, size * count );
 	return pMem;
 }
+#endif
 
 #if ( defined ( _MSC_VER ) && _MSC_VER >= 1900 )
 size_t _msize_base( void *pMem ) _CRT_NOEXCEPT
