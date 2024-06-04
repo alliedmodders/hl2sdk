@@ -38,6 +38,15 @@ COLLISION DETECTION
 
 #include "vcollide.h"
 
+enum RayType_t : uint8
+{
+	RAY_TYPE_LINE = 0,
+	RAY_TYPE_SPHERE,
+	RAY_TYPE_HULL,
+	RAY_TYPE_CAPSULE,
+	RAY_TYPE_MESH,
+};
+
 struct cmodel_t
 {
 	Vector		mins, maxs;
@@ -59,70 +68,55 @@ struct csurface_t
 //-----------------------------------------------------------------------------
 struct Ray_t
 {
-	VectorAligned  m_Start;	// starting point, centered within the extents
-	VectorAligned  m_Delta;	// direction + length of the ray
-	VectorAligned  m_StartOffset;	// Add this to m_Start to get the actual ray start
-	VectorAligned  m_Extents;	// Describes an axis aligned box extruded along a ray
-	const matrix3x4_t *m_pWorldAxisTransform;
-	bool	m_IsRay;	// are the extents zero?
-	bool	m_IsSwept;	// is delta != 0?
-
-	Ray_t() : m_pWorldAxisTransform( NULL )	{}
-
-	void Init( Vector const& start, Vector const& end )
+	Ray_t() 
 	{
-		Assert( &end );
-		VectorSubtract( end, start, m_Delta );
-
-		m_IsSwept = (m_Delta.LengthSqr() != 0);
-
-		VectorClear( m_Extents );
-		m_pWorldAxisTransform = NULL;
-		m_IsRay = true;
-
-		// Offset m_Start to be in the center of the box...
-		VectorClear( m_StartOffset );
-		VectorCopy( start, m_Start );
+		m_Line.m_vStartOffset.Init();
+		m_Line.m_flRadius = 0.0f;
+		m_eType = RAY_TYPE_LINE;
 	}
-
-	void Init( Vector const& start, Vector const& end, Vector const& mins, Vector const& maxs )
+	
+	struct Line_t
 	{
-		Assert( &end );
-		VectorSubtract( end, start, m_Delta );
-
-		m_pWorldAxisTransform = NULL;
-		m_IsSwept = (m_Delta.LengthSqr() != 0);
-
-		VectorSubtract( maxs, mins, m_Extents );
-		m_Extents *= 0.5f;
-		m_IsRay = (m_Extents.LengthSqr() < 1e-6);
-
-		// Offset m_Start to be in the center of the box...
-		VectorAdd( mins, maxs, m_StartOffset );
-		m_StartOffset *= 0.5f;
-		VectorAdd( start, m_StartOffset, m_Start );
-		m_StartOffset *= -1.0f;
-	}
-
-	// compute inverse delta
-	Vector InvDelta() const
+		Vector m_vStartOffset;
+		float m_flRadius;
+	};
+	
+	struct Sphere_t
 	{
-		Vector vecInvDelta;
-		for ( int iAxis = 0; iAxis < 3; ++iAxis )
-		{
-			if ( m_Delta[iAxis] != 0.0f )
-			{
-				vecInvDelta[iAxis] = 1.0f / m_Delta[iAxis];
-			}
-			else
-			{
-				vecInvDelta[iAxis] = FLT_MAX;
-			}
-		}
-		return vecInvDelta;
-	}
-
-private:
+		Vector m_vCenter;
+		float m_flRadius;
+	};
+	
+	struct Hull_t
+	{
+		Vector m_vMin;
+		Vector m_vMax;
+	};
+	
+	struct Capsule_t
+	{
+		Vector m_vCenter[2];
+		float m_flRadius;
+	};
+	
+	struct Mesh_t
+	{
+		Vector m_vMin;
+		Vector m_vMax;
+		Vector* m_pVertices;
+		int m_nNumVertices;
+	};
+	
+	union
+	{
+		Line_t 		m_Line;
+		Sphere_t 	m_Sphere;
+		Hull_t 		m_Hull;
+		Capsule_t 	m_Capsule;
+		Mesh_t 		m_Mesh;
+	};
+	
+	RayType_t m_eType;
 };
 
 

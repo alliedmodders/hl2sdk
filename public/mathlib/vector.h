@@ -404,10 +404,11 @@ public:
 class ALIGN16 VectorAligned : public Vector
 {
 public:
-	inline VectorAligned(void) {};
-	inline VectorAligned(vec_t X, vec_t Y, vec_t Z) 
+	inline VectorAligned(void) { w = 0.0f; }
+	inline VectorAligned(vec_t X, vec_t Y, vec_t Z, float W) 
 	{
 		Init(X,Y,Z);
+		w = W;
 	}
 
 #ifdef VECTOR_NO_SLOW_OPERATIONS
