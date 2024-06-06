@@ -14,6 +14,11 @@ public:
 	CTransform() {}
 	CTransform( const Vector &v, const Quaternion &q ) : m_vPosition(v), m_orientation(q) {}
 
+	bool IsValid() const
+	{
+		return m_vPosition.IsValid() && m_orientation.IsValid();
+	}
+
 	bool operator==(const CTransform& v) const;
 	bool operator!=(const CTransform& v) const;
 
