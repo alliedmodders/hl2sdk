@@ -312,13 +312,7 @@ struct RnQueryAttr_t : public RnQueryShapeAttr_t
 class CTraceFilter : public RnQueryAttr_t
 {
 public:
-	CTraceFilter( int nCollisionGroup = COLLISION_GROUP_DEFAULT, bool bIterateEntities = true ) 
-	{
-		m_nCollisionGroup = nCollisionGroup;
-		m_bIterateEntities = bIterateEntities;
-	}
-	
-	CTraceFilter( uint64 nInteractsWith, int nCollisionGroup = COLLISION_GROUP_DEFAULT, bool bIterateEntities = true ) 
+	CTraceFilter( uint64 nInteractsWith = 0, int nCollisionGroup = COLLISION_GROUP_DEFAULT, bool bIterateEntities = true ) 
 	{
 		m_nInteractsWith = nInteractsWith;
 		m_nCollisionGroup = nCollisionGroup;
@@ -328,7 +322,7 @@ public:
 	CTraceFilter( 	CEntityInstance* pPassEntity, 
 					CEntityInstance* pPassEntityOwner, 
 					uint16 nHierarchyId,
-					uint64 nInteractsWith, 
+					uint64 nInteractsWith = 0, 
 					int nCollisionGroup = COLLISION_GROUP_DEFAULT, 
 					bool bIterateEntities = true ) 
 	{
@@ -349,7 +343,7 @@ public:
 					CEntityInstance* pPassEntityOwner2, 
 					uint16 nHierarchyId1,
 					uint16 nHierarchyId2,
-					uint64 nInteractsWith, 
+					uint64 nInteractsWith = 0, 
 					int nCollisionGroup = COLLISION_GROUP_DEFAULT, 
 					bool bIterateEntities = true ) 
 	{
