@@ -68,11 +68,12 @@ struct csurface_t
 //-----------------------------------------------------------------------------
 struct Ray_t
 {
-	Ray_t() 																{ Init( Vector( 0.0f, 0.0f, 0.0f ) ); }
-	Ray_t( const Vector& vStartOffset ) 									{ Init( vStartOffset ); }
-	Ray_t( const Vector& vCenter, float flRadius ) 							{ Init( vCenter, flRadius ); }
-	Ray_t( const Vector& vMins, const Vector& vMaxs ) 						{ Init( vMins, vMaxs ); }
+	Ray_t() { Init( Vector( 0.0f, 0.0f, 0.0f ) ); }
+	Ray_t( const Vector& vStartOffset ) { Init( vStartOffset ); }
+	Ray_t( const Vector& vCenter, float flRadius ) { Init( vCenter, flRadius ); }
+	Ray_t( const Vector& vMins, const Vector& vMaxs ) { Init( vMins, vMaxs ); }
 	Ray_t( const Vector& vCenterA, const Vector& vCenterB, float flRadius ) { Init( vCenterA, vCenterB, flRadius ); }
+	Ray_t( const Vector& vMins, const Vector& vMaxs, const Vector* pVertices, int nNumVertices ) { Init( vMins, vMaxs, pVertices, nNumVertices ); }
 	
 	void Init( const Vector& vStartOffset )
 	{
@@ -131,6 +132,15 @@ struct Ray_t
 		}
 	}
 	
+	void Init( const Vector& vMins, const Vector& vMaxs, const Vector* pVertices, int nNumVertices )
+	{
+		m_Mesh.m_vMins = vMins;
+		m_Mesh.m_vMaxs = vMaxs;
+		m_Mesh.m_pVertices = pVertices;
+		m_Mesh.m_nNumVertices = nNumVertices;
+		m_eType = RAY_TYPE_MESH;
+	}
+	
 	struct Line_t
 	{
 		Vector m_vStartOffset;
@@ -157,9 +167,9 @@ struct Ray_t
 	
 	struct Mesh_t
 	{
-		Vector m_vMin;
-		Vector m_vMax;
-		Vector* m_pVertices;
+		Vector m_vMins;
+		Vector m_vMaxs;
+		const Vector* m_pVertices;
 		int m_nNumVertices;
 	};
 	
