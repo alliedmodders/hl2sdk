@@ -13,13 +13,13 @@
 
 #include "cmodel.h"
 #include "Color.h"
+#include "entity2/entityinstance.h"
 #include "mathlib/transform.h"
 #include "tier1/generichash.h"
 #include "tier1/utlvector.h"
 #include "tier1/utlstring.h"
 #include "ispatialpartition.h"
 
-class CBaseEntity;
 class IPhysicsBody;
 class IPhysicsShape;
 
@@ -312,14 +312,69 @@ struct RnQueryAttr_t : public RnQueryShapeAttr_t
 class CTraceFilter : public RnQueryAttr_t
 {
 public:
-	CTraceFilter( int collisionGroup = COLLISION_GROUP_DEFAULT, bool bIterateEntities = true ) 
+	CTraceFilter( int nCollisionGroup = COLLISION_GROUP_DEFAULT, bool bIterateEntities = true ) 
 	{
-		m_nCollisionGroup = collisionGroup;
+		m_nCollisionGroup = nCollisionGroup;
 		m_bIterateEntities = bIterateEntities;
 	}
 	
+	CTraceFilter( uint64 nInteractsWith, int nCollisionGroup = COLLISION_GROUP_DEFAULT, bool bIterateEntities = true ) 
+	{
+		m_nInteractsWith = nInteractsWith;
+		m_nCollisionGroup = nCollisionGroup;
+		m_bIterateEntities = bIterateEntities;
+	}
+
+	CTraceFilter( 	CEntityInstance* pPassEntity, 
+					CEntityInstance* pPassEntityOwner, 
+					uint16 nHierarchyId,
+					uint64 nInteractsWith, 
+					int nCollisionGroup = COLLISION_GROUP_DEFAULT, 
+					bool bIterateEntities = true ) 
+	{
+		SetPassEntity1( pPassEntity );
+		
+		SetPassEntityOwner1( pPassEntityOwner );
+
+		m_nHierarchyIds[0] = nHierarchyId;
+		
+		m_nInteractsWith = nInteractsWith;
+		m_nCollisionGroup = nCollisionGroup;
+		m_bIterateEntities = bIterateEntities;
+	}
+	
+	CTraceFilter( 	CEntityInstance* pPassEntity1, 
+					CEntityInstance* pPassEntity2, 
+					CEntityInstance* pPassEntityOwner1, 
+					CEntityInstance* pPassEntityOwner2, 
+					uint16 nHierarchyId1,
+					uint16 nHierarchyId2,
+					uint64 nInteractsWith, 
+					int nCollisionGroup = COLLISION_GROUP_DEFAULT, 
+					bool bIterateEntities = true ) 
+	{
+		SetPassEntity1( pPassEntity1 );
+		SetPassEntity2( pPassEntity2 );
+		
+		SetPassEntityOwner1( pPassEntityOwner1 );
+		SetPassEntiryOwner2( pPassEntityOwner2 );
+		
+		m_nHierarchyIds[0] = nHierarchyId1;
+		m_nHierarchyIds[1] = nHierarchyId2;
+		
+		m_nInteractsWith = nInteractsWith;
+		m_nCollisionGroup = nCollisionGroup;
+		m_bIterateEntities = bIterateEntities;
+	}
+	
+	void SetPassEntity1( CEntityInstance* pEntity ) { m_nEntityIdsToIgnore[0] = pEntity ? pEntity->GetRefEHandle().ToInt() : -1; }
+	void SetPassEntity2( CEntityInstance* pEntity ) { m_nEntityIdsToIgnore[1] = pEntity ? pEntity->GetRefEHandle().ToInt() : -1; }
+	
+	void SetPassEntityOwner1( CEntityInstance* pOwner ) { m_nOwnerIdsToIgnore[0] = pOwner ? pOwner->GetRefEHandle().ToInt() : -1; }
+	void SetPassEntiryOwner2( CEntityInstance* pOwner ) { m_nOwnerIdsToIgnore[1] = pOwner ? pOwner->GetRefEHandle().ToInt() : -1; }
+	
 	virtual ~CTraceFilter() {}
-	virtual bool ShouldHitEntity( CBaseEntity* pEntity ) { return true; }
+	virtual bool ShouldHitEntity( CEntityInstance* pEntity ) { return true; }
 	
 public:
 	bool m_bIterateEntities; // if true then calls ShouldHitEntity for each hit entity
@@ -412,7 +467,7 @@ public:
 	
 public:
 	const CPhysSurfaceProperties *m_pSurfaceProperties;
-	CBaseEntity *m_pEnt;
+	CEntityInstance *m_pEnt;
 	const CHitBox *m_pHitbox;
 	
 	HPhysicsBody m_hBody;

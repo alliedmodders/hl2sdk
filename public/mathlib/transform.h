@@ -14,18 +14,14 @@ public:
 	CTransform() {}
 	CTransform( const Vector &v, const Quaternion &q ) : m_vPosition(v), m_orientation(q) {}
 
-	VectorAligned m_vPosition;
-	QuaternionAligned m_orientation;
-	
-	bool IsValid() const
-	{
-		return m_vPosition.IsValid() && m_orientation.IsValid();
-	}
-
 	bool operator==(const CTransform& v) const;
 	bool operator!=(const CTransform& v) const;
 
-	inline void SetToIdentity();
+	void SetToIdentity();
+	
+public:
+	VectorAligned m_vPosition;
+	QuaternionAligned m_orientation;
 
 } ALIGN16_POST;
 
