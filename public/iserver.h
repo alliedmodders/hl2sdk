@@ -126,11 +126,10 @@ public:
 
 	virtual void	unk201() = 0;
 	virtual void	unk202() = 0;
-	virtual void	unk203() = 0;
 	
 	virtual void	SetMaxClients( int nMaxClients ) = 0;
 	
-	virtual void	unk205() = 0;
+	virtual void	unk301() = 0;
 
 	virtual CPlayerUserId GetPlayerUserId( CPlayerSlot slot ) = 0;
 	virtual const char *GetPlayerNetworkIDString( CPlayerSlot slot ) = 0;
@@ -146,15 +145,15 @@ public:
 
 	virtual void	FillKV3ServerInfo( KeyValues3 *out ) = 0;
 
-	virtual void	unk301() = 0;
+	virtual void	unk401() = 0;
 	
 	virtual bool	IsPausable( PauseGroup_t ) = 0;
 
 	// Returns sv_password cvar value, if it's set to "none" nullptr would be returned!
 	virtual const char *GetPassword() = 0;
 
-	virtual void	unk401() = 0;
-	virtual void	unk402() = 0;
+	virtual void	unk501() = 0;
+	virtual void	unk502() = 0;
 
 	virtual void	FillServerInfo( CSVCMsg_ServerInfo_t *pServerInfo ) = 0;
 	virtual void	UserInfoChanged( CPlayerSlot slot ) = 0;
@@ -162,7 +161,7 @@ public:
 	// 2nd arg is unused.
 	virtual void	GetClassBaseline( void *, ServerClass *pClass, intp *pOut ) = 0;
 
-	virtual void	unk501() = 0;
+	virtual void	unk601() = 0;
 
 	virtual CServerSideClientBase *ConnectClient( const char *pszName, ns_address *pAddr, int socket, CCLCMsg_SplitPlayerConnect_t *pSplitPlayer,
 												  const char *pszChallenge, const byte *pAuthTicket, int nAuthTicketLength, bool bIsLowViolence ) = 0;
