@@ -103,7 +103,7 @@ DEFINES +=-DX64BITS -DPLATFORM_64BITS -DVPROF_LEVEL=1 -DSWDS -D_finite=finite -D
 UNDEF = -Usprintf -Ustrncpy -UPROTECTED_THINGS_ENABLE
 
 BASE_CFLAGS = -fPIC -fno-strict-aliasing -Wall -Wsign-compare -Wno-conversion -Wno-overloaded-virtual -Wno-non-virtual-dtor -Wno-invalid-offsetof \
-	      -Wno-unknown-pragmas -Wno-unused -Wno-c++11-narrowing
+	      -Wno-unknown-pragmas -Wno-unused -Wno-c++11-narrowing -Wno-register
 SHLIBCFLAGS = -fPIC
 
 # Clang >= 3 || GCC >= 4.7
