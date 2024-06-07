@@ -351,7 +351,7 @@ public:
 		SetPassEntity2( pPassEntity2 );
 		
 		SetPassEntityOwner1( pPassEntityOwner1 );
-		SetPassEntiryOwner2( pPassEntityOwner2 );
+		SetPassEntityOwner2( pPassEntityOwner2 );
 		
 		m_nHierarchyIds[0] = nHierarchyId1;
 		m_nHierarchyIds[1] = nHierarchyId2;
@@ -365,7 +365,7 @@ public:
 	void SetPassEntity2( CEntityInstance* pEntity ) { m_nEntityIdsToIgnore[1] = pEntity ? pEntity->GetRefEHandle().ToInt() : -1; }
 	
 	void SetPassEntityOwner1( CEntityInstance* pOwner ) { m_nOwnerIdsToIgnore[0] = pOwner ? pOwner->GetRefEHandle().ToInt() : -1; }
-	void SetPassEntiryOwner2( CEntityInstance* pOwner ) { m_nOwnerIdsToIgnore[1] = pOwner ? pOwner->GetRefEHandle().ToInt() : -1; }
+	void SetPassEntityOwner2( CEntityInstance* pOwner ) { m_nOwnerIdsToIgnore[1] = pOwner ? pOwner->GetRefEHandle().ToInt() : -1; }
 	
 	virtual ~CTraceFilter() {}
 	virtual bool ShouldHitEntity( CEntityInstance* pEntity ) { return true; }
