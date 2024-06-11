@@ -127,9 +127,18 @@ public:
 	virtual void	unk201() = 0;
 	virtual void	unk202() = 0;
 	
+};
+
+abstract_class CNetworkGameServerBase : public INetworkGameServer, protected IConnectionlessPacketHandler
+{
+public:
+	virtual ~CNetworkGameServerBase() = 0;
+	
 	virtual void	SetMaxClients( int nMaxClients ) = 0;
 	
 	virtual void	unk301() = 0;
+	virtual bool	ProcessConnectionlessPacket( const ns_address *addr, bf_read *bf ) = 0; // process a connectionless packet
+
 
 	virtual CPlayerUserId GetPlayerUserId( CPlayerSlot slot ) = 0;
 	virtual const char *GetPlayerNetworkIDString( CPlayerSlot slot ) = 0;
@@ -179,7 +188,7 @@ abstract_class INetworkServerService : public IEngineService
 {
 public:
 	virtual ~INetworkServerService() {}
-	virtual INetworkGameServer	*GetIGameServer( void ) = 0;
+	virtual CNetworkGameServerBase	*GetIGameServer( void ) = 0;
 	virtual bool	IsActiveInGame( void ) const = 0;
 	virtual bool	IsMultiplayer( void ) const = 0;
 	virtual void	StartupServer( const GameSessionConfiguration_t &config, ISource2WorldSession *pWorldSession, const char * ) = 0;
@@ -204,7 +213,7 @@ public:
 	virtual void	*GetServerSerializersMsg( void ) = 0;
 };
 
-typedef INetworkGameServer IServer;
+typedef CNetworkGameServerBase IServer;
 
 
 #endif // ISERVER_H
