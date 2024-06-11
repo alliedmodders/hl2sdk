@@ -188,7 +188,7 @@ abstract_class INetworkServerService : public IEngineService
 {
 public:
 	virtual ~INetworkServerService() {}
-	virtual INetworkGameServer	*GetIGameServer( void ) = 0;
+	virtual CNetworkGameServerBase	*GetIGameServer( void ) = 0;
 	virtual bool	IsActiveInGame( void ) const = 0;
 	virtual bool	IsMultiplayer( void ) const = 0;
 	virtual void	StartupServer( const GameSessionConfiguration_t &config, ISource2WorldSession *pWorldSession, const char * ) = 0;
@@ -213,7 +213,7 @@ public:
 	virtual void	*GetServerSerializersMsg( void ) = 0;
 };
 
-typedef INetworkGameServer IServer;
+typedef CNetworkGameServerBase IServer;
 
 
 #endif // ISERVER_H
