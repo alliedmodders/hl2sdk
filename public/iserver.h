@@ -127,9 +127,18 @@ public:
 	virtual void	unk201() = 0;
 	virtual void	unk202() = 0;
 	
+};
+
+abstract_class CNetworkGameServerBase : public INetworkGameServer, protected IConnectionlessPacketHandler
+{
+public:
+	virtual ~CNetworkGameServerBase() = 0;
+	
 	virtual void	SetMaxClients( int nMaxClients ) = 0;
 	
 	virtual void	unk301() = 0;
+	virtual bool	ProcessConnectionlessPacket( const ns_address *addr, bf_read *bf ) = 0; // process a connectionless packet
+
 
 	virtual CPlayerUserId GetPlayerUserId( CPlayerSlot slot ) = 0;
 	virtual const char *GetPlayerNetworkIDString( CPlayerSlot slot ) = 0;
