@@ -13,7 +13,7 @@ class CNetMessagePB;
 class CNetMessage
 {
 public:
-	~CNetMessage() {}
+	virtual ~CNetMessage() {}
 
 	// Returns the underlying proto object
 	virtual void *AsProto() const = 0;
