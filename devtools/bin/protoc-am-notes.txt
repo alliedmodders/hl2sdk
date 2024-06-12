@@ -1,0 +1,37 @@
+AlliedModders custom protoc
+Built from ProtoBuf 3.21.8
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 04cb3303a..f94c86452 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -33,6 +33,9 @@ if(protobuf_DEPRECATED_CMAKE_SUBDIRECTORY_USAGE)
+ endif()
+
+ # Add c++11 flags
++if (NOT WIN32)
++  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_USE_CXX11_ABI=0")
++endif()
+ if (CYGWIN)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+ else()
+diff --git a/src/google/protobuf/compiler/cpp/message.cc b/src/google/protobuf/compiler/cpp/message.cc
+index 69069dacd..872d86630 100644
+--- a/src/google/protobuf/compiler/cpp/message.cc
++++ b/src/google/protobuf/compiler/cpp/message.cc
+@@ -308,7 +308,7 @@ bool HasPrivateHasMethod(const FieldDescriptor* field) {
+
+ bool ShouldMarkClassAsFinal(const Descriptor* descriptor,
+                             const Options& options) {
+-  return true;
++  return false;
+ }
+
+
+diff --git a/third_party/googletest b/third_party/googletest
+index 5ec7f0c4a..4c9a3bb62 160000
+--- a/third_party/googletest
++++ b/third_party/googletest
+@@ -1 +1 @@
+-Subproject commit 5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081
++Subproject commit 4c9a3bb62bf3ba1f1010bf96f9c8ed767b363774
