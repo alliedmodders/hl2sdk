@@ -12,6 +12,8 @@
 #include <tier1/bitbuf.h>
 #include "Color.h"
 
+class CNetMessage;
+
 enum NetworkValidationMode_t
 {
 
@@ -49,26 +51,28 @@ struct NetMessageInfo_t
 	bool m_bOkayToRedispatch;
 };
 
-abstract_class INetworkSerializable
+abstract_class INetworkMessageInternal
 {
 public:
-	virtual ~INetworkSerializable() = 0;
+	virtual ~INetworkMessageInternal() = 0;
 
 	virtual const char *GetUnscopedName() = 0;
 	virtual NetMessageInfo_t *GetNetMessageInfo() = 0;
 
-	virtual void SetMessageId(unsigned short nMessageId) = 0;
+	virtual void SetMessageId( unsigned short nMessageId ) = 0;
 
-	virtual void AddCategoryMask(int nMask, bool) = 0;
+	virtual void AddCategoryMask( int nMask, bool ) = 0;
 
-	virtual void SwitchMode(NetworkValidationMode_t nMode) = 0;
+	virtual void SwitchMode( NetworkValidationMode_t nMode ) = 0;
 
-	virtual void *AllocateMessage() = 0;
-	virtual void DeallocateMessage(void *pMsg) = 0;
-	virtual void *AllocateAndCopyConstructNetMessage(void const *pOther) = 0;
+	virtual CNetMessage *AllocateMessage() = 0;
+	virtual void DeallocateMessage( CNetMessage *pMsg ) = 0;
+	virtual CNetMessage *AllocateAndCopyConstructNetMessage( const CNetMessage *pOther ) = 0;
 
-	virtual bool Serialize(bf_write &pBuf, void const *pData, NetworkSerializationMode_t unused) = 0;
-	virtual bool Unserialize(bf_read &pBuf, void *pData, NetworkSerializationMode_t unused) = 0;
+	// Calls to INetworkMessages::SerializeMessageInternal
+	virtual bool Serialize( bf_write &pBuf, const CNetMessage *pData ) = 0;
+	// Calls to INetworkMessages::UnserializeMessageInternal
+	virtual bool Unserialize( bf_read &pBuf, CNetMessage *pData ) = 0;
 };
 
 #endif /* NETWORKSERIALIZER_H */
