@@ -20,13 +20,13 @@
 
 class	IDemoRecorderBase;
 class	IInstantReplayIntercept;
-class	INetMessage;
+class	CNetMessage;
 class	INetChannelHandler;
 class	INetChannel;
 class	INetChannelInfo;
 class	INetMessageBinder;
 class	INetworkMessageProcessingPreFilter;
-class	INetworkSerializable;
+class	INetworkMessageInternal;
 class	INetMessageDispatcher;
 class	InstantReplayMessage_t;
 class	CUtlSlot;
@@ -59,7 +59,7 @@ abstract_class INetworkMessageProcessingPreFilter
 {
 public:
 	// Filter incoming messages from the netchan, return true to filter out (block) the further processing of the message
-	virtual bool FilterMessage( INetworkSerializable *pNetMessage, const void *pData, INetChannel *pChannel ) = 0;
+	virtual bool FilterMessage( INetworkMessageInternal *pNetMessage, const CNetMessage *pData, INetChannel *pChannel ) = 0;
 };
 
 abstract_class INetChannel : public INetChannelInfo
@@ -73,7 +73,7 @@ public:
 	
 	virtual HSteamNetConnection GetSteamNetConnection( void ) const = 0;
 	
-	virtual bool	SendNetMessage( INetworkSerializable *pNetMessage, const void *pData, NetChannelBufType_t bufType ) = 0;
+	virtual bool	SendNetMessage( INetworkMessageInternal *pNetMessage, const CNetMessage *pData, NetChannelBufType_t bufType ) = 0;
 	virtual bool	SendData( bf_write &msg, NetChannelBufType_t bufferType ) = 0;
 	virtual int		Transmit( const char *pDebugName, bf_write *data ) = 0;
 	virtual void	SetBitsToSend( void ) = 0;
@@ -112,8 +112,8 @@ public:
 	virtual void	StartRegisteringMessageHandlers( void ) = 0;
 	virtual void	FinishRegisteringMessageHandlers( void ) = 0;
 	
-	virtual void	RegisterNetMessageHandlerAbstract( CUtlSlot *nSlot, const CUtlAbstractDelegate &delegate, int nParamCount, INetworkSerializable *pNetMessage, int nPriority ) = 0;
-	virtual void	UnregisterNetMessageHandlerAbstract( CUtlSlot *nSlot, const CUtlAbstractDelegate &delegate, INetworkSerializable *pNetMessage ) = 0;
+	virtual void	RegisterNetMessageHandlerAbstract( CUtlSlot *nSlot, const CUtlAbstractDelegate &delegate, int nParamCount, INetworkMessageInternal *pNetMessage, int nPriority ) = 0;
+	virtual void	UnregisterNetMessageHandlerAbstract( CUtlSlot *nSlot, const CUtlAbstractDelegate &delegate, INetworkMessageInternal *pNetMessage ) = 0;
 	
 	virtual void	SetChallengeNr( unsigned int challenge ) = 0;
 	virtual int		GetNumBitsWritten( NetChannelBufType_t bufferType ) const = 0;
@@ -126,7 +126,7 @@ public:
 	virtual void	InstallMessageFilter( INetworkMessageProcessingPreFilter *pFilter ) = 0;
 	virtual void	UninstallMessageFilter( INetworkMessageProcessingPreFilter *pFilter ) = 0;
 	
-	virtual void	PostReceivedNetMessage( INetworkSerializable *pNetMessage, const void *pData, const NetChannelBufType_t *pBufType, int nBits, int nInSequenceNr ) = 0;
+	virtual void	PostReceivedNetMessage( INetworkMessageInternal *pNetMessage, const CNetMessage *pData, const NetChannelBufType_t *pBufType, int nBits, int nInSequenceNr ) = 0;
 	virtual void	InsertReplayMessage( InstantReplayMessage_t &msg ) = 0;
 	virtual bool	HasQueuedNetMessages( int nMessageId ) const = 0;
 
