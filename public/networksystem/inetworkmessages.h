@@ -65,6 +65,11 @@ public:
 	// Passing nMessasgeId as -1 would auto-assign the id even if bAutoAssignId is false based on the message name hash.
 	virtual INetworkSerializable *FindOrCreateNetMessage(int nMessageId, IProtobufBinding const *pProtoBinding, uint nMessageSize, INetworkSerializerBindingBuildFilter *pUnused, bool bCreateIfNotFound = true, bool bAutoAssignId = false) = 0;
 
+	virtual bool CallsSerializeAbstract(bf_write &pBuf, INetworkSerializable *pNetMessage, void const *pData) = 0;
+
+	virtual void unk_001() = 0;
+	virtual void unk_002() = 0;
+
 	virtual bool SerializeAbstract(bf_write &pBuf, INetworkSerializable *pNetMessage, void const *pData) = 0;
 
 	// Returns true if the buffer is fully read, false if there's still data left
@@ -98,7 +103,7 @@ public:
 	virtual void SetNetworkSerializationContextData(char const *szContext, NetworkSerializationMode_t, void *) = 0;
 	virtual void *GetNetworkSerializationContextData(char const *szContext) = 0;
 
-	virtual void unk001() = 0;
+	virtual void unk003() = 0;
 
 	// Doesn't support duplicated callbacks per field
 	virtual void RegisterNetworkFieldChangeCallbackInternal(char const *szFieldName, uint64, NetworkFieldChangedDelegateType_t fieldType, CUtlAbstractDelegate pCallback, NetworkFieldChangeCallbackPerformType_t cbPerformType, int unkflag ) = 0;
