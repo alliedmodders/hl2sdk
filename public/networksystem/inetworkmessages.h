@@ -65,7 +65,7 @@ public:
 	// Passing nMessasgeId as -1 would auto-assign the id even if bAutoAssignId is false based on the message name hash.
 	virtual INetworkSerializable *FindOrCreateNetMessage(int nMessageId, IProtobufBinding const *pProtoBinding, uint nMessageSize, INetworkSerializerBindingBuildFilter *pUnused, bool bCreateIfNotFound = true, bool bAutoAssignId = false) = 0;
 
-	virtual bool CallsSerializeAbstract(bf_write &pBuf, INetworkSerializable *pNetMessage, void const *pData) = 0;
+	virtual bool CallsSerializeAbstract(bf_write &pBuf, void const *pData) = 0;
 
 	virtual void unk_001() = 0;
 	virtual void unk_002() = 0;
