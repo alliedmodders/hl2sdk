@@ -178,13 +178,15 @@ public:
 
 	// Access for direct read into buffer
 	void *			AccessForDirectRead( int nBytes );
+	DLL_CLASS_IMPORT const void *AccessGet( int nBytes );
+	DLL_CLASS_IMPORT void *AccessPut( int nBytes );
 
 	// Attaches the buffer to external memory....
 	DLL_CLASS_IMPORT void		SetExternalBuffer( void* pMemory, int nSize, int nInitialPut, int nFlags = 0 );
 	bool			IsExternallyAllocated() const;
 	DLL_CLASS_IMPORT void		AssumeMemory( void *pMemory, int nSize, int nInitialPut, int nFlags = 0 );
 	void			*Detach();
-	void*			DetachMemory();
+	DLL_CLASS_IMPORT void *DetachMemory();
 
 	FORCEINLINE void ActivateByteSwappingIfBigEndian( void )
 	{
@@ -199,6 +201,8 @@ public:
 	DLL_CLASS_IMPORT void	SetBigEndian( bool bigEndian );
 	DLL_CLASS_IMPORT bool	IsBigEndian( void );
 
+	DLL_CLASS_IMPORT void	AlignBuffer( int alignment );
+
 	// Resets the buffer; but doesn't free memory
 	void			Clear();
 
@@ -207,6 +211,12 @@ public:
 
 	// Dump the buffer to stdout
 	void			Spew( );
+
+	DLL_CLASS_IMPORT void Swap( CUtlBuffer &other );
+	DLL_CLASS_IMPORT void Swap( CUtlMemory<unsigned char> &other );
+
+	DLL_CLASS_IMPORT bool WriteToFile( const char *, bool );
+	DLL_CLASS_IMPORT bool WriteToFileIfDifferent( const char * );
 
 	// Read stuff out.
 	// Binary mode: it'll just read the bits directly in, and characters will be
@@ -225,8 +235,10 @@ public:
 	double			GetDouble( );
 	void *			GetPtr();
 	DLL_CLASS_IMPORT void	GetString( char* pString, int nMaxChars = 0 );
-	DLL_CLASS_IMPORT void	Get( void* pMem, int size );
+	DLL_CLASS_IMPORT void	GetString( CBufferString *pString );
+	DLL_CLASS_IMPORT bool	Get( void* pMem, int size );
 	DLL_CLASS_IMPORT void	GetLine( char* pLine, int nMaxChars = 0 );
+	DLL_CLASS_IMPORT void	GetLine( CBufferString *pLine );
 
 	// Used for getting objects that have a byteswap datadesc defined
 	template <typename T> void GetObjects( T *dest, int count = 1 );
@@ -238,6 +250,7 @@ public:
 	// This version of GetString converts \" to \\ and " to \, etc.
 	// It also reads a " at the beginning and end of the string
 	DLL_CLASS_IMPORT void	GetDelimitedString( CUtlCharConversion *pConv, char *pString, int nMaxChars = 0 );
+	DLL_CLASS_IMPORT void	GetDelimitedString( CUtlCharConversion *pConv, CBufferString *pString );
 	DLL_CLASS_IMPORT char	GetDelimitedChar( CUtlCharConversion *pConv );
 
 	// This will return the # of characters of the string about to be read out
@@ -257,7 +270,7 @@ public:
 	DLL_CLASS_IMPORT int	PeekDelimitedStringLength( CUtlCharConversion *pConv, bool bActualSize = true );
 
 	// Just like scanf, but doesn't work in binary mode
-	DLL_CLASS_IMPORT int	Scanf( const char* pFmt, ... );
+	DLL_CLASS_IMPORT int	Scanf( const char* pFmt, ... ) FMTFUNCTION( 2, 3 );
 	DLL_CLASS_IMPORT int	VaScanf( const char* pFmt, va_list list );
 
 	// Eats white space, advances Get index
@@ -265,6 +278,7 @@ public:
 
 	// Eats C++ style comments
 	DLL_CLASS_IMPORT bool	EatCPPComment();
+	DLL_CLASS_IMPORT bool	EatCComment( int * );
 
 	// (For text buffers only)
 	// Parse a token from the buffer:
@@ -273,7 +287,7 @@ public:
 	// If successful, the get index is advanced and the function returns true,
 	// otherwise the index is not advanced and the function returns false.
 	DLL_CLASS_IMPORT bool	ParseToken( const char *pStartingDelim, const char *pEndingDelim, char *pString, int nMaxLen );
-	DLL_CLASS_IMPORT bool	ParseToken( const char* pStartingDelim, const char* pEndingDelim, CBufferString &str );
+	DLL_CLASS_IMPORT bool	ParseToken( const char *pStartingDelim, const char *pEndingDelim, CBufferString *pString );
 
 	// Advance the get index until after the particular string is found
 	// Do not eat whitespace before starting. Return false if it failed
@@ -283,7 +297,7 @@ public:
 	// Parses the next token, given a set of character breaks to stop at
 	// Returns the length of the token parsed in bytes (-1 if none parsed)
 	DLL_CLASS_IMPORT int	ParseToken( const characterset_t *pBreaks, char *pTokenBuf, int nMaxLen, bool bParseComments = true );
-	DLL_CLASS_IMPORT int	ParseToken( const characterset_t* pBreaks, CBufferString &str, bool bParseComments = true );
+	DLL_CLASS_IMPORT int	ParseToken( const characterset_t *pBreaks, CBufferString *pTokenBuf, bool bParseComments = true );
 
 	// Write stuff in
 	// Binary mode: it'll just write the bits directly in, and strings will be
@@ -310,6 +324,11 @@ public:
 	// It also places " at the beginning and end of the string
 	DLL_CLASS_IMPORT void	PutDelimitedString( CUtlCharConversion *pConv, const char *pString );
 	DLL_CLASS_IMPORT void	PutDelimitedChar( CUtlCharConversion *pConv, char c );
+
+	DLL_CLASS_IMPORT bool	PutFileContent( const char *pString );
+	DLL_CLASS_IMPORT void	PutJSONString( const char *pString );
+
+	DLL_CLASS_IMPORT void	PutZeros( int nCount );
 
 	// Just like printf, writes a terminating zero in binary mode
 	DLL_CLASS_IMPORT void	Printf( const char* pFmt, ... ) FMTFUNCTION( 2, 3 );
