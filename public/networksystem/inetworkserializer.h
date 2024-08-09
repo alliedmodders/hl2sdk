@@ -66,8 +66,6 @@ public:
 	virtual void SwitchMode( NetworkValidationMode_t nMode ) = 0;
 
 	virtual CNetMessage *AllocateMessage() = 0;
-	virtual void DeallocateMessage( CNetMessage *pMsg ) = 0;
-	virtual CNetMessage *AllocateAndCopyConstructNetMessage( const CNetMessage *pOther ) = 0;
 
 	// Calls to INetworkMessages::SerializeMessageInternal
 	virtual bool Serialize( bf_write &pBuf, const CNetMessage *pData ) = 0;

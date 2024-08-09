@@ -13,18 +13,18 @@ class CNetMessagePB;
 class CNetMessage
 {
 public:
+	// Disabled as per CNetMessagePB note
+	CNetMessage() = delete;
+	CNetMessage( const CNetMessage & ) = delete;
+
 	virtual ~CNetMessage() {}
 
 	// Returns the underlying proto object
 	virtual void *AsProto() const = 0;
 	virtual void *AsProto2() const = 0;
 
-	virtual INetworkMessageInternal *GetNetMessage() const
-	{
-		// This shouldn't ever be called and the game provided vtable should be called instead!
-		Assert(0);
-		return nullptr;
-	}
+	virtual INetworkMessageInternal *GetNetMessage() const = 0;
+	virtual CNetMessage *CopyConstruct( const CNetMessage *other ) const = 0;
 
 	// Helper function to cast up the abstract message to a concrete CNetMessagePB<T> type.
 	// Doesn't do any validity checks itself!
@@ -39,6 +39,9 @@ public:
 	{
 		return static_cast<CNetMessagePB<T> *>(this);
 	}
+	
+private:
+	char unk001[32];
 };
 
 // AMNOTE: This is a stub class over real CNetMessagePB!
@@ -55,10 +58,10 @@ public:
 template<typename PROTO_TYPE>
 class CNetMessagePB : public CNetMessage, public PROTO_TYPE
 {
-private:
+public:
 	// Prevent manual construction of this object as per the comment above
-	CNetMessagePB() { };
-	CNetMessagePB( const CNetMessagePB & ) { };
+	CNetMessagePB() = delete;
+	CNetMessagePB( const CNetMessagePB & ) = delete;
 };
 
 #endif // NETMESSAGE_H
