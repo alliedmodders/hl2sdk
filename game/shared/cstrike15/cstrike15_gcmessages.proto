@@ -404,6 +404,7 @@ message CMsgGC_ServerQuestUpdateData {
 	optional bytes binary_data = 2;
 	optional uint32 mm_game_mode = 3;
 	optional .ScoreLeaderboardData missionlbsdata = 4;
+	optional uint32 flags = 5;
 }
 
 message CMsgGCCStrike15_v2_MatchmakingGC2ServerConfirm {
@@ -899,6 +900,7 @@ message CEconItemPreviewDataBlock {
 	optional uint32 musicindex = 17;
 	optional int32 entindex = 18;
 	optional uint32 petindex = 19;
+	repeated .CEconItemPreviewDataBlock.Sticker keychains = 20;
 }
 
 message CMsgGCCStrike15_v2_MatchEndRewardDropsNotification {
