@@ -73,7 +73,7 @@ public:
 	
 	virtual HSteamNetConnection GetSteamNetConnection( void ) const = 0;
 	
-	virtual bool	SendNetMessage( INetworkMessageInternal *pNetMessage, const CNetMessage *pData, NetChannelBufType_t bufType ) = 0;
+	virtual bool	SendNetMessage( const CNetMessage *pData, NetChannelBufType_t bufType ) = 0;
 	virtual bool	SendData( bf_write &msg, NetChannelBufType_t bufferType ) = 0;
 	virtual int		Transmit( const char *pDebugName, bf_write *data ) = 0;
 	virtual void	SetBitsToSend( void ) = 0;
