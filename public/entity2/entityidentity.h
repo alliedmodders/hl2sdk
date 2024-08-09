@@ -20,9 +20,9 @@ class CEntityInstance;
 struct ChangeAccessorFieldPathIndex_t
 {
 	ChangeAccessorFieldPathIndex_t() { m_Value = -1; }
-	ChangeAccessorFieldPathIndex_t( int16 value ) { m_Value = value; }
+	ChangeAccessorFieldPathIndex_t( int32 value ) { m_Value = value; }
 	
-	int16 m_Value;
+	int32 m_Value;
 };
 
 typedef uint32 SpawnGroupHandle_t;
