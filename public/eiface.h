@@ -616,6 +616,8 @@ public:
 
 	// The client has submitted a keyvalues command
 	virtual void			ClientCommandKeyValues( CPlayerSlot slot, KeyValues *pKeyValues ) = 0;
+	
+	virtual void			unk0001() = 0;
 
 	virtual bool			ClientCanPause( CPlayerSlot slot ) = 0;
 
@@ -633,7 +635,7 @@ public:
 	virtual void			unk003( CPlayerSlot slot ) = 0;
 
 	// Something NetMessage related
-	virtual void			unk004() = 0;
+	virtual void			ClientSvcUserMessage( CPlayerSlot slot, int nType, uint32 cbSize, const void *pvBuffer ) = 0;
 
 	// Something pawn related
 	virtual void			unk005() = 0;
