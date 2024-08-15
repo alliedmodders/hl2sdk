@@ -617,7 +617,7 @@ public:
 	// The client has submitted a keyvalues command
 	virtual void			ClientCommandKeyValues( CPlayerSlot slot, KeyValues *pKeyValues ) = 0;
 	
-	virtual void			unk0001() = 0;
+	virtual void			unk001() = 0;
 
 	virtual bool			ClientCanPause( CPlayerSlot slot ) = 0;
 
@@ -631,18 +631,18 @@ public:
 
 	virtual IHLTVDirector	*GetHLTVDirector( void ) = 0;
 
-	virtual void			unk002( CPlayerSlot slot ) = 0;
-	virtual void			unk003( CPlayerSlot slot ) = 0;
+	virtual void			unk101( CPlayerSlot slot ) = 0;
+	virtual void			unk102( CPlayerSlot slot ) = 0;
 
-	// Something NetMessage related
-	virtual void			ClientSvcUserMessage( CPlayerSlot slot, int nType, uint32 cbSize, const void *pvBuffer ) = 0;
+	// Handles incoming usermessages from the client
+	virtual void			ClientSvcUserMessage( CPlayerSlot slot, int um_type, uint32 size, const void *buf ) = 0;
 
 	// Something pawn related
-	virtual void			unk005() = 0;
-	virtual void			unk006() = 0;
+	virtual void			unk201() = 0;
+	virtual void			unk202() = 0;
 
-	virtual void			unk007() = 0;
-	virtual void			unk008() = 0;
+	virtual void			unk203() = 0;
+	virtual void			unk204() = 0;
 };
 
 typedef IVEngineServer2 IVEngineServer;
