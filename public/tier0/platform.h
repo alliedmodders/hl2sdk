@@ -574,6 +574,11 @@ typedef unsigned int		uint;
 	#define abstract_class class NO_VTABLE
 #endif
 
+// MSVC CRT uses 0x7fff while gcc uses MAX_INT, leading to mismatches between platforms
+// As a result, we pick the least common denominator here.  This should be used anywhere
+// you might typically want to use RAND_MAX
+#define VALVE_RAND_MAX 0x7fff
+
 
 //-----------------------------------------------------------------------------
 // Why do we need this? It would be nice to make it die die die

@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: Math primitives.
 //
@@ -1567,7 +1567,9 @@ float QuaternionAngleDiff( const Quaternion &p, const Quaternion &q )
 	QuaternionConjugate( q, qInv );
 	QuaternionMult( p, qInv, diff );
 
-	float sinang = sqrt( diff.x * diff.x + diff.y * diff.y + diff.z * diff.z );
+	// Note if the quaternion is slightly non-normalized the square root below may be more than 1,
+	// the value is clamped to one otherwise it may result in asin() returning an undefined result.
+	float sinang = MIN( 1.0f, sqrt( diff.x * diff.x + diff.y * diff.y + diff.z * diff.z ) );
 	float angle = RAD2DEG( 2 * asin( sinang ) );
 	return angle;
 #else
@@ -3029,7 +3031,7 @@ void CalcClosestPointOnLineSegment( const Vector &P, const Vector &vLineA, const
 {
 	Vector vDir;
 	float t = CalcClosestPointToLineT( P, vLineA, vLineB, vDir );
-	t = clamp( t, 0, 1 );
+	t = clamp( t, 0.f, 1.f );
 	if ( outT ) 
 	{
 		*outT = t;
@@ -3101,7 +3103,7 @@ void CalcClosestPointOnLineSegment2D( const Vector2D &P, const Vector2D &vLineA,
 {
 	Vector2D vDir;
 	float t = CalcClosestPointToLineT2D( P, vLineA, vLineB, vDir );
-	t = clamp( t, 0, 1 );
+	t = clamp( t, 0.f, 1.f );
 	if ( outT )
 	{
 		*outT = t;
@@ -4073,6 +4075,47 @@ void GetInterpolationData( float const *pKnotPositions,
 	*pValueB = pKnotValues[nKnot2];
 	*pInterpolationValue = FLerp( 0, 1, 0, flSizeOfGap, flOffsetFromStartOfGap );
 	return;
+}
+
+float RandomVectorInUnitSphere( Vector *pVector )
+{
+	// Guarantee uniform random distribution within a sphere
+	// Graphics gems III contains this algorithm ("Nonuniform random point sets via warping")
+	float u = ((float)rand() / VALVE_RAND_MAX);
+	float v = ((float)rand() / VALVE_RAND_MAX);
+	float w = ((float)rand() / VALVE_RAND_MAX);
+
+	float flPhi = acos( 1 - 2 * u );
+	float flTheta = 2 * M_PI * v;
+	float flRadius = powf( w, 1.0f / 3.0f );
+
+	float flSinPhi, flCosPhi;
+	float flSinTheta, flCosTheta;
+	SinCos( flPhi, &flSinPhi, &flCosPhi );
+	SinCos( flTheta, &flSinTheta, &flCosTheta );
+
+	pVector->x = flRadius * flSinPhi * flCosTheta;
+	pVector->y = flRadius * flSinPhi * flSinTheta;
+	pVector->z = flRadius * flCosPhi;
+	return flRadius;
+}
+
+float RandomVectorInUnitCircle( Vector2D *pVector )
+{
+	// Guarantee uniform random distribution within a sphere
+	// Graphics gems III contains this algorithm ("Nonuniform random point sets via warping")
+	float u = ((float)rand() / VALVE_RAND_MAX);
+	float v = ((float)rand() / VALVE_RAND_MAX);
+
+	float flTheta = 2 * M_PI * v;
+	float flRadius = powf( u, 1.0f / 2.0f );
+
+	float flSinTheta, flCosTheta;
+	SinCos( flTheta, &flSinTheta, &flCosTheta );
+
+	pVector->x = flRadius * flCosTheta;
+	pVector->y = flRadius * flSinTheta;
+	return flRadius;
 }
 
 /* Reverse engineered code ahead */
