@@ -380,7 +380,7 @@ struct AtomicTypeInfo_T_t
 		if ( m_pTemplateType != rhs.m_pTemplateType )
 			return m_pTemplateType < rhs.m_pTemplateType;
 		
-		return m_pfnManipulator < rhs.m_pfnManipulator;
+		return (void *)m_pfnManipulator < (void *)rhs.m_pfnManipulator;
 	}
 	
 	int m_nAtomicID;
