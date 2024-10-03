@@ -225,8 +225,8 @@ inline bool V_isspace( int c )
 #define V_strupper(start)				V_strupper_fast		((start))
 #define V_strlower(start)				V_strlower_fast		((start))
 
-#define V_stristr(s1, search)			V_stristr_fast		((s1), (start))
-#define V_strnistr(s1, search, count)	_V_strnistr_fast	((s1), (start), (count))
+#define V_stristr(s1, search)			V_stristr_fast		((s1), (search))
+#define V_strnistr(s1, search, count)	_V_strnistr_fast	((s1), (search), (count))
 
 #define V_strcspn(s1, s2)				_V_strcspn			((s1), (s2))
 
