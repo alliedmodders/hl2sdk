@@ -10,7 +10,7 @@
 #pragma once
 #endif
 
-
+#include "tier0/utlstringtoken.h"
 #include "tier1/utlmemory.h"
 #include "tier1/strtools.h"
 #include "limits.h"
@@ -39,18 +39,6 @@ inline size_t strnlen(const char *s, size_t n)
 }
 
 #endif
-
-class CUtlStringToken
-{
-public:
-	inline CUtlStringToken(): m_nHashCode(0) {}
-	inline CUtlStringToken(unsigned int nHashCode): m_nHashCode(nHashCode) {}
-	inline bool operator==(CUtlStringToken const &other) const { return (other.m_nHashCode == m_nHashCode); }
-	inline bool operator!=(CUtlStringToken const &other) const { return (other.m_nHashCode != m_nHashCode); }
-
-public:
-	unsigned int m_nHashCode;
-};
 
 //-----------------------------------------------------------------------------
 // Simple string class. 
