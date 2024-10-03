@@ -30,6 +30,10 @@ class Vector4D;
 class Quaternion;
 class Color;
 class QAngle;
+class CUtlString;
+
+template< class T, class I> class CUtlMemory;
+template< class T, class A> class CUtlVector;
 
 abstract_class IParsingErrorListener
 {
@@ -47,24 +51,13 @@ abstract_class IParsingErrorListener
 #define PARSING_FLAG_USE_BASE_AUTO					(1 << 7) // Use auto detection of a number base when parsing (uses https://en.cppreference.com/w/cpp/string/basic_string/stol under the hood, so same base rules applies)
 #define PARSING_FLAG_USE_BASE_16					(1 << 8) // Use base of 16 when parsing
 
-// 3d memcpy. Copy (up-to) 3 dimensional data with arbitrary source and destination
-// strides. Optimizes to just a single memcpy when possible. For 2d data, set numslices to 1.
-void CopyMemory3D( void *pDestAdr, void const *pSrcAdr,		
-				   int nNumCols, int nNumRows, int nNumSlices, // dimensions of copy
-				   int nSrcBytesPerRow, int nSrcBytesPerSlice, // strides for source.
-				   int nDestBytesPerRow, int nDestBytesPerSlice // strides for dest
-	);
-
-
-template< class T, class I > class CUtlMemory;
-template< class T, class A > class CUtlVector;
-
 // Unicode string conversion policies - what to do if an illegal sequence is encountered
 enum EStringConvertErrorPolicy
 {
 	_STRINGCONVERTFLAG_SKIP =		1,
 	_STRINGCONVERTFLAG_FAIL =		2,
 	_STRINGCONVERTFLAG_ASSERT =		4,
+	_STRINGCONVERTFLAG_UNK001 =		8,
 
 	STRINGCONVERT_REPLACE =			0,
 	STRINGCONVERT_SKIP =			_STRINGCONVERTFLAG_SKIP,
@@ -78,68 +71,166 @@ enum EStringConvertErrorPolicy
 //-----------------------------------------------------------------------------
 // Portable versions of standard string functions
 //-----------------------------------------------------------------------------
-void	_V_memset	( void *dest, int fill, int count );
-void	_V_memcpy	( void *dest, const void *src, int count );
-void	_V_memmove	( void *dest, const void *src, int count );
-int		_V_memcmp	( const void *m1, const void *m2, int count );
-int		_V_strlen	( const char *str );
-void	_V_strcpy	( char *dest, const char *src );
-char*	_V_strrchr	( const char *s, char c );
-int		_V_strcmp	( const char *s1, const char *s2 );
-int		_V_wcscmp	( const wchar_t *s1, const wchar_t *s2 );
-int		_V_stricmp	( const char *s1, const char *s2 );
-char*	_V_strstr	( const char *s1, const char *search );
-char*	_V_strupr	( char *start );
-char*	_V_strlower	( char *start );
-int		_V_wcslen	( const wchar_t *pwch );
+PLATFORM_INTERFACE void			V_tier0_memset( void *dest, int fill, size_t count );
+PLATFORM_INTERFACE void			V_tier0_memcpy( void *dest, const void *src, size_t count );
+PLATFORM_INTERFACE void			V_tier0_memmove( void *dest, const void *src, size_t count );
+PLATFORM_INTERFACE int			V_tier0_memcmp( const void *m1, const void *m2, size_t count );
 
-#ifdef POSIX
-inline char *strupr( char *start )
+PLATFORM_INTERFACE int			V_tier0_strlen( const char *str );
+PLATFORM_INTERFACE int			V_tier0_strlen16( const char16_t *str );
+PLATFORM_INTERFACE int			V_tier0_strlen32( const char32_t *str );
+PLATFORM_INTERFACE int			V_tier0_wcslen( const wchar_t *str );
+
+PLATFORM_INTERFACE void			V_tier0_strcpy( char *dest, const char *src );
+PLATFORM_INTERFACE void			_V_strncpy( char *pDest, const char *pSrc, int maxLen );
+PLATFORM_INTERFACE void			V_tier0_strcpy32( char32_t *dest, const char32_t *src );
+PLATFORM_INTERFACE void			_V_strncpy32_bytes( char32_t *pDest, const char32_t *pSrc, int bytes );
+PLATFORM_INTERFACE void			V_tier0_wcscpy( wchar_t *dest, const wchar_t *src );
+PLATFORM_INTERFACE void			_V_wcsncpy_bytes( wchar_t *pDest, const wchar_t *pSrc, int bytes );
+
+PLATFORM_INTERFACE char *		V_tier0_strrchr( const char *s, char c );
+PLATFORM_INTERFACE char *		V_strnchr( const char *s, char c, int n );
+PLATFORM_INTERFACE char32_t *	V_strchr32( const char32_t *s, char32_t c );
+PLATFORM_INTERFACE wchar_t *	V_tier0_wcschr( const wchar_t *s, wchar_t c );
+
+PLATFORM_INTERFACE int			V_tier0_strcmp( const char *s1, const char *s2 );
+PLATFORM_INTERFACE int			_V_strncmp( const char *s1, const char *s2, int n );
+PLATFORM_INTERFACE int			V_strcmp32( const char32_t *s1, const char32_t *s2 );
+PLATFORM_INTERFACE int			V_tier0_wcscmp( const wchar_t *s1, const wchar_t *s2 );
+
+PLATFORM_INTERFACE int			V_stricmp_fast( const char *s1, const char *s2 );
+PLATFORM_INTERFACE int			V_stricmp_fast_NegativeForUnequal( const char *s1, const char *s2 );
+PLATFORM_INTERFACE int			_V_strnicmp_fast( const char *s1, const char *s2, int n );
+PLATFORM_INTERFACE int			V_wcsicmp( const wchar_t *s1, const wchar_t *s2 );
+PLATFORM_INTERFACE int			V_wcsnicmp_cch( const wchar_t *s1, const wchar_t *s2, int symbols );
+
+PLATFORM_INTERFACE char *		V_tier0_strstr( const char *s1, const char *search );
+PLATFORM_INTERFACE char32_t *	V_strstr32( const char32_t *s1, const char32_t *search );
+
+PLATFORM_INTERFACE char *		V_strupper_fast( char *start );
+PLATFORM_INTERFACE char32_t *	V_towupper32( char32_t *start );
+PLATFORM_INTERFACE wchar_t *	V_towupper( wchar_t *start );
+
+PLATFORM_INTERFACE char *		V_strlower_fast( char *start );
+PLATFORM_INTERFACE char32_t *	V_towlower32( char32_t *start );
+PLATFORM_INTERFACE wchar_t *	V_towlower( wchar_t *start );
+
+PLATFORM_INTERFACE int			V_atoi( const char *str );
+PLATFORM_INTERFACE int64 		V_atoi64( const char *str );
+PLATFORM_INTERFACE uint64 		V_atoui64( const char *str );
+PLATFORM_INTERFACE float		V_atof( const char *str );
+PLATFORM_INTERFACE float		V_atofloat32( const char *str );
+PLATFORM_INTERFACE double		V_atofloat64( const char *str );
+
+PLATFORM_INTERFACE double		V_strtod( const char *str, char **endptr = NULL );
+PLATFORM_INTERFACE double		V_wcstod( const wchar_t *str, wchar_t **endptr = NULL );
+PLATFORM_INTERFACE int64		V_strtoi64( const char *str, char **endptr = NULL );
+PLATFORM_INTERFACE int64		V_wcstoi64( const wchar_t *str, wchar_t **endptr = NULL );
+PLATFORM_INTERFACE uint64		V_strtoui64( const char *str, char **endptr = NULL );
+PLATFORM_INTERFACE uint64		V_wcstoui64( const wchar_t *str, wchar_t **endptr = NULL );
+
+PLATFORM_INTERFACE char *		V_strtok( const char *str, const char *delim );
+
+PLATFORM_OVERLOAD const char *	V_stristr_fast( const char *str, const char *search );
+PLATFORM_INTERFACE const char *	_V_strnistr_fast( const char *str, const char *search, int n );
+PLATFORM_OVERLOAD const wchar_t *V_wcsistr( const wchar_t *str, const wchar_t *search );
+
+PLATFORM_OVERLOAD int			V_strnlen( const char *str, int n );
+PLATFORM_OVERLOAD int			V_strnlen( const char32_t *str, int n );
+PLATFORM_OVERLOAD int			V_strnlen( const wchar_t *str, int n );
+
+PLATFORM_INTERFACE int			_V_strcspn( const char *s1, const char *s2 );
+
+#define COPY_ALL_CHARACTERS -1
+PLATFORM_INTERFACE char *		_V_strncat( char *s1, const char *s2, size_t size, int max_chars_to_copy = COPY_ALL_CHARACTERS );
+inline void V_strcat( char *dest, const char *src, int cchDest )
 {
-      char *str = start;
-      while( str && *str )
-      {
-              *str = (char)toupper(*str);
-              str++;
-      }
-      return start;
+	_V_strncat( dest, src, cchDest, COPY_ALL_CHARACTERS );
 }
 
-inline char *strlwr( char *start )
+PLATFORM_INTERFACE int			V_snprintf( char *pDest, int destLen, const char *pFormat, ... ) FMTFUNCTION( 3, 4 );
+PLATFORM_INTERFACE int			V_snprintfcat( char *pDest, int destLen, const char *pFormat, ... ) FMTFUNCTION( 3, 4 );
+PLATFORM_INTERFACE int			V_snwprintf_bytes( wchar_t *pDest, int bytes, const wchar_t *pFormat, ... );
+PLATFORM_INTERFACE int			V_snwprintf_cch( wchar_t *pDest, int symbols, const wchar_t *pFormat, ... );
+
+PLATFORM_INTERFACE int			V_vsnprintf( char *pDest, int maxLenInCharacters, const char *pFormat, va_list params );
+PLATFORM_INTERFACE int			V_vsnprintfcat( char *pDest, int maxLenInCharacters, const char *pFormat, va_list params );
+template <size_t maxLenInCharacters> int V_vsprintf_safe( char( &pDest )[maxLenInCharacters], const char *pFormat, va_list params ) { return V_vsnprintf( pDest, maxLenInCharacters, pFormat, params ); }
+
+PLATFORM_INTERFACE int			V_vsnwprintf_cch( wchar_t *pDest, int maxLenInCharacters, const wchar_t *pFormat, va_list params );
+template <size_t maxLenInCharacters> int V_vswprintf_safe( char( &pDest )[maxLenInCharacters], const char *pFormat, va_list params ) { return V_vsnwprintf_cch( pDest, maxLenInCharacters, pFormat, params ); }
+
+PLATFORM_INTERFACE bool			V_iswspace( wchar_t c );
+inline bool V_isspace( int c )
 {
-      char *str = start;
-      while( str && *str )
-      {
-              *str = (char)tolower(*str);
-              str++;
-      }
-      return start;
+	// The standard white-space characters are the following: space, tab, carriage-return, newline, vertical tab, and form-feed. In the C locale, V_isspace() returns true only for the standard white-space characters. 
+	//return c == ' ' || c == 9 /*horizontal tab*/ || c == '\r' || c == '\n' || c == 11 /*vertical tab*/ || c == '\f';
+	// codes of whitespace symbols: 9 HT, 10 \n, 11 VT, 12 form feed, 13 \r, 32 space
+
+	// easy to understand version, validated:
+	// return ((1 << (c-1)) & 0x80001F00) != 0 && ((c-1)&0xE0) == 0;
+
+	// 5% faster on Core i7, 35% faster on Xbox360, no branches, validated:
+#ifdef _X360
+	return ((1 << (c - 1)) & 0x80001F00 & ~(-int( (c - 1) & 0xE0 ))) != 0;
+#else
+// this is 11% faster on Core i7 than the previous, VC2005 compiler generates a seemingly unbalanced search tree that's faster
+	switch(c)
+	{
+		case ' ':
+		case 9:
+		case '\r':
+		case '\n':
+		case 11:
+		case '\f':
+			return true;
+		default:
+			return false;
+	}
+#endif
 }
 
-#endif // POSIX
+// Short form remaps
+#define V_memset(dest, fill, count)		V_tier0_memset		((dest), (fill), (count))
+#define V_memcpy(dest, src, count)		V_tier0_memcpy		((dest), (src), (count))
+#define V_memmove(dest, src, count)		V_tier0_memmove		((dest), (src), (count))
+#define V_memcmp(m1, m2, count)			V_tier0_memcmp		((m1), (m2), (count))
 
-// there are some users of these via tier1 templates in used in tier0. but tier0 can't depend on vstdlib which means in tier0 we always need the inlined ones
-#if ( !defined( TIER0_DLL_EXPORT ) )
+#define V_strlen(str)					V_tier0_strlen		((str))
+#define V_strlen16(str)					V_tier0_strlen16	((str))
+#define V_strlen32(str)					V_tier0_strlen32	((str))
+#define V_wcslen(str)					V_tier0_wcslen		((str))
 
-#define V_memset(dest, fill, count)		_V_memset   ((dest), (fill), (count))	
-#define V_memcpy(dest, src, count)		_V_memcpy	((dest), (src), (count))	
-#define V_memmove(dest, src, count)		_V_memmove	((dest), (src), (count))	
-#define V_memcmp(m1, m2, count)			_V_memcmp	((m1), (m2), (count))		
-#define V_strlen(str)					_V_strlen	((str))				
-#define V_strcpy(dest, src)				_V_strcpy	((dest), (src))			
-#define V_strrchr(s, c)					_V_strrchr	((s), (c))				
-#define V_strcmp(s1, s2)				_V_strcmp	((s1), (s2))			
-#define V_wcscmp(s1, s2)				_V_wcscmp	((s1), (s2))			
-#define V_stricmp(s1, s2 )				_V_stricmp	((s1), (s2) )			
-#define V_strstr(s1, search )			_V_strstr	((s1), (search) )		
-#define V_strupr(start)					_V_strupr	((start))				
-#define V_strlower(start)				_V_strlower ((start))		
-#define V_wcslen(pwch)					_V_wcslen	((pwch))		
+#define V_strcpy(dest, src)				V_tier0_strcpy		((dest), (src))
+#define V_strncpy(dest, src, count)		_V_strncpy			((dest), (src), (count))
+#define V_strcpy32(dest, src)			V_tier0_strcpy32	((dest), (src))
+#define V_strncpy32(dest, src, bytes)	_V_strncpy32_bytes	((dest), (src), (bytes))
+#define V_wcscpy(dest, src)				V_tier0_wcscpy		((dest), (src))
+#define V_wcsncpy(dest, src, bytes)		_V_wcsncpy_bytes	((dest), (src), (bytes))
 
-// AM TODO: handle this for the rest (above and more) now exported by tier0
-PLATFORM_INTERFACE int V_stricmp_fast(const char* s1, const char* s2);
+#define V_strrchr(s, c)					V_tier0_strrchr		((s), (c))
+#define V_wcschr(s, c)					V_tier0_wcschr		((s), (c))
 
-PLATFORM_INTERFACE int _V_strnicmp_fast(const char* s1, const char* s2, int n);
+#define V_strcmp(s1, s2)				V_tier0_strcmp		((s1), (s2))
+#define V_strncmp(s1, s2, count)		_V_strncmp			((s1), (s2), (count))
+#define V_wcscmp(s1, s2)				V_tier0_wcscmp		((s1), (s2))
+
+#define V_stricmp(s1, s2)				V_stricmp_fast		((s1), (s2) )
+#define V_stricmp_n(s1, s2)				V_stricmp_fast_NegativeForUnequal((s1), (s2) )
+#define V_strnicmp(s1, s2, count)		_V_strnicmp_fast	((s1), (s2), (count))
+#define V_wcsnicmp(s1, s2, symbols)		V_wcsnicmp_cch		((s1), (s2), (symbols))
+
+#define V_strstr(s1, search)			V_tier0_strstr		((s1), (search))
+
+#define V_strupper(start)				V_strupper_fast		((start))
+#define V_strlower(start)				V_strlower_fast		((start))
+
+#define V_stristr(s1, search)			V_stristr_fast		((s1), (start))
+#define V_strnistr(s1, search, count)	_V_strnistr_fast	((s1), (start), (count))
+
+#define V_strcspn(s1, s2)				_V_strcspn			((s1), (s2))
+
+#define V_strncat(s1, s2, count)		_V_strncat			((s1), (s2), (count))
 
 // Compares two strings with the support of wildcarding only for the first arg (includes '*' for multiple and '?' for single char usages)
 PLATFORM_INTERFACE int V_CompareNameWithWildcards(const char *wildcarded_string, const char *compare_to, bool case_sensitive = false);
@@ -217,95 +308,20 @@ PLATFORM_INTERFACE float64 V_StringToFloat64Raw(const char *buf, float64 default
 // Parses string as a float32 value, if the parsing fails, default_value is returned, doesn't perform error checking/reporting
 PLATFORM_INTERFACE float32 V_StringToFloat32Raw(const char *buf, float32 default_value, bool *successful = NULL, char **remainder = NULL);
 
-#else
-
-inline void		V_memset (void *dest, int fill, int count)			{ memset( dest, fill, count ); }
-inline void		V_memcpy (void *dest, const void *src, int count)	{ memcpy( dest, src, count ); }
-inline void		V_memmove (void *dest, const void *src, int count)	{ memmove( dest, src, count ); }
-inline int		V_memcmp (const void *m1, const void *m2, int count){ return memcmp( m1, m2, count ); } 
-inline int		V_strlen (const char *str)							{ return (int) strlen ( str ); }
-inline void		V_strcpy (char *dest, const char *src)				{ strcpy( dest, src ); }
-inline int		V_wcslen(const wchar_t *pwch)						{ return (int)wcslen(pwch); }
-inline char*	V_strrchr (const char *s, char c)					{ return (char*)strrchr( s, c ); }
-inline int		V_strcmp (const char *s1, const char *s2)			{ return strcmp( s1, s2 ); }
-inline int		V_wcscmp (const wchar_t *s1, const wchar_t *s2)		{ return wcscmp( s1, s2 ); }
-inline int		V_stricmp( const char *s1, const char *s2 )			{ return stricmp( s1, s2 ); }
-inline char*	V_strstr( const char *s1, const char *search )		{ return (char*)strstr( s1, search ); }
-inline char*	V_strupr (char *start)								{ return strupr( start ); }
-inline char*	V_strlower (char *start)							{ return strlwr( start ); }
-
-#endif
-
-
-int			V_strncmp (const char *s1, const char *s2, int count);
-int			V_strcasecmp (const char *s1, const char *s2);
-int			V_strncasecmp (const char *s1, const char *s2, int n);
-int			V_strnicmp (const char *s1, const char *s2, int n);
-int			V_atoi (const char *str);
-int64 		V_atoi64(const char *str);
-uint64 		V_atoui64(const char *str);
-float		V_atof (const char *str);
-char*		V_stristr( char* pStr, const char* pSearch );
-const char*	V_stristr( const char* pStr, const char* pSearch );
-const char*	V_strnistr( const char* pStr, const char* pSearch, int n );
-const char*	V_strnchr( const char* pStr, char c, int n );
-
 // returns string immediately following prefix, (ie str+strlen(prefix)) or NULL if prefix not found
-const char *StringAfterPrefix             ( const char *str, const char *prefix );
-const char *StringAfterPrefixCaseSensitive( const char *str, const char *prefix );
-inline bool	StringHasPrefix             ( const char *str, const char *prefix ) { return StringAfterPrefix             ( str, prefix ) != NULL; }
-inline bool	StringHasPrefixCaseSensitive( const char *str, const char *prefix ) { return StringAfterPrefixCaseSensitive( str, prefix ) != NULL; }
+PLATFORM_INTERFACE const char *_V_StringAfterPrefix( const char *str, const char *prefix );
+PLATFORM_INTERFACE const char *_V_StringAfterPrefixCaseSensitive( const char *str, const char *prefix );
 
+#define V_StringAfterPrefix(str, prefix)					_V_StringAfterPrefix((str), (prefix))
+#define V_StringAfterPrefixCaseSensitive(str, prefix)		_V_StringAfterPrefixCaseSensitive((str), (prefix))
+
+inline bool	V_StringHasPrefix             ( const char *str, const char *prefix ) { return V_StringAfterPrefix( str, prefix ) != NULL; }
+inline bool	V_StringHasPrefixCaseSensitive( const char *str, const char *prefix ) { return V_StringAfterPrefixCaseSensitive( str, prefix ) != NULL; }
 
 // Normalizes a float string in place.  
 // (removes leading zeros, trailing zeros after the decimal point, and the decimal point itself where possible)
-void			V_normalizeFloatString( char* pFloat );
-
-inline bool V_isspace(int c)
-{
-	// The standard white-space characters are the following: space, tab, carriage-return, newline, vertical tab, and form-feed. In the C locale, V_isspace() returns true only for the standard white-space characters. 
-	//return c == ' ' || c == 9 /*horizontal tab*/ || c == '\r' || c == '\n' || c == 11 /*vertical tab*/ || c == '\f';
-	// codes of whitespace symbols: 9 HT, 10 \n, 11 VT, 12 form feed, 13 \r, 32 space
-	
-	// easy to understand version, validated:
-	// return ((1 << (c-1)) & 0x80001F00) != 0 && ((c-1)&0xE0) == 0;
-	
-	// 5% faster on Core i7, 35% faster on Xbox360, no branches, validated:
-	#ifdef _X360
-	return ((1 << (c-1)) & 0x80001F00 & ~(-int((c-1)&0xE0))) != 0;
-	#else
-	// this is 11% faster on Core i7 than the previous, VC2005 compiler generates a seemingly unbalanced search tree that's faster
-	switch(c)
-	{
-	case ' ':
-	case 9:
-	case '\r':
-	case '\n':
-	case 11:
-	case '\f':
-		return true;
-	default:
-		return false;
-	}
-	#endif
-}
-
-
-// These are versions of functions that guarantee NULL termination.
-//
-// maxLen is the maximum number of bytes in the destination string.
-// pDest[maxLen-1] is always NULL terminated if pSrc's length is >= maxLen.
-//
-// This means the last parameter can usually be a sizeof() of a string.
-void V_strncpy( char *pDest, const char *pSrc, int maxLen );
-int V_snprintf( char *pDest, int destLen, const char *pFormat, ... ) FMTFUNCTION( 3, 4 );
-void V_wcsncpy( wchar_t *pDest, wchar_t const *pSrc, int maxLenInBytes );
-int V_snwprintf( wchar_t *pDest, int destLen, const wchar_t *pFormat, ... );
-
-#define COPY_ALL_CHARACTERS -1
-char *V_strncat(char *, const char *, size_t destBufferSize, int max_chars_to_copy=COPY_ALL_CHARACTERS );
-char *V_strnlwr(char *, size_t);
-
+PLATFORM_INTERFACE void	V_normalizeFloatString( char* pFloat );
+PLATFORM_INTERFACE void	V_normalizeFloatWString( wchar_t* pFloat );
 
 // UNDONE: Find a non-compiler-specific way to do this
 #ifdef _WIN32
@@ -333,6 +349,55 @@ typedef char *  va_list;
 #include <stdarg.h>
 #endif
 
+// Prints out a pretified memory counter string value ( e.g., 7,233.27 Mb, 1,298.003 Kb, 127 bytes )
+PLATFORM_INTERFACE char *V_PrettifyMem( float value, int digitsafterdecimal = 2, bool usebinaryonek = false );
+
+// Prints out a pretified integer with comma separators (eg, 7,233,270,000)
+PLATFORM_INTERFACE char *V_PrettifyNum( int64 value );
+
+// Returns the UTF8 encoded length in this byte
+PLATFORM_INTERFACE int V_UTF8LenFromFirst( char c );
+
+// Conversion functions, returning the number of bytes consumed
+PLATFORM_INTERFACE int V_UTF8ToUChar32( const char *str, char32_t &result, bool &failed );
+PLATFORM_INTERFACE int V_UTF32ToUChar32( const char32_t *str, char32_t &result, bool &failed );
+
+PLATFORM_INTERFACE int V_UChar32ToUTF16( const char32_t *str, char16_t *result );
+PLATFORM_INTERFACE int V_UChar32ToUTF8( const char32_t *str, char *result );
+
+PLATFORM_INTERFACE int V_UTF8ToUTF16( const char *str, char16_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+PLATFORM_INTERFACE int V_UTF8CharsToUTF16( const char *str, int size, char16_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+PLATFORM_INTERFACE int V_UTF8ToUTF32( const char *str, char32_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+PLATFORM_INTERFACE int V_UTF8CharsToUTF32( const char *str, int size, char32_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+
+PLATFORM_INTERFACE int V_UTF16ToUTF8( const char16_t *str, char *dest, int dest_size, EStringConvertErrorPolicy policy );
+PLATFORM_INTERFACE int V_UTF16CharsToUTF8( const char16_t *str, int size, char *dest, int dest_size, EStringConvertErrorPolicy policy );
+PLATFORM_INTERFACE int V_UTF16ToUTF16( const char16_t *str, char16_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+PLATFORM_INTERFACE int V_UTF16ToUTF32( const char16_t *str, char32_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+PLATFORM_INTERFACE int V_UTF16CharsToUTF32( const char16_t *str, int size, char32_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+
+PLATFORM_INTERFACE int V_UTF32ToUTF8( const char32_t *str, char *dest, int dest_size, EStringConvertErrorPolicy policy );
+PLATFORM_INTERFACE int V_UTF32CharsToUTF8( const char32_t *str, int size, char *dest, int dest_size, EStringConvertErrorPolicy policy );
+PLATFORM_INTERFACE int V_UTF32ToUTF16( const char32_t *str, char16_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+PLATFORM_INTERFACE int V_UTF32CharsToUTF16( const char32_t *str, int size, char16_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+PLATFORM_INTERFACE int V_UTF32ToUTF32( const char32_t *str, char32_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+
+// Functions for converting hexidecimal character strings back into binary data etc.
+//
+// e.g., 
+// int output;
+// V_hextobinary( "ffffffff", 8, &output, sizeof( output ) );
+// would make output == 0xfffffff or -1
+// Similarly,
+// char buffer[ 9 ];
+// V_binarytohex( &output, sizeof( output ), buffer, sizeof( buffer ) );
+// would put "ffffffff" into buffer (note null terminator!!!)
+PLATFORM_INTERFACE void _V_hextobinary( char const *in, int numchars, byte *out, int maxoutputbytes );
+PLATFORM_INTERFACE void _V_binarytohex( const byte *in, int inputbytes, char *out, int outsize );
+
+#define V_HexToBinary(in, numchars, out, maxoutputbytes)	_V_hextobinary((in), (numchars), (out), (maxoutputbytes))
+#define V_BinaryToHex(in, inputbytes, out, outsize)			_V_binarytohex((in), (inputbytes), (out), (outsize))
+
 #ifdef _WIN32
 #define CORRECT_PATH_SEPARATOR '\\'
 #define CORRECT_PATH_SEPARATOR_S "\\"
@@ -345,174 +410,135 @@ typedef char *  va_list;
 #define INCORRECT_PATH_SEPARATOR_S "\\"
 #endif
 
-int V_vsnprintf( char *pDest, int maxLenInCharacters, const char *pFormat, va_list params );
-template <size_t maxLenInCharacters> int V_vsprintf_safe( char (&pDest)[maxLenInCharacters], const char *pFormat, va_list params ) { return V_vsnprintf( pDest, maxLenInCharacters, pFormat, params ); }
-int V_vsnprintf( char *pDest, int maxLen, const char *pFormat, va_list params );
-
-// Prints out a pretified memory counter string value ( e.g., 7,233.27 Mb, 1,298.003 Kb, 127 bytes )
-char *V_pretifymem( float value, int digitsafterdecimal = 2, bool usebinaryonek = false );
-
-// Prints out a pretified integer with comma separators (eg, 7,233,270,000)
-char *V_pretifynum( int64 value );
-
-// conversion functions wchar_t <-> char, returning the number of characters converted
-int V_UTF8ToUnicode( const char *pUTF8, wchar_t *pwchDest, int cubDestSizeInBytes );
-int V_UnicodeToUTF8( const wchar_t *pUnicode, char *pUTF8, int cubDestSizeInBytes );
-int V_UCS2ToUnicode( const ucs2 *pUCS2, wchar_t *pUnicode, int cubDestSizeInBytes );
-int V_UCS2ToUTF8( const ucs2 *pUCS2, char *pUTF8, int cubDestSizeInBytes );
-
-// Functions for converting hexidecimal character strings back into binary data etc.
-//
-// e.g., 
-// int output;
-// V_hextobinary( "ffffffff", 8, &output, sizeof( output ) );
-// would make output == 0xfffffff or -1
-// Similarly,
-// char buffer[ 9 ];
-// V_binarytohex( &output, sizeof( output ), buffer, sizeof( buffer ) );
-// would put "ffffffff" into buffer (note null terminator!!!)
-void V_hextobinary( char const *in, int numchars, byte *out, int maxoutputbytes );
-void V_binarytohex( const byte *in, int inputbytes, char *out, int outsize );
-
 // Tools for working with filenames
 // Extracts the base name of a file (no path, no extension, assumes '/' or '\' as path separator)
-void V_FileBase( const char *in, char *out,int maxlen );
+PLATFORM_INTERFACE void _V_FileBase( const char *in, char *out, int maxlen );
+#define V_FileBase _V_FileBase
+
 // Remove the final characters of ppath if it's '\' or '/'.
-void V_StripTrailingSlash( char *ppath );
+PLATFORM_INTERFACE void V_StripTrailingSlash( char *ppath );
+
 // Remove any extension from in and return resulting string in out
-void V_StripExtension( const char *in, char *out, int outLen );
+PLATFORM_INTERFACE void _V_StripExtension( const char *in, char *out, int outLen );
+#define V_StripExtension _V_StripExtension
+
 // Make path end with extension if it doesn't already have an extension
-void V_DefaultExtension( char *path, const char *extension, int pathStringLength );
+PLATFORM_INTERFACE void _V_DefaultExtension( char *path, const char *extension, int pathStringLength );
+#define V_DefaultExtension _V_DefaultExtension
+
 // Strips any current extension from path and ensures that extension is the new extension.
 // NOTE: extension string MUST include the . character
-void V_SetExtension( char *path, const char *extension, int pathStringLength );
+PLATFORM_INTERFACE void _V_SetExtension( char *path, const char *extension, int pathStringLength );
+#define V_SetExtension _V_SetExtension
+
 // Removes any filename from path ( strips back to previous / or \ character )
-void V_StripFilename( char *path );
+PLATFORM_INTERFACE void V_StripFilename( char *path );
+
 // Remove the final directory from the path
-bool V_StripLastDir( char *dirName, int maxlen );
+PLATFORM_INTERFACE bool _V_StripLastDir( char *dirName, int maxlen );
+#define V_StripLastDir _V_StripLastDir
+
 // Returns a pointer to the unqualified file name (no path) of a file name
-const char * V_UnqualifiedFileName( const char * in );
+PLATFORM_INTERFACE const char *V_UnqualifiedFileName( const char *in );
+
 // Given a path and a filename, composes "path\filename", inserting the (OS correct) separator if necessary
-void V_ComposeFileName( const char *path, const char *filename, char *dest, int destSize );
+PLATFORM_INTERFACE void _V_ComposeFileName( const char *path, const char *filename, char *dest, int destSize );
+#define V_ComposeFileName _V_ComposeFileName
 
 // Copy out the path except for the stuff after the final pathseparator
-bool V_ExtractFilePath( const char *path, char *dest, int destSize );
-// Copy out the file extension into dest
-void V_ExtractFileExtension( const char *path, char *dest, int destSize );
+PLATFORM_INTERFACE bool _V_ExtractFilePath( const char *path, char *dest, int destSize );
+#define V_ExtractFilePath _V_ExtractFilePath
 
-const char *V_GetFileExtension( const char * path );
+// Copy out the file extension into dest
+PLATFORM_INTERFACE void _V_ExtractFileExtension( const char *path, char *dest, int destSize );
+#define V_ExtractFileExtension _V_ExtractFileExtension
+
+PLATFORM_INTERFACE const char *V_GetFileExtension( const char *path );
+// Returns empty string instead of null on failure
+PLATFORM_INTERFACE const char *V_GetFileExtensionSafe( const char *path );
 
 // This removes "./" and "../" from the pathname. pFilename should be a full pathname.
 // Returns false if it tries to ".." past the root directory in the drive (in which case 
 // it is an invalid path).
-bool V_RemoveDotSlashes( char *pFilename, char separator = CORRECT_PATH_SEPARATOR );
+PLATFORM_INTERFACE bool V_RemoveDotSlashes( char *pFilename, char separator = CORRECT_PATH_SEPARATOR );
 
 // If pPath is a relative path, this function makes it into an absolute path
 // using the current working directory as the base, or pStartingDir if it's non-NULL.
 // Returns false if it runs out of room in the string, or if pPath tries to ".." past the root directory.
-void V_MakeAbsolutePath( char *pOut, int outLen, const char *pPath, const char *pStartingDir = NULL );
+PLATFORM_INTERFACE void _V_MakeAbsolutePath( char *pOut, int outLen, const char *pPath, int, const char *pStartingDir = NULL );
+#define V_MakeAbsolutePath _V_MakeAbsolutePath
 
 // Creates a relative path given two full paths
 // The first is the full path of the file to make a relative path for.
 // The second is the full path of the directory to make the first file relative to
 // Returns false if they can't be made relative (on separate drives, for example)
-bool V_MakeRelativePath( const char *pFullPath, const char *pDirectory, char *pRelativePath, int nBufLen );
+PLATFORM_INTERFACE bool _V_MakeRelativePath( const char *pFullPath, const char *pDirectory, char *pRelativePath, int nBufLen, bool );
+#define V_MakeRelativePath _V_MakeRelativePath
 
 // Fixes up a file name, removing dot slashes, fixing slashes, converting to lowercase, etc.
-void V_FixupPathName( char *pOut, size_t nOutLen, const char *pPath );
+PLATFORM_INTERFACE void _V_FixupPathName( char *pOut, size_t nOutLen, const char *pPath, bool convert_to_lower = true );
+#define V_FixupPathName _V_FixupPathName
 
 // Adds a path separator to the end of the string if there isn't one already. Returns false if it would run out of space.
-void V_AppendSlash( char *pStr, int strSize );
+PLATFORM_INTERFACE void _V_AppendSlash( char *pStr, int strSize, char separator = CORRECT_PATH_SEPARATOR );
+#define V_AppendSlash _V_AppendSlash
 
 // Returns true if the path is an absolute path.
-bool V_IsAbsolutePath( const char *pPath );
+PLATFORM_INTERFACE bool V_IsAbsolutePath( const char *pPath );
 
 // Scans pIn and replaces all occurences of pMatch with pReplaceWith.
 // Writes the result to pOut.
 // Returns true if it completed successfully.
 // If it would overflow pOut, it fills as much as it can and returns false.
-bool V_StrSubst( const char *pIn, const char *pMatch, const char *pReplaceWith,
-	char *pOut, int outLen, bool bCaseSensitive=false );
+PLATFORM_INTERFACE bool _V_StrSubst( const char *pIn, const char *pMatch, const char *pReplaceWith,
+									 char *pOut, int outLen, bool bCaseSensitive=false );
+#define V_StrSubst _V_StrSubst
 
-
-// If possible, use CSplitString instead
-// AM TODO: These are exported by tier0, but will require changes to CUtlVector
+// AM TODO: If possible, use CSplitString instead rn. 
+// These are exported by tier0, but will require changes to CUtlVector (additional template arg)
+// 
 // Split the specified string on the specified separator.
 // Returns a list of strings separated by pSeparator.
 // You are responsible for freeing the contents of outStrings (call outStrings.PurgeAndDeleteElements).
-void V_SplitString( const char *pString, const char *pSeparator, CUtlVector<char*, CUtlMemory<char*, int> > &outStrings );
+PLATFORM_OVERLOAD void V_SplitString( const char *pString, const char *pSeparator, CUtlVector<CUtlString, CUtlMemory<CUtlString, int>> &outStrings, bool );
 
 // Just like V_SplitString, but it can use multiple possible separators.
-void V_SplitString2( const char *pString, const char **pSeparators, int nSeparators, CUtlVector<char*, CUtlMemory<char*, int> > &outStrings );
-
-// Returns false if the buffer is not large enough to hold the working directory name.
-bool V_GetCurrentDirectory( char *pOut, int maxLen );
-
-// Set the working directory thus.
-bool V_SetCurrentDirectory( const char *pDirName );
-
+PLATFORM_OVERLOAD void V_SplitStringInPlace( char *pString, const char *pSeparator, CUtlVector<const char *, CUtlMemory<const char *, int>> &outStrings );
 
 // This function takes a slice out of pStr and stores it in pOut.
 // It follows the Python slice convention:
 // Negative numbers wrap around the string (-1 references the last character).
 // Large numbers are clamped to the end of the string.
-void V_StrSlice( const char *pStr, int firstChar, int lastCharNonInclusive, char *pOut, int outSize );
+PLATFORM_INTERFACE void _V_StrSlice( const char *pStr, int firstChar, int lastCharNonInclusive, char *pOut, int outSize );
+#define V_StrSlice _V_StrSlice
 
 // Chop off the left nChars of a string.
-void V_StrLeft( const char *pStr, int nChars, char *pOut, int outSize );
+PLATFORM_INTERFACE void _V_StrLeft( const char *pStr, int nChars, char *pOut, int outSize );
+#define V_StrLeft _V_StrLeft
 
 // Chop off the right nChars of a string.
-void V_StrRight( const char *pStr, int nChars, char *pOut, int outSize );
+PLATFORM_INTERFACE void _V_StrRight( const char *pStr, int nChars, char *pOut, int outSize );
+#define V_StrRight _V_StrRight
 
 // change "special" characters to have their c-style backslash sequence. like \n, \r, \t, ", etc.
 // returns a pointer to a newly allocated string, which you must delete[] when finished with.
-char *V_AddBackSlashesToSpecialChars( char const *pSrc );
+PLATFORM_INTERFACE char *V_AddBackSlashesToSpecialChars( char const *pSrc );
 
 // Force slashes of either type to be = separator character
-void V_FixSlashes( char *pname, char separator = CORRECT_PATH_SEPARATOR );
+PLATFORM_INTERFACE void V_FixSlashes( char *pname, char separator = CORRECT_PATH_SEPARATOR );
 
 // This function fixes cases of filenames like materials\\blah.vmt or somepath\otherpath\\ and removes the extra double slash.
-void V_FixDoubleSlashes( char *pStr );
-
-// Convert multibyte to wchar + back
-// Specify -1 for nInSize for null-terminated string
-void V_strtowcs( const char *pString, int nInSize, wchar_t *pWString, int nOutSize );
-void V_wcstostr( const wchar_t *pWString, int nInSize, char *pString, int nOutSize );
-
-// buffer-safe strcat
-inline void V_strcat( char *dest, const char *src, int cchDest )
-{
-	V_strncat( dest, src, cchDest, COPY_ALL_CHARACTERS );
-}
-
-// Convert from a string to an array of integers.
-void V_StringToIntArray( int *pVector, int count, const char *pString );
-
-// Convert from a string to a 4 byte color value.
-void V_StringToColor32( color32 *color, const char *pString );
+PLATFORM_INTERFACE void V_FixDoubleSlashes( char *pStr );
 
 // Convert \r\n (Windows linefeeds) to \n (Unix linefeeds).
-void V_TranslateLineFeedsToUnix( char *pStr );
+PLATFORM_INTERFACE void V_TranslateLineFeedsToUnix( char *pStr );
 
 //-----------------------------------------------------------------------------
 // generic unique name helper functions
 //-----------------------------------------------------------------------------
 
 // returns -1 if no match, nDefault if pName==prefix, and N if pName==prefix+N
-inline int V_IndexAfterPrefix( const char *pName, const char *prefix, int nDefault = 0 )
-{
-	if ( !pName || !prefix )
-		return -1;
-
-	const char *pIndexStr = StringAfterPrefix( pName, prefix );
-	if ( !pIndexStr )
-		return -1;
-
-	if ( !*pIndexStr )
-		return nDefault;
-
-	return atoi( pIndexStr );
-}
+PLATFORM_INTERFACE int V_IndexAfterPrefix( const char *pName, const char *prefix, int nDefault = 0 );
 
 // returns startindex if none found, 2 if "prefix" found, and n+1 if "prefixn" found
 template < class NameArray >
@@ -574,43 +600,14 @@ bool V_GenerateUniqueName( char *name, int memsize, const char *prefix, const Na
 	return true;
 }
 
-
-extern bool V_StringToBin( const char*pString, void *pBin, uint nBinSize );
-extern bool V_BinToString( char*pString, void *pBin, uint nBinSize );
-
-template<typename T>
-struct BinString_t
-{
-	BinString_t(){}
-	BinString_t( const char *pStr )
-	{
-		V_strncpy( m_string, pStr, sizeof(m_string) );
-		ToBin();
-	}
-	BinString_t( const T & that )
-	{
-		m_bin = that;
-		ToString();
-	}
-	bool ToBin()
-	{
-		return V_StringToBin( m_string, &m_bin, sizeof( m_bin ) );
-	}
-	void ToString()
-	{
-		V_BinToString( m_string, &m_bin, sizeof( m_bin ) );
-	}
-	T m_bin;
-	char m_string[sizeof(T)*2+2]; // 0-terminated string representing the binary data in hex
-};
-
-template <typename T>
-inline BinString_t<T> MakeBinString( const T& that )
-{
-	return BinString_t<T>( that );
-}
-
-
+// 3d memcpy. Copy (up-to) 3 dimensional data with arbitrary source and destination
+// strides. Optimizes to just a single memcpy when possible. For 2d data, set numslices to 1.
+PLATFORM_INTERFACE void V_CopyMemory3D(
+	void *pDestAdr, void const *pSrcAdr,
+	int nNumCols, int nNumRows, int nNumSlices, // dimensions of copy
+	int nSrcBytesPerRow, int nSrcBytesPerSlice, // strides for source.
+	int nDestBytesPerRow, int nDestBytesPerSlice // strides for dest
+);
 
 // NOTE: This is for backward compatability!
 // We need to DLL-export the Q methods in vstdlib but not link to them in other projects
@@ -627,12 +624,12 @@ inline BinString_t<T> MakeBinString( const T& that )
 #define Q_wcscmp				V_wcscmp
 #define Q_stricmp				V_stricmp
 #define Q_strstr				V_strstr
-#define Q_strupr				V_strupr
+#define Q_strupr				V_strupper
 #define Q_strlower				V_strlower
 #define Q_wcslen				V_wcslen
 #define	Q_strncmp				V_strncmp 
-#define	Q_strcasecmp			V_strcasecmp
-#define	Q_strncasecmp			V_strncasecmp
+#define	Q_strcasecmp			V_stricmp
+#define	Q_strncasecmp			V_strnicmp
 #define	Q_strnicmp				V_strnicmp
 #define	Q_atoi					V_atoi
 #define	Q_atoi64				V_atoi64
@@ -645,17 +642,14 @@ inline BinString_t<T> MakeBinString( const T& that )
 #define Q_strncpy				V_strncpy
 #define Q_wcsncpy				V_wcsncpy
 #define Q_snprintf				V_snprintf
-#define Q_snwprintf				V_snwprintf
+#define Q_snwprintf				V_snwprintf_bytes
 #define Q_wcsncpy				V_wcsncpy
 #define Q_strncat				V_strncat
-#define Q_strnlwr				V_strnlwr
 #define Q_vsnprintf				V_vsnprintf
-#define Q_pretifymem			V_pretifymem
-#define Q_pretifynum			V_pretifynum
-#define Q_UTF8ToUnicode			V_UTF8ToUnicode
-#define Q_UnicodeToUTF8			V_UnicodeToUTF8
-#define Q_hextobinary			V_hextobinary
-#define Q_binarytohex			V_binarytohex
+#define Q_pretifymem			V_PrettifyMem
+#define Q_pretifynum			V_PrettifyNum
+#define Q_hextobinary			V_HexToBinary
+#define Q_binarytohex			V_BinaryToHex
 #define Q_FileBase				V_FileBase
 #define Q_StripTrailingSlash	V_StripTrailingSlash
 #define Q_StripExtension		V_StripExtension
@@ -674,18 +668,14 @@ inline BinString_t<T> MakeBinString( const T& that )
 #define Q_IsAbsolutePath		V_IsAbsolutePath
 #define Q_StrSubst				V_StrSubst
 #define Q_SplitString			V_SplitString
-#define Q_SplitString2			V_SplitString2
 #define Q_StrSlice				V_StrSlice
 #define Q_StrLeft				V_StrLeft
 #define Q_StrRight				V_StrRight
 #define Q_FixSlashes			V_FixSlashes
-#define Q_strtowcs				V_strtowcs
-#define Q_wcstostr				V_wcstostr
 #define Q_strcat				V_strcat
 #define Q_MakeRelativePath		V_MakeRelativePath
 #define Q_FixupPathName			V_FixupPathName
 
 #endif // !defined( VSTDLIB_DLL_EXPORT )
-
 
 #endif	// TIER1_STRTOOLS_H

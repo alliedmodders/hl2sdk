@@ -23,9 +23,6 @@
     <ClCompile Include="rangecheckedvar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="strtools.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="tier1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
