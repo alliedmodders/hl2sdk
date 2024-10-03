@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -178,7 +178,6 @@ public:
 	{
 		m_vMinBounds.Init();
 		m_vMaxBounds.Init();
-		m_nBoneNameHash = 0;
 		m_nGroupId = HITGROUP_GENERIC;
 		m_nShapeType = HITBOX_SHAPE_HULL;
 		m_bTranslationOnly = false;
@@ -196,7 +195,7 @@ public:
 	Vector m_vMinBounds;
 	Vector m_vMaxBounds;
 	float m_flShapeRadius;
-	uint32 m_nBoneNameHash;
+	CUtlStringToken m_nBoneNameHash;
 	int32 m_nGroupId;
 	uint8 m_nShapeType;
 	bool m_bTranslationOnly;
@@ -218,16 +217,9 @@ public:
 		
 		m_name = m_tempName;
 		m_sSurfaceProperty = m_tempSurfaceProp;
-		m_sBoneName = m_tempBoneName;
-		
-		m_nBoneNameHash = MurmurHash2LowerCase(m_tempBoneName, 0x31415926);
 
-#if 0
-		if (g_bUpdateStringTokenDatabase)
-		{
-			RegisterStringToken(m_nBoneNameHash, m_tempBoneName, 0, true);
-		}
-#endif
+		m_sBoneName = m_tempBoneName;
+		m_nBoneNameHash = MakeStringToken( m_tempBoneName );
 
 		m_cRenderColor.SetColor( 0, 0, 0, 0 );
 	}

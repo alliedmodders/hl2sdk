@@ -11,7 +11,7 @@
 #endif
 
 #include "tier0/platform.h"
-#include "tier0/utlstringtoken.h"
+#include "tier1/utlstringtoken.h"
 
 class CBufferString;
 
