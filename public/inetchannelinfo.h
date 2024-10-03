@@ -67,7 +67,9 @@ public:
 
 	virtual float		GetAvgLatency( void ) const = 0;	// average packet latency in seconds
 	virtual float		GetEngineLatency( void ) const = 0;	// current latency (RTT), more accurate but jittering
-	virtual void		GetLatencyBreakdown( NetChanStat_t* pPeer, NetChanStat_t* pNet, NetChanStat_t* pLocal, NetChanStat_t* pEngine ) const = 0;
+	
+	virtual void		unk001( void ) const = 0;
+	virtual void		unk002( void ) const = 0;
 	
 	virtual float		GetAvgLoss( int flow ) const = 0;	 // avg packet loss[0..1]
 	virtual float		GetAvgData( int flow ) const = 0;	 // data flow in bytes/sec
@@ -80,6 +82,8 @@ public:
 
 	virtual float		GetTimeoutSeconds( void ) const = 0;
 	virtual float		GetTimeUntilTimeout( void ) const = 0;
+	
+	virtual void		unk101( void ) const = 0;
 	
 	virtual void		ResetLatencyStats( int channel ) = 0;
 	virtual SNetChannelLatencyStats *GetLatencyStats( int channel ) const = 0;
