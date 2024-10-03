@@ -337,7 +337,7 @@ public:
 		if (!pszString || !pszString[0])
 			return;
 
-		m_nHashCode = MurmurHash2LowerCase(pszString, strlen(pszString), 0x31415926);
+		m_nHashCode = MurmurHash2LowerCase(pszString, (int)strlen(pszString), 0x31415926);
 		m_pszString = pszString;
 
 #if 0
