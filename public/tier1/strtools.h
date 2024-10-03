@@ -219,6 +219,8 @@ inline bool V_isspace( int c )
 #define V_stricmp_n(s1, s2)				V_stricmp_fast_NegativeForUnequal((s1), (s2) )
 #define V_strnicmp(s1, s2, count)		_V_strnicmp_fast	((s1), (s2), (count))
 #define V_wcsnicmp(s1, s2, symbols)		V_wcsnicmp_cch		((s1), (s2), (symbols))
+#define V_strcasecmp(s1, s2)			V_stricmp			((s1), (s2))
+#define V_strncasecmp(s1, s2, count)	V_strnicmp			((s1), (s2), (count))
 
 #define V_strstr(s1, search)			V_tier0_strstr		((s1), (search))
 
