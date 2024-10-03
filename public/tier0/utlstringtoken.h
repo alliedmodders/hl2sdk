@@ -73,7 +73,7 @@ FORCEINLINE CUtlStringToken MakeStringToken( char const *pString, int nLen )
 
 FORCEINLINE CUtlStringToken MakeStringToken( char const *pString )
 {
-	return MakeStringToken( pString, ( int )V_strlen(pString) );
+	return MakeStringToken( pString, ( int )strlen(pString) );
 }
 
 #endif // UTLSTRINGTOKEN_H
