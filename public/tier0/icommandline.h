@@ -57,17 +57,5 @@ public:
 //-----------------------------------------------------------------------------
 PLATFORM_INTERFACE ICommandLine *CommandLine();
 
-
-//-----------------------------------------------------------------------------
-// Process related functions
-//-----------------------------------------------------------------------------
-PLATFORM_INTERFACE const tchar *Plat_GetCommandLine();
-#ifndef _WIN32
-// helper function for OS's that don't have a ::GetCommandLine() call
-PLATFORM_INTERFACE void Plat_SetCommandLine( const char *cmdLine );
-#endif
-PLATFORM_INTERFACE const char *Plat_GetCommandLineA();
-
-
 #endif // TIER0_ICOMMANDLINE_H
 
