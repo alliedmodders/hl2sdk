@@ -31,11 +31,15 @@ class CUtlStringToken
 {
 public:
 	FORCEINLINE CUtlStringToken( uint32 nHashCode = 0 ) : m_nHashCode( nHashCode ) {}
-	FORCEINLINE CUtlStringToken( const char *str ) : m_nHashCode( MurmurHash2LowerCase( str, STRINGTOKEN_MURMURHASH_SEED ) ) 
+	FORCEINLINE CUtlStringToken( const char *str ) : m_nHashCode( 0 ) 
 	{
-		if(g_bUpdateStringTokenDatabase)
+		if(str && *str)
 		{
-			RegisterStringToken( m_nHashCode, str, 0, true );
+			m_nHashCode = MurmurHash2LowerCase( str, STRINGTOKEN_MURMURHASH_SEED );
+			if(g_bUpdateStringTokenDatabase)
+			{
+				RegisterStringToken( m_nHashCode, str, 0, true );
+			}
 		}
 	}
 
