@@ -237,6 +237,7 @@ class CEntitySystem : public IEntityResourceManifestBuilder
 
 public:
 	virtual						~CEntitySystem() = 0;
+	virtual void				unk_001() = 0;
 	virtual void				ClearEntityDatabase(ClearEntityDatabaseMode_t eMode) = 0;
 	virtual CEntityInstance*	FindEntityProcedural(const char* szName, CEntityInstance* pSearchingEntity = nullptr, CEntityInstance* pActivator = nullptr, CEntityInstance* pCaller = nullptr) = 0;
 	virtual void				OnEntityParentChanged(CEntityInstance* pEntity, CEntityInstance* pNewParent) = 0; // empty function
