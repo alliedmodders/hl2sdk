@@ -1194,14 +1194,14 @@ public:
 class CSplitString: public CUtlVector<char*, CUtlMemory<char*, int> >
 {
 public:
-	CSplitString(const char *pString, const char *pSeparator, bool bIncludeSeparators = false)
+	CSplitString(const char *pString, const char *pSeparator, bool bIncludeSeparators = false) : m_szBuffer(nullptr)
 	{
-		Split( pString, 0, &pSeparator, 1, bIncludeSeparators);
+		Split( pString, -1, &pSeparator, 1, bIncludeSeparators);
 	}
 
-	CSplitString(const char *pString, const char **pSeparators, int nSeparators, bool bIncludeSeparators = false)
+	CSplitString(const char *pString, const char **pSeparators, int nSeparators, bool bIncludeSeparators = false) : m_szBuffer(nullptr)
 	{
-		Split(pString, 0, pSeparators, nSeparators, bIncludeSeparators);
+		Split(pString, -1, pSeparators, nSeparators, bIncludeSeparators);
 	}
 
 	~CSplitString()
