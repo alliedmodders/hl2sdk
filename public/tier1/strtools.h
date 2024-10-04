@@ -115,10 +115,10 @@ PLATFORM_INTERFACE char *		V_strlower_fast( char *start );
 PLATFORM_INTERFACE char32_t *	V_towlower32( char32_t *start );
 PLATFORM_INTERFACE wchar_t *	V_towlower( wchar_t *start );
 
-PLATFORM_INTERFACE int			V_atoi( const char *str );
+PLATFORM_INTERFACE int64		V_atoi( const char *str );
 PLATFORM_INTERFACE int64 		V_atoi64( const char *str );
 PLATFORM_INTERFACE uint64 		V_atoui64( const char *str );
-PLATFORM_INTERFACE float		V_atof( const char *str );
+PLATFORM_INTERFACE double		V_atof( const char *str );
 PLATFORM_INTERFACE float		V_atofloat32( const char *str );
 PLATFORM_INTERFACE double		V_atofloat64( const char *str );
 
