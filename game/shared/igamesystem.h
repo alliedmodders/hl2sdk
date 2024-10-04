@@ -254,9 +254,11 @@ public:
 
 	GS_EVENT_IMPL( ClientPreEntityThink );
 
-	virtual void unk_1271( const void *const msg ) = 0;
-	virtual void unk_1272( const void *const msg ) = 0;
-	virtual void unk_1273( const void *const msg ) = 0;
+	virtual void unk_001( const void *const msg ) = 0;
+	virtual void unk_002( const void *const msg ) = 0;
+	virtual void unk_003( const void *const msg ) = 0;
+	virtual void unk_004( const void *const msg ) = 0;
+	virtual void unk_005( const void *const msg ) = 0;
 
 	// Gets called each frame
 	GS_EVENT_IMPL( ClientUpdate );
@@ -270,14 +272,16 @@ public:
 	GS_EVENT_IMPL( ServerPostEntityThink );
 	GS_EVENT_IMPL( ServerPreClientUpdate );
 
-	virtual void unk_1277( const void *const msg ) = 0;
-	virtual void unk_1278( const void *const msg ) = 0;
+	virtual void unk_101( const void *const msg ) = 0;
+	virtual void unk_102( const void *const msg ) = 0;
+	virtual void unk_103( const void *const msg ) = 0;
+	virtual void unk_104( const void *const msg ) = 0;
 
 	GS_EVENT_IMPL( ServerGamePostSimulate );
 	GS_EVENT_IMPL( ClientGamePostSimulate );
 
-	virtual void unk_1281( const void *const msg ) = 0;
-	virtual void unk_1282( const void *const msg ) = 0;
+	virtual void unk_201( const void *const msg ) = 0;
+	virtual void unk_202( const void *const msg ) = 0;
 
 	GS_EVENT_IMPL( GameFrameBoundary );
 	GS_EVENT_IMPL( OutOfGameFrameBoundary );
@@ -285,12 +289,12 @@ public:
 	GS_EVENT_IMPL( SaveGame );
 	GS_EVENT_IMPL( RestoreGame );
 
-	virtual void unk_1285( const void *const msg ) = 0;
-	virtual void unk_1286( const void *const msg ) = 0;
-	virtual void unk_1287( const void *const msg ) = 0;
-	virtual void unk_1288( const void *const msg ) = 0;
-	virtual void unk_1289( const void *const msg ) = 0;
-	virtual void unk_1290( const void *const msg ) = 0;
+	virtual void unk_301( const void *const msg ) = 0;
+	virtual void unk_302( const void *const msg ) = 0;
+	virtual void unk_303( const void *const msg ) = 0;
+	virtual void unk_304( const void *const msg ) = 0;
+	virtual void unk_305( const void *const msg ) = 0;
+	virtual void unk_306( const void *const msg ) = 0;
 
 	virtual const char* GetName() = 0;
 	virtual void SetGameSystemGlobalPtrs(void* pValue) = 0;
@@ -345,9 +349,11 @@ public:
 
 	GS_EVENT( ClientPreEntityThink ) {}
 
-	virtual void unk_1271( const void *const msg ) {}
-	virtual void unk_1272( const void *const msg ) {}
-	virtual void unk_1273( const void *const msg ) {}
+	virtual void unk_001( const void *const msg ) {}
+	virtual void unk_002( const void *const msg ) {}
+	virtual void unk_003( const void *const msg ) {}
+	virtual void unk_004( const void *const msg ) {}
+	virtual void unk_005( const void *const msg ) {}
 
 	// Gets called each frame
 	GS_EVENT( ClientUpdate ) {}
@@ -361,14 +367,16 @@ public:
 	GS_EVENT( ServerPostEntityThink ) {}
 	GS_EVENT( ServerPreClientUpdate ) {}
 
-	virtual void unk_1277( const void *const msg ) {}
-	virtual void unk_1278( const void *const msg ) {}
+	virtual void unk_101( const void *const msg ) {}
+	virtual void unk_102( const void *const msg ) {}
+	virtual void unk_103( const void *const msg ) {}
+	virtual void unk_104( const void *const msg ) {}
 
 	GS_EVENT( ServerGamePostSimulate ) {}
 	GS_EVENT( ClientGamePostSimulate ) {}
 
-	virtual void unk_1281( const void *const msg ) {}
-	virtual void unk_1282( const void *const msg ) {}
+	virtual void unk_201( const void *const msg ) {}
+	virtual void unk_202( const void *const msg ) {}
 
 	GS_EVENT( GameFrameBoundary ) {}
 	GS_EVENT( OutOfGameFrameBoundary ) {}
@@ -376,12 +384,12 @@ public:
 	GS_EVENT( SaveGame ) {}
 	GS_EVENT( RestoreGame ) {}
 
-	virtual void unk_1285( const void *const msg ) {}
-	virtual void unk_1286( const void *const msg ) {}
-	virtual void unk_1287( const void *const msg ) {}
-	virtual void unk_1288( const void *const msg ) {}
-	virtual void unk_1289( const void *const msg ) {}
-	virtual void unk_1290( const void *const msg ) {}
+	virtual void unk_301( const void *const msg ) {}
+	virtual void unk_302( const void *const msg ) {}
+	virtual void unk_303( const void *const msg ) {}
+	virtual void unk_304( const void *const msg ) {}
+	virtual void unk_305( const void *const msg ) {}
+	virtual void unk_306( const void *const msg ) {}
 
 	virtual const char* GetName() { return m_pName; }
 	virtual void SetGameSystemGlobalPtrs(void* pValue) {}
