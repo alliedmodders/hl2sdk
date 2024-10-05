@@ -44,6 +44,18 @@ extern CGameEntitySystem* GameEntitySystem();
 
 typedef void (*EntityResourceManifestCreationCallback_t)(IEntityResourceManifest *, void *);
 
+struct GameTime_t
+{
+public:
+	GameTime_t( float value = 0.0f ) : m_Value( value ) {}
+
+	float GetTime() const { return m_Value; }
+	void SetTime( float value ) { m_Value = value; }
+
+private:
+	float m_Value;
+};
+
 enum EntityIOTargetType_t
 {
 	ENTITY_IO_TARGET_INVALID = -1,
@@ -99,7 +111,8 @@ enum EntityDormancyType_t
 
 struct EventQueuePrioritizedEvent_t
 {
-	float m_flFireTime;
+	int m_unk001;
+	GameTime_t m_flFireTime;
 	EntityIOTargetType_t m_eTargetType;
 	CUtlSymbolLarge m_iTarget;
 	CUtlSymbolLarge m_iTargetInput;
@@ -237,7 +250,10 @@ class CEntitySystem : public IEntityResourceManifestBuilder
 
 public:
 	virtual						~CEntitySystem() = 0;
-	virtual void				unk_001() = 0;
+
+	// This function is called in CGameEntitySystem::ProcessEventQueue()
+	virtual GameTime_t			unk_001( int ) = 0;
+
 	virtual void				ClearEntityDatabase(ClearEntityDatabaseMode_t eMode) = 0;
 	virtual CEntityInstance*	FindEntityProcedural(const char* szName, CEntityInstance* pSearchingEntity = nullptr, CEntityInstance* pActivator = nullptr, CEntityInstance* pCaller = nullptr) = 0;
 	virtual void				OnEntityParentChanged(CEntityInstance* pEntity, CEntityInstance* pNewParent) = 0; // empty function
