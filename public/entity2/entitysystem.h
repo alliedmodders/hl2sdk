@@ -216,9 +216,9 @@ public:
 	virtual void		LockResourceManifest(bool bLock, CEntityResourceManifestLock* const context) = 0;
 };
 
-// Size: 0x1510 | 0x1540 (from constructor)
 class CEntitySystem : public IEntityResourceManifestBuilder
 {
+private:
 	enum
 	{
 		MAX_ACCESSORS = 32,
@@ -247,6 +247,8 @@ class CEntitySystem : public IEntityResourceManifestBuilder
 	{ 
 		unsigned int operator()( uint32 n ) const { return MurmurHash2( &n, sizeof( uint32 ), 0x3501A674 ); } 
 	};
+
+	typedef CUtlDelegate<bool( IParsingErrorListener *, CEntityInstance *, void *, const ComponentUnserializerFieldInfo_t *, const KeyValues3 * )> KeyUnserializerDelegate;
 
 public:
 	virtual						~CEntitySystem() = 0;
@@ -295,56 +297,57 @@ public:
 	CUtlSymbolLarge FindPooledString(const char* pString);
 
 private:
-	IEntityResourceManifest* m_pCurrentManifest;
+	IEntityResourceManifest *m_pCurrentManifest;
+
 public:
 	CConcreteEntityList m_EntityList;
-	// CConcreteEntityList seems to be correct but m_CallQueue supposedly starts at offset 2664, which is... impossible?
-	// Based on CEntitySystem::CEntitySystem found via string "MaxNonNetworkableEntities"
+	CUtlString m_sEntSystemName;
 
-public:
-	CUtlString m_sEntSystemName; // 2696
-	CUtlMap<const char*, CEntityClass*, uint16, CDefFastCaselessStringLess> m_entClassesByCPPClassname; // 2704
-	CUtlMap<const char*, CEntityClass*, uint16, CDefFastCaselessStringLess> m_entClassesByClassname; // 2736
-	CUtlMap<const char*, CEntityComponentHelper*, uint16, CDefFastCaselessStringLess> m_entityComponentHelpers; // 2768
-	CUtlMap<CUtlSymbolLarge, CUtlVector<CEntityHandle>*, uint16, CDefLess<CUtlSymbolLarge>> m_entityNames; // 2800
-	CEventQueue m_EventQueue; // 2832
-	CUtlVectorFixedGrowable<IEntityIONotify*, 2> m_entityIONotifiers; // 2968 | 2984
-	int m_nSuppressDormancyChangeCount; // 3008 | 3024
-	NetworkSerializationMode_t m_eNetworkSerializationMode; // 3012 | 3028
-	int m_nExecuteQueuedCreationDepth; // 3016 | 3032
-	int m_nExecuteQueuedDeletionDepth; // 3020 | 3036
-	int m_nSuppressDestroyImmediateCount; // 3024 | 3040
-	int m_nSuppressAutoDeletionExecutionCount; // 3028 | 3044
-	int m_nEntityKeyValuesAllocatorRefCount; // 3032 | 3048
-	float m_flChangeCallbackSpewThreshold; // 3036 | 3052
-	bool m_Unk1; // 3040 | 3056
-	bool m_Unk2; // 3041 | 3057
-	bool m_Unk3; // 3042 | 3058
-	bool m_bEnableAutoDeletionExecution; // 3043 | 3059
-	bool m_Unk4; // 3044 | 3060
-	bool m_Unk5; // 3045 | 3061
-	bool m_Unk6; // 3046 | 3062
-	CUtlVector<CreationInfo_t> m_queuedCreations; // 3048 | 3064
-	CUtlVector<PostDataUpdateInfo_t> m_queuedPostDataUpdates; // 3072 | 3088
-	CUtlVector<DestructionInfo_t> m_queuedDeletions; // 3096 | 3112
-	CUtlVector<DestructionInfo_t> m_queuedDeferredDeletions; // 3120 | 3136
-	CUtlVector<DestructionInfo_t> m_queuedDeallocations; // 3144 | 3160
-	CUtlVector<DormancyChangeInfo_t> m_queuedDormancyChanges; // 3168 | 3184
-	CUtlDelegate<void ( int, const EntitySpawnInfo_t* )> m_EntityPostSpawnCallback; // 3192 | 3208
-	INetworkFieldChangedEventQueue* m_pNetworkFieldChangedEventQueue; // 3208 | 3232
-	INetworkFieldScratchData* m_pNetworkFieldScratchData; // 3216 | 3240
-	IFieldChangeLimitSpew* m_pFieldChangeLimitSpew; // 3224 | 3248
-	CUtlHashtable<fieldtype_t, CUtlDelegate<bool ( IParsingErrorListener*, CEntityInstance*, void*, const ComponentUnserializerFieldInfo_t*, const KeyValues3* )>, MurmurHash2HashFunctor> m_DataDescKeyUnserializers; // 3232 | 3256
-	CUtlScratchMemoryPool m_ComponentUnserializerInfoAllocator; // 3264 | 3288
-	CKeyValues3Context m_EntityKeyValuesAllocator; // 3280 | 3304
-	CUtlSymbolTableLargeMT_CI m_Symbols; // 4864 | 4888
-	SpawnGroupHandle_t m_hActiveSpawnGroup; // 5048 | 5088
-	matrix3x4a_t m_vSpawnOriginOffset; // 5056 | 5104
-	IEntityDataInstantiator* m_Accessors[ MAX_ACCESSORS ]; // 5104 | 5152
-	CUtlHashtable<CUtlString, void*> m_EntityMaterialAttributes; // 5360 | 5408
+	CUtlMap<const char*, CEntityClass*, uint16, CDefFastCaselessStringLess> m_entClassesByCPPClassname;
+	CUtlMap<const char*, CEntityClass*, uint16, CDefFastCaselessStringLess> m_entClassesByClassname;
+	CUtlMap<const char*, CEntityComponentHelper*, uint16, CDefFastCaselessStringLess> m_entityComponentHelpers;
+	CUtlMap<CUtlSymbolLarge, CUtlVector<CEntityHandle>*, uint16, CDefLess<CUtlSymbolLarge>> m_entityNames;
+
+	CEventQueue m_EventQueue;
+	CUtlVectorFixedGrowable<IEntityIONotify*, 2> m_entityIONotifiers;
+	int m_nSuppressDormancyChangeCount;
+	NetworkSerializationMode_t m_eNetworkSerializationMode;
+	int m_nExecuteQueuedCreationDepth;
+	int m_nExecuteQueuedDeletionDepth;
+	int m_nSuppressDestroyImmediateCount;
+	int m_nSuppressAutoDeletionExecutionCount;
+	int m_nEntityKeyValuesAllocatorRefCount;
+	float m_flChangeCallbackSpewThreshold;
+
+	bool m_Unk1;
+	bool m_Unk2;
+	bool m_Unk3;
+	bool m_bEnableAutoDeletionExecution;
+	bool m_Unk4;
+	bool m_Unk5;
+	bool m_Unk6;
+
+	CUtlVector<CreationInfo_t> m_queuedCreations;
+	CUtlVector<PostDataUpdateInfo_t> m_queuedPostDataUpdates;
+	CUtlVector<DestructionInfo_t> m_queuedDeletions;
+	CUtlVector<DestructionInfo_t> m_queuedDeferredDeletions;
+	CUtlVector<DestructionInfo_t> m_queuedDeallocations;
+	CUtlVector<DormancyChangeInfo_t> m_queuedDormancyChanges;
+
+	CUtlDelegate<void ( int, const EntitySpawnInfo_t* )> m_EntityPostSpawnCallback;
+	INetworkFieldChangedEventQueue* m_pNetworkFieldChangedEventQueue;
+	INetworkFieldScratchData* m_pNetworkFieldScratchData;
+	IFieldChangeLimitSpew* m_pFieldChangeLimitSpew;
+	CUtlHashtable<fieldtype_t, KeyUnserializerDelegate, MurmurHash2HashFunctor> m_DataDescKeyUnserializers;
+	CUtlScratchMemoryPool m_ComponentUnserializerInfoAllocator;
+	CKeyValues3Context m_EntityKeyValuesAllocator;
+	CUtlSymbolTableLargeMT_CI m_Symbols;
+	SpawnGroupHandle_t m_hActiveSpawnGroup;
+	matrix3x4a_t m_vSpawnOriginOffset;
+	IEntityDataInstantiator* m_Accessors[ MAX_ACCESSORS ];
+	CUtlHashtable<CUtlString, void*> m_EntityMaterialAttributes;
 };
 
-// Size: 0x1570 | 0x15A0 (from constructor)
 class CGameEntitySystem : public CEntitySystem
 {
 	struct SpawnGroupEntityFilterInfo_t
@@ -352,7 +355,6 @@ class CGameEntitySystem : public CEntitySystem
 		ISpawnGroupEntityFilter* m_pFilter;
 		SpawnGroupEntityFilterType_t m_nType;
 	};
-	//typedef SpawnGroupEntityFilterInfo_t CUtlMap<char const*, SpawnGroupEntityFilterInfo_t, int, bool (*)(char const* const&, char const* const&)>::ElemType_t;
 
 public:
 	virtual ~CGameEntitySystem() = 0;
@@ -361,14 +363,13 @@ public:
 	void RemoveListenerEntity(IEntityListener* pListener);
 
 public:
-	int m_iMaxNetworkedEntIndex; // 5392 | 5440
-	int m_iNetworkedEntCount; // 5396 | 5444
-	int m_iNonNetworkedSavedEntCount; // 5400 | 5448
-	// int m_iNumEdicts; // This is no longer referenced in the server binary
-	CUtlDict<SpawnGroupEntityFilterInfo_t> m_spawnGroupEntityFilters; // 5408 | 5456
-	CUtlVector<IEntityListener*> m_entityListeners; // 5448 | 5496
-	IEntity2SaveRestore* m_pEntity2SaveRestore; // 5472 | 5520
-	IEntity2Networkables* m_pEntity2Networkables; // 5480 | 5528
+	int m_iMaxNetworkedEntIndex;
+	int m_iNetworkedEntCount;
+	int m_iNonNetworkedSavedEntCount;
+	CUtlDict<SpawnGroupEntityFilterInfo_t> m_spawnGroupEntityFilters;
+	CUtlVector<IEntityListener*> m_entityListeners;
+	IEntity2SaveRestore* m_pEntity2SaveRestore;
+	IEntity2Networkables* m_pEntity2Networkables;
 };
 
 abstract_class IEntityFindFilter
