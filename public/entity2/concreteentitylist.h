@@ -9,7 +9,7 @@ class CConcreteEntityList
 	{
 		CEntityIdentity* m_pHead;
 		CEntityIdentity* m_pTail;
-		uint64 unk;
+		int m_nCount;
 	};
 public:
 	CEntityIdentity* m_pIdentityChunks[MAX_ENTITY_LISTS];

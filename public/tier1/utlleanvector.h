@@ -363,7 +363,7 @@ public:
 	};
 	Iterator_t First() const							{ const T* base = this->Base(); return Iterator_t( base, &base[ this->m_nCount ] ); }
 	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( it.elem + 1, it.end ); }
-	bool IsValidIterator( const Iterator_t &it ) const	{ return it.elem != it.end; }
+	bool IsValidIterator( const Iterator_t &it ) const	{ return it.elem && it.elem != it.end; }
 	T& operator[]( const Iterator_t &it )				{ return *const_cast<T*>(it.elem); }
 	const T& operator[]( const Iterator_t &it ) const	{ return *it.elem; }
 
