@@ -172,6 +172,7 @@ class IMatchFramework;
 class ISource2V8System;
 class ISoundSystem;
 class IAvi;
+class IWebm;
 class IBik;
 class IVRAD3;
 class IMeshSystem;
@@ -337,6 +338,9 @@ DECLARE_TIER2_INTERFACE(IGameTypes, g_pGameTypes);
 
 #define AVI_INTERFACE_VERSION					"VAvi001"
 DECLARE_TIER3_INTERFACE( IAvi, g_pAVI );
+
+#define WEBM_INTERFACE_VERSION					"VWebm001"
+DECLARE_TIER3_INTERFACE( IWebm, g_pWebm );
 
 #define BIK_INTERFACE_VERSION					"VBik001"
 DECLARE_TIER3_INTERFACE( IBik, g_pBIK );

@@ -163,6 +163,7 @@ static const InterfaceGlobals_t g_pInterfaceGlobals[] =
 	{ LOCALIZE_INTERFACE_VERSION, &g_pLocalize },
 	{ MEDIA_FOUNDATION_INTERFACE_VERSION, &g_pMediaFoundation },
 	{ AVI_INTERFACE_VERSION, &g_pAVI },
+	{ WEBM_INTERFACE_VERSION, &g_pWebm },
 	{ BIK_INTERFACE_VERSION, &g_pBIK },
 	{ MESHSYSTEM_INTERFACE_VERSION, &g_pMeshSystem },
 	{ MESHUTILS_INTERFACE_VERSION, &g_pMeshUtils },
