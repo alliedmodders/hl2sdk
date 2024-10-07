@@ -36,6 +36,7 @@ ILocalize *g_pLocalize;
 IMediaFoundation *g_pMediaFoundation;
 IGameTypes *g_pGameTypes;
 IAvi *g_pAVI;
+IWebm *g_pWebm;
 IBik *g_pBIK;
 IMeshSystem *g_pMeshSystem;
 IMeshUtils *g_pMeshUtils;
