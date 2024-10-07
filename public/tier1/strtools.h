@@ -502,7 +502,7 @@ PLATFORM_INTERFACE bool _V_StrSubst( const char *pIn, const char *pMatch, const 
 // Split the specified string on the specified separator.
 // Returns a list of strings separated by pSeparator.
 // You are responsible for freeing the contents of outStrings (call outStrings.PurgeAndDeleteElements).
-PLATFORM_OVERLOAD void V_SplitString( const char *pString, const char *pSeparator, CUtlVector<CUtlString, CUtlMemory<CUtlString, int>> &outStrings, bool );
+PLATFORM_OVERLOAD void V_SplitString( const char *pString, const char *pSeparator, CUtlVector<CUtlString, CUtlMemory<CUtlString, int>> &outStrings, bool include_empty = false );
 
 // Just like V_SplitString, but it can use multiple possible separators.
 PLATFORM_OVERLOAD void V_SplitStringInPlace( char *pString, const char *pSeparator, CUtlVector<const char *, CUtlMemory<const char *, int>> &outStrings );
