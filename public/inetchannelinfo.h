@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -67,11 +67,9 @@ public:
 
 	virtual float		GetAvgLatency( void ) const = 0;	// average packet latency in seconds
 	virtual float		GetEngineLatency( void ) const = 0;	// current latency (RTT), more accurate but jittering
-	
-	virtual void		unk001( void ) const = 0;
-	virtual void		unk002( void ) const = 0;
-	
-	virtual float		GetAvgLoss( int flow ) const = 0;	 // avg packet loss[0..1]
+
+    virtual float		GetAvgLoss(int flow) const = 0;	 // avg packet loss[0..1]
+    virtual float		GetAvgLatePackets(int flow) const = 0;	 // avg late packets[0..1]
 	virtual float		GetAvgData( int flow ) const = 0;	 // data flow in bytes/sec
 	virtual float		GetAvgPackets( int flow ) const = 0; // avg packets/sec
 	virtual int			GetTotalData( int flow ) const = 0;	 // total flow in/out in bytes
