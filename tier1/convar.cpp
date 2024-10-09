@@ -1,5 +1,5 @@
 
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -26,11 +26,6 @@
 #endif
 #include "tier0/memdbgon.h"
 
-
-// Comment this out when we release.
-//#define ALLOW_DEVELOPMENT_CVARS
-
-
 //-----------------------------------------------------------------------------
 // Statically constructed list of ConCommandBases, 
 // used for registering them with the ICVar interface
@@ -38,27 +33,33 @@
 static int64 s_nCVarFlag = 0;
 static bool s_bRegistered = false;
 
-class ConCommandRegList;
+void RegisterCommand( ConCommandCreation_t& cmd )
+{
+	*cmd.m_pHandle = g_pCVar->RegisterConCommand( cmd, s_nCVarFlag );
+	if ( !cmd.m_pHandle->IsValid() )
+	{
+		Plat_FatalErrorFunc( "RegisterConCommand: Unknown error registering con command \"%s\"!\n", cmd.m_pszName );
+		DebuggerBreakIfDebugging( );
+	}
+}
+
+void UnRegisterCommand( ConCommandHandle& cmd )
+{
+	if ( cmd.IsValid() )
+	{
+		g_pCVar->UnregisterConCommand( cmd );
+
+		cmd.Invalidate();
+	}
+}
+
 class ConCommandRegList
 {
 public:
-	static void RegisterCommand(ConCommand* pCmd)
+	static ConCommandRegList* GetRegList()
 	{
-		if (s_bConCommandsRegistered)
-		{
-			ConCommandHandle hndl = g_pCVar->RegisterConCommand(pCmd, s_nCVarFlag);
-			if (!hndl.IsValid())
-			{
-				Plat_FatalErrorFunc("RegisterConCommand: Unknown error registering con command \"%s\"!\n", pCmd->GetName());
-				DebuggerBreakIfDebugging();
-			}
-
-			pCmd->SetHandle(hndl);
-		}
-		else
-		{
-			GetCommandRegList()->AddToTail(pCmd);
-		}
+		static ConCommandRegList* list = new ConCommandRegList();
+		return list;
 	}
 
 	static void RegisterAll()
@@ -67,113 +68,124 @@ public:
 		{
 			s_bConCommandsRegistered = true;
 
-			for(int i = 0; i < GetCommandRegList()->Count(); i++)
+			ConCommandRegList* list = GetRegList();
+			FOR_EACH_VEC( list->m_Vec, i )
 			{
-				ConCommand *pCmd = GetCommandRegList()->Element(i);
-				ConCommandHandle hndl = g_pCVar->RegisterConCommand(pCmd, s_nCVarFlag);
-				pCmd->SetHandle(hndl);
-
-				if (!hndl.IsValid())
-				{
-					Plat_FatalErrorFunc("RegisterConCommand: Unknown error registering con command \"%s\"!\n", pCmd->GetName());
-					DebuggerBreakIfDebugging();
-				}
+				RegisterCommand( list->m_Vec[i] );
 			}
+			delete list;
 		}
 	}
 private:
+	friend void AddCommand( ConCommandCreation_t& cmd );
 
-	// GAMMACASE: Required to prevent static initialization order problem https://isocpp.org/wiki/faq/ctors#static-init-order
-	static CUtlVector<ConCommand *> *GetCommandRegList()
+	void Add( const ConCommandCreation_t& cmd )
 	{
-		static CUtlVector<ConCommand *> s_ConCommandRegList;
-		return &s_ConCommandRegList;
+		m_Vec.AddToTail( cmd );
 	}
 
+	CUtlVector<ConCommandCreation_t> m_Vec;
+public:
 	static bool s_bConCommandsRegistered;
 };
-
 bool ConCommandRegList::s_bConCommandsRegistered = false;
 
-#ifdef CONVAR_WORK_FINISHED
-template <typename ToCheck, std::size_t ExpectedSize, std::size_t RealSize = sizeof(ToCheck)>
-void check_size() {
-	static_assert(ExpectedSize == RealSize, "Size mismatch");
-};
+void AddCommand( ConCommandCreation_t& cmd )
+{
+	if (ConCommandRegList::s_bConCommandsRegistered && s_bRegistered)
+	{
+		RegisterCommand( cmd );
+		return;
+	}
 
-class ConVarRegList;
-static ConVarRegList* s_pConVarRegList = nullptr;
+	ConCommandRegList::GetRegList()->Add( cmd );
+}
+
+void RegisterConVar( ConVarCreation_t& cvar )
+{
+	g_pCVar->RegisterConVar( cvar, s_nCVarFlag, cvar.m_pHandle, cvar.m_pConVarData );
+	if (!cvar.m_pHandle->IsValid())
+	{
+		Plat_FatalErrorFunc( "RegisterConVar: Unknown error registering convar \"%s\"!\n", cvar.m_pszName );
+		DebuggerBreakIfDebugging();
+	}
+}
+
+void UnRegisterConVar( ConVarHandle& cvar )
+{
+	if (cvar.IsValid())
+	{
+		g_pCVar->UnregisterConVar( cvar );
+
+		cvar.Invalidate();
+	}
+}
 
 class ConVarRegList
 {
 public:
-	ConVarRegList()
+	static ConVarRegList* GetRegList()
 	{
-		check_size<ConVar, 0x60>();
-		check_size<ConVarRegList, 11216>();
-	}
-
-	static bool AreConVarsRegistered()
-	{
-		return s_bConVarsRegistered;
+		static ConVarRegList* list = new ConVarRegList();
+		return list;
 	}
 
 	static void RegisterAll()
 	{
-		if (!s_bConVarsRegistered && g_pCVar)
+		if ( !s_bConVarsRegistered && g_pCVar )
 		{
 			s_bConVarsRegistered = true;
 
-			ConVarRegList* pList = s_pConVarRegList;
-			while (pList != nullptr)
+			ConVarRegList* list = GetRegList();
+			FOR_EACH_VEC( list->m_Vec, i )
 			{
-				FOR_EACH_VEC(s_pConVarRegList->m_Vec, i)
-				{
-					ConVar* pConVar = &pList->m_Vec[i];
-					ConVarHandle hndl;
-					//g_pCVar->RegisterConVar(pConVar, s_nCVarFlag, hndl);
-					//pConVar->SetHandle(hndl);
-
-					if (!hndl.IsValid())
-					{
-						Plat_FatalErrorFunc("RegisterConCommand: Unknown error registering convar \"%s\"!\n", pConVar->GetName());
-						DebuggerBreakIfDebugging();
-					}
-				}
-
-				ConVarRegList *pNext = pList->m_pNext;
-				delete pList;
-				pList = pNext;
+				RegisterConVar( list->m_Vec[i] );
 			}
-
-			s_pConVarRegList = nullptr;
+			delete list;
 		}
 	}
-private:
-	CUtlVectorFixed<ConVar, 100> m_Vec;
-	ConVarRegList* m_pNext = nullptr;
 
+private:
+	friend void SetupConVar( ConVarCreation_t& cvar );
+
+	void Add( const ConVarCreation_t& cvar )
+	{
+		m_Vec.AddToTail( cvar );
+	}
+
+	CUtlVector<ConVarCreation_t> m_Vec;
+public:
 	static bool s_bConVarsRegistered;
 };
 
 bool ConVarRegList::s_bConVarsRegistered = false;
-#endif // CONVAR_WORK_FINISHED
+
+void SetupConVar( ConVarCreation_t& cvar )
+{
+	if ( ConVarRegList::s_bConVarsRegistered )
+	{
+		RegisterConVar(cvar);
+		return;
+	}
+	
+	ConVarRegList::GetRegList()->Add( cvar );
+}
 
 //-----------------------------------------------------------------------------
 // Called by the framework to register ConCommandBases with the ICVar
 //-----------------------------------------------------------------------------
-void ConVar_Register( int64 nCVarFlag)
+void ConVar_Register( int64 nCVarFlag )
 {
 	if ( !g_pCVar || s_bRegistered )
+	{
 		return;
+	}
 
 	s_bRegistered = true;
 	s_nCVarFlag = nCVarFlag;
 
 	ConCommandRegList::RegisterAll();
-#ifdef CONVAR_WORK_FINISHED
 	ConVarRegList::RegisterAll();
-#endif // CONVAR_WORK_FINISHED
 }
 
 void ConVar_Unregister( )
@@ -183,84 +195,6 @@ void ConVar_Unregister( )
 
 	s_bRegistered = false;
 }
-
-
-//-----------------------------------------------------------------------------
-// Purpose: Default constructor
-//-----------------------------------------------------------------------------
-ConCommandBase::ConCommandBase( void )
-{
-	m_pszName       = NULL;
-	m_pszHelpString = NULL;
-
-	m_nFlags = 0;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-ConCommandBase::~ConCommandBase( void )
-{
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Return name of the command/var
-// Output : const char
-//-----------------------------------------------------------------------------
-const char *ConCommandBase::GetName( void ) const
-{
-	return m_pszName;
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : flag - 
-// Output : Returns true on success, false on failure.
-//-----------------------------------------------------------------------------
-bool ConCommandBase::IsFlagSet( int64 flag ) const
-{
-	return ( flag & m_nFlags ) ? true : false;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : flags - 
-//-----------------------------------------------------------------------------
-void ConCommandBase::AddFlags( int64 flags )
-{
-	m_nFlags |= flags;
-
-#ifdef ALLOW_DEVELOPMENT_CVARS
-	m_nFlags &= ~FCVAR_DEVELOPMENTONLY;
-#endif
-}
-
-void ConCommandBase::RemoveFlags( int64 flags )
-{
-	m_nFlags &= ~flags;
-}
-
-int64 ConCommandBase::GetFlags( void ) const
-{
-	return m_nFlags;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Output : const char
-//-----------------------------------------------------------------------------
-const char *ConCommandBase::GetHelpText( void ) const
-{
-	return m_pszHelpString;
-}
-
-//-----------------------------------------------------------------------------
-//
-// Con Commands start here
-//
-//-----------------------------------------------------------------------------
-
 
 //-----------------------------------------------------------------------------
 // Global methods
@@ -451,98 +385,68 @@ int DefaultCompletionFunc( const char *partial, CUtlVector< CUtlString > &comman
 	return 0;
 }
 
-
-ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, FnCommandCallback_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
+ConCommand::ConCommand( const char *pName, FnCommandCallback_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
-	m_Callback.m_fnCommandCallback = callback;
-	m_Callback.m_bUsingCommandCallbackInterface = false;
-	m_Callback.m_bHasVoidCommandCallback = false;
-	m_Callback.m_bHasContextlessCommandCallback = false;
+	ConCommandCreation_t creation;
+	creation.m_fnCallback.m_fnCommandCallback = callback;
+	creation.m_fnCallback.m_bIsInterface = false;
+	creation.m_fnCallback.m_bIsVoidCallback = false;
+	creation.m_fnCallback.m_bIsContextLess = false;
 
-	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
-	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
-	m_bUsingCommandCompletionInterface = false;
-
-	m_pReference = pReferenceOut;
-	m_pReference->handle.Reset();
+	creation.m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
+	creation.m_bHasCompletionCallback = completionFunc != 0 ? true : false;
+	creation.m_bIsInterface = false;
 
 	// Setup the rest
-	Create( pName, pHelpString, flags );
+	Create( pName, pHelpString, flags, creation );
 }
 
-ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, FnCommandCallbackVoid_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
+ConCommand::ConCommand( const char *pName, FnCommandCallbackVoid_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
-	m_Callback.m_fnVoidCommandCallback = callback;
-	m_Callback.m_bUsingCommandCallbackInterface = false;
-	m_Callback.m_bHasVoidCommandCallback = true;
-	m_Callback.m_bHasContextlessCommandCallback = false;
+	ConCommandCreation_t creation;
+	creation.m_fnCallback.m_fnVoidCommandCallback = callback;
+	creation.m_fnCallback.m_bIsInterface = false;
+	creation.m_fnCallback.m_bIsVoidCallback = true;
+	creation.m_fnCallback.m_bIsContextLess = false;
 
-	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
-	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
-	m_bUsingCommandCompletionInterface = false;
-
-	m_pReference = pReferenceOut;
-	m_pReference->handle.Reset();
+	creation.m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
+	creation.m_bHasCompletionCallback = completionFunc != nullptr ? true : false;
+	creation.m_bIsInterface = false;
 
 	// Setup the rest
-	Create( pName, pHelpString, flags );
+	Create( pName, pHelpString, flags, creation );
 }
 
-ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, FnCommandCallbackNoContext_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
+ConCommand::ConCommand( const char *pName, FnCommandCallbackNoContext_t callback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/ )
 {
-	m_Callback.m_fnContextlessCommandCallback = callback;
-	m_Callback.m_bUsingCommandCallbackInterface = false;
-	m_Callback.m_bHasVoidCommandCallback = false;
-	m_Callback.m_bHasContextlessCommandCallback = true;
+	ConCommandCreation_t creation;
+	creation.m_fnCallback.m_fnContextlessCommandCallback = callback;
+	creation.m_fnCallback.m_bIsInterface = false;
+	creation.m_fnCallback.m_bIsVoidCallback = false;
+	creation.m_fnCallback.m_bIsContextLess = true;
 
-	m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
-	m_bHasCompletionCallback = completionFunc != 0 ? true : false;
-	m_bUsingCommandCompletionInterface = false;
-
-	m_pReference = pReferenceOut;
-	m_pReference->handle.Reset();
+	creation.m_fnCompletionCallback = completionFunc ? completionFunc : DefaultCompletionFunc;
+	creation.m_bHasCompletionCallback = completionFunc != nullptr ? true : false;
+	creation.m_bIsInterface = false;
 
 	// Setup the rest
-	Create(pName, pHelpString, flags);
+	Create( pName, pHelpString, flags, creation );
 }
 
-ConCommand::ConCommand( ConCommandRefAbstract *pReferenceOut, const char *pName, ICommandCallback *pCallback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, ICommandCompletionCallback *pCompletionCallback /*= 0*/ )
+ConCommand::ConCommand( const char *pName, ICommandCallback *pCallback, const char *pHelpString /*= 0*/, int64 flags /*= 0*/, ICommandCompletionCallback *pCompletionCallback /*= 0*/ )
 {
-	m_Callback.m_pCommandCallback = pCallback;
-	m_Callback.m_bUsingCommandCallbackInterface = true;
-	m_Callback.m_bHasVoidCommandCallback = false;
-	m_Callback.m_bHasContextlessCommandCallback = false;
+	ConCommandCreation_t creation;
+	creation.m_fnCallback.m_pCommandCallback = pCallback;
+	creation.m_fnCallback.m_bIsInterface = true;
+	creation.m_fnCallback.m_bIsVoidCallback = false;
+	creation.m_fnCallback.m_bIsContextLess = false;
 
-	m_pCommandCompletionCallback = pCompletionCallback;
-	m_bHasCompletionCallback = true;
-	m_bUsingCommandCompletionInterface = true;
-
-	m_pReference = pReferenceOut;
-	m_pReference->handle.Reset();
+	creation.m_pCommandCompletionCallback = pCompletionCallback;
+	creation.m_bHasCompletionCallback = pCompletionCallback != nullptr ? true : false;
+	creation.m_bIsInterface = true;
 
 	// Setup the rest
-	Create( pName, pHelpString, flags );
-}
-
-//-----------------------------------------------------------------------------
-// Destructor
-//-----------------------------------------------------------------------------
-ConCommand::~ConCommand( void )
-{
-	ConCommandRefAbstract *pRef = GetRef();
-	if ( pRef )
-	{
-		pRef->handle.Unregister();
-	}
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: Used internally by OneTimeInit to initialize.
-//-----------------------------------------------------------------------------
-void ConCommand::Init()
-{
-	ConCommandRegList::RegisterCommand( this );
+	Create( pName, pHelpString, flags, creation );
 }
 
 //-----------------------------------------------------------------------------
@@ -552,582 +456,37 @@ void ConCommand::Init()
 //			*pHelpString - 
 //			flags - 
 //-----------------------------------------------------------------------------
-void ConCommand::Create( const char* pName, const char* pHelpString /*= 0*/, int64 flags /*= 0*/ )
+void ConCommand::Create( const char* pName, const char* pHelpString, int64_t flags, ConCommandCreation_t& setup )
 {
 	static const char* empty_string = "";
 
 	// Name should be static data
 	Assert(pName);
-	m_pszName = pName;
-	m_pszHelpString = pHelpString ? pHelpString : empty_string;
+	setup.m_pszName = pName;
+	setup.m_pszHelpString = pHelpString ? pHelpString : empty_string;
 
-	m_nFlags = flags;
+	setup.m_nFlags = flags;
 
 #ifdef ALLOW_DEVELOPMENT_CVARS
-	m_nFlags &= ~FCVAR_DEVELOPMENTONLY;
+	setup.m_nFlags &= ~FCVAR_DEVELOPMENTONLY;
 #endif
+	setup.m_pHandle = &this->m_Handle;
 
-	Init();
+	AddCommand( setup );
 }
 
-void ConCommand::Shutdown()
+void ConCommand::Destroy()
 {
-	GetRef()->handle.Unregister();
+	UnRegisterCommand(this->m_Handle);
 }
 
-
-//-----------------------------------------------------------------------------
-// Purpose: Invoke the function if there is one
-//-----------------------------------------------------------------------------
-void ConCommandHandle::Dispatch( const CCommandContext &context, const CCommand &command )
-{
-	ConCommand *pCommand = g_pCVar->GetCommand( *this );
-	if ( pCommand->m_Callback.m_fnCommandCallback )
-	{
-		if ( pCommand->m_Callback.m_bUsingCommandCallbackInterface )
-		{
-			pCommand->m_Callback.m_pCommandCallback->CommandCallback( context, command );
-		}
-		else if ( pCommand->m_Callback.m_bHasVoidCommandCallback )
-		{
-			pCommand->m_Callback.m_fnVoidCommandCallback();
-		}
-		else if ( pCommand->m_Callback.m_bHasContextlessCommandCallback )
-		{
-			pCommand->m_Callback.m_fnContextlessCommandCallback( command );
-		}
-		else
-		{
-			pCommand->m_Callback.m_fnCommandCallback( context, command );
-		}
-	}
-
-	// Command without callback!!!
-	AssertMsg(0, ("Encountered ConCommand without a callback!\n"));
-}
-
-bool ConCommandHandle::HasCallback() const
-{
-	ConCommand *pCommand = g_pCVar->GetCommand( *this );
-	return pCommand->m_Callback.m_fnCommandCallback != nullptr;
-}
-
-void ConCommandHandle::Unregister()
-{
-	if (IsValid())
-	{
-		if ( g_pCVar )
-			g_pCVar->UnregisterConCommand( *this );
-
-		Reset();
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Calls the autocompletion method to get autocompletion suggestions
-//-----------------------------------------------------------------------------
-int	ConCommand::AutoCompleteSuggest( const char *partial, CUtlVector< CUtlString > &commands )
-{
-	if (m_bUsingCommandCompletionInterface)
-	{
-		if ( !m_pCommandCompletionCallback )
-			return 0;
-		return m_pCommandCompletionCallback->CommandCompletionCallback( partial, commands );
-	}
-
-	Assert( m_fnCompletionCallback );
-	if ( !m_fnCompletionCallback )
-		return 0;
-
-	return m_fnCompletionCallback( partial, commands );
-}
-
-
-//-----------------------------------------------------------------------------
-// Returns true if the console command can autocomplete 
-//-----------------------------------------------------------------------------
-bool ConCommand::CanAutoComplete( void )
-{
-	return m_bHasCompletionCallback;
-}
-
-
-#ifdef CONVAR_WORK_FINISHED
 //-----------------------------------------------------------------------------
 //
 // Console Variables
 //
 //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-// Various constructors
-//-----------------------------------------------------------------------------
-ConVar::ConVar( const char *pName, const char *pDefaultValue, int64 flags /* = 0 */ )
-{
-	Create( pName, pDefaultValue, flags );
-}
-
-ConVar::ConVar( const char *pName, const char *pDefaultValue, int64 flags, const char *pHelpString )
-{
-	Create( pName, pDefaultValue, flags, pHelpString );
-}
-
-ConVar::ConVar( const char *pName, const char *pDefaultValue, int64 flags, const char *pHelpString, bool bMin, float fMin, bool bMax, float fMax )
-{
-	Create( pName, pDefaultValue, flags, pHelpString, bMin, fMin, bMax, fMax );
-}
-
-ConVar::ConVar( const char *pName, const char *pDefaultValue, int64 flags, const char *pHelpString, FnChangeCallback_t callback )
-{
-	Create( pName, pDefaultValue, flags, pHelpString, false, 0.0, false, 0.0, callback );
-}
-
-ConVar::ConVar( const char *pName, const char *pDefaultValue, int64 flags, const char *pHelpString, bool bMin, float fMin, bool bMax, float fMax, FnChangeCallback_t callback )
-{
-	Create( pName, pDefaultValue, flags, pHelpString, bMin, fMin, bMax, fMax, callback );
-}
-
-
-//-----------------------------------------------------------------------------
-// Destructor
-//-----------------------------------------------------------------------------
-ConVar::~ConVar( void )
-{
-	if ( m_Value.m_pszString )
-	{
-		delete[] m_Value.m_pszString;
-		m_Value.m_pszString = NULL;
-	}
-}
-
-
-//-----------------------------------------------------------------------------
-// Install a change callback (there shouldn't already be one....)
-//-----------------------------------------------------------------------------
-void ConVar::InstallChangeCallback( FnChangeCallback_t callback, bool bInvoke )
-{
-	if (callback)
-	{
-		if (m_fnChangeCallbacks.Find(callback) != -1)
-		{
-			m_fnChangeCallbacks.AddToTail(callback);
-			if (bInvoke)
-				callback(this, m_Value.m_pszString, m_Value.m_fValue);
-		}
-		else
-		{
-			Warning("InstallChangeCallback ignoring duplicate change callback!!!\n");
-		}
-	}
-	else
-	{
-		Warning("InstallChangeCallback called with NULL callback, ignoring!!!\n");
-	}
-}
-
-bool ConVar::IsFlagSet( int64 flag ) const
-{
-	return ( flag & m_pParent->m_nFlags ) ? true : false;
-}
-
-const char *ConVar::GetHelpText( void ) const
-{
-	return m_pParent->m_pszHelpString;
-}
-
-void ConVar::AddFlags( int64 flags )
-{
-	m_pParent->m_nFlags |= flags;
-
-#ifdef ALLOW_DEVELOPMENT_CVARS
-	m_pParent->m_nFlags &= ~FCVAR_DEVELOPMENTONLY;
-#endif
-}
-
-int64 ConVar::GetFlags( void ) const
-{
-	return m_pParent->m_nFlags;
-}
-
-const char *ConVar::GetName( void ) const
-{
-	return m_pParent->m_pszName;
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : 
-//-----------------------------------------------------------------------------
-void ConVar::Init()
-{
-	BaseClass::Init();
-}
-
-const char *ConVar::GetBaseName( void ) const
-{
-	return m_pParent->m_pszName;
-}
-
-int ConVar::GetSplitScreenPlayerSlot( void ) const
-{
-	return 0;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *value - 
-//-----------------------------------------------------------------------------
-void ConVar::InternalSetValue( const char *value )
-{
-	float fNewValue;
-	char  tempVal[ 32 ];
-	char  *val;
-
-	Assert(m_pParent == this); // Only valid for root convars.
-
-	float flOldValue = m_Value.m_fValue;
-
-	val = (char *)value;
-	fNewValue = ( float )atof( value );
-
-	if ( ClampValue( fNewValue ) )
-	{
-		Q_snprintf( tempVal,sizeof(tempVal), "%f", fNewValue );
-		val = tempVal;
-	}
-	
-	// Redetermine value
-	m_Value.m_fValue		= fNewValue;
-	m_Value.m_nValue		= ( int )( fNewValue );
-
-	if ( !( m_nFlags & FCVAR_NEVER_AS_STRING ) )
-	{
-		ChangeStringValue( val, flOldValue );
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *tempVal - 
-//-----------------------------------------------------------------------------
-void ConVar::ChangeStringValue( const char *tempVal, float flOldValue )
-{
-	Assert( !( m_nFlags & FCVAR_NEVER_AS_STRING ) );
-
- 	char* pszOldValue = (char*)stackalloc( m_Value.m_StringLength );
-	memcpy( pszOldValue, m_Value.m_pszString, m_Value.m_StringLength );
-	
-	int len = Q_strlen(tempVal) + 1;
-
-	if ( len > m_Value.m_StringLength)
-	{
-		if (m_Value.m_pszString)
-		{
-			delete[] m_Value.m_pszString;
-		}
-
-		m_Value.m_pszString	= new char[len];
-		m_Value.m_StringLength = len;
-	}
-
-	memcpy( m_Value.m_pszString, tempVal, len );
-
-	// Invoke any necessary callback function
-	for (int i = 0; i < m_fnChangeCallbacks.Count(); i++)
-	{
-		m_fnChangeCallbacks[i]( this, pszOldValue, flOldValue );
-	}
-
-	if (g_pCVar)
-		g_pCVar->CallGlobalChangeCallbacks( this, pszOldValue, flOldValue );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Check whether to clamp and then perform clamp
-// Input  : value - 
-// Output : Returns true if value changed
-//-----------------------------------------------------------------------------
-bool ConVar::ClampValue( float& value )
-{
-	if ( m_bHasMin && ( value < m_fMinVal ) )
-	{
-		value = m_fMinVal;
-		return true;
-	}
-	
-	if ( m_bHasMax && ( value > m_fMaxVal ) )
-	{
-		value = m_fMaxVal;
-		return true;
-	}
-
-	return false;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *value - 
-//-----------------------------------------------------------------------------
-void ConVar::InternalSetFloatValue( float fNewValue )
-{
-	if ( fNewValue == m_Value.m_fValue )
-		return;
-
-	Assert( m_pParent == this ); // Only valid for root convars.
-
-	// Check bounds
-	ClampValue( fNewValue );
-
-	// Redetermine value
-	float flOldValue = m_Value.m_fValue;
-	m_Value.m_fValue		= fNewValue;
-	m_Value.m_nValue		= ( int )fNewValue;
-
-	if ( !( m_nFlags & FCVAR_NEVER_AS_STRING ) )
-	{
-		char tempVal[ 32 ];
-		Q_snprintf( tempVal, sizeof( tempVal), "%f", m_Value.m_fValue );
-		ChangeStringValue( tempVal, flOldValue );
-	}
-	else
-	{
-		Assert( m_fnChangeCallbacks.Count() == 0 );
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *value - 
-//-----------------------------------------------------------------------------
-void ConVar::InternalSetIntValue( int nValue )
-{
-	if ( nValue == m_Value.m_nValue )
-		return;
-
-	Assert( m_pParent == this ); // Only valid for root convars.
-
-	float fValue = (float)nValue;
-	if ( ClampValue( fValue ) )
-	{
-		nValue = ( int )( fValue );
-	}
-
-	// Redetermine value
-	float flOldValue = m_Value.m_fValue;
-	m_Value.m_fValue		= fValue;
-	m_Value.m_nValue		= nValue;
-
-	if ( !( m_nFlags & FCVAR_NEVER_AS_STRING ) )
-	{
-		char tempVal[ 32 ];
-		Q_snprintf( tempVal, sizeof( tempVal ), "%d", m_Value.m_nValue );
-		ChangeStringValue( tempVal, flOldValue );
-	}
-	else
-	{
-		Assert( m_fnChangeCallbacks.Count() == 0 );
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *value - 
-//-----------------------------------------------------------------------------
-void ConVar::InternalSetColorValue( Color cValue )
-{
-	int color = cValue.GetRawColor();
-	InternalSetIntValue( color );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Private creation
-//-----------------------------------------------------------------------------
-void ConVar::Create( const char *pName, const char *pDefaultValue, int64 flags /*= 0*/,
-	const char *pHelpString /*= NULL*/, bool bMin /*= false*/, float fMin /*= 0.0*/,
-	bool bMax /*= false*/, float fMax /*= false*/, FnChangeCallback_t callback /*= NULL*/ )
-{
-	static const char *empty_string = "";
-
-	m_pParent = this;
-
-	// Name should be static data
-	m_pszDefaultValue = pDefaultValue ? pDefaultValue : empty_string;
-	Assert( m_pszDefaultValue );
-
-	m_Value.m_StringLength = strlen( m_pszDefaultValue ) + 1;
-	m_Value.m_pszString = new char[m_Value.m_StringLength];
-	memcpy( m_Value.m_pszString, m_pszDefaultValue, m_Value.m_StringLength );
-	
-	m_bHasMin = bMin;
-	m_fMinVal = fMin;
-	m_bHasMax = bMax;
-	m_fMaxVal = fMax;
-	
-	if (callback)
-		m_fnChangeCallbacks.AddToTail(callback);
-
-	m_Value.m_fValue = ( float )atof( m_Value.m_pszString );
-
-	// Bounds Check, should never happen, if it does, no big deal
-	if ( m_bHasMin && ( m_Value.m_fValue < m_fMinVal ) )
-	{
-		Assert( 0 );
-	}
-
-	if ( m_bHasMax && ( m_Value.m_fValue > m_fMaxVal ) )
-	{
-		Assert( 0 );
-	}
-
-	m_Value.m_nValue = ( int )m_Value.m_fValue;
-
-	BaseClass::Create( pName, pHelpString, flags );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *value - 
-//-----------------------------------------------------------------------------
-void ConVar::SetValue(const char *value)
-{
-	ConVar *var = ( ConVar * )m_pParent;
-	var->InternalSetValue( value );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : value - 
-//-----------------------------------------------------------------------------
-void ConVar::SetValue( float value )
-{
-	ConVar *var = ( ConVar * )m_pParent;
-	var->InternalSetFloatValue( value );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : value - 
-//-----------------------------------------------------------------------------
-void ConVar::SetValue( int value )
-{
-	ConVar *var = ( ConVar * )m_pParent;
-	var->InternalSetIntValue( value );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : value - 
-//-----------------------------------------------------------------------------
-void ConVar::SetValue( Color value )
-{
-	ConVar *var = ( ConVar * )m_pParent;
-	var->InternalSetColorValue( value );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Reset to default value
-//-----------------------------------------------------------------------------
-void ConVar::Revert( void )
-{
-	// Force default value again
-	ConVar *var = ( ConVar * )m_pParent;
-	var->SetValue( var->m_pszDefaultValue );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : minVal - 
-// Output : true if there is a min set
-//-----------------------------------------------------------------------------
-bool ConVar::GetMin( float& minVal ) const
-{
-	minVal = m_pParent->m_fMinVal;
-	return m_pParent->m_bHasMin;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : maxVal - 
-//-----------------------------------------------------------------------------
-bool ConVar::GetMax( float& maxVal ) const
-{
-	maxVal = m_pParent->m_fMaxVal;
-	return m_pParent->m_bHasMax;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Output : const char
-//-----------------------------------------------------------------------------
-const char *ConVar::GetDefault( void ) const
-{
-	return m_pParent->m_pszDefaultValue;
-}
-
-
-//-----------------------------------------------------------------------------
-// This version is simply used to make reading convars simpler.
-// Writing convars isn't allowed in this mode
-//-----------------------------------------------------------------------------
-class CEmptyConVar : public ConVar
-{
-public:
-	CEmptyConVar() : ConVar( "", "0" ) {}
-	// Used for optimal read access
-	virtual void SetValue( const char *pValue ) {}
-	virtual void SetValue( float flValue ) {}
-	virtual void SetValue( int nValue ) {}
-	virtual void SetValue( Color cValue ) {}
-	virtual const char *GetName( void ) const { return ""; }
-	virtual bool IsFlagSet( int nFlags ) const { return false; }
-};
-
-static CEmptyConVar s_EmptyConVar;
-
-ConVarRef::ConVarRef( const char *pName )
-{
-	Init( pName, false );
-}
-
-ConVarRef::ConVarRef( const char *pName, bool bIgnoreMissing )
-{
-	Init( pName, bIgnoreMissing );
-}
-
-void ConVarRef::Init( const char *pName, bool bIgnoreMissing )
-{
-	m_pConVar = g_pCVar ? g_pCVar->FindVar( pName ) : &s_EmptyConVar;
-	if ( !m_pConVar )
-	{
-		m_pConVar = &s_EmptyConVar;
-	}
-	m_pConVarState = static_cast< ConVar * >( m_pConVar );
-	if( !IsValid() )
-	{
-		static bool bFirst = true;
-		if ( g_pCVar || bFirst )
-		{
-			if ( !bIgnoreMissing )
-			{
-				Warning( "ConVarRef %s doesn't point to an existing ConVar\n", pName );
-			}
-			bFirst = false;
-		}
-	}
-}
-
-ConVarRef::ConVarRef( IConVar *pConVar )
-{
-	m_pConVar = pConVar ? pConVar : &s_EmptyConVar;
-	m_pConVarState = static_cast< ConVar * >( m_pConVar );
-}
-
-bool ConVarRef::IsValid() const
-{
-	return m_pConVar != &s_EmptyConVar;
-}
-
+#ifdef CONVAR_WORK_FINISHED
 
 //-----------------------------------------------------------------------------
 // Purpose: 
