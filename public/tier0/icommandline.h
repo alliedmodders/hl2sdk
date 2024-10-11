@@ -39,6 +39,10 @@ public:
 	virtual const char* GetParm( int nIndex ) const = 0;
 	
 	virtual bool		HasParm( const char *parm ) = 0;
+	
+	// Additions in 9247927 (2024-10-11)
+	virtual void		CreateCmdLine( const char *commandline, bool unknown ) = 0;
+	virtual void		CreateCmdLine( int argc, char **argv, bool unknown ) = 0;
 };
 
 //-----------------------------------------------------------------------------
