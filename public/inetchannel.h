@@ -71,7 +71,7 @@ public:
 	virtual void	Clear( void ) = 0;
 	virtual void	Shutdown( ENetworkDisconnectionReason reason ) = 0;
 	
-	virtual float	sub_180095190_GetUnknownFloat() const = 0;
+	virtual HSteamNetConnection GetSteamNetConnection( void ) const = 0;
 	
 	virtual bool	SendNetMessage( const CNetMessage *pData, NetChannelBufType_t bufType ) = 0;
 	virtual bool	SendData( bf_write &msg, NetChannelBufType_t bufferType ) = 0;
@@ -84,7 +84,7 @@ public:
 
 	virtual void	UpdateMessageStats( int msggroup, int bits, bool ) = 0;
 	
-	virtual void	unk001( void ) = 0;
+	virtual void	unk011() = 0;
 	
 	virtual bool	CanPacket( void ) const = 0;
 	virtual bool	IsOverflowed( void ) const = 0;
@@ -103,9 +103,9 @@ public:
 	virtual bool	IsTimedOut( void ) const = 0;
 	virtual void	UpdateLastReceivedTime( void ) = 0;
 
-	virtual float	sub_180096C00_GetUnknownFloat() const = 0;
-	//Can this be SetRemoteFramerate?
-	virtual void	sub_180097DA0_SetUnknown(void *pUnknownStruct) = 0;
+	virtual void	unk111() = 0;
+	virtual void	unk112() = 0;
+	
 	virtual bool	IsRemoteDisconnected( ENetworkDisconnectionReason &reason ) const = 0;
 
 	virtual void	SetNetMessageDispatcher( INetMessageDispatcher *pDispatcher ) = 0;
@@ -141,9 +141,7 @@ public:
 	virtual int		GetCurrentNetMessageBits( void ) const = 0;
 	virtual int		GetCurrentNetMessageInSequenceNr( void ) const = 0;
 
-	virtual void	sub_18009CB70_SetUnknown(int a1) = 0;
-	virtual void	sub_18009DAE0_GetUnknown() = 0;
-	virtual void	sub_180097E50_SetUnknown(void *pUnknownStruct) = 0;
+	virtual void	unk211() = 0;
 };
 
 

@@ -81,7 +81,7 @@ public:
 	virtual float		GetTimeoutSeconds( void ) const = 0;
 	virtual float		GetTimeUntilTimeout( void ) const = 0;
 	
-	virtual void		unk101( void ) const = 0;
+	virtual void		unk001() = 0;
 	
 	virtual void		ResetLatencyStats( int channel ) = 0;
 	virtual SNetChannelLatencyStats *GetLatencyStats( int channel ) const = 0;
@@ -91,7 +91,7 @@ public:
 	virtual void		SetNumPredictionErrors( int num ) = 0;
 	virtual void		SetShowNetMessages( bool show ) = 0;
 
-	virtual int			sub_18009CF60_GetUnknownCount(int a1, unsigned short* a2, int maxCount) = 0;		//30
+	virtual void		unk101() = 0;
 };
 
 #endif // INETCHANNELINFO_H
