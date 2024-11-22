@@ -918,6 +918,10 @@ struct surfacesoundnames_t
 
 	unsigned short	breakSound;
 	unsigned short	strainSound;
+	
+	// These two are used to store the "jump" and "land" entries from surfaceproperties.txt
+	unsigned short unknown001;
+	unsigned short unknown002;
 };
 
 struct surfacesoundhandles_t
