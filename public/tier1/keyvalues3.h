@@ -1032,10 +1032,10 @@ private:
 	void MoveToPartial( ClusterNodeChain<CLUSTER> &full_cluster, ClusterNodeChain<CLUSTER> &partial_cluster );
 
 	template <typename CLUSTER, typename... Args, typename = typename std::enable_if_t<std::is_constructible_v<typename CLUSTER::NodeType, Args...>, int>>
-	auto Alloc( ClusterNodeChain<CLUSTER> &partial_clusters, ClusterNodeChain<CLUSTER> &full_clusters, int initial_size = CLUSTER::CLUSTER_SIZE, Args&&... args );
+	auto Alloc( ClusterNodeChain<CLUSTER> &partial_clusters, ClusterNodeChain<CLUSTER> &full_clusters, int initial_size, Args&&... args );
 
 	template <typename CLUSTER, typename NODE, typename... Args, typename = typename std::enable_if_t<std::is_constructible_v<typename CLUSTER::NodeType, Args...>, int>>
-	NODE *RawAlloc( NodeList<NODE> &raw_array, ClusterNodeChain<CLUSTER> &partial_clusters, ClusterNodeChain<CLUSTER> &full_clusters, int initial_size = CLUSTER::CLUSTER_SIZE, Args&&... args );
+	NODE *RawAlloc( NodeList<NODE> &raw_array, ClusterNodeChain<CLUSTER> &partial_clusters, ClusterNodeChain<CLUSTER> &full_clusters, int initial_size, Args&&... args );
 
 	CKeyValues3Array *AllocArray( int initial_size = 0 ) { return RawAlloc( m_RawArrayEntries, m_PartialArrayClusters, m_FullArrayClusters, initial_size ); }
 	CKeyValues3Table *AllocTable( int initial_size = 0 ) { return RawAlloc( m_RawTableEntries, m_PartialTableClusters, m_FullTableClusters, initial_size ); }
@@ -1575,7 +1575,7 @@ inline NODE *CKeyValues3Context::RawAlloc( NodeList<NODE> &raw_array, ClusterNod
 	if(raw_array.IsFull() || needed_byte_size > raw_array.FreeBytes())
 	{
 		if(initial_size <= NODE::DATA_SIZE)
-			return Alloc( partial_clusters, full_clusters );
+			return Alloc( partial_clusters, full_clusters, CLUSTER::CLUSTER_SIZE );
 		else
 			return nullptr;
 	}
