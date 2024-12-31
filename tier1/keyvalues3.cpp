@@ -188,7 +188,7 @@ void KeyValues3::FreeTable( CKeyValues3Table *element, bool clearing_context )
 	else
 	{
 		auto context = GetContext();
-		bool raw_allocated = context->IsTableRawAllocated( element );
+		bool raw_allocated = context && context->IsTableRawAllocated( element );
 
 		if(!raw_allocated && element->GetClusterElement() < 0)
 		{
