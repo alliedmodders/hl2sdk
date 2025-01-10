@@ -456,15 +456,11 @@ public:
 typedef IVEngineServer IVEngineServer021;
 typedef IVEngineServer IVEngineServer022;
 
-// AlliedModders - Shim until all supported mods are using the SDK Base that has this
-#if 0
+
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_8	"ServerGameDLL008"
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_9	"ServerGameDLL009"
 #define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL010"
 #define INTERFACEVERSION_SERVERGAMEDLL_INT			10
-#else
-#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL009"
-#endif
 
 class IServerGCLobby;
 
@@ -595,8 +591,6 @@ public:
 
 	// Called to add output to the status command
 	virtual void 			Status( void (*print) (const char *fmt, ...) ) = 0;
-	
-	// AlliedModders - Below functions require v10 of the interface.
 
 	// Informs the game we would like to load this level, giving it a chance to prepare dynamic resources.
 	//
