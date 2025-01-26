@@ -535,7 +535,7 @@ FORCEINLINE_CVAR const char *ConVarRef::GetName() const
 //-----------------------------------------------------------------------------
 FORCEINLINE_CVAR float ConVarRef::GetFloat( void ) const
 {
-	return m_pConVarState->m_fValue;
+	return m_pConVarState->GetFloat();
 }
 
 //-----------------------------------------------------------------------------
@@ -543,7 +543,7 @@ FORCEINLINE_CVAR float ConVarRef::GetFloat( void ) const
 //-----------------------------------------------------------------------------
 FORCEINLINE_CVAR int ConVarRef::GetInt( void ) const 
 {
-	return m_pConVarState->m_nValue;
+	return m_pConVarState->GetInt();
 }
 
 //-----------------------------------------------------------------------------
