@@ -500,8 +500,8 @@ class ConCommandData
 {
 public:
 	const char *GetName() const { return m_pszName; }
-	const char *GetHelpString() const { return m_pszHelpString; }
-	bool HasHelpString() const { return m_pszHelpString && m_pszHelpString[0]; }
+	const char *GetHelpText() const { return m_pszHelpString; }
+	bool HasHelpText() const { return m_pszHelpString && m_pszHelpString[0]; }
 
 	bool IsFlagSet( uint64 flag ) const { return (m_nFlags & flag) != 0; }
 	void AddFlags( uint64 flags ) { m_nFlags |= flags; }
@@ -548,8 +548,8 @@ public:
 	const ConCommandData *GetRawData() const { return const_cast<ConCommandRef *>(this)->GetRawData(); }
 
 	const char *GetName() const { return GetRawData()->GetName(); }
-	const char *GetHelpString() const { return GetRawData()->GetHelpString(); }
-	bool HasHelpString() const { return GetRawData()->HasHelpString(); }
+	const char *GetHelpText() const { return GetRawData()->GetHelpText(); }
+	bool HasHelpText() const { return GetRawData()->HasHelpText(); }
 
 	bool IsFlagSet( uint64 flag ) const { return GetRawData()->GetFlags(); }
 	void AddFlags( uint64 flags ) { GetRawData()->AddFlags( flags ); }
@@ -817,26 +817,34 @@ public:
 	};
 
 	ConVarData( EConVarType type = EConVarType_Invalid ) :
-		m_pszName( "<undefined>" ),
-		m_defaultValue( CVValue_t::InvalidValue() ),
-		m_minValue( nullptr ),
-		m_maxValue( nullptr ),
-		m_pszHelpString( "This convar is being accessed prior to ConVar_Register being called" ),
-		m_eVarType( type ),
-		m_Version( 0 ),
-		m_iTimesChanged( 0 ),
-		m_nFlags( FCVAR_REFERENCE ),
-		m_iCallbackIndex( 0 ),
-		m_GameInfoFlags( 0 ),
 		m_Values {}
-	{}
+	{
+		Invalidate( type, true );
+	}
+
+	// Helper method to invalidate convar data to its default, pre-register state
+	void Invalidate( EConVarType type = EConVarType_Invalid, bool as_undefined = false )
+	{
+		if(as_undefined)
+			m_pszName = "<undefined>";
+		m_defaultValue = CVValue_t::InvalidValue();
+		m_minValue = nullptr;
+		m_maxValue = nullptr;
+		m_pszHelpString = as_undefined ? "This convar is being accessed prior to ConVar_Register being called" : nullptr;
+		m_eVarType = type;
+		m_Version = 0;
+		m_iTimesChanged = 0;
+		m_nFlags = FCVAR_REFERENCE;
+		m_iCallbackIndex = 0;
+		m_GameInfoFlags = 0;
+	}
 
 	const char *GetName( void ) const { return m_pszName; }
-	const char *GetHelpString( void ) const { return m_pszHelpString; }
-	bool HasHelpString() const { return m_pszHelpString && m_pszHelpString[0]; }
+	const char *GetHelpText( void ) const { return m_pszHelpString; }
+	bool HasHelpText() const { return m_pszHelpString && m_pszHelpString[0]; }
 
-	EConVarType	GetType( void ) const { return m_eVarType; }
-	
+	EConVarType	GetType() const { return m_eVarType; }
+
 	short GetVersion() const { return m_Version; }
 
 	int	GetTimesChanged() const { return m_iTimesChanged; }
@@ -1017,9 +1025,15 @@ public:
 		Init( *this, type );
 	}
 
+	ConVarRefAbstract( const ConVarRefAbstract &ref )
+		: BaseClass(), m_ConVarData( nullptr )
+	{
+		CopyRef( ref );
+	}
+
 	const char *GetName() const { return m_ConVarData->GetName(); }
-	const char *GetHelpString() const { return m_ConVarData->GetHelpString(); }
-	bool HasHelpString() const { return m_ConVarData->HasHelpString(); }
+	const char *GetHelpText() const { return m_ConVarData->GetHelpText(); }
+	bool HasHelpText() const { return m_ConVarData->HasHelpText(); }
 
 	EConVarType	GetType() const { return m_ConVarData->GetType(); }
 
@@ -1132,7 +1146,7 @@ protected:
 };
 
 uint64 SanitiseConVarFlags( uint64 flags );
-void SetupConVar( ConVarRef *cvar, ConVarData **cvar_data, ConVarCreation_t &info );
+void SetupConVar( ConVarRefAbstract *cvar, ConVarData **cvar_data, ConVarCreation_t &info );
 void UnRegisterConVar( ConVarRef *cvar );
 
 template<typename T>
@@ -1371,7 +1385,10 @@ inline void ConVarRefAbstract::ConvertToPrimitiveFrom( CSplitScreenSlot slot, T 
 //-----------------------------------------------------------------------------
 // Called by the framework to register ConVars and ConCommands with the ICVar
 //-----------------------------------------------------------------------------
-void ConVar_Register( uint64 nCVarFlag = 0 );
+typedef void (*FnConVarRegisterCallback)(ConVarRefAbstract *ref);
+typedef void (*FnConCommandRegisterCallback)(ConCommandRef *ref);
+
+void ConVar_Register( uint64 nCVarFlag = 0, FnConVarRegisterCallback cvar_reg_cb = nullptr, FnConCommandRegisterCallback cmd_reg_cb = nullptr );
 void ConVar_Unregister( );
 
 

@@ -29,9 +29,11 @@
 // #define SANITIZE_CVAR_FLAGS 1
 
 //-----------------------------------------------------------------------------
-// Statically constructed list of ConCommandBases, 
+// Statically constructed list of ConVars/ConCommands, 
 // used for registering them with the ICVar interface
 //-----------------------------------------------------------------------------
+static FnConVarRegisterCallback s_ConVarRegCB = nullptr;
+static FnConCommandRegisterCallback s_ConCommandRegCB = nullptr;
 static uint64 s_nCVarFlag = 0;
 static bool s_bRegistered = false;
 
@@ -52,6 +54,8 @@ public:
 			Plat_FatalErrorFunc( "RegisterConCommand: Unknown error registering con command \"%s\"!\n", cmd.m_Info.m_pszName );
 			DebuggerBreakIfDebugging();
 		}
+		else if(s_ConCommandRegCB)
+			s_ConCommandRegCB( cmd.m_Command );
 	}
 
 	static void RegisterAll()
@@ -136,7 +140,7 @@ public:
 	{
 		ConVarCreation_t m_Info;
 
-		ConVarRef *m_pConVar = nullptr;
+		ConVarRefAbstract *m_pConVar = nullptr;
 		ConVarData **m_pConVarData = nullptr;
 	};
 
@@ -148,6 +152,9 @@ public:
 			Plat_FatalErrorFunc( "RegisterConVar: Unknown error registering convar \"%s\"!\n", cvar.m_Info.m_pszName );
 			DebuggerBreakIfDebugging();
 		}
+		// Don't let references pass as a newly registered cvar
+		else if(s_ConVarRegCB && (cvar.m_Info.m_nFlags & FCVAR_REFERENCE) == 0)
+			s_ConVarRegCB( cvar.m_pConVar );
 	}
 
 	static void RegisterAll()
@@ -205,7 +212,7 @@ public:
 bool ConVarRegList::s_bConVarsRegistered = false;
 ConVarRegList *ConVarRegList::s_pRoot = nullptr;
 
-void SetupConVar( ConVarRef *cvar, ConVarData **cvar_data, ConVarCreation_t &info )
+void SetupConVar( ConVarRefAbstract *cvar, ConVarData **cvar_data, ConVarCreation_t &info )
 {
 	ConVarRegList::Entry_t entry;
 	entry.m_Info = info;
@@ -248,7 +255,7 @@ uint64 SanitiseConVarFlags( uint64 flags )
 //-----------------------------------------------------------------------------
 // Called by the framework to register ConCommandBases with the ICVar
 //-----------------------------------------------------------------------------
-void ConVar_Register( uint64 nCVarFlag )
+void ConVar_Register( uint64 nCVarFlag, FnConVarRegisterCallback cvar_reg_cb, FnConCommandRegisterCallback cmd_reg_cb )
 {
 	if ( !g_pCVar || s_bRegistered )
 	{
@@ -257,6 +264,8 @@ void ConVar_Register( uint64 nCVarFlag )
 
 	s_bRegistered = true;
 	s_nCVarFlag = nCVarFlag;
+	s_ConVarRegCB = cvar_reg_cb;
+	s_ConCommandRegCB = cmd_reg_cb;
 
 	ConCommandRegList::RegisterAll();
 	ConVarRegList::RegisterAll();
@@ -697,8 +706,8 @@ void ConVar_PrintDescription( const ConVarRefAbstract *ref )
 			desc.AppendFormat( " %s", s_FlagsMap[i].m_Name );
 	}
 
-	if(ref->HasHelpString())
-		ConMsg( "%-120s - %s\n", desc.Get(), ref->GetHelpString() );
+	if(ref->HasHelpText())
+		ConMsg( "%-120s - %s\n", desc.Get(), ref->GetHelpText() );
 	else
 		ConMsg( "%-120s\n", desc.Get() );
 }
