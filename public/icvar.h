@@ -19,9 +19,6 @@
 #include "convar.h"
 #include <cstdint>
 
-// TO-DO: Remove Metamod ConVar PR is finished
-class ConCommandBase;
-
 // Shorthand helper to iterate registered convars
 // Example usage:
 // FOR_EACH_CONVAR( iter )
