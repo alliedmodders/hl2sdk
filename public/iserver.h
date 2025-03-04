@@ -17,13 +17,22 @@
 #include <engine/IEngineService.h>
 #include <netadr.h>
 
+enum server_state_t : int
+{
+	SS_Dead = 0,
+	SS_WaitingForGameSessionManifest,
+	SS_Loading,
+	SS_Active,
+	SS_Paused,
+};
+
 class IGameSpawnGroupMgr;
 struct EventServerAdvanceTick_t;
 struct EventServerPollNetworking_t;
 struct EventServerProcessNetworking_t;
 struct EventServerSimulate_t;
 struct EventServerPostSimulate_t;
-struct server_state_t;
+struct SpawnGroupDesc_t;
 class IPrerequisite;
 class CServerChangelevelState;
 class ISource2WorldSession;
@@ -98,7 +107,7 @@ public:
 	virtual void	MakeSpawnGroupActive( SpawnGroupHandle_t ) = 0;
 	virtual void	SynchronouslySpawnGroup( SpawnGroupHandle_t ) = 0;
 
-	virtual void	SetServerState( server_state_t ) = 0;
+	virtual void	SetServerState( server_state_t eNewState ) = 0;
 	virtual void	SpawnServer( const char * ) = 0;
 
 	virtual int 	GetSpawnGroupLoadingStatus( SpawnGroupHandle_t ) = 0;
