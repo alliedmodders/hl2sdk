@@ -94,6 +94,7 @@ class IHLTVServer;
 class CCompressedResourceManifest;
 class ILoadingSpawnGroup;
 class IToolGameSimulationAPI;
+class CCLCMsg_Move_t; // aka CNetMessagePB<CCLCMsg_Move> from netmessages.proto (compile to pb in your amproject)
 
 namespace google
 {
