@@ -39,7 +39,12 @@ public:
 	{
 		return static_cast<CNetMessagePB<T> *>(this);
 	}
-	
+
+	float GetMargin() const
+	{
+		return m_flMargin;
+	}
+
 private:
 	char unk001[24];
 	float m_flMargin;
