@@ -18,6 +18,15 @@
 #include "icvar.h"
 #include <netadr.h>
 
+enum server_state_t : int
+{
+	SS_Dead = 0,
+	SS_WaitingForGameSessionManifest,
+	SS_Loading,
+	SS_Active,
+	SS_Paused,
+};
+
 class IGameSpawnGroupMgr;
 struct EventServerAdvanceTick_t;
 struct EventServerPollNetworking_t;
@@ -25,7 +34,7 @@ struct EventServerProcessNetworking_t;
 struct EventServerSimulate_t;
 struct EventServerEndSimulate_t;
 struct EventServerPostSimulate_t;
-struct server_state_t;
+struct SpawnGroupDesc_t;
 class IPrerequisite;
 class CServerChangelevelState;
 class ISource2WorldSession;
