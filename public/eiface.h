@@ -601,7 +601,9 @@ public:
 	virtual void			ClientSetupVisibility( CPlayerSlot slot, vis_info_t *visinfo ) = 0;
 
 	// A block of CUserCmds has arrived from the user, decode them and buffer for execution during player simulation
-	virtual int			ProcessUsercmds( CPlayerSlot slot, bf_read *buf, int numcmds, bool ignore, bool paused, float margin ) = 0;
+	// Will be called when CNetworkGameServerBase::GetServerState() > SS_Loading
+	// A "paused" argument equals CNetworkGameServerBase::GetServerState() == SS_Paused
+	virtual void			ProcessUsercmds( CPlayerSlot slot, const CCLCMsg_Move_t &msg, bool paused ) = 0;
 
 	virtual bool			IsPlayerSlotOccupied( CPlayerSlot slot ) = 0;
 
