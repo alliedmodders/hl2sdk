@@ -94,7 +94,9 @@ class IHLTVServer;
 class CCompressedResourceManifest;
 class ILoadingSpawnGroup;
 class IToolGameSimulationAPI;
-class CCLCMsg_Move_t; // aka CNetMessagePB<CCLCMsg_Move> from netmessages.proto (compile to pb in your amproject)
+class CCLCMsg_Move;
+template <typename T>
+class CNetMessagePB;
 
 namespace google
 {
@@ -604,7 +606,7 @@ public:
 	// A block of CUserCmds has arrived from the user, decode them and buffer for execution during player simulation
 	// Will be called when CNetworkGameServerBase::GetServerState() > SS_Loading
 	// A "paused" argument equals CNetworkGameServerBase::GetServerState() == SS_Paused
-	virtual void			ProcessUsercmds( CPlayerSlot slot, const CCLCMsg_Move_t &msg, bool paused ) = 0;
+	virtual void			ProcessUsercmds( CPlayerSlot slot, const CNetMessagePB<CCLCMsg_Move> &msg, bool paused ) = 0;
 
 	virtual bool			IsPlayerSlotOccupied( CPlayerSlot slot ) = 0;
 
