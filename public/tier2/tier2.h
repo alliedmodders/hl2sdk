@@ -13,7 +13,7 @@
 #endif
 
 #include "tier1/tier1.h"
-
+struct ResourceManifestDesc_t;
 
 //-----------------------------------------------------------------------------
 // Call this to connect to/disconnect from all tier 2 libraries.
@@ -80,6 +80,9 @@ public:
 		DisconnectTier2Libraries();
 		BaseClass::Disconnect();
 	}
+private:
+	CUtlVector<ResourceManifestDesc_t *> m_manualManifests;
+	int m_nAppSysTier2LibraryConnects;
 };
 
 
