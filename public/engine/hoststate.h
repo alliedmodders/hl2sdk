@@ -5,7 +5,15 @@
 
 struct ResourceManifestDesc_t;
 
-enum HostMode_t
+enum HostStateRequestType_t
+{
+	HSR_IDLE = 1,
+	HSR_GAME,
+	HSR_SOURCETV_RELAY,
+	HSR_QUIT
+};
+
+enum HostStateRequestMode_t
 {
 	HM_LEVEL_LOAD_SERVER = 1,
 	HM_CONNECT,
@@ -19,20 +27,20 @@ enum HostMode_t
 
 struct CHostStateRequest
 {
-	HostStateLoopModeType_t m_iType;
+	HostStateRequestType_t m_iType;
 	CUtlString m_LoopModeType;
 	CUtlString m_Desc;
 	bool m_bActive;
 	unsigned int m_ID;
-	HostMode_t m_iMode;
+	HostStateRequestMode_t m_iMode;
 	CUtlString m_LevelName;
 	bool m_bChangelevel;
 	CUtlString m_SaveGame;
 	CUtlString m_Address;
 	CUtlString m_DemoFile;
-	bool m_bLoadmap;
+	bool m_bLoadMap;
 	CUtlString m_Addons;
-	KeyValues *m_KV;
+	KeyValues *m_pKV;
 };
 
 class ISwitchLoopModeStatusNotify
