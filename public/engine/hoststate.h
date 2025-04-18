@@ -1,19 +1,11 @@
 #include "tier1/utlstring.h"
 #include "tier1/KeyValues.h"
 #include "appframework/IAppSystem.h"
-#include "tier2.h"
+#include "tier2/tier2.h"
 
 struct ResourceManifestDesc_t;
 
-typedef enum
-{
-	HOST_STATE_LOOP_MODE_IDLE = 1,
-	HOST_STATE_LOOP_MODE_GAME,
-	HOST_STATE_LOOP_MODE_SOURCETV_RELAY,
-	HOST_STATE_LOOP_MODE_QUIT
-} HostStateLoopModeType_t;
-
-typedef enum
+enum HostMode_t
 {
 	HM_LEVEL_LOAD_SERVER = 1,
 	HM_CONNECT,
@@ -23,7 +15,7 @@ typedef enum
 	HM_PLAY_DEMO,
 	HM_SOURCETV_RELAY,
 	HM_ADDON_DOWNLOAD
-} HostMode_t;
+};
 
 struct CHostStateRequest
 {
@@ -42,8 +34,6 @@ struct CHostStateRequest
 	CUtlString m_Addons;
 	KeyValues *m_KV;
 };
-
-static_assert(sizeof(CHostStateRequest) == 0x68, "CHostStateRequest size mismatch");
 
 class ISwitchLoopModeStatusNotify
 {
