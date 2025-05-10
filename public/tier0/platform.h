@@ -81,6 +81,17 @@ class CBufferString;
 // scope. However the new COMPILE_TIME_ASSERT macro supports that by default.
 #define ASSERT_INVARIANT( pred )	COMPILE_TIME_ASSERT( pred )
 
+#ifdef _DEBUG
+template<typename DEST_POINTER_TYPE, typename SOURCE_POINTER_TYPE>
+inline DEST_POINTER_TYPE assert_cast(SOURCE_POINTER_TYPE* pSource)
+{
+	Assert( static_cast<DEST_POINTER_TYPE>(pSource) == dynamic_cast<DEST_POINTER_TYPE>(pSource) );
+	return static_cast<DEST_POINTER_TYPE>(pSource);
+}
+#else
+#define assert_cast static_cast
+#endif
+
 // feature enables
 #define NEW_SOFTWARE_LIGHTING
 #if !defined( _X360 )
@@ -1116,8 +1127,6 @@ PLATFORM_INTERFACE char const *		Plat_GetEnv( char const *pEnvVarName );
 PLATFORM_INTERFACE void				Plat_ExitProcess( int nCode );
 
 PLATFORM_INTERFACE bool				Plat_ShouldCollectMiniDumpsForFatalErrors();
-
-PLATFORM_INTERFACE void				Plat_FatalErrorFunc( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
 
 // b/w compatibility
 #define Sys_FloatTime Plat_FloatTime

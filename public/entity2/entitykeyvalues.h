@@ -248,7 +248,7 @@ inline EntityKeyId_t CEntityKeyValues::GetEntityKeyId( const CEntityKeyValues::I
 	if ( it.index >= it.keys->GetMemberCount() )
 		return EntityKeyId_t();
 
-	return it.keys->GetMemberNameEx( it.index );
+	return it.keys->GetKV3MemberName( it.index );
 }
 
 inline const char* CEntityKeyValues::GetAttributeName( const CEntityKeyValues::Iterator_t &it ) const

@@ -243,6 +243,9 @@ PLATFORM_INTERFACE void Msg( const tchar* pMsg, ... );
 PLATFORM_INTERFACE void Warning( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
 PLATFORM_INTERFACE void Warning_SpewCallStack( int iMaxCallStackLength, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
 
+#define Plat_FatalError( ... ) do { Log_Error( LOG_GENERAL, ##__VA_ARGS__ ); Plat_ExitProcess( EXIT_FAILURE ); } while( 0 )
+#define Plat_FatalErrorFunc
+
 // This is gone in Source2. Provide helper to roughly mimic Source1 behavior
 void Error( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
 inline void Error( const tchar* pMsg, ... )
@@ -311,25 +314,6 @@ PLATFORM_INTERFACE void COM_TimestampedLog( char const *fmt, ... ) FMTFUNCTION( 
 #define DBG_BREAK()                  ((void)0)
 
 #endif /* _DEBUG */
-
-//-----------------------------------------------------------------------------
-// Macro to assist in asserting constant invariants during compilation
-
-#define COMPILE_TIME_ASSERT( pred )	static_assert( pred, "Compile time assert constraint is not true: " #pred )
-// ASSERT_INVARIANT used to be needed in order to allow COMPILE_TIME_ASSERTs at global
-// scope. However the new COMPILE_TIME_ASSERT macro supports that by default.
-#define ASSERT_INVARIANT( pred )	COMPILE_TIME_ASSERT( pred )
-
-#ifdef _DEBUG
-template<typename DEST_POINTER_TYPE, typename SOURCE_POINTER_TYPE>
-inline DEST_POINTER_TYPE assert_cast(SOURCE_POINTER_TYPE* pSource)
-{
-    Assert( static_cast<DEST_POINTER_TYPE>(pSource) == dynamic_cast<DEST_POINTER_TYPE>(pSource) );
-    return static_cast<DEST_POINTER_TYPE>(pSource);
-}
-#else
-#define assert_cast static_cast
-#endif
 
 //-----------------------------------------------------------------------------
 // Templates to assist in validating pointers:

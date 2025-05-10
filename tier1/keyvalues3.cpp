@@ -10,7 +10,7 @@
 #endif
 
 KeyValues3::KeyValues3( KV3TypeEx_t type, KV3SubType_t subtype ) : 
-	KeyValues3( -1, type, subtype )
+	KeyValues3( KV3_INVALID_CLUSTER_ELEMENT, type, subtype )
 {
 }
 
@@ -19,7 +19,7 @@ KeyValues3::KeyValues3( int cluster_elem, KV3TypeEx_t type, KV3SubType_t subtype
 	m_TypeEx( type ),
 	m_SubType( subtype ),
 	m_nFlags( 0 ),
-	m_nClusterElement( (uint16)-1 ),
+	m_nClusterElement( (uint16)KV3_INVALID_CLUSTER_ELEMENT ),
 	m_nNumArrayElements( 0 ),
 	m_nReserved( 0 )
 {
@@ -39,9 +39,9 @@ void KeyValues3::Alloc( int initial_size, Data_t data, int preallocated_size, bo
 	{
 		case KV3_TYPEEX_ARRAY:
 		{
-			if(preallocated_size <= 0)
+			if ( preallocated_size <= 0 )
 			{
-				m_Data.m_pArray = AllocArray();
+				m_Data.m_Array.m_pRoot = AllocArray();
 				m_bFreeArrayMemory = true;
 			}
 			else
@@ -53,7 +53,7 @@ void KeyValues3::Alloc( int initial_size, Data_t data, int preallocated_size, bo
 		}
 		case KV3_TYPEEX_TABLE:
 		{
-			if(preallocated_size <= 0)
+			if ( preallocated_size <= 0 )
 			{
 				m_Data.m_pTable = AllocTable();
 				m_bFreeArrayMemory = true;
@@ -86,15 +86,15 @@ void KeyValues3::AllocArrayInPlace( int initial_size, Data_t data, int prealloca
 {
 	int bytes_needed = MAX( CKeyValues3Array::TotalSizeOf( 0 ), CKeyValues3Array::TotalSizeOf( initial_size ) );
 
-	if(bytes_needed > preallocated_size)
+	if ( bytes_needed > preallocated_size )
 	{
 		Plat_FatalErrorFunc( "KeyValues3: pre-allocated array memory is too small for %u elements (%u bytes available, %u bytes needed)\n", initial_size, preallocated_size, bytes_needed );
 		DebuggerBreak();
 	}
 
-	Construct( data.m_pArray, -1, initial_size );
+	Construct( m_Data.m_Array.m_pRoot, KV3_INVALID_CLUSTER_ELEMENT, initial_size );
 
-	m_Data.m_pArray = data.m_pArray;
+	m_Data.m_Array.m_pRoot = data.m_Array.m_pRoot;
 	m_bFreeArrayMemory = should_free;
 }
 
@@ -102,13 +102,13 @@ void KeyValues3::AllocTableInPlace( int initial_size, Data_t data, int prealloca
 {
 	int bytes_needed = MAX( CKeyValues3Array::TotalSizeOf( 0 ), CKeyValues3Array::TotalSizeOf( initial_size ) );
 
-	if(bytes_needed > preallocated_size)
+	if ( bytes_needed > preallocated_size )
 	{
 		Plat_FatalErrorFunc( "KeyValues3: pre-allocated table memory is too small for %u members (%u bytes available, %u bytes needed)\n", initial_size, preallocated_size, bytes_needed );
 		DebuggerBreak();
 	}
 
-	Construct( data.m_pTable, -1, initial_size );
+	Construct( data.m_pTable, KV3_INVALID_CLUSTER_ELEMENT, initial_size );
 
 	m_Data.m_pTable = data.m_pTable;
 	m_bFreeArrayMemory = should_free;
@@ -118,11 +118,11 @@ CKeyValues3Array *KeyValues3::AllocArray( int initial_size )
 {
 	auto context = GetContext();
 
-	if(context)
+	if ( context )
 	{
 		auto arr = context->AllocArray( initial_size );
 
-		if(arr)
+		if ( arr )
 			return arr;
 	}
 
@@ -133,11 +133,11 @@ CKeyValues3Table* KeyValues3::AllocTable( int initial_size )
 {
 	auto context = GetContext();
 
-	if(context)
+	if ( context )
 	{
 		auto table = context->AllocTable( initial_size );
 
-		if(table)
+		if ( table )
 			return table;
 	}
 
@@ -146,27 +146,27 @@ CKeyValues3Table* KeyValues3::AllocTable( int initial_size )
 
 void KeyValues3::FreeArray( CKeyValues3Array *element, bool clearing_context )
 {
-	if(!element)
+	if ( !element )
 		return;
 
 	element->PurgeContent( this, clearing_context );
 
-	if(!m_bFreeArrayMemory)
+	if ( !m_bFreeArrayMemory )
 	{
 		Destruct( element );
 	}
 	else
 	{
 		auto context = GetContext();
-		bool raw_allocated = context && context->IsArrayRawAllocated( element );
+		bool raw_allocated = context && context->IsArrayAllocated( element );
 
-		if(!raw_allocated && element->GetClusterElement() < 0)
+		if ( !raw_allocated && element->GetClusterElement() < 0 )
 		{
 			FreeOnHeap( element );
 		}
-		else if(!clearing_context)
+		else if ( !clearing_context )
 		{
-			if(!raw_allocated)
+			if ( !raw_allocated )
 				context->FreeArray( element );
 			else
 				Destruct( element );
@@ -176,30 +176,30 @@ void KeyValues3::FreeArray( CKeyValues3Array *element, bool clearing_context )
 
 void KeyValues3::FreeTable( CKeyValues3Table *element, bool clearing_context )
 {
-	if(!element)
+	if ( !element )
 		return;
 
 	element->PurgeContent( this, clearing_context );
 
-	if(!m_bFreeArrayMemory)
+	if ( !m_bFreeArrayMemory )
 	{
 		Destruct( element );
 	}
 	else
 	{
 		auto context = GetContext();
-		bool raw_allocated = context && context->IsTableRawAllocated( element );
+		bool raw_allocated = context && context->IsTableAllocated( element );
 
-		if(!raw_allocated && element->GetClusterElement() < 0)
+		if ( !raw_allocated && element->GetClusterElement() < 0 )
 		{
 			FreeOnHeap( element );
 		}
-		else if(!clearing_context)
+		else if ( !clearing_context )
 		{
-			if(!raw_allocated)
-				context->FreeTable( element );
-			else
+			if ( raw_allocated )
 				Destruct( element );
+			else
+				context->FreeTable( element );
 		}
 	}
 }
@@ -208,17 +208,14 @@ KeyValues3 *KeyValues3::AllocMember( KV3TypeEx_t type, KV3SubType_t subtype )
 {
 	auto context = GetContext();
 
-	if(context)
-		return context->AllocKV( type, subtype );
-	else
-		return new KeyValues3( type, subtype );
+	return context ? context->AllocKV( type, subtype ) : new KeyValues3( type, subtype );
 }
 
 void KeyValues3::FreeMember( KeyValues3 *member )
 {
 	auto context = GetContext();
 
-	if(context)
+	if ( context )
 	{
 		auto cluster = member->GetCluster();
 
@@ -261,10 +258,10 @@ void KeyValues3::Free( bool bClearingContext )
 		}
 		case KV3_TYPEEX_ARRAY:
 		{
-			FreeArray( m_Data.m_pArray, bClearingContext );
+			FreeArray( m_Data.m_Array.m_pRoot, bClearingContext );
 
 			m_bFreeArrayMemory = false;
-			m_Data.m_pArray = nullptr;
+			m_Data.m_Array.m_pRoot = nullptr;
 
 			break;
 		}
@@ -336,7 +333,7 @@ void KeyValues3::ResolveUnspecified()
 	}
 }
 
-void KeyValues3::PrepareForType( KV3TypeEx_t type, KV3SubType_t subtype )
+void KeyValues3::PrepareForType( KV3TypeEx_t type, KV3SubType_t subtype, int initial_size, Data_t data, int bytes_available, bool should_free )
 {
 	if ( GetTypeEx() == type )
 	{
@@ -363,7 +360,7 @@ void KeyValues3::PrepareForType( KV3TypeEx_t type, KV3SubType_t subtype )
 	{
 		Free();
 		m_TypeEx = type;
-		Alloc();
+		Alloc( initial_size, data, bytes_available, should_free );
 	}
 
 	m_SubType = subtype;
@@ -381,10 +378,10 @@ CKeyValues3Context* KeyValues3::GetContext() const
 { 
 	CKeyValues3Cluster* cluster = GetCluster();
 
-	if ( cluster )
-		return cluster->GetContext();
-	else
+	if ( !cluster )
 		return nullptr;
+
+	return cluster->GetContext();
 }
 
 KV3MetaData_t* KeyValues3::GetMetaData( CKeyValues3Context** ppCtx ) const
@@ -533,62 +530,71 @@ void KeyValues3::SetColor( const Color &color )
 
 int KeyValues3::GetArrayElementCount() const
 {
-	if ( GetType() != KV3_TYPE_ARRAY )
-		return 0;
+	if ( IsArray() )
+	{
+		const CKeyValues3Array *pArray = GetKV3Array();
 
-	if ( GetTypeEx() == KV3_TYPEEX_ARRAY )
-		return m_Data.m_pArray->Count();
-	else
-		return m_nNumArrayElements;
+		if ( !pArray )
+			return m_nNumArrayElements;
+
+		return pArray->Count();
+	}
+
+	return -1;
 }
 
 KeyValues3** KeyValues3::GetArrayBase()
 {
-	if ( GetTypeEx() != KV3_TYPEEX_ARRAY )
+	CKeyValues3Array *pArray = GetKV3Array();
+
+	if ( !pArray )
 		return nullptr;
 
-	return m_Data.m_pArray->Base();
+	return pArray->Base();
 }
 
 KeyValues3* KeyValues3::GetArrayElement( int elem )
 {
-	if ( GetTypeEx() != KV3_TYPEEX_ARRAY )
+	CKeyValues3Array *pArray = GetKV3Array();
+
+	if ( !pArray || elem < 0 || elem >= pArray->Count() )
 		return nullptr;
 
-	if ( elem < 0 || elem >= m_Data.m_pArray->Count() )
-		return nullptr;
-
-	return m_Data.m_pArray->Element( elem );
+	return pArray->Element( elem );
 }
 
 KeyValues3* KeyValues3::ArrayInsertElementBefore( int elem )
 {
-	if ( GetTypeEx() != KV3_TYPEEX_ARRAY )
-		PrepareForType( KV3_TYPEEX_ARRAY, KV3_SUBTYPE_ARRAY );
+	if ( !IsKV3Array() )
+		SetToEmptyKV3Array();
 
-	return *m_Data.m_pArray->InsertMultipleBefore( this, elem, 1 );
+	return *GetKV3Array()->InsertMultipleBefore( this, elem, 1 );
 }
 
 KeyValues3* KeyValues3::ArrayAddElementToTail()
 {
-	if ( GetTypeEx() != KV3_TYPEEX_ARRAY )
-		PrepareForType( KV3_TYPEEX_ARRAY, KV3_SUBTYPE_ARRAY );
+	if ( !IsArray() )
+		SetToEmptyKV3Array();
 
-	return *m_Data.m_pArray->InsertMultipleBefore( this, m_Data.m_pArray->Count(), 1 );
+	CKeyValues3Array *pArray = GetKV3Array();
+
+	return *pArray->InsertMultipleBefore( this, pArray->Count(), 1 );
 }
 
 void KeyValues3::ArraySwapItems( int idx1, int idx2 )
 {
-	if(GetTypeEx() != KV3_TYPEEX_ARRAY)
+	CKeyValues3Array *pArray = GetKV3Array();
+
+	if ( !pArray )
 		return;
 
-	if(idx1 < 0 || idx1 >= m_Data.m_pArray->Count())
+	if ( idx1 < 0 || idx1 >= pArray->Count() )
 		return;
 
-	if(idx2 < 0 || idx2 >= m_Data.m_pArray->Count())
+	if ( idx2 < 0 || idx2 >= pArray->Count() )
 		return;
 
-	auto base = GetArrayBase();
+	auto base = pArray->Base();
 
 	auto temp = base[idx1];
 	base[idx1] = base[idx2];
@@ -597,18 +603,20 @@ void KeyValues3::ArraySwapItems( int idx1, int idx2 )
 
 void KeyValues3::SetArrayElementCount( int count, KV3TypeEx_t type, KV3SubType_t subtype )
 {
-	if ( GetTypeEx() != KV3_TYPEEX_ARRAY )
-		PrepareForType( KV3_TYPEEX_ARRAY, KV3_SUBTYPE_ARRAY );
+	if ( !IsKV3Array() )
+		SetToEmptyKV3Array();
 
-	m_Data.m_pArray->SetCount( this, count, type, subtype );
+	GetKV3Array()->SetCount( this, count, type, subtype );
 }
 
 void KeyValues3::ArrayRemoveElements( int elem, int num )
 {
-	if ( GetTypeEx() != KV3_TYPEEX_ARRAY )
+	CKeyValues3Array *pArray = GetKV3Array();
+
+	if ( !pArray )
 		return;
 
-	m_Data.m_pArray->RemoveMultiple( this, elem, num );
+	pArray->RemoveMultiple( this, elem, num );
 }
 
 void KeyValues3::NormalizeArray()
@@ -658,7 +666,7 @@ bool KeyValues3::ReadArrayInt32( int dest_size, int32* data ) const
 {
 	int src_size = 0;
 
-	if ( GetType() == KV3_TYPE_STRING )
+	if ( IsString() )
 	{
 		CSplitString values( GetString(), " " );
 		src_size = values.Count();
@@ -672,9 +680,11 @@ bool KeyValues3::ReadArrayInt32( int dest_size, int32* data ) const
 		{
 			case KV3_TYPEEX_ARRAY:
 			{
-				src_size = m_Data.m_pArray->Count();
+				CKeyValues3Array *pArray = m_Data.m_Array.m_pRoot;
+
+				src_size = pArray->Count();
 				int count = MIN( src_size, dest_size );
-				KeyValues3** arr = m_Data.m_pArray->Base();
+				KeyValues3** arr = pArray->Base();
 				for ( int i = 0; i < count; ++i )
 					data[ i ] = arr[ i ]->GetInt();
 				break;
@@ -725,7 +735,7 @@ bool KeyValues3::ReadArrayFloat32( int dest_size, float32* data ) const
 {
 	int src_size = 0;
 
-	if ( GetType() == KV3_TYPE_STRING )
+	if ( IsString() )
 	{
 		CSplitString values( GetString(), " " );
 		src_size = values.Count();
@@ -739,9 +749,11 @@ bool KeyValues3::ReadArrayFloat32( int dest_size, float32* data ) const
 		{
 			case KV3_TYPEEX_ARRAY:
 			{
-				src_size = m_Data.m_pArray->Count();
+				CKeyValues3Array *pArray = m_Data.m_Array.m_pRoot;
+
+				src_size = pArray->Count();
 				int count = MIN( src_size, dest_size );
-				KeyValues3** arr = m_Data.m_pArray->Base();
+				KeyValues3** arr = pArray->Base();
 				for ( int i = 0; i < count; ++i )
 					data[ i ] = arr[ i ]->GetFloat();
 				break;
@@ -761,7 +773,7 @@ bool KeyValues3::ReadArrayFloat32( int dest_size, float32* data ) const
 					data[ i ] = ( float32 )m_Data.m_Array.m_f64[ i ];
 				break;
 			}
-			default: 
+			default:
 				break;
 		}
 	}
@@ -772,80 +784,92 @@ bool KeyValues3::ReadArrayFloat32( int dest_size, float32* data ) const
 	return ( src_size == dest_size );
 }
 
-int KeyValues3::GetMemberCount() const
+void KeyValues3::SetToEmptyTable()
 {
-	if ( GetType() != KV3_TYPE_TABLE )
-		return 0;
-	
-	return m_Data.m_pTable->GetMemberCount();
+	PrepareForType( KV3_TYPEEX_TABLE, KV3_SUBTYPE_TABLE );
+	GetTable()->RemoveAll( this );
 }
 
-CKeyValues3Table *KeyValues3::GetTableRaw()
+int KeyValues3::GetMemberCount() const
 {
-	if(GetType() != KV3_TYPE_TABLE)
-		return nullptr;
+	const CKeyValues3Table *pTable = GetTable();
 
-	return m_Data.m_pTable;
+	if ( pTable )
+		return pTable->GetMemberCount();
+
+	return KV3_INVALID_MEMBER;
 }
 
 KeyValues3* KeyValues3::GetMember( KV3MemberId_t id )
 {
-	if ( GetType() != KV3_TYPE_TABLE || id < 0 || id >= m_Data.m_pTable->GetMemberCount() )
+	CKeyValues3Table *pTable = GetTable();
+
+	if ( !pTable || id < 0 || id >= pTable->GetMemberCount() )
 		return nullptr;
 	
-	return m_Data.m_pTable->GetMember( id );
+	return pTable->GetMember( id );
 }
 
 const char* KeyValues3::GetMemberName( KV3MemberId_t id ) const
 {
-	if ( GetType() != KV3_TYPE_TABLE || id < 0 || id >= m_Data.m_pTable->GetMemberCount() )
+	const CKeyValues3Table *pTable = GetTable();
+
+	if ( !pTable || id < 0 || id >= pTable->GetMemberCount() )
 		return nullptr;
 	
-	return m_Data.m_pTable->GetMemberName( id );
+	return pTable->GetMemberName( id );
 }
 
-CKV3MemberName KeyValues3::GetMemberNameEx( KV3MemberId_t id ) const
+CKV3MemberName KeyValues3::GetKV3MemberName( KV3MemberId_t id ) const
 {
-	if ( GetType() != KV3_TYPE_TABLE || id < 0 || id >= m_Data.m_pTable->GetMemberCount() )
+	const CKeyValues3Table *pTable = GetTable();
+
+	if ( !pTable || id < 0 || id >= pTable->GetMemberCount() )
 		return CKV3MemberName();
 
-	return CKV3MemberName( m_Data.m_pTable->GetMemberHash( id ), m_Data.m_pTable->GetMemberName( id ) );
+	return CKV3MemberName( pTable->GetMemberHash( id ), pTable->GetMemberName( id ) );
 }
 
-CUtlStringToken KeyValues3::GetMemberHash( KV3MemberId_t id ) const
+CKV3MemberHash KeyValues3::GetMemberHash( KV3MemberId_t id ) const
 {
-	if ( GetType() != KV3_TYPE_TABLE || id < 0 || id >= m_Data.m_pTable->GetMemberCount() )
-		return CUtlStringToken();
+	const CKeyValues3Table *pTable = GetTable();
+
+	if ( !pTable || id < 0 || id >= pTable->GetMemberCount() )
+		return CKV3MemberHash();
 	
-	return m_Data.m_pTable->GetMemberHash( id );
+	return pTable->GetMemberHash( id );
 }
 
-KeyValues3* KeyValues3::FindMember( const CKV3MemberName &name, KeyValues3* defaultValue )
+KeyValues3* KeyValues3::Internal_FindMember( const CKV3MemberName &name, KV3MemberId_t &next, KeyValues3* defaultValue )
 {
-	if ( GetType() != KV3_TYPE_TABLE )
+	CKeyValues3Table *pTable = GetTable();
+
+	if ( !pTable )
 		return defaultValue;
 
-	KV3MemberId_t id = m_Data.m_pTable->FindMember( name );
+	KV3MemberId_t id = pTable->Internal_FindMember( name, next );
 
 	if ( id == KV3_INVALID_MEMBER )
 		return defaultValue;
 
-	return m_Data.m_pTable->GetMember( id );
+	return pTable->GetMember( id );
 }
 
 KeyValues3* KeyValues3::FindOrCreateMember( const CKV3MemberName &name, bool *pCreated )
 {
-	if ( GetType() != KV3_TYPE_TABLE )
-		PrepareForType( KV3_TYPEEX_TABLE, KV3_SUBTYPE_TABLE );
+	if ( !IsTable() )
+		SetToEmptyTable();
 
-	KV3MemberId_t id = m_Data.m_pTable->FindMember( name );
+	CKeyValues3Table *pTable = GetTable();
+
+	KV3MemberId_t id = pTable->FindMember( name );
 
 	if ( id == KV3_INVALID_MEMBER )
 	{
 		if ( pCreated )
 			*pCreated = true;
 
-		id = m_Data.m_pTable->CreateMember( this, name );
+		id = pTable->CreateMember( this, name );
 	}
 	else
 	{
@@ -853,53 +877,93 @@ KeyValues3* KeyValues3::FindOrCreateMember( const CKV3MemberName &name, bool *pC
 			*pCreated = false;
 	}
 
-	return m_Data.m_pTable->GetMember( id );
+	return pTable->GetMember( id );
 }
 
-void KeyValues3::SetToEmptyTable()
+KeyValues3* KeyValues3::RenameMember( const CKV3MemberName &name, const CKV3MemberName &newName )
 {
-	PrepareForType( KV3_TYPEEX_TABLE, KV3_SUBTYPE_TABLE );
-	m_Data.m_pTable->RemoveAll( this );
+	if ( newName.IsEmpty() )
+		return nullptr;
+
+	CKeyValues3Table *pTable = GetTable();
+
+	if ( !pTable )
+		return nullptr;
+
+	KV3MemberId_t id = pTable->FindMember( name );
+
+	if ( id == KV3_INVALID_MEMBER )
+		return nullptr;
+
+	pTable->RenameMember( this, id, newName );
+
+	return pTable->GetMember( id );
 }
 
 bool KeyValues3::RemoveMember( KV3MemberId_t id )
 {
-	if ( GetType() != KV3_TYPE_TABLE || id < 0 || id >= m_Data.m_pTable->GetMemberCount() )
+	CKeyValues3Table *pTable = GetTable();
+
+	if ( !pTable || id < 0 || id >= pTable->GetMemberCount() )
 		return false;
 
-	m_Data.m_pTable->RemoveMember( this, id );
+	pTable->RemoveMember( this, id );
 
 	return true;
 }
 
 bool KeyValues3::RemoveMember( const KeyValues3* kv )
 {
-	if ( GetType() != KV3_TYPE_TABLE )
+	CKeyValues3Table *pTable = GetTable();
+
+	if ( !pTable )
 		return false;
 
-	KV3MemberId_t id = m_Data.m_pTable->FindMember( kv );
+	KV3MemberId_t id = pTable->FindMember( kv );
 
 	if ( id == KV3_INVALID_MEMBER )
 		return false;
 
-	m_Data.m_pTable->RemoveMember( this, id );
+	pTable->RemoveMember( this, id );
 
 	return true;
 }
 
 bool KeyValues3::RemoveMember( const CKV3MemberName &name )
 {
-	if ( GetType() != KV3_TYPE_TABLE )
+	CKeyValues3Table *pTable = GetTable();
+
+	if ( !pTable )
 		return false;
 
-	KV3MemberId_t id = m_Data.m_pTable->FindMember( name );
+	KV3MemberId_t id = pTable->FindMember( name );
 
 	if ( id == KV3_INVALID_MEMBER )
 		return false;
 
-	m_Data.m_pTable->RemoveMember( this, id );
+	pTable->RemoveMember( this, id );
 
 	return true;
+}
+
+bool KeyValues3::HasInvalidMemberNames() const
+{
+	const CKeyValues3Table *pTable = GetTable();
+
+	if ( !pTable )
+		return false;
+
+	return pTable->HasInvalidMemberNames();
+}
+
+void KeyValues3::SetHasInvalidMemberNames( bool bValue )
+{
+	CKeyValues3Table *pTable = GetTable();
+
+	if ( !pTable )
+		return;
+
+	pTable->SetHasInvalidMemberNames( bValue );
 }
 
 const char* KeyValues3::GetTypeAsString() const
@@ -1065,7 +1129,7 @@ const char* KeyValues3::ToString( CBufferString& buff, uint flags ) const
 						bool unprintable = false;
 						CBufferStringN<128> temp;
 
-						CKeyValues3Array::Element_t* arr = m_Data.m_pArray->Base();
+						CKeyValues3Array::Element_t* arr = m_Data.m_Array.m_pRoot->Base();
 						for ( int i = 0; i < elements; ++i )
 						{
 							switch ( arr[i]->GetType() )
@@ -1191,7 +1255,7 @@ const char* KeyValues3::ToString( CBufferString& buff, uint flags ) const
 
 void KeyValues3::CopyFrom( const KeyValues3* pSrc )
 {
-	if(this == pSrc)
+	if ( this == pSrc )
 		return;
 
 	SetToNull();
@@ -1237,8 +1301,8 @@ void KeyValues3::CopyFrom( const KeyValues3* pSrc )
 			{
 				case KV3_TYPEEX_ARRAY:
 				{
-					PrepareForType( KV3_TYPEEX_ARRAY, KV3_SUBTYPE_ARRAY );
-					m_Data.m_pArray->CopyFrom( this, pSrc->m_Data.m_pArray );
+					SetToEmptyKV3Array();
+					m_Data.m_Array.m_pRoot->CopyFrom( this, pSrc->m_Data.m_Array.m_pRoot );
 					break;
 				}
 				case KV3_TYPEEX_ARRAY_FLOAT32:
@@ -1267,7 +1331,7 @@ void KeyValues3::CopyFrom( const KeyValues3* pSrc )
 		case KV3_TYPE_TABLE:
 		{
 			SetToEmptyTable();
-			m_Data.m_pTable->CopyFrom( this, pSrc->m_Data.m_pTable );
+			GetTable()->CopyFrom( this, pSrc->GetTable() );
 			break;
 		}
 		default:
@@ -1276,6 +1340,36 @@ void KeyValues3::CopyFrom( const KeyValues3* pSrc )
 
 	m_SubType = eSrcSubType;
 	m_nFlags = pSrc->m_nFlags;
+}
+
+void KeyValues3::OverlayKeysFrom( KeyValues3 *parent, bool depth )
+{
+	if ( !IsTable() )
+		SetToNull();
+
+	CKeyValues3Table *pParentTable = parent->GetTable();
+
+	if ( !pParentTable )
+		return;
+
+	auto parent_hashes = pParentTable->HashesBase();
+	auto parent_members = pParentTable->MembersBase();
+	auto parent_names = pParentTable->NamesBase();
+
+	FOR_EACH_KV3_TABLE( *pParentTable, id )
+	{
+		KeyValues3 *kv = FindOrCreateMember( CKV3MemberName( parent_hashes[id], parent_names[id] ) );
+		KeyValues3 *parent_kv = parent_members[id];
+
+		if ( depth && kv->IsTable() && parent_kv->IsTable() )
+		{
+			OverlayKeysFrom( parent_kv, true );
+		}
+		else
+		{
+			CopyFrom( parent_kv );
+		}
+	}
 }
 
 KeyValues3& KeyValues3::operator=( const KeyValues3& src )
@@ -1292,26 +1386,28 @@ void CKeyValues3Iterator::Init( KeyValues3 *kv )
 {
 	m_Stack.Purge();
 
-	if(kv)
+	if ( kv )
 	{
 		auto entry = m_Stack.AddToTailGetPtr();
 		entry->m_nIndex = -1;
 		entry->m_pKV = kv;
+
+		Advance();
 	}
 }
 
 void CKeyValues3Iterator::Advance()
 {
-	while(m_Stack.Count() > 0)
+	while ( m_Stack.Count() > 0 )
 	{
 		auto &entry = m_Stack[m_Stack.Count() - 1];
 		auto kv = entry.m_pKV;
 
-		if(kv->GetType() == KV3_TYPE_ARRAY)
+		if ( kv->GetType() == KV3_TYPE_ARRAY )
 		{
 			entry.m_nIndex++;
 
-			if(entry.m_nIndex < kv->GetArrayElementCount())
+			if ( entry.m_nIndex < kv->GetArrayElementCount() )
 			{
 				auto new_entry = m_Stack.AddToTailGetPtr();
 				new_entry->m_nIndex = -1;
@@ -1319,11 +1415,11 @@ void CKeyValues3Iterator::Advance()
 				return;
 			}
 		}
-		else if(kv->GetType() == KV3_TYPE_TABLE)
+		else if ( kv->GetType() == KV3_TYPE_TABLE )
 		{
 			entry.m_nIndex++;
 
-			if(entry.m_nIndex < kv->GetMemberCount())
+			if ( entry.m_nIndex < kv->GetMemberCount() )
 			{
 				auto new_entry = m_Stack.AddToTailGetPtr();
 				new_entry->m_nIndex = -1;
@@ -1350,7 +1446,7 @@ CKeyValues3Array::CKeyValues3Array( int cluster_elem, int alloc_size ) :
 
 CKeyValues3ArrayCluster* CKeyValues3Array::GetCluster() const
 {
-	if ( m_nClusterElement == -1 )
+	if ( !HasCluster() )
 		return nullptr;
 
 	return GET_OUTER( CKeyValues3ArrayCluster, m_Values[ m_nClusterElement ] );
@@ -1360,10 +1456,10 @@ CKeyValues3Context* CKeyValues3Array::GetContext() const
 { 
 	CKeyValues3ArrayCluster* cluster = GetCluster();
 
-	if ( cluster )
-		return cluster->GetContext();
-	else
+	if ( !cluster )
 		return nullptr;
+
+	return cluster->GetContext();
 }
 
 KeyValues3* CKeyValues3Array::Element( int i )
@@ -1375,10 +1471,10 @@ KeyValues3* CKeyValues3Array::Element( int i )
 
 void CKeyValues3Array::EnsureElementCapacity( int count, bool force, bool dont_move )
 {
-	if(count <= m_nAllocatedChunks)
+	if ( count <= m_nAllocatedChunks )
 		return;
 
-	if(count > ALLOC_KV3ARRAY_MAX)
+	if ( count > ALLOC_KV3ARRAY_MAX )
 	{
 		Plat_FatalErrorFunc( "%s: element count overflow (%u)\n", __FUNCTION__, count );
 		DebuggerBreak();
@@ -1389,7 +1485,7 @@ void CKeyValues3Array::EnsureElementCapacity( int count, bool force, bool dont_m
 
 	Element_t *new_base = nullptr;
 
-	if(m_bIsDynamicallySized)
+	if ( m_bIsDynamicallySized )
 	{
 		new_base = (Element_t *)realloc( m_pDynamicElements, new_byte_size );
 	}
@@ -1397,7 +1493,7 @@ void CKeyValues3Array::EnsureElementCapacity( int count, bool force, bool dont_m
 	{
 		new_base = (Element_t *)malloc( new_byte_size );
 
-		if(m_nCount > 0 && !dont_move)
+		if ( m_nCount > 0 && !dont_move )
 		{
 			memmove( new_base, Base(), sizeof( Element_t ) * m_nCount );
 		}
@@ -1411,7 +1507,8 @@ void CKeyValues3Array::EnsureElementCapacity( int count, bool force, bool dont_m
 void CKeyValues3Array::SetCount( KeyValues3 *parent, int count, KV3TypeEx_t type, KV3SubType_t subtype )
 {
 	Element_t *elements_base = Base();
-	for(int i = count; i < m_nCount; i++)
+
+	for ( int i = count; i < m_nCount; i++ )
 	{
 		parent->FreeMember( elements_base[i] );
 	}
@@ -1419,7 +1516,7 @@ void CKeyValues3Array::SetCount( KeyValues3 *parent, int count, KV3TypeEx_t type
 	EnsureElementCapacity( count );
 
 	elements_base = Base();
-	for(int i = m_nCount; i < count; i++)
+	for ( int i = m_nCount; i < count; i++ )
 	{
 		elements_base[i] = parent->AllocMember( type, subtype );
 	}
@@ -1429,23 +1526,25 @@ void CKeyValues3Array::SetCount( KeyValues3 *parent, int count, KV3TypeEx_t type
 
 CKeyValues3Array::Element_t* CKeyValues3Array::InsertMultipleBefore( KeyValues3 *parent, int from, int num )
 {
-	if(from < 0 || from > m_nCount)
+	if ( from < 0 || from > m_nCount )
 	{
 		Plat_FatalErrorFunc( "%s: invalid insert point %u (current count %u)\n", __FUNCTION__, from, m_nCount );
 		DebuggerBreak();
 	}
 
-	if(num > ALLOC_KV3ARRAY_MAX - m_nCount)
+	if ( num > ALLOC_KV3ARRAY_MAX - m_nCount )
 	{
 		Plat_FatalErrorFunc( "%s: max element overflow, cur count %u + %u\n", __FUNCTION__, m_nCount, num );
 		DebuggerBreak();
 	}
 
 	int new_size = m_nCount + num;
+
 	EnsureElementCapacity( new_size );
 
 	Element_t *base = Base();
-	if(from < m_nCount)
+
+	if ( from < m_nCount )
 	{
 		memmove( (void *)base[from + num], (void *)base[from], sizeof(Element_t) * (m_nCount - from) );
 	}
@@ -1487,7 +1586,7 @@ void CKeyValues3Array::RemoveMultiple( KeyValues3 *parent, int from, int num )
 
 void CKeyValues3Array::PurgeBuffers()
 {
-	if(m_bIsDynamicallySized)
+	if ( m_bIsDynamicallySized )
 	{
 		free( m_pDynamicElements );
 		m_nAllocatedChunks = m_nInitialSize;
@@ -1499,7 +1598,7 @@ void CKeyValues3Array::PurgeBuffers()
 
 void CKeyValues3Array::PurgeContent( KeyValues3 *parent, bool clearing_context )
 {
-	if(!clearing_context && parent)
+	if ( !clearing_context && parent )
 	{
 		auto elements_base = Base();
 
@@ -1517,7 +1616,7 @@ CKeyValues3Table::CKeyValues3Table( int cluster_elem, int alloc_size ) :
 	m_nCount( 0 ),
 	m_nInitialSize( MIN( alloc_size, 255 ) ),
 	m_bIsDynamicallySized( false ),
-	m_unk001( false ),
+	m_bHasInvalidMemberNames( false ),
 	m_unk002( false ),
 	m_pDynamicBuffer( nullptr )
 {
@@ -1525,7 +1624,7 @@ CKeyValues3Table::CKeyValues3Table( int cluster_elem, int alloc_size ) :
 
 CKeyValues3TableCluster* CKeyValues3Table::GetCluster() const
 {
-	if ( m_nClusterElement == -1 )
+	if ( !HasCluster() )
 		return nullptr;
 
 	return GET_OUTER( CKeyValues3TableCluster, m_Values[ m_nClusterElement ] );
@@ -1535,10 +1634,10 @@ CKeyValues3Context* CKeyValues3Table::GetContext() const
 { 
 	CKeyValues3TableCluster* cluster = GetCluster();
 
-	if ( cluster )
-		return cluster->GetContext();
-	else
+	if ( !cluster )
 		return nullptr;
+
+	return cluster->GetContext();
 }
 
 KeyValues3* CKeyValues3Table::GetMember( KV3MemberId_t id )
@@ -1573,7 +1672,7 @@ void CKeyValues3Table::EnableFastSearch()
 
 	for ( int i = 0; i < m_nCount; ++i )
 	{
-		m_pFastSearch->m_member_ids.Insert( pHashes[i].GetHashCode(), i );
+		m_pFastSearch->m_member_ids.Insert( pHashes[i], i );
 	}
 
 	m_pFastSearch->m_ignore = false;
@@ -1582,10 +1681,10 @@ void CKeyValues3Table::EnableFastSearch()
 
 void CKeyValues3Table::EnsureMemberCapacity( int count, bool force, bool dont_move )
 {
-	if(count <= m_nAllocatedChunks)
+	if ( count <= m_nAllocatedChunks )
 		return;
 
-	if(count > ALLOC_KV3TABLE_MAX)
+	if ( count > ALLOC_KV3TABLE_MAX )
 	{
 		Plat_FatalErrorFunc( "%s member count overflow (%u)\n", __FUNCTION__, count );
 		DebuggerBreak();
@@ -1596,7 +1695,7 @@ void CKeyValues3Table::EnsureMemberCapacity( int count, bool force, bool dont_mo
 
 	void *new_base = nullptr;
 
-	if(m_bIsDynamicallySized)
+	if ( m_bIsDynamicallySized )
 	{
 		new_base = realloc( m_pDynamicBuffer, new_byte_size );
 
@@ -1608,7 +1707,7 @@ void CKeyValues3Table::EnsureMemberCapacity( int count, bool force, bool dont_mo
 	{
 		new_base = malloc( new_byte_size );
 
-		if(m_nCount > 0 && !dont_move)
+		if ( m_nCount > 0 && !dont_move )
 		{
 			memmove( (uint8 *)new_base + OffsetToHashesBase( new_count ), HashesBase(), m_nCount * sizeof( Hash_t ) );
 			memmove( (uint8 *)new_base + OffsetToMembersBase( new_count ), MembersBase(), m_nCount * sizeof( Member_t ) );
@@ -1622,20 +1721,7 @@ void CKeyValues3Table::EnsureMemberCapacity( int count, bool force, bool dont_mo
 	m_bIsDynamicallySized = true;
 }
 
-KV3MemberId_t CKeyValues3Table::FindMember( const KeyValues3* kv ) const
-{
-	const Member_t* pMembers = MembersBase();
-
-	for ( int i = 0; i < m_nCount; ++i )
-	{
-		if ( pMembers[i] == kv )
-			return i;
-	}
-
-	return KV3_INVALID_MEMBER;
-}
-
-KV3MemberId_t CKeyValues3Table::FindMember( const CKV3MemberName &name )
+KV3MemberId_t CKeyValues3Table::Internal_FindMember( const CKV3MemberName &name, KV3MemberId_t &next )
 {
 	bool bFastSearch = false;
 
@@ -1650,28 +1736,45 @@ KV3MemberId_t CKeyValues3Table::FindMember( const CKV3MemberName &name )
 			}
 		}
 		else
-		{
 			bFastSearch = true;
-		}
 	}
 
 	if ( bFastSearch )
 	{
-		UtlHashHandle_t h = m_pFastSearch->m_member_ids.Find( name.GetHashCode() );
+		UtlHashHandle_t h = m_pFastSearch->m_member_ids.Find( name );
 
 		if ( h != m_pFastSearch->m_member_ids.InvalidHandle() )
-			return m_pFastSearch->m_member_ids[ h ];
+		{
+			KV3MemberId_t res = m_pFastSearch->m_member_ids[ h ];
+
+			next = res + 1;
+
+			return res;
+		}
 	}
 	else
 	{
 		const Hash_t* pHashes = HashesBase();
 
-		for ( int i = 0; i < m_nCount; ++i )
-		{
-			if ( pHashes[i] == name.GetHashCode() )
+		for ( KV3MemberId_t i = 0; i < m_nCount; ++i )
+			if ( pHashes[i] == name )
+			{
+				next = i + 1;
+
 				return i;
-		}
+			}
 	}
+
+	return KV3_INVALID_MEMBER;
+}
+
+KV3MemberId_t CKeyValues3Table::FindMember( const KeyValues3* kv ) const
+{
+	const Member_t* pMembers = MembersBase();
+
+	for ( int i = 0; i < m_nCount; ++i )
+		if ( pMembers[i] == kv )
+			return i;
 
 	return KV3_INVALID_MEMBER;
 }
@@ -1693,24 +1796,24 @@ KV3MemberId_t CKeyValues3Table::CreateMember( KeyValues3 *parent, const CKV3Memb
 
 	members_base[curr] = parent->AllocMember();
 	hashes_base[curr] = name.GetHashCode();
-	Flags_t flags = 0;
 
-	if(name_external)
+	auto &curr_name = names_base[curr];
+	auto &flags = flags_base[curr];
+
+	if ( name_external )
 	{
-		names_base[curr] = name.GetString();
+		curr_name = name.GetString();
 		flags |= MEMBER_FLAG_EXTERNAL_NAME;
 	}
 	else
 	{
 		auto context = parent->GetContext();
 
-		if(context)
-			names_base[curr] = context->AllocString( name.GetString() );
+		if ( context )
+			curr_name = context->AllocString( name.GetString() );
 		else
-			names_base[curr] = strdup( name.GetString() );
+			curr_name = strdup( name.GetString() );
 	}
-
-	flags_base[curr] = flags;
 
 	if ( m_pFastSearch && !m_pFastSearch->m_ignore )
 		m_pFastSearch->m_member_ids.Insert( name.GetHashCode(), curr );
@@ -1741,11 +1844,11 @@ void CKeyValues3Table::CopyFrom( KeyValues3 *parent, const CKeyValues3Table* src
 
 	memmove( hashes_base, src_hashes_base, sizeof(Hash_t) * new_size );
 
-	for(int i = 0; i < new_size; i++)
+	for ( int i = 0; i < new_size; i++ )
 	{
 		flags_base[i] = src_flags_base[i] & ~MEMBER_FLAG_EXTERNAL_NAME;
 
-		if(context)
+		if ( context )
 			names_base[i] = context->AllocString( src_names_base[i] );
 		else
 			names_base[i] = strdup( src_names_base[i] );
@@ -1756,6 +1859,40 @@ void CKeyValues3Table::CopyFrom( KeyValues3 *parent, const CKeyValues3Table* src
 
 	if ( new_size >= 128 )
 		EnableFastSearch();
+}
+
+void CKeyValues3Table::RenameMember( KeyValues3 *parent, KV3MemberId_t id, const CKV3MemberName &newName )
+{
+	Hash_t* hashes_base = HashesBase();
+	Name_t* names_base = NamesBase();
+	Flags_t* flags_base = FlagsBase();
+
+	auto &name = names_base[id];
+	auto &flags = flags_base[id];
+
+	hashes_base[id] = newName;
+
+	auto context = parent->GetContext();
+
+	if ( context )
+	{
+		name = context->AllocString( newName.GetString() );
+	}
+	else
+	{
+		if ( flags & MEMBER_FLAG_EXTERNAL_NAME )
+			flags &= ~MEMBER_FLAG_EXTERNAL_NAME;
+		else if ( name )
+			free( (void *)name );
+
+		name = strdup( newName.GetString() );
+	}
+
+	if ( m_pFastSearch )
+	{
+		m_pFastSearch->m_ignore = true;
+		m_pFastSearch->m_ignores_counter = 1;
+	}
 }
 
 void CKeyValues3Table::RemoveMember( KeyValues3 *parent, KV3MemberId_t id )
@@ -1769,7 +1906,7 @@ void CKeyValues3Table::RemoveMember( KeyValues3 *parent, KV3MemberId_t id )
 
 	parent->FreeMember( members_base[id] );
 
-	if((flags_base[id] & MEMBER_FLAG_EXTERNAL_NAME) == 0 && !parent->GetContext() && names_base[id])
+	if ( ( flags_base[id] & MEMBER_FLAG_EXTERNAL_NAME ) == 0 && !parent->GetContext() && names_base[id] )
 	{
 		free( (void *)names_base[id] );
 	}
@@ -1802,19 +1939,19 @@ void CKeyValues3Table::RemoveAll( KeyValues3 *parent, int new_size )
 	{
 		parent->FreeMember( members_base[i] );
 
-		if((flags_base[i] & MEMBER_FLAG_EXTERNAL_NAME) == 0 && !parent->GetContext() && names_base[i])
+		if ( ( flags_base[i] & MEMBER_FLAG_EXTERNAL_NAME ) == 0 && !parent->GetContext() && names_base[i] )
 		{
 			free( (void *)names_base[i] );
 		}
 	}
 
 	m_nCount = 0;
-	if(new_size > 0)
+	if ( new_size > 0 )
 	{
 		EnsureMemberCapacity( new_size, true, true );
 	}
 
-	if(new_size < 128)
+	if ( new_size < 128 )
 	{
 		PurgeFastSearch();
 	}
@@ -1841,12 +1978,12 @@ void CKeyValues3Table::PurgeContent( KeyValues3 *parent, bool bClearingContext )
 
 	for ( int i = 0; i < m_nCount; ++i )
 	{
-		if(!bClearingContext && parent)
+		if ( !bClearingContext && parent )
 		{
 			parent->FreeMember( members_base[i] );
 		}
 
-		if((flags_base[i] & MEMBER_FLAG_EXTERNAL_NAME) == 0 && parent && !parent->GetContext() && names_base[i])
+		if ( ( flags_base[i] & MEMBER_FLAG_EXTERNAL_NAME ) == 0 && parent && !parent->GetContext() && names_base[i] )
 		{
 			free( (void *)names_base[i] );
 		}

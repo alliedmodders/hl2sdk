@@ -111,8 +111,20 @@ PLATFORM_OVERLOAD bool SaveKV3Text_ToString( const KV3ID_t& format, const KeyVal
 PLATFORM_OVERLOAD bool SaveKV3Text_ToString( const KV3ID_t& format, const KeyValues3* kv, CUtlString* error, CUtlString* output, uint flags = KV3_SAVE_TEXT_NONE );
 PLATFORM_OVERLOAD bool SaveKV3ToFile( const KV3ID_t& encoding, const KV3ID_t& format, const KeyValues3* kv, CUtlString* error, const char* filename, const char* path, uint flags = KV3_SAVE_TEXT_NONE );
 
-typedef int32 KV3MemberId_t;
+using KV3MemberId_t = int32;
 #define KV3_INVALID_MEMBER ((KV3MemberId_t)-1)
+
+#define KV3_INVALID_CLUSTER_ELEMENT (~0)
+
+#define FOR_EACH_KV3_ARRAY( arrayName, iter ) \
+	for ( int iter = 0; iter < (arrayName).Count(); iter++ )
+#define FOR_EACH_KV3_ARRAY_BACK( arrayName, iter ) \
+	for ( int iter = iter < (arrayName).Count()-1; iter >= 0; iter-- )
+
+#define FOR_EACH_KV3_TABLE( tableName, iter ) \
+	for ( KV3MemberId_t iter = 0; iter < (tableName).GetMemberCount(); iter++ )
+#define FOR_EACH_KV3_TABLE_BACK( tableName, iter ) \
+	for ( KV3MemberId_t iter = (tableName).GetMemberCount()-1; iter >= 0; iter-- )
 
 // AMNOTE: These constants aren't actual constants, but rather calculated at compile time
 // but the way they are calculated is unknown, previously it was using CUtlLeanVector min/max calculations
@@ -283,6 +295,24 @@ enum KeyValues3Flag_t : uint8
 	KEYVALUES3_FLAG_LAST_VALUE = (1 << 2)
 };
 
+union KeyValues3Array_t
+{
+	float32* m_f32;
+	Vector *m_vec;
+	Vector2D *m_vec2;
+	Vector4D *m_vec4;
+	Quaternion *m_quat;
+	QAngle *m_ang;
+	matrix3x4_t *m_mat;
+	float64* m_f64;
+	int16* m_i16;
+	int32* m_i32;
+	uint8 m_u8Short[8];
+	int16 m_i16Short[4];
+
+	CKeyValues3Array* m_pRoot;
+};
+
 namespace KV3Helpers
 {
 	template <typename T, typename... Ts>
@@ -361,28 +391,48 @@ struct KV3BinaryBlob_t
 	bool m_bFreeMemory;
 };
 
-class CKV3MemberName
+using KeyValues3LowercaseHash_t = CUtlStringToken;
+using CKV3MemberHash = KeyValues3LowercaseHash_t;
+
+class CKV3MemberName : public CKV3MemberHash
 {
 public:
-	inline CKV3MemberName(const char* pszString): m_nHashCode(), m_pszString("")
-	{	
-		if (!pszString || !pszString[0])
-			return;
+	template< uintp N > constexpr CKV3MemberName( const char (&szInit)[N] ) : CUtlStringToken( szInit ), m_pszString( (const char *)szInit ) {}
+	CKV3MemberName( const char* pszString, int nLen ) : CUtlStringToken( MakeStringToken2( pszString, nLen ) ), m_pszString( pszString ) {}
+	CKV3MemberName( uint32 nHash = 0, const char* pszString = StringFuncs<char>::EmptyString() ) : CUtlStringToken( nHash ), m_pszString( pszString ) {}
 
-		m_nHashCode = MakeStringToken( pszString );
-		m_pszString = pszString;
+	static CKV3MemberName Make( const char *pszInit, int nLen = -1 )
+	{
+		Assert( pszInit && pszInit[0] );
+
+		return CKV3MemberName( pszInit, nLen );
 	}
 
-	inline CKV3MemberName(): m_nHashCode(), m_pszString("") {}
-	inline CKV3MemberName( CUtlStringToken nHashCode, const char* pszString = ""): m_nHashCode(nHashCode), m_pszString(pszString) {}
-
-	inline unsigned int GetHashCode() const { return m_nHashCode.GetHashCode(); }
-	inline const char* GetString() const { return m_pszString; }
+	bool IsEmpty() const          { return !m_pszString || !m_pszString[0]; }
+	const char* GetString() const { return m_pszString; }
 
 private:
-	CUtlStringToken m_nHashCode;
 	const char* m_pszString;
 };
+
+using CKeyValues3StringAndHash = CKV3MemberName;
+
+// Pulse thing
+class CKV3MemberNameWithStorage : public CKV3MemberName
+{
+public:
+	template< uintp N > constexpr CKV3MemberNameWithStorage( const char (&szInit)[N] ) : CKV3MemberName( szInit ), m_Storage( (const char*)szInit, N - 1 ) {}
+	CKV3MemberNameWithStorage( const char* pszString, int nLen ): CKV3MemberName( pszString, nLen ), m_Storage( pszString, nLen ) {}
+	CKV3MemberNameWithStorage( uint32 nHash = 0, const char* pszString = StringFuncs<char>::EmptyString(), int nLen = -1  ) : CKV3MemberName( nHash, pszString ), m_Storage( pszString, nLen ) {}
+
+	const CBufferString &GetStorage() const { return m_Storage; }
+
+private:
+	CBufferStringN< 32 > m_Storage;
+};
+
+// Pulse thing
+using CKV3MemberNameSet = KeyValues3; // Allocates with KV_TYPE_ARRAY.
 
 template<size_t SIZE, typename T>
 class CKeyValues3ClusterImpl;
@@ -417,13 +467,21 @@ public:
 	KV3TypeEx_t GetTypeEx() const	{ return ( KV3TypeEx_t )m_TypeEx; }
 	KV3SubType_t GetSubType() const	{ return ( KV3SubType_t )m_SubType; }
 
+	bool HasInvalidMemberNames() const;
+	void SetHasInvalidMemberNames( bool bValue = true );
+
 	const char* GetTypeAsString() const;
 	const char* GetSubTypeAsString() const;
 
 	const char* ToString( CBufferString& buff, uint flags = KV3_TO_STRING_NONE ) const;
 
-	void SetToNull() { PrepareForType( KV3_TYPEEX_NULL, KV3_SUBTYPE_NULL ); }
 	bool IsNull() const { return GetType() == KV3_TYPE_NULL; }
+	void SetToNull() { PrepareForType( KV3_TYPEEX_NULL, KV3_SUBTYPE_NULL ); }
+
+	bool IsArray() const { return GetType() == KV3_TYPE_ARRAY; }
+	bool IsKV3Array() const { return GetTypeEx() == KV3_TYPEEX_ARRAY; }
+	bool IsTable() const { return GetType() == KV3_TYPE_TABLE; }
+	bool IsString() const { return GetType() == KV3_TYPE_STRING; }
 
 	bool GetBool( bool defaultValue = false ) const			{ return GetValue<bool>( defaultValue ); }
 	char8 GetChar( char8 defaultValue = 0 ) const			{ return GetValue<char8>( defaultValue ); }
@@ -488,10 +546,15 @@ public:
 	void SetQAngle( const QAngle &ang )				{ SetVecBasedObj<QAngle>( ang, 3, KV3_SUBTYPE_QANGLE ); }
 	void SetMatrix3x4( const matrix3x4_t &matrix )	{ SetVecBasedObj<matrix3x4_t>( matrix, 3*4, KV3_SUBTYPE_MATRIX3X4 ); }
 
+	KeyValues3Array_t *GetArray() { return IsArray() ? &m_Data.m_Array : nullptr; }
+	const KeyValues3Array_t *GetArray() const { return const_cast<KeyValues3 *>(this)->GetArray(); };
+	CKeyValues3Array *GetKV3Array() { return IsKV3Array() ? m_Data.m_Array.m_pRoot : nullptr; }
+	const CKeyValues3Array *GetKV3Array() const { return const_cast<KeyValues3 *>(this)->GetKV3Array(); };
+
 	int GetArrayElementCount() const;
 	void SetArrayElementCount( int count, KV3TypeEx_t type = KV3_TYPEEX_NULL, KV3SubType_t subtype = KV3_SUBTYPE_UNSPECIFIED );
 
-	void SetToEmptyArray() { PrepareForType( KV3_TYPEEX_ARRAY, KV3_SUBTYPE_ARRAY ); }
+	void SetToEmptyKV3Array() { PrepareForType( KV3_TYPEEX_ARRAY, KV3_SUBTYPE_ARRAY ); }
 	KeyValues3** GetArrayBase();
 
 	KeyValues3* GetArrayElement( int elem );
@@ -506,24 +569,26 @@ public:
 	void ArrayRemoveElements( int elem, int num );
 	void ArrayRemoveElement( int elem ) { ArrayRemoveElements( elem, 1 ); }
 
+	CKeyValues3Table *GetTable() { return IsTable() ? m_Data.m_pTable : nullptr; }
+	const CKeyValues3Table *GetTable() const { return const_cast<KeyValues3 *>(this)->GetTable(); }
+
 	void SetToEmptyTable();
 	int GetMemberCount() const;
 
-	CKeyValues3Table *GetTableRaw();
-	CKeyValues3Table *GetTableRaw() const { return const_cast<KeyValues3 *>(this)->GetTableRaw(); };
-
 	KeyValues3* GetMember( KV3MemberId_t id );
 	const KeyValues3* GetMember( KV3MemberId_t id ) const { return const_cast<KeyValues3*>(this)->GetMember( id ); }
-
 	const char* GetMemberName( KV3MemberId_t id ) const;
-	CKV3MemberName GetMemberNameEx( KV3MemberId_t id ) const;
+	CKV3MemberHash GetMemberHash( KV3MemberId_t id ) const;
+	CKV3MemberName GetKV3MemberName( KV3MemberId_t id ) const;
 
-	CUtlStringToken GetMemberHash( KV3MemberId_t id ) const;
+protected:
+	KeyValues3* Internal_FindMember( const CKV3MemberName &name, KV3MemberId_t &next, KeyValues3* defaultValue = nullptr );
 
-	KeyValues3* FindMember( const CKV3MemberName &name, KeyValues3* defaultValue = nullptr );
+public:
+	KeyValues3* FindMember( const CKV3MemberName &name, KeyValues3* defaultValue = nullptr ) { KV3MemberId_t next = KV3_INVALID_MEMBER; return Internal_FindMember( name, next, defaultValue ); }
 	const KeyValues3 *FindMember( const CKV3MemberName &name, KeyValues3 *defaultValue = nullptr ) const { return const_cast<KeyValues3 *>(this)->FindMember( name, defaultValue ); };
 	KeyValues3* FindOrCreateMember( const CKV3MemberName &name, bool *pCreated = nullptr );
-
+	KeyValues3* RenameMember( const CKV3MemberName &name, const CKV3MemberName &newName );
 	bool RemoveMember( KV3MemberId_t id );
 	bool RemoveMember( const KeyValues3* kv );
 	bool RemoveMember( const CKV3MemberName &name );
@@ -554,7 +619,7 @@ public:
 	matrix3x4_t GetMemberMatrix3x4( const CKV3MemberName &name, const matrix3x4_t &defaultValue = matrix3x4_t( Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 0.0f ), Vector( 0.0f, 0.0f, 0.0f ) ) ) const { auto kv = FindMember( name ); return kv ? kv->GetMatrix3x4( defaultValue ) : defaultValue; }
 
 	void SetMemberToNull( const CKV3MemberName &name ) { FindOrCreateMember( name )->SetToNull(); }
-	void SetMemberToEmptyArray( const CKV3MemberName &name ) { FindOrCreateMember( name )->SetToEmptyArray(); }
+	void SetMemberToEmptyArray( const CKV3MemberName &name ) { FindOrCreateMember( name )->SetToEmptyKV3Array(); }
 	void SetMemberToEmptyTable( const CKV3MemberName &name ) { FindOrCreateMember( name )->SetToEmptyTable(); }
 	void SetMemberToBinaryBlob( const CKV3MemberName &name, const byte *blob, int size ) { FindOrCreateMember( name )->SetToBinaryBlob( blob, size ); }
 	void SetMemberToBinaryBlobExternal( const CKV3MemberName &name, const byte *blob, int size, bool free_mem ) { FindOrCreateMember( name )->SetToBinaryBlobExternal( blob, size, free_mem ); }
@@ -606,24 +671,8 @@ private:
 
 		KV3BinaryBlob_t* m_pBinaryBlob;
 
-		CKeyValues3Array* m_pArray;
+		KeyValues3Array_t m_Array;
 		CKeyValues3Table* m_pTable;
-
-		union Array_t
-		{
-			float32* m_f32;
-			Vector *m_vec;
-			Vector2D *m_vec2;
-			Vector4D *m_vec4;
-			Quaternion *m_quat;
-			QAngle *m_ang;
-			matrix3x4_t *m_mat;
-			float64* m_f64;
-			int16* m_i16;
-			int32* m_i32;
-			uint8 m_u8Short[8];
-			int16 m_i16Short[4];
-		} m_Array;
 
 		uint64 m_nMemory;
 		void* m_pMemory;
@@ -652,11 +701,14 @@ private:
 
 	void Free( bool bClearingContext = false );
 	void ResolveUnspecified();
-	void PrepareForType( KV3TypeEx_t type, KV3SubType_t subtype );
-	void CopyFrom( const KeyValues3* pSrc );
+	void PrepareForType( KV3TypeEx_t type, KV3SubType_t subtype, int initial_size = 0, Data_t data = {}, int bytes_available = 0, bool should_free = false );
 
+	void CopyFrom( const KeyValues3* pSrc );
+	void OverlayKeysFrom( KeyValues3 *parent, bool depth = false );
+
+	bool HasCluster() const { return m_nClusterElement != KV3_INVALID_CLUSTER_ELEMENT; }
 	int GetClusterElement() const { return m_nClusterElement; }
-	void SetClusterElement( int element ) { m_bContextIndependent = (element == -1); m_nClusterElement = element; }
+	void SetClusterElement( int element ) { m_bContextIndependent = ( element == KV3_INVALID_CLUSTER_ELEMENT ); m_nClusterElement = element; }
 	CKeyValues3Cluster* GetCluster() const;
 
 	template < typename T > T FromString( T defaultValue ) const;
@@ -733,9 +785,10 @@ public:
 	static const size_t DATA_SIZE = KV3_ARRAY_MAX_FIXED_MEMBERS;
 	static const size_t DATA_ALIGNMENT = KV3Helpers::PackAlignOf<Element_t>();
 
-	CKeyValues3Array( int cluster_elem = -1, int alloc_size = DATA_SIZE );
+	CKeyValues3Array( int cluster_elem = KV3_INVALID_CLUSTER_ELEMENT, int alloc_size = DATA_SIZE );
 	~CKeyValues3Array() { Free(); }
 
+	bool HasCluster() const { return m_nClusterElement != KV3_INVALID_CLUSTER_ELEMENT; }
 	int GetClusterElement() const { return m_nClusterElement; }
 	void SetClusterElement( int element ) { m_nClusterElement = element; }
 
@@ -797,22 +850,39 @@ public:
 		MEMBER_FLAG_EXTERNAL_NAME = (1 << 0)
 	};
 
-	typedef CUtlStringToken	Hash_t;
-	typedef KeyValues3*		Member_t;
-	typedef const char*		Name_t;
-	typedef uint8			Flags_t;
+	typedef KeyValues3LowercaseHash_t	Hash_t;
+	typedef KeyValues3*					Member_t;
+	typedef const char*					Name_t;
+	typedef uint8						Flags_t;
 
 	static const size_t DATA_SIZE = KV3_TABLE_MAX_FIXED_MEMBERS;
 	static const size_t DATA_ALIGNMENT = KV3Helpers::PackAlignOf<Hash_t, Member_t, Name_t, Flags_t>();
 
-	CKeyValues3Table( int cluster_elem = -1, int alloc_size = DATA_SIZE );
+	CKeyValues3Table( int cluster_elem = KV3_INVALID_CLUSTER_ELEMENT, int alloc_size = DATA_SIZE );
 	~CKeyValues3Table() { Free(); }
 
+	bool HasCluster() const { return m_nClusterElement != KV3_INVALID_CLUSTER_ELEMENT; }
 	int GetClusterElement() const { return m_nClusterElement; }
 	void SetClusterElement( int element ) { m_nClusterElement = element; }
 
+	bool HasInvalidMemberNames() const { return m_bHasInvalidMemberNames; }
+	void SetHasInvalidMemberNames( bool bValue = true ) { m_bHasInvalidMemberNames = bValue; }
+
 	CKeyValues3TableCluster* GetCluster() const;
 	CKeyValues3Context* GetContext() const;
+
+	// Gets the base address (can change when adding elements!)
+	void *Base() { return IsBaseStatic() ? &m_StaticBuffer : m_pDynamicBuffer; };
+	Hash_t *HashesBase() { return reinterpret_cast<Hash_t *>((uint8 *)Base() + OffsetToHashesBase( GetAllocatedChunks() )); }
+	Member_t *MembersBase() { return reinterpret_cast<Member_t *>((uint8 *)Base() + OffsetToMembersBase( GetAllocatedChunks() )); }
+	Name_t *NamesBase() { return reinterpret_cast<Name_t *>((uint8 *)Base() + OffsetToNamesBase( GetAllocatedChunks() )); }
+	Flags_t *FlagsBase() { return reinterpret_cast<Flags_t *>((uint8 *)Base() + OffsetToFlagsBase( GetAllocatedChunks() )); }
+
+	const void *Base() const { return const_cast<CKeyValues3Table *>(this)->Base(); }
+	const Hash_t *HashesBase() const { return const_cast<CKeyValues3Table *>(this)->HashesBase(); }
+	const Member_t *MembersBase() const { return const_cast<CKeyValues3Table *>(this)->MembersBase(); }
+	const Name_t *NamesBase() const { return const_cast<CKeyValues3Table *>(this)->NamesBase(); }
+	const Flags_t *FlagsBase() const { return const_cast<CKeyValues3Table *>(this)->FlagsBase(); }
 
 	int GetMemberCount() const { return m_nCount; }
 	Member_t GetMember( KV3MemberId_t id );
@@ -824,11 +894,14 @@ public:
 	void EnableFastSearch();
 	void EnsureMemberCapacity( int num, bool force = false, bool dont_move = false );
 
+	KV3MemberId_t Internal_FindMember( const CKV3MemberName &name, KV3MemberId_t &next );
+	KV3MemberId_t FindMember( const CKV3MemberName &name ) { KV3MemberId_t next = KV3_INVALID_MEMBER; return Internal_FindMember( name, next ); }
 	KV3MemberId_t FindMember( const KeyValues3* kv ) const;
-	KV3MemberId_t FindMember( const CKV3MemberName &name );
 	KV3MemberId_t CreateMember( KeyValues3 *parent, const CKV3MemberName &name, bool name_external = false );
 
 	void CopyFrom( KeyValues3 *parent, const CKeyValues3Table* src );
+
+	void RenameMember( KeyValues3 *parent, KV3MemberId_t id, const CKV3MemberName &newName );
 	void RemoveMember( KeyValues3 *parent, KV3MemberId_t id );
 	void RemoveAll( KeyValues3 *parent, int new_size = 0 );
 
@@ -851,24 +924,12 @@ private:
 	constexpr size_t OffsetToNamesBase( int size ) const { return KV3Helpers::PackSizeOf<DATA_ALIGNMENT, Hash_t, Member_t>( size ); }
 	constexpr size_t OffsetToFlagsBase( int size ) const { return KV3Helpers::PackSizeOf<DATA_ALIGNMENT, Hash_t, Member_t, Name_t>( size ); }
 
-	// Gets the base address (can change when adding elements!)
-	void *Base() { return IsBaseStatic() ? &m_StaticBuffer : m_pDynamicBuffer; };
-	Hash_t *HashesBase() { return reinterpret_cast<Hash_t *>((uint8 *)Base() + OffsetToHashesBase( GetAllocatedChunks() )); }
-	Member_t *MembersBase() { return reinterpret_cast<Member_t *>((uint8 *)Base() + OffsetToMembersBase( GetAllocatedChunks() )); }
-	Name_t *NamesBase() { return reinterpret_cast<Name_t *>((uint8 *)Base() + OffsetToNamesBase( GetAllocatedChunks() )); }
-	Flags_t *FlagsBase() { return reinterpret_cast<Flags_t *>((uint8 *)Base() + OffsetToFlagsBase( GetAllocatedChunks() )); }
-
-	const void *Base() const { return const_cast<CKeyValues3Table *>(this)->Base(); }
-	const Hash_t *HashesBase() const { return const_cast<CKeyValues3Table *>(this)->HashesBase(); }
-	const Member_t *MembersBase() const { return const_cast<CKeyValues3Table *>(this)->MembersBase(); }
-	const Name_t *NamesBase() const { return const_cast<CKeyValues3Table *>(this)->NamesBase(); }
-	const Flags_t *FlagsBase() const { return const_cast<CKeyValues3Table *>(this)->FlagsBase(); }
-
 private:
 	int m_nClusterElement;
 	int m_nAllocatedChunks;
 
-	struct kv3tablefastsearch_t {
+	struct kv3tablefastsearch_t
+	{
 		kv3tablefastsearch_t() : m_ignore( false ), m_ignores_counter( 0 ) {}
 		~kv3tablefastsearch_t() { Clear(); }
 
@@ -892,7 +953,7 @@ private:
 	uint8 m_nInitialSize;
 	bool m_bIsDynamicallySized;
 
-	bool m_unk001;
+	bool m_bHasInvalidMemberNames;
 	bool m_unk002;
 
 	union
@@ -1144,8 +1205,8 @@ public:
 	template <typename CLUSTER>
 	void PurgeClusterNodeChain( ClusterNodeChain<CLUSTER> &cluster_node );
 
-	bool IsArrayRawAllocated( CKeyValues3Array *element ) { return m_RawArrayEntries.IsWithinRange( element ); }
-	bool IsTableRawAllocated( CKeyValues3Table *element ) { return m_RawTableEntries.IsWithinRange( element ); }
+	bool IsArrayAllocated( CKeyValues3Array *element ) { return m_RawArrayEntries.IsWithinRange( element ); }
+	bool IsTableAllocated( CKeyValues3Table *element ) { return m_RawTableEntries.IsWithinRange( element ); }
 
 private:
 	template <typename CLUSTER>
@@ -1249,10 +1310,12 @@ void KeyValues3::NormalizeArray( KV3TypeEx_t type, KV3SubType_t subtype, int siz
 	m_TypeEx = KV3_TYPEEX_ARRAY;
 	Alloc( size );
 
-	m_Data.m_pArray->SetCount( this, size, type, subtype );
+	CKeyValues3Array *pNewArray = m_Data.m_Array.m_pRoot;
 
-	CKeyValues3Array::Element_t* arr = m_Data.m_pArray->Base();
-	for ( int i = 0; i < m_Data.m_pArray->Count(); ++i )
+	pNewArray->SetCount( this, size, type, subtype );
+
+	CKeyValues3Array::Element_t* arr = pNewArray->Base();
+	for ( int i = 0; i < pNewArray->Count(); ++i )
 		arr[ i ]->SetDirect( data[ i ] );
 
 	if ( bFree )
@@ -1266,7 +1329,7 @@ inline T *KeyValues3::AllocateOnHeap( int initial_size )
 		initial_size = T::DATA_SIZE;
 
 	auto element = (T *)g_pMemAlloc->RegionAlloc( MEMALLOC_REGION_ALLOC_4, T::TotalSizeOf( initial_size ) );
-	Construct( element, -1, initial_size );
+	Construct( element, KV3_INVALID_CLUSTER_ELEMENT, initial_size );
 
 	return element;
 }
@@ -1334,10 +1397,12 @@ void KeyValues3::AllocArray( int size, const T* data, KV3ArrayAllocType_t alloc_
 	{
 		PrepareForType( KV3_TYPEEX_ARRAY, subtype );
 
-		m_Data.m_pArray->SetCount( this, size, type_elem, subtype_elem );
+		CKeyValues3Array *pNewArray = m_Data.m_Array.m_pRoot;
 
-		CKeyValues3Array::Element_t* arr = m_Data.m_pArray->Base();
-		for ( int i = 0; i < m_Data.m_pArray->Count(); ++i )
+		pNewArray->SetCount( this, size, type_elem, subtype_elem );
+
+		CKeyValues3Array::Element_t* arr = pNewArray->Base();
+		for ( int i = 0; i < pNewArray->Count(); ++i )
 			arr[ i ]->SetValue<T>( data[ i ], type_elem, subtype_elem );
 
 		if ( alloc_type == KV3_ARRAY_ALLOC_EXTERN_FREE )
@@ -1584,7 +1649,7 @@ inline NODE *CKeyValues3ContextBase::NodeList<NODE>::Alloc( int initial_size )
 	auto entry = Tail();
 	m_nUsedBytes = byte_size_needed;
 
-	Construct( &entry->m_Value, -1, initial_size );
+	Construct( &entry->m_Value, KV3_INVALID_CLUSTER_ELEMENT, initial_size );
 	entry->m_pNext = Tail();
 
 	return &entry->m_Value;

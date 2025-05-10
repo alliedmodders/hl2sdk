@@ -21,7 +21,6 @@
 #include "tier1/utlhashtable.h"
 #include "tier1/memblockallocator.h"
 
-
 //-----------------------------------------------------------------------------
 // forward declarations
 //-----------------------------------------------------------------------------
@@ -33,8 +32,14 @@ class CUtlSymbolTableMT;
 // This is a symbol, which is a easier way of dealing with strings.
 //-----------------------------------------------------------------------------
 typedef unsigned short UtlSymId_t;
+typedef unsigned int UtlSymElm_t;
 
 #define UTL_INVAL_SYMBOL  ((UtlSymId_t)~0)
+
+#define FOR_EACH_SYMBOL( tableName, iter ) \
+	for ( UtlSymElm_t iter = 0; iter < (tableName).GetNumStrings(); iter++ )
+#define FOR_EACH_SYMBOL_BACK( tableName, iter ) \
+	for ( UtlSymElm_t iter = (tableName).GetNumStrings()-1; iter >= 0; iter-- )
 
 class CUtlSymbol
 {
@@ -46,15 +51,24 @@ public:
 	
 	// operator=
 	CUtlSymbol& operator=( CUtlSymbol const& src ) { m_Id = src.m_Id; return *this; }
-	
+
 	// operator==
 	bool operator==( CUtlSymbol const& src ) const { return m_Id == src.m_Id; }
 
+	static uint32 MakeHash( bool bInsensitive, const char *pString, int nLength )
+	{
+		return bInsensitive ? MakeStringToken2< true >( pString, nLength ) 
+		                    : MakeStringToken2< false >( pString, nLength );
+	}
+
+	UtlSymId_t GetId() const { return m_Id; }
+
 	// Is valid?
-	bool IsValid() const { return m_Id != UTL_INVAL_SYMBOL; }
-	
+	static UtlSymId_t Invalid() { return UTL_INVAL_SYMBOL; }
+	bool IsValid() const { return GetId() != Invalid(); }
+
 	// Gets at the symbol
-	operator UtlSymId_t () const { return m_Id; }
+	operator UtlSymId_t () const  { return m_Id; }
 
 protected:
 	CUtlSymbol( const char* pStr );
@@ -64,6 +78,7 @@ protected:
 	UtlSymId_t   m_Id;
 };
 
+CUtlSymbol CUtlSymbol_Make( const CUtlSymbolTable *pTable, const char *pString, int nLength, uint32 hash );
 
 //-----------------------------------------------------------------------------
 // CUtlSymbolTable:
@@ -77,7 +92,6 @@ protected:
 //    two bytes of each string are decorated with a hash to speed up
 //	  comparisons.
 //-----------------------------------------------------------------------------
-
 class CUtlSymbolTable
 {
 public:
@@ -92,10 +106,18 @@ public:
 	// Finds the symbol for pString
 	DLL_CLASS_IMPORT CUtlSymbol Find( const char* pString ) const;
 	DLL_CLASS_IMPORT CUtlSymbol Find( const char* pString, int nLength ) const;
-	
+
 	// Look up the string associated with a particular symbol
 	DLL_CLASS_IMPORT const char* String( CUtlSymbol id ) const;
-	
+
+	uint32 Hash( const char *pString, int nLength ) const { return CUtlSymbol::MakeHash( IsInsensitive(), pString, nLength ); }
+	uint32 Hash( const char *pString ) const { return Hash( pString, strlen( pString ) ); }
+	uint32 Hash( CUtlSymbol id ) const { return Hash( (const char *)m_MemBlockAllocator.GetBlock( m_MemBlocks[ id ] ) ); }
+
+	// Remove once symbol element.
+	// @Wend4r: The table is not designed for that.
+	void Remove( CUtlSymbol id ) { m_HashTable.Remove( id ); m_MemBlocks[ id ] = MEMBLOCKHANDLE_INVALID; }
+
 	// Remove all symbols in the table.
 	DLL_CLASS_IMPORT void RemoveAll();
 	DLL_CLASS_IMPORT void Purge();
@@ -110,12 +132,6 @@ public:
 	DLL_CLASS_IMPORT bool SaveToBuffer( CUtlBuffer& buff ) const;
 	DLL_CLASS_IMPORT bool RestoreFromBuffer( CUtlBuffer& buff );
 
-	int GetNumStrings( void ) const
-	{
-		return m_MemBlocks.Count();
-	}
-
-protected:
 	struct UtlSymTableAltKey
 	{ 
 		const CUtlSymbolTable*	m_pTable;
@@ -127,30 +143,112 @@ protected:
 	{
 		ptrdiff_t m_ownerOffset;
 
-		UtlSymTableHashFunctor();
-		unsigned int operator()( UtlSymTableAltKey k ) const;
-		unsigned int operator()( int k ) const;
+		UtlSymTableHashFunctor()
+		{
+			const ptrdiff_t tableoffset = (uintp)(&((Hashtable_t*)1024)->GetHashRef()) - 1024;
+			const ptrdiff_t owneroffset = offsetof(CUtlSymbolTable, m_HashTable) + tableoffset;
+			m_ownerOffset = -owneroffset;
+		}
+
+		unsigned int operator()( UtlSymTableAltKey k ) const
+		{
+			const CUtlSymbolTable* pTable = (const CUtlSymbolTable*)((uintp)this + m_ownerOffset);
+
+			return pTable->Hash( k.m_pString );
+		}
+
+		unsigned int operator()( UtlSymElm_t k ) const
+		{
+			const CUtlSymbolTable* pTable = (const CUtlSymbolTable*)((uintp)this + m_ownerOffset);
+
+			return pTable->Hash( k );
+		}
 	};
 
 	struct UtlSymTableEqualFunctor
 	{
 		ptrdiff_t m_ownerOffset;
 
-		UtlSymTableEqualFunctor();
-		bool operator()( int a, int b ) const;
-		bool operator()( UtlSymTableAltKey a, int b ) const;
-		bool operator()( int a, UtlSymTableAltKey b ) const;
+		UtlSymTableEqualFunctor()
+		{
+			const ptrdiff_t tableoffset = (uintp)(&((Hashtable_t*)1024)->GetEqualRef()) - 1024;
+			const ptrdiff_t owneroffset = offsetof(CUtlSymbolTable, m_HashTable) + tableoffset;
+			m_ownerOffset = -owneroffset;
+		}
+
+		bool operator()( UtlSymElm_t a, UtlSymElm_t b ) const
+		{
+			const CUtlSymbolTable* pTable = (const CUtlSymbolTable*)((uintp)this + m_ownerOffset);
+
+			if ( pTable->IsInsensitive() )
+				return V_stricmp( pTable->String( a ), pTable->String( b ) ) == 0;
+			else
+				return V_strcmp( pTable->String( a ), pTable->String( b ) ) == 0; 
+		}
+
+		bool operator()( UtlSymTableAltKey a, UtlSymElm_t b ) const
+		{
+			const char* pString = a.m_pTable->String( b );
+			int nLength = ( int )strlen( pString );
+
+			if ( a.m_nLength != nLength )
+				return false;
+
+			if ( a.m_pTable->IsInsensitive() ) 
+				return V_strnicmp( a.m_pString, pString, a.m_nLength ) == 0;
+			else
+				return V_strncmp( a.m_pString, pString, a.m_nLength ) == 0;
+		}
+
+		bool operator()( UtlSymElm_t a, UtlSymTableAltKey b ) const
+		{
+			return operator()( b, a );
+		}
 	};
 
-	typedef CUtlHashtable<int, empty_t, UtlSymTableHashFunctor, UtlSymTableEqualFunctor, UtlSymTableAltKey> Hashtable_t;
+	typedef CUtlHashtable<UtlSymElm_t, empty_t, UtlSymTableHashFunctor, UtlSymTableEqualFunctor, UtlSymTableAltKey> Hashtable_t;
 	typedef CUtlVector<MemBlockHandle_t> MemBlocksVec_t;
 
+	const Hashtable_t &GetHashtable() const
+	{
+		return m_HashTable;
+	}
+
+	UtlSymElm_t GetNumStrings( void ) const
+	{
+		return m_MemBlocks.Count();
+	}
+
+	bool IsInsensitive() const
+	{
+		return m_bInsensitive;
+	}
+
+protected:
+	// By "UtlSymId_t" elements.
 	Hashtable_t					m_HashTable;
+
+	// By "const char *" elements.
 	MemBlocksVec_t				m_MemBlocks;
 	CUtlMemoryBlockAllocator	m_MemBlockAllocator;
 
 	bool m_bInsensitive;
 };
+
+inline CUtlSymbol CUtlSymbol_Make( const CUtlSymbolTable *pTable, const char *pString, int nLength, unsigned int hash )
+{
+	auto &hashtable = pTable->GetHashtable();
+
+	CUtlSymbolTable::UtlSymTableAltKey key;
+
+	key.m_pTable = pTable;
+	key.m_pString = pString;
+	key.m_nLength = nLength;
+
+	UtlHashHandle_t h = hashtable.Find( key, hash );
+
+	return h == hashtable.InvalidHandle() ? UTL_INVAL_SYMBOL : hashtable[ h ];
+}
 
 class CUtlSymbolTableMT :  public CUtlSymbolTable
 {

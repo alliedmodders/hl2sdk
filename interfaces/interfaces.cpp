@@ -6,8 +6,8 @@
 
 /* This is totally reverse-engineered code and may be wrong */
 
-#include "interfaces/interfaces.h"
 #include "tier0/dbg.h"
+#include "interfaces/interfaces.h"
 
 IApplication *g_pApplication;
 ICvar *cvar, *g_pCVar;

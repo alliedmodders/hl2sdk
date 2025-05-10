@@ -5,9 +5,13 @@
 #pragma once
 #endif
 
-#include "tier0/platform.h"
+#define __need_size_t
+#include <stddef.h>
+#undef __need_size_t
+
 #include "strtools.h"
-#include "utlstring.h"
+#include "tier0/platform.h"
+#include "tier1/utlcommon.h"
 
 class CFormatStringElement;
 class IFormatOutputStream;
@@ -83,7 +87,6 @@ protected:
 		m_nAllocatedSize( (bAllowHeapAllocation * ALLOW_HEAP_ALLOCATION) | STACK_ALLOCATED_MARKER | (nAllocatedSize + sizeof( m_szString )) ),
 		m_pString( nullptr )
 	{
-		Assert( nAllocatedSize > 8 );
 	}
 
 public:
@@ -122,11 +125,11 @@ public:
 	bool IsAllocationEmpty() const { return AllocatedNum() == 0; }
 
 protected:
-	char *Base() { return IsStackAllocated() ? m_szString : (!IsAllocationEmpty() ? m_pString : nullptr); }
+	char *Base() { return IsStackAllocated() ? m_szString : m_pString; }
 	const char *Base() const { return const_cast<CBufferString *>( this )->Base(); }
 
 public:
-	const char *Get() const { auto base = Base(); return base ? base : StringFuncs<char>::EmptyString(); }
+	const char *Get() const { return IsStackAllocated() ? m_szString : (IsAllocationEmpty() ? StringFuncs<char>::EmptyString() : m_pString); }
 
 	void Clear()
 	{
@@ -269,8 +272,8 @@ public:
 	DLL_CLASS_IMPORT const char *StripExtension();
 	DLL_CLASS_IMPORT const char *StripTrailingSlash();
 
-	DLL_CLASS_IMPORT void ToLowerFast(int nStart);
-	DLL_CLASS_IMPORT void ToUpperFast(int nStart);
+	DLL_CLASS_IMPORT void ToLowerFast(int nStart = 0);
+	DLL_CLASS_IMPORT void ToUpperFast(int nStart = 0);
 
 	DLL_CLASS_IMPORT const char *Trim(const char *pTrimChars = "\t\r\n ");
 	DLL_CLASS_IMPORT const char *TrimHead(const char *pTrimChars = "\t\r\n ");
@@ -292,19 +295,14 @@ private:
 	};
 };
 
-template<size_t SIZE>
+template< size_t SIZE >
 class CBufferStringN : public CBufferString
 {
 public:
 	static const size_t DATA_SIZE = ALIGN_VALUE( SIZE - sizeof( char[8] ), 8 );
 
-	CBufferStringN( bool bAllowHeapAllocation = true ) : CBufferString( DATA_SIZE, bAllowHeapAllocation ), m_FixedData{} {}
-	CBufferStringN( const char *pString, bool bAllowHeapAllocation = true ) : CBufferStringN( bAllowHeapAllocation )
-	{
-		Insert( 0, pString );
-	}
-
-	~CBufferStringN() { PurgeN(); }
+	CBufferStringN( bool bAllowHeapAllocation = true ) : CBufferString( DATA_SIZE, bAllowHeapAllocation ) {}
+	CBufferStringN( const char *pString, int nLen = -1, bool bAllowHeapAllocation = true ) : CBufferStringN( bAllowHeapAllocation ) { Insert( 0, pString, nLen ); }
 
 	// Should be preferred over CBufferString::Purge as it preserves stack space correctly
 	void PurgeN() { Purge( DATA_SIZE ); }
@@ -314,7 +312,7 @@ private:
 };
 
 // AMNOTE: CBufferStringN name is preferred to be used, altho CBufferStringGrowable is left as a small bcompat
-template <size_t SIZE>
+template< size_t SIZE >
 using CBufferStringGrowable = CBufferStringN<SIZE>;
 
 #endif /* BUFFERSTRING_H */

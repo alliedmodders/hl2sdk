@@ -10,7 +10,6 @@
 #define UTLCOMMON_H
 #pragma once
 
-#include "utlstring.h"
 #include "type_traits"
 
 //-----------------------------------------------------------------------------
@@ -135,6 +134,55 @@ struct PointerLessFunctor { bool operator()( const void *a, const void *b ) cons
 struct PointerEqualFunctor { bool operator()( const void *a, const void *b ) const { return a == b; } };
 struct PointerHashFunctor { unsigned int operator()( const void* s ) const { return Mix32HashFunctor()((uint32)POINTER_TO_INT(s)); } };
 
+//-----------------------------------------------------------------------------
+// Purpose: Implementation of low-level string functionality for character types.
+//-----------------------------------------------------------------------------
+
+template < typename T >
+class StringFuncs
+{
+public:
+	static T		*Duplicate( const T *pValue );
+	// Note that this function takes a character count, and does not guarantee null-termination.
+	static void		 Copy( T *out_pOut, const T *pIn, int iLengthInChars );
+	static int		 Compare( const T *pLhs, const T *pRhs );
+	static int		 CaselessCompare( const T *pLhs, const T *pRhs );
+	static int		 Length( const T *pValue );
+	static const T  *FindChar( const T *pStr, const T cSearch );
+	static const T	*EmptyString();
+	static const T	*NullDebugString();
+};
+
+template < >
+class StringFuncs<char>
+{
+public:
+	static char		  *Duplicate( const char *pValue ) { return strdup( pValue ); }
+	// Note that this function takes a character count, and does not guarantee null-termination.
+	static void		   Copy( char *out_pOut, const char *pIn, int iLengthInChars ) { strncpy( out_pOut, pIn, iLengthInChars ); }
+	static int		   Compare( const char *pLhs, const char *pRhs ) { return strcmp( pLhs, pRhs ); }
+	static int		   CaselessCompare( const char *pLhs, const char *pRhs ) { return Q_strcasecmp( pLhs, pRhs ); }
+	static int		   Length( const char *pValue ) { return (int)strlen( pValue ); }
+	static const char *FindChar( const char *pStr, const char cSearch ) { return strchr( pStr, cSearch ); }
+	static const char *EmptyString() { return ""; }
+	static const char *NullDebugString() { return "(null)"; }
+};
+
+template < >
+class StringFuncs<wchar_t>
+{
+public:
+	static wchar_t		 *Duplicate( const wchar_t *pValue ) { return wcsdup( pValue ); }
+	// Note that this function takes a character count, and does not guarantee null-termination.
+	static void			  Copy( wchar_t *out_pOut, const wchar_t  *pIn, int iLengthInChars ) { wcsncpy( out_pOut, pIn, iLengthInChars ); }
+	static int			  Compare( const wchar_t *pLhs, const wchar_t *pRhs ) { return wcscmp( pLhs, pRhs ); }
+	static int			  CaselessCompare( const wchar_t *pLhs, const wchar_t *pRhs ); // no implementation?
+	static int			  Length( const wchar_t *pValue ) { return (int)wcslen( pValue ); }
+	static const wchar_t *FindChar( const wchar_t *pStr, const wchar_t cSearch ) { return wcschr( pStr, cSearch ); }
+	static const wchar_t *EmptyString() { return L""; }
+	static const wchar_t *NullDebugString() { return L"(null)"; }
+};
+
 
 // Generic implementation of Less and Equal functors
 template < typename T >
@@ -152,6 +200,8 @@ struct DefaultEqualFunctor
 	bool operator()( typename ArgumentTypeInfo< T >::Alt_t a, typename ArgumentTypeInfo< T >::Arg_t b ) const { return a == b; }
 	bool operator()( typename ArgumentTypeInfo< T >::Arg_t a, typename ArgumentTypeInfo< T >::Alt_t b ) const { return a == b; }
 };
+
+class CUtlStringToken;
 
 // Hashes for basic types
 template <> struct DefaultHashFunctor<char> : Mix32HashFunctor { };
