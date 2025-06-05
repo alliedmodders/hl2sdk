@@ -112,7 +112,7 @@ inline void CUtlMemoryBlockAllocator::RemoveAll( size_t nSize )
 	{
 		accumulated_total += m_MemPages[i].m_nTotalSize;
 
-		if(removed_at != -1 || nSize && accumulated_total > nSize)
+		if(removed_at != -1 || (nSize && accumulated_total > nSize))
 		{
 			CRawAllocator::Free( m_MemPages[i].m_pMemory );
 
