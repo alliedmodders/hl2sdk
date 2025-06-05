@@ -1384,7 +1384,7 @@ void CKeyValues3Array::EnsureElementCapacity( int count, bool force, bool dont_m
 		DebuggerBreak();
 	}
 
-	const int new_count = force ? count : KV3Helpers::CalcNewBufferSize( m_nAllocatedChunks, count, ALLOC_KV3ARRAY_MIN, ALLOC_KV3ARRAY_MAX );
+	const int new_count = force ? count : CalcNewDoublingCount( m_nAllocatedChunks, count, ALLOC_KV3ARRAY_MIN, ALLOC_KV3ARRAY_MAX );
 	const int new_byte_size = TotalSizeOfData( new_count );
 
 	Element_t *new_base = nullptr;
@@ -1591,7 +1591,7 @@ void CKeyValues3Table::EnsureMemberCapacity( int count, bool force, bool dont_mo
 		DebuggerBreak();
 	}
 
-	const int new_count = force ? count : KV3Helpers::CalcNewBufferSize( m_nAllocatedChunks, count, ALLOC_KV3TABLE_MIN, ALLOC_KV3TABLE_MAX );
+	const int new_count = force ? count : CalcNewDoublingCount( m_nAllocatedChunks, count, ALLOC_KV3TABLE_MIN, ALLOC_KV3TABLE_MAX );
 	const int new_byte_size = TotalSizeOfData( new_count );
 
 	void *new_base = nullptr;

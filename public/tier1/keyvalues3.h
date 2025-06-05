@@ -7,6 +7,7 @@
 
 #include "tier0/platform.h"
 #include "tier0/dbg.h"
+#include "tier0/commonmacros.h"
 #include "tier1/bufferstring.h"
 #include "tier1/generichash.h"
 #include "tier1/strtools.h"
@@ -298,24 +299,6 @@ namespace KV3Helpers
 	constexpr size_t PackSizeOf( int size )
 	{
 		return ((ALIGN_VALUE( size * sizeof( Ts ), ALIGN )) + ... + 0);
-	}
-
-	inline int CalcNewBufferSize( int old_size, int requested_size, int min_size, int max_size )
-	{
-		int new_size = MAX( old_size, min_size );
-
-		while(new_size < requested_size)
-		{
-			if(new_size < max_size / 2)
-				new_size *= 2;
-			else
-			{
-				new_size = max_size;
-				break;
-			}
-		}
-
-		return new_size;
 	}
 }
 
@@ -1569,7 +1552,7 @@ inline void CKeyValues3ContextBase::NodeList<NODE>::EnsureByteSize( int bytes_ne
 	if(bytes_needed < m_nAllocatedBytes)
 		return;
 
-	int new_alloc_size = KV3Helpers::CalcNewBufferSize( m_nAllocatedBytes, bytes_needed, ALLOC_CONTEXT_NODELIST_MIN, ALLOC_CONTEXT_NODELIST_MAX );
+	int new_alloc_size = CalcNewDoublingCount( m_nAllocatedBytes, bytes_needed, ALLOC_CONTEXT_NODELIST_MIN, ALLOC_CONTEXT_NODELIST_MAX );
 
 	m_pData = (ListEntry *)realloc( m_pData, new_alloc_size );
 	m_nAllocatedBytes = new_alloc_size;

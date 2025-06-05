@@ -169,5 +169,28 @@ T ClampedArrayElement( const T (&buffer)[N], unsigned int uIndex )
 	return buffer[ uIndex ];
 }
 
+// Would double old_count until it's greater or equal the requested_count and is clamped to min/max bounds.
+inline int CalcNewDoublingCount( int old_count, int requested_count, int min_count, int max_count )
+{
+	int new_count = old_count;
+
+	while(new_count < requested_count)
+	{
+		if(new_count < max_count / 2)
+		{
+			new_count *= 2;
+			if(new_count < min_count)
+				new_count = min_count;
+		}
+		else
+		{
+			new_count = max_count;
+			break;
+		}
+	}
+
+	return new_count;
+}
+
 #endif // COMMONMACROS_H
 
