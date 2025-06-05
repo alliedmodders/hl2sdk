@@ -125,11 +125,11 @@ class CUtlSymbolTableLargeBase
 {
 public:
 	// constructor, destructor
-	CUtlSymbolTableLargeBase( int nGrowSize = 0, int nInitSize = 16, RawAllocatorType_t eAllocatorType = RawAllocator_Standard )
-		:	m_HashTable( 0, eAllocatorType ), 
-			m_MemBlocks( nGrowSize, nInitSize, eAllocatorType ), 
+	CUtlSymbolTableLargeBase( int nGrowSize = 0, int nInitSize = 16 )
+		:	m_HashTable( 0 ), 
+			m_MemBlocks( nGrowSize, nInitSize ), 
 			m_Mutex( "CUtlSymbolTableLargeBase" ), 
-			m_MemBlockAllocator( ( nInitSize > 0 ) ? 8 : 0, PAGE_SIZE, eAllocatorType ), 
+			m_MemBlockAllocator( ( nInitSize > 0 ) ? 8 : 0, PAGE_SIZE ), 
 			m_nElementLimit( INT_MAX - 1 ), 
 			m_bThrowError( true )  { }
 
@@ -226,8 +226,8 @@ private:
 		}
 	};
 
-	typedef CUtlHashtable<UtlSymLargeId_t, empty_t, UtlSymTableLargeHashFunctor, UtlSymTableLargeEqualFunctor, UtlSymTableLargeAltKey, CUtlMemory_RawAllocator<CUtlHashtableEntry<UtlSymLargeId_t, empty_t>>> Hashtable_t;
-	typedef CUtlVector< MemBlockHandle_t, CUtlMemory_RawAllocator<MemBlockHandle_t> > MemBlocksVec_t;
+	typedef CUtlHashtable<UtlSymLargeId_t, empty_t, UtlSymTableLargeHashFunctor, UtlSymTableLargeEqualFunctor, UtlSymTableLargeAltKey> Hashtable_t;
+	typedef CUtlVectorRawAllocator< MemBlockHandle_t > MemBlocksVec_t;
 
 	Hashtable_t					m_HashTable;
 	MemBlocksVec_t				m_MemBlocks;

@@ -74,14 +74,14 @@ public:
 	};
 
 	storage_t flags_and_hash;
-	alignas( MAX( alignof(KVPair), alignof(storage_t) ) ) storage_t data[ ( sizeof(KVPair) + sizeof(storage_t) - 1 ) / sizeof(storage_t) ];
+	AlignedByteArrayExplicit_t<(sizeof( KVPair ) + sizeof( storage_t ) - 1) / sizeof( storage_t ), storage_t, MAX( alignof(KVPair), alignof(storage_t) )> data;
 
 	bool IsValid() const { return flags_and_hash >= 0; }
 	void MarkInvalid() { int32 flag = FLAG_FREE; flags_and_hash = (storage_t)flag; }
-	const KVPair *Raw() const { return reinterpret_cast< const KVPair * >( &data[0] ); }
-	const KVPair *operator->() const { Assert( IsValid() ); return reinterpret_cast< const KVPair * >( &data[0] ); }
-	KVPair *Raw() { return reinterpret_cast< KVPair * >( &data[0] ); }
-	KVPair *operator->() { Assert( IsValid() ); return reinterpret_cast< KVPair * >( &data[0] ); }
+	const KVPair *Raw() const { return reinterpret_cast< const KVPair * >(data.Base()); }
+	const KVPair *operator->() const { Assert( IsValid() ); return reinterpret_cast< const KVPair * >(data.Base()); }
+	KVPair *Raw() { return reinterpret_cast< KVPair * >(data.Base()); }
+	KVPair *operator->() { Assert( IsValid() ); return reinterpret_cast< KVPair * >(data.Base()); }
 
 	// Returns the ideal index of the data in this slot, or all bits set if invalid
 	uint32 FORCEINLINE IdealIndex( uint32 slotmask ) const { return IdealIndex( flags_and_hash, slotmask ) | ( (int32)flags_and_hash >> 31 ); }
@@ -99,12 +99,11 @@ public:
 	// More efficient than memcpy for the small types that are stored in a hashtable
 	void MoveDataFrom( CUtlHashtableEntry &src )
 	{
-		storage_t * RESTRICT srcData = &src.data[0];
-		for ( int i = 0; i < ARRAYSIZE( data ); ++i ) { data[i] = srcData[i]; }
+		for ( int i = 0; i < data.Count(); ++i ) { data[i] = src.data[i]; }
 	}
 };
 
-template <typename KeyT, typename ValueT = empty_t, typename KeyHashT = DefaultHashFunctor<KeyT>, typename KeyIsEqualT = DefaultEqualFunctor<KeyT>, typename AlternateKeyT = typename ArgumentTypeInfo<KeyT>::Alt_t, typename TableT = CUtlMemory< CUtlHashtableEntry< KeyT, ValueT > > >
+template <typename KeyT, typename ValueT = empty_t, typename KeyHashT = DefaultHashFunctor<KeyT>, typename KeyIsEqualT = DefaultEqualFunctor<KeyT>, typename AlternateKeyT = typename ArgumentTypeInfo<KeyT>::Alt_t, typename TableT = CUtlVectorRawAllocator<CUtlHashtableEntry<KeyT, ValueT>>>
 class CUtlHashtable
 {
 public:
@@ -115,7 +114,7 @@ protected:
 	typedef typename ArgumentTypeInfo<KeyT>::Arg_t KeyArg_t;
 	typedef typename ArgumentTypeInfo<ValueT>::Arg_t ValueArg_t;
 	typedef typename ArgumentTypeInfo<AlternateKeyT>::Arg_t KeyAlt_t;
-	typedef CUtlHashtableEntry< KeyT, ValueT > entry_t;
+	typedef CUtlHashtableEntry<KeyT, ValueT> entry_t;
 
 	enum
 	{
@@ -163,8 +162,8 @@ public:
 	explicit CUtlHashtable( int minimumSize = 32 )
 		: m_nUsed(0), m_nTableSize(0), m_nMinSize(MAX(8, minimumSize)), m_bSizeLocked(false), m_eq(), m_hash() { InitTable(); }
 
-	CUtlHashtable( int nInitSize, RawAllocatorType_t eAllocatorType, int minimumSize = 32 )
-		: m_table(0, nInitSize, eAllocatorType), m_nUsed(0), m_nTableSize(0), m_nMinSize(MAX(8, minimumSize)), m_bSizeLocked(false), m_eq(), m_hash() { InitTable(); }
+	CUtlHashtable( int nInitSize, int minimumSize )
+		: m_table(0, nInitSize), m_nUsed(0), m_nTableSize(0), m_nMinSize(MAX(8, minimumSize)), m_bSizeLocked(false), m_eq(), m_hash() { InitTable(); }
 
 	CUtlHashtable( int minimumSize, const KeyHashT &hash, KeyIsEqualT const &eq = KeyIsEqualT() )
 		: m_nUsed(0), m_nTableSize(0), m_nMinSize(MAX(8, minimumSize)), m_bSizeLocked(false), m_eq(eq), m_hash(hash) { InitTable(); }
@@ -318,19 +317,11 @@ void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::DoReal
 {
 	Assert( !m_bSizeLocked ); 
 
-	CUtlMemory_RawAllocator<entry_t> oldTable;
-	entry_t * RESTRICT pOldBase = NULL;
+	CUtlMemoryConservative<entry_t> oldTable;
+	entry_t * RESTRICT pOldBase = m_table.Detach();
 	int nOldSize = m_nTableSize;
 
-	if ( !m_table.IsExternallyAllocated() )
-	{
-		int tableSize = m_table.Count();
-		pOldBase = m_table.Detach();
-
-		if ( pOldBase )
-			 oldTable.AssumeMemory( pOldBase, tableSize, m_table.GetRawAllocatorType() );
-	}
-	else
+	if (!pOldBase)
 	{
 		if ( nOldSize > 0 )
 		{
@@ -338,15 +329,15 @@ void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::DoReal
 
 			if ( nBytes >= 0x4000 )
 			{
-				pOldBase = (entry_t *)malloc( nBytes );
-				oldTable.AssumeMemory( pOldBase, nOldSize, RawAllocator_Standard );
+				oldTable.EnsureCapacity( nOldSize );
+				pOldBase = oldTable.Base();
 			}
 			else
 			{
 				pOldBase = (entry_t *)stackalloc( nBytes );
 			}
 
-			memcpy( pOldBase, m_table.Base(), nBytes );
+			V_memmove( pOldBase, m_table.Base(), nBytes );
 		}
 
 		m_table.Purge();
@@ -356,7 +347,7 @@ void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::DoReal
 	Assert( size > 0 && (uint)size <= entry_t::IdealIndex( ~0, 0x1FFFFFFF ) ); // reasonable power of 2
 	Assert( size > m_nUsed );
 
-	m_table.EnsureCapacity( size );
+	m_table.EnsureCount( size );
 
 	// correct the size if we have allocated more than required
 	while ( size <= INT_MAX/2 )
@@ -466,7 +457,7 @@ int CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::DoInser
 	if ( allowGrow && !m_bSizeLocked )
 	{
 		// Keep the load factor between .25 and .75
-		int newSize = m_nUsed + 1;
+		int newSize = m_nUsed + 4;
 		if ( newSize*4 > m_nTableSize*3 )
 		{
 			DoRealloc( newSize * 4 / 3 );
@@ -714,7 +705,7 @@ void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::Remove
 	int used = m_nUsed;
 	if ( used != 0 )
 	{
-		entry_t* table = m_table.Base(); 
+		entry_t* table = m_table.Base();
 		for ( int i = m_nTableSize - 1; i >= 0; --i )
 		{
 			if ( table[i].IsValid() )

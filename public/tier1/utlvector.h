@@ -45,7 +45,7 @@ public:
 	typedef T ElemType_t;
 
 	// constructor, destructor
-	CUtlVector( int growSize = 0, int initSize = 0, RawAllocatorType_t allocatorType = RawAllocator_Standard );
+	CUtlVector( int growSize = 0, int initSize = 0 );
 	CUtlVector( T* pMemory, int allocationCount, int numElements = 0 );
 	~CUtlVector();
 	
@@ -65,6 +65,13 @@ public:
 	// Gets the base address (can change when adding elements!)
 	T* Base()								{ return m_Memory.Base(); }
 	const T* Base() const					{ return m_Memory.Base(); }
+
+	// Attaches the buffer to external memory....
+	void SetExternalBuffer( T *pMemory, int allocationCount, int numElements = 0 );
+	void SetExternalBuffer( const T *pMemory, int allocationCount, int numElements = 0 );
+	void AssumeMemory( T *pMemory, int allocationCount, int numElements = 0 );
+	T *Detach();
+	void *DetachMemory();
 
 	// Returns the number of elements in the vector
 	int Count() const;
@@ -240,6 +247,16 @@ public:
 	CUtlVectorConservative( T* pMemory, int numElements ) : BaseClass( pMemory, numElements ) {}
 };
 
+template< class T >
+class CUtlVectorRawAllocator : public CUtlVector< T, CUtlMemory_RawAllocator<T> >
+{
+	typedef CUtlVector< T, CUtlMemory_RawAllocator<T> > BaseClass;
+public:
+
+	// constructor, destructor
+	CUtlVectorRawAllocator( int growSize = 0, int initSize = 0 ) : BaseClass( growSize, initSize ) {}
+	CUtlVectorRawAllocator( T *pMemory, int numElements ) : BaseClass( pMemory, numElements ) {}
+};
 
 //-----------------------------------------------------------------------------
 // The CUtlVectorUltra Conservative class:
@@ -516,7 +533,7 @@ public:
 // constructor, destructor
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-inline CUtlVector<T, A>::CUtlVector( int growSize, int initSize, RawAllocatorType_t allocatorType )	: 
+inline CUtlVector<T, A>::CUtlVector( int growSize, int initSize ) : 
 	m_Size(0), m_Memory(growSize, initSize)
 {
 }
@@ -605,6 +622,43 @@ inline const T& CUtlVector<T, A>::Tail() const
 	return m_Memory[ m_Size - 1 ];
 }
 
+//-----------------------------------------------------------------------------
+// Attaches the buffer to external memory....
+//-----------------------------------------------------------------------------
+template< class T, class A >
+inline void CUtlVector<T, A>::SetExternalBuffer( T *pMemory, int allocationCount, int numElements )
+{
+	m_Memory.SetExternalBuffer( pMemory, allocationCount );
+	m_Size = numElements;
+}
+
+template< class T, class A >
+void CUtlVector<T, A>::SetExternalBuffer( const T *pMemory, int allocationCount, int numElements )
+{
+	m_Memory.SetExternalBuffer( pMemory, allocationCount );
+	m_Size = numElements;
+}
+
+template< class T, class A >
+inline void CUtlVector<T, A>::AssumeMemory( T *pMemory, int allocationCount, int numElements )
+{
+	m_Memory.AssumeMemory( pMemory, allocationCount );
+	m_Size = numElements;
+}
+
+template< typename T, class A >
+inline T *CUtlVector<T, A>::Detach()
+{
+	m_Size = 0;
+	return m_Memory.Detach();
+}
+
+template< typename T, class A >
+inline void *CUtlVector<T, A>::DetachMemory()
+{
+	m_Size = 0;
+	return m_Memory.DetachMemory();
+}
 
 //-----------------------------------------------------------------------------
 // Count

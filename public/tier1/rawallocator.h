@@ -18,17 +18,35 @@
 #pragma once
 #endif
 
-enum RawAllocatorType_t : uint8
-{
-	RawAllocator_Standard = 0,
-	RawAllocator_Platform = 1,
-};
+#include "platform.h"
+#include "basetypes.h"
+
+#include "memdbgon.h"
 
 class CRawAllocator
 {
 public:
-	DLL_CLASS_IMPORT static void* Alloc( RawAllocatorType_t eAllocatorType, size_t nSize, size_t* nAdjustedSize );
-	DLL_CLASS_IMPORT static void Free( RawAllocatorType_t eAllocatorType, void* pMem, size_t nSize );
+	static void* Alloc( size_t nSize, size_t *nAdjustedSize )
+	{
+		void *ptr = malloc( nSize );
+		*nAdjustedSize = MAX( _msize( ptr ), nSize );
+		return ptr;
+	}
+
+	static void* Realloc( void *base, size_t nSize, size_t *nAdjustedSize )
+	{
+		void *ptr = realloc( base, nSize );
+		*nAdjustedSize = MAX( _msize( ptr ), nSize );
+		return ptr;
+	}
+
+	static void Free( void* pMem )
+	{
+		if(pMem)
+			free( pMem );
+	}
 };
+
+#include "memdbgoff.h"
 
 #endif // RAWALLOCATOR_H
