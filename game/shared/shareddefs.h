@@ -126,6 +126,8 @@ inline float FractionUnDucked( int msecs )
 #define HUD_PRINTCONSOLE	2
 #define HUD_PRINTTALK		3
 #define HUD_PRINTCENTER		4
+#define HUD_PRINTTALK2		5	// adds 4(EOT) to beginning of msg
+#define HUD_PRINTALERT		6
 
 
 //===================================================================================================================
