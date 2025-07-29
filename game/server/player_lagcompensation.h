@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2006, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2006, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Manages the server moving things back in time to match up to where clients thought they were 
 //			when the client commited an action

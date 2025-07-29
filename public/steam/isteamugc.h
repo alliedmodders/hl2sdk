@@ -121,6 +121,7 @@ enum EItemState
 	k_EItemStateNeedsUpdate		= 8,	// items needs an update. Either because it's not installed yet or creator updated content
 	k_EItemStateDownloading		= 16,	// item update is currently downloading
 	k_EItemStateDownloadPending	= 32,	// DownloadItem() was called for this item, content isn't available until DownloadItemResult_t is fired
+	k_EItemStateDisabledLocally	= 64,	// Item is disabled locally, so it shouldn't be considered subscribed
 };
 
 enum EItemStatistic
@@ -154,6 +155,7 @@ enum EItemPreviewType
 																// |   |Dn |       |
 																// +---+---+---+---+
 	k_EItemPreviewType_EnvironmentMap_LatLong			= 4,	// standard image file expected
+	k_EItemPreviewType_Clip								= 5,	// clip id is stored
 	k_EItemPreviewType_ReservedMax						= 255,	// you can specify your own types above this value
 };
 
@@ -192,7 +194,7 @@ struct SteamUGCDetails_t
 	UGCHandle_t m_hFile;											// The handle of the primary file
 	UGCHandle_t m_hPreviewFile;										// The handle of the preview file
 	char m_pchFileName[k_cchFilenameMax];							// The cloud filename of the primary file
-	int32 m_nFileSize;												// Size of the primary file
+	int32 m_nFileSize;												// Size of the primary file (for legacy items which only support one file). This may not be accurate for non-legacy items which can be greater than 4gb in size.
 	int32 m_nPreviewFileSize;										// Size of the preview file
 	char m_rgchURL[k_cchPublishedFileURLMax];						// URL (for a video or a website)
 	// voting information
@@ -200,7 +202,8 @@ struct SteamUGCDetails_t
 	uint32 m_unVotesDown;											// number of votes down
 	float m_flScore;												// calculated score
 	// collection details
-	uint32 m_unNumChildren;							
+	uint32 m_unNumChildren;
+	uint64 m_ulTotalFilesSize;										// Total size of all files (non-legacy), excluding the preview file
 };
 
 //-----------------------------------------------------------------------------
@@ -265,6 +268,7 @@ public:
 	virtual bool SetReturnPlaytimeStats( UGCQueryHandle_t handle, uint32 unDays ) = 0;
 	virtual bool SetLanguage( UGCQueryHandle_t handle, const char *pchLanguage ) = 0;
 	virtual bool SetAllowCachedResponse( UGCQueryHandle_t handle, uint32 unMaxAgeSeconds ) = 0;
+	virtual bool SetAdminQuery( UGCUpdateHandle_t handle, bool bAdminQuery ) = 0; // admin queries return hidden items
 
 	// Options only for querying user UGC
 	virtual bool SetCloudFileNameFilter( UGCQueryHandle_t handle, const char *pMatchCloudFileName ) = 0;
@@ -387,7 +391,7 @@ public:
 	virtual uint32 GetUserContentDescriptorPreferences( EUGCContentDescriptorID *pvecDescriptors, uint32 cMaxEntries ) = 0;
 };
 
-#define STEAMUGC_INTERFACE_VERSION "STEAMUGC_INTERFACE_VERSION018"
+#define STEAMUGC_INTERFACE_VERSION "STEAMUGC_INTERFACE_VERSION019"
 
 // Global interface accessor
 inline ISteamUGC *SteamUGC();
@@ -455,6 +459,8 @@ struct ItemInstalled_t
 	enum { k_iCallback = k_iSteamUGCCallbacks + 5 };
 	AppId_t m_unAppID;
 	PublishedFileId_t m_nPublishedFileId;
+	UGCHandle_t m_hLegacyContent;
+	uint64 m_unManifestID;
 };
 
 

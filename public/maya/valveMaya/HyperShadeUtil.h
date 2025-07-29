@@ -1,4 +1,4 @@
-//======= Copyright © 1996-2007, Valve Corporation, All rights reserved. ======
+//======= Copyright Â© 1996-2007, Valve Corporation, All rights reserved. ======
 //
 // Purpose: Utils for working with HyperShade in Maya
 //

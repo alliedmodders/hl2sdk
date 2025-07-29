@@ -1689,7 +1689,7 @@ inline AngularImpulse RandomAngularImpulse( float minVal, float maxVal )
 
 class RadianEuler;
 
-class Quaternion				// same data-layout as engine's vec4_t,
+class ALIGN16 Quaternion				// same data-layout as engine's vec4_t,
 {								//		which is a vec_t[4]
 public:
 	inline Quaternion(void)	{ 
@@ -1720,7 +1720,7 @@ public:
 	vec_t& operator[](int i);
 
 	vec_t x, y, z, w;
-};
+} ALIGN16_POST;
 
 
 //-----------------------------------------------------------------------------

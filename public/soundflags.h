@@ -1,4 +1,4 @@
-//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose:
 //
@@ -115,36 +115,19 @@ enum soundlevel_t
 //-----------------------------------------------------------------------------
 // Flags to be or-ed together for the iFlags field
 //-----------------------------------------------------------------------------
-enum SoundFlags_t
+enum SoundFlags_t : uint16
 {
-	SOUND_NONE			= 0,			// to keep the compiler happy
+	SOUND_FLAGS_NONE			= 0,			// to keep the compiler happy
 
-	SOUND_COMBAT		= (1<<0),
-	SOUND_WORLD			= (1<<1),
-	SOUND_PLAYER		= (1<<2),
-	SOUND_DANGER		= (1<<3),
-	SOUND_BULLET_IMPACT	= (1<<4),
-	SOUND_THUMPER		= (1<<5),
-	SOUND_PHYSICS_DANGER= (1<<6),
-	SOUND_MOVE_AWAY		= (1<<7),
-	SOUND_PLAYER_VEHICLE= (1<<8),
-	SOUND_GLASS_BREAK	= (1<<9),
-	SOUND_PHYSICS_OBJECT= (1<<10),
-
-	SOUND_CONTEXT_START				= (1<<20),
-
-	SOUND_CONTEXT_GUNFIRE			= SOUND_CONTEXT_START,
-	SOUND_CONTEXT_COMBINE_ONLY		= (1<<21),
-	SOUND_CONTEXT_REACT_TO_SOURCE	= (1<<22),
-	SOUND_CONTEXT_EXPLOSION			= (1<<23),
-	SOUND_CONTEXT_EXCLUDE_COMBINE	= (1<<24),
-	SOUND_CONTEXT_DANGER_APPROACH	= (1<<25),
-	SOUND_CONTEXT_ALLIES_ONLY		= (1<<26),
-	SOUND_CONTEXT_PANIC_NPCS		= (1<<27),
-
-	ALL_SCENTS			= 0,
-	ALL_SOUNDS			= SOUND_CONTEXT_START - 1,
-	ALL_CONTEXTS		= ~ALL_SOUNDS
+	SOUND_FLAG_GUNFIRE			= (1<<0),
+	SOUND_FLAG_COMBINE_ONLY		= (1<<1),
+	SOUND_FLAG_REACT_TO_SOURCE	= (1<<2),
+	SOUND_FLAG_EXPLOSION		= (1<<3),
+	SOUND_FLAG_EXCLUDE_COMBINE	= (1<<4),
+	SOUND_FLAG_DANGER_APPROACH	= (1<<5),
+	SOUND_FLAG_ALLIES_ONLY		= (1<<6),
+	SOUND_FLAG_PANIC_NPCS		= (1<<7),
+	SOUND_FLAG_SQUAD_ONLY		= (1<<8)
 };
 
 #define MAX_SOUND_INDEX_BITS	13

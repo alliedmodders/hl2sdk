@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2004, Valve Corporation, All rights reserved. =======
+//====== Copyright Â© 1996-2004, Valve Corporation, All rights reserved. =======
 //http://www.nfl.com/gamecenter/2010010900/2009/POST18/eagles@cowboys#tab:watch
 // Purpose: 
 //

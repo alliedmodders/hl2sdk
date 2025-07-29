@@ -115,9 +115,6 @@ public:
 	void RemoveAllKeys();
 
 	bool IsEmpty() const;
-	
-	bool ValuesHasBadNames() const;
-	bool AttributesHasBadNames() const;
 
 	bool HasValue( const EntityKeyId_t &id ) const { bool bIsAttribute; return ( GetKeyValue( id, &bIsAttribute ) && !bIsAttribute ); }
 	bool HasAttribute( const EntityKeyId_t &id ) const { bool bIsAttribute; return ( GetKeyValue( id, &bIsAttribute ) && bIsAttribute ); }

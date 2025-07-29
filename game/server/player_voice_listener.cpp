@@ -1,4 +1,4 @@
-//========== Copyright © Valve Corporation, All rights reserved. ============
+//========== Copyright Â© Valve Corporation, All rights reserved. ============
 //
 // Purpose: Maintain data about voice communications from various players
 //			so that the server can react to it.

@@ -1,4 +1,4 @@
-//======= Copyright © 1996-2008, Valve Corporation, All rights reserved. ======//
+//======= Copyright Â© 1996-2008, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: Add a specially formatted string to each debug DLL of the form 
 //          "%DLLNAME%.dll is built debug!". We can search for this string via

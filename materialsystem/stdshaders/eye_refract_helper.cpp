@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2008, Valve Corporation, All rights reserved. ======//
+//===== Copyright Â© 1996-2008, Valve Corporation, All rights reserved. ======//
 
 #include "BaseVSShader.h"
 #include "mathlib/VMatrix.h"

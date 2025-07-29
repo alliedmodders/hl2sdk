@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2006, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2006, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: A base class for all material proxies in the client dll
 //

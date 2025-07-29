@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2006, Valve Corporation, All rights reserved. =======//
+//====== Copyright Â© 1996-2006, Valve Corporation, All rights reserved. =======//
 //
 // Purpose: Provide a class (SSE/SIMD only) holding a 2d matrix of class FourVectors,
 // for high speed processing in tools.

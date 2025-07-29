@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Interface that entities can use to redirect scoring to other entities.
 //			i.e. A rocket redirects scoring to the player that fired it.

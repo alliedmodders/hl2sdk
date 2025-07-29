@@ -68,6 +68,32 @@ enum EStringConvertErrorPolicy
 	STRINGCONVERT_ASSERT_FAIL =		_STRINGCONVERTFLAG_ASSERT + STRINGCONVERT_FAIL,
 };
 
+// UNDONE: Find a non-compiler-specific way to do this
+#ifdef _WIN32
+#ifndef _VA_LIST_DEFINED
+
+#ifdef  _M_ALPHA
+
+struct va_list 
+{
+    char *a0;       /* pointer to first homed integer argument */
+    int offset;     /* byte offset of next parameter */
+};
+
+#else  // !_M_ALPHA
+
+typedef char *  va_list;
+
+#endif // !_M_ALPHA
+
+#define _VA_LIST_DEFINED
+
+#endif   // _VA_LIST_DEFINED
+
+#elif POSIX
+#include <stdarg.h>
+#endif
+
 //-----------------------------------------------------------------------------
 // Portable versions of standard string functions
 //-----------------------------------------------------------------------------
@@ -77,42 +103,48 @@ PLATFORM_INTERFACE void			V_tier0_memmove( void *dest, const void *src, size_t c
 PLATFORM_INTERFACE int			V_tier0_memcmp( const void *m1, const void *m2, size_t count );
 
 PLATFORM_INTERFACE int			V_tier0_strlen( const char *str );
-PLATFORM_INTERFACE int			V_tier0_strlen16( const char16_t *str );
-PLATFORM_INTERFACE int			V_tier0_strlen32( const char32_t *str );
+PLATFORM_INTERFACE int			V_tier0_strlen16( const uchar16 *str );
+PLATFORM_INTERFACE int			V_tier0_strlen32( const uchar32 *str );
 PLATFORM_INTERFACE int			V_tier0_wcslen( const wchar_t *str );
 
 PLATFORM_INTERFACE void			V_tier0_strcpy( char *dest, const char *src );
 PLATFORM_INTERFACE void			_V_strncpy( char *pDest, const char *pSrc, int maxLen );
-PLATFORM_INTERFACE void			V_tier0_strcpy32( char32_t *dest, const char32_t *src );
-PLATFORM_INTERFACE void			_V_strncpy32_bytes( char32_t *pDest, const char32_t *pSrc, int bytes );
+PLATFORM_INTERFACE void			V_tier0_strcpy32( uchar32 *dest, const uchar32 *src );
+PLATFORM_INTERFACE void			_V_strncpy32_bytes( uchar32 *pDest, const uchar32 *pSrc, int bytes );
 PLATFORM_INTERFACE void			V_tier0_wcscpy( wchar_t *dest, const wchar_t *src );
-PLATFORM_INTERFACE void			_V_wcsncpy_bytes( wchar_t *pDest, const wchar_t *pSrc, int bytes );
+PLATFORM_INTERFACE void			_V_wcsncpy_bytes( OUT_Z_BYTECAP( bytes ) wchar_t *pDest, const wchar_t *pSrc, int bytes );
 
 PLATFORM_INTERFACE char *		V_tier0_strrchr( const char *s, char c );
 PLATFORM_INTERFACE char *		V_strnchr( const char *s, char c, int n );
-PLATFORM_INTERFACE char32_t *	V_strchr32( const char32_t *s, char32_t c );
+PLATFORM_INTERFACE uchar32 *	V_strchr32( const uchar32 *s, uchar32 c );
 PLATFORM_INTERFACE wchar_t *	V_tier0_wcschr( const wchar_t *s, wchar_t c );
 
 PLATFORM_INTERFACE int			V_tier0_strcmp( const char *s1, const char *s2 );
 PLATFORM_INTERFACE int			_V_strncmp( const char *s1, const char *s2, int n );
-PLATFORM_INTERFACE int			V_strcmp32( const char32_t *s1, const char32_t *s2 );
+PLATFORM_INTERFACE int			V_strcmp32( const uchar32 *s1, const uchar32 *s2 );
 PLATFORM_INTERFACE int			V_tier0_wcscmp( const wchar_t *s1, const wchar_t *s2 );
 
 PLATFORM_INTERFACE int			V_stricmp_fast( const char *s1, const char *s2 );
+// A special high-performance case-insensitive compare function that in
+// a single call distinguishes between exactly matching strings,
+// strings equal in case-insensitive way, and not equal strings:
+//   returns 0 if strings match exactly
+//   returns >0 if strings match in a case-insensitive way, but do not match exactly
+//   returns <0 if strings do not match even in a case-insensitive way
 PLATFORM_INTERFACE int			V_stricmp_fast_NegativeForUnequal( const char *s1, const char *s2 );
 PLATFORM_INTERFACE int			_V_strnicmp_fast( const char *s1, const char *s2, int n );
 PLATFORM_INTERFACE int			V_wcsicmp( const wchar_t *s1, const wchar_t *s2 );
 PLATFORM_INTERFACE int			V_wcsnicmp_cch( const wchar_t *s1, const wchar_t *s2, int symbols );
 
 PLATFORM_INTERFACE char *		V_tier0_strstr( const char *s1, const char *search );
-PLATFORM_INTERFACE char32_t *	V_strstr32( const char32_t *s1, const char32_t *search );
+PLATFORM_INTERFACE uchar32 *	V_strstr32( const uchar32 *s1, const uchar32 *search );
 
 PLATFORM_INTERFACE char *		V_strupper_fast( char *start );
-PLATFORM_INTERFACE char32_t *	V_towupper32( char32_t *start );
+PLATFORM_INTERFACE uchar32 *	V_towupper32( uchar32 *start );
 PLATFORM_INTERFACE wchar_t *	V_towupper( wchar_t *start );
 
 PLATFORM_INTERFACE char *		V_strlower_fast( char *start );
-PLATFORM_INTERFACE char32_t *	V_towlower32( char32_t *start );
+PLATFORM_INTERFACE uchar32 *	V_towlower32( uchar32 *start );
 PLATFORM_INTERFACE wchar_t *	V_towlower( wchar_t *start );
 
 PLATFORM_INTERFACE int64		V_atoi( const char *str );
@@ -136,59 +168,118 @@ PLATFORM_INTERFACE const char *	_V_strnistr_fast( const char *str, const char *s
 PLATFORM_OVERLOAD const wchar_t *V_wcsistr( const wchar_t *str, const wchar_t *search );
 
 PLATFORM_OVERLOAD int			V_strnlen( const char *str, int n );
-PLATFORM_OVERLOAD int			V_strnlen( const char32_t *str, int n );
+PLATFORM_OVERLOAD int			V_strnlen( const uchar32 *str, int n );
 PLATFORM_OVERLOAD int			V_strnlen( const wchar_t *str, int n );
 
 PLATFORM_INTERFACE int			_V_strcspn( const char *s1, const char *s2 );
 
 #define COPY_ALL_CHARACTERS -1
-PLATFORM_INTERFACE char *		_V_strncat( char *s1, const char *s2, size_t size, int max_chars_to_copy = COPY_ALL_CHARACTERS );
-inline void V_strcat( char *dest, const char *src, int cchDest )
+PLATFORM_INTERFACE char *		_V_strncat( INOUT_Z_CAP( size ) char *s1, const char *s2, size_t size, int max_chars_to_copy = COPY_ALL_CHARACTERS );
+inline void V_strcat( INOUT_Z_CAP( cchDest ) char *dest, const char *src, int cchDest )
 {
-	_V_strncat( dest, src, cchDest, COPY_ALL_CHARACTERS );
+	_V_strncat( dest, src, (int)cchDest, COPY_ALL_CHARACTERS );
+}
+template <size_t cchDest> char *V_strcat_safe( INOUT_Z_ARRAY char (&pDest)[cchDest], const char *pSrc, int nMaxCharsToCopy=COPY_ALL_CHARACTERS )
+{ 
+	return _V_strncat( pDest, pSrc, (int)cchDest, nMaxCharsToCopy );
 }
 
-PLATFORM_INTERFACE int			V_snprintf( char *pDest, int destLen, const char *pFormat, ... ) FMTFUNCTION( 3, 4 );
-PLATFORM_INTERFACE int			V_snprintfcat( char *pDest, int destLen, const char *pFormat, ... ) FMTFUNCTION( 3, 4 );
-PLATFORM_INTERFACE int			V_snwprintf_bytes( wchar_t *pDest, int bytes, const wchar_t *pFormat, ... );
-PLATFORM_INTERFACE int			V_snwprintf_cch( wchar_t *pDest, int symbols, const wchar_t *pFormat, ... );
-
-PLATFORM_INTERFACE int			V_vsnprintf( char *pDest, int maxLenInCharacters, const char *pFormat, va_list params );
-PLATFORM_INTERFACE int			V_vsnprintfcat( char *pDest, int maxLenInCharacters, const char *pFormat, va_list params );
-template <size_t maxLenInCharacters> int V_vsprintf_safe( char( &pDest )[maxLenInCharacters], const char *pFormat, va_list params ) { return V_vsnprintf( pDest, maxLenInCharacters, pFormat, params ); }
-
-PLATFORM_INTERFACE int			V_vsnwprintf_cch( wchar_t *pDest, int maxLenInCharacters, const wchar_t *pFormat, va_list params );
-template <size_t maxLenInCharacters> int V_vswprintf_safe( char( &pDest )[maxLenInCharacters], const char *pFormat, va_list params ) { return V_vsnwprintf_cch( pDest, maxLenInCharacters, pFormat, params ); }
-
-PLATFORM_INTERFACE bool			V_iswspace( wchar_t c );
-inline bool V_isspace( int c )
+PLATFORM_INTERFACE wchar_t *	V_wcsncat_cch( INOUT_Z_CAP( cchDest ) wchar_t *pDest, const wchar_t *pSrc, int cchDest, int nMaxCharsToCopy=COPY_ALL_CHARACTERS );
+inline void V_wcscat( INOUT_Z_CAP(cchDest) wchar_t *dest, const wchar_t *src, int cchDest )
 {
-	// The standard white-space characters are the following: space, tab, carriage-return, newline, vertical tab, and form-feed. In the C locale, V_isspace() returns true only for the standard white-space characters. 
-	//return c == ' ' || c == 9 /*horizontal tab*/ || c == '\r' || c == '\n' || c == 11 /*vertical tab*/ || c == '\f';
-	// codes of whitespace symbols: 9 HT, 10 \n, 11 VT, 12 form feed, 13 \r, 32 space
-
-	// easy to understand version, validated:
-	// return ((1 << (c-1)) & 0x80001F00) != 0 && ((c-1)&0xE0) == 0;
-
-	// 5% faster on Core i7, 35% faster on Xbox360, no branches, validated:
-#ifdef _X360
-	return ((1 << (c - 1)) & 0x80001F00 & ~(-int( (c - 1) & 0xE0 ))) != 0;
-#else
-// this is 11% faster on Core i7 than the previous, VC2005 compiler generates a seemingly unbalanced search tree that's faster
-	switch(c)
-	{
-		case ' ':
-		case 9:
-		case '\r':
-		case '\n':
-		case 11:
-		case '\f':
-			return true;
-		default:
-			return false;
-	}
-#endif
+	V_wcsncat_cch( dest, src, cchDest, COPY_ALL_CHARACTERS );
 }
+template <size_t cchDest> wchar_t *V_wcscat_safe( INOUT_Z_ARRAY wchar_t( &pDest )[cchDest], const wchar_t *pSrc, int nMaxCharsToCopy=COPY_ALL_CHARACTERS )
+{
+	return V_wcsncat_cch( pDest, pSrc, cchDest, nMaxCharsToCopy );
+}
+
+PLATFORM_INTERFACE int			V_snprintf( OUT_Z_CAP( destLen ) char *pDest, int destLen, PRINTF_FORMAT_STRING const char *pFormat, ... ) FMTFUNCTION( 3, 4 );
+
+PLATFORM_INTERFACE int			V_snprintfcat( OUT_Z_CAP( destLen ) char *pDest, int destLen, PRINTF_FORMAT_STRING const char *pFormat, ... ) FMTFUNCTION( 3, 4 );
+PLATFORM_INTERFACE int			V_snwprintf_bytes( OUT_Z_CAP( bytes ) wchar_t *pDest, int bytes, PRINTF_FORMAT_STRING const wchar_t *pFormat, ... );
+PLATFORM_INTERFACE int			V_snwprintf_cch( OUT_Z_CAP( symbols ) wchar_t *pDest, int symbols, PRINTF_FORMAT_STRING const wchar_t *pFormat, ... );
+
+PLATFORM_INTERFACE int			V_vsnprintf( OUT_Z_CAP( maxLenInCharacters ) char *pDest, int maxLenInCharacters, PRINTF_FORMAT_STRING const char *pFormat, va_list params );
+PLATFORM_INTERFACE int			V_vsnprintfcat( OUT_Z_CAP( maxLenInCharacters ) char *pDest, int maxLenInCharacters, PRINTF_FORMAT_STRING const char *pFormat, va_list params );
+template <size_t maxLenInCharacters> int V_vsprintf_safe( OUT_Z_ARRAY char (&pDest)[maxLenInCharacters], PRINTF_FORMAT_STRING const char *pFormat, va_list params ) { return V_vsnprintf( pDest, maxLenInCharacters, pFormat, params ); }
+
+template <size_t maxLenInChars> int V_sprintf_safe( OUT_Z_ARRAY char( &pDest )[maxLenInChars], PRINTF_FORMAT_STRING const char *pFormat, ... ) FMTFUNCTION( 2, 3 );
+template <size_t maxLenInChars> int V_sprintf_safe( OUT_Z_ARRAY char( &pDest )[maxLenInChars], PRINTF_FORMAT_STRING const char *pFormat, ... )
+{
+	va_list params;
+	va_start( params, pFormat );
+	int result = V_vsnprintf( pDest, maxLenInChars, pFormat, params );
+	va_end( params );
+	return result;
+}
+
+// Append formatted text to an array in a safe manner -- always null-terminated, truncation rather than buffer overrun.
+template <size_t maxLenInChars> int V_sprintfcat_safe( INOUT_Z_ARRAY char (&pDest)[maxLenInChars], PRINTF_FORMAT_STRING const char *pFormat, ... ) FMTFUNCTION( 2, 3 );
+template <size_t maxLenInChars> int V_sprintfcat_safe( INOUT_Z_ARRAY char (&pDest)[maxLenInChars], PRINTF_FORMAT_STRING const char *pFormat, ... )
+{
+	va_list params;
+	va_start( params, pFormat );
+	size_t usedLength = V_strlen(pDest);
+	// This code is here to check against buffer overruns when uninitialized arrays are passed in.
+	// It should never be executed. Unfortunately we can't assert in this header file.
+	if ( usedLength >= maxLenInChars )
+		usedLength = 0;
+	int result = V_vsnprintf( pDest + usedLength, maxLenInChars - usedLength, pFormat, params );
+	va_end( params );
+	return result;
+}
+
+PLATFORM_INTERFACE int			V_vsnwprintf_cch( OUT_Z_CAP( maxLenInCharacters ) wchar_t *pDest, int maxLenInCharacters, PRINTF_FORMAT_STRING const wchar_t *pFormat, va_list params );
+template <size_t maxLenInCharacters> int V_vswprintf_safe( OUT_Z_ARRAY wchar_t( &pDest )[maxLenInCharacters], PRINTF_FORMAT_STRING const wchar_t *pFormat, va_list params ) { return V_vsnwprintf_cch( pDest, maxLenInCharacters, pFormat, params ); }
+
+PLATFORM_INTERFACE int			V_vsnprintfRet( OUT_Z_CAP(maxLenInCharacters) char *pDest, int maxLenInCharacters, PRINTF_FORMAT_STRING const char *pFormat, va_list params, bool *pbTruncated );
+template <size_t maxLenInCharacters> int V_vsprintfRet_safe( OUT_Z_ARRAY char (&pDest)[maxLenInCharacters], PRINTF_FORMAT_STRING const char *pFormat, va_list params, bool *pbTruncated ) { return V_vsnprintfRet( pDest, maxLenInCharacters, pFormat, params, pbTruncated ); }
+
+// FMTFUNCTION can only be used on ASCII functions, not wide-char functions.
+int V_snwprintf( OUT_Z_CAP(maxLenInCharacters) wchar_t *pDest, int maxLenInCharacters, PRINTF_FORMAT_STRING const wchar_t *pFormat, ... );
+template <size_t maxLenInChars> int V_swprintf_safe( OUT_Z_ARRAY wchar_t (&pDest)[maxLenInChars], PRINTF_FORMAT_STRING const wchar_t *pFormat, ... )
+{
+	va_list params;
+	va_start( params, pFormat );
+	int result = V_vsnwprintf_cch( pDest, maxLenInChars, pFormat, params );
+	va_end( params );
+	return result;
+}
+
+// this is locale-unaware and therefore faster version of standard isdigit()
+// It also avoids sign-extension errors.
+inline bool V_isdigit( char c )
+{
+	return c >= '0' && c <= '9';
+}
+
+PLATFORM_INTERFACE bool V_isdigit_str( const char *str );
+PLATFORM_INTERFACE bool V_iswdigit( int c );
+
+inline bool V_isempty( const char* pszString ) { return !pszString || !pszString[ 0 ]; }
+
+// The islower/isdigit/etc. functions all expect a parameter that is either
+// 0-0xFF or EOF. It is easy to violate this constraint simply by passing
+// 'char' to these functions instead of unsigned char.
+// The V_ functions handle the char/unsigned char mismatch by taking a
+// char parameter and casting it to unsigned char so that chars with the
+// sign bit set will be zero extended instead of sign extended.
+// Not that EOF cannot be passed to these functions.
+//
+// These functions could also be used for optimizations if locale
+// considerations make some of the CRT functions slow.
+inline bool V_isalpha(char c) { return isalpha( (unsigned char)c ) != 0; }
+inline bool V_isalnum(char c) { return isalnum( (unsigned char)c ) != 0; }
+inline bool V_isprint(char c) { return isprint( (unsigned char)c ) != 0; }
+inline bool V_isxdigit(char c) { return isxdigit( (unsigned char)c ) != 0; }
+inline bool V_ispunct(char c) { return ispunct( (unsigned char)c ) != 0; }
+inline bool V_isgraph(char c) { return isgraph( (unsigned char)c ) != 0; }
+inline bool V_isupper(char c) { return isupper( (unsigned char)c ) != 0; }
+inline bool V_islower(char c) { return islower( (unsigned char)c ) != 0; }
+inline bool V_iscntrl(char c) { return iscntrl( (unsigned char)c ) != 0; }
+inline bool V_isspace(char c) { return isspace( (unsigned char)c ) != 0; }
+PLATFORM_INTERFACE bool	V_iswspace( wchar_t c );
 
 // Short form remaps
 #define V_memset(dest, fill, count)		V_tier0_memset		((dest), (fill), (count))
@@ -310,6 +401,46 @@ PLATFORM_INTERFACE float64 V_StringToFloat64Raw(const char *buf, float64 default
 // Parses string as a float32 value, if the parsing fails, default_value is returned, doesn't perform error checking/reporting
 PLATFORM_INTERFACE float32 V_StringToFloat32Raw(const char *buf, float32 default_value, bool *successful = NULL, char **remainder = NULL);
 
+// Templatised and shortened version of the generic V_StringTo* functions
+// these are silent, so you won't get error console warnings if parsing fails by default
+template <typename T>
+inline bool V_StringToValue( const char *string, T &value, uint flags = PARSING_FLAG_SKIP_ASSERT | PARSING_FLAG_SKIP_WARNING );
+
+template <> inline bool V_StringToValue<bool>( const char *string, bool &value, uint flags )
+{ bool success = false; value = V_StringToBool( string, false, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<int8>( const char *string, int8 &value, uint flags )
+{ bool success = false; value = V_StringToInt8( string, 0, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<uint8>( const char *string, uint8 &value, uint flags )
+{ bool success = false; value = V_StringToUint8( string, 0, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<int16>( const char *string, int16 &value, uint flags )
+{ bool success = false; value = V_StringToInt16( string, 0, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<uint16>( const char *string, uint16 &value, uint flags )
+{ bool success = false; value = V_StringToUint16( string, 0, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<int32>( const char *string, int32 &value, uint flags )
+{ bool success = false; value = V_StringToInt32( string, 0, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<uint32>( const char *string, uint32 &value, uint flags )
+{ bool success = false; value = V_StringToUint32( string, 0, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<int64>( const char *string, int64 &value, uint flags )
+{ bool success = false; value = V_StringToInt64( string, 0, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<uint64>( const char *string, uint64 &value, uint flags )
+{ bool success = false; value = V_StringToUint64( string, 0, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<float32>( const char *string, float32 &value, uint flags )
+{ bool success = false; value = V_StringToFloat32( string, 0.0f, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<float64>( const char *string, float64 &value, uint flags )
+{ bool success = false; value = V_StringToFloat64( string, 0.0, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<Vector>( const char *string, Vector &value, uint flags )
+{ bool success = false; V_StringToVector( string, value, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<Vector2D>( const char *string, Vector2D &value, uint flags )
+{ bool success = false; V_StringToVector2D( string, value, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<Vector4D>( const char *string, Vector4D &value, uint flags )
+{ bool success = false; V_StringToVector4D( string, value, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<Color>( const char *string, Color &value, uint flags )
+{ bool success = false; V_StringToColor( string, value, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<QAngle>( const char *string, QAngle &value, uint flags )
+{ bool success = false; V_StringToQAngle( string, value, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<Quaternion>( const char *string, Quaternion &value, uint flags )
+{ bool success = false; V_StringToQuaternion( string, value, &success, nullptr, flags ); return success; }
+
 // returns string immediately following prefix, (ie str+strlen(prefix)) or NULL if prefix not found
 PLATFORM_INTERFACE const char *_V_StringAfterPrefix( const char *str, const char *prefix );
 PLATFORM_INTERFACE const char *_V_StringAfterPrefixCaseSensitive( const char *str, const char *prefix );
@@ -325,32 +456,6 @@ inline bool	V_StringHasPrefixCaseSensitive( const char *str, const char *prefix 
 PLATFORM_INTERFACE void	V_normalizeFloatString( char* pFloat );
 PLATFORM_INTERFACE void	V_normalizeFloatWString( wchar_t* pFloat );
 
-// UNDONE: Find a non-compiler-specific way to do this
-#ifdef _WIN32
-#ifndef _VA_LIST_DEFINED
-
-#ifdef  _M_ALPHA
-
-struct va_list 
-{
-    char *a0;       /* pointer to first homed integer argument */
-    int offset;     /* byte offset of next parameter */
-};
-
-#else  // !_M_ALPHA
-
-typedef char *  va_list;
-
-#endif // !_M_ALPHA
-
-#define _VA_LIST_DEFINED
-
-#endif   // _VA_LIST_DEFINED
-
-#elif POSIX
-#include <stdarg.h>
-#endif
-
 // Prints out a pretified memory counter string value ( e.g., 7,233.27 Mb, 1,298.003 Kb, 127 bytes )
 PLATFORM_INTERFACE char *V_PrettifyMem( float value, int digitsafterdecimal = 2, bool usebinaryonek = false );
 
@@ -361,28 +466,110 @@ PLATFORM_INTERFACE char *V_PrettifyNum( int64 value );
 PLATFORM_INTERFACE int V_UTF8LenFromFirst( char c );
 
 // Conversion functions, returning the number of bytes consumed
-PLATFORM_INTERFACE int V_UTF8ToUChar32( const char *str, char32_t &result, bool &failed );
-PLATFORM_INTERFACE int V_UTF32ToUChar32( const char32_t *str, char32_t &result, bool &failed );
+// Decode a single UTF-8 character to a uchar32, returns number of UTF-8 bytes parsed
+PLATFORM_INTERFACE int V_UTF8ToUChar32( const char *str, uchar32 &result, bool &failed );
+PLATFORM_INTERFACE int V_UTF32ToUChar32( const uchar32 *str, uchar32 &result, bool &failed );
 
-PLATFORM_INTERFACE int V_UChar32ToUTF16( const char32_t *str, char16_t *result );
-PLATFORM_INTERFACE int V_UChar32ToUTF8( const char32_t *str, char *result );
+// Decode a single UTF-16 character to a uchar32, returns number of UTF-16 characters (NOT BYTES) consumed
+PLATFORM_INTERFACE int V_UTF16ToUChar32( const uchar16 *str, uchar32 &result, bool &failed );
 
-PLATFORM_INTERFACE int V_UTF8ToUTF16( const char *str, char16_t *dest, int dest_size, EStringConvertErrorPolicy policy );
-PLATFORM_INTERFACE int V_UTF8CharsToUTF16( const char *str, int size, char16_t *dest, int dest_size, EStringConvertErrorPolicy policy );
-PLATFORM_INTERFACE int V_UTF8ToUTF32( const char *str, char32_t *dest, int dest_size, EStringConvertErrorPolicy policy );
-PLATFORM_INTERFACE int V_UTF8CharsToUTF32( const char *str, int size, char32_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+PLATFORM_INTERFACE int V_UChar32ToUTF16( const uchar32 *str, uchar16 *result );
+PLATFORM_INTERFACE int V_UChar32ToUTF8( const uchar32 *str, char *result );
 
-PLATFORM_INTERFACE int V_UTF16ToUTF8( const char16_t *str, char *dest, int dest_size, EStringConvertErrorPolicy policy );
-PLATFORM_INTERFACE int V_UTF16CharsToUTF8( const char16_t *str, int size, char *dest, int dest_size, EStringConvertErrorPolicy policy );
-PLATFORM_INTERFACE int V_UTF16ToUTF16( const char16_t *str, char16_t *dest, int dest_size, EStringConvertErrorPolicy policy );
-PLATFORM_INTERFACE int V_UTF16ToUTF32( const char16_t *str, char32_t *dest, int dest_size, EStringConvertErrorPolicy policy );
-PLATFORM_INTERFACE int V_UTF16CharsToUTF32( const char16_t *str, int size, char32_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+// Conversion between Unicode string types (UTF-8, UTF-16, UTF-32). Deals with bytes, not element counts,
+// to minimize harm from the programmer mistakes which continue to plague our wide-character string code.
+// Returns the number of bytes written to the output, or if output is NULL, the number of bytes required.
+PLATFORM_INTERFACE int V_UTF8ToUTF16( const char *str, OUT_Z_BYTECAP( dest_size ) uchar16 *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+PLATFORM_INTERFACE int V_UTF8ToUTF32( const char *str, OUT_Z_BYTECAP( dest_size ) uchar32 *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+PLATFORM_INTERFACE int V_UTF16ToUTF8( const uchar16 *str, OUT_Z_BYTECAP( dest_size ) char *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+PLATFORM_INTERFACE int V_UTF16ToUTF16( const uchar16 *str, OUT_Z_BYTECAP( dest_size ) uchar16 *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+PLATFORM_INTERFACE int V_UTF16ToUTF32( const uchar16 *str, OUT_Z_BYTECAP( dest_size ) uchar32 *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+PLATFORM_INTERFACE int V_UTF32ToUTF8( const uchar32 *str, OUT_Z_BYTECAP( dest_size ) char *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+PLATFORM_INTERFACE int V_UTF32ToUTF16( const uchar32 *str, OUT_Z_BYTECAP( dest_size ) uchar16 *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
 
-PLATFORM_INTERFACE int V_UTF32ToUTF8( const char32_t *str, char *dest, int dest_size, EStringConvertErrorPolicy policy );
-PLATFORM_INTERFACE int V_UTF32CharsToUTF8( const char32_t *str, int size, char *dest, int dest_size, EStringConvertErrorPolicy policy );
-PLATFORM_INTERFACE int V_UTF32ToUTF16( const char32_t *str, char16_t *dest, int dest_size, EStringConvertErrorPolicy policy );
-PLATFORM_INTERFACE int V_UTF32CharsToUTF16( const char32_t *str, int size, char16_t *dest, int dest_size, EStringConvertErrorPolicy policy );
-PLATFORM_INTERFACE int V_UTF32ToUTF32( const char32_t *str, char32_t *dest, int dest_size, EStringConvertErrorPolicy policy );
+// This is disgusting and exist only easily to facilitate having 16-bit and 32-bit wchar_t's on different platforms
+PLATFORM_INTERFACE int V_UTF32ToUTF32( const uchar32 *str, OUT_Z_BYTECAP( dest_size ) uchar32 *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+
+// Conversion between count-limited UTF-n character arrays, including any potential NULL characters.
+// Output has a terminating NULL for safety; strip the last character if you want an unterminated string.
+// Returns the number of bytes written to the output, or if output is NULL, the number of bytes required.
+PLATFORM_INTERFACE int V_UTF8CharsToUTF16( const char *str, int size, OUT_Z_BYTECAP( dest_size ) uchar16 *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+PLATFORM_INTERFACE int V_UTF8CharsToUTF32( const char *str, int size, OUT_Z_BYTECAP( dest_size ) uchar32 *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+PLATFORM_INTERFACE int V_UTF16CharsToUTF8( const uchar16 *str, int size, OUT_Z_BYTECAP( dest_size ) char *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+PLATFORM_INTERFACE int V_UTF16CharsToUTF32( const uchar16 *str, int size, OUT_Z_BYTECAP( dest_size ) uchar32 *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+PLATFORM_INTERFACE int V_UTF32CharsToUTF8( const uchar32 *str, int size, OUT_Z_BYTECAP( dest_size ) char *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+PLATFORM_INTERFACE int V_UTF32CharsToUTF16( const uchar32 *str, int size, OUT_Z_BYTECAP( dest_size ) uchar16 *dest, int dest_size, EStringConvertErrorPolicy policy = STRINGCONVERT_ASSERT_REPLACE );
+
+// NOTE: WString means either UTF32 or UTF16 depending on the platform and compiler settings.
+#if defined( _MSC_VER ) || defined( _WIN32 )
+#define V_UTF8ToWString V_UTF8ToUTF16
+#define V_UTF8CharsToWString V_UTF8CharsToUTF16
+#define V_UTF32ToWString V_UTF32ToUTF16
+#define V_WStringToUTF8 V_UTF16ToUTF8
+#define V_WStringCharsToUTF8 V_UTF16CharsToUTF8
+#define V_WStringToUTF32 V_UTF16ToUTF32
+#else
+#define V_UTF8ToWString V_UTF8ToUTF32
+#define V_UTF8CharsToWString V_UTF8CharsToUTF32
+#define V_UTF32ToWString V_UTF32ToUTF32
+#define V_WStringToUTF8 V_UTF32ToUTF8
+#define V_WStringCharsToUTF8 V_UTF32CharsToUTF8
+#define V_WStringToUTF32 V_UTF32ToUTF32
+#endif
+
+PLATFORM_OVERLOAD int V_UnicodeCaseCollate( const char *s1, const char *s2, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+
+// Validate that a Unicode string is well-formed and contains only valid code points
+PLATFORM_OVERLOAD bool V_UnicodeValidate( const char *pUTF8 );
+PLATFORM_OVERLOAD bool V_UnicodeValidate( const uchar16 *pUTF16 );
+PLATFORM_OVERLOAD bool V_UnicodeValidate( const uchar32 *pUTF32 );
+
+// Returns length of string in Unicode code points (printed glyphs or non-printing characters)
+PLATFORM_OVERLOAD int V_UnicodeLength( const char *pUTF8 );
+PLATFORM_OVERLOAD int V_UnicodeLength( const uchar16 *pUTF16 );
+PLATFORM_OVERLOAD int V_UnicodeLength( const uchar32 *pUTF32 );
+
+PLATFORM_OVERLOAD int V_UnicodeBufferLength( char const *pUTF8, int size, bool &success );
+PLATFORM_OVERLOAD int V_UnicodeBufferLength( const uchar16 *pUTF32, int size, bool &success );
+PLATFORM_OVERLOAD int V_UnicodeBufferLength( const uchar32 *pUTF16, int size, bool &success );
+
+// Repair invalid Unicode strings by dropping truncated characters and fixing improperly-double-encoded UTF-16 sequences.
+// Unlike conversion functions which replace with '?' by default, a repair operation assumes that you know that something
+// is wrong with the string (eg, mid-sequence truncation) and you just want to do the best possible job of cleaning it up.
+// You can pass a REPLACE or FAIL policy if you would prefer to replace characters with '?' or clear the entire string.
+// Returns nonzero on success, or 0 if the policy is FAIL and an invalid sequence was found.
+PLATFORM_OVERLOAD int V_UnicodeRepair( char *pUTF8, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+PLATFORM_OVERLOAD int V_UnicodeRepair( uchar16 *pUTF16, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+PLATFORM_OVERLOAD int V_UnicodeRepair( uchar32 *pUTF32, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+
+// Advance pointer forward by N Unicode code points (printed glyphs or non-printing characters), stopping at terminating null if encountered.
+PLATFORM_OVERLOAD char *V_UnicodeAdvance( char *pUTF8, int nCharacters );
+PLATFORM_OVERLOAD uchar16 *V_UnicodeAdvance( uchar16 *pUTF16, int nCharactersnCharacters );
+PLATFORM_OVERLOAD uchar32 *V_UnicodeAdvance( uchar32 *pUTF32, int nChars );
+inline const char *V_UnicodeAdvance( const char *pUTF8, int nCharacters ) { return V_UnicodeAdvance( (char *)pUTF8, nCharacters ); }
+inline const uchar16 *V_UnicodeAdvance( const uchar16 *pUTF16, int nCharacters ) { return V_UnicodeAdvance( (uchar16 *)pUTF16, nCharacters ); }
+inline const uchar32 *V_UnicodeAdvance( const uchar32 *pUTF32, int nCharacters ) { return V_UnicodeAdvance( (uchar32 *)pUTF32, nCharacters ); }
+
+// Truncate to maximum of N Unicode code points (printed glyphs or non-printing characters)
+inline void V_UnicodeTruncate( char *pUTF8, int nCharacters ) { *V_UnicodeAdvance( pUTF8, nCharacters ) = 0; }
+inline void V_UnicodeTruncate( uchar16 *pUTF16, int nCharacters ) { *V_UnicodeAdvance( pUTF16, nCharacters ) = 0; }
+inline void V_UnicodeTruncate( uchar32 *pUTF32, int nCharacters ) { *V_UnicodeAdvance( pUTF32, nCharacters ) = 0; }
+
+PLATFORM_OVERLOAD int V_UnicodeCaseCompare( const char *s1, const char *s2, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+PLATFORM_OVERLOAD int V_UnicodeCaseCompare( const uchar16 *s1, const uchar16 *s2, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+PLATFORM_OVERLOAD int V_UnicodeCaseCompare( const uchar32 *s1, const uchar32 *s2, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+
+PLATFORM_OVERLOAD int V_UnicodeCaseConvert( const char *pUTF8, OUT_Z_BYTECAP( dest_size ) char *dest, int dest_size, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+PLATFORM_OVERLOAD int V_UnicodeCaseConvert( const uchar16 *pUTF16, OUT_Z_BYTECAP( dest_size ) uchar16 *dest, int dest_size, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+PLATFORM_OVERLOAD int V_UnicodeCaseConvert( const uchar32 *pUTF32, OUT_Z_BYTECAP( dest_size ) uchar32 *dest, int dest_size, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+
+PLATFORM_OVERLOAD bool V_UnicodeCaseStringInString( const char *pUTF8, const char *substr, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+PLATFORM_OVERLOAD bool V_UnicodeCaseStringInString( const uchar16 *pUTF16, const uchar16 *substr, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+PLATFORM_OVERLOAD bool V_UnicodeCaseStringInString( const uchar32 *pUTF32, const uchar32 *substr, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+
+PLATFORM_OVERLOAD uchar32 *V_UnicodeConvertAndCaseStr( const char *pUTF8, OUT_Z_BYTECAP( dest_size ) uchar32 *dest, int dest_size, uchar32 **new_buf, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+PLATFORM_OVERLOAD uchar32 *V_UnicodeConvertAndCaseStr( const uchar16 *pUTF16, OUT_Z_BYTECAP( dest_size ) uchar32 *dest, int dest_size, uchar32 **new_buf, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
+PLATFORM_OVERLOAD uchar32 *V_UnicodeConvertAndCaseStr( const uchar32 *pUTF32, OUT_Z_BYTECAP( dest_size ) uchar32 *dest, int dest_size, uchar32 **new_buf, int flags, EStringConvertErrorPolicy ePolicy = STRINGCONVERT_SKIP );
 
 // Functions for converting hexidecimal character strings back into binary data etc.
 //
@@ -419,6 +606,15 @@ PLATFORM_INTERFACE void _V_FileBase( const char *in, char *out, int maxlen );
 
 // Remove the final characters of ppath if it's '\' or '/'.
 PLATFORM_INTERFACE void V_StripTrailingSlash( char *ppath );
+
+// Remove the final characters of ppline if they are whitespace (uses V_isspace)
+PLATFORM_INTERFACE void V_StripTrailingWhitespace( char *ppline );
+
+// Remove the initial characters of ppline if they are whitespace (uses V_isspace)
+PLATFORM_INTERFACE void V_StripLeadingWhitespace( char *ppline );
+
+// Remove the initial/final characters of ppline if they are " quotes
+PLATFORM_INTERFACE void V_StripSurroundingQuotes( char *ppline );
 
 // Remove any extension from in and return resulting string in out
 PLATFORM_INTERFACE void _V_StripExtension( const char *in, char *out, int outLen );
@@ -467,22 +663,26 @@ PLATFORM_INTERFACE bool V_RemoveDotSlashes( char *pFilename, char separator = CO
 // If pPath is a relative path, this function makes it into an absolute path
 // using the current working directory as the base, or pStartingDir if it's non-NULL.
 // Returns false if it runs out of room in the string, or if pPath tries to ".." past the root directory.
-PLATFORM_INTERFACE void _V_MakeAbsolutePath( char *pOut, int outLen, const char *pPath, int, const char *pStartingDir = NULL );
+PLATFORM_INTERFACE void _V_MakeAbsolutePath( OUT_Z_CAP( outLen ) char *pOut, int outLen, const char *pPath, const char *pStartingDir = NULL );
+PLATFORM_INTERFACE bool V_MakeAbsolutePathBuffer( CBufferString &buf, const char *pPath, const char *pStartingDir = NULL );
 #define V_MakeAbsolutePath _V_MakeAbsolutePath
+
+PLATFORM_INTERFACE void V_RemoveFormatSpecifications( const char *pszFrom, char *pszTo, size_t sizeDest );
 
 // Creates a relative path given two full paths
 // The first is the full path of the file to make a relative path for.
 // The second is the full path of the directory to make the first file relative to
 // Returns false if they can't be made relative (on separate drives, for example)
-PLATFORM_INTERFACE bool _V_MakeRelativePath( const char *pFullPath, const char *pDirectory, char *pRelativePath, int nBufLen, bool );
+PLATFORM_INTERFACE bool _V_MakeRelativePath( const char *pFullPath, const char *pDirectory, OUT_Z_CAP( nBufLen ) char *pRelativePath, int nBufLen, bool );
+PLATFORM_INTERFACE bool V_MakeRelativePathBuffer( const char *pFullPath, const char *pDirectory, CBufferString &buf, bool );
 #define V_MakeRelativePath _V_MakeRelativePath
 
 // Fixes up a file name, removing dot slashes, fixing slashes, converting to lowercase, etc.
-PLATFORM_INTERFACE void _V_FixupPathName( char *pOut, size_t nOutLen, const char *pPath, bool convert_to_lower = true );
+PLATFORM_INTERFACE void _V_FixupPathName( OUT_Z_CAP( nOutLen ) char *pOut, size_t nOutLen, const char *pPath, bool convert_to_lower = true );
 #define V_FixupPathName _V_FixupPathName
 
 // Adds a path separator to the end of the string if there isn't one already. Returns false if it would run out of space.
-PLATFORM_INTERFACE void _V_AppendSlash( char *pStr, int strSize, char separator = CORRECT_PATH_SEPARATOR );
+PLATFORM_INTERFACE void _V_AppendSlash( INOUT_Z_CAP( strSize ) char *pStr, int strSize, char separator = CORRECT_PATH_SEPARATOR );
 #define V_AppendSlash _V_AppendSlash
 
 // Returns true if the path is an absolute path.
@@ -493,7 +693,7 @@ PLATFORM_INTERFACE bool V_IsAbsolutePath( const char *pPath );
 // Returns true if it completed successfully.
 // If it would overflow pOut, it fills as much as it can and returns false.
 PLATFORM_INTERFACE bool _V_StrSubst( const char *pIn, const char *pMatch, const char *pReplaceWith,
-									 char *pOut, int outLen, bool bCaseSensitive=false );
+									 OUT_Z_CAP( outLen ) char *pOut, int outLen, bool bCaseSensitive=false );
 #define V_StrSubst _V_StrSubst
 
 // AM TODO: If possible, use CSplitString instead rn. 
@@ -534,6 +734,51 @@ PLATFORM_INTERFACE void V_FixDoubleSlashes( char *pStr );
 
 // Convert \r\n (Windows linefeeds) to \n (Unix linefeeds).
 PLATFORM_INTERFACE void V_TranslateLineFeedsToUnix( char *pStr );
+
+// Encode a string for display as HTML -- this only encodes ' " & < >, which are the important ones to encode for 
+// security and ensuring HTML display doesn't break.  Other special chars like the ? sign and so forth will not
+// be encoded
+//
+// Returns false if there was not enough room in pDest to encode the entire source string, otherwise true
+PLATFORM_INTERFACE bool V_BasicHtmlEntityEncode( OUT_Z_CAP( nDestSize ) char *pDest, const int nDestSize, char const *pIn, const int nInSize, bool bPreserveWhitespace = false );
+
+
+// Decode a string with htmlentities HTML -- this should handle all special chars, not just the ones V_BasicHtmlEntityEncode uses.
+//
+// Returns false if there was not enough room in pDest to decode the entire source string, otherwise true
+PLATFORM_INTERFACE bool V_HtmlEntityDecodeToUTF8( OUT_Z_CAP( nDestSize ) char *pDest, const int nDestSize, char const *pIn, const int nInSize );
+
+// strips HTML from a string.  Should call Q_HTMLEntityDecodeToUTF8 afterward.
+PLATFORM_INTERFACE void V_StripAndPreserveHTML( CBufferString *pbuffer, const char *pchHTML, const char **rgszPreserveTags, uint cPreserveTags, uint cMaxResultSize );
+PLATFORM_INTERFACE void V_StripAndPreserveHTMLCore( CBufferString *pbuffer, const char *pchHTML, const char **rgszPreserveTags, uint cPreserveTags, const char **rgszNoCloseTags, uint cNoCloseTags, uint cMaxResultSize );
+
+// Extracts the domain from a URL
+PLATFORM_INTERFACE bool V_ExtractDomainFromURL( const char *pchURL, OUT_Z_CAP( cchDomain ) char *pchDomain, int cchDomain );
+
+// returns true if the url passed in is on the specified domain
+PLATFORM_INTERFACE bool V_URLContainsDomain( const char *pchURL, const char *pchDomain );
+
+//-----------------------------------------------------------------------------
+// returns true if the character is allowed in a URL, false otherwise
+//-----------------------------------------------------------------------------
+PLATFORM_INTERFACE bool V_IsValidURLCharacter( const char *pch, int *pAdvanceBytes );
+
+//-----------------------------------------------------------------------------
+// returns true if the character is allowed in a DNS doman name, false otherwise
+//-----------------------------------------------------------------------------
+PLATFORM_INTERFACE bool V_IsValidDomainNameCharacter( const char *pch, int *pAdvanceBytes );
+
+ // Converts BBCode tags to HTML tags
+PLATFORM_INTERFACE bool V_BBCodeToHTML( OUT_Z_CAP( nDestSize ) char *pDest, const int nDestSize, char const *pIn, const int nInSize );
+
+
+// helper to identify "mean" spaces, which we don't like in visible identifiers
+// such as player Name
+PLATFORM_INTERFACE bool V_IsMeanSpaceW( wchar_t wch );
+
+// helper to identify characters which are deprecated in Unicode,
+// and we simply don't accept
+PLATFORM_INTERFACE bool V_IsDeprecatedW( wchar_t wch );
 
 //-----------------------------------------------------------------------------
 // generic unique name helper functions
@@ -601,6 +846,160 @@ bool V_GenerateUniqueName( char *name, int memsize, const char *prefix, const Na
 	V_snprintf( name, memsize, "%s%d", prefix, i );
 	return true;
 }
+
+//
+// This utility class is for performing UTF-8 <-> UTF-16 conversion.
+// It is intended for use with function/method parameters.
+//
+// For example, you can call
+//     FunctionTakingUTF16( CStrAutoEncode( utf8_string ).ToUChar16() )
+// or
+//     FunctionTakingUTF8( CStrAutoEncode( utf16_string ).ToString() )
+//
+// The converted string is allocated off the heap, and destroyed when
+// the object goes out of scope.
+//
+// if the string cannot be converted, NULL is returned.
+//
+// This class doesn't have any conversion operators; the intention is
+// to encourage the developer to get used to having to think about which
+// encoding is desired.
+//
+class CStrAutoEncode
+{
+public:
+	explicit CStrAutoEncode( const char *buf )
+	{
+		InitEmpty();
+
+		m_pch = buf;
+		m_bHasUTF8 = true;
+	}
+
+	explicit CStrAutoEncode( const uchar16 *buf )
+	{
+		InitEmpty();
+
+		m_char16 = buf;
+		m_bHasUTF16 = true;
+	}
+
+	explicit CStrAutoEncode( const uchar32 *buf )
+	{
+		InitEmpty();
+
+		m_char32 = buf;
+		m_bHasUTF32 = true;
+	}
+
+	CStrAutoEncode( const CStrAutoEncode &other )
+	{
+		Copy( other );
+	}
+
+	// returns the UTF-8 string, converting on the fly.
+	const char *ToUTF8() { return ToString(); }
+	const char* ToString()
+	{
+		PopulateUTF8();
+		return m_pch;
+	}
+
+	// returns the UTF-16 string, converting on the fly.
+	const uchar16 *ToUTF16() { return ToUChar16(); }
+	const uchar16 *ToUChar16()
+	{
+		PopulateUTF16();
+		return m_char16;
+	}
+
+	// returns the UTF-32 string, converting on the fly.
+	const uchar32 *ToUTF32() { return ToUChar32(); }
+	const uchar32 *ToUChar32()
+	{
+		PopulateUTF32();
+		return m_char32;
+	}
+
+	~CStrAutoEncode()
+	{
+		Clear();
+	}
+
+	PLATFORM_CLASS void Clear();
+	PLATFORM_CLASS CStrAutoEncode &Copy( const CStrAutoEncode &other );
+
+	// Creates a copy and stores it
+	PLATFORM_CLASS void SetCopy( const char *buf, int nCount = -1 );
+	PLATFORM_CLASS void SetCopy( const uchar16 *buf, int nCount = -1 );
+	PLATFORM_CLASS void SetCopy( const uchar32 *buf, int nCount = -1 );
+
+	// Creates a copy and coverts to UTF8 then stores it
+	PLATFORM_CLASS void SetUTF8Copy( const uchar32 *buf );
+	PLATFORM_CLASS void SetUTF8Copy( const uchar16 *buf );
+
+	// Creates a copy and coverts to UTF16 then stores it
+	PLATFORM_CLASS void SetUTF16Copy( const char *buf );
+	PLATFORM_CLASS void SetUTF16Copy( const uchar32 *buf );
+
+	// Creates a copy and coverts to UTF32 then stores it
+	PLATFORM_CLASS void SetUTF32Copy( const char *buf );
+	PLATFORM_CLASS void SetUTF32Copy( const uchar16 *buf );
+
+private:
+	PLATFORM_CLASS void InitEmpty();
+
+	PLATFORM_CLASS void PopulateUTF8() const;
+	PLATFORM_CLASS void PopulateUTF16() const;
+	PLATFORM_CLASS void PopulateUTF32() const;
+
+	// one of these pointers is an owned pointer; whichever
+	// one is the encoding OTHER than the one we were initialized
+	// with is the pointer we've allocated and must free.
+	const char *m_pch;
+	const uchar16 *m_char16;
+	const uchar32 *m_char32;
+
+	bool m_bHasUTF8 : 1;
+	bool m_bOwnUTF8 : 1;
+
+	bool m_bHasUTF16 : 1;
+	bool m_bOwnUTF16 : 1;
+
+	bool m_bHasUTF32 : 1;
+	bool m_bOwnUTF32 : 1;
+
+	bool m_bOriginal : 1;
+};
+
+// trim right whitespace
+PLATFORM_INTERFACE char *TrimRight( char *pString );
+
+PLATFORM_INTERFACE const char *SkipBlanks( const char *pString );
+
+// Encodes a string (or binary data) in URL encoding format, see rfc1738 section 2.2.
+// Dest buffer should be 3 times the size of source buffer to guarantee it has room to encode.
+PLATFORM_INTERFACE void V_URLEncodeRaw( OUT_Z_CAP(nDestLen) char *pchDest, int nDestLen, const char *pchSource, int nSourceLen );
+
+// Decodes a string (or binary data) from URL encoding format, see rfc1738 section 2.2.
+// Dest buffer should be at least as large as source buffer to gurantee room for decode.
+// Dest buffer being the same as the source buffer (decode in-place) is explicitly allowed.
+//
+// Returns the amount of space actually used in the output buffer.  
+PLATFORM_INTERFACE size_t V_URLDecodeRaw( OUT_CAP(nDecodeDestLen) char *pchDecodeDest, int nDecodeDestLen, const char *pchEncodedSource, int nEncodedSourceLen );
+
+// Encodes a string (or binary data) in URL encoding format, this isn't the strict rfc1738 format, but instead uses + for spaces.  
+// This is for historical reasons and HTML spec foolishness that lead to + becoming a de facto standard for spaces when encoding form data.
+// Dest buffer should be 3 times the size of source buffer to guarantee it has room to encode.
+PLATFORM_INTERFACE void V_URLEncode( OUT_Z_CAP(nDestLen) char *pchDest, int nDestLen, const char *pchSource, int nSourceLen );
+
+// Decodes a string (or binary data) in URL encoding format, this isn't the strict rfc1738 format, but instead uses + for spaces.  
+// This is for historical reasons and HTML spec foolishness that lead to + becoming a de facto standard for spaces when encoding form data.
+// Dest buffer should be at least as large as source buffer to gurantee room for decode.
+// Dest buffer being the same as the source buffer (decode in-place) is explicitly allowed.
+//
+// Returns the amount of space actually used in the output buffer.  
+PLATFORM_INTERFACE size_t V_URLDecode( OUT_CAP(nDecodeDestLen) char *pchDecodeDest, int nDecodeDestLen, const char *pchEncodedSource, int nEncodedSourceLen );
 
 // 3d memcpy. Copy (up-to) 3 dimensional data with arbitrary source and destination
 // strides. Optimizes to just a single memcpy when possible. For 2d data, set numslices to 1.

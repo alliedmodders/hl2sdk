@@ -1,4 +1,4 @@
-//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -156,7 +156,8 @@ enum MoveType_t : unsigned char
 	MOVETYPE_CUSTOM,			// Allows the entity to describe its own physics
 
 	// should always be defined as the last item in the list
-	MOVETYPE_LAST		= MOVETYPE_CUSTOM,
+	MOVETYPE_LAST,
+	MOVETYPE_INVALID	= MOVETYPE_LAST,
 
 	MOVETYPE_MAX_BITS	= 5
 };

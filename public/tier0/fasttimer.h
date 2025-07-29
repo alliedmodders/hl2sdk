@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -84,16 +84,14 @@ public:
 
 	static void Init()
 	{
-		const CPUInformation& pi = GetCPUInformation();
-
 		if ( !IsX360() )
 		{
-			g_ClockSpeed = pi.m_Speed;
+			g_ClockSpeed = Plat_CPUTickFrequency();
 		}
 		else
 		{
 			// cycle counter runs as doc'd at 1/64 Xbox 3.2GHz clock speed, thus 50 Mhz
-			g_ClockSpeed = pi.m_Speed / 64L;
+			g_ClockSpeed = Plat_CPUTickFrequency() / 64L;
 		}
 		g_dwClockSpeed = (unsigned long)g_ClockSpeed;
 

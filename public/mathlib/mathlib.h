@@ -1,4 +1,4 @@
-//===== Copyright � 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -14,9 +14,7 @@
 #include "tier0/dbg.h"
 
 #include "mathlib/math_pfns.h"
-#ifndef ALIGN8_POST
-#define ALIGN8_POST
-#endif
+
 // plane_t structure
 // !!! if this is changed, it must be changed in asm code too !!!
 // FIXME: does the asm code even exist anymore?
@@ -151,6 +149,9 @@ struct matrix3x4_t
 	inline void ConcatRotations( const matrix3x4_t &other );
 	inline void ConcatTransforms( const matrix3x4_t &other );
 
+	inline void ScaleBy( const float value );
+	inline void ScaleByZero();
+
 	inline void Multiply( const matrix3x4_t &other );
 	inline void Transpose();
 
@@ -160,6 +161,9 @@ struct matrix3x4_t
 
 	inline float RowDotProduct( int row, const Vector &in ) const;
 	inline float ColumnDotProduct( MatrixAxisType_t column, const Vector &in ) const;
+
+	inline Vector GetTranslation() const;
+	inline void SetTranslation( const Vector &in );
 
 	inline Vector GetColumn( MatrixAxisType_t column ) const;
 	inline void SetColumn( const Vector &in, MatrixAxisType_t column );
@@ -205,7 +209,11 @@ struct matrix3x4_t
 		}
 	}
 
-	matrix3x4_t operator *( const matrix3x4_t &other ) { Multiply( other ); return *this; }
+	matrix3x4_t &operator *=( const matrix3x4_t &other ) { Multiply( other ); return *this; }
+	matrix3x4_t &operator *=( float value ) { ScaleBy( value ); return *this; }
+
+	matrix3x4_t operator *( const matrix3x4_t &other ) const { matrix3x4_t temp( *this ); temp.Multiply( other ); return temp; }
+	matrix3x4_t operator *( float value ) const { matrix3x4_t temp( *this ); temp.ScaleBy( value ); return temp; }
 
 	float *operator[]( int i )				{ Assert(( i >= 0 ) && ( i < 3 )); return m_flMatVal[i]; }
 	const float *operator[]( int i ) const	{ Assert(( i >= 0 ) && ( i < 3 )); return m_flMatVal[i]; }
@@ -378,7 +386,7 @@ void inline SinCos( float radians, float *sine, float *cosine )
 {
 #if defined( _X360 )
 	XMScalarSinCos( sine, cosine, radians );
-#elif defined( COMPILER_MSVC32 )
+#elif defined( PLATFORM_WINDOWS_PC32 )
 	_asm
 	{
 		fld		DWORD PTR [radians]
@@ -390,15 +398,15 @@ void inline SinCos( float radians, float *sine, float *cosine )
 		fstp DWORD PTR [edx]
 		fstp DWORD PTR [eax]
 	}
-#elif defined( GNUC )
+#elif defined( PLATFORM_WINDOWS_PC64 )
+	*sine = sin( radians );
+	*cosine = cos( radians );
+#elif defined( POSIX )
 	double __cosr, __sinr;
- 	__asm __volatile__ ("fsincos" : "=t" (__cosr), "=u" (__sinr) : "0" (radians));
+	__asm ("fsincos" : "=t" (__cosr), "=u" (__sinr) : "0" (radians));
 
   	*sine = __sinr;
   	*cosine = __cosr;
-#else
-	*sine = sinf(radians);
-	*cosine = cosf(radians);
 #endif
 }
 
@@ -505,6 +513,19 @@ bool MatricesAreEqual( const matrix3x4_t &src1, const matrix3x4_t &src2, float f
 void MatrixGetColumn( const matrix3x4_t &in, int column, Vector &out );
 void MatrixSetColumn( const Vector &in, int column, matrix3x4_t &out );
 
+inline void MatrixGetTranslation( const matrix3x4_t &in, Vector &out )
+{
+	MatrixGetColumn ( in, 3, out );
+}
+
+inline void MatrixSetTranslation( const Vector &in, matrix3x4_t &out )
+{
+	MatrixSetColumn ( in, 3, out );
+}
+
+void MatrixScaleBy ( const float flScale, matrix3x4_t &out );
+void MatrixScaleByZero ( matrix3x4_t &out );
+
 //void DecomposeRotation( const matrix3x4_t &mat, float *out );
 void ConcatRotations (const matrix3x4_t &in1, const matrix3x4_t &in2, matrix3x4_t &out);
 void ConcatTransforms (const matrix3x4_t &in1, const matrix3x4_t &in2, matrix3x4_t &out);
@@ -531,10 +552,6 @@ void QuaternionInvert( const Quaternion &p, Quaternion &q );
 float QuaternionNormalize( Quaternion &q );
 void QuaternionAdd( const Quaternion &p, const Quaternion &q, Quaternion &qt );
 void QuaternionMult( const Quaternion &p, const Quaternion &q, Quaternion &qt );
-void QuaternionExp( const Quaternion &p, Quaternion &q );
-void QuaternionLn( const Quaternion &p, Quaternion &q );
-void QuaternionAverageExponential( Quaternion &q, int nCount, const Quaternion *pQuaternions, const float *pflWeights = NULL );
-void QuaternionLookAt( const Vector &vecForward, const Vector &referenceUp, Quaternion &q );
 void QuaternionMatrix( const Quaternion &q, matrix3x4_t &matrix );
 void QuaternionMatrix( const Quaternion &q, const Vector &pos, matrix3x4_t &matrix );
 void QuaternionAngles( const Quaternion &q, QAngle &angles );
@@ -571,16 +588,16 @@ inline float anglemod(float a)
 inline float RemapVal( float val, float A, float B, float C, float D)
 {
 	if ( A == B )
-		return fsel( val - B , D , C );
+		return val >= B ? D : C;
 	return C + (D - C) * (val - A) / (B - A);
 }
 
 inline float RemapValClamped( float val, float A, float B, float C, float D)
 {
 	if ( A == B )
-		return fsel( val - B , D , C );
+		return val >= B ? D : C;
 	float cVal = (val - A) / (B - A);
-	cVal = clamp<float>( cVal, 0.0f, 1.0f );
+	cVal = clamp( cVal, 0.0f, 1.0f );
 
 	return C + (D - C) * cVal;
 }
@@ -671,7 +688,7 @@ template<> FORCEINLINE QAngleByValue Lerp<QAngleByValue>( float flPercent, const
 #endif // VECTOR_NO_SLOW_OPERATIONS
 
 
-// Swap two of anything.
+/// Same as swap(), but won't cause problems with std::swap
 template <class T> 
 FORCEINLINE void V_swap( T& x, T& y )
 {
@@ -686,15 +703,15 @@ template <class T> FORCEINLINE T AVG(T a, T b)
 }
 
 // number of elements in an array of static size
-#define NELEMS(x) ((sizeof(x))/sizeof(x[0]))
+#define NELEMS(x) ARRAYSIZE(x)
 
 // XYZ macro, for printf type functions - ex printf("%f %f %f",XYZ(myvector));
 #define XYZ(v) (v).x,(v).y,(v).z
 
+
 inline float Sign( float x )
 {
-	return fsel( x, 1.0f, -1.0f ); // x >= 0 ? 1.0f : -1.0f
-	//return (x <0.0f) ? -1.0f : 1.0f;
+	return (x <0.0f) ? -1.0f : 1.0f;
 }
 
 //
@@ -725,16 +742,6 @@ inline int ClampArrayBounds( int n, unsigned maxindex )
 	return result;
 }
 
-
-
-// Turn a number "inside out". 
-// See Recording Animation in Binary Order for Progressive Temporal Refinement
-// by Paul Heckbert from "Graphics Gems".
-//
-// If you want to iterate something from 0 to n, you can use this to iterate non-sequentially, in
-// such a way that you will start with widely separated values and then refine the gaps between
-// them, as you would for progressive refinement. This works with non-power of two ranges.
-int InsideOut( int nTotal, int nCounter );
 
 #define BOX_ON_PLANE_SIDE(emins, emaxs, p)	\
 	(((p)->type < 3)?						\
@@ -796,9 +803,7 @@ inline void PositionMatrix( const Vector &position, matrix3x4_t &mat )
 
 inline void MatrixPosition( const matrix3x4_t &matrix, Vector &position )
 {
-	position[0] = matrix[0][3];
-	position[1] = matrix[1][3];
-	position[2] = matrix[2][3];
+	MatrixGetColumn( matrix, 3, position );
 }
 
 inline void VectorRotate( const Vector& in1, const matrix3x4_t &in2, Vector &out)
@@ -936,18 +941,6 @@ inline int FASTCALL BoxOnPlaneSide2 (const Vector& emins, const Vector& emaxs, c
 
 void ClearBounds (Vector& mins, Vector& maxs);
 void AddPointToBounds (const Vector& v, Vector& mins, Vector& maxs);
-
-//-----------------------------------------------------------------------------
-// Ensures that the min and max bounds values are valid. 
-// (ClearBounds() sets min > max, which is clearly invalid.)
-//-----------------------------------------------------------------------------
-bool AreBoundsValid( const Vector &vMin, const Vector &vMax );
-
-//-----------------------------------------------------------------------------
-// Returns true if the provided point is in the AABB defined by vMin
-// at the lower corner and vMax at the upper corner.
-//-----------------------------------------------------------------------------
-bool IsPointInBounds( const Vector &vPoint, const Vector &vMin, const Vector &vMax );
 
 //
 // COLORSPACE/GAMMA CONVERSION STUFF
@@ -1157,7 +1150,9 @@ inline float SimpleSplineRemapValClamped( float val, float A, float B, float C, 
 
 FORCEINLINE int RoundFloatToInt(float f)
 {
-#if defined( _X360 )
+#if defined(__i386__) || defined(_M_IX86) || defined( PLATFORM_WINDOWS_PC64 ) || defined(__x86_64__)
+	return _mm_cvtss_si32(_mm_load_ss(&f));
+#elif defined( _X360 )
 #ifdef Assert
 	Assert( IsFPUControlWordSet() );
 #endif
@@ -1168,67 +1163,18 @@ FORCEINLINE int RoundFloatToInt(float f)
 	};
 	flResult = __fctiw( f );
 	return pResult[1];
-#else // !X360
-	int nResult;
-#if defined( COMPILER_MSVC32 )
-	__asm
-	{
-		fld f
-		fistp nResult
-	}
-#elif GNUC
-	__asm __volatile__ (
-		"fistpl %0;": "=m" (nResult): "t" (f) : "st"
-	);
 #else
-	nResult = static_cast<int>(f);
-#endif
-	return nResult;
+#error Unknown architecture
 #endif
 }
 
 FORCEINLINE unsigned char RoundFloatToByte(float f)
 {
-#if defined( _X360 )
+	int nResult = RoundFloatToInt(f);
 #ifdef Assert
-	Assert( IsFPUControlWordSet() );
+	Assert( (nResult & ~0xFF) == 0 );
 #endif
-	union
-	{
-		double flResult;
-		int pIntResult[2];
-		unsigned char pResult[8];
-	};
-	flResult = __fctiw( f );
-#ifdef Assert
-	Assert( pIntResult[1] >= 0 && pIntResult[1] <= 255 );
-#endif
-	return pResult[7];
-
-#else // !X360
-	
-	int nResult;
-
-#if defined( COMPILER_MSVC32 )
-	__asm
-	{
-		fld f
-		fistp nResult
-	}
-#elif GNUC
-	__asm __volatile__ (
-		"fistpl %0;": "=m" (nResult): "t" (f) : "st"
-	);
-#else
-	nResult = static_cast<unsigned int> (f) & 0xff;
-#endif
-
-#ifdef Assert
-	Assert( nResult >= 0 && nResult <= 255 );
-#endif 
-	return nResult;
-
-#endif
+	return (unsigned char) nResult;
 }
 
 FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
@@ -1248,25 +1194,41 @@ FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
 	return pResult[1];
 #else  // !X360
 	
-#if defined( COMPILER_MSVC32 )
-	unsigned char nResult[8];
-	__asm
+#if defined( PLATFORM_WINDOWS_PC64 )
+	uint nRet = ( uint ) f;
+	if ( nRet & 1 )
 	{
-		fld f
-		fistp       qword ptr nResult
+		if ( ( f - floor( f ) >= 0.5 ) )
+		{
+			nRet++;
+		}
 	}
-	return *((unsigned long*)nResult);
-#elif defined( COMPILER_GCC )
+	else
+	{
+		if ( ( f - floor( f ) > 0.5 ) )
+		{
+			nRet++;
+		}
+	}
+	return nRet;
+#else // PLATFORM_WINDOWS_PC64
 	unsigned char nResult[8];
-	__asm __volatile__ (
-		"fistpl %0;": "=m" (nResult): "t" (f) : "st"
-	);
-	return *((unsigned long*)nResult);
-#else
-	return static_cast<unsigned long>(f);
-#endif
 
-#endif
+	#if defined( _WIN32 )
+		__asm
+		{
+			fld f
+			fistp       qword ptr nResult
+		}
+	#elif POSIX
+		__asm __volatile__ (
+			"fistpl %0;": "=m" (nResult): "t" (f) : "st"
+		);
+	#endif
+
+		return *((unsigned long*)nResult);
+#endif // PLATFORM_WINDOWS_PC64
+#endif // !X360
 }
 
 FORCEINLINE bool IsIntegralValue( float flValue, float flTolerance = 0.001f )
@@ -1286,76 +1248,54 @@ FORCEINLINE int Float2Int( float a )
 	flResult = __fctiwz( a );
 	return pResult[1];
 #else  // !X360
-	
-	int RetVal;
-
-#if defined( COMPILER_MSVC32 )
-	int CtrlwdHolder;
-	int CtrlwdSetter;
-	__asm 
-	{
-		fld    a					// push 'a' onto the FP stack
-		fnstcw CtrlwdHolder		// store FPU control word
-		movzx  eax, CtrlwdHolder	// move and zero extend word into eax
-		and    eax, 0xFFFFF3FF	// set all bits except rounding bits to 1
-		or     eax, 0x00000C00	// set rounding mode bits to round towards zero
-		mov    CtrlwdSetter, eax	// Prepare to set the rounding mode -- prepare to enter plaid!
-		fldcw  CtrlwdSetter		// Entering plaid!
-		fistp  RetVal				// Store and converted (to int) result
-		fldcw  CtrlwdHolder		// Restore control word
-	}
-#else
-	RetVal = static_cast<int>( a );
-#endif
-
-	return RetVal;
+	// Rely on compiler to generate CVTTSS2SI on x86
+	return (int) a;
 #endif
 }
 
 // Over 15x faster than: (int)floor(value)
 inline int Floor2Int( float a )
 {
-   int RetVal;
-
-#if defined( _X360 )
-	RetVal = (int)floor( a );
-#elif defined( COMPILER_MSVC32 )
-   int CtrlwdHolder;
-   int CtrlwdSetter;
-   __asm 
-   {
-      fld    a					// push 'a' onto the FP stack
-      fnstcw CtrlwdHolder		// store FPU control word
-      movzx  eax, CtrlwdHolder	// move and zero extend word into eax
-      and    eax, 0xFFFFF3FF	// set all bits except rounding bits to 1
-      or     eax, 0x00000400	// set rounding mode bits to round down
-      mov    CtrlwdSetter, eax	// Prepare to set the rounding mode -- prepare to enter plaid!
-      fldcw  CtrlwdSetter		// Entering plaid!
-      fistp  RetVal				// Store floored and converted (to int) result
-      fldcw  CtrlwdHolder		// Restore control word
-   }
+	int RetVal;
+#if defined( __i386__ )
+	// Convert to int and back, compare, subtract one if too big
+	__m128 a128 = _mm_set_ss(a);
+	RetVal = _mm_cvtss_si32(a128);
+    __m128 rounded128 = _mm_cvt_si2ss(_mm_setzero_ps(), RetVal);
+	RetVal -= _mm_comigt_ss( rounded128, a128 );
 #else
 	RetVal = static_cast<int>( floor(a) );
 #endif
-
 	return RetVal;
 }
 
 //-----------------------------------------------------------------------------
 // Fast color conversion from float to unsigned char
 //-----------------------------------------------------------------------------
-FORCEINLINE unsigned char FastFToC( float c )
+FORCEINLINE unsigned int FastFToC( float c )
 {
-	volatile float dc;
-
-	// ieee trick
-	dc = c * 255.0f + (float)(1 << 23);
-	
-	// return the lsb
-#if defined( _X360 )
-	return ((unsigned char*)&dc)[3];
+#if defined( __i386__ )
+	// IEEE float bit manipulation works for values between [0, 1<<23)
+	union { float f; int i; } convert = { c*255.0f + (float)(1<<23) };
+	return convert.i & 255;
 #else
-	return *(unsigned char*)&dc;
+	// consoles CPUs suffer from load-hit-store penalty
+	return Float2Int( c * 255.0f );
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// Fast conversion from float to integer with magnitude less than 2**22
+//-----------------------------------------------------------------------------
+FORCEINLINE int FastFloatToSmallInt( float c )
+{
+#if defined( __i386__ )
+	// IEEE float bit manipulation works for values between [-1<<22, 1<<22)
+	union { float f; int i; } convert = { c + (float)(3<<22) };
+	return (convert.i & ((1<<23)-1)) - (1<<22);
+#else
+	// consoles CPUs suffer from load-hit-store penalty
+	return Float2Int( c );
 #endif
 }
 
@@ -1367,35 +1307,22 @@ FORCEINLINE unsigned char FastFToC( float c )
 inline float ClampToMsec( float in )
 {
 	int msec = Floor2Int( in * 1000.0f + 0.5f );
-	return msec / 1000.0f;
+	return 0.001f * msec;
 }
 
 // Over 15x faster than: (int)ceil(value)
 inline int Ceil2Int( float a )
 {
    int RetVal;
-
-#if defined( _X360 )
-	RetVal = (int)ceil( a );
-#elif defined( COMPILER_MSVC32 )
-   int CtrlwdHolder;
-   int CtrlwdSetter;
-   __asm 
-   {
-      fld    a					// push 'a' onto the FP stack
-      fnstcw CtrlwdHolder		// store FPU control word
-      movzx  eax, CtrlwdHolder	// move and zero extend word into eax
-      and    eax, 0xFFFFF3FF	// set all bits except rounding bits to 1
-      or     eax, 0x00000800	// set rounding mode bits to round down
-      mov    CtrlwdSetter, eax	// Prepare to set the rounding mode -- prepare to enter plaid!
-      fldcw  CtrlwdSetter		// Entering plaid!
-      fistp  RetVal				// Store floored and converted (to int) result
-      fldcw  CtrlwdHolder		// Restore control word
-   }
+#if defined( __i386__ )
+   // Convert to int and back, compare, add one if too small
+   __m128 a128 = _mm_load_ss(&a);
+   RetVal = _mm_cvtss_si32(a128);
+   __m128 rounded128 = _mm_cvt_si2ss(_mm_setzero_ps(), RetVal);
+   RetVal += _mm_comilt_ss( rounded128, a128 );
 #else
-	RetVal = static_cast<int>( ceil(a) );
+   RetVal = static_cast<int>( ceil(a) );
 #endif
-
 	return RetVal;
 }
 
@@ -1736,13 +1663,6 @@ void Parabolic_Spline_NormalizeX(
 	float t, 
 	Vector& output );
 
-// Evaluate the cubic Bernstein basis for the input parametric coordinate.
-// Output is the coefficient for that basis polynomial.
-float CubicBasis0( float t );
-float CubicBasis1( float t );
-float CubicBasis2( float t );
-float CubicBasis3( float t );
-
 // quintic interpolating polynomial from Perlin.
 // 0->0, 1->1, smooth-in between with smooth tangents
 FORCEINLINE float QuinticInterpolatingPolynomial(float t)
@@ -1763,6 +1683,7 @@ void GetInterpolationData( float const *pKnotPositions,
 						   float *pValueA, 
 						   float *pValueB,
 						   float *pInterpolationValue);
+
 float RangeCompressor( float flValue, float flMin, float flMax, float flBase );
 
 // Get the minimum distance from vOrigin to the bounding box defined by [mins,maxs]
@@ -1806,11 +1727,12 @@ float CalcDistanceSqrToLineSegment2D( Vector2D const &P, Vector2D const &vLineA,
 
 // Init the mathlib
 void MathLib_Init( float gamma = 2.2f, float texGamma = 2.2f, float brightness = 0.0f, int overbright = 2.0f, bool bAllow3DNow = true, bool bAllowSSE = true, bool bAllowSSE2 = true, bool bAllowMMX = true );
+bool MathLib_3DNowEnabled( void );
 bool MathLib_MMXEnabled( void );
 bool MathLib_SSEEnabled( void );
 bool MathLib_SSE2Enabled( void );
 
-inline float Approach( float target, float value, float speed );
+float Approach( float target, float value, float speed );
 float ApproachAngle( float target, float value, float speed );
 float AngleDiff( float destAngle, float srcAngle );
 float AngleDistance( float next, float cur );
@@ -1825,23 +1747,10 @@ bool AnglesAreEqual( float a, float b, float tolerance = 0.0f );
 void RotationDeltaAxisAngle( const QAngle &srcAngles, const QAngle &destAngles, Vector &deltaAxis, float &deltaAngle );
 void RotationDelta( const QAngle &srcAngles, const QAngle &destAngles, QAngle *out );
 
-//-----------------------------------------------------------------------------
-// Clips a line segment such that only the portion in the positive half-space
-// of the plane remains.  If the segment is entirely clipped, the vectors
-// are set to vec3_invalid (all components are FLT_MAX).
-//
-// flBias is added to the dot product with the normal.  A positive bias 
-// results in a more inclusive positive half-space, while a negative bias
-// results in a more exclusive positive half-space.
-//-----------------------------------------------------------------------------
-void ClipLineSegmentToPlane( const Vector &vNormal, const Vector &vPlanePoint, Vector *p1, Vector *p2, float flBias = 0.0f );
-
 void ComputeTrianglePlane( const Vector& v1, const Vector& v2, const Vector& v3, Vector& normal, float& intercept );
 int PolyFromPlane( Vector *outVerts, const Vector& normal, float dist, float fHalfScale = 9000.0f );
 int ClipPolyToPlane( Vector *inVerts, int vertCount, Vector *outVerts, const Vector& normal, float dist, float fOnPlaneEpsilon = 0.1f );
 int ClipPolyToPlane_Precise( double *inVerts, int vertCount, double *outVerts, const double *normal, double dist, double fOnPlaneEpsilon = 0.1 );
-float TetrahedronVolume( const Vector &p0, const Vector &p1, const Vector &p2, const Vector &p3 );
-float TriangleArea( const Vector &p0, const Vector &p1, const Vector &p2 );
 
 //-----------------------------------------------------------------------------
 // Computes a reasonable tangent space for a triangle
@@ -2001,12 +1910,7 @@ FORCEINLINE float * UnpackNormal_SHORT2( const unsigned int *pPackedNormal, floa
 
 	pNormal[0] = ( iX - 16384.0f ) / 16384.0f;
 	pNormal[1] = ( iY - 16384.0f ) / 16384.0f;
-	float mag = ( pNormal[0]*pNormal[0] + pNormal[1]*pNormal[1] );
-	if ( mag > 1.0f )
-	{
-		mag = 1.0f;
-	}
-	pNormal[2] = zSign*sqrtf( 1.0f - mag );
+	pNormal[2] = zSign*sqrtf( 1.0f - ( pNormal[0]*pNormal[0] + pNormal[1]*pNormal[1] ) );
 	if ( bIsTangent )
 	{
 		pNormal[3] = tSign;
@@ -2272,33 +2176,6 @@ inline bool AlmostEqual( const Vector &a, const Vector &b, int maxUlps = 10)
 		AlmostEqual( a.z, b.z, maxUlps );
 }
 
-inline float Approach( float target, float value, float speed )
-{
-	float delta = target - value;
-
-#if defined(_X360) || defined( PS3 ) // use conditional move for speed on 360
-
-	return fsel( delta-speed,	// delta >= speed ?
-				 value + speed,	// if delta == speed, then value + speed == value + delta == target  
-				 fsel( (-speed) - delta, // delta <= -speed
-						value - speed,
-						target )
-				);  // delta < speed && delta > -speed
-
-#else
-
-	if ( delta > speed )
-		value += speed;
-	else if ( delta < -speed )
-		value -= speed;
-	else 
-		value = target;
-		
-	return value;
-
-#endif
-}
-
 inline void matrix3x4_t::Init( const Vector &xAxis, const Vector &yAxis, const Vector &zAxis, const Vector &vecOrigin )
 {
 	MatrixInitialize( *this, vecOrigin, xAxis, yAxis, zAxis );
@@ -2373,6 +2250,16 @@ inline void matrix3x4_t::ConcatTransforms( const matrix3x4_t &other )
 	::ConcatTransforms( *this, other, *this );
 }
 
+inline void matrix3x4_t::ScaleBy( const float value )
+{
+	MatrixScaleBy( value, *this );
+}
+
+inline void matrix3x4_t::ScaleByZero()
+{
+	MatrixScaleByZero( *this );
+}
+
 inline void matrix3x4_t::Multiply( const matrix3x4_t &other )
 {
 	MatrixMultiply( *this, other, *this );
@@ -2412,6 +2299,18 @@ inline float matrix3x4_t::RowDotProduct( int row, const Vector &in ) const
 inline float matrix3x4_t::ColumnDotProduct( MatrixAxisType_t column, const Vector &in ) const
 {
 	return MatrixColumnDotProduct( *this, column, in );
+}
+
+inline Vector matrix3x4_t::GetTranslation() const
+{
+	Vector out;
+	MatrixGetTranslation( *this, out );
+	return out;
+}
+
+inline void matrix3x4_t::SetTranslation( const Vector &in )
+{
+	MatrixSetTranslation( in, *this );
 }
 
 inline Vector matrix3x4_t::GetColumn( MatrixAxisType_t column ) const

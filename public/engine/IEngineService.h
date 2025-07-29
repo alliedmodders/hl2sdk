@@ -1,4 +1,4 @@
-//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -22,6 +22,8 @@ struct EventClientOutput_t
 	EngineLoopState_t m_LoopState;
 	float m_flRenderTime;
 	float m_flRealTime;
+	float m_flRenderFrameTimeUnbounded;
+	bool m_bRenderOnly;
 };
 
 abstract_class IEngineService : public IAppSystem

@@ -285,22 +285,6 @@ bool CEntityKeyValues::IsEmpty() const
 	return false;
 }
 
-bool CEntityKeyValues::ValuesHasBadNames() const
-{
-	if ( !m_pAllocator )
-		return false;
-
-	return m_pValues->TableHasBadNames();
-}
-
-bool CEntityKeyValues::AttributesHasBadNames() const
-{
-	if ( !m_pAllocator )
-		return false;
-
-	return m_pAttributes->TableHasBadNames();
-}
-
 void CEntityKeyValues::ReleaseAllComplexKeys()
 {
 	EntityComplexKeyListElem_t* pListElem = m_pComplexKeys;

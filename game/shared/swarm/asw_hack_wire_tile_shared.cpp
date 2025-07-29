@@ -168,7 +168,7 @@ bool CASW_Hack_Wire_Tile::IsWireLit(int iWire)
 // north, east, south, west
 bool g_TileConnections[3][4] = { 
 	{ false, true, false, true },		// ASW_WIRE_TILE_HORIZ   --
-	{ false, false, true, true },		// ASW_WIRE_TILE_LEFT    -.  (¬)
+	{ false, false, true, true },		// ASW_WIRE_TILE_LEFT    -.  (Â¬)
 	{ false, true, true, false }		// ASW_WIRE_TILE_RIGHT   ,-  (r)
 };
 

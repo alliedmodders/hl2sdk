@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2006, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2006, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Projecteding shader for Spy in TF2 (and probably many other things to come)
 //

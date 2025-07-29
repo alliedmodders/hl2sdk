@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2006, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2006, Valve Corporation, All rights reserved. ============//
 
 #ifndef EYE_REFRACT_HELPER_H
 #define EYE_REFRACT_HELPER_H

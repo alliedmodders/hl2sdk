@@ -1,4 +1,4 @@
-//===== Copyright © Valve Corporation, All rights reserved. ======//
+//===== Copyright Â© Valve Corporation, All rights reserved. ======//
 #ifndef IGAMEUISYSTEMMGR_H
 #define IGAMEUISYSTEMMGR_H
 

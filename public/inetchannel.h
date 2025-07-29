@@ -142,6 +142,7 @@ public:
 	virtual int		GetCurrentNetMessageInSequenceNr( void ) const = 0;
 
 	virtual void	unk211() = 0;
+	virtual void	unk212() = 0;
 };
 
 

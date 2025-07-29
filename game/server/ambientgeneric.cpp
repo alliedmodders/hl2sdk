@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2008, Valve Corporation, All rights reserved. ======//
+//===== Copyright Â© 1996-2008, Valve Corporation, All rights reserved. ======//
 //
 //			ambient_generic: a sound emitter used for one-shot and looping sounds.
 //

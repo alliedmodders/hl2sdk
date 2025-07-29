@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ====
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ====
 //
 // When triggered, will attempt to fire off each of its outputs.  Each output
 //  has its own chance of firing.

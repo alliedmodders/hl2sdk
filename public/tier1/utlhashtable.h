@@ -117,9 +117,12 @@ protected:
 	typedef typename ArgumentTypeInfo<AlternateKeyT>::Arg_t KeyAlt_t;
 	typedef CUtlHashtableEntry< KeyT, ValueT > entry_t;
 
-	enum { FLAG_FREE = entry_t::FLAG_FREE };
-	enum { FLAG_LAST = entry_t::FLAG_LAST };
-	enum { MASK_HASH = entry_t::MASK_HASH };
+	enum
+	{
+		FLAG_FREE = entry_t::FLAG_FREE,
+		FLAG_LAST = entry_t::FLAG_LAST,
+		MASK_HASH = entry_t::MASK_HASH
+	};
 
 	TableT m_table;
 	int m_nUsed;

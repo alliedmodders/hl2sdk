@@ -1,4 +1,4 @@
-//===== Copyright � 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose:
 //
@@ -94,6 +94,9 @@ class IHLTVServer;
 class CCompressedResourceManifest;
 class ILoadingSpawnGroup;
 class IToolGameSimulationAPI;
+class CCLCMsg_Move;
+template <typename T>
+class CNetMessagePB;
 
 namespace google
 {
@@ -318,7 +321,7 @@ public:
 	virtual bool IsClientLowViolence( CPlayerSlot nSlot ) = 0;
 
 	// Kicks the slot with the specified NetworkDisconnectionReason
-	virtual void DisconnectClient( CPlayerSlot nSlot, ENetworkDisconnectionReason reason ) = 0;
+	virtual void DisconnectClient( CPlayerSlot nSlot, ENetworkDisconnectionReason reason, const char *szInternalReason = nullptr ) = 0;
 
 #if 0 // Don't really match the binary
 	virtual void GetAllSpawnGroupsWithPVS( CUtlVector<SpawnGroupHandle_t> *spawnGroups, CUtlVector<IPVS *> *pOut ) = 0;
@@ -466,7 +469,7 @@ public:
 	virtual void			GetDefaultScaleForCharacter( const char *pCharacterName, bool bCheckLoadoutScale ) = 0;
 	virtual void			GetDefaultControlPointAutoUpdates( const char *pParticleSystemName, CUtlVector<EconControlPointInfo_t> &autoUpdates ) = 0;
 
-	virtual void			unk_201();
+	virtual void			unk_201() = 0;
 
 	virtual void			GetCharacterNameForModel( const char *pModelName, bool bCheckItemModifiers, CUtlString &characterName ) = 0;
 	virtual void			GetModelNameForCharacter( const char *pCharacterNamel, int nIndex, CBufferString &modelName ) = 0;
@@ -483,7 +486,7 @@ public:
 
 //-----------------------------------------------------------------------------
 // Just an interface version name for the random number interface
-// See vstdlib/random.h for the interface definition
+// See tier1/random.h for the interface definition
 // NOTE: If you change this, also change VENGINE_CLIENT_RANDOM_INTERFACE_VERSION in cdll_int.h
 //-----------------------------------------------------------------------------
 #define VENGINE_SERVER_RANDOM_INTERFACE_VERSION	"VEngineRandom001"
@@ -569,7 +572,7 @@ public:
 
 	// Called when the client attempts to connect (doesn't get called for bots)
 	// returning false would reject the connection with the pRejectReason message
-	virtual bool			ClientConnect( CPlayerSlot slot, const char *pszName, uint64 xuid, const char *pszNetworkID, bool unk1, CBufferString *pRejectReason );
+	virtual bool			ClientConnect( CPlayerSlot slot, const char *pszName, uint64 xuid, const char *pszNetworkID, bool unk1, CBufferString *pRejectReason ) = 0;
 
 	// Client is connected and should be put in the game
 	// type values could be:
@@ -601,7 +604,9 @@ public:
 	virtual void			ClientSetupVisibility( CPlayerSlot slot, vis_info_t *visinfo ) = 0;
 
 	// A block of CUserCmds has arrived from the user, decode them and buffer for execution during player simulation
-	virtual int			ProcessUsercmds( CPlayerSlot slot, bf_read *buf, int numcmds, bool ignore, bool paused, float margin ) = 0;
+	// Will be called when CNetworkGameServerBase::GetServerState() > SS_Loading
+	// A "paused" argument equals CNetworkGameServerBase::GetServerState() == SS_Paused
+	virtual void			ProcessUsercmds( CPlayerSlot slot, const CNetMessagePB<CCLCMsg_Move> &msg, bool paused ) = 0;
 
 	virtual bool			IsPlayerSlotOccupied( CPlayerSlot slot ) = 0;
 

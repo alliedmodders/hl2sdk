@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2001, Valve LLC, All rights reserved. ============
+//========= Copyright Â© 1996-2001, Valve LLC, All rights reserved. ============
 //
 // Purpose:		Player for Swarm.  This is an invisible entity that doesn't move, representing the commander.
 //                  The player drives movement of CASW_Marine NPC entities

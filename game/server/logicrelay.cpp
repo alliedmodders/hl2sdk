@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ====
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ====
 //
 // A message forwarder. Fires an OnTrigger output when triggered, and can be
 // disabled to prevent forwarding outputs.

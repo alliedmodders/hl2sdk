@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2007, Valve Corporation, All rights reserved. ======//
+//===== Copyright Â© 1996-2007, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: shader for drawing sprites as cards, with animation frame lerping
 //

@@ -25,6 +25,13 @@ enum SchemaTypeScope_t : uint8
 	SCHEMA_DEFAULT_TYPE_SCOPE,
 };
 
+enum SchemaHierarchyIteration_t
+{
+	SCHEMA_ITER_NONE = 0,
+	SCHEMA_ITER_SINGLE_PARENT,
+	SCHEMA_ITER_MULTI_PARENT
+};
+
 typedef void (*CompleteModuleRegistrationCallbackFn_t)(void*);
 
 abstract_class ISchemaSystemTypeScope
@@ -42,9 +49,9 @@ public:
 	virtual SchemaMetaInfoHandle_t<CSchemaType_Ptr>				Type_Ptr( CSchemaType* pObjectType ) = 0;
 	virtual SchemaMetaInfoHandle_t<CSchemaType_Atomic>			Type_Atomic( const char* pszAtomicName, uint16 nSize, uint8 nAlignment ) = 0;
 	virtual SchemaMetaInfoHandle_t<CSchemaType_Atomic_T>		Type_Atomic_T( const char* pszAtomicName, uint16 nSize, uint8 nAlignment, CSchemaType* pTemplateType ) = 0;
-	virtual SchemaMetaInfoHandle_t<CSchemaType_Atomic_CollectionOfT> Type_Atomic_CollectionOfT( const char* pszAtomicName, uint16 nSize, uint8 nAlignment, uint16 nElementSize, CSchemaType* pTemplateType, SchemaCollectionManipulatorFn_t manipulator ) = 0;
+	virtual SchemaMetaInfoHandle_t<CSchemaType_Atomic_CollectionOfT> Type_Atomic_CollectionOfT( const char* pszAtomicName, uint16 nSize, uint8 nAlignment, uint16 nElementSize, CSchemaType* pTemplateType, uint64 nFixedBufferCount, SchemaCollectionManipulatorFn_t manipulator ) = 0;
 	virtual SchemaMetaInfoHandle_t<CSchemaType_Atomic_TT>		Type_Atomic_TT( const char* pszAtomicName, uint16 nSize, uint8 nAlignment, CSchemaType* pTemplateType, CSchemaType* pTemplateType2 ) = 0;
-	virtual SchemaMetaInfoHandle_t<CSchemaType_Atomic_I>		Type_Atomic_I( const char* pszAtomicName, uint16 nSize, uint8 nAlignment, int nInterger ) = 0;
+	virtual SchemaMetaInfoHandle_t<CSchemaType_Atomic_I>		Type_Atomic_I( const char* pszAtomicName, uint16 nSize, uint8 nAlignment, int nInteger ) = 0;
 	virtual SchemaMetaInfoHandle_t<CSchemaType_DeclaredClass>	Type_DeclaredClass( const char* pszClassName ) = 0;
 	virtual SchemaMetaInfoHandle_t<CSchemaType_DeclaredEnum>	Type_DeclaredEnum( const char* pszEnumName ) = 0;
 	virtual SchemaMetaInfoHandle_t<CSchemaType_FixedArray>		Type_FixedArray( CSchemaType* pElementType, int nElementCount, uint16 nElementSize, uint8 nElementAlignment ) = 0;
@@ -89,7 +96,7 @@ public:
 	CSchemaPtrMap<SchemaMetaInfoHandle_t<CSchemaType>, CSchemaType_Ptr*> m_Pointers;
 	CSchemaPtrMap<int, CSchemaType_Atomic*>							m_Atomics;
 	CSchemaPtrMap<AtomicTypeInfo_T_t, CSchemaType_Atomic_T*>		m_AtomicsT;
-	CSchemaPtrMap<AtomicTypeInfo_T_t, CSchemaType_Atomic_CollectionOfT*> m_AtomicsCollectionOfT;
+	CSchemaPtrMap<AtomicTypeInfo_CollectionOfT_t, CSchemaType_Atomic_CollectionOfT*> m_AtomicsCollectionOfT;
 	CSchemaPtrMap<AtomicTypeInfo_TT_t, CSchemaType_Atomic_TT*>		m_AtomicsTT;
 	CSchemaPtrMap<AtomicTypeInfo_I_t, CSchemaType_Atomic_I*>		m_AtomicsI;
 	CSchemaPtrMap<uint, CSchemaType_DeclaredClass*>					m_DeclaredClasses;
@@ -143,7 +150,7 @@ public:
 	virtual void ValidateClasses( CSchemaClassInfo** ppClassInfos ) = 0;
 	
 	virtual bool ConvertOldIntrospectedResourceDataToKV3( void*, void*, void*, CKeyValues3Context*, const char* ) = 0;
-	virtual void FindClassesByMeta( const char* pszMetaName, int, CUtlVector<const CSchemaClassInfo*> *classes ) = 0;
+	virtual void FindClassesByMeta( const char* pszMetaName, SchemaHierarchyIteration_t iter_type, CUtlVector<const CSchemaClassInfo*> *classes ) = 0;
 	
 	virtual void InstallCompleteModuleRegistrationCallback( CompleteModuleRegistrationCallbackFn_t pfnCallback, void* pArgument ) = 0;
 	virtual void RemoveCompleteModuleRegistrationCallback( CompleteModuleRegistrationCallbackFn_t pfnCallback, void* pArgument ) = 0;
@@ -180,20 +187,12 @@ public:
 	int m_nNumConnections;
 	CThreadFastMutex m_Mutex;
 
-#ifdef CONVAR_WORK_FINISHED
 	CConCommandMemberAccessor<CSchemaSystem> m_SchemaListBindings;
 	CConCommandMemberAccessor<CSchemaSystem> m_SchemaAllListBindings;
 	CConCommandMemberAccessor<CSchemaSystem> m_SchemaDumpBinding;
 	CConCommandMemberAccessor<CSchemaSystem> m_SchemaDetailedClassLayout;
 	CConCommandMemberAccessor<CSchemaSystem> m_SchemaStats;
 	CConCommandMemberAccessor<CSchemaSystem> m_SchemaMetaStats;
-#else
-#ifdef _WIN32
-	uint8 pad[288];
-#else
-	uint8 pad[384];
-#endif // _WIN32
-#endif // CONVAR_WORK_FINISHED
 	
 	CUtlVector<void*> m_LoadedModules;
 	CUtlVector<DetectedSchemaMismatch_t> m_DetectedSchemaMismatches;

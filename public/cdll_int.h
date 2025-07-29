@@ -198,7 +198,7 @@ typedef void (*pfnDemoCustomDataCallback)( uint8 *pData, size_t iSize );
 
 //-----------------------------------------------------------------------------
 // Just an interface version name for the random number interface
-// See vstdlib/random.h for the interface definition
+// See tier1/random.h for the interface definition
 // NOTE: If you change this, also change VENGINE_SERVER_RANDOM_INTERFACE_VERSION in eiface.h
 //-----------------------------------------------------------------------------
 #define VENGINE_CLIENT_RANDOM_INTERFACE_VERSION	"VEngineRandom001"

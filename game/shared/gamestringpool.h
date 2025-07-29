@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Pool of all per-level strings. Allocates memory for strings, 
 //			consolodating duplicates. The memory is freed on behalf of clients

@@ -24,7 +24,7 @@ class IMatRenderContext;
 
 #include "dmxloader/dmxelement.h"
 #include "tier1/utlintrusivelist.h"
-#include "vstdlib/random.h"
+#include "tier1/random.h"
 #include "tier1/utlobjectreference.h"
 #include "tier1/utlstringmap.h"
 #include "tier1/utlmap.h"

@@ -753,7 +753,7 @@ void CUtlLeanVectorImpl<B, T, I>::DestructElements( T* pElement, const T* pEnd )
 template < class T, class I = short >
 using CUtlLeanVector = CUtlLeanVectorImpl< CUtlLeanVectorBase< T, I >, T, I >;
 
-template < class T, size_t N = 3, class I = short >
+template < class T, size_t N = 3, class I = int >
 using CUtlLeanVectorFixedGrowable = CUtlLeanVectorImpl< CUtlLeanVectorFixedGrowableBase< T, N, I >, T, I >;
 
 #include "tier0/memdbgoff.h"

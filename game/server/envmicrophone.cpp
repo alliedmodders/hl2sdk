@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ====
+//========= Copyright Â© 1996-2005, Valve Corporation, All rights reserved. ====
 //
 // Purpose: Implements an entity that measures sound volume at a point in a map.
 //

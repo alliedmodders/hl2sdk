@@ -28,13 +28,13 @@ struct inputdata_t;
 typedef enum _fieldtypes : uint8
 {
 	FIELD_VOID = 0,			// No type or value
-	FIELD_FLOAT,			// Any floating point value
+	FIELD_FLOAT32,			// Any floating point value
 	FIELD_STRING,			// A string ID (return from ALLOC_STRING)
 	FIELD_VECTOR,			// Any vector, QAngle, or AngularImpulse
 	FIELD_QUATERNION,		// A quaternion
-	FIELD_INTEGER,			// Any integer or enum
+	FIELD_INT32,			// Any integer or enum
 	FIELD_BOOLEAN,			// boolean, implemented as an int, I may use this as a hint for compression
-	FIELD_SHORT,			// 2 byte integer
+	FIELD_INT16,			// 2 byte integer
 	FIELD_CHARACTER,		// a byte
 	FIELD_COLOR32,			// 8-bit per channel r,g,b,a (32bit color)
 	FIELD_EMBEDDED,			// an embedded object with a datadesc, recursively traverse and embedded class/structure based on an additional typedescription
@@ -61,7 +61,7 @@ typedef enum _fieldtypes : uint8
 	FIELD_UNUSED,
 
 	FIELD_VECTOR2D,			// 2 floats
-	FIELD_INTEGER64,		// 64bit integer
+	FIELD_INT64,			// 64bit integer
 
 	FIELD_VECTOR4D,			// 4 floats
 
@@ -76,7 +76,7 @@ typedef enum _fieldtypes : uint8
 	FIELD_FLOAT64,
 	FIELD_POSITIVEINTEGER_OR_NULL,
 	FIELD_HSCRIPT_NEW_INSTANCE,
-	FIELD_UINT,
+	FIELD_UINT32,
 	FIELD_UTLSTRINGTOKEN,
 	FIELD_QANGLE,
 	FIELD_NETWORK_ORIGIN_CELL_QUANTIZED_VECTOR,
@@ -149,16 +149,16 @@ public:
 #define FIELD_SIZE( _fieldType )	CDatamapFieldSizeDeducer<_fieldType>::SIZE
 #define FIELD_BITS( _fieldType )	(FIELD_SIZE( _fieldType ) * 8)
 
-DECLARE_FIELD_SIZE( FIELD_FLOAT,		sizeof(float) )
-DECLARE_FIELD_SIZE( FIELD_STRING,		sizeof(int) )
-DECLARE_FIELD_SIZE( FIELD_VECTOR,		3 * sizeof(float) )
-DECLARE_FIELD_SIZE( FIELD_VECTOR2D,		2 * sizeof(float) )
-DECLARE_FIELD_SIZE( FIELD_VECTOR4D,		4 * sizeof( float ) )
-DECLARE_FIELD_SIZE( FIELD_QUATERNION,	4 * sizeof(float))
-DECLARE_FIELD_SIZE( FIELD_INTEGER,		sizeof(int))
-DECLARE_FIELD_SIZE( FIELD_INTEGER64,	sizeof(int64))
+DECLARE_FIELD_SIZE( FIELD_FLOAT32,		sizeof(float32))
+DECLARE_FIELD_SIZE( FIELD_STRING,		sizeof(int))
+DECLARE_FIELD_SIZE( FIELD_VECTOR,		3 * sizeof(float32))
+DECLARE_FIELD_SIZE( FIELD_VECTOR2D,		2 * sizeof(float32))
+DECLARE_FIELD_SIZE( FIELD_VECTOR4D,		4 * sizeof(float32))
+DECLARE_FIELD_SIZE( FIELD_QUATERNION,	4 * sizeof(float32))
+DECLARE_FIELD_SIZE( FIELD_INT32,		sizeof(int32))
+DECLARE_FIELD_SIZE( FIELD_INT64,		sizeof(int64))
 DECLARE_FIELD_SIZE( FIELD_BOOLEAN,		sizeof(char))
-DECLARE_FIELD_SIZE( FIELD_SHORT,		sizeof(short))
+DECLARE_FIELD_SIZE( FIELD_INT16,		sizeof(int16))
 DECLARE_FIELD_SIZE( FIELD_CHARACTER,	sizeof(char))
 DECLARE_FIELD_SIZE( FIELD_COLOR32,		sizeof(int))
 DECLARE_FIELD_SIZE( FIELD_CLASSPTR,		sizeof(int))

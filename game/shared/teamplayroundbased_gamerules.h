@@ -1,4 +1,4 @@
-//====== Copyright © 1996-2006, Valve Corporation, All rights reserved. =======
+//====== Copyright Â© 1996-2006, Valve Corporation, All rights reserved. =======
 //
 // Purpose: Teamplay game rules that manage a round based structure for you
 //

@@ -1,4 +1,4 @@
-//========== Copyright © 2008, Valve Corporation, All rights reserved. ========
+//========== Copyright Â© 2008, Valve Corporation, All rights reserved. ========
 //
 // Purpose: VScript
 //
@@ -175,12 +175,12 @@ template <typename T> struct ScriptDeducer { /*enum { FIELD_TYPE = FIELD_TYPEUNK
 #define DECLARE_DEDUCE_FIELDTYPE( fieldType, type ) template<> struct ScriptDeducer<type> { enum { FIELD_TYPE = fieldType }; };
 
 DECLARE_DEDUCE_FIELDTYPE( FIELD_VOID, void );
-DECLARE_DEDUCE_FIELDTYPE( FIELD_FLOAT, float );
+DECLARE_DEDUCE_FIELDTYPE( FIELD_FLOAT32, float32 );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_CSTRING, const char * );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_CSTRING, char * );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_VECTOR, Vector );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_VECTOR, const Vector & );
-DECLARE_DEDUCE_FIELDTYPE( FIELD_INTEGER, int );
+DECLARE_DEDUCE_FIELDTYPE( FIELD_INT32, int32 );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_BOOLEAN, bool );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_CHARACTER, char );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_HSCRIPT, HSCRIPT );

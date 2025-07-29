@@ -1,4 +1,4 @@
-//===== Copyright � 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: Math primitives.
 //
@@ -79,8 +79,6 @@ float VectorNormalize (Vector& vec)
 	
 	return radius;
 }
-
-
 
 // TODO: Add fast C VectorNormalizeFast.
 // Perhaps use approximate rsqrt trick, if the accuracy isn't too bad.
@@ -427,6 +425,33 @@ void MatrixSetColumn( const Vector &in, int column, matrix3x4_t& out )
 	out[2][column] = in.z;
 }
 
+void MatrixScaleBy ( const float flScale, matrix3x4_t &out )
+{
+	out[0][0] *= flScale;
+	out[1][0] *= flScale;
+	out[2][0] *= flScale;
+	out[0][1] *= flScale;
+	out[1][1] *= flScale;
+	out[2][1] *= flScale;
+	out[0][2] *= flScale;
+	out[1][2] *= flScale;
+	out[2][2] *= flScale;
+}
+
+void MatrixScaleByZero ( matrix3x4_t &out )
+{
+	out[0][0] = 0.0f;
+	out[1][0] = 0.0f;
+	out[2][0] = 0.0f;
+	out[0][1] = 0.0f;
+	out[1][1] = 0.0f;
+	out[2][1] = 0.0f;
+	out[0][2] = 0.0f;
+	out[1][2] = 0.0f;
+	out[2][2] = 0.0f;
+}
+
+
 
 int VectorCompare (const float *v1, const float *v2)
 {
@@ -566,53 +591,128 @@ void ConcatRotations (const float in1[3][3], const float in2[3][3], float out[3]
 				in1[2][2] * in2[2][2];
 }
 
+void ConcatTransforms_Aligned( const matrix3x4_t &m0, const matrix3x4_t &m1, matrix3x4_t &out )
+{
+	Assert( (((size_t)&m0) % 16) == 0 );
+	Assert( (((size_t)&m1) % 16) == 0 );
+	Assert( (((size_t)&out) % 16) == 0 );
+
+	fltx4 lastMask = *(fltx4 *)(&g_SIMD_ComponentMask[3]);
+	fltx4 rowA0 = LoadAlignedSIMD( m0.m_flMatVal[0] );
+	fltx4 rowA1 = LoadAlignedSIMD( m0.m_flMatVal[1] );
+	fltx4 rowA2 = LoadAlignedSIMD( m0.m_flMatVal[2] );
+
+	fltx4 rowB0 = LoadAlignedSIMD( m1.m_flMatVal[0] );
+	fltx4 rowB1 = LoadAlignedSIMD( m1.m_flMatVal[1] );
+	fltx4 rowB2 = LoadAlignedSIMD( m1.m_flMatVal[2] );
+
+	// now we have the rows of m0 and the columns of m1
+	// first output row
+	fltx4 A0 = SplatXSIMD(rowA0);
+	fltx4 A1 = SplatYSIMD(rowA0);
+	fltx4 A2 = SplatZSIMD(rowA0);
+	fltx4 mul00 = MulSIMD( A0, rowB0 );
+	fltx4 mul01 = MulSIMD( A1, rowB1 );
+	fltx4 mul02 = MulSIMD( A2, rowB2 );
+	fltx4 out0 = AddSIMD( mul00, AddSIMD(mul01,mul02) );
+
+	// second output row
+	A0 = SplatXSIMD(rowA1);
+	A1 = SplatYSIMD(rowA1);
+	A2 = SplatZSIMD(rowA1);
+	fltx4 mul10 = MulSIMD( A0, rowB0 );
+	fltx4 mul11 = MulSIMD( A1, rowB1 );
+	fltx4 mul12 = MulSIMD( A2, rowB2 );
+	fltx4 out1 = AddSIMD( mul10, AddSIMD(mul11,mul12) );
+
+	// third output row
+	A0 = SplatXSIMD(rowA2);
+	A1 = SplatYSIMD(rowA2);
+	A2 = SplatZSIMD(rowA2);
+	fltx4 mul20 = MulSIMD( A0, rowB0 );
+	fltx4 mul21 = MulSIMD( A1, rowB1 );
+	fltx4 mul22 = MulSIMD( A2, rowB2 );
+	fltx4 out2 = AddSIMD( mul20, AddSIMD(mul21,mul22) );
+
+	// add in translation vector
+	A0 = AndSIMD(rowA0,lastMask);
+	A1 = AndSIMD(rowA1,lastMask);
+	A2 = AndSIMD(rowA2,lastMask);
+	out0 = AddSIMD(out0, A0);
+	out1 = AddSIMD(out1, A1);
+	out2 = AddSIMD(out2, A2);
+
+	StoreAlignedSIMD( out.m_flMatVal[0], out0 );
+	StoreAlignedSIMD( out.m_flMatVal[1], out1 );
+	StoreAlignedSIMD( out.m_flMatVal[2], out2 );
+}
 
 /*
 ================
 R_ConcatTransforms
 ================
 */
+
 void ConcatTransforms (const matrix3x4_t& in1, const matrix3x4_t& in2, matrix3x4_t& out)
 {
-	Assert( s_bMathlibInitialized );
-	if ( &in1 == &out )
+#if 0
+	// test for ones that'll be 2x faster
+	if ( (((size_t)&in1) % 16) == 0 && (((size_t)&in2) % 16) == 0 && (((size_t)&out) % 16) == 0 )
 	{
-		matrix3x4_t in1b;
-		MatrixCopy( in1, in1b );
-		ConcatTransforms( in1b, in2, out );
+		ConcatTransforms_Aligned( in1, in2, out );
 		return;
 	}
-	if ( &in2 == &out )
-	{
-		matrix3x4_t in2b;
-		MatrixCopy( in2, in2b );
-		ConcatTransforms( in1, in2b, out );
-		return;
-	}
-	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] +
-				in1[0][2] * in2[2][0];
-	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] +
-				in1[0][2] * in2[2][1];
-	out[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] +
-				in1[0][2] * in2[2][2];
-	out[0][3] = in1[0][0] * in2[0][3] + in1[0][1] * in2[1][3] +
-				in1[0][2] * in2[2][3] + in1[0][3];
-	out[1][0] = in1[1][0] * in2[0][0] + in1[1][1] * in2[1][0] +
-				in1[1][2] * in2[2][0];
-	out[1][1] = in1[1][0] * in2[0][1] + in1[1][1] * in2[1][1] +
-				in1[1][2] * in2[2][1];
-	out[1][2] = in1[1][0] * in2[0][2] + in1[1][1] * in2[1][2] +
-				in1[1][2] * in2[2][2];
-	out[1][3] = in1[1][0] * in2[0][3] + in1[1][1] * in2[1][3] +
-				in1[1][2] * in2[2][3] + in1[1][3];
-	out[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] +
-				in1[2][2] * in2[2][0];
-	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] +
-				in1[2][2] * in2[2][1];
-	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] +
-				in1[2][2] * in2[2][2];
-	out[2][3] = in1[2][0] * in2[0][3] + in1[2][1] * in2[1][3] +
-				in1[2][2] * in2[2][3] + in1[2][3];
+#endif
+
+	fltx4 lastMask = *(fltx4 *)(&g_SIMD_ComponentMask[3]);
+	fltx4 rowA0 = LoadUnalignedSIMD( in1.m_flMatVal[0] );
+	fltx4 rowA1 = LoadUnalignedSIMD( in1.m_flMatVal[1] );
+	fltx4 rowA2 = LoadUnalignedSIMD( in1.m_flMatVal[2] );
+
+	fltx4 rowB0 = LoadUnalignedSIMD( in2.m_flMatVal[0] );
+	fltx4 rowB1 = LoadUnalignedSIMD( in2.m_flMatVal[1] );
+	fltx4 rowB2 = LoadUnalignedSIMD( in2.m_flMatVal[2] );
+
+	// now we have the rows of m0 and the columns of m1
+	// first output row
+	fltx4 A0 = SplatXSIMD(rowA0);
+	fltx4 A1 = SplatYSIMD(rowA0);
+	fltx4 A2 = SplatZSIMD(rowA0);
+	fltx4 mul00 = MulSIMD( A0, rowB0 );
+	fltx4 mul01 = MulSIMD( A1, rowB1 );
+	fltx4 mul02 = MulSIMD( A2, rowB2 );
+	fltx4 out0 = AddSIMD( mul00, AddSIMD(mul01,mul02) );
+
+	// second output row
+	A0 = SplatXSIMD(rowA1);
+	A1 = SplatYSIMD(rowA1);
+	A2 = SplatZSIMD(rowA1);
+	fltx4 mul10 = MulSIMD( A0, rowB0 );
+	fltx4 mul11 = MulSIMD( A1, rowB1 );
+	fltx4 mul12 = MulSIMD( A2, rowB2 );
+	fltx4 out1 = AddSIMD( mul10, AddSIMD(mul11,mul12) );
+
+	// third output row
+	A0 = SplatXSIMD(rowA2);
+	A1 = SplatYSIMD(rowA2);
+	A2 = SplatZSIMD(rowA2);
+	fltx4 mul20 = MulSIMD( A0, rowB0 );
+	fltx4 mul21 = MulSIMD( A1, rowB1 );
+	fltx4 mul22 = MulSIMD( A2, rowB2 );
+	fltx4 out2 = AddSIMD( mul20, AddSIMD(mul21,mul22) );
+
+	// add in translation vector
+	A0 = AndSIMD(rowA0,lastMask);
+	A1 = AndSIMD(rowA1,lastMask);
+	A2 = AndSIMD(rowA2,lastMask);
+	out0 = AddSIMD(out0, A0);
+	out1 = AddSIMD(out1, A1);
+	out2 = AddSIMD(out2, A2);
+
+	// write to output
+	StoreUnalignedSIMD( out.m_flMatVal[0], out0 );
+	StoreUnalignedSIMD( out.m_flMatVal[1], out1 );
+	StoreUnalignedSIMD( out.m_flMatVal[2], out2 );
 }
 
 
@@ -1359,7 +1459,9 @@ float Bias( float x, float biasAmt )
 	{
 		lastExponent = log( biasAmt ) * -1.4427f; // (-1.4427 = 1 / log(0.5))
 	}
-	return pow( x, lastExponent );
+	float fRet = pow( x, lastExponent );
+	Assert ( !IS_NAN( fRet ) );
+	return fRet;
 }
 
 
@@ -1375,7 +1477,9 @@ float Gain( float x, float biasAmt )
 
 float SmoothCurve( float x )
 {
-	return (1 - cos( x * M_PI )) * 0.5f;
+	// Actual smooth curve. Visualization:
+	// http://www.wolframalpha.com/input/?i=plot%5B+0.5+*+%281+-+cos%5B2+*+pi+*+x%5D%29+for+x+%3D+%280%2C+1%29+%5D
+	return 0.5f * (1 - cos( 2.0f * M_PI * x ) );
 }
 
 
@@ -2408,9 +2512,7 @@ void Hermite_SplineBasis( float t, float basis[4] )
 //-----------------------------------------------------------------------------
 
 // BUG: the VectorSubtract()'s calls go away if the global optimizer is enabled
-#ifdef _MSC_VER
 #pragma optimize( "g", off )
-#endif
 
 void Hermite_Spline( const Vector &p0, const Vector &p1, const Vector &p2, float t, Vector& output )
 {
@@ -2420,9 +2522,7 @@ void Hermite_Spline( const Vector &p0, const Vector &p1, const Vector &p2, float
 	Hermite_Spline( p1, p2, e10, e21, t, output );
 }
 
-#ifdef _MSC_VER
 #pragma optimize( "", on )
-#endif
 
 float Hermite_Spline( float p0, float p1, float p2,	float t )
 {
@@ -3188,18 +3288,15 @@ bool CalcLineToLineIntersectionSegment(
    return true;
 }
 
-#ifdef _MSC_VER
 #pragma optimize( "", off )
-#endif
 
 #ifndef EXCEPTION_EXECUTE_HANDLER
 #define EXCEPTION_EXECUTE_HANDLER       1
 #endif
 
-#ifdef _MSC_VER
 #pragma optimize( "", on )
-#endif
 
+static bool s_b3DNowEnabled = false;
 static bool s_bMMXEnabled = false;
 static bool s_bSSEEnabled = false;
 static bool s_bSSE2Enabled = false;
@@ -3213,7 +3310,7 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 
 #if !defined( _X360 )
 	// Grab the processor information:
-	const CPUInformation& pi = GetCPUInformation();
+	const CPUInformation& pi = *GetCPUInformation();
 
 	// Select the default generic routines.
 	pfSqrt = _sqrtf;
@@ -3235,38 +3332,54 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 		s_bMMXEnabled = false;
 	}
 
-	// GAMMACASE: Since the sse.cpp doesn't have any x64 code rn
-	// we can't use the sse stuff here
-#ifndef COMPILER_MSVC64
+	// SSE Generally performs better than 3DNow when present, so this is placed 
+	// first to allow SSE to override these settings.
+#if !defined( OSX ) && !defined( PLATFORM_WINDOWS_PC64 ) && !defined(LINUX)
+	if ( bAllow3DNow && pi.m_b3DNow )
+	{
+		s_b3DNowEnabled = true;
+
+		// Select the 3DNow specific routines if available;
+		pfVectorNormalize = _3DNow_VectorNormalize;
+		pfVectorNormalizeFast = _3DNow_VectorNormalizeFast;
+		pfInvRSquared = _3DNow_InvRSquared;
+		pfSqrt = _3DNow_Sqrt;
+		pfRSqrt = _3DNow_RSqrt;
+		pfRSqrtFast = _3DNow_RSqrt;
+	}
+	else
+#endif
+	{
+		s_b3DNowEnabled = false;
+	}
+
 	if ( bAllowSSE && pi.m_bSSE )
 	{
 		s_bSSEEnabled = true;
 
+#ifndef PLATFORM_WINDOWS_PC64
+		// These are not yet available.
 		// Select the SSE specific routines if available
 		pfVectorNormalizeFast = _SSE_VectorNormalizeFast;
 		pfInvRSquared = _SSE_InvRSquared;
 		pfSqrt = _SSE_Sqrt;
 		pfRSqrt = _SSE_RSqrtAccurate;
 		pfRSqrtFast = _SSE_RSqrtFast;
-#ifdef _WIN32
+#endif
+#ifdef PLATFORM_WINDOWS_PC32
 		pfFastSinCos = _SSE_SinCos;
 		pfFastCos = _SSE_cos;
 #endif
-
 	}
 	else
 	{
 		s_bSSEEnabled = false;
 	}
-#else
-	s_bSSEEnabled = false;
-#endif
 
-#ifndef COMPILER_MSVC64
 	if ( bAllowSSE2 && pi.m_bSSE2 )
 	{
 		s_bSSE2Enabled = true;
-#ifdef _WIN32
+#ifdef PLATFORM_WINDOWS_PC32
 		pfFastSinCos = _SSE2_SinCos;
 		pfFastCos = _SSE2_cos;
 #endif
@@ -3275,15 +3388,18 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 	{
 		s_bSSE2Enabled = false;
 	}
-#else
-	s_bSSE2Enabled = false;
-#endif
-#endif
+#endif // !_X360
 
 	s_bMathlibInitialized = true;
 
 	InitSinCosTable();
 	BuildGammaTable( gamma, texGamma, brightness, overbright );
+}
+
+bool MathLib_3DNowEnabled( void )
+{
+	Assert( s_bMathlibInitialized );
+	return s_b3DNowEnabled;
 }
 
 bool MathLib_MMXEnabled( void )
@@ -3302,6 +3418,20 @@ bool MathLib_SSE2Enabled( void )
 {
 	Assert( s_bMathlibInitialized );
 	return s_bSSE2Enabled;
+}
+
+float Approach( float target, float value, float speed )
+{
+	float delta = target - value;
+
+	if ( delta > speed )
+		value += speed;
+	else if ( delta < -speed )
+		value -= speed;
+	else 
+		value = target;
+
+	return value;
 }
 
 // BUGBUG: Why doesn't this call angle diff?!?!?
@@ -3990,8 +4120,8 @@ void HSVtoRGB( const Vector &hsv, Vector &rgb )
 		hue = 0.0F;
 	}
 	hue /= 60.0F;
-	int     i = static_cast<int>(hue);   // integer part
-	float32 f = hue - i;                 // fractional part
+	int     i = hue;        // integer part
+	float32 f = hue - i;    // fractional part
 	float32 p = hsv.z * (1.0F - hsv.y);
 	float32 q = hsv.z * (1.0F - hsv.y * f);
 	float32 t = hsv.z * (1.0F - hsv.y * (1.0F - f));

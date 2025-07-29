@@ -1,4 +1,4 @@
-//====== Copyright � 1996-2005, Valve Corporation, All rights reserved. =======//
+//====== Copyright © 1996-2005, Valve Corporation, All rights reserved. =======//
 //
 // Purpose: 
 //
@@ -16,6 +16,7 @@
 
 #include "unitlib/unitlib.h" // just here for tests - remove before checking in!!!
 
+#include "platform.h"
 #include "tier1/utlmemory.h"
 #include "tier1/cbyteswap.h"
 #include "tier1/bufferstring.h"
@@ -36,7 +37,7 @@ struct characterset_t;
 //	{ '\t', "t" }
 // END_CHAR_CONVERSION( CStringConversion, '\\' )
 //-----------------------------------------------------------------------------
-class CUtlCharConversion
+class DLL_CLASS_IMPORT CUtlCharConversion
 {
 public:
 	struct ConversionArray_t
@@ -45,7 +46,14 @@ public:
 		const char *m_pReplacementString;
 	};
 
-	CUtlCharConversion( char nEscapeChar, const char *pDelimiter, int nCount, ConversionArray_t *pArray );
+	CUtlCharConversion( char nEscapeChar, const char *pDelimiter, int nCount, const ConversionArray_t *pArray );
+
+	CUtlCharConversion( CUtlCharConversion &&rhs );
+	CUtlCharConversion( const CUtlCharConversion &rhs );
+
+	CUtlCharConversion &operator=( CUtlCharConversion &&rhs );
+	CUtlCharConversion &operator=( const CUtlCharConversion &rhs );
+
 	char GetEscapeChar() const;
 	const char *GetDelimiter() const;
 	int GetDelimiterLength() const;
@@ -90,12 +98,12 @@ protected:
 //-----------------------------------------------------------------------------
 // Character conversions for C strings
 //-----------------------------------------------------------------------------
-CUtlCharConversion *GetCStringCharConversion();
+PLATFORM_INTERFACE CUtlCharConversion *GetCStringCharConversion();
 
 //-----------------------------------------------------------------------------
-// Character conversions for quoted strings, with no escape sequences
+// Character conversions for JSON strings
 //-----------------------------------------------------------------------------
-CUtlCharConversion *GetNoEscCharConversion();
+PLATFORM_INTERFACE CUtlCharConversion *GetJSONCharConversion();
 
 
 //-----------------------------------------------------------------------------
@@ -106,13 +114,11 @@ CUtlCharConversion *GetNoEscCharConversion();
 
 
 
-typedef unsigned short ushort;
-
 template < class A >
 static const char *GetFmtStr( int nRadix = 10, bool bPrint = true ) { Assert( 0 ); return ""; }
 
 template <> inline const char *GetFmtStr< short >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%hd"; }
-template <> inline const char *GetFmtStr< ushort >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%hu"; }
+template <> inline const char *GetFmtStr< uint16 >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%hu"; }
 template <> inline const char *GetFmtStr< int >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%d"; }
 template <> inline const char *GetFmtStr< uint >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 || nRadix == 16 ); return nRadix == 16 ? "%x" : "%u"; }
 template <> inline const char *GetFmtStr< int64 >	( int nRadix, bool bPrint ) { Assert( nRadix == 10 ); return "%lld"; }

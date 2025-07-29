@@ -12,42 +12,30 @@
 class CFormatStringElement;
 class IFormatOutputStream;
 
-template<size_t MAX_SIZE, bool AllowHeapAllocation>
-class CBufferStringGrowable;
-
 /*
-	Main idea of CBufferString is to provide the base class for the CBufferStringGrowable wich implements stack allocation
+	Main idea of CBufferString is to provide stack allocated string
 	with the ability to convert to the heap allocation if allowed.
 
-	Example usage of CBufferStringGrowable class:
+	By default CBufferString provides 8 bytes of stack allocation and could be increased by
+	using CBufferStringN<SIZE> where custom stack SIZE could be used.
+
+	Example usage of CBufferStringN class:
  
 	* Basic buffer allocation:
 	```
-		CBufferStringGrowable<256> buff;
+		CBufferStringN<256> buff;
 		buff.Insert(0, "Hello World!");
 		printf("Result: %s\n", buff.Get());
 	```
-	additionaly the heap allocation of the buffer could be disabled, by providing ``AllowHeapAllocation`` template argument,
-	by disabling heap allocation, if the buffer capacity is not enough to perform the operation, the app would exit with an Assert;
+	additionaly the heap allocation of the buffer could be disabled. If the heap allocation is disabled and
+	if the buffer capacity is not enough to perform the growing operation, the app would exit with an Assert;
 
-	* Additional usage:
-	CBufferString::IsStackAllocated() - could be used to check if the buffer is stack allocated;
-	CBufferString::IsHeapAllocated() - could be used to check if the buffer is heap allocated;
-	CBufferString::Get() - would return a pointer to the data, or an empty string if it's not allocated.
-
-	* Additionaly current length of the buffer could be read via CBufferString::GetTotalNumber()
-	and currently allocated amount of bytes could be read via CBufferString::GetAllocatedNumber()
-
-	* Most, if not all the functions would ensure the buffer capacity and enlarge it when needed,
-	in case of stack allocated buffers, it would switch to heap allocation instead.
+	* Most, if not all the functions would ensure the buffer capacity and enlarge it when needed.
+	In case of stack allocated buffers, if the requested size exceeds stack size, it would switch to heap allocation instead.
 */
 
 class CBufferString
 {
-protected:
-	// You shouldn't be initializing this class, use CBufferStringGrowable instead.
-	CBufferString() {}
-
 public:
 	enum EAllocationOption_t
 	{
@@ -55,8 +43,7 @@ public:
 		UNK2 = 0,
 		UNK3 = (1 << 1),
 		UNK4 = (1 << 8),
-		UNK5 = (1 << 9),
-		ALLOW_HEAP_ALLOCATION = (1 << 31)
+		UNK5 = (1 << 9)
 	};
 
 	enum EAllocationFlags_t
@@ -64,9 +51,90 @@ public:
 		LENGTH_MASK = (1 << 30) - 1,
 		FLAGS_MASK = ~LENGTH_MASK,
 
-		STACK_ALLOCATION_MARKER = (1 << 30),
-		HEAP_ALLOCATION_MARKER = (1 << 31)
+		// Flags in m_nLength
+		// Means it tried to grow larger than static size and heap allocation was disabled
+		OVERFLOWED_MARKER = (1 << 30),
+		// Means it owns the heap buffer and it needs to be cleaned up
+		FREE_HEAP_MARKER = (1 << 31),
+
+		// Flags in m_nAllocatedSize
+		// Means it uses stack allocated buffer
+		STACK_ALLOCATED_MARKER = (1 << 30),
+		// Allows the buffer to grow beyond the static size on the heap
+		ALLOW_HEAP_ALLOCATION = (1 << 31)
 	};
+
+public:
+	CBufferString( bool bAllowHeapAllocation = true ) :
+		m_nLength( 0 ),
+		m_nAllocatedSize( (bAllowHeapAllocation * ALLOW_HEAP_ALLOCATION) | STACK_ALLOCATED_MARKER | sizeof( m_szString ) ),
+		m_pString( nullptr )
+	{ }
+
+	CBufferString( const char *pString, bool bAllowHeapAllocation = true ) :
+		CBufferString( bAllowHeapAllocation )
+	{
+		Insert( 0, pString );
+	}
+
+protected:
+	CBufferString( size_t nAllocatedSize, bool bAllowHeapAllocation = true ) :
+		m_nLength( 0 ),
+		m_nAllocatedSize( (bAllowHeapAllocation * ALLOW_HEAP_ALLOCATION) | STACK_ALLOCATED_MARKER | (nAllocatedSize + sizeof( m_szString )) ),
+		m_pString( nullptr )
+	{
+		Assert( nAllocatedSize > 8 );
+	}
+
+public:
+	CBufferString( const CBufferString &other ) : CBufferString() { *this = other; }
+	CBufferString &operator=( const CBufferString &src )
+	{
+		Clear();
+		Insert( 0, src.Get() );
+		return *this;
+	}
+
+	~CBufferString() { Purge(); }
+
+	void SetHeapAllocationState( bool state )
+	{
+		if(state)
+			m_nAllocatedSize |= ALLOW_HEAP_ALLOCATION;
+		else
+			m_nAllocatedSize &= ~ALLOW_HEAP_ALLOCATION;
+	}
+
+	int AllocatedNum() const { return m_nAllocatedSize & LENGTH_MASK; }
+	int Length() const { return m_nLength & LENGTH_MASK; }
+
+	bool CanHeapAllocate() const { return (m_nAllocatedSize & ALLOW_HEAP_ALLOCATION) != 0; }
+	bool IsStackAllocated() const { return (m_nAllocatedSize & STACK_ALLOCATED_MARKER) != 0; }
+	bool ShouldFreeMemory() const { return (m_nLength & FREE_HEAP_MARKER) != 0; }
+	bool IsOverflowed() const { return (m_nLength & OVERFLOWED_MARKER) != 0; }
+
+	bool IsInputStringUnsafe( const char *pData ) const
+	{
+		return ((void *)pData >= this && (void *)pData < &this[1]) ||
+				(!IsAllocationEmpty() && pData >= Base() && pData < (Base() + AllocatedNum()));
+	}
+
+	bool IsAllocationEmpty() const { return AllocatedNum() == 0; }
+
+protected:
+	char *Base() { return IsStackAllocated() ? m_szString : (!IsAllocationEmpty() ? m_pString : nullptr); }
+	const char *Base() const { return const_cast<CBufferString *>( this )->Base(); }
+
+public:
+	const char *Get() const { auto base = Base(); return base ? base : StringFuncs<char>::EmptyString(); }
+
+	void Clear()
+	{
+		if(!IsAllocationEmpty())
+			Base()[0] = '\0';
+
+		m_nLength &= ~LENGTH_MASK;
+	}
 
 public:
 	DLL_CLASS_IMPORT const char *AppendConcat(int, const char * const *, const int *, bool bIgnoreAlignment = false);
@@ -94,10 +162,10 @@ public:
 
 	// Ensures the nCapacity condition is met and grows the local buffer if needed.
 	// Returns pResultingBuffer pointer to the newly allocated data, as well as resulting capacity that was allocated in bytes.
-	DLL_CLASS_IMPORT int EnsureCapacity(int nCapacity, char **pResultingBuffer, bool bIgnoreAlignment = false, bool bForceGrow = true);
-	DLL_CLASS_IMPORT int EnsureAddedCapacity(int nCapacity, char **pResultingBuffer, bool bIgnoreAlignment = false, bool bForceGrow = true);
+	DLL_CLASS_IMPORT int EnsureCapacity(int nCapacity, char **pResultingBuffer, bool bIgnoreAlignment = false, bool bForceGrow = false);
+	DLL_CLASS_IMPORT int EnsureAddedCapacity(int nCapacity, char **pResultingBuffer, bool bIgnoreAlignment = false, bool bForceGrow = false);
 
-	DLL_CLASS_IMPORT char *EnsureLength(int nCapacity, bool bIgnoreAlignment = false, int *pNewCapacity = NULL);
+	DLL_CLASS_IMPORT char *EnsureLength(int nCapacity, bool bIgnoreAlignment = false, int *pNewCapacity = nullptr);
 	DLL_CLASS_IMPORT char *EnsureOwnedAllocation(CBufferString::EAllocationOption_t eAlloc);
 
 	DLL_CLASS_IMPORT const char *EnsureTrailingSlash(char cSeparator, bool bDontAppendIfEmpty = true);
@@ -134,8 +202,8 @@ public:
 	// Returns the resulting char buffer (Same as to what CBufferString->Get() returns).
 	DLL_CLASS_IMPORT const char *Insert(int nIndex, const char *pBuf, int nCount = -1, bool bIgnoreAlignment = false);
 
-	DLL_CLASS_IMPORT char *GetInsertPtr(int nIndex, int nChars, bool bIgnoreAlignment = false, int *pNewCapacity = NULL);
-	DLL_CLASS_IMPORT char *GetReplacePtr(int nIndex, int nOldChars, int nNewChars, bool bIgnoreAlignment = false, int *pNewCapacity = NULL);
+	DLL_CLASS_IMPORT char *GetInsertPtr(int nIndex, int nChars, bool bIgnoreAlignment = false, int *pNewCapacity = nullptr);
+	DLL_CLASS_IMPORT char *GetReplacePtr(int nIndex, int nOldChars, int nNewChars, bool bIgnoreAlignment = false, int *pNewCapacity = nullptr);
 
 	DLL_CLASS_IMPORT int GrowByChunks(int, int);
 
@@ -156,7 +224,7 @@ public:
 	// Copies data from pOther and then purges it
 	DLL_CLASS_IMPORT void MoveFrom(CBufferString &pOther);
 
-	DLL_CLASS_IMPORT void Purge(int nLength);
+	DLL_CLASS_IMPORT void Purge(int nAllocatedBytesToPreserve = 0);
 
 	DLL_CLASS_IMPORT char *Relinquish(CBufferString::EAllocationOption_t eAlloc);
 
@@ -184,7 +252,7 @@ public:
 	// Strips any current extension from path and ensures that extension is the new extension
 	DLL_CLASS_IMPORT const char *SetExtension(const char *extension);
 
-	DLL_CLASS_IMPORT char *SetLength(int nLen, bool bIgnoreAlignment = false, int *pNewCapacity = NULL);
+	DLL_CLASS_IMPORT char *SetLength(int nLen, bool bIgnoreAlignment = false, int *pNewCapacity = nullptr);
 	DLL_CLASS_IMPORT void SetPtr(char *pBuf, int nBufferChars, int, bool, bool);
 
 	// Frees the buffer (if it was heap allocated) and writes "~DSTRCT" to the local buffer.
@@ -213,119 +281,40 @@ public:
 
 	DLL_CLASS_IMPORT int UnicodeCaseConvert(int, EStringConvertErrorPolicy eErrorPolicy);
 
-	// Casts to CBufferStringGrowable. Very dirty solution until someone figures out the sane one.
-	template<size_t MAX_SIZE = 8, bool AllowHeapAllocation = true, typename T = CBufferStringGrowable<MAX_SIZE, AllowHeapAllocation>>
-	T *ToGrowable()
-	{
-		return (T *)this;
-	}
-};
-
-template<size_t MAX_SIZE, bool AllowHeapAllocation = true>
-class CBufferStringGrowable : public CBufferString
-{
-	friend class CBufferString;
-
-public:
-	CBufferStringGrowable() : m_nTotalCount(0), m_nAllocated(STACK_ALLOCATION_MARKER | (MAX_SIZE & LENGTH_MASK))
-	{
-		memset(m_Memory.m_szString, 0, sizeof(m_Memory.m_szString));
-		if (AllowHeapAllocation)
-		{
-			m_nAllocated |= ALLOW_HEAP_ALLOCATION;
-		}
-	}
-
-	CBufferStringGrowable(const CBufferStringGrowable& other) : m_nTotalCount(0), m_nAllocated(STACK_ALLOCATION_MARKER | (MAX_SIZE & LENGTH_MASK))
-	{
-		memset(m_Memory.m_szString, 0, sizeof(m_Memory.m_szString));
-		if (AllowHeapAllocation)
-		{
-			m_nAllocated |= ALLOW_HEAP_ALLOCATION;
-		}
-		Insert(0, other.Get());
-	}
-
-	~CBufferStringGrowable()
-	{
-		if (IsHeapAllocated() && m_Memory.m_pString)
-		{
-#if PLATFORM_WINDOWS
-			g_pMemAlloc->Free((void*)m_Memory.m_pString);
-#else
-			delete[] m_Memory.m_pString;
-#endif
-		}
-	}
-
-	inline CBufferStringGrowable& operator=(const CBufferStringGrowable& src)
-	{
-		Clear();
-		Insert(0, src.Get());
-		return *this;
-	}
-
-	inline int GetAllocatedNumber() const
-	{
-		return m_nAllocated & LENGTH_MASK;
-	}
-
-	inline int GetTotalNumber() const
-	{
-		return m_nTotalCount & LENGTH_MASK;
-	}
-
-	inline bool IsStackAllocated() const
-	{
-		return (m_nAllocated & STACK_ALLOCATION_MARKER) != 0;
-	}
-
-	inline bool IsHeapAllocated() const
-	{
-		return (m_nTotalCount & HEAP_ALLOCATION_MARKER) != 0;
-	}
-
-	inline bool IsInputStringUnsafe(const char *pData) const
-	{
-		return ((void *)pData >= this && (void *)pData < &this[1]) ||
-			(GetAllocatedNumber() != 0 && pData >= Get() && pData < (Get() + GetAllocatedNumber()));
-	}
-
-	inline const char *Get() const
-	{
-		if (IsStackAllocated())
-		{
-			return m_Memory.m_szString;
-		}
-		else if (GetAllocatedNumber() != 0)
-		{
-			return m_Memory.m_pString;
-		}
-
-		return StringFuncs<char>::EmptyString();
-	}
-
-	inline void Clear()
-	{
-		if (GetAllocatedNumber() != 0)
-		{
-			if (IsStackAllocated())
-				m_Memory.m_szString[0] = '\0';
-			else
-				m_Memory.m_pString[0] = '\0';
-		}
-		m_nTotalCount &= ~LENGTH_MASK;
-	}
-
 private:
-	int m_nTotalCount;
-	int m_nAllocated;
+	int m_nLength;
+	int m_nAllocatedSize;
 
 	union
 	{
 		char *m_pString;
-		char m_szString[MAX_SIZE];
-	} m_Memory;
+		char m_szString[8];
+	};
 };
+
+template<size_t SIZE>
+class CBufferStringN : public CBufferString
+{
+public:
+	static const size_t DATA_SIZE = ALIGN_VALUE( SIZE - sizeof( char[8] ), 8 );
+
+	CBufferStringN( bool bAllowHeapAllocation = true ) : CBufferString( DATA_SIZE, bAllowHeapAllocation ), m_FixedData{} {}
+	CBufferStringN( const char *pString, bool bAllowHeapAllocation = true ) : CBufferStringN( bAllowHeapAllocation )
+	{
+		Insert( 0, pString );
+	}
+
+	~CBufferStringN() { PurgeN(); }
+
+	// Should be preferred over CBufferString::Purge as it preserves stack space correctly
+	void PurgeN() { Purge( DATA_SIZE ); }
+
+private:
+	char m_FixedData[DATA_SIZE];
+};
+
+// AMNOTE: CBufferStringN name is preferred to be used, altho CBufferStringGrowable is left as a small bcompat
+template <size_t SIZE>
+using CBufferStringGrowable = CBufferStringN<SIZE>;
 
 #endif /* BUFFERSTRING_H */

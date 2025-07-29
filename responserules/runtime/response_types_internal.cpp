@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2010, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2010, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Core types for the response rules -- criteria, responses, rules, and matchers.
 //

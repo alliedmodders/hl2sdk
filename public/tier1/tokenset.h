@@ -1,4 +1,4 @@
-//========= Copyright © 2008, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 2008, Valve Corporation, All rights reserved. ============//
 
 #ifndef __TOKENSET_H
 #define __TOKENSET_H

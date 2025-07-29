@@ -1,4 +1,4 @@
-//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -17,13 +17,22 @@
 #include <engine/IEngineService.h>
 #include <netadr.h>
 
+enum server_state_t : int
+{
+	SS_Dead = 0,
+	SS_WaitingForGameSessionManifest,
+	SS_Loading,
+	SS_Active,
+	SS_Paused,
+};
+
 class IGameSpawnGroupMgr;
 struct EventServerAdvanceTick_t;
 struct EventServerPollNetworking_t;
 struct EventServerProcessNetworking_t;
 struct EventServerSimulate_t;
 struct EventServerPostSimulate_t;
-struct server_state_t;
+struct SpawnGroupDesc_t;
 class IPrerequisite;
 class CServerChangelevelState;
 class ISource2WorldSession;
@@ -32,7 +41,7 @@ class GameSessionConfiguration_t;
 class KeyValues3;
 class CSVCMsg_ServerInfo_t;
 class CServerSideClientBase;
-class CCLCMsg_SplitPlayerConnect_t;
+class C2S_CONNECT_Message;
 
 typedef int ChallengeType_t;
 typedef int PauseGroup_t;
@@ -98,7 +107,7 @@ public:
 	virtual void	MakeSpawnGroupActive( SpawnGroupHandle_t ) = 0;
 	virtual void	SynchronouslySpawnGroup( SpawnGroupHandle_t ) = 0;
 
-	virtual void	SetServerState( server_state_t ) = 0;
+	virtual void	SetServerState( server_state_t eNewState ) = 0;
 	virtual void	SpawnServer( const char * ) = 0;
 
 	virtual int 	GetSpawnGroupLoadingStatus( SpawnGroupHandle_t ) = 0;
@@ -170,7 +179,7 @@ public:
 
 	virtual void	StartHLTVMaster() = 0;
 
-	virtual CServerSideClientBase *ConnectClient( const char *pszName, ns_address *pAddr, int socket, CCLCMsg_SplitPlayerConnect_t *pSplitPlayer,
+	virtual CServerSideClientBase *ConnectClient( const char *pszName, ns_address *pAddr, void *pNetInfo, C2S_CONNECT_Message *pConnectMsg,
 												  const char *pszChallenge, const byte *pAuthTicket, int nAuthTicketLength, bool bIsLowViolence ) = 0;
 	virtual CServerSideClientBase *CreateNewClient( CPlayerSlot slot ) = 0;
 	

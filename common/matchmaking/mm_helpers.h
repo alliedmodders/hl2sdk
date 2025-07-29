@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2009, Valve Corporation, All rights reserved. ======//
+//===== Copyright Â© 1996-2009, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: common routines to operate on matchmaking sessions and members
 // Assumptions: caller should include all required headers before including mm_helpers.h

@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2007, Valve Corporation, All rights reserved. ============//
+//========= Copyright Â© 1996-2007, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: A single behavior that handles running all of the NPC's add ons
 //

@@ -1,4 +1,4 @@
-//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -98,6 +98,8 @@ public:
 	float m_softContactFrequency;
 	float m_softContactDampingRatio;
 	float m_wheelDrag;
+	float m_heatConductivity;
+	float m_flashpoint;
 };
 
 class CPhysSurfacePropertiesSoundNames
