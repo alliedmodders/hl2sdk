@@ -46,7 +46,7 @@ public:
 	}
 
 private:
-	char unk001[24];
+	char unk001[40];
 	float m_flMargin;
 };
 
