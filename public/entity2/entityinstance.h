@@ -30,6 +30,7 @@ public:
 	virtual void Precache( const CEntityPrecacheContext* pContext ) = 0;
 	virtual void AddedToEntityDatabase() = 0;
 	virtual void Spawn( const CEntityKeyValues* pKeyValues ) = 0;
+	virtual void unk001() = 0;
 	virtual void PostDataUpdate( /*DataUpdateType_t*/int updateType ) = 0;
 	virtual void OnDataUnchangedInPVS() = 0;
 	virtual void Activate( /*ActivateType_t*/int activateType ) = 0;
@@ -49,12 +50,15 @@ public:
 	virtual void OnSave() = 0;
 	virtual void OnRestore() = 0;
 	
-	virtual void unk001() = 0;
+	virtual void unk002() = 0;
 	virtual int ObjectCaps() = 0;
 	virtual CEntityIndex RequiredEdictIndex() = 0;
-	
+
+	virtual void unk003() = 0;
+	virtual void unk004() = 0;
 	// marks an entire entity for transmission over the network
-	virtual void NetworkStateChanged() = 0;
+	// virtual void NetworkStateChanged() = 0;
+	virtual void unk005() = 0;
 	
 	// marks a field for transmission over the network
 	// nOffset is the flattened field offset
@@ -65,7 +69,8 @@ public:
 	// PathIndex is the value to specify 
 	//		if the path to the field goes through one or more pointers, otherwise pass -1
 	// 		this value is usually a member of the CNetworkVarChainer and belongs to the last object in the chain
-	virtual void NetworkStateChanged( uint nOffset, int nItem = -1, ChangeAccessorFieldPathIndex_t PathIndex = ChangeAccessorFieldPathIndex_t() ) = 0;
+	// virtual void NetworkStateChanged( uint nOffset, int nItem = -1, ChangeAccessorFieldPathIndex_t PathIndex = ChangeAccessorFieldPathIndex_t() ) = 0;
+	virtual void unk006() = 0;
 	
 	virtual void LogFieldInfo( const char* pszFieldName, const char* pszInfo ) = 0;
 	virtual bool FullEdictChanged() = 0;
