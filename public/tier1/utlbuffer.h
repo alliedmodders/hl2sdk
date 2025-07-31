@@ -157,6 +157,7 @@ public:
 	// flags
 	enum BufferFlags_t
 	{
+		BF_NONE = 0,
 		TEXT_BUFFER = 0x1,			// Describes how get + put work (as strings, or binary)
 		EXTERNAL_GROWABLE = 0x2,	// This is used w/ external buffers and causes the utlbuf to switch to reallocatable memory if an overflow happens when Putting.
 		CONTAINS_CRLF = 0x4,		// For text buffers only, does this contain \n or \n\r?
@@ -168,8 +169,8 @@ public:
 	typedef bool (CUtlBuffer::*UtlBufferOverflowFunc_t)( int nSize );
 
 	// Constructors for growable + external buffers for serialization/unserialization
-	DLL_CLASS_IMPORT CUtlBuffer( int growSize = 0, int initSize = 0, int nFlags = 0 );
-	DLL_CLASS_IMPORT CUtlBuffer( const void* pBuffer, int size, int nFlags = 0 );
+	DLL_CLASS_IMPORT CUtlBuffer( int growSize = 0, int initSize = 0, CUtlBuffer::BufferFlags_t nFlags = BufferFlags_t::BF_NONE );
+	DLL_CLASS_IMPORT CUtlBuffer( const void* pBuffer, int size, CUtlBuffer::BufferFlags_t nFlags = BufferFlags_t::BF_NONE );
 	// This one isn't actually defined so that we catch contructors that are trying to pass a bool in as the third param.
 	CUtlBuffer( const void *pBuffer, int size, bool crap );
 
@@ -188,9 +189,9 @@ public:
 	DLL_CLASS_IMPORT void *AccessPut( int nBytes );
 
 	// Attaches the buffer to external memory....
-	DLL_CLASS_IMPORT void		SetExternalBuffer( void* pMemory, int nSize, int nInitialPut, int nFlags = 0 );
+	DLL_CLASS_IMPORT void		SetExternalBuffer( void* pMemory, int nSize, int nInitialPut, CUtlBuffer::BufferFlags_t nFlags = BufferFlags_t::BF_NONE );
 	bool			IsExternallyAllocated() const;
-	DLL_CLASS_IMPORT void		AssumeMemory( void *pMemory, int nSize, int nInitialPut, int nFlags = 0 );
+	DLL_CLASS_IMPORT void		AssumeMemory( void *pMemory, int nSize, int nInitialPut, CUtlBuffer::BufferFlags_t nFlags = BufferFlags_t::BF_NONE );
 	void			*Detach();
 	DLL_CLASS_IMPORT void *DetachMemory();
 
@@ -474,6 +475,10 @@ protected:
 	CByteswap	m_Byteswap;
 };
 
+constexpr CUtlBuffer::BufferFlags_t operator|( const CUtlBuffer::BufferFlags_t f, const CUtlBuffer::BufferFlags_t v )
+{
+	return (CUtlBuffer::BufferFlags_t)(f | v);
+}
 
 // Stream style output operators for CUtlBuffer
 inline CUtlBuffer &operator<<( CUtlBuffer &b, char v )
