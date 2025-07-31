@@ -477,7 +477,7 @@ protected:
 
 constexpr CUtlBuffer::BufferFlags_t operator|( const CUtlBuffer::BufferFlags_t f, const CUtlBuffer::BufferFlags_t v )
 {
-	return (CUtlBuffer::BufferFlags_t)(f | v);
+	return static_cast<CUtlBuffer::BufferFlags_t>(static_cast<int>(f) | static_cast<int>(v));
 }
 
 // Stream style output operators for CUtlBuffer
