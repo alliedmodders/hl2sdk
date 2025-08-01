@@ -105,41 +105,39 @@
 // CBaseEntity::m_fFlags
 enum Flags_t : uint32
 {
-	// PLAYER SPECIFIC FLAGS FIRST BECAUSE WE USE ONLY A FEW BITS OF NETWORK PRECISION
-	FL_ONGROUND 				= (1 << 0), // At rest / on the ground
-	FL_DUCKING 					= (1 << 1), // Player flag -- Player is fully crouched
-	FL_WATERJUMP 				= (1 << 2), // player jumping out of water
-	// FL_EMPTY					= (1 << 3),
-	FL_BOT 						= (1 << 4), // Fake client controlled pawn entity, mostly referenced in movement related code
-	FL_FROZEN 					= (1 << 5), // Player is frozen for 3rd person camera
-	FL_ATCONTROLS 				= (1 << 6), // Player can't move, but keeps key inputs for controlling another entity
-	FL_CLIENT 					= (1 << 7), // Is a player
-	FL_FAKECLIENT 				= (1 << 8), // Fake client, simulated server side. Mainly set on controllers
-	// FL_EMPTY 				= (1 << 9),
-
-	// NON-PLAYER SPECIFIC (i.e., not used by GameMovement or the client .dll ) -- Can still be applied to players, though
-	FL_FLY 						= (1 << 10), // Changes the SV_Movestep() behavior to not need to be on ground
-	FL_SUPPRESS_SAVE 			= (1 << 11),
-	FL_IN_VEHICLE 				= (1 << 12),
-	FL_IN_VEHICLE_TRANSPORT 	= (1 << 13),
-	FL_GODMODE 					= (1 << 14),
-	FL_NOTARGET 				= (1 << 15),
-	FL_AIMTARGET 				= (1 << 16), // set if the crosshair needs to aim onto the entity
-	// FL_EMPTY 				= (1 << 17),
-	FL_STATICPROP 				= (1 << 18), // Eetsa static prop!
-	// FL_EMPTY 				= (1 << 19),
-	FL_GRENADE 					= (1 << 20),
-	// FL_EMPTY					= (1 << 21),
-	FL_DONTTOUCH 				= (1 << 22), // Doesn't generate touch functions, generates Untouch() for anything it was touching when this flag was set
-	// FL_EMPTY 				= (1 << 23),
-	// FL_EMPTY 				= (1 << 24),
-	FL_OBJECT 					= (1 << 25), // Terrible name. This is an object that NPCs should see. Missiles, for example.
-	// FL_EMPTY 				= (1 << 26),
-	FL_ONFIRE 					= (1 << 27), // You know...
-	FL_DISSOLVING 				= (1 << 28), // We're dissolving!
-	FL_TRANSRAGDOLL 			= (1 << 29), // In the process of turning into a client side ragdoll.
-	FL_UNBLOCKABLE_BY_PLAYER 	= (1 << 30)  // pusher that can't be blocked by the player
-	// FL_EMPTY 				= (1 << 31),
+	FL_ONGROUND = (1u << 0), // At rest / on the ground
+	FL_DUCKING = (1u << 1), // Player flag -- Player is fully crouched
+	FL_WATERJUMP = (1u << 2), // player jumping out of water
+	FL_NOCLIP = (1u << 3), // Forces MOVETYPE_NOCLIP on the entity
+	FL_PAWN_FAKECLIENT = (1u << 4), // Fake client controlled pawn entity), mostly referenced in movement related code
+	FL_FROZEN = (1u << 5), // Player is frozen for 3rd person camera
+	FL_ATCONTROLS = (1u << 6), // Player can't move), but keeps key inputs for controlling another entity
+	FL_CLIENT = (1u << 7), // Is a player
+	FL_CONTROLLER_FAKECLIENT = (1u << 8), // Fake client, simulated server side. Mainly set on controllers
+	FL_INWATER = (1u << 9), // In water. Potentially obsolete in s2
+	// NON-PLAYER SPECIFIC=i.e., not used by GameMovement or the client .dll ) -- Can still be applied to players, though
+	FL_FLY = (1u << 10), // Changes the SV_Movestep() behavior to not need to be on ground
+	FL_SWIM = (1u << 11), // Changes the SV_Movestep() behavior to not need to be on ground =but stay in water)
+	FL_CONVEYOR = (1u << 12), // Potentially obsolete in s2
+	FL_NPC = (1u << 13), // Potentially obsolete in s2
+	FL_GODMODE = (1u << 14),
+	FL_NOTARGET = (1u << 15),
+	FL_AIMTARGET = (1u << 16), // set if the crosshair needs to aim onto the entity
+	FL_PARTIALGROUND = (1u << 17), // not all corners are valid. Potentially obsolete in s2
+	FL_STATICPROP = (1u << 18), // Eetsa static prop!
+	FL_GRAPHED = (1u << 19), // worldgraph has this ent listed as something that blocks a connection. Potentially obsolete in s2
+	FL_GRENADE = (1u << 20),
+	FL_STEPMOVEMENT = (1u << 21), // Changes the SV_Movestep() behavior to not do any processing. Potentially obsolete in s2
+	FL_DONTTOUCH = (1u << 22), // Doesn't generate touch functions), generates Untouch() for anything it was touching when this flag was set
+	FL_BASEVELOCITY = (1u << 23), // Base velocity has been applied this frame =used to convert base velocity into momentum)
+	FL_CONVEYOR_NEW = (1u << 24),
+	FL_OBJECT = (1u << 25), // Terrible name. This is an object that NPCs should see. Missiles), for example.
+	FL_KILLME = (1u << 26), // This entity is marked for death -- will be freed by game DLL. Potentially obsolete in s2
+	FL_ONFIRE = (1u << 27), // You know...
+	FL_DISSOLVING = (1u << 28), // We're dissolving!
+	FL_TRANSRAGDOLL = (1u << 29), // In the process of turning into a client side ragdoll.
+	FL_UNBLOCKABLE_BY_PLAYER = (1u << 30), // pusher that can't be blocked by the player
+	FL_FREEZING = (1u << 31) // We're becoming frozen!
 };
 
 // edict->movetype values
