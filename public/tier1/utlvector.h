@@ -247,10 +247,12 @@ public:
 	CUtlVectorConservative( T* pMemory, int numElements ) : BaseClass( pMemory, numElements ) {}
 };
 
-template< class T >
-class CUtlVectorRawAllocator : public CUtlVector< T, CUtlMemory_RawAllocator<T> >
+template< class T, class A = CMemAllocAllocator >
+class CUtlVectorRawAllocator : public CUtlVector< T, CUtlMemory_RawAllocator<T, A> >
 {
-	typedef CUtlVector< T, CUtlMemory_RawAllocator<T> > BaseClass;
+	typedef CUtlVector< T, CUtlMemory_RawAllocator<T, A> > BaseClass;
+	typedef A CAllocator;
+
 public:
 
 	// constructor, destructor

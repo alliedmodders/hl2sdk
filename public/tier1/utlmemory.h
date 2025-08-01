@@ -1027,9 +1027,11 @@ void CUtlMemoryAligned<T, nAlignment>::Purge()
 }
 
 #pragma pack(push, 1)
-template< class T >
+template< class T, class A >
 class CUtlMemory_RawAllocator
 {
+	typedef A CAllocator;
+
 public:
 	// constructor, destructor
 	CUtlMemory_RawAllocator( int nGrowSize = 0, int nInitSize = 0 );
@@ -1057,7 +1059,7 @@ public:
 	void *DetachMemory();
 
 	// Fast swap
-	void Swap( CUtlMemory_RawAllocator< T > &mem );
+	void Swap( CUtlMemory_RawAllocator< T, A > &mem );
 
 	// Size
 	int NumAllocated() const							{ return m_nAllocationCount; }
@@ -1104,15 +1106,15 @@ private:
 // constructor, destructor
 //-----------------------------------------------------------------------------
 
-template< class T >
-CUtlMemory_RawAllocator<T>::CUtlMemory_RawAllocator( int nGrowSize, int nInitSize )
+template< class T, class A >
+CUtlMemory_RawAllocator<T, A>::CUtlMemory_RawAllocator( int nGrowSize, int nInitSize )
 	: m_nAllocationCount( 0 ), m_pMemory( nullptr )
 {
 	EnsureCapacity( nInitSize );
 }
 
-template< class T >
-CUtlMemory_RawAllocator<T>::~CUtlMemory_RawAllocator()
+template< class T, class A >
+CUtlMemory_RawAllocator<T, A>::~CUtlMemory_RawAllocator()
 {
 	Purge();
 }
@@ -1120,15 +1122,15 @@ CUtlMemory_RawAllocator<T>::~CUtlMemory_RawAllocator()
 //-----------------------------------------------------------------------------
 // Fast swap
 //-----------------------------------------------------------------------------
-template< class T >
-void CUtlMemory_RawAllocator<T>::Swap( CUtlMemory_RawAllocator<T> &mem )
+template< class T, class A >
+void CUtlMemory_RawAllocator<T, A>::Swap( CUtlMemory_RawAllocator<T, A> &mem )
 {
 	V_swap( m_pMemory, mem.m_pMemory );
 	V_swap( m_nAllocationCount, mem.m_nAllocationCount );
 }
 
-template< class T >
-void CUtlMemory_RawAllocator<T>::AssumeMemory( T* pMemory, int numElements )
+template< class T, class A >
+void CUtlMemory_RawAllocator<T, A>::AssumeMemory( T* pMemory, int numElements )
 {
 	// Blow away any existing allocated memory
 	Purge();
@@ -1138,8 +1140,8 @@ void CUtlMemory_RawAllocator<T>::AssumeMemory( T* pMemory, int numElements )
 	m_nAllocationCount = numElements;
 }
 
-template< class T >
-void *CUtlMemory_RawAllocator<T>::DetachMemory()
+template< class T, class A >
+void *CUtlMemory_RawAllocator<T, A>::DetachMemory()
 {
 	void *pMemory = m_pMemory;
 	m_pMemory = 0;
@@ -1147,8 +1149,8 @@ void *CUtlMemory_RawAllocator<T>::DetachMemory()
 	return pMemory;
 }
 
-template< class T >
-inline T* CUtlMemory_RawAllocator<T>::Detach()
+template< class T, class A >
+inline T* CUtlMemory_RawAllocator<T, A>::Detach()
 {
 	return (T*)DetachMemory();
 }
@@ -1156,8 +1158,8 @@ inline T* CUtlMemory_RawAllocator<T>::Detach()
 //-----------------------------------------------------------------------------
 // Grows the memory
 //-----------------------------------------------------------------------------
-template< class T >
-void CUtlMemory_RawAllocator<T>::Grow( int num )
+template< class T, class A >
+void CUtlMemory_RawAllocator<T, A>::Grow( int num )
 {
 	Assert( num > 0 );
 	EnsureCapacity( m_nAllocationCount + num );
@@ -1166,18 +1168,16 @@ void CUtlMemory_RawAllocator<T>::Grow( int num )
 //-----------------------------------------------------------------------------
 // Makes sure we've got at least this much memory
 //-----------------------------------------------------------------------------
-template< class T >
-inline void CUtlMemory_RawAllocator<T>::EnsureCapacity( int num )
+template< class T, class A >
+inline void CUtlMemory_RawAllocator<T, A>::EnsureCapacity( int num )
 {
 	if(m_nAllocationCount >= num)
 		return;
 
 	int new_alloc_size = CalcNewDoublingCount( m_nAllocationCount, num, 2, INT_MAX );
-	size_t adjusted_size = 0;
 
 	MEM_ALLOC_CREDIT_CLASS();
-	m_pMemory = (T *)CRawAllocator::Realloc( m_pMemory, new_alloc_size * sizeof( T ), &adjusted_size );
-	m_nAllocationCount = clamp( (int)(adjusted_size / sizeof( T )), new_alloc_size, INT_MAX );
+	m_pMemory = CAllocator::Realloc( m_pMemory, new_alloc_size, m_nAllocationCount );
 
 	UTLMEMORY_TRACK_ALLOC();
 }
@@ -1185,21 +1185,21 @@ inline void CUtlMemory_RawAllocator<T>::EnsureCapacity( int num )
 //-----------------------------------------------------------------------------
 // Memory deallocation
 //-----------------------------------------------------------------------------
-template< class T >
-void CUtlMemory_RawAllocator<T>::Purge()
+template< class T, class A >
+void CUtlMemory_RawAllocator<T, A>::Purge()
 {
 	if (m_nAllocationCount > 0)
 	{
 		UTLMEMORY_TRACK_FREE();
-		CRawAllocator::Free( m_pMemory );
+		CAllocator::Free( m_pMemory );
 		m_pMemory = 0;
 	}
 	
 	m_nAllocationCount = 0;
 }
 
-template< class T >
-void CUtlMemory_RawAllocator<T>::Purge( int numElements )
+template< class T, class A >
+void CUtlMemory_RawAllocator<T, A>::Purge( int numElements )
 {
 	Assert( numElements >= 0 );
 
@@ -1232,11 +1232,9 @@ void CUtlMemory_RawAllocator<T>::Purge( int numElements )
 	}
 
 	UTLMEMORY_TRACK_FREE();
-	size_t adjusted_size = 0;
 
 	MEM_ALLOC_CREDIT_CLASS();
-	m_pMemory = (T *)CRawAllocator::Realloc( m_pMemory, numElements * sizeof( T ), &adjusted_size );
-	m_nAllocationCount = clamp( (int)(adjusted_size / sizeof( T )), numElements, INT_MAX );
+	m_pMemory = CAllocator::Realloc( m_pMemory, numElements, m_nAllocationCount );
 
 	UTLMEMORY_TRACK_ALLOC();
 }
