@@ -177,7 +177,7 @@ struct UtlRBTreeNode_t : public UtlRBTreeLinks_t< I >
 	T  m_Data;
 };
 
-template < class T, class I = unsigned short, typename L = bool (*)( const T &, const T & ), class M = CUtlMemory< UtlRBTreeNode_t< T, I >, I > >
+template < class T, class I = unsigned short, typename L = bool (*)( const T &, const T & ), class M = CUtlLeanVector< UtlRBTreeNode_t< T, I >, I > >
 class CUtlRBTree
 {
 public:
@@ -712,7 +712,7 @@ I  CUtlRBTree<T, I, L, M>::NewNode( bool bConstructElement )
 		if ( !m_Elements.IsValidIterator( it ) )
 		{
 			MEM_ALLOC_CREDIT_CLASS();
-			m_Elements.Grow();
+			m_Elements.AddToTailGetPtr();
 
 			it = m_Elements.IsValidIterator( m_LastAlloc ) ? m_Elements.Next( m_LastAlloc ) : m_Elements.First();
 
