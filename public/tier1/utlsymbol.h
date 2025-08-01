@@ -125,7 +125,7 @@ protected:
 
 	struct UtlSymTableHashFunctor
 	{
-		ptrdiff_t m_ownerOffset;
+		//ptrdiff_t m_ownerOffset;
 
 		UtlSymTableHashFunctor();
 		unsigned int operator()( UtlSymTableAltKey k ) const;
@@ -134,7 +134,7 @@ protected:
 
 	struct UtlSymTableEqualFunctor
 	{
-		ptrdiff_t m_ownerOffset;
+		//ptrdiff_t m_ownerOffset;
 
 		UtlSymTableEqualFunctor();
 		bool operator()( int a, int b ) const;
@@ -145,9 +145,9 @@ protected:
 	typedef CUtlHashtable<int, empty_t, UtlSymTableHashFunctor, UtlSymTableEqualFunctor, UtlSymTableAltKey> Hashtable_t;
 	typedef CUtlVector<MemBlockHandle_t> MemBlocksVec_t;
 
-	Hashtable_t					m_HashTable;
-	MemBlocksVec_t				m_MemBlocks;
-	CUtlMemoryBlockAllocator	m_MemBlockAllocator;
+	Hashtable_t						m_HashTable;
+	MemBlocksVec_t					m_MemBlocks;
+	CUtlMemoryBlockAllocator<byte>	m_MemBlockAllocator;
 
 	bool m_bInsensitive;
 };

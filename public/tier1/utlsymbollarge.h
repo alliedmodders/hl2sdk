@@ -227,14 +227,14 @@ private:
 	};
 
 	typedef CUtlHashtable<UtlSymLargeId_t, empty_t, UtlSymTableLargeHashFunctor, UtlSymTableLargeEqualFunctor, UtlSymTableLargeAltKey> Hashtable_t;
-	typedef CUtlVectorRawAllocator< MemBlockHandle_t > MemBlocksVec_t;
+	typedef CUtlLeanVector< MemBlockHandle_t > MemBlocksVec_t;
 
-	Hashtable_t					m_HashTable;
-	MemBlocksVec_t				m_MemBlocks;
-	MUTEX_TYPE					m_Mutex;
-	CUtlMemoryBlockAllocator	m_MemBlockAllocator;
-	int							m_nElementLimit;
-	bool						m_bThrowError;
+	Hashtable_t						m_HashTable;
+	MemBlocksVec_t					m_MemBlocks;
+	MUTEX_TYPE						m_Mutex;
+	CUtlMemoryBlockAllocator<byte>	m_MemBlockAllocator;
+	int								m_nElementLimit;
+	bool							m_bThrowError;
 };
 
 template < bool CASEINSENSITIVE, size_t PAGE_SIZE, class MUTEX_TYPE >
