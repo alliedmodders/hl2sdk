@@ -23,20 +23,24 @@
 
 #include "memdbgon.h"
 
-class CRawAllocator
+class CMemAllocAllocator
 {
 public:
-	static void* Alloc( size_t nSize, size_t *nAdjustedSize )
+	template<typename T, typename I = int>
+	static T* Alloc( I nCount, I &nAdjustedCount )
 	{
-		void *ptr = malloc( nSize );
-		*nAdjustedSize = MAX( _msize( ptr ), nSize );
+		size_t byte_size = nCount * sizeof( T );
+		T *ptr = (T *)malloc( byte_size );
+		nAdjustedCount = MIN( (I)(MAX( _msize( ptr ), byte_size ) / sizeof( T )), (std::numeric_limits<I>::max)() );
 		return ptr;
 	}
 
-	static void* Realloc( void *base, size_t nSize, size_t *nAdjustedSize )
+	template<typename T, typename I = int>
+	static T* Realloc( T *base, I nCount, I &nAdjustedCount )
 	{
-		void *ptr = realloc( base, nSize );
-		*nAdjustedSize = MAX( _msize( ptr ), nSize );
+		size_t byte_size = nCount * sizeof( T );
+		T *ptr = (T *)realloc( base, byte_size );
+		nAdjustedCount = MIN( (I)(MAX( _msize( ptr ), byte_size ) / sizeof( T )), (std::numeric_limits<I>::max)() );
 		return ptr;
 	}
 
