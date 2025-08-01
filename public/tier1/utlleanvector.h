@@ -15,22 +15,30 @@
 #pragma once
 #endif
 
+#include "commonmacros.h"
+#include "rawallocator.h"
 #include "tier0/platform.h"
 #include "tier0/dbg.h"
 
 #include <limits>
 
-#include "tier0/memdbgon.h"
-
 #define FOR_EACH_LEANVEC( vecName, iteratorName ) \
 	for ( auto iteratorName = vecName.First(); vecName.IsValidIterator( iteratorName ); iteratorName = vecName.Next( iteratorName ) )
 
-template< class T, class I >
+template< class T, class I, class A >
 class CUtlLeanVectorBase
 {
+	typedef A CAllocator;
+
 public:
+	enum : I
+	{
+		EXTERNAL_BUFFER_MARKER = (I { 1 } << (std::numeric_limits<I>::digits - 1))
+	};
+
 	// constructor, destructor
-	CUtlLeanVectorBase();
+	CUtlLeanVectorBase( I growSize = 0, I initSize = 0 );
+	CUtlLeanVectorBase( T *pMemory, I allocationCount, I numElements = 0 );
 	~CUtlLeanVectorBase();
 	
 	// Gets the base address (can change when adding elements!)
@@ -40,12 +48,24 @@ public:
 	// Makes sure we have enough memory allocated to store a requested # of elements
 	void EnsureCapacity( int num, bool force = false );
 	
+	bool IsExternallyAllocated() const { return (m_nAllocated & EXTERNAL_BUFFER_MARKER) != 0; }
+
+	// Attaches the buffer to external memory....
+	void SetExternalBuffer( T *pMemory, int allocationCount, int numElements = 0 );
+	void SetExternalBuffer( const T *pMemory, int allocationCount, int numElements = 0 );
+	void AssumeMemory( T *pMemory, int allocationCount, int numElements = 0 );
+	T *Detach();
+	void *DetachMemory();
+
+	int NumAllocated() const { return (m_nAllocated & (~EXTERNAL_BUFFER_MARKER)); }
+
 	// Element removal
 	void RemoveAll(); // doesn't deallocate memory
+
+	bool IsIdxValid( I i ) const { return (i >= 0) && (i < NumAllocated()); }
 	
 	// Memory deallocation
 	void Purge();
-
 protected:
 
 	struct
@@ -59,14 +79,21 @@ protected:
 //-----------------------------------------------------------------------------
 // constructor, destructor
 //-----------------------------------------------------------------------------
-template< class T, class I >
-inline CUtlLeanVectorBase<T, I>::CUtlLeanVectorBase() : m_nCount(0),
-	m_nAllocated(0), m_pElements(NULL)
+template< class T, class I, class A >
+inline CUtlLeanVectorBase<T, I, A>::CUtlLeanVectorBase( I growSize, I initSize ) :
+	m_nCount( 0 ), m_nAllocated( 0 ), m_pElements( nullptr )
+{
+	EnsureCapacity( initSize );
+}
+	
+template< class T, class I, class A >
+inline CUtlLeanVectorBase<T, I, A>::CUtlLeanVectorBase( T *pMemory, I allocationCount, I numElements ) :
+	m_nCount( numElements ), m_nAllocated( allocationCount | EXTERNAL_BUFFER_MARKER ), m_pElements( pMemory )
 {
 }
 
-template< class T, class I >
-inline CUtlLeanVectorBase<T, I>::~CUtlLeanVectorBase()
+template< class T, class I, class A >
+inline CUtlLeanVectorBase<T, I, A>::~CUtlLeanVectorBase()
 {
 	Purge();
 }
@@ -74,39 +101,88 @@ inline CUtlLeanVectorBase<T, I>::~CUtlLeanVectorBase()
 //-----------------------------------------------------------------------------
 // Gets the base address (can change when adding elements!)
 //-----------------------------------------------------------------------------
-template< class T, class I >
-inline T* CUtlLeanVectorBase<T, I>::Base()
+template< class T, class I, class A >
+inline T* CUtlLeanVectorBase<T, I, A>::Base()
 {
-	return m_nAllocated ? m_pElements : NULL;
+	return NumAllocated() ? m_pElements : nullptr;
 }
 
-template< class T, class I >
-inline const T* CUtlLeanVectorBase<T, I>::Base() const
+template< class T, class I, class A >
+inline const T* CUtlLeanVectorBase<T, I, A>::Base() const
 {
-	return m_nAllocated ? m_pElements : NULL;
+	return NumAllocated() ? m_pElements : nullptr;
+}
+
+//-----------------------------------------------------------------------------
+// Attaches the buffer to external memory....
+//-----------------------------------------------------------------------------
+template< class T, class I, class A >
+inline void CUtlLeanVectorBase<T, I, A>::SetExternalBuffer( T *pMemory, int allocationCount, int numElements )
+{
+	// Blow away any existing allocated memory
+	Purge();
+
+	m_nCount = numElements;
+	m_nAllocated = allocationCount | EXTERNAL_BUFFER_MARKER;
+	m_pElements = pMemory;
+}
+
+template< class T, class I, class A >
+inline void CUtlLeanVectorBase<T, I, A>::SetExternalBuffer( const T *pMemory, int allocationCount, int numElements )
+{
+	// Blow away any existing allocated memory
+	Purge();
+
+	m_nCount = numElements;
+	m_nAllocated = allocationCount | EXTERNAL_BUFFER_MARKER;
+	m_pElements = const_cast<T *>(pMemory);
+}
+
+template< class T, class I, class A >
+inline void CUtlLeanVectorBase<T, I, A>::AssumeMemory( T *pMemory, int allocationCount, int numElements )
+{
+	// Blow away any existing allocated memory
+	Purge();
+
+	m_nCount = numElements;
+	m_nAllocated = allocationCount;
+
+	// Simply take the pointer but don't mark us as external
+	m_pElements = pMemory;
+}
+
+template< class T, class I, class A >
+inline T *CUtlLeanVectorBase<T, I, A>::Detach()
+{
+	return (T *)DetachMemory();
+}
+
+template< class T, class I, class A >
+inline void *CUtlLeanVectorBase<T, I, A>::DetachMemory()
+{
+	if(IsExternallyAllocated())
+		return nullptr;
+
+	void *pMemory = m_pElements;
+	m_nCount = 0;
+	m_nAllocated = 0;
+
+	m_pElements = 0;
+	return pMemory;
 }
 
 //-----------------------------------------------------------------------------
 // Makes sure we have enough memory allocated to store a requested # of elements
 //-----------------------------------------------------------------------------
-template< class T, class I >
-void CUtlLeanVectorBase<T, I>::EnsureCapacity( int num, bool force )
+template< class T, class I, class A >
+void CUtlLeanVectorBase<T, I, A>::EnsureCapacity( int num, bool force )
 {
-	I nMinAllocated = ( 31 + sizeof( T ) ) / sizeof( T );
+	if(num <= NumAllocated())
+		return;
+	
+	I nMinAllocated = (31 + sizeof( T )) / sizeof( T );
 	I nMaxAllocated = (std::numeric_limits<I>::max)();
-	I nNewAllocated = m_nAllocated;
-	
-	if ( force )
-	{
-		if ( num == m_nAllocated )
-			return;
-	}
-	else
-	{
-		if ( num <= m_nAllocated )
-			return;
-	}
-	
+
 	if ( num > nMaxAllocated )
 	{
 		Msg( "%s allocation count overflow( %llu > %llu )\n", __FUNCTION__, ( uint64 )num, ( uint64 )nMaxAllocated );
@@ -114,30 +190,30 @@ void CUtlLeanVectorBase<T, I>::EnsureCapacity( int num, bool force )
 		DebuggerBreak();
 	}
 	
-	if ( force )
+	I nNewAllocated = num;
+	if ( !force )
+		nNewAllocated = CalcNewDoublingCount( NumAllocated(), num, nMinAllocated, nMaxAllocated );
+	
+	T *pNew = nullptr;
+	if(IsExternallyAllocated())
 	{
-		nNewAllocated = num;
+		CAllocator::template Alloc<T>( nNewAllocated, nNewAllocated );
+		V_memmove( pNew, Base(), m_nCount * sizeof( T ) );
 	}
 	else
 	{
-		while ( nNewAllocated < num )
-		{
-			if ( nNewAllocated < nMaxAllocated/2 )
-				nNewAllocated = MAX( nNewAllocated*2, nMinAllocated );
-			else
-				nNewAllocated = nMaxAllocated;
-		}
+		pNew = CAllocator::Realloc( m_pElements, nNewAllocated, nNewAllocated );
 	}
-	
-	m_pElements = (T*)realloc( m_pElements, nNewAllocated * sizeof(T) );
+
+	m_pElements = pNew;
 	m_nAllocated = nNewAllocated;
 }
 
 //-----------------------------------------------------------------------------
 // Element removal
 //-----------------------------------------------------------------------------
-template< class T, class I >
-void CUtlLeanVectorBase<T, I>::RemoveAll()
+template< class T, class I, class A >
+void CUtlLeanVectorBase<T, I, A>::RemoveAll()
 {
 	T* pElement = Base();
 	const T* pEnd = &pElement[ m_nCount ];
@@ -150,26 +226,37 @@ void CUtlLeanVectorBase<T, I>::RemoveAll()
 //-----------------------------------------------------------------------------
 // Memory deallocation
 //-----------------------------------------------------------------------------
-template< class T, class I >
-inline void CUtlLeanVectorBase<T, I>::Purge()
+template< class T, class I, class A >
+inline void CUtlLeanVectorBase<T, I, A>::Purge()
 {
 	RemoveAll();
 	
-	if ( m_nAllocated > 0 )
+	if(!IsExternallyAllocated())
 	{
-		free( (void*)m_pElements );
-		m_pElements = NULL;
+		if(NumAllocated() > 0)
+		{
+			CAllocator::Free( m_pElements );
+			m_pElements = nullptr;
+		}
+
+		m_nAllocated = 0;
 	}
-	
-	m_nAllocated = 0;
 }
 
-template< class T, size_t N, class I >
+template< class T, size_t N, class I, class A >
 class CUtlLeanVectorFixedGrowableBase
 {
+	typedef A CAllocator;
+
 public:
+	enum : I
+	{
+		EXTERNAL_BUFFER_MARKER = (I { 1 } << (std::numeric_limits<I>::digits - 1))
+	};
+
 	// constructor, destructor
-	CUtlLeanVectorFixedGrowableBase();
+	CUtlLeanVectorFixedGrowableBase( I growSize = 0, I initSize = 0 );
+	CUtlLeanVectorFixedGrowableBase( T *pMemory, I allocationCount, I numElements = 0 );
 	~CUtlLeanVectorFixedGrowableBase();
 	
 	// Gets the base address (can change when adding elements!)
@@ -179,9 +266,15 @@ public:
 	// Makes sure we have enough memory allocated to store a requested # of elements
 	void EnsureCapacity( int num, bool force = false );
 	
+	bool IsExternallyAllocated() const { return (m_nAllocated & EXTERNAL_BUFFER_MARKER) != 0; }
+
+	int NumAllocated() const { return (m_nAllocated & (~EXTERNAL_BUFFER_MARKER)); }
+
 	// Element removal
 	void RemoveAll(); // doesn't deallocate memory
 	
+	bool IsIdxValid( I i ) const { return (i >= 0) && (i < NumAllocated()); }
+
 	// Memory deallocation
 	void Purge();
 
@@ -214,14 +307,21 @@ protected:
 //-----------------------------------------------------------------------------
 // constructor, destructor
 //-----------------------------------------------------------------------------
-template< class T, size_t N, class I >
-inline CUtlLeanVectorFixedGrowableBase<T, N, I>::CUtlLeanVectorFixedGrowableBase() : m_nCount(0),
-	m_nAllocated(N)
+template< class T, size_t N, class I, class A >
+inline CUtlLeanVectorFixedGrowableBase<T, N, I, A>::CUtlLeanVectorFixedGrowableBase( I growSize, I initSize ) :
+	m_nCount( 0 ), m_nAllocated( N )
+{
+	EnsureCapacity( initSize );
+}
+
+template< class T, size_t N, class I, class A >
+inline CUtlLeanVectorFixedGrowableBase<T, N, I, A>::CUtlLeanVectorFixedGrowableBase( T *pMemory, I allocationCount, I numElements ) :
+	m_nCount( numElements ), m_nAllocated( allocationCount | EXTERNAL_BUFFER_MARKER ), m_pElements( pMemory )
 {
 }
 
-template< class T, size_t N, class I >
-inline CUtlLeanVectorFixedGrowableBase<T, N, I>::~CUtlLeanVectorFixedGrowableBase()
+template< class T, size_t N, class I, class A >
+inline CUtlLeanVectorFixedGrowableBase<T, N, I, A>::~CUtlLeanVectorFixedGrowableBase()
 {
 	Purge();
 }
@@ -229,47 +329,47 @@ inline CUtlLeanVectorFixedGrowableBase<T, N, I>::~CUtlLeanVectorFixedGrowableBas
 //-----------------------------------------------------------------------------
 // Gets the base address (can change when adding elements!)
 //-----------------------------------------------------------------------------
-template< class T, size_t N, class I >
-inline T* CUtlLeanVectorFixedGrowableBase<T, N, I>::Base()
+template< class T, size_t N, class I, class A >
+inline T* CUtlLeanVectorFixedGrowableBase<T, N, I, A>::Base()
 {
-	if ( m_nAllocated )
+	if ( NumAllocated() )
 	{
-		if ( ( size_t )m_nAllocated > N )
+		if ( IsExternallyAllocated() || ( size_t )NumAllocated() > N )
 			return m_pElements;
 		else
 			return &m_FixedAlloc[ 0 ];
 	}
 	
-	return NULL;
+	return nullptr;
 }
 
-template< class T, size_t N, class I >
-inline const T* CUtlLeanVectorFixedGrowableBase<T, N, I>::Base() const
+template< class T, size_t N, class I, class A >
+inline const T* CUtlLeanVectorFixedGrowableBase<T, N, I, A>::Base() const
 {
-	if ( m_nAllocated )
+	if ( NumAllocated() )
 	{
-		if ( ( size_t )m_nAllocated > N )
+		if ( IsExternallyAllocated() || ( size_t )NumAllocated() > N )
 			return m_pElements;
 		else
 			return &m_FixedAlloc[ 0 ];
 	}
 	
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
 // Makes sure we have enough memory allocated to store a requested # of elements
 //-----------------------------------------------------------------------------
-template< class T, size_t N, class I >
-void CUtlLeanVectorFixedGrowableBase<T, N, I>::EnsureCapacity( int num, bool force )
+template< class T, size_t N, class I, class A >
+void CUtlLeanVectorFixedGrowableBase<T, N, I, A>::EnsureCapacity( int num, bool force )
 {
-	I nMinAllocated = ( 31 + sizeof( T ) ) / sizeof( T );
-	I nMaxAllocated = (std::numeric_limits<I>::max)();
-	I nNewAllocated = m_nAllocated;
-	
-	if ( num <= m_nAllocated )
+	if ( num <= NumAllocated() )
 		return;
 	
+	I nMinAllocated = (31 + sizeof( T )) / sizeof( T );
+	I nMaxAllocated = (std::numeric_limits<I>::max)();
+	I nNewAllocated = num;
+
 	if ( ( size_t )num > N )
 	{
 		if ( num > nMaxAllocated )
@@ -278,46 +378,31 @@ void CUtlLeanVectorFixedGrowableBase<T, N, I>::EnsureCapacity( int num, bool for
 			Plat_FatalErrorFunc( "%s allocation count overflow", __FUNCTION__ );
 			DebuggerBreak();
 		}
-		
-		if ( force )
-		{
-			nNewAllocated = num;
-		}
-		else
-		{
-			while ( nNewAllocated < num )
-			{
-				if ( nNewAllocated < nMaxAllocated/2 )
-					nNewAllocated = MAX( nNewAllocated*2, nMinAllocated );
-				else
-					nNewAllocated = nMaxAllocated;
-			}
-		}
+	}
+
+	if(!force)
+		nNewAllocated = CalcNewDoublingCount( NumAllocated(), num, nMinAllocated, nMaxAllocated );
+	
+	T *pNew = nullptr;
+	if(!IsExternallyAllocated() && (size_t)NumAllocated() > N)
+	{
+		pNew = CAllocator::Realloc( m_pElements, nNewAllocated, nNewAllocated );
 	}
 	else
 	{
-		nNewAllocated = num;
+		pNew = CAllocator::template Alloc<T>( nNewAllocated, nNewAllocated );
+		V_memmove( pNew, Base(), m_nCount * sizeof( T ) );
 	}
 	
-	if ( ( size_t )m_nAllocated > N )
-	{
-		m_pElements = (T*)realloc( m_pElements, nNewAllocated * sizeof(T) );
-	}
-	else if ( ( size_t )nNewAllocated > N )
-	{
-		T* pNew = (T*)malloc( nNewAllocated * sizeof(T) );
-		memcpy( pNew, Base(), m_nCount * sizeof(T) );
-		m_pElements = pNew;
-	}
-	
+	m_pElements = pNew;
 	m_nAllocated = nNewAllocated;
 }
 
 //-----------------------------------------------------------------------------
 // Element removal
 //-----------------------------------------------------------------------------
-template< class T, size_t N, class I >
-void CUtlLeanVectorFixedGrowableBase<T, N, I>::RemoveAll()
+template< class T, size_t N, class I, class A >
+void CUtlLeanVectorFixedGrowableBase<T, N, I, A>::RemoveAll()
 {
 	T* pElement = Base();
 	const T* pEnd = &pElement[ m_nCount ];
@@ -330,23 +415,29 @@ void CUtlLeanVectorFixedGrowableBase<T, N, I>::RemoveAll()
 //-----------------------------------------------------------------------------
 // Memory deallocation
 //-----------------------------------------------------------------------------
-template< class T, size_t N, class I >
-inline void CUtlLeanVectorFixedGrowableBase<T, N, I>::Purge()
+template< class T, size_t N, class I, class A >
+inline void CUtlLeanVectorFixedGrowableBase<T, N, I, A>::Purge()
 {
 	RemoveAll();
 	
-	if ( ( size_t )m_nAllocated > N )
-		free( (void*)m_pElements );
-	
-	m_nAllocated = N;
+	if(!IsExternallyAllocated())
+	{
+		if((size_t)NumAllocated() > N)
+			CAllocator::Free( m_pElements );
+
+		m_nAllocated = N;
+	}
 }
 
 template< class B, class T, class I >
 class CUtlLeanVectorImpl : public B
 {
+	typedef B BaseClass;
 public:
+
 	// constructor, destructor
-	CUtlLeanVectorImpl() {};
+	CUtlLeanVectorImpl( I growSize = 0, I initSize = 0 ) : BaseClass( growSize, initSize ) {};
+	CUtlLeanVectorImpl( T *pMemory, I allocationCount, I numElements = 0 ) : BaseClass( pMemory, allocationCount, numElements ) {};
 	~CUtlLeanVectorImpl() {};
 
 	// Copy the array.
@@ -355,17 +446,18 @@ public:
 	class Iterator_t
 	{
 	public:
-		Iterator_t( const T* _elem, const T* _end ) : elem( _elem ), end( _end ) {}
-		const T* elem;
-		const T* end;
-		bool operator==( const Iterator_t it ) const	{ return elem == it.elem && end == it.end; }
-		bool operator!=( const Iterator_t it ) const	{ return elem != it.elem || end != it.end; }
+		Iterator_t( I i ) : index( i ) {}
+		I index;
+
+		bool operator==( const Iterator_t it ) const { return index == it.index; }
+		bool operator!=( const Iterator_t it ) const { return index != it.index; }
 	};
-	Iterator_t First() const							{ const T* base = this->Base(); return Iterator_t( base, &base[ this->m_nCount ] ); }
-	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( it.elem + 1, it.end ); }
-	bool IsValidIterator( const Iterator_t &it ) const	{ return it.elem && it.elem != it.end; }
-	T& operator[]( const Iterator_t &it )				{ return *const_cast<T*>(it.elem); }
-	const T& operator[]( const Iterator_t &it ) const	{ return *it.elem; }
+	Iterator_t First() const { return Iterator_t( this->IsIdxValid( 0 ) ? 0 : InvalidIndex() ); }
+	Iterator_t Next( const Iterator_t &it ) const { return Iterator_t( this->IsIdxValid( it.index + 1 ) ? it.index + 1 : InvalidIndex() ); }
+	I GetIndex( const Iterator_t &it ) const { return it.index; }
+	bool IsIdxAfter( I i, const Iterator_t &it ) const { return i > it.index; }
+	bool IsValidIterator( const Iterator_t &it ) const { return this->IsIdxValid( it.index ); }
+	Iterator_t InvalidIterator() const { return Iterator_t( InvalidIndex() ); }
 
 	// element access
 	T& operator[]( int i );
@@ -388,6 +480,7 @@ public:
 	T* AddToTailGetPtr();
 
 	// Adds an element, uses copy constructor
+	int AddToTail();
 	int AddToTail( const T& src );
 
 	// Adds multiple elements, uses default constructor
@@ -399,6 +492,8 @@ public:
 	void SetSize( int size );
 	void SetCount( int count );
 
+	void EnsureCount( int num );
+
 	// Finds an element (element needs operator== defined)
 	int Find( const T& src ) const;
 
@@ -408,6 +503,8 @@ public:
 	bool FindAndRemove( const T& src );	// removes first occurrence of src, preserves order, shifts elements
 	bool FindAndFastRemove( const T& src );	// removes first occurrence of src, doesn't preserve order
 	void RemoveMultiple( int elem, int num ); // preserves order, shifts elements
+	void RemoveMultipleFromHead( int num ); // preserves order, shifts elements
+	void RemoveMultipleFromTail( int num ); // preserves order, shifts elements
 
 protected:
 	// Can't copy this unless we explicitly do it!
@@ -539,6 +636,15 @@ T* CUtlLeanVectorImpl<B, T, I>::AddToTailGetPtr()
 // Adds an element, uses copy constructor
 //-----------------------------------------------------------------------------
 template< class B, class T, class I >
+int CUtlLeanVectorImpl<B, T, I>::AddToTail()
+{
+	this->EnsureCapacity( this->m_nCount + 1 );
+	T* pBase = this->Base();
+	Construct( &pBase[ this->m_nCount ] );
+	return this->m_nCount++;
+}
+
+template< class B, class T, class I >
 int CUtlLeanVectorImpl<B, T, I>::AddToTail( const T& src )
 {
 	this->EnsureCapacity( this->m_nCount + 1 );
@@ -644,6 +750,15 @@ inline void CUtlLeanVectorImpl<B, T, I>::SetSize( int size )
 	SetCount( size );
 }
 
+template< class B, class T, class I >
+void CUtlLeanVectorImpl<B, T, I>::EnsureCount( int num )
+{
+	if(Count() < num)
+	{
+		AddMultipleToTail( num - Count() );
+	}
+}
+
 //-----------------------------------------------------------------------------
 // Finds an element (element needs operator== defined)
 //-----------------------------------------------------------------------------
@@ -672,7 +787,7 @@ void CUtlLeanVectorImpl<B, T, I>::FastRemove( int elem )
 	if ( this->m_nCount > 0 )
 	{
 		if ( elem != this->m_nCount - 1 )
-			memcpy( &pBase[ elem ], &pBase[ this->m_nCount - 1 ], sizeof( T ) );
+			V_memmove( &pBase[ elem ], &pBase[ this->m_nCount - 1 ], sizeof( T ) );
 		--this->m_nCount;
 	}
 }
@@ -722,6 +837,20 @@ void CUtlLeanVectorImpl<B, T, I>::RemoveMultiple( int elem, int num )
 	this->m_nCount -= num;
 }
 
+template< class B, class T, class I >
+void CUtlLeanVectorImpl<B, T, I>::RemoveMultipleFromHead( int num )
+{
+	Assert( num <= Count() );
+	RemoveMultiple( 0, num );
+}
+
+template< class B, class T, class I >
+void CUtlLeanVectorImpl<B, T, I>::RemoveMultipleFromTail( int num )
+{
+	Assert( num <= Count() );
+	RemoveMultiple( Count() - num, num );
+}
+
 //-----------------------------------------------------------------------------
 // Shifts elements
 //-----------------------------------------------------------------------------
@@ -750,12 +879,10 @@ void CUtlLeanVectorImpl<B, T, I>::DestructElements( T* pElement, const T* pEnd )
 		Destruct( pElement++ );
 }
 
-template < class T, class I = short >
-using CUtlLeanVector = CUtlLeanVectorImpl< CUtlLeanVectorBase< T, I >, T, I >;
+template < class T, class I = short, class A = CMemAllocAllocator >
+using CUtlLeanVector = CUtlLeanVectorImpl< CUtlLeanVectorBase< T, I, A >, T, I >;
 
-template < class T, size_t N = 3, class I = int >
-using CUtlLeanVectorFixedGrowable = CUtlLeanVectorImpl< CUtlLeanVectorFixedGrowableBase< T, N, I >, T, I >;
-
-#include "tier0/memdbgoff.h"
+template < class T, size_t N = 3, class I = int, class A = CMemAllocAllocator >
+using CUtlLeanVectorFixedGrowable = CUtlLeanVectorImpl< CUtlLeanVectorFixedGrowableBase< T, N, I, A >, T, I >;
 
 #endif // UTLLEANVECTOR_H
