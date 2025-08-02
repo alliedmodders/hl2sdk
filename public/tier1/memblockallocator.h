@@ -93,9 +93,9 @@ public:
 	{
 		unsigned int MemoryLeft() const { return m_nTotalSize - m_nUsedSize; }
 
-		unsigned int	m_nTotalSize;
-		unsigned int	m_nUsedSize;
-		T				*m_pMemory;
+		unsigned int	m_nTotalSize = 0;
+		unsigned int	m_nUsedSize = 0;
+		T				*m_pMemory = nullptr;
 	};
 
 	typedef CUtlLeanVector<MemPage_t, int> MemPagesVec_t;
@@ -107,8 +107,6 @@ public:
 	bool					m_bStaticPageSize;
 	bool					m_unk002;
 };
-
-constexpr int a = sizeof(CUtlMemoryBlockAllocator<byte>::MemPagesVec_t);
 
 template<class T, class A>
 inline void CUtlMemoryBlockAllocator<T, A>::RemoveAll( size_t nSize )
@@ -226,7 +224,7 @@ inline void CUtlMemoryBlockAllocator<T, A>::SetPageSize( uint32 nPageSize, uint3
 		m_nPageOffsetBits = largest_bit;
 	}
 
-	m_MemPages.SetCount( 1 << (32 - m_nPageOffsetBits) );
+	m_MemPages.EnsureCapacity( MaxPossiblePageSize() );
 }
 
 template<class T, class A>

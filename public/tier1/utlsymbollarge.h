@@ -155,57 +155,32 @@ private:
 	unsigned int	HashValue( UtlSymLargeId_t id ) const;
 
 	struct UtlSymTableLargeAltKey
-	{ 
+	{
+		operator UtlSymLargeId_t() const { return m_SymId; }
+
 		const CUtlSymbolTableLargeBase*	m_pTable;
-		const char*						m_pString;
-		int								m_nLength;
+		union
+		{
+			struct
+			{
+				const char *m_pString;
+				int m_nLength;
+			};
+
+			UtlSymLargeId_t m_SymId;
+		};
 	};
 
 	struct UtlSymTableLargeHashFunctor
 	{
-		ptrdiff_t m_ownerOffset;
-
-		UtlSymTableLargeHashFunctor()
-		{
-			const ptrdiff_t tableoffset = (uintp)(&((Hashtable_t*)1024)->GetHashRef()) - 1024;
-			const ptrdiff_t owneroffset = offsetof(CUtlSymbolTableLargeBase, m_HashTable) + tableoffset;
-			m_ownerOffset = -owneroffset;
-		}
-
 		unsigned int operator()( UtlSymTableLargeAltKey k ) const
 		{
 			return CUtlSymbolLarge_Hash( CASEINSENSITIVE, k.m_pString, k.m_nLength );
-		}
-
-		unsigned int operator()( UtlSymLargeId_t k ) const
-		{
-			const CUtlSymbolTableLargeBase* pTable = (const CUtlSymbolTableLargeBase*)((uintp)this + m_ownerOffset);
-
-			return pTable->HashValue( k );
 		}
 	};
 
 	struct UtlSymTableLargeEqualFunctor
 	{
-		ptrdiff_t m_ownerOffset;
-
-		UtlSymTableLargeEqualFunctor()
-		{
-			const ptrdiff_t tableoffset = (uintp)(&((Hashtable_t*)1024)->GetEqualRef()) - 1024;
-			const ptrdiff_t owneroffset = offsetof(CUtlSymbolTableLargeBase, m_HashTable) + tableoffset;
-			m_ownerOffset = -owneroffset;
-		}
-		
-		bool operator()( UtlSymLargeId_t a, UtlSymLargeId_t b ) const 
-		{ 
-			const CUtlSymbolTableLargeBase* pTable = (const CUtlSymbolTableLargeBase*)((uintp)this + m_ownerOffset);
-
-			if ( !CASEINSENSITIVE ) 
-				return strcmp( pTable->String( a ), pTable->String( b ) ) == 0; 
-			else
-				return V_stricmp_fast( pTable->String( a ), pTable->String( b ) ) == 0; 
-		}
-
 		bool operator()( UtlSymTableLargeAltKey a, UtlSymLargeId_t b ) const 
 		{ 
 			const char* pString = a.m_pTable->String( b );
@@ -227,7 +202,7 @@ private:
 	};
 
 	typedef CUtlHashtable<UtlSymLargeId_t, empty_t, UtlSymTableLargeHashFunctor, UtlSymTableLargeEqualFunctor, UtlSymTableLargeAltKey> Hashtable_t;
-	typedef CUtlLeanVector< MemBlockHandle_t > MemBlocksVec_t;
+	typedef CUtlLeanVector< MemBlockHandle_t, int > MemBlocksVec_t;
 
 	Hashtable_t						m_HashTable;
 	MemBlocksVec_t					m_MemBlocks;
@@ -279,13 +254,17 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 
 	entry->m_Hash = hash;
 	char *pText = (char *)&entry->m_String[ 0 ];
-	memcpy( pText, pString, nLength );
+	V_memmove( pText, pString, nLength );
 	pText[ nLength ] = '\0';
 
 	UtlSymLargeId_t id = m_MemBlocks.AddToTail( block + sizeof( LargeSymbolTableHashDecoration_t ) );
 
+	UtlSymTableLargeAltKey key;
+	key.m_pTable = this;
+	key.m_SymId = id;
+
 	empty_t empty;
-	m_HashTable.Insert( id, empty, hash );
+	m_HashTable.Insert( key, empty, hash );
 
 	return entry->ToSymbol();
 }
