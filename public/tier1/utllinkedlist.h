@@ -161,7 +161,7 @@ protected:
 	ListElem_t const& InternalElement( I i ) const { return m_Memory[i]; }
 
 	// copy constructors not allowed
-	CUtlLinkedList( CUtlLinkedList<T, S, ML, I, M> const& list ) : m_LastAlloc( 0 ) { Assert(0); }
+	CUtlLinkedList( CUtlLinkedList<T, S, ML, I, M> const& list ) : m_LastAlloc( m_Memory.InvalidIterator() ) { Assert(0); }
 
 	M	m_Memory;
 	I	m_Head;
