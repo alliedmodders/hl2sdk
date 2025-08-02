@@ -131,7 +131,8 @@ public:
 			m_Mutex( "CUtlSymbolTableLargeBase" ), 
 			m_MemBlockAllocator( ( nInitSize > 0 ) ? 8 : 0, PAGE_SIZE ), 
 			m_nElementLimit( INT_MAX - 1 ), 
-			m_bThrowError( true )  { }
+			m_bThrowError( true ),
+			m_nBytesAccumulated( 0 ) { }
 
 	~CUtlSymbolTableLargeBase() { }
 
@@ -210,6 +211,7 @@ private:
 	CUtlMemoryBlockAllocator<byte>	m_MemBlockAllocator;
 	int								m_nElementLimit;
 	bool							m_bThrowError;
+	int								m_nBytesAccumulated;
 };
 
 template < bool CASEINSENSITIVE, size_t PAGE_SIZE, class MUTEX_TYPE >
@@ -256,6 +258,8 @@ inline CUtlSymbolLarge CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 	char *pText = (char *)&entry->m_String[ 0 ];
 	V_memmove( pText, pString, nLength );
 	pText[ nLength ] = '\0';
+
+	m_nBytesAccumulated += nLength + 1;
 
 	UtlSymLargeId_t id = m_MemBlocks.AddToTail( block + sizeof( LargeSymbolTableHashDecoration_t ) );
 
