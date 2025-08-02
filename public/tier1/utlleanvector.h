@@ -459,6 +459,9 @@ public:
 	bool IsValidIterator( const Iterator_t &it ) const { return this->IsIdxValid( it.index ); }
 	Iterator_t InvalidIterator() const { return Iterator_t( InvalidIndex() ); }
 
+	T &operator[]( const Iterator_t &it ) { return Element( it.index ); }
+	const T &operator[]( const Iterator_t &it ) const { return Element( it.index ); }
+
 	// element access
 	T& operator[]( int i );
 	const T& operator[]( int i ) const;
