@@ -316,7 +316,7 @@ inline CUtlLeanVectorFixedGrowableBase<T, N, I, A>::CUtlLeanVectorFixedGrowableB
 
 template< class T, size_t N, class I, class A >
 inline CUtlLeanVectorFixedGrowableBase<T, N, I, A>::CUtlLeanVectorFixedGrowableBase( T *pMemory, I allocationCount, I numElements ) :
-	m_nCount( numElements ), m_nAllocated( allocationCount | EXTERNAL_BUFFER_MARKER ), m_pElements( pMemory )
+	m_nAllocCount( numElements ), m_nAllocAllocated( allocationCount | EXTERNAL_BUFFER_MARKER ), m_pElements( pMemory )
 {
 }
 
@@ -474,7 +474,10 @@ public:
 
 	// Is element index valid?
 	bool IsValidIndex( int i ) const;
-	static int InvalidIndex();
+
+	// Specify the invalid ('null') index that we'll only return on failure
+	static const I INVALID_INDEX = (I)-1; // For use with COMPILE_TIME_ASSERT
+	static I InvalidIndex() { return INVALID_INDEX; }
 
 	// Adds an element, uses default constructor
 	T* AddToTailGetPtr();
@@ -609,15 +612,6 @@ template< class B, class T, class I >
 inline bool CUtlLeanVectorImpl<B, T, I>::IsValidIndex( int i ) const
 {
 	return (i >= 0) && (i < this->m_nCount);
-}
-
-//-----------------------------------------------------------------------------
-// Returns in invalid index
-//-----------------------------------------------------------------------------
-template< class B, class T, class I >
-inline int CUtlLeanVectorImpl<B, T, I>::InvalidIndex()
-{
-	return -1;
 }
 
 //-----------------------------------------------------------------------------

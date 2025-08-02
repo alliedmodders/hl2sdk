@@ -20,6 +20,8 @@
 #include "utlblockmemory.h"
 #include "tier0/dbg.h"
 
+#include <type_traits>
+
 // define to enable asserts griping about things you shouldn't be doing with multilists
 // #define MULTILIST_PEDANTIC_ASSERTS 1 
 
@@ -41,6 +43,8 @@
 template <class T, class I> 
 struct UtlLinkedListElem_t
 {
+	UtlLinkedListElem_t() {}
+
 	T  m_Element;
 	I  m_Previous;
 	I  m_Next;
@@ -79,8 +83,6 @@ public:
 
 	// Make sure we have a particular amount of memory
 	void EnsureCapacity( int num );
-
-	void SetGrowSize( int growSize );
 
 	// Memory deallocation
 	void Purge();
@@ -159,7 +161,7 @@ protected:
 	ListElem_t const& InternalElement( I i ) const { return m_Memory[i]; }
 
 	// copy constructors not allowed
-	CUtlLinkedList( CUtlLinkedList<T, S, ML, I, M> const& list ) { Assert(0); }
+	CUtlLinkedList( CUtlLinkedList<T, S, ML, I, M> const& list ) : m_LastAlloc( 0 ) { Assert(0); }
 
 	M	m_Memory;
 	I	m_Head;
@@ -370,14 +372,6 @@ void CUtlLinkedList<T,S,ML,I,M>::EnsureCapacity( int num )
 	m_Memory.EnsureCapacity(num);
 }
 
-template< class T, class S, bool ML, class I, class M >
-void CUtlLinkedList<T,S,ML,I,M>::SetGrowSize( int growSize )
-{
-	RemoveAll();
-	m_Memory.Init( growSize );
-}
-
-
 //-----------------------------------------------------------------------------
 // Deallocate memory
 //-----------------------------------------------------------------------------
@@ -399,11 +393,14 @@ void  CUtlLinkedList<T,S,ML,I,M>::Purge()
 template<class T, class S, bool ML, class I, class M>
 void CUtlLinkedList<T,S,ML,I,M>::PurgeAndDeleteElements()
 {
-	I iNext;
-	for( I i=Head(); i != InvalidIndex(); i=iNext )
+	if constexpr (std::is_pointer_v<T>)
 	{
-		iNext = Next(i);
-		delete Element(i);
+		I iNext;
+		for(I i=Head(); i != InvalidIndex(); i=iNext)
+		{
+			iNext = Next( i );
+			delete Element( i );
+		}
 	}
 
 	Purge();
@@ -432,7 +429,7 @@ I CUtlLinkedList<T,S,ML,I,M>::AllocInternal( bool multilist )
 		if ( !m_Memory.IsValidIterator( it ) )
 		{
 			MEM_ALLOC_CREDIT_CLASS();
-			m_Memory.Grow();
+			m_Memory.AddToTailGetPtr();
 
 			it = m_Memory.IsValidIterator( m_LastAlloc ) ? m_Memory.Next( m_LastAlloc ) : m_Memory.First();
 
