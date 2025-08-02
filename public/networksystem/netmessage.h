@@ -40,8 +40,16 @@ public:
 		return static_cast<CNetMessagePB<T> *>(this);
 	}
 
+	float GetMargin() const
+	{
+		return m_flMargin;
+	}
+
 private:
-	char unk001[40];
+	char unk001[24];
+	float m_flMargin;
+	char padding[4];
+	char unk002[8];
 };
 
 // AMNOTE: This is a stub class over real CNetMessagePB!
