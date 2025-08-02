@@ -21,6 +21,8 @@
 #include "platform.h"
 #include "basetypes.h"
 
+#include <limits>
+
 #include "memdbgon.h"
 
 class CMemAllocAllocator
