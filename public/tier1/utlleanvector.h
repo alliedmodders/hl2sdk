@@ -45,6 +45,8 @@ public:
 	T* Base();
 	const T* Base() const;
 
+	void Swap( CUtlLeanVectorBase<T, I, A> &mem );
+
 	// Makes sure we have enough memory allocated to store a requested # of elements
 	void EnsureCapacity( int num, bool force = false );
 	
@@ -111,6 +113,17 @@ template< class T, class I, class A >
 inline const T* CUtlLeanVectorBase<T, I, A>::Base() const
 {
 	return NumAllocated() ? m_pElements : nullptr;
+}
+
+//-----------------------------------------------------------------------------
+// Fast swap
+//-----------------------------------------------------------------------------
+template< class T, class I, class A >
+void CUtlLeanVectorBase<T, I, A>::Swap( CUtlLeanVectorBase<T, I, A> &vec )
+{
+	V_swap( m_nCount, vec.m_nCount );
+	V_swap( m_nAllocated, vec.m_nAllocated );
+	V_swap( m_pElements, vec.m_pElements );
 }
 
 //-----------------------------------------------------------------------------
