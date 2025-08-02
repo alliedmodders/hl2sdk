@@ -20,6 +20,7 @@
 #include "tier1/utlmemory.h"
 #include "tier1/cbyteswap.h"
 #include "tier1/bufferstring.h"
+#include "tier1/utlleanvector.h"
 #include <stdarg.h>
 
 
@@ -454,7 +455,7 @@ protected:
 	template <typename T> void PutTypeBin( T src );
 	template <typename T> void PutObject( T *src );
 
-	CUtlMemory<unsigned char> m_Memory;
+	CUtlLeanVector<unsigned char> m_Memory;
 	int m_Get;
 	int m_Put;
 
