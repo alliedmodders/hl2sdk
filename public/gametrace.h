@@ -41,45 +41,46 @@ enum CollisionFunctionMask_t
 
 enum RnQueryObjectSet
 {
-    //  RNQUERY_OBJECTS_STATIC (0x1) is used in
-    //      CLightQueryGameSystem::OnPostSimulate
-    //      ray test by loading rays.bin
-    //      CBaePlayerPawn::IsPlayerAimingAtTarget
-    //      CBaseRagdoll related
-    //      CSoundOpvarSetAutoRoomEntity::Spawn
-    //      CNavSpaceBuildTreeJob
+	// AMNOTE:
+	// RNQUERY_OBJECTS_STATIC (0x1) is used in
+	//      CLightQueryGameSystem::OnPostSimulate
+	//      ray test by loading rays.bin
+	//      CBaePlayerPawn::IsPlayerAimingAtTarget
+	//      CBaseRagdoll related
+	//      CSoundOpvarSetAutoRoomEntity::Spawn
+	//      CNavSpaceBuildTreeJob
 
-    // RNQUERY_OBJECTS_STATIC | RNQUERY_OBJECTS_KEYFRAMED (0x3) is used in
-    //      when decoy hit entity isn't player pawn
+	// RNQUERY_OBJECTS_STATIC | RNQUERY_OBJECTS_KEYFRAMED (0x3) is used in
+	//      when decoy hit entity isn't player pawn
 
-    //  RNQUERY_OBJECTS_KEYFRAMED | RNQUERY_OBJECTS_DYNAMIC (0x6) is used in
-    //      checking if a grenade projectile has hit any player
-    //      filtering bullet trace result
-    //      checking if hit entity is a *_door_rotating
-    //      checking if player is aiming at a CPointCommentaryNode
+	// RNQUERY_OBJECTS_KEYFRAMED | RNQUERY_OBJECTS_DYNAMIC (0x6) is used in
+	//      checking if a grenade projectile has hit any player
+	//      filtering bullet trace result
+	//      checking if hit entity is a *_door_rotating
+	//      checking if player is aiming at a CPointCommentaryNode
 
-    // RNQUERY_OBJECTS_LOCATABLE (0x8) is used in
-    //      checking if a CSmokeGrenadeProjectile is exploded from inferno
-    //      CGamePhysicsQueryInterface::EntitiesAlong* to add g_LocatableEntities to results
+	// RNQUERY_OBJECTS_LOCATABLE (0x8) is used in
+	//      checking if a CSmokeGrenadeProjectile is exploded from inferno
+	//      CGamePhysicsQueryInterface::EntitiesAlong* to add g_LocatableEntities to results
 
-    //  RNQUERY_OBJECTS_KEYFRAMED | RNQUERY_OBJECTS_DYNAMIC | RNQUERY_OBJECTS_LOCATABLE (0xE) is used in
-    //      CBotBreakableEnumerator
-    //      CInferno::Think damage
-    //      CBombTarget
-    //      UTIL_EntitiesAlongRay
-    //      CEnvShake::ApplyShake with type rumble
-    //      CBaseFilter Think
+	// RNQUERY_OBJECTS_KEYFRAMED | RNQUERY_OBJECTS_DYNAMIC | RNQUERY_OBJECTS_LOCATABLE (0xE) is used in
+	//      CBotBreakableEnumerator
+	//      CInferno::Think damage
+	//      CBombTarget
+	//      UTIL_EntitiesAlongRay
+	//      CEnvShake::ApplyShake with type rumble
+	//      CBaseFilter Think
 
-    // RNQUERY_OBJECTS_STATIC | RNQUERY_OBJECTS_KEYFRAMED | RNQUERY_OBJECTS_DYNAMIC | RNQUERY_OBJECTS_LOCATABLE (0xF) is used in pretty much every trace filter
+	// RNQUERY_OBJECTS_STATIC | RNQUERY_OBJECTS_KEYFRAMED | RNQUERY_OBJECTS_DYNAMIC | RNQUERY_OBJECTS_LOCATABLE (0xF) is used in pretty much every trace filter
 
-    RNQUERY_OBJECTS_STATIC          = (1 << 0), // static body
-    RNQUERY_OBJECTS_KEYFRAMED       = (1 << 1), // keyframed body
-    RNQUERY_OBJECTS_DYNAMIC         = (1 << 2), // dynamic body
-    RNQUERY_OBJECTS_LOCATABLE       = (1 << 3),
+	RNQUERY_OBJECTS_STATIC          = (1 << 0), // static body
+	RNQUERY_OBJECTS_KEYFRAMED       = (1 << 1), // keyframed body
+	RNQUERY_OBJECTS_DYNAMIC         = (1 << 2), // dynamic body
+	RNQUERY_OBJECTS_LOCATABLE       = (1 << 3),
 
 
-    RNQUERY_OBJECTS_ALL_GAME_ENTITIES = RNQUERY_OBJECTS_KEYFRAMED | RNQUERY_OBJECTS_DYNAMIC | RNQUERY_OBJECTS_LOCATABLE,
-    RNQUERY_OBJECTS_ALL               = RNQUERY_OBJECTS_STATIC | RNQUERY_OBJECTS_ALL_GAME_ENTITIES,
+	RNQUERY_OBJECTS_ALL_GAME_ENTITIES = RNQUERY_OBJECTS_KEYFRAMED | RNQUERY_OBJECTS_DYNAMIC | RNQUERY_OBJECTS_LOCATABLE,
+	RNQUERY_OBJECTS_ALL               = RNQUERY_OBJECTS_STATIC | RNQUERY_OBJECTS_ALL_GAME_ENTITIES,
 };
 
 enum HitGroup_t
