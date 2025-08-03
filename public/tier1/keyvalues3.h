@@ -572,7 +572,6 @@ public:
 	KeyValues3& operator=( const KeyValues3& src );
 	KeyValues3( const KeyValues3 &other ) : KeyValues3() { CopyFrom( &other ); }
 
-private:
 	union Data_t
 	{
 		Data_t() : m_nMemory(0)
@@ -613,6 +612,7 @@ private:
 		char m_Memory[1];
 	};
 
+private:
 	void Alloc( int initial_size = 0, Data_t data = {}, int bytes_available = 0, bool should_free = false );
 
 	CKeyValues3Array *AllocArray( int initial_size = 0 );

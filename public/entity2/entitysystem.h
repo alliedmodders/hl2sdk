@@ -123,6 +123,10 @@ struct EventQueuePrioritizedEvent_t
 
 	variant_t m_VariantValue; // variable-type parameter
 
+	void *m_unk101;
+	KeyValues3 m_KV3;
+	KeyValues3::Data_t m_KV3Data;
+
 	EventQueuePrioritizedEvent_t *m_pNext;
 	EventQueuePrioritizedEvent_t *m_pPrev;
 };
@@ -365,7 +369,6 @@ public:
 	void RemoveListenerEntity(IEntityListener* pListener);
 
 public:
-	int m_iMaxNetworkedEntIndex;
 	int m_iNetworkedEntCount;
 	int m_iNonNetworkedSavedEntCount;
 	CUtlDict<SpawnGroupEntityFilterInfo_t> m_spawnGroupEntityFilters;
