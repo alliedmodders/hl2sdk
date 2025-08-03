@@ -18,6 +18,7 @@
 #include "utlfixedmemory.h"
 #include "utlleanvector.h"
 #include "utlblockmemory.h"
+#include "utlntree.h"
 #include "tier0/dbg.h"
 
 #include <type_traits>
