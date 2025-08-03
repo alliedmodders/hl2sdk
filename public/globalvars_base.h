@@ -83,6 +83,9 @@ public:
 	
 	// Non-zero when during movement processing, it's the part after the decimal point of the "when" field in player's subtick moves.
 	float m_flSubtickFraction;
+
+	// Simulation tick interval
+	float interval_per_tick;
 };
 
 inline CGlobalVarsBase::CGlobalVarsBase()
@@ -90,4 +93,5 @@ inline CGlobalVarsBase::CGlobalVarsBase()
 }
 
 #endif // GLOBALVARS_BASE_H
+
 
