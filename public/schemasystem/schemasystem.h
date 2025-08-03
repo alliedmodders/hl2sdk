@@ -92,7 +92,6 @@ public:
 	
 	bool m_bBuiltinTypesInitialized;
 	CSchemaType_Builtin m_BuiltinTypes[SCHEMA_BUILTIN_TYPE_COUNT];
-	bool m_bUnk1;
 	
 	CSchemaPtrMap<SchemaMetaInfoHandle_t<CSchemaType>, CSchemaType_Ptr*> m_Pointers;
 	CSchemaPtrMap<int, CSchemaType_Atomic*>							m_Atomics;
