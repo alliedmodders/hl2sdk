@@ -50,9 +50,6 @@ public:
 
 	FnGlobalVarsWarningFunc m_pfnWarningFunc;
 
-	// Time spent on last server or client frame (has nothing to do with think intervals)
-	float frametime;
-
 	// Current time 
 	//
 	// On the client, this (along with tickcount) takes a different meaning based on what
@@ -93,3 +90,4 @@ inline CGlobalVarsBase::CGlobalVarsBase()
 }
 
 #endif // GLOBALVARS_BASE_H
+
