@@ -210,7 +210,7 @@ void CUtlLeanVectorBase<T, I, A>::EnsureCapacity( int num, bool force )
 	T *pNew = nullptr;
 	if(IsExternallyAllocated())
 	{
-		CAllocator::template Alloc<T>( nNewAllocated, nNewAllocated );
+		pNew = CAllocator::template Alloc<T>( nNewAllocated, nNewAllocated );
 		V_memmove( pNew, Base(), m_nCount * sizeof( T ) );
 	}
 	else
