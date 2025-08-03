@@ -8,6 +8,7 @@
 #ifndef VPROF_H
 #define VPROF_H
 
+#include "tier0/cutlsourcelocation.h"
 #include "tier0/dbg.h"
 #include "tier0/fasttimer.h"
 #include "tier0/l2cache.h"
@@ -783,7 +784,7 @@ public:
 	DLL_CLASS_IMPORT VProfScopeHelper &operator=( VProfScopeHelper &&other );
 
 	static DLL_CLASS_IMPORT VProfExitScopeCB EnterScopeInternal( const char *pszName );
-	static DLL_CLASS_IMPORT VProfExitScopeCB EnterScopeInternalBudgetFlags( const char *pszName, VProfBudgetGroupCallSite &budgetGroup );
+	static DLL_CLASS_IMPORT VProfExitScopeCB EnterScopeInternalBudgetFlags( const char *pszName, VProfBudgetGroupCallSite &budgetGroup, const CUtlSourceLocation& location = {} );
 
 private:
 	VProfExitScopeCB m_pExitScope = nullptr;
