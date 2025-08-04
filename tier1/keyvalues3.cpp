@@ -1548,7 +1548,7 @@ KeyValues3* CKeyValues3Table::GetMember( KV3MemberId_t id )
 	return MembersBase()[id];
 }
 
-const const char* CKeyValues3Table::GetMemberName( const KeyValues3 *parent, KV3MemberId_t id ) const
+const char* CKeyValues3Table::GetMemberName( const KeyValues3 *parent, KV3MemberId_t id ) const
 {
 	Assert( 0 <= id && id < m_nCount );
 
