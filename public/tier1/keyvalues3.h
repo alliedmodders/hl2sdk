@@ -347,7 +347,7 @@ struct KV3BinaryBlob_t
 class CKV3MemberName
 {
 public:
-	inline CKV3MemberName(const char* pszString): m_nHashCode(), m_pszString("")
+	inline CKV3MemberName(const char* pszString, UtlSymLargeId_t symid = UTL_INVAL_SYMBOL_LARGE ): m_nHashCode(), m_SymId( symid ), m_pszString("")
 	{	
 		if (!pszString || !pszString[0])
 			return;
@@ -356,14 +356,16 @@ public:
 		m_pszString = pszString;
 	}
 
-	inline CKV3MemberName(): m_nHashCode(), m_pszString("") {}
-	inline CKV3MemberName( CUtlStringToken nHashCode, const char* pszString = ""): m_nHashCode(nHashCode), m_pszString(pszString) {}
+	inline CKV3MemberName(): m_nHashCode(), m_SymId( UTL_INVAL_SYMBOL_LARGE ), m_pszString("") {}
+	inline CKV3MemberName( CUtlStringToken nHashCode, const char* pszString = "", UtlSymLargeId_t symid = UTL_INVAL_SYMBOL_LARGE ): m_nHashCode(nHashCode), m_SymId( symid ), m_pszString(pszString) {}
 
 	inline unsigned int GetHashCode() const { return m_nHashCode.GetHashCode(); }
 	inline const char* GetString() const { return m_pszString; }
+	inline UtlSymLargeId_t GetSymId() const { return m_SymId; }
 
 private:
 	CUtlStringToken m_nHashCode;
+	UtlSymLargeId_t m_SymId;
 	const char* m_pszString;
 };
 
@@ -777,12 +779,17 @@ class CKeyValues3Table
 public:
 	enum
 	{
-		MEMBER_FLAG_EXTERNAL_NAME = (1 << 0)
+		MEMBER_FLAG_EXTERNAL_NAME = (1 << 0),
+		MEMBER_FLAG_LARGE_SYMBOL = (1 << 1)
 	};
 
 	typedef CUtlStringToken	Hash_t;
 	typedef KeyValues3*		Member_t;
-	typedef const char*		Name_t;
+	union Name_t
+	{
+		const char *m_String;
+		UtlSymLargeId_t m_SymId;
+	};
 	typedef uint8			Flags_t;
 
 	static const size_t DATA_SIZE = KV3_TABLE_MAX_FIXED_MEMBERS;
@@ -800,8 +807,9 @@ public:
 	int GetMemberCount() const { return m_nCount; }
 	Member_t GetMember( KV3MemberId_t id );
 	const Member_t GetMember( KV3MemberId_t id ) const { return const_cast<CKeyValues3Table*>(this)->GetMember( id ); }
-	const Name_t GetMemberName( KV3MemberId_t id ) const;
+	const const char *GetMemberName( const KeyValues3 *parent, KV3MemberId_t id ) const;
 	const Hash_t GetMemberHash( KV3MemberId_t id ) const;
+	CKV3MemberName GetKV3MemberName( const KeyValues3 *parent, KV3MemberId_t id ) const;
 
 	void PurgeFastSearch();
 	void EnableFastSearch();
@@ -824,6 +832,10 @@ public:
 	static constexpr size_t TotalSizeWithoutStaticData() { return sizeof(CKeyValues3Table) - sizeof(m_StaticBuffer); }
 
 private:
+	void PurgeNameBuffer( KeyValues3 *parent, KV3MemberId_t id );
+
+	void StoreKeyName( KeyValues3 *parent, Name_t &out_string, Flags_t &out_flags, const char *input_string, UtlSymLargeId_t sym_id = UTL_INVAL_SYMBOL_LARGE, bool name_external = false );
+
 	int GetAllocatedChunks() const { return m_nAllocatedChunks; }
 	bool IsBaseStatic() { return !m_bIsDynamicallySized; }
 
@@ -1114,7 +1126,8 @@ public:
 	IParsingErrorListener* GetParsingErrorListener() const { return m_pParsingErrorListener; }
 	void SetParsingErrorListener( IParsingErrorListener* listener ) { m_pParsingErrorListener = listener; }
 
-	const char* AllocString( const char* pString );
+	const char* AllocString( const char* pString, UtlSymLargeId_t *symid = NULL );
+	const char *LookupString( UtlSymLargeId_t symid ) const;
 
 	void EnableMetaData( bool bEnable );
 	void CopyMetaData( KV3MetaData_t* pDest, const KV3MetaData_t* pSrc );

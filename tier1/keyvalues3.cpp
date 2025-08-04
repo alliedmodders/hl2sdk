@@ -801,7 +801,7 @@ const char* KeyValues3::GetMemberName( KV3MemberId_t id ) const
 	if ( GetType() != KV3_TYPE_TABLE || id < 0 || id >= m_Data.m_pTable->GetMemberCount() )
 		return nullptr;
 	
-	return m_Data.m_pTable->GetMemberName( id );
+	return m_Data.m_pTable->GetMemberName( this, id );
 }
 
 CKV3MemberName KeyValues3::GetMemberNameEx( KV3MemberId_t id ) const
@@ -809,7 +809,7 @@ CKV3MemberName KeyValues3::GetMemberNameEx( KV3MemberId_t id ) const
 	if ( GetType() != KV3_TYPE_TABLE || id < 0 || id >= m_Data.m_pTable->GetMemberCount() )
 		return CKV3MemberName();
 
-	return CKV3MemberName( m_Data.m_pTable->GetMemberHash( id ), m_Data.m_pTable->GetMemberName( id ) );
+	return m_Data.m_pTable->GetKV3MemberName( this, id );
 }
 
 CUtlStringToken KeyValues3::GetMemberHash( KV3MemberId_t id ) const
@@ -1548,11 +1548,19 @@ KeyValues3* CKeyValues3Table::GetMember( KV3MemberId_t id )
 	return MembersBase()[id];
 }
 
-const CKeyValues3Table::Name_t CKeyValues3Table::GetMemberName( KV3MemberId_t id ) const
+const const char* CKeyValues3Table::GetMemberName( const KeyValues3 *parent, KV3MemberId_t id ) const
 {
 	Assert( 0 <= id && id < m_nCount );
 
-	return NamesBase()[id];
+	Flags_t flags = FlagsBase()[id];
+
+	if((flags & MEMBER_FLAG_LARGE_SYMBOL) != 0)
+	{
+		UtlSymLargeId_t symid = NamesBase()[id].m_SymId;
+		return parent->GetContext()->LookupString( symid );
+	}
+
+	return NamesBase()[id].m_String;
 }
 
 const CKeyValues3Table::Hash_t CKeyValues3Table::GetMemberHash( KV3MemberId_t id ) const
@@ -1560,6 +1568,27 @@ const CKeyValues3Table::Hash_t CKeyValues3Table::GetMemberHash( KV3MemberId_t id
 	Assert( 0 <= id && id < m_nCount );
 
 	return HashesBase()[id];
+}
+
+CKV3MemberName CKeyValues3Table::GetKV3MemberName( const KeyValues3 *parent, KV3MemberId_t id ) const
+{
+	Assert( 0 <= id && id < m_nCount );
+
+	Flags_t flags = FlagsBase()[id];
+
+	UtlSymLargeId_t symid = UTL_INVAL_SYMBOL_LARGE;
+	const char *key_name = nullptr;
+	if((flags & MEMBER_FLAG_LARGE_SYMBOL) != 0)
+	{
+		symid = NamesBase()[id].m_SymId;
+		key_name = parent->GetContext()->LookupString( symid );
+	}
+	else
+	{
+		key_name = NamesBase()[id].m_String;
+	}
+
+	return CKV3MemberName( GetMemberHash( id ), key_name, symid );
 }
 
 void CKeyValues3Table::EnableFastSearch()
@@ -1693,24 +1722,8 @@ KV3MemberId_t CKeyValues3Table::CreateMember( KeyValues3 *parent, const CKV3Memb
 
 	members_base[curr] = parent->AllocMember();
 	hashes_base[curr] = name.GetHashCode();
-	Flags_t flags = 0;
-
-	if(name_external)
-	{
-		names_base[curr] = name.GetString();
-		flags |= MEMBER_FLAG_EXTERNAL_NAME;
-	}
-	else
-	{
-		auto context = parent->GetContext();
-
-		if(context)
-			names_base[curr] = context->AllocString( name.GetString() );
-		else
-			names_base[curr] = strdup( name.GetString() );
-	}
-
-	flags_base[curr] = flags;
+	
+	StoreKeyName( parent, names_base[curr], flags_base[curr], name.GetString(), name.GetSymId(), name_external );
 
 	if ( m_pFastSearch && !m_pFastSearch->m_ignore )
 		m_pFastSearch->m_member_ids.Insert( name.GetHashCode(), curr );
@@ -1718,6 +1731,52 @@ KV3MemberId_t CKeyValues3Table::CreateMember( KeyValues3 *parent, const CKV3Memb
 	m_nCount = new_size;
 
 	return curr;
+}
+
+void CKeyValues3Table::StoreKeyName( KeyValues3 *parent, Name_t &out_buffer, Flags_t &out_flags, const char *input_string, UtlSymLargeId_t sym_id, bool name_external )
+{
+	Flags_t flags = 0;
+
+	if(name_external)
+	{
+		out_buffer.m_String = input_string;
+		flags |= MEMBER_FLAG_EXTERNAL_NAME;
+	}
+	else
+	{
+		auto context = parent->GetContext();
+
+		if(context)
+		{
+			const char *existing_str = context->LookupString( sym_id );
+
+			if(existing_str && (existing_str == input_string || strcmp(existing_str, input_string) == 0))
+			{
+				out_buffer.m_SymId = sym_id;
+				flags |= MEMBER_FLAG_LARGE_SYMBOL;
+			}
+			else
+			{
+				const char *alloced_string = context->AllocString( input_string, &sym_id );
+				
+				if(sym_id >= 0)
+				{
+					out_buffer.m_SymId = sym_id;
+					flags |= MEMBER_FLAG_LARGE_SYMBOL;
+				}
+				else
+				{
+					out_buffer.m_String = alloced_string;
+				}
+			}
+		}
+		else
+		{
+			out_buffer.m_String = strdup( input_string );
+		}
+	}
+
+	out_flags = flags;
 }
 
 void CKeyValues3Table::CopyFrom( KeyValues3 *parent, const CKeyValues3Table* src )
@@ -1743,12 +1802,10 @@ void CKeyValues3Table::CopyFrom( KeyValues3 *parent, const CKeyValues3Table* src
 
 	for(int i = 0; i < new_size; i++)
 	{
-		flags_base[i] = src_flags_base[i] & ~MEMBER_FLAG_EXTERNAL_NAME;
-
-		if(context)
-			names_base[i] = context->AllocString( src_names_base[i] );
+		if(context && (src_flags_base[i] & MEMBER_FLAG_LARGE_SYMBOL) != 0)
+			StoreKeyName( parent, names_base[i], flags_base[i], context->LookupString( src_names_base[i].m_SymId ), src_names_base[i].m_SymId );
 		else
-			names_base[i] = strdup( src_names_base[i] );
+			StoreKeyName( parent, names_base[i], flags_base[i], src_names_base[i].m_String );
 
 		members_base[i] = parent->AllocMember();
 		members_base[i]->CopyFrom( src_members_base[i] );
@@ -1756,6 +1813,19 @@ void CKeyValues3Table::CopyFrom( KeyValues3 *parent, const CKeyValues3Table* src
 
 	if ( new_size >= 128 )
 		EnableFastSearch();
+}
+
+void CKeyValues3Table::PurgeNameBuffer( KeyValues3 *parent, KV3MemberId_t id )
+{
+	auto name = NamesBase()[id];
+	auto flags = FlagsBase()[id];
+
+	if((flags & MEMBER_FLAG_EXTERNAL_NAME) == 0 &&
+		(flags & MEMBER_FLAG_LARGE_SYMBOL) == 0 &&
+		!parent->GetContext() && name.m_String)
+	{
+		free( (void *)name.m_String );
+	}
 }
 
 void CKeyValues3Table::RemoveMember( KeyValues3 *parent, KV3MemberId_t id )
@@ -1769,10 +1839,7 @@ void CKeyValues3Table::RemoveMember( KeyValues3 *parent, KV3MemberId_t id )
 
 	parent->FreeMember( members_base[id] );
 
-	if((flags_base[id] & MEMBER_FLAG_EXTERNAL_NAME) == 0 && !parent->GetContext() && names_base[id])
-	{
-		free( (void *)names_base[id] );
-	}
+	PurgeNameBuffer( parent, id );
 
 	if ( id < m_nCount )
 	{
@@ -1801,11 +1868,7 @@ void CKeyValues3Table::RemoveAll( KeyValues3 *parent, int new_size )
 	for(int i = 0; i < m_nCount; i++)
 	{
 		parent->FreeMember( members_base[i] );
-
-		if((flags_base[i] & MEMBER_FLAG_EXTERNAL_NAME) == 0 && !parent->GetContext() && names_base[i])
-		{
-			free( (void *)names_base[i] );
-		}
+		PurgeNameBuffer( parent, i );
 	}
 
 	m_nCount = 0;
@@ -1846,10 +1909,7 @@ void CKeyValues3Table::PurgeContent( KeyValues3 *parent, bool bClearingContext )
 			parent->FreeMember( members_base[i] );
 		}
 
-		if((flags_base[i] & MEMBER_FLAG_EXTERNAL_NAME) == 0 && parent && !parent->GetContext() && names_base[i])
-		{
-			free( (void *)names_base[i] );
-		}
+		PurgeNameBuffer( parent, i );
 	}
 
 	m_nCount = 0;
@@ -1967,9 +2027,19 @@ KeyValues3* CKeyValues3Context::Root()
 	return &m_KV3BaseCluster.Head()->m_Value;
 }
 
-const char* CKeyValues3Context::AllocString( const char* pString )
+const char* CKeyValues3Context::AllocString( const char* pString, UtlSymLargeId_t *out_symid )
 {
-	return m_Symbols.AddString( pString ).String();
+	UtlSymLargeId_t sym = m_Symbols.AddStringRaw( pString );
+
+	if(out_symid)
+		*out_symid = sym;
+
+	return m_Symbols.String( sym );
+}
+
+const char* CKeyValues3Context::LookupString( UtlSymLargeId_t symid ) const
+{
+	return m_Symbols.String( symid );
 }
 
 void CKeyValues3Context::EnableMetaData( bool bEnable )
