@@ -33,6 +33,8 @@ struct EntityIOConnectionDescFat_t
 	const char* m_pszOverrideParam;
 	float m_flDelay;
 	int32 m_nTimesToFire;
+
+	KeyValues3 m_KV3Value;
 };
 
 abstract_class IEntityKeyComplex
@@ -103,7 +105,8 @@ public:
 		const char* pszInputName,
 		const char* pszOverrideParam,
 		float flDelay,
-		int32 nTimesToFire );
+		int32 nTimesToFire,
+		const KeyValues3 *kv3value = nullptr );
 
 	void RemoveConnectionDesc( int nDesc );
 

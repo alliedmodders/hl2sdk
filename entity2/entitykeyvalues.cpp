@@ -169,7 +169,8 @@ void CEntityKeyValues::AddConnectionDesc(
 	const char* pszInputName,
 	const char* pszOverrideParam,
 	float flDelay,
-	int32 nTimesToFire )
+	int32 nTimesToFire,
+	const KeyValues3 *kv3value )
 {
 	if ( m_nQueuedForSpawnCount > 0 )
 		return;
@@ -185,6 +186,7 @@ void CEntityKeyValues::AddConnectionDesc(
 	desc->m_pszOverrideParam	= m_pAllocator->AllocString( pszOverrideParam ? pszOverrideParam : "" );
 	desc->m_flDelay				= flDelay;
 	desc->m_nTimesToFire		= nTimesToFire;
+	desc->m_KV3Value			= *kv3value;
 }
 
 void CEntityKeyValues::RemoveConnectionDesc( int nDesc )
@@ -238,7 +240,9 @@ void CEntityKeyValues::CopyFrom( const CEntityKeyValues* pSrc, bool bRemoveAllKe
 			pSrc->m_connectionDescs[ iter ].m_pszInputName,
 			pSrc->m_connectionDescs[ iter ].m_pszOverrideParam,
 			pSrc->m_connectionDescs[ iter ].m_flDelay,
-			pSrc->m_connectionDescs[ iter ].m_nTimesToFire );
+			pSrc->m_connectionDescs[ iter ].m_nTimesToFire,
+			&pSrc->m_connectionDescs[ iter ].m_KV3Value
+		);
 	}
 }
 
