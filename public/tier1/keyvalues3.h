@@ -807,7 +807,7 @@ public:
 	int GetMemberCount() const { return m_nCount; }
 	Member_t GetMember( KV3MemberId_t id );
 	const Member_t GetMember( KV3MemberId_t id ) const { return const_cast<CKeyValues3Table*>(this)->GetMember( id ); }
-	const const char *GetMemberName( const KeyValues3 *parent, KV3MemberId_t id ) const;
+	const char *GetMemberName( const KeyValues3 *parent, KV3MemberId_t id ) const;
 	const Hash_t GetMemberHash( KV3MemberId_t id ) const;
 	CKV3MemberName GetKV3MemberName( const KeyValues3 *parent, KV3MemberId_t id ) const;
 
