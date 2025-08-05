@@ -25,8 +25,7 @@ public:
 	virtual NetChannelBufType_t	GetNetworkBufType( void ) const = 0;
 	virtual bool	IsInitMessage( void ) const = 0;
 
-	virtual int 	GetRecipientCount( void ) const = 0;
-	virtual CPlayerSlot	GetRecipientIndex( int slot ) const = 0;
+	virtual const CBitVec<64> &GetRecipients( void ) const = 0;
 };
 
 #endif // IRECIPIENTFILTER_H

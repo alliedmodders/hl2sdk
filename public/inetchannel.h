@@ -122,6 +122,7 @@ public:
 	virtual void	SetInstantReplayIntercept( IInstantReplayIntercept *pInstantReplayIntercept ) = 0;
 	virtual bool	IsNull( void ) const = 0;
 	virtual bool	ProcessDemoPacket( NetPacket_t *packet ) = 0;
+	virtual void	ProcessMessages() = 0;
 	
 	virtual void	InstallMessageFilter( INetworkMessageProcessingPreFilter *pFilter ) = 0;
 	virtual void	UninstallMessageFilter( INetworkMessageProcessingPreFilter *pFilter ) = 0;
@@ -138,11 +139,10 @@ public:
 	
 	virtual EResult	SendRawMessage( const void *pData, uint32 cbData, int nSendFlags ) = 0;
 	
-	virtual int		GetCurrentNetMessageBits( void ) const = 0;
-	virtual int		GetCurrentNetMessageInSequenceNr( void ) const = 0;
-
 	virtual void	unk211() = 0;
 	virtual void	unk212() = 0;
+	virtual void	unk213() = 0;
+	virtual void	unk214() = 0;
 };
 
 

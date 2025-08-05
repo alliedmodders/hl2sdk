@@ -72,8 +72,8 @@ public:
 	virtual float		GetAvgChoke(int flow) const = 0;
 	virtual float		GetAvgData( int flow ) const = 0;	 // data flow in bytes/sec
 	
-	virtual float		unk001( int flow ) const = 0;
-	
+	virtual float		GetAvgPacketBytes( int flow ) const = 0; //avg packet bytes/sec // flow=0: m_flOutBytesPerSec //flow=0: m_flInBytesPerSec
+
 	virtual float		GetAvgPackets( int flow ) const = 0; // avg packets/sec
 	virtual int			GetTotalData( int flow ) const = 0;	 // total flow in/out in bytes
 	virtual int			GetTotalPackets( int flow ) const = 0;
