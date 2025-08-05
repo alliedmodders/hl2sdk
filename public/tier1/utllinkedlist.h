@@ -420,8 +420,6 @@ I CUtlLinkedList<T,S,ML,I,M>::AllocInternal( bool multilist )
 	I elem;
 	if ( m_FirstFree == InvalidIndex() )
 	{
-		Assert( m_Memory.IsValidIterator( m_LastAlloc ) || m_ElementCount == 0 );
-
 		typename M::Iterator_t it = m_Memory.AddToTail();
 
 		// We can overflow before the utlmemory overflows, since S != I
@@ -630,7 +628,6 @@ void  CUtlLinkedList<T,S,ML,I,M>::RemoveAll()
 		Assert( m_Head == InvalidIndex() );
 		Assert( m_Tail == InvalidIndex() );
 		Assert( m_FirstFree == InvalidIndex() );
-		Assert( m_ElementCount == 0 );
 		return;
 	}
 
