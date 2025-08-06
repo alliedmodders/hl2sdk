@@ -21,8 +21,8 @@ struct datamap_t;
 
 struct NetworkStateChangedData
 {
-	inline NetworkStateChangedData() : m_Unk00(1), m_Unk48(-1), m_nArrayIndex(-1), m_nPathIndex(ChangeAccessorFieldPathIndex_t()), m_Unk60(0) { }
-	inline explicit NetworkStateChangedData( bool bFullChanged ) : m_Unk00(static_cast<uint32>(!bFullChanged)), m_Unk48(-1), m_nArrayIndex(-1), m_nPathIndex(ChangeAccessorFieldPathIndex_t()), m_Unk60(0) { }
+	inline NetworkStateChangedData() : m_Unk00(1), m_nLine(-1), m_nArrayIndex(-1), m_nPathIndex(ChangeAccessorFieldPathIndex_t()), m_Unk60(0) { }
+	inline explicit NetworkStateChangedData( bool bFullChanged ) : m_Unk00(static_cast<uint32>(!bFullChanged)), m_nLine(-1), m_nArrayIndex(-1), m_nPathIndex(ChangeAccessorFieldPathIndex_t()), m_Unk60(0) { }
 
 	// nLocalOffset is the flattened field offset
 	//		calculated taking into account embedded structures
@@ -32,12 +32,12 @@ struct NetworkStateChangedData
 	// nPathIndex is the value to specify 
 	//		if the path to the field goes through one or more pointers, otherwise pass -1
 	// 		this value is usually a member of the CNetworkVarChainer and belongs to the last object in the chain
-	inline NetworkStateChangedData( uint32 nLocalOffset, int32 nArrayIndex = -1, ChangeAccessorFieldPathIndex_t nPathIndex = ChangeAccessorFieldPathIndex_t() ) : m_Unk00(1), m_LocalOffsets(0, 1), m_Unk48(-1), m_nArrayIndex(nArrayIndex), m_nPathIndex(nPathIndex), m_Unk60(0)
+	inline NetworkStateChangedData( uint32 nLocalOffset, int32 nArrayIndex = -1, ChangeAccessorFieldPathIndex_t nPathIndex = ChangeAccessorFieldPathIndex_t() ) : m_Unk00(1), m_LocalOffsets(0, 1), m_nLine(-1), m_nArrayIndex(nArrayIndex), m_nPathIndex(nPathIndex), m_Unk60(0)
 	{
 		m_LocalOffsets.AddToHead(nLocalOffset);
 	}
 
-	inline NetworkStateChangedData(const std::initializer_list< uint32 > nLocalOffsets, int32 nArrayIndex = -1, ChangeAccessorFieldPathIndex_t nPathIndex = ChangeAccessorFieldPathIndex_t()) : m_Unk00(1), m_LocalOffsets(0, nLocalOffsets.size()), m_Unk48(-1), m_nArrayIndex(nArrayIndex), m_nPathIndex(nPathIndex), m_Unk60(1)
+	inline NetworkStateChangedData(const std::initializer_list< uint32 > nLocalOffsets, int32 nArrayIndex = -1, ChangeAccessorFieldPathIndex_t nPathIndex = ChangeAccessorFieldPathIndex_t()) : m_Unk00(1), m_LocalOffsets(0, nLocalOffsets.size()), m_nLine(-1), m_nArrayIndex(nArrayIndex), m_nPathIndex(nPathIndex), m_Unk60(1)
 	{
 		for ( const uint32& nLocalOffset : nLocalOffsets )
 		{
@@ -48,9 +48,9 @@ struct NetworkStateChangedData
 	uint32 m_Unk00; // Perhaps it is an enum, default 1, when 0 adds FL_FULL_EDICT_CHANGED
 	CUtlVector<uint32> m_LocalOffsets;
 	// Probably only works in the debug build, as it has always been empty
-	CUtlString m_ClassName;
 	CUtlString m_FieldName;
-	int32 m_Unk48; // default -1
+	CUtlString m_FileName;
+	int32 m_nLine; // default -1
 	int32 m_nArrayIndex; // default -1
 	ChangeAccessorFieldPathIndex_t m_nPathIndex; // default -1 (can also be -2)
 	int16 m_Unk60; // default 0, if m_LocalOffsets has multiple values, it is set to 1
