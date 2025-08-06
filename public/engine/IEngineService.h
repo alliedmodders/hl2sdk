@@ -58,10 +58,14 @@ public:
 	virtual void		*GetEngineDeviceInfo( void ) const = 0;
 	virtual int			GetEngineDeviceWidth( void ) const = 0;
 	virtual int			GetEngineDeviceHeight( void ) const = 0;
-	virtual int			GetEngineSwapChainSize( void ) const = 0;
-	virtual bool		IsLoopSwitchQueued( void ) const = 0;
-	virtual bool		IsLoopSwitchRequested( void ) const = 0;
-	virtual CEventDispatcher<CEventIDManager_Default> *GetEventDispatcher( void ) = 0;
+	virtual void		GetEngineSwapChainSize(int* w, int* h) const = 0;
+	virtual void		GetWindowSafeArea(void) = 0;
+	virtual bool		IsLoopSwitchQueued(void) const = 0;
+	virtual bool		IsLoopSwitchRequested(void) const = 0;
+
+	virtual bool		unk001(void) const = 0;
+
+	virtual CEventDispatcher<CEventIDManager_Default>* GetEventDispatcher(void) = 0;
 	virtual void		*GetDebugVisualizerMgr( void ) = 0;
 	virtual int			GetActiveLoopClientServerMode( void ) const = 0;
 	virtual void		EnableMaxFramerate( bool ) = 0;
