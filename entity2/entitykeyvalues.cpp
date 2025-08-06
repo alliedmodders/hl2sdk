@@ -186,7 +186,9 @@ void CEntityKeyValues::AddConnectionDesc(
 	desc->m_pszOverrideParam	= m_pAllocator->AllocString( pszOverrideParam ? pszOverrideParam : "" );
 	desc->m_flDelay				= flDelay;
 	desc->m_nTimesToFire		= nTimesToFire;
-	desc->m_KV3Value			= *kv3value;
+
+	if(kv3value)
+		desc->m_KV3Value = *kv3value;
 }
 
 void CEntityKeyValues::RemoveConnectionDesc( int nDesc )
