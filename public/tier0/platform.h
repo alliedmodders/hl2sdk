@@ -57,7 +57,7 @@
 
 #include <string.h>
 
-#ifdef COMPILER_GCC
+#if defined(COMPILER_GCC) || defined(COMPILER_CLANG)
 #include <new>
 #else
 #include <new.h>
@@ -415,7 +415,7 @@ typedef unsigned int		uint;
 	#define DEFAULT_VC_WARNING( x ) __pragma(warning(default:4310) )
 
 
-#elif defined ( COMPILER_GCC )
+#elif defined ( COMPILER_GCC ) || defined ( COMPILER_CLANG )
 
 	#if (CROSS_PLATFORM_VERSION >= 1) && !defined( PLATFORM_64BITS )
 		#define  STDCALL			__attribute__ ((__stdcall__))
@@ -513,7 +513,7 @@ typedef unsigned int		uint;
 // !!! NOTE: if you get a compile error here, you are using VALIGNOF on an abstract type :NOTE !!!
 #define VALIGNOF_PORTABLE( type ) ( sizeof( AlignOf_t<type> ) - sizeof( type ) )
 
-#if defined( COMPILER_GCC ) || defined( COMPILER_MSVC )
+#if defined( COMPILER_GCC ) || defined( COMPILER_CLANG ) || defined( COMPILER_MSVC )
 #define VALIGNOF( type ) __alignof( type )
 #define VALIGNOF_TEMPLATE_SAFE( type ) VALIGNOF_PORTABLE( type )
 #else
