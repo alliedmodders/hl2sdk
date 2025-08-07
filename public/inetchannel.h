@@ -55,6 +55,12 @@ enum NetChannelBufType_t : int8
 	BUF_VOICE,
 };
 
+abstract_class INetworkChannelNotify
+{
+public:
+	virtual void OnShutdownChannel( INetChannel *pChannel ) = 0;
+};
+
 abstract_class INetworkMessageProcessingPreFilter
 {
 public:
