@@ -215,6 +215,10 @@ typedef void * HINSTANCE;
 #define GNUC 1
 #endif
 
+#ifdef COMPILER_CLANG
+#define CLANG 1
+#endif
+
 #if defined( _WIN32 )
 #define _WINDOWS 1
 #endif
@@ -618,7 +622,7 @@ typedef unsigned int		uint;
 //-----------------------------------------------------------------------------
 // Stack-based allocation related helpers
 //-----------------------------------------------------------------------------
-#if defined( COMPILER_GCC )
+#if defined( COMPILER_GCC ) || defined( COMPILER_CLANG )
 
 	#define stackalloc( _size )		alloca( ALIGN_VALUE( _size, 16 ) )
 
@@ -833,7 +837,7 @@ PLATFORM_INTERFACE void Plat_Printf ( const tchar *pFmt, ... ) FMTFUNCTION( 1, 2
 
 	#endif
 
-#elif defined ( COMPILER_GCC )
+#elif defined ( COMPILER_GCC ) || defined ( COMPILER_CLANG )
 
 	inline void SetupFPUControlWord()
 	{
