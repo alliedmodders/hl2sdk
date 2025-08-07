@@ -201,6 +201,36 @@ inline int GetBitForBitnumByte( int bitNum )
 
 inline int CalcNumIntsForBits( int numBits )	{ return (numBits + (BITS_PER_INT-1)) / BITS_PER_INT; }
 
+// http://bits.stephan-brumme.com/PopulationCount.html
+// http://graphics.stanford.edu/~seander/bithacks.html#PopulationCountSetParallel
+inline uint PopulationCount( uint32 v )
+{
+	uint32 const w = v - ( ( v >> 1 ) & 0x55555555 );
+	uint32 const x = ( w & 0x33333333 ) + ( ( w >> 2 ) & 0x33333333 );
+	return ( ( (x + ( x >> 4 ) ) & 0xF0F0F0F ) * 0x1010101 ) >> 24;
+}
+
+inline uint PopulationCount( uint64 v )
+{
+	uint64 const w = v - ( ( v >> 1 ) & 0x5555555555555555ull );
+	uint64 const x = ( w & 0x3333333333333333ull ) + ( ( w >> 2 ) & 0x3333333333333333ull );
+	return ( ( ( ( x + ( x >> 4 ) ) & 0x0F0F0F0F0F0F0F0Full ) * 0x0101010101010101ull ) >> 56 ); // [Sergiy] I'm not sure if it's faster to multiply here to reduce the bit sum further first, so feel free to optimize, please
+}
+
+inline uint PopulationCount( uint16 v )
+{
+	uint16 const w = v - ( ( v >> 1 ) & 0x5555 );
+	uint16 const x = ( w & 0x3333 ) + ( ( w >> 2 ) & 0x3333 );
+	return ( ( (x + ( x >> 4 ) ) & 0x0F0F ) * 0x101 ) >> 8;
+}
+
+inline uint PopulationCount( uint8 v )
+{
+	uint8 const w = v - ( ( v >> 1 ) & 0x55 );
+	uint8 const x = ( w & 0x33 ) +  ( ( w >> 2 ) & 0x33 );
+	return ( x + ( x >> 4 ) ) & 0x0F;
+}
+
 #ifdef _X360
 #define BitVec_Bit( bitNum ) GetBitForBitnum( bitNum )
 #define BitVec_BitInByte( bitNum ) GetBitForBitnumByte( bitNum )
@@ -264,6 +294,8 @@ public:
 
 	uint32	GetDWord(int i) const;
 	void	SetDWord(int i, uint32 val);
+	//From https://github.com/Wend4r/sourcesdk/blob/0a20c6e052c4ac248267af59f971d2f79346427c/public/bitvec.h#L213
+	uint    PopulationCount() const;
 
 	CBitVecT<BASE_OPS>&	operator=(const CBitVecT<BASE_OPS> &other)	{ other.CopyTo( this ); return *this; }
 	bool			operator==(const CBitVecT<BASE_OPS> &other)		{ return Compare( other ); }
@@ -898,6 +930,19 @@ inline void CBitVecT<BASE_OPS>::SetDWord(int i, uint32 val)
 {
 	Assert(i >= 0 && i < this->GetNumDWords());
 	this->Base()[i] = val;
+}
+//-----------------------------------------------------------------------------
+template <class BASE_OPS>
+inline uint32 CBitVecT<BASE_OPS>::PopulationCount() const
+{
+	int nDwordCount = this->GetNumDWords();
+	const uint32 *pBase = this->Base();
+	uint32 nCount = 0;
+	for( int i = 0; i < nDwordCount; ++i )
+	{
+		nCount += ::PopulationCount( pBase[i] );
+	}
+	return nCount;
 }
 
 //-----------------------------------------------------------------------------
