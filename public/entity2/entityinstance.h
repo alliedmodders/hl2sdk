@@ -9,6 +9,7 @@
 #include "entity2/entityidentity.h"
 #include "variant.h"
 #include "schemasystem/schematypes.h"
+#include <initializer_list>
 
 class CEntityKeyValues;
 class CFieldPath;
@@ -20,9 +21,9 @@ struct datamap_t;
 
 struct NetworkStateChangedData
 {
-	inline NetworkStateChangedData() : m_unk001(1), m_FieldOffset(-1), m_nArrayIndex(-1), m_nPathIndex(ChangeAccessorFieldPathIndex_t()), m_unk101(0) { }
+	inline NetworkStateChangedData() : m_unk001(1), m_nLine(-1), m_nArrayIndex(-1), m_nPathIndex(ChangeAccessorFieldPathIndex_t()), m_unk101(0) { }
 	inline explicit NetworkStateChangedData( bool bFullChanged ) :
-		m_unk001(static_cast<uint32>(!bFullChanged)), m_FieldOffset(-1),
+		m_unk001(static_cast<uint32>(!bFullChanged)), m_nLine(-1),
 		m_nArrayIndex(-1), m_nPathIndex(ChangeAccessorFieldPathIndex_t()),
 		m_unk101(0)
 	{ }
@@ -36,13 +37,13 @@ struct NetworkStateChangedData
 	//		if the path to the field goes through one or more pointers, otherwise pass -1
 	// 		this value is usually a member of the CNetworkVarChainer and belongs to the last object in the chain
 	inline NetworkStateChangedData( uint32 nLocalOffset, int32 nArrayIndex = -1, ChangeAccessorFieldPathIndex_t nPathIndex = ChangeAccessorFieldPathIndex_t() ) :
-		m_unk001(1), m_LocalOffsets(0, 1), m_FieldOffset(-1), m_nArrayIndex(nArrayIndex), m_nPathIndex(nPathIndex), m_unk101(0)
+		m_unk001(1), m_LocalOffsets(0, 1), m_nLine(-1), m_nArrayIndex(nArrayIndex), m_nPathIndex(nPathIndex), m_unk101(0)
 	{
 		m_LocalOffsets.AddToHead(nLocalOffset);
 	}
 
 	inline NetworkStateChangedData(const std::initializer_list< uint32 > nLocalOffsets, int32 nArrayIndex = -1, ChangeAccessorFieldPathIndex_t nPathIndex = ChangeAccessorFieldPathIndex_t()) :
-		m_unk001(1), m_LocalOffsets(0, nLocalOffsets.size()), m_FieldOffset(-1), m_nArrayIndex(nArrayIndex), m_nPathIndex(nPathIndex), m_unk101(1)
+		m_unk001(1), m_LocalOffsets(0, nLocalOffsets.size()), m_nLine(-1), m_nArrayIndex(nArrayIndex), m_nPathIndex(nPathIndex), m_unk101(1)
 	{
 		for ( const uint32& nLocalOffset : nLocalOffsets )
 		{
@@ -54,9 +55,9 @@ struct NetworkStateChangedData
 	CUtlVector<uint32> m_LocalOffsets;
 	
 	// AMNOTE: Mostly unused/debug
-	CUtlString m_ClassName;
 	CUtlString m_FieldName;
-	int32 m_FieldOffset;
+	CUtlString m_FileName;
+	int32 m_nLine;
 	int32 m_nArrayIndex;
 	ChangeAccessorFieldPathIndex_t m_nPathIndex;
 
