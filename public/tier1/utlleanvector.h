@@ -869,7 +869,7 @@ void CUtlLeanVectorImpl<B, T, I>::ShiftElements( T* pDest, const T* pSrc, const 
 {
 	ptrdiff_t numToMove = pSrcEnd - pSrc;
 	if ( numToMove > 0 )
-		memmove( pDest, pSrc, numToMove * sizeof( T ) );
+		V_memmove( pDest, pSrc, numToMove * sizeof( T ) );
 }
 
 //-----------------------------------------------------------------------------
