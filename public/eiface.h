@@ -601,7 +601,7 @@ public:
 	virtual void			ClientCommand( CPlayerSlot slot, const CCommand &args ) = 0;
 
 	// Set the the client controller's userinfo cvar value set to the specified address.
-	virtual void			ClientSetConVarUserInfoSet( CPlayerSlot slot, ConVarUserInfoSet_t *pConVarUserInfoSet ) = 0;
+	virtual void			ClientSetConVarUserInfoSet( CPlayerSlot slot, ConVarUserInfoSet_t pConVarUserInfoSet ) = 0;
 	// A player changed one/several replicated cvars (name etc)
 	virtual void			ClientSettingsChanged( CPlayerSlot slot ) = 0;
 
