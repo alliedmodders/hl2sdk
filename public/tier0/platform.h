@@ -57,7 +57,7 @@
 
 #include <string.h>
 
-#if defined(COMPILER_GCC) || defined(COMPILER_CLANG)
+#ifdef COMPILER_GCC
 #include <new>
 #else
 #include <new.h>
@@ -213,10 +213,6 @@ typedef void * HINSTANCE;
 
 #ifdef COMPILER_GCC
 #define GNUC 1
-#endif
-
-#ifdef COMPILER_CLANG
-#define CLANG 1
 #endif
 
 #if defined( _WIN32 )
@@ -419,7 +415,7 @@ typedef unsigned int		uint;
 	#define DEFAULT_VC_WARNING( x ) __pragma(warning(default:4310) )
 
 
-#elif defined ( COMPILER_GCC ) || defined ( COMPILER_CLANG )
+#elif defined ( COMPILER_GCC )
 
 	#if (CROSS_PLATFORM_VERSION >= 1) && !defined( PLATFORM_64BITS )
 		#define  STDCALL			__attribute__ ((__stdcall__))
@@ -517,7 +513,7 @@ typedef unsigned int		uint;
 // !!! NOTE: if you get a compile error here, you are using VALIGNOF on an abstract type :NOTE !!!
 #define VALIGNOF_PORTABLE( type ) ( sizeof( AlignOf_t<type> ) - sizeof( type ) )
 
-#if defined( COMPILER_GCC ) || defined( COMPILER_CLANG ) || defined( COMPILER_MSVC )
+#if defined( COMPILER_GCC ) || defined( COMPILER_MSVC )
 #define VALIGNOF( type ) __alignof( type )
 #define VALIGNOF_TEMPLATE_SAFE( type ) VALIGNOF_PORTABLE( type )
 #else
@@ -622,7 +618,7 @@ typedef unsigned int		uint;
 //-----------------------------------------------------------------------------
 // Stack-based allocation related helpers
 //-----------------------------------------------------------------------------
-#if defined( COMPILER_GCC ) || defined( COMPILER_CLANG )
+#if defined( COMPILER_GCC )
 
 	#define stackalloc( _size )		alloca( ALIGN_VALUE( _size, 16 ) )
 
@@ -837,7 +833,7 @@ PLATFORM_INTERFACE void Plat_Printf ( const tchar *pFmt, ... ) FMTFUNCTION( 1, 2
 
 	#endif
 
-#elif defined ( COMPILER_GCC ) || defined ( COMPILER_CLANG )
+#elif defined ( COMPILER_GCC )
 
 	inline void SetupFPUControlWord()
 	{
