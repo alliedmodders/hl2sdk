@@ -39,7 +39,7 @@
 // Shorthand helper to iterate registered concommands
 #define FOR_EACH_CONCOMMAND( iter ) for(ConCommandRef iter = icvar->FindFirstConCommand(); iter.IsValidRef(); iter = icvar->FindNextConCommand( iter ))
 
-
+typedef uint8 *ConVarUserInfoSet_t;
 struct ConVarSnapshot_t;
 class KeyValues;
 
@@ -117,7 +117,7 @@ public:
 	virtual int					GetTotalUserInfoCvarsByteSize() = 0;
 	// Copies default values of all cvars which have FCVAR_USERINFO flag to the buffer in a byte range from->to
 	// if copy_or_cleanup is true, if false would cleanup the buffer
-	virtual void				CopyUserInfoCvarDefaults( uint8* buffer, int from, int to, bool copy_or_cleanup ) = 0;
+	virtual void				CopyUserInfoCvarDefaults( ConVarUserInfoSet_t buffer, int from, int to, bool copy_or_cleanup ) = 0;
 
 	// Register, unregister vars
 	virtual void				RegisterConVar( const ConVarCreation_t& setup, uint64 nAdditionalFlags, ConVarRef* pCvarRef, ConVarData** pCvarData ) = 0;
