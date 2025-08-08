@@ -14,7 +14,6 @@
 #include "const.h"
 #include "eiface.h"
 #include "inetchannel.h"
-#include "bitvec.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: Generic interface for routing messages to users
@@ -28,7 +27,6 @@ public:
 	virtual bool	IsInitMessage( void ) const = 0;
 
 	virtual const CPlayerBitVec &GetRecipients( void ) const = 0;
-	int	GetRecipientCount() const { return GetRecipients().PopulationCount(); }
 };
 
 #endif // IRECIPIENTFILTER_H
