@@ -2034,6 +2034,9 @@ const char* CKeyValues3Context::AllocString( const char* pString, UtlSymLargeId_
 	if(out_symid)
 		*out_symid = sym;
 
+	if(sym == UTL_INVAL_SYMBOL_LARGE)
+		return "";
+
 	return m_Symbols.String( sym );
 }
 
