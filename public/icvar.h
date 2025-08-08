@@ -39,7 +39,7 @@
 // Shorthand helper to iterate registered concommands
 #define FOR_EACH_CONCOMMAND( iter ) for(ConCommandRef iter = icvar->FindFirstConCommand(); iter.IsValidRef(); iter = icvar->FindNextConCommand( iter ))
 
-
+struct ConVarUserInfoSet_t;
 struct ConVarSnapshot_t;
 class KeyValues;
 
