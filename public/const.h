@@ -242,20 +242,21 @@ enum LifeState_t
 // entity effects
 enum
 {
-	EF_BONEMERGE			= 0x001,	// Performs bone merge on client side
-	EF_BRIGHTLIGHT 			= 0x002,	// DLIGHT centered at entity origin
-	EF_DIMLIGHT 			= 0x004,	// player flashlight
-	EF_NOINTERP				= 0x008,	// don't interpolate the next frame
+	// EF_BONEMERGE			= 0x001,	// Performs bone merge on client side
+	// EF_BRIGHTLIGHT 		= 0x002,	// DLIGHT centered at entity origin
+	// EF_DIMLIGHT 			= 0x004,	// player flashlight
+	DEPRICATED_EF_NOINTERP	= 0x008,	// don't interpolate the next frame
 	EF_NOSHADOW				= 0x010,	// Don't cast no shadow
 	EF_NODRAW				= 0x020,	// don't draw entity
 	EF_NORECEIVESHADOW		= 0x040,	// Don't receive no shadow
-	EF_BONEMERGE_FASTCULL	= 0x080,	// For use with EF_BONEMERGE. If this is set, then it places this ent's origin at its
+	// EF_BONEMERGE_FASTCULL= 0x080,	// For use with EF_BONEMERGE. If this is set, then it places this ent's origin at its
 										// parent and uses the parent's bbox + the max extents of the aiment.
 										// Otherwise, it sets up the parent's bones every frame to figure out where to place
 										// the aiment, which is inefficient because it'll setup the parent's bones even if
 										// the parent is not in the PVS.
-	EF_ITEM_BLINK			= 0x100,	// blink an item so that the user notices it.
+	// EF_ITEM_BLINK		= 0x100,	// blink an item so that the user notices it.
 	EF_PARENT_ANIMATES		= 0x200,	// always assume that the parent entity is animating
+	EF_NODRAW_BUT_TRANSMIT	= 0x400,
 	EF_MAX_BITS = 10
 };
 
