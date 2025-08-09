@@ -15,6 +15,8 @@
 #include <resourcefile/resourcetype.h>
 #include <tier1/checksum_crc.h>
 #include <engine/IEngineService.h>
+#include "networksystem/inetworkmessages.h"
+#include "icvar.h"
 #include <netadr.h>
 
 class IGameSpawnGroupMgr;
@@ -124,27 +126,34 @@ public:
 
 	virtual void	unk201() = 0;
 	virtual void	unk202() = 0;
-	
+
+	virtual void	BroadcastMessage( INetworkMessageInternal *pNetMessage, const CNetMessage *pData, IRecipientFilter *filter ) = 0;
+	virtual bool	IsRecordingDemo() = 0;
+
+	virtual void	unk301() = 0;
 };
 
-abstract_class CNetworkGameServerBase : public INetworkGameServer, protected IConnectionlessPacketHandler
+abstract_class CNetworkGameServerBase : public INetworkGameServer, protected IConnectionlessPacketHandler, public IConVarListener
 {
 public:
 	virtual ~CNetworkGameServerBase() = 0;
-	
+
 	virtual void	SetMaxClients( int nMaxClients ) = 0;
 	
-	virtual void	unk301() = 0;
+	virtual void	unk011() = 0;
+
 	virtual bool	ProcessConnectionlessPacket( const ns_address *addr, bf_read *bf ) = 0; // process a connectionless packet
 
+	virtual void	OnConVarCreated( ConVarRefAbstract *pNewCvar ) = 0;
+	virtual void	OnConCommandCreated( ConCommand *pNewCommand ) = 0;
 
 	virtual CPlayerUserId GetPlayerUserId( CPlayerSlot slot ) = 0;
 	virtual const char *GetPlayerNetworkIDString( CPlayerSlot slot ) = 0;
 	
 	// Returns udp port of this server instance
-	virtual int		GetUDPPort() = 0;
+	virtual uint16		GetUDPPort() = 0;
 	// Returns hostname of this server instance
-	virtual const char *GetName() = 0;
+	virtual const char *GetHostName() = 0;
 
 	// AMNOTE: arg names are speculative and might be incorrect!
 	// Sums up across all the connected players.

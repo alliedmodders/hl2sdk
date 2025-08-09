@@ -53,7 +53,7 @@ typedef void(*FnChangeCallbackGlobal_t)(ConVarRefAbstract* ref, CSplitScreenSlot
 //-----------------------------------------------------------------------------
 // ConVar & ConCommand creation listener callbacks
 //-----------------------------------------------------------------------------
-class ICVarListenerCallbacks
+class IConVarListener
 {
 public:
 	virtual void OnConVarCreated( ConVarRefAbstract *pNewCvar ) {};
@@ -93,8 +93,8 @@ public:
 	virtual void			SetMaxSplitScreenSlots( int nSlots ) = 0;
 	virtual int				GetMaxSplitScreenSlots() const = 0;
 
-	virtual void			RegisterCreationListeners( ICVarListenerCallbacks *callbacks ) = 0;
-	virtual void			RemoveCreationListeners( ICVarListenerCallbacks *callbacks ) = 0;
+	virtual void			RegisterCreationListeners( IConVarListener *callbacks ) = 0;
+	virtual void			RemoveCreationListeners( IConVarListener *callbacks ) = 0;
 
 	virtual void			unk001() = 0;
 
@@ -235,7 +235,7 @@ public:
 	CUtlLinkedList<CConVarChangeCallbackNode_t, unsigned short, true> m_ConVarChangeCBList;
 	int m_ConVarCount;
 
-	CUtlVector<ICVarListenerCallbacks *> m_CvarCreationListeners;
+	CUtlVector<IConVarListener *> m_CvarCreationListeners;
 	CUtlVector<FnChangeCallbackGlobal_t> m_GlobalChangeCBList;
 
 	CUtlLinkedList<ConCommandData> m_ConCommandList;
