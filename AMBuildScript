@@ -73,6 +73,9 @@ class SDKConfig(object):
       cxx.defines += ['X64BITS', 'PLATFORM_64BITS']
     cxx.defines += ['RAD_TELEMETRY_DISABLED']
 
+    # Older PVKII code often wrapped changes to base SDK files in PVK2_DLL preprocessor
+    cxx.defines += ['PVK2_DLL']
+
     # Platform-specifics
     if cxx.target.platform == 'linux':
       self.configure_linux(cxx)
