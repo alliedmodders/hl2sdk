@@ -29,9 +29,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-#ifdef _WIN32
 #pragma warning( disable : 4127 )
-#endif
 
 // Let scene linger for 1/4 second so blends can finish
 #define SCENE_LINGER_TIME 0.25f
@@ -3487,11 +3485,9 @@ bool CChoreoScene::Merge( CChoreoScene *other )
 		CChoreoActor *a = other->m_Actors[ i ];
 
 		// See if that actor already exists
-		bool newActor = false;
 		CChoreoActor *destActor = FindActor( a->GetName() );
 		if ( !destActor )
 		{
-			newActor = true;
 			destActor = AllocActor();
 			*destActor = *a;
 			destActor->RemoveAllChannels();

@@ -1,0 +1,175 @@
+# vim: set ts=2 sw=2 tw=99 noet ft=python: 
+import os, sys, shutil
+from ambuild2 import util
+
+def ResolveEnvPath(env, folder=None):
+  if env in os.environ:
+    path = os.environ[env]
+    if os.path.isdir(path):
+      return path
+    return None
+
+  if folder:
+    head = os.getcwd()
+    oldhead = None
+    while head != None and head != oldhead:
+      path = os.path.join(head, folder)
+      if os.path.isdir(path):
+        return path
+      oldhead = head
+      head, tail = os.path.split(head)
+
+  return None
+
+def Normalize(path):
+  return os.path.abspath(os.path.normpath(path))
+
+class SDKConfig(object):
+  def __init__(self):
+    self.libs = []
+    self.targets = []
+    self.target_archs = set()
+
+    if builder.options.targets:
+      target_archs = builder.options.targets.split(',')
+    else:
+      target_archs = ['x86', 'x86_64']
+
+    for arch in target_archs:
+      try:
+        cxx = builder.DetectCxx(target_arch = arch)
+        self.target_archs.add(cxx.target.arch)
+      except Exception as e:
+        if builder.options.targets:
+            raise
+        print('Skipping target {}: {}'.format(arch, e))
+        continue
+      self.targets.append(cxx)
+
+    if not self.targets:
+      raise Exception('No suitable C/C++ compiler was found.')
+  
+  @property
+  def tag(self):
+    if builder.options.debug == '1':
+      return 'Debug'
+    return 'Release'
+  
+  def configure_cxx(self, cxx):
+    if cxx.like('gcc'):
+      self.configure_gcc(cxx)
+    elif cxx.family == 'msvc':
+      self.configure_msvc(cxx)
+
+    # Optimization
+    if builder.options.opt == '1':
+      cxx.defines += ['NDEBUG']
+
+    # Debugging
+    if builder.options.debug == '1':
+      cxx.defines += ['DEBUG', '_DEBUG']
+
+    if cxx.target.arch == 'x86_64':
+      cxx.defines += ['X64BITS', 'PLATFORM_64BITS']
+    cxx.defines += ['RAD_TELEMETRY_DISABLED']
+
+    # Platform-specifics
+    if cxx.target.platform == 'linux':
+      self.configure_linux(cxx)
+    elif cxx.target.platform == 'windows':
+      self.configure_windows(cxx)
+  
+  def configure_gcc(self, cxx):
+    cxx.cflags += [
+      '-Wall',
+      '-Werror',
+      '-Wno-overloaded-virtual',
+      '-Wno-unused-function',
+      '-Wno-unknown-pragmas',
+      '-Wno-dangling-else',
+      '-Wno-unused-variable',
+      '-Wno-unused-private-field',
+      '-Wno-inconsistent-missing-override',
+      '-Wno-tautological-overlap-compare',
+      '-Wno-tautological-constant-out-of-range-compare',
+      '-Wno-undefined-bool-conversion',
+      '-msse',
+      '-fPIC'
+    ]
+
+    cxx.defines += [
+      'COMPILER_GCC'
+    ]
+
+    cxx.cxxflags += [
+      '-std=c++17'
+    ]
+
+    if builder.options.opt == '1':
+      cxx.cflags += ['-O3']
+    return
+
+  def configure_msvc(self, cxx):
+    cxx.defines += ['COMPILER_MSVC']
+    if cxx.target.arch == 'x86':
+      cxx.defines += ['COMPILER_MSVC32']
+    elif cxx.target.arch == 'x86_64':
+      cxx.defines += ['COMPILER_MSVC64']
+    
+    cxx.cxxflags += [
+      '/std:c++17',
+      '/WX'
+    ]
+    
+    if builder.options.opt == '1':
+      cxx.cflags += ['/Ox', '/Zo']
+      cxx.linkflags += ['/OPT:ICF', '/OPT:REF']
+
+    return
+  
+  def configure_linux(self, cxx):
+    cxx.defines += ['_LINUX', 'LINUX', 'POSIX', 'GNUC']
+
+    if cxx.target.arch == 'x86':
+      cxx.cflags += ["-march=pentium4", "-march=core2", "-msse2", "-mfpmath=sse"]
+    else:
+      cxx.cflags += ["-march=nocona", "-march=core2"]
+
+    # Set of defines required by the HL2SDK
+    cxx.defines += [
+      '_finite=finite',
+	    'strnicmp=strncasecmp', '_vsnprintf=vsnprintf',
+      '_alloca=alloca',
+      'NO_MALLOC_OVERRIDE'
+    ]
+    return
+  
+  def configure_windows(self, cxx):
+    cxx.defines += ['_WINDOWS', 'WINDOWS', 'COMPILER_MSVC']
+    if cxx.target.arch == 'x86':
+      cxx.defines += ['WIN32']
+    elif cxx.target.arch == 'x86_64':
+      cxx.defines += ['WIN32', 'WIN64']
+    return
+  
+  def configure(self):
+    for cxx in self.targets:
+      self.configure_cxx(cxx)
+
+  def ConfigureLibrary(self, project, compiler, context, prefix = ''):
+    name = prefix + project.name
+    if compiler.target.platform == 'linux' and compiler.target.arch == 'x86':
+      name += '_i486'
+    binary = project.Configure(compiler, name, '{0} - {1}'.format(self.tag, compiler.target.arch))
+    binary.compiler.cxxincludes += [
+      os.path.join(context.currentSourcePath)
+    ]
+    return binary
+
+HL2SDK = SDKConfig()
+HL2SDK.configure()
+
+BuildScripts = ['mathlib/AMBuilder', 'tier1/AMBuilder', 'PackageScript']
+# Turn off the 'lib' prefix for all platform, we will add it if we need to
+util.StaticLibPrefix = ''
+builder.Build(BuildScripts, { 'HL2SDK': HL2SDK })

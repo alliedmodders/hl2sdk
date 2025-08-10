@@ -1,7 +1,7 @@
 #ifndef HAPTICS_INTERFACE_H
 #define HAPTICS_INTERFACE_H
 
-#if defined( GAME_DLL ) && defined( _WIN32 )
+#ifdef GAME_DLL
 #pragma warning("IHaptics.h is only for client ussage");
 #endif
 

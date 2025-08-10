@@ -18,21 +18,16 @@
 #ifndef _XBOX
 #undef min
 #undef max
-#ifdef _WIN32
 #pragma warning(push)
-#endif // _WIN32
 #include <set>
-#ifdef _WIN32
 #pragma warning(pop)
-#endif // _WIN32
-#endif // _XBOX
+#endif
 
 #ifdef _WIN32
 #pragma once
 #endif
 
 // the include <set> monkey's with the MAX() define, unbreak it
-#undef MINMAX_H
 #include "minmax.h"
 
 #include "ai_playerally.h"

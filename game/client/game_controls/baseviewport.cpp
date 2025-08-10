@@ -11,9 +11,7 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#ifdef _WIN32
 #pragma warning( disable : 4800  )  // disable forcing int to bool performance warning
-#endif
 
 #include "cbase.h"
 #include <cdll_client_int.h>
@@ -263,6 +261,43 @@ void CBaseViewport::UpdateAllPanels( void )
 	}
 }
 
+// Check if we have any visible panel (that's not the MainMenuOverride or the Scoreboard)
+bool CBaseViewport::IsAnyPanelVisibleExceptScores()
+{
+	int count = m_Panels.Count();
+	for ( int i = 0; i < count; i++ )
+	{
+		IViewPortPanel *p = m_Panels[i];
+
+		if ( p->IsVisible() && Q_strcmp("MainMenuOverride", p->GetName()) && Q_strcmp("scores", p->GetName()) )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CBaseViewport::IsPanelVisible( const char* panel )
+{
+	int count = m_Panels.Count();
+
+	for ( int i = 0; i < count; i++ )
+	{
+		IViewPortPanel *p = m_Panels[i];
+		if ( p->IsVisible() )
+		{
+			const char* panel_name = p->GetName();
+			if ( !Q_strcmp( panel, panel_name ) )
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 IViewPortPanel* CBaseViewport::CreatePanelByName(const char *szPanelName)
 {
 	IViewPortPanel* newpanel = NULL;
@@ -486,6 +521,9 @@ void CBaseViewport::RemoveAllPanels( void)
 CBaseViewport::~CBaseViewport()
 {
 	m_bInitialized = false;
+
+	if ( gViewPortInterface == this )
+		gViewPortInterface = NULL;
 
 #ifndef _XBOX
 	if ( !m_bHasParent && m_pBackGround )
@@ -717,7 +755,7 @@ void CBaseViewport::ReloadScheme(const char *fromFile)
 
 int CBaseViewport::GetDeathMessageStartHeight( void )
 {
-	return YRES(2);
+	return YRES(16);
 }
 
 void CBaseViewport::Paint()

@@ -249,7 +249,7 @@ void *CUtlMemoryPool::Alloc( size_t amount )
 		}
 	}
 	m_BlocksAllocated++;
-	m_PeakAlloc = V_max(m_PeakAlloc, m_BlocksAllocated);
+	m_PeakAlloc = max(m_PeakAlloc, m_BlocksAllocated);
 
 	returnBlock = m_pHeadOfFreeList;
 
@@ -268,7 +268,7 @@ void *CUtlMemoryPool::AllocZero( size_t amount )
 	void *mem = Alloc( amount );
 	if ( mem )
 	{
-		V_memset( mem, 0x00, amount );
+		memset( mem, 0x00, amount );
 	}
 	return mem;
 }

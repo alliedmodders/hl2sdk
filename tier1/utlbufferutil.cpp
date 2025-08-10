@@ -6,9 +6,7 @@
 // Serialization buffer
 //===========================================================================//
 
-#ifdef _WIN32
 #pragma warning (disable : 4514)
-#endif
 
 #include "tier1/utlbufferutil.h"
 #include "tier1/utlbuffer.h"

@@ -115,9 +115,7 @@ class BuildModeLocalizedStringEditDialog : public Frame
 
 public:
 
-#ifdef _WIN32
 #pragma warning( disable : 4355 )
-#endif
 	BuildModeLocalizedStringEditDialog() : Frame(this, NULL)
 	{
 		m_pTokenEntry = new TextEntry(this, NULL);
@@ -135,9 +133,7 @@ public:
 			m_pFileCombo->AddItem(g_pVGuiLocalize->GetLocalizationFileName(i), NULL);
 		}
 	}
-#ifdef _WIN32
 #pragma warning( default : 4355 )
-#endif
 
 	virtual void DoModal(const char *token)
 	{
@@ -1325,7 +1321,7 @@ void BuildModeDialog::OnPanelMoved()
 //-----------------------------------------------------------------------------
 void BuildModeDialog::OnSetClipboardText(const char *text)
 {
-	system()->SetClipboardText(text, strlen(text));
+	system()->SetClipboardText(text, V_strlen(text));
 }
 
 void BuildModeDialog::OnCreateNewControl( char const *text )

@@ -12,6 +12,8 @@
 #pragma once
 #endif
 
+#include "tier0/platform.h"
+
 #define null 0L
 
 #ifndef NULL
@@ -22,7 +24,6 @@
 #endif
 #endif
 
-#ifdef _WIN32
 #pragma warning( disable: 4800 )	// disables 'performance warning converting int to bool'
 #pragma warning( disable: 4786 )	// disables 'identifier truncated in browser information' warning
 #pragma warning( disable: 4355 )	// disables 'this' : used in base member initializer list
@@ -30,12 +31,10 @@
 #pragma warning( disable: 4514 )	// warning C4514: 'Color::Color' : unreferenced inline function has been removed
 #pragma warning( disable: 4100 )	// warning C4100: 'code' : unreferenced formal parameter
 #pragma warning( disable: 4127 )	// warning C4127: conditional expression is constant
-#endif
 
 typedef unsigned char  uchar;
 typedef unsigned short ushort;
 typedef unsigned int   uint;
-typedef unsigned long  ulong;
 
 #ifndef _WCHAR_T_DEFINED
 // DAL - wchar_t is a built in define in gcc 3.2 with a size of 4 bytes
@@ -52,17 +51,17 @@ namespace vgui
 {
 // handle to an internal vgui panel
 // this is the only handle to a panel that is valid across dll boundaries
-typedef unsigned int VPANEL;
+typedef uintp VPANEL;
 
 // handles to vgui objects
 // NULL values signify an invalid value
-typedef unsigned long HScheme;
+typedef uint32 HScheme;
 // Both -1 and 0 are used for invalid textures. Be careful.
-typedef unsigned long HTexture;
-typedef unsigned long HCursor;
-typedef unsigned long HPanel;
+typedef uint32 HTexture;
+typedef uint32 HCursor;
+typedef uint32 HPanel;
 const HPanel INVALID_PANEL = 0xffffffff;
-typedef unsigned long HFont;
+typedef uint32 HFont;
 const HFont INVALID_FONT = 0; // the value of an invalid font handle
 }
 

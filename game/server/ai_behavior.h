@@ -15,15 +15,11 @@
 #include "networkvar.h"
 
 #ifdef DEBUG
-#ifdef _WIN32
 #pragma warning(push)
-#endif // _WIN32
 #include <typeinfo>
-#ifdef _WIN32
 #pragma warning(pop)
 #pragma warning(disable:4290)
-#endif // _WIN32
-#endif // DEBUG
+#endif
 
 #if defined( _WIN32 )
 #pragma once
@@ -618,7 +614,7 @@ inline void CAI_BehaviorBase::ChainStartTask( int task, float taskData )
 
 	bool fPrevOverride = m_fOverrode;
 	GetOuter()->StartTask( (const Task_t *)&tempTask );
-	m_fOverrode = fPrevOverride;;
+	m_fOverrode = fPrevOverride;
 }
 
 //-------------------------------------
@@ -628,7 +624,7 @@ inline void CAI_BehaviorBase::ChainRunTask( int task, float taskData )
 	Task_t tempTask = { task, taskData }; 
 	bool fPrevOverride = m_fOverrode;
 	GetOuter()->RunTask( (const Task_t *)	&tempTask );
-	m_fOverrode = fPrevOverride;;
+	m_fOverrode = fPrevOverride;
 }
 
 //-------------------------------------

@@ -158,7 +158,6 @@ public:
 
 	int		random_seed;	// For shared random functions
 #ifdef GAME_DLL
-	// AlliedModders - This member only exists after the 2015 SDK update.
 	int		server_random_seed; // Only the server populates this seed
 #endif
 

@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright � 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // $Header: $
 // $NoKeywords: $
@@ -150,13 +150,13 @@ private:
 //-----------------------------------------------------------------------------
 template <class T, class LessFunc, class BaseVector> 
 CUtlSortVector<T, LessFunc, BaseVector>::CUtlSortVector( int nGrowSize, int initSize ) : 
-	m_pLessContext(NULL), BaseVector( nGrowSize, initSize ), m_bNeedsSort( false )
+	BaseVector( nGrowSize, initSize ), m_pLessContext(NULL), m_bNeedsSort( false )
 {
 }
 
 template <class T, class LessFunc, class BaseVector> 
 CUtlSortVector<T, LessFunc, BaseVector>::CUtlSortVector( T* pMemory, int numElements ) :
-	m_pLessContext(NULL), BaseVector( pMemory, numElements ), m_bNeedsSort( false )
+	BaseVector( pMemory, numElements ), m_pLessContext(NULL), m_bNeedsSort( false )
 {
 }
 

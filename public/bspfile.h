@@ -421,7 +421,7 @@ struct dgamelumpheader_t
 // This is expected to be a four-CC code ('lump')
 typedef int GameLumpId_t;
 
-// 360 only: game lump is compressed, filelen reflects original size
+// game lump is compressed, filelen reflects original size
 // use next entry fileofs to determine actual disk lump compressed size
 // compression stage ensures a terminal null dictionary entry
 #define GAMELUMPFLAG_COMPRESSED	0x0001
@@ -663,7 +663,7 @@ public:
 	CDispCornerNeighbors	m_CornerNeighbors[4];	// Indexed by CORNER_ defines.
 
 	enum unnamed { ALLOWEDVERTS_SIZE = PAD_NUMBER( MAX_DISPVERTS, 32 ) / 32 };
-	unsigned long	m_AllowedVerts[ALLOWEDVERTS_SIZE];	// This is built based on the layout and sizes of our neighbors
+	uint32	m_AllowedVerts[ALLOWEDVERTS_SIZE];	// This is built based on the layout and sizes of our neighbors
 														// and tells us which vertices are allowed to be active.
 };
 
@@ -794,9 +794,7 @@ struct dfaceid_t
 #if defined( _X360 )
 #pragma bitfield_order( push, lsb_to_msb )
 #endif
-#ifdef _WIN32
 #pragma warning( disable:4201 )	// C4201: nonstandard extension used: nameless struct/union
-#endif
 struct dleaf_version_0_t
 {
 	DECLARE_BYTESWAP_DATADESC();
@@ -850,9 +848,7 @@ struct dleaf_t
 	// Precaculated light info for entities.
 //	CompressedLightCube m_AmbientLighting;
 };
-#ifdef _WIN32
 #pragma warning( default:4201 )	// C4201: nonstandard extension used: nameless struct/union
-#endif
 #if defined( _X360 )
 #pragma bitfield_order( pop )
 #endif

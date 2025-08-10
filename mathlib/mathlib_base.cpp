@@ -16,10 +16,8 @@
 #include "tier0/vprof.h"
 //#define _VPROF_MATHLIB
 
-#ifdef _WIN32
 #pragma warning(disable:4244)   // "conversion from 'const int' to 'float', possible loss of data"
 #pragma warning(disable:4730)	// "mixing _m64 and floating point expressions may result in incorrect code"
-#endif
 
 #include "mathlib/mathlib.h"
 #include "mathlib/vector.h"
@@ -1777,7 +1775,7 @@ void QuaternionScale( const Quaternion &p, float t, Quaternion &q )
 	// FIXME: nick, this isn't overly sensitive to accuracy, and it may be faster to 
 	// use the cos part (w) of the quaternion (sin(omega)*N,cos(omega)) to figure the new scale.
 	float sinom = sqrt( DotProduct( &p.x, &p.x ) );
-	sinom = V_min( sinom, 1.f );
+	sinom = min( sinom, 1.f );
 
 	float sinsom = sin( asin( sinom ) * t );
 
@@ -1862,13 +1860,10 @@ void QuaternionMult( const Quaternion &p, const Quaternion &q, Quaternion &qt )
 
 void QuaternionMatrix( const Quaternion &q, const Vector &pos, matrix3x4_t& matrix )
 {
-#ifdef DBGFLAG_ASSERT
-	static bool s_bHushAsserts = !!CommandLine()->FindParm("-hushasserts");
-	if (!s_bHushAsserts)
+	if ( !HushAsserts() )
 	{
 		Assert( pos.IsValid() );
 	}
-#endif
 
 	QuaternionMatrix( q, matrix );
 
@@ -1880,13 +1875,10 @@ void QuaternionMatrix( const Quaternion &q, const Vector &pos, matrix3x4_t& matr
 void QuaternionMatrix( const Quaternion &q, matrix3x4_t& matrix )
 {
 	Assert( s_bMathlibInitialized );
-#ifdef DBGFLAG_ASSERT
-	static bool s_bHushAsserts = !!CommandLine()->FindParm("-hushasserts");
-	if ( !s_bHushAsserts )
+	if ( !HushAsserts() )
 	{
 		Assert( q.IsValid() );
 	}
-#endif
 
 #ifdef _VPROF_MATHLIB
 	VPROF_BUDGET( "QuaternionMatrix", "Mathlib" );
@@ -2508,7 +2500,7 @@ float Hermite_Spline(
 }
 
 
-void Hermite_SplineBasis( float t, float basis[4] )
+void Hermite_SplineBasis( float t, float basis[] )
 {
 	float tSqr = t*t;
 	float tCube = t*tSqr;
@@ -2684,7 +2676,7 @@ void Cubic_Spline(
 
 	output.Init();
 
-	Vector a, b, c, d;
+	Vector b, c;
 
 	// matrix row 1
 	VectorScale( p2, tSqrSqr * 2, b );
@@ -2819,7 +2811,7 @@ void Parabolic_Spline(
 
 	output.Init();
 
-	Vector a, b, c, d;
+	Vector a, b, c;
 
 	// matrix row 1
 	// no influence from t cubed
@@ -4057,10 +4049,10 @@ void CalcTriangleTangentSpace( const Vector &p0, const Vector &p1, const Vector 
 //-----------------------------------------------------------------------------
 void RGBtoHSV( const Vector &rgb, Vector &hsv )
 {
-	float flMax = V_max( rgb.x, rgb.y );
-	flMax = V_max( flMax, rgb.z );
-	float flMin = V_min( rgb.x, rgb.y );
-	flMin = V_min( flMin, rgb.z );
+	float flMax = max( rgb.x, rgb.y );
+	flMax = max( flMax, rgb.z );
+	float flMin = min( rgb.x, rgb.y );
+	flMin = min( flMin, rgb.z );
 
 	// hsv.z is the value
 	hsv.z = flMax;

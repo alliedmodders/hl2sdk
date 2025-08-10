@@ -6,9 +6,7 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#ifdef _WIN32
 #pragma warning (disable:4514)
-#endif
 
 #include "utlsymbol.h"
 #include "KeyValues.h"
@@ -234,7 +232,7 @@ CUtlSymbol CUtlSymbolTable::AddString( const char* pString )
 	if ( iPool == -1 )
 	{
 		// Add a new pool.
-		int newPoolSize = V_max( len, MIN_STRING_POOL_SIZE );
+		int newPoolSize = max( len, MIN_STRING_POOL_SIZE );
 		StringPool_t *pPool = (StringPool_t*)malloc( sizeof( StringPool_t ) + newPoolSize - 1 );
 		pPool->m_TotalLen = newPoolSize;
 		pPool->m_SpaceUsed = 0;

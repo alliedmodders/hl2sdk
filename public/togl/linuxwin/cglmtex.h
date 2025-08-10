@@ -146,10 +146,8 @@ bool LessFunc_GLMTexLayoutKey( const GLMTexLayoutKey &a, const GLMTexLayoutKey &
 #define	GLM_TEX_MAX_FACES	6
 #define	GLM_TEX_MAX_SLICES	(GLM_TEX_MAX_MIPS * GLM_TEX_MAX_FACES)
 
-#ifdef _WIN32
 #pragma warning( push )
 #pragma warning( disable : 4200 )
-#endif
 
 struct GLMTexLayout
 {
@@ -172,9 +170,7 @@ struct GLMTexLayout
 	GLMTexLayoutSlice	m_slices[0];				// dynamically allocated 2-d array [faces][mips]
 };
 
-#ifdef _WIN32
 #pragma warning( pop )
-#endif
 
 class	CGLMTexLayoutTable
 {
@@ -274,16 +270,18 @@ struct GLMTexSamplingParams
 	};
 
 	uint32 m_borderColor;
+	float m_lodBias;
 
 	FORCEINLINE bool operator== (const GLMTexSamplingParams& rhs ) const
 	{
-		return ( m_bits == rhs.m_bits ) && ( m_borderColor == rhs.m_borderColor );
+		return ( m_bits == rhs.m_bits ) && ( m_borderColor == rhs.m_borderColor ) && ( m_lodBias == rhs.m_lodBias );
 	}
 
 	FORCEINLINE void SetToDefaults()
 	{
 		m_bits = 0;
 		m_borderColor = 0;
+		m_lodBias = 0.0f;
 		m_packed.m_addressU = D3DTADDRESS_WRAP;
 		m_packed.m_addressV = D3DTADDRESS_WRAP;
 		m_packed.m_addressW = D3DTADDRESS_WRAP;
@@ -325,7 +323,9 @@ struct GLMTexSamplingParams
 		}
 		gGL->glSamplerParameterfv( nSamplerObject, GL_TEXTURE_BORDER_COLOR, flBorderColor ); // <-- this crashes ATI's driver, remark it out
 		gGL->glSamplerParameteri( nSamplerObject, GL_TEXTURE_MIN_LOD, m_packed.m_minLOD );
+		gGL->glSamplerParameterfv( nSamplerObject, GL_TEXTURE_LOD_BIAS, &m_lodBias );
 		gGL->glSamplerParameteri( nSamplerObject, GL_TEXTURE_COMPARE_MODE_ARB, m_packed.m_compareMode ? GL_COMPARE_R_TO_TEXTURE_ARB : GL_NONE );
+		gGL->glSamplerParameterf( nSamplerObject, GL_TEXTURE_LOD_BIAS, m_lodBias );
 		if ( m_packed.m_compareMode )
 		{
 			gGL->glSamplerParameteri( nSamplerObject, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL );
@@ -393,6 +393,12 @@ struct GLMTexSamplingParams
 			gGL->glTexParameteri( target, GL_TEXTURE_MIN_LOD, m_packed.m_minLOD );
 		}
 
+		if ( m_lodBias != curState.m_lodBias )
+		{
+			// Could use TexParameterf instead, but we don't currently grab it. This works fine, too.
+			gGL->glTexParameterfv( target, GL_TEXTURE_LOD_BIAS, &m_lodBias );
+		}
+
 		if ( m_packed.m_compareMode != curState.m_packed.m_compareMode )
 		{
 			gGL->glTexParameteri( target, GL_TEXTURE_COMPARE_MODE_ARB, m_packed.m_compareMode ? GL_COMPARE_R_TO_TEXTURE_ARB : GL_NONE );
@@ -437,6 +443,7 @@ struct GLMTexSamplingParams
 		}
 		gGL->glTexParameterfv( target, GL_TEXTURE_BORDER_COLOR, flBorderColor ); // <-- this crashes ATI's driver, remark it out
 		gGL->glTexParameteri( target, GL_TEXTURE_MIN_LOD, m_packed.m_minLOD );
+		gGL->glTexParameterfv( target, GL_TEXTURE_LOD_BIAS, &m_lodBias );
 		gGL->glTexParameteri( target, GL_TEXTURE_COMPARE_MODE_ARB, m_packed.m_compareMode ? GL_COMPARE_R_TO_TEXTURE_ARB : GL_NONE );
 		if ( m_packed.m_compareMode )
 		{

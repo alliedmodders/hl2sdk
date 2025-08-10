@@ -1,0 +1,72 @@
+# vim: set ts=2 sw=2 tw=99 noet ft=python:
+import os, sys
+
+builder.SetBuildFolder('/')
+
+project = builder.StaticLibraryProject('tier1')
+
+project.sources = [
+	'bitbuf.cpp',
+	'byteswap.cpp',
+	'characterset.cpp',
+	'checksum_crc.cpp',
+	'checksum_md5.cpp',
+	'checksum_sha1.cpp',
+	'commandbuffer.cpp',
+	'convar.cpp',
+	'datamanager.cpp',
+	'diff.cpp',
+	'exprevaluator.cpp',
+	'fileio.cpp',
+	'generichash.cpp',
+	'ilocalize.cpp',
+	'interface.cpp',
+	'KeyValues.cpp',
+	'keyvaluesjson.cpp',
+	'kvpacker.cpp',
+	'lzmaDecoder.cpp',
+	'lzss.cpp',
+	'mempool.cpp',
+	'memstack.cpp',
+	'NetAdr.cpp',
+	'newbitbuf.cpp',
+	'pathmatch.cpp',
+	'qsort_s.cpp',
+	'rangecheckedvar.cpp',
+	'reliabletimer.cpp',
+	'snappy-sinksource.cpp',
+	'snappy-stubs-internal.cpp',
+	'snappy.cpp',
+	'sparsematrix.cpp',
+	'splitstring.cpp',
+	'stringpool.cpp',
+	'strtools.cpp',
+	'strtools_unicode.cpp',
+	'tier1.cpp',
+	'tokenreader.cpp',
+	'undiff.cpp',
+	'uniqueid.cpp',
+	'utlbinaryblock.cpp',
+	'utlbuffer.cpp',
+	'utlbufferutil.cpp',
+	'utlstring.cpp',
+	'utlsymbol.cpp'
+]
+
+for cxx in HL2SDK.targets:
+  binary = HL2SDK.ConfigureLibrary(project, cxx, builder)
+  compiler = binary.compiler
+
+  if compiler.target.platform == 'linux':
+    binary.sources += ['processor_detect_linux.cpp']
+  else:
+    binary.sources += ['processor_detect.cpp']
+
+  compiler.cxxincludes += [
+	os.path.join(builder.currentSourcePath, '..', 'common'),
+    os.path.join(builder.currentSourcePath, '..', 'public'),
+    os.path.join(builder.currentSourcePath, '..', 'public', 'tier0'),
+    os.path.join(builder.currentSourcePath, '..', 'public', 'tier1')
+  ]
+
+HL2SDK.libs += builder.Add(project)

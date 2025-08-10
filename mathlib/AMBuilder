@@ -1,0 +1,48 @@
+# vim: set ts=2 sw=2 tw=99 noet ft=python:
+import os, sys
+
+def AddSourceFilesFromDir(path, files):
+  list = []
+  for file in files:
+    list.append(os.path.join(path, file))
+  return list
+
+builder.SetBuildFolder('/')
+
+project = builder.StaticLibraryProject('mathlib')
+project.sources = [
+	'3dnow.cpp',
+	'almostequal.cpp',
+	'anorms.cpp',
+	'bumpvects.cpp',
+	'color_conversion.cpp',
+	'halton.cpp',
+	'IceKey.cpp',
+	'imagequant.cpp',
+	'lightdesc.cpp',
+	'mathlib_base.cpp',
+	'polyhedron.cpp',
+	'powsse.cpp',
+	'quantize.cpp',
+	'randsse.cpp',
+	'simdvectormatrix.cpp',
+	'sparse_convolution_noise.cpp',
+	'spherical.cpp',
+	'sse.cpp',
+	'sseconst.cpp',
+	'ssenoise.cpp',
+	'vector.cpp',
+	'vmatrix.cpp',
+]
+
+for cxx in HL2SDK.targets:
+  binary = HL2SDK.ConfigureLibrary(project, cxx, builder)
+  compiler = binary.compiler
+
+  compiler.cxxincludes += [
+    os.path.join(builder.currentSourcePath, '..', 'public'),
+    os.path.join(builder.currentSourcePath, '..', 'public', 'tier0'),
+    os.path.join(builder.currentSourcePath, '..', 'public', 'mathlib')
+  ]
+
+HL2SDK.libs += builder.Add(project)

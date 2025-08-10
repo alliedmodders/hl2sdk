@@ -6,10 +6,7 @@
 // $NoKeywords: $
 //=============================================================================//
 #include "cbase.h"
-
-#ifdef _WIN32
 #pragma warning (disable: 4514)
-#endif
 
 #include "vgui_bitmapimage.h"
 #include "vgui_bitmapbutton.h"
