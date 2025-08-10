@@ -395,6 +395,14 @@ DBG_INTERFACE struct SDL_Window * GetAssertDialogParent();
 #define  AssertAlways( _exp )           							_AssertMsg( _exp, _T("Assertion Failed: ") _T(#_exp), ((void)0), false )
 #define  AssertMsgAlways( _exp, _msg )  							_AssertMsg( _exp, _msg, ((void)0), false )
 
+#ifdef PVK2_DEV_VERSION
+#define DevAssertFatal( _exp ) AssertFatal( _exp )
+#define DevAssertFatalMsg( _exp, _msg, ... )						_AssertMsg( _exp, (const tchar *)CDbgFmtMsg( _msg, ##__VA_ARGS__ ), ((void)0), true )
+#else
+#define DevAssertFatal( _exp ) Assert( _exp )
+#define DevAssertFatalMsg( _exp, _msg, ... )  						_AssertMsg( _exp, (const tchar *)CDbgFmtMsg( _msg, ##__VA_ARGS__ ), ((void)0), false )
+#endif
+
 // Stringify a number
 #define V_STRINGIFY_INTERNAL(x) #x
 // Extra level of indirection needed when passing in a macro to avoid getting the macro name instead of value

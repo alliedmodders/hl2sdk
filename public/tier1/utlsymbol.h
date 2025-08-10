@@ -46,6 +46,7 @@ public:
 	
 	// operator==
 	bool operator==( CUtlSymbol const& src ) const { return m_Id == src.m_Id; }
+	bool operator==( UtlSymId_t src ) const { return m_Id == src; }
 	bool operator==( const char* pStr ) const;
 	
 	// Is valid?
@@ -103,11 +104,6 @@ public:
 	// Look up the string associated with a particular symbol
 	const char* String( CUtlSymbol id ) const;
 	
-	inline bool HasElement( const char* pStr ) const
-	{
-		return Find( pStr ) != UTL_INVAL_SYMBOL;
-	}
-
 	// Remove all symbols in the table.
 	void  RemoveAll();
 
@@ -142,7 +138,7 @@ protected:
 	class CLess
 	{
 	public:
-		CLess( int ignored = 0 ) {} // permits default initialization to NULL in CUtlRBTree
+		CLess( int ignored = 0 ) {} // permits default initialization to nullptr in CUtlRBTree
 		bool operator!() const { return false; }
 		bool operator()( const CStringPoolIndex &left, const CStringPoolIndex &right ) const;
 	};
@@ -209,10 +205,15 @@ public:
 	}
 	
 private:
+#ifdef PVK2_DLL
+	// Always use spinlock instead of a mutex, fixes a start-up hang on Linux?!
+	mutable CThreadSpinRWLock m_lock;
+#else
 #if defined(WIN32) || defined(_WIN32)
 	mutable CThreadSpinRWLock m_lock;
 #else
 	mutable CThreadRWLock m_lock;
+#endif
 #endif
 };
 
@@ -243,25 +244,14 @@ class CUtlFilenameSymbolTable
 	{
 		FileNameHandleInternal_t()
 		{
-			COMPILE_TIME_ASSERT( sizeof( *this ) == sizeof( FileNameHandle_t ) );
-
 			path = 0;
 			file = 0;
-
-#ifdef PLATFORM_64BITS
-			pad = 0;
-#endif
 		}
 
 		// Part before the final '/' character
 		unsigned short path;
 		// Part after the final '/', including extension
 		unsigned short file;
-
-#ifdef PLATFORM_64BITS
-		// some padding to make sure we are the same size as FileNameHandle_t on 64 bit.
-		unsigned int pad;
-#endif
 	};
 
 	class HashTable;

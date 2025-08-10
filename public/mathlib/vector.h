@@ -69,11 +69,7 @@ public:
 	vec_t x, y, z;
 
 	// Construction/destruction:
-#ifdef VECTOR_PARANOIA
-	Vector();
-#else
-	Vector() = default;
-#endif
+	Vector(void); 
 	Vector(vec_t X, vec_t Y, vec_t Z);
 	explicit Vector(vec_t XYZ); ///< broadcast initialize
 
@@ -404,7 +400,7 @@ public:
 	}
 	
 #endif
-	//float w;	// this space is used anyway
+	float w;	// this space is used anyway
 } ALIGN16_POST;
 
 //-----------------------------------------------------------------------------
@@ -504,13 +500,15 @@ float RandomVectorInUnitCircle( Vector2D *pVector );
 //-----------------------------------------------------------------------------
 // constructors
 //-----------------------------------------------------------------------------
-#ifdef VECTOR_PARANOIA
 inline Vector::Vector(void)									
-{
+{ 
+#ifdef _DEBUG
+#ifdef VECTOR_PARANOIA
 	// Initialize to NAN to catch errors
 	x = y = z = VEC_T_NAN;
-}
 #endif
+#endif
+}
 
 inline Vector::Vector(vec_t X, vec_t Y, vec_t Z)						
 { 
@@ -589,13 +587,13 @@ inline Vector& Vector::operator=(const Vector &vOther)
 //-----------------------------------------------------------------------------
 inline vec_t& Vector::operator[](int i)
 {
-	Assert( (i >= 0) && (i < 3) );
+	DevAssertFatal( (i >= 0) && (i < 3) );
 	return ((vec_t*)this)[i];
 }
 
 inline vec_t Vector::operator[](int i) const
 {
-	Assert( (i >= 0) && (i < 3) );
+	DevAssertFatal( (i >= 0) && (i < 3) );
 	return ((vec_t*)this)[i];
 }
 
@@ -1174,7 +1172,7 @@ inline Vector VectorLerp(const Vector& src1, const Vector& src2, vec_t t )
 inline Vector &AllocTempVector()
 {
 	static Vector s_vecTemp[128];
-	static CInterlockedInt s_nIndex;
+	static std::atomic_int s_nIndex;
 
 	int nIndex;
 	for (;;)
@@ -1182,7 +1180,8 @@ inline Vector &AllocTempVector()
 		int nOldIndex = s_nIndex;
 		nIndex = ( (nOldIndex + 0x10001) & 0x7F );
 
-		if ( s_nIndex.AssignIf( nOldIndex, nIndex ) )
+		//if ( s_nIndex.AssignIf( nOldIndex, nIndex ) )
+		if ( std::atomic_compare_exchange_strong( &s_nIndex, &nOldIndex, nIndex ) )
 		{
 			break;
 		}
@@ -1455,34 +1454,16 @@ inline Vector CrossProduct(const Vector& a, const Vector& b)
 
 inline void VectorMin( const Vector &a, const Vector &b, Vector &result )
 {
-	result.x = MIN(a.x, b.x);
-	result.y = MIN(a.y, b.y);
-	result.z = MIN(a.z, b.z);
+	result.x = fpmin(a.x, b.x);
+	result.y = fpmin(a.y, b.y);
+	result.z = fpmin(a.z, b.z);
 }
 
 inline void VectorMax( const Vector &a, const Vector &b, Vector &result )
 {
-	result.x = MAX(a.x, b.x);
-	result.y = MAX(a.y, b.y);
-	result.z = MAX(a.z, b.z);
-}
-
-inline Vector VectorMin( const Vector &a, const Vector &b )
-{
-	Vector result;
-	result.x = fpmin(a.x, b.x);
-	result.y = fpmin(a.y, b.y);
-	result.z = fpmin(a.z, b.z);
-	return result;
-}
-
-inline Vector VectorMax( const Vector &a, const Vector &b )
-{
-	Vector result;
 	result.x = fpmax(a.x, b.x);
 	result.y = fpmax(a.y, b.y);
 	result.z = fpmax(a.z, b.z);
-	return result;
 }
 
 inline float ComputeVolume( const Vector &vecMins, const Vector &vecMaxs )
@@ -1562,19 +1543,19 @@ class RadianEuler;
 class Quaternion				// same data-layout as engine's vec4_t,
 {								//		which is a vec_t[4]
 public:
+	inline Quaternion(void)	{ 
+	
+	// Initialize to NAN to catch errors
+#ifdef _DEBUG
 #ifdef VECTOR_PARANOIA
-	Quaternion()
-	{ 
-		// Initialize to NAN to catch errors
 		x = y = z = w = VEC_T_NAN;
-	}
-#else
-	Quaternion() = default;
 #endif
-	Quaternion(vec_t ix, vec_t iy, vec_t iz, vec_t iw) : x(ix), y(iy), z(iz), w(iw) { }
-	Quaternion(RadianEuler const &angle);	// evil auto type promotion!!!
+#endif
+	}
+	inline Quaternion(vec_t ix, vec_t iy, vec_t iz, vec_t iw) : x(ix), y(iy), z(iz), w(iw) { }
+	inline Quaternion(RadianEuler const &angle);	// evil auto type promotion!!!
 
-	void Init(vec_t ix=0.0f, vec_t iy=0.0f, vec_t iz=0.0f, vec_t iw=0.0f)	{ x = ix; y = iy; z = iz; w = iw; }
+	inline void Init(vec_t ix=0.0f, vec_t iy=0.0f, vec_t iz=0.0f, vec_t iw=0.0f)	{ x = ix; y = iy; z = iz; w = iw; }
 
 	bool IsValid() const;
 	void Invalidate();
@@ -1681,20 +1662,13 @@ class QAngle;
 class RadianEuler
 {
 public:
-#ifdef VECTOR_PARANOIA
-	RadianEuler()
-	{
-		x = y = z = VEC_T_NAN;
-	}
-#else
-	RadianEuler() = default;
-#endif
-	RadianEuler(vec_t X, vec_t Y, vec_t Z)		{ x = X; y = Y; z = Z; }
-	RadianEuler(Quaternion const &q);	// evil auto type promotion!!!
-	RadianEuler(QAngle const &angles);	// evil auto type promotion!!!
+	inline RadianEuler(void)							{ }
+	inline RadianEuler(vec_t X, vec_t Y, vec_t Z)		{ x = X; y = Y; z = Z; }
+	inline RadianEuler(Quaternion const &q);	// evil auto type promotion!!!
+	inline RadianEuler(QAngle const &angles);	// evil auto type promotion!!!
 
 	// Initialization
-	void Init(vec_t ix=0.0f, vec_t iy=0.0f, vec_t iz=0.0f)	{ x = ix; y = iy; z = iz; }
+	inline void Init(vec_t ix=0.0f, vec_t iy=0.0f, vec_t iz=0.0f)	{ x = ix; y = iy; z = iz; }
 
 	//	conversion to qangle
 	QAngle ToQAngle( void ) const;
@@ -1798,11 +1772,7 @@ public:
 	vec_t x, y, z;
 
 	// Construction/destruction
-#ifdef VECTOR_PARANOIA
-	QAngle();
-#else
-	QAngle() = default;
-#endif
+	QAngle(void);
 	QAngle(vec_t X, vec_t Y, vec_t Z);
 //	QAngle(RadianEuler const &angles);	// evil auto type promotion!!!
 
@@ -1902,13 +1872,15 @@ inline void VectorMA( const QAngle &start, float scale, const QAngle &direction,
 //-----------------------------------------------------------------------------
 // constructors
 //-----------------------------------------------------------------------------
-#ifdef VECTOR_PARANOIA
 inline QAngle::QAngle(void)									
 { 
+#ifdef _DEBUG
+#ifdef VECTOR_PARANOIA
 	// Initialize to NAN to catch errors
 	x = y = z = VEC_T_NAN;
-}
 #endif
+#endif
+}
 
 inline QAngle::QAngle(vec_t X, vec_t Y, vec_t Z)						
 { 
@@ -2206,7 +2178,7 @@ inline void AngularImpulseToQAngle( const AngularImpulse &impulse, QAngle &angle
 
 FORCEINLINE vec_t InvRSquared( float const *v )
 {
-#if defined( PLATFORM_INTEL )
+#if defined(__i386__) || defined(_M_IX86)
 	float sqrlen = v[0]*v[0]+v[1]*v[1]+v[2]*v[2] + 1.0e-10f, result;
 	_mm_store_ss(&result, _mm_rcp_ss( _mm_max_ss( _mm_set_ss(1.0f), _mm_load_ss(&sqrlen) ) ));
 	return result;
@@ -2220,8 +2192,8 @@ FORCEINLINE vec_t InvRSquared( const Vector &v )
 	return InvRSquared(&v.x);
 }
 
-#if defined( PLATFORM_INTEL )
-FORCEINLINE void _SSE_RSqrtInline( float a, float* out )
+#if defined(__i386__) || defined(_M_IX86)
+inline void _SSE_RSqrtInline( float a, float* out )
 {
 	__m128  xx = _mm_load_ss( &a );
 	__m128  xr = _mm_rsqrt_ss( xx );
@@ -2238,7 +2210,13 @@ FORCEINLINE void _SSE_RSqrtInline( float a, float* out )
 // FIXME: Change this back to a #define once we get rid of the vec_t version
 FORCEINLINE float VectorNormalize( Vector& vec )
 {
-#if defined( PLATFORM_INTEL )
+#ifndef DEBUG // stop crashing my edit-and-continue!
+	#if defined(__i386__) || defined(_M_IX86)
+		#define DO_SSE_OPTIMIZATION
+	#endif
+#endif
+
+#if defined( DO_SSE_OPTIMIZATION )
 	float sqrlen = vec.LengthSqr() + 1.0e-10f, invlen;
 	_SSE_RSqrtInline(sqrlen, &invlen);
 	vec.x *= invlen;

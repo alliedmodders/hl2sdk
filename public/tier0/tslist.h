@@ -36,38 +36,15 @@
 
 #if defined( PLATFORM_64BITS )
 
-#if defined (PLATFORM_WINDOWS) 
-//typedef __m128i int128;
-//inline int128 int128_zero()	{ return _mm_setzero_si128(); }
-#else  // PLATFORM_WINDOWS
-typedef __int128_t int128;
-#define int128_zero() 0
-#endif// PLATFORM_WINDOWS
-
 #define TSLIST_HEAD_ALIGNMENT 16
 #define TSLIST_NODE_ALIGNMENT 16
-
-#ifdef POSIX
-inline bool ThreadInterlockedAssignIf128( int128 volatile * pDest, const int128 &value, const int128 &comparand ) 
-{
-    // We do not want the original comparand modified by the swap
-    // so operate on a local copy.
-    int128 local_comparand = comparand;
-	return __sync_bool_compare_and_swap( pDest, local_comparand, value );
-}
-#endif
-
 inline bool ThreadInterlockedAssignIf64x128( volatile int128 *pDest, const int128 &value, const int128 &comperand )
-{
-	return ThreadInterlockedAssignIf128( pDest, value, comperand );
-}
+	{ return ThreadInterlockedAssignIf128( pDest, value, comperand ); }
 #else
 #define TSLIST_HEAD_ALIGNMENT 8
 #define TSLIST_NODE_ALIGNMENT 8
 inline bool ThreadInterlockedAssignIf64x128( volatile int64 *pDest, const int64 value, const int64 comperand )
-{
-	return ThreadInterlockedAssignIf64( pDest, value, comperand );
-}
+	{ return ThreadInterlockedAssignIf64( pDest, value, comperand ); }
 #endif
 
 #ifdef _MSC_VER
@@ -143,29 +120,46 @@ union TSLIST_HEAD_ALIGN TSLHead_t
 //-------------------------------------
 class CTSListBase
 {
+	static constexpr std::align_val_t alignVal = static_cast<std::align_val_t>(TSLIST_HEAD_ALIGNMENT);
 public:
 
 	// override new/delete so we can guarantee 8-byte aligned allocs
 	static void * operator new( size_t size )
 	{
+#ifdef NO_MALLOC_OVERRIDE
+		return ::operator new( size, alignVal );
+#else
 		CTSListBase *pNode = (CTSListBase *)MemAlloc_AllocAligned( size, TSLIST_HEAD_ALIGNMENT, __FILE__, __LINE__ );
 		return pNode;
+#endif
 	}
 
 	static void * operator new( size_t size, int nBlockUse, const char *pFileName, int nLine )
 	{
+#ifdef NO_MALLOC_OVERRIDE
+		return ::operator new( size, alignVal );
+#else
 		CTSListBase *pNode = (CTSListBase *)MemAlloc_AllocAligned( size, TSLIST_HEAD_ALIGNMENT, pFileName, nLine );
 		return pNode;
+#endif
 	}
 
 	static void operator delete( void *p)
 	{
+#ifdef NO_MALLOC_OVERRIDE
+		::operator delete( p, alignVal );
+#else
 		MemAlloc_FreeAligned( p );
+#endif
 	}
 
 	static void operator delete( void *p, int nBlockUse, const char *pFileName, int nLine )
 	{
+#ifdef NO_MALLOC_OVERRIDE
+		::operator delete( p, alignVal );
+#else
 		MemAlloc_FreeAligned( p );
+#endif
 	}
 
 private:
@@ -424,6 +418,8 @@ class TSLIST_HEAD_ALIGN CTSList : public CTSListBase
 public:
 	struct TSLIST_NODE_ALIGN Node_t : public TSLNodeBase_t
 	{
+		static constexpr std::align_val_t alignVal = static_cast<std::align_val_t>(TSLIST_NODE_ALIGNMENT);
+
 		Node_t() {}
 		Node_t( const T &init ) : elem( init ) {}
 		T elem;
@@ -431,24 +427,40 @@ public:
 	    // override new/delete so we can guarantee 8-byte aligned allocs
 	    static void * operator new( size_t size )
 	    {
+#ifdef NO_MALLOC_OVERRIDE
+			return ::operator new( size, alignVal );
+#else
       		Node_t *pNode = (Node_t *)MemAlloc_AllocAligned( size, TSLIST_NODE_ALIGNMENT, __FILE__, __LINE__ );
 			return pNode;
+#endif
 	    }
 
 		// override new/delete so we can guarantee 8-byte aligned allocs
 		static void * operator new( size_t size, int nBlockUse, const char *pFileName, int nLine )
 		{
+#ifdef NO_MALLOC_OVERRIDE
+			return ::operator new( size, alignVal );
+#else
 			Node_t *pNode = (Node_t *)MemAlloc_AllocAligned( size, TSLIST_NODE_ALIGNMENT, pFileName, nLine );
 			return pNode;
+#endif
 		}
 
 	    static void operator delete( void *p)
 	    {
+#ifdef NO_MALLOC_OVERRIDE
+			::operator delete( p, alignVal );
+#else
 			MemAlloc_FreeAligned( p );
+#endif
 	    }
 		static void operator delete( void *p, int nBlockUse, const char *pFileName, int nLine )
 		{
+#ifdef NO_MALLOC_OVERRIDE
+			::operator delete( p, alignVal );
+#else
 			MemAlloc_FreeAligned( p );
+#endif
 		}
 
 	} TSLIST_NODE_ALIGN_POST;
@@ -619,30 +631,47 @@ private:
 template <typename T, bool bTestOptimizer = false>
 class TSLIST_HEAD_ALIGN CTSQueue
 {
+	static constexpr std::align_val_t alignVal = static_cast<std::align_val_t>(TSLIST_HEAD_ALIGNMENT);
 public:
 
 	// override new/delete so we can guarantee 8-byte aligned allocs
 	static void * operator new( size_t size )
 	{
+#ifdef NO_MALLOC_OVERRIDE
+		return ::operator new( size, alignVal );
+#else
 		CTSQueue *pNode = (CTSQueue *)MemAlloc_AllocAligned( size, TSLIST_HEAD_ALIGNMENT, __FILE__, __LINE__ );
 		return pNode;
+#endif
 	}
 
 	// override new/delete so we can guarantee 8-byte aligned allocs
 	static void * operator new( size_t size, int nBlockUse, const char *pFileName, int nLine )
 	{
+#ifdef NO_MALLOC_OVERRIDE
+		return ::operator new( size, alignVal );
+#else
 		CTSQueue *pNode = (CTSQueue *)MemAlloc_AllocAligned( size, TSLIST_HEAD_ALIGNMENT, pFileName, nLine );
 		return pNode;
+#endif
 	}
 
 	static void operator delete( void *p)
 	{
+#ifdef NO_MALLOC_OVERRIDE
+		::operator delete( p, alignVal );
+#else
 		MemAlloc_FreeAligned( p );
+#endif
 	}
 
 	static void operator delete( void *p, int nBlockUse, const char *pFileName, int nLine )
 	{
+#ifdef NO_MALLOC_OVERRIDE
+		::operator delete( p, alignVal );
+#else
 		MemAlloc_FreeAligned( p );
+#endif
 	}
 
 private:
@@ -660,27 +689,45 @@ public:
 
 	struct TSLIST_NODE_ALIGN Node_t
 	{
+		static constexpr std::align_val_t alignVal = static_cast<std::align_val_t>(TSLIST_HEAD_ALIGNMENT);
+
 		// override new/delete so we can guarantee 8-byte aligned allocs
 		static void * operator new( size_t size )
 		{
+#ifdef NO_MALLOC_OVERRIDE
+			return ::operator new( size, alignVal );
+#else
 			Node_t *pNode = (Node_t *)MemAlloc_AllocAligned( size, TSLIST_HEAD_ALIGNMENT, __FILE__, __LINE__ );
 			return pNode;
+#endif
 		}
 
 		static void * operator new( size_t size, int nBlockUse, const char *pFileName, int nLine )
 		{
+#ifdef NO_MALLOC_OVERRIDE
+			return ::operator new( size, alignVal );
+#else
 			Node_t *pNode = (Node_t *)MemAlloc_AllocAligned( size, TSLIST_HEAD_ALIGNMENT, pFileName, nLine );
 			return pNode;
+#endif
 		}
 
 		static void operator delete( void *p)
 		{
+#ifdef NO_MALLOC_OVERRIDE
+			::operator delete( p, alignVal );
+#else
 			MemAlloc_FreeAligned( p );
+#endif
 		}
 
 		static void operator delete( void *p, int nBlockUse, const char *pFileName, int nLine )
 		{
+#ifdef NO_MALLOC_OVERRIDE
+			::operator delete( p, alignVal );
+#else
 			MemAlloc_FreeAligned( p );
+#endif
 		}
 
 		Node_t() {}
@@ -692,16 +739,25 @@ public:
 
 	union TSLIST_HEAD_ALIGN NodeLink_t
 	{
+		static constexpr std::align_val_t alignVal = static_cast<std::align_val_t>(TSLIST_HEAD_ALIGNMENT);
 		// override new/delete so we can guarantee 8-byte aligned allocs
 		static void * operator new( size_t size )
 		{
+#ifdef NO_MALLOC_OVERRIDE
+			return ::operator new( size, alignVal );
+#else
 			NodeLink_t *pNode = (NodeLink_t *)MemAlloc_AllocAligned( size, TSLIST_HEAD_ALIGNMENT, __FILE__, __LINE__ );
 			return pNode;
+#endif
 		}
 
 		static void operator delete( void *p)
 		{
+#ifdef NO_MALLOC_OVERRIDE
+			::operator delete( p, alignVal );
+#else
 			MemAlloc_FreeAligned( p );
+#endif
 		}
 
 		struct Value_t
@@ -1004,7 +1060,7 @@ private:
 	NodeLink_t m_Head;
 	NodeLink_t m_Tail;
 
-	CInterlockedInt m_Count;
+	std::atomic_int m_Count;
 	
 	CTSListBase m_FreeNodes;
 } TSLIST_NODE_ALIGN_POST;
