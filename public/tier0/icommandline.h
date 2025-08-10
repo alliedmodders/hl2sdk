@@ -20,11 +20,13 @@ abstract_class ICommandLine
 {
 public:
 	virtual void		CreateCmdLine( const char *commandline ) = 0;
-	virtual void		CreateCmdLine( int argc, char **argv ) = 0;
+	virtual void		CreateCmdLine( int argc, const char **argv ) = 0;
 	virtual const char	*GetCmdLine( void ) const = 0;
 
 	// Check whether a particular parameter exists
 	virtual	const char	*CheckParm( const char *psz, const char **ppszValue = 0 ) const = 0;
+	// A bool return of whether param exists, useful for just checking if param that is just a flag is set
+	virtual bool		HasParm( const char *psz ) const = 0;
 	virtual void		RemoveParm( const char *parm ) = 0;
 	virtual void		AppendParm( const char *pszParm, const char *pszValues ) = 0;
 
@@ -42,15 +44,6 @@ public:
 	virtual void SetParm( int nIndex, char const *pNewParm ) =0;
 
 	virtual const char *ParmValueByIndex( int nIndex, const char *pDefaultVal = 0 ) const = 0;
-
-	// A bool return of whether param exists, useful for just checking if param that is just a flag is set
-	virtual bool		HasParm( const char *psz ) const = 0;
-
-	virtual const char **GetParms() const = 0;
-
-	// Newer call with flag to control paramfile behavior
-	virtual void		CreateCmdLine1( const char *commandline, bool bParseParamFiles ) = 0;
-	virtual void		CreateCmdLine1( int argc, char **argv, bool bParseParamFiles ) = 0;
 };
 
 //-----------------------------------------------------------------------------
