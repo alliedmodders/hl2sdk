@@ -860,7 +860,7 @@ inline int ThreadWaitForEvents( int nEvents, CThreadEvent * const *pEvents, bool
 class CThreadSpinRWLock
 {
 	std::atomic<uint32_t> lock{};
-	std::atomic_flag writePending{};
+	std::atomic_bool writePending{};
 
 	static constexpr uint32_t WRITE_MODE = (std::numeric_limits<uint32_t>::max)();
 	static constexpr uint32_t READ_MAX = WRITE_MODE - 1;
@@ -882,7 +882,7 @@ public:
 	{
 		uint32_t was = lock;
 
-		if ( was == 0 && writePending.test() )
+		if ( was == 0 && writePending.load() )
 			return false;
 		
 		if ( was < READ_MAX )
@@ -897,7 +897,7 @@ public:
 		{
 			uint32_t was = lock;
 
-			if ( was == 0 && writePending.test() )
+			if ( was == 0 && writePending.load() )
 				continue;
 
 			if ( was < READ_MAX )
@@ -927,7 +927,7 @@ public:
 
 	void LockForWrite()
 	{
-		writePending.test_and_set();
+		writePending.exchange(true);
 
 		while ( true )
 		{
@@ -943,7 +943,7 @@ public:
 
 	void UnlockWrite()
 	{
-		writePending.clear();
+		writePending.store(false);
 
 		while ( true )
 		{
