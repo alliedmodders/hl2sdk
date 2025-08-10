@@ -18,7 +18,6 @@
 #define GAMMA 2.2f
 #define TEXGAMMA 2.2f
 
-#include "tier0/icommandline.h"
 #include "mathlib/vector.h"
 #include "mathlib/vector4d.h"
 #include "mathlib/vmatrix.h"
@@ -29,6 +28,7 @@
 #include "texture_group_names.h"
 #include "vtf/vtf.h"
 #include "materialsystem/deformations.h"
+#include "materialsystem/imaterialsystemhardwareconfig.h"
 #include "materialsystem/IColorCorrection.h"
 
 
@@ -70,24 +70,13 @@ typedef uint64 VertexFormat_t;
 // V081 - 10/25/2016 - Added new Suspend/Resume texture streaming interfaces. Might also have added more calls here due
 //                     to the streaming work that didn't get bumped, but we're not guarding versions on the TF branch
 //                     very judiciously since we need to audit them when merging to SDK branch either way.
-//
-// misyl: unfrogged this interface to be compatible, added MATERIAL_SYSTEM_INTERFACE_VERSION_OLD for sdk 2013 compat.
-#define MATERIAL_SYSTEM_INTERFACE_VERSION "VMaterialSystem082"
-#define MATERIAL_SYSTEM_INTERFACE_VERSION_OLD "VMaterialSystem080"
+#define MATERIAL_SYSTEM_INTERFACE_VERSION "VMaterialSystem081"
 
-#ifdef POSIX
+#if defined( POSIX ) || defined ( PLATFORM_64BITS )
 #define ABSOLUTE_MINIMUM_DXLEVEL 90
 #else
 #define ABSOLUTE_MINIMUM_DXLEVEL 80
 #endif
-
-// HDRFIXME NOTE: must match common_ps_fxc.h
-enum HDRType_t
-{
-	HDR_TYPE_NONE,
-	HDR_TYPE_INTEGER,
-	HDR_TYPE_FLOAT,
-};
 
 enum ShaderParamType_t 
 { 
@@ -439,9 +428,9 @@ struct FlashlightState_t
 		m_bEnableShadows = false;						// Provide reasonable defaults for shadow depth mapping parameters
 		m_bDrawShadowFrustum = false;
 		m_flShadowMapResolution = 1024.0f;
-		m_flShadowFilterSize = 3.0f;
-		m_flShadowSlopeScaleDepthBias = 16.0f;
-		m_flShadowDepthBias = 0.0005f;
+		m_flShadowFilterSize = 1.0f;
+		m_flShadowSlopeScaleDepthBias = 4.0f;
+		m_flShadowDepthBias = 0.00001f;
 		m_flShadowJitterSeed = 0.0f;
 		m_flShadowAtten = 0.0f;
 		m_bScissor = false; 
@@ -578,68 +567,6 @@ class CShadowMgr;
 
 DECLARE_POINTER_HANDLE( MaterialLock_t );
 
-enum RenderBackend_t
-{
-	RENDER_BACKEND_UNKNOWN,
-	RENDER_BACKEND_D3D9,
-	RENDER_BACKEND_TOGL,
-	RENDER_BACKEND_VULKAN,
-	RENDER_BACKEND_NULL,
-};
-
-FORCEINLINE const char* GetRenderBackendName( RenderBackend_t eBackend )
-{
-	switch ( eBackend )
-	{
-		default:
-#ifdef ALLOW_NOSHADERAPI
-		case RENDER_BACKEND_UNKNOWN: return "Unknown";
-		case RENDER_BACKEND_NULL:    return "Null";
-#endif
-		case RENDER_BACKEND_D3D9:    return "Direct3D 9";
-		case RENDER_BACKEND_TOGL:    return "OpenGL";
-		case RENDER_BACKEND_VULKAN:  return "Vulkan";
-	}
-}
-
-FORCEINLINE const char* GetRenderBackendShaderAPI( RenderBackend_t eBackend )
-{
-	switch ( eBackend )
-	{
-		default:
-#ifdef ALLOW_NOSHADERAPI
-		case RENDER_BACKEND_UNKNOWN:
-		case RENDER_BACKEND_NULL:   return "shaderapiempty";
-#endif
-		case RENDER_BACKEND_D3D9:   return "shaderapidx9";
-		case RENDER_BACKEND_TOGL:   return "shaderapidx9";
-		case RENDER_BACKEND_VULKAN: return "shaderapivk";
-	}
-}
-
-FORCEINLINE RenderBackend_t DetermineRenderBackend()
-{
-#ifdef ALLOW_NOSHADERAPI
-	if ( CommandLine()->FindParm( "-noshaderapi" ) )
-		return RENDER_BACKEND_NULL;
-#endif
-
-	if ( CommandLine()->FindParm( "-vulkan" ) )
-		return RENDER_BACKEND_VULKAN;
-
-	if ( CommandLine()->FindParm( "-gl" ) )
-		return RENDER_BACKEND_TOGL;
-
-	if ( CommandLine()->FindParm( "-dx9" ) )
-		return RENDER_BACKEND_D3D9;
-
-#if defined( PLATFORM_WINDOWS_PC )
-	return RENDER_BACKEND_D3D9;
-#else
-	return RENDER_BACKEND_VULKAN;
-#endif
-}
-
 //-----------------------------------------------------------------------------
 // 
 //-----------------------------------------------------------------------------
@@ -649,11 +576,11 @@ abstract_class IMaterialSystem : public IAppSystem
 public:
 
 	// Placeholder for API revision
-	virtual bool Connect( CreateInterfaceFn factory ) = 0;
-	virtual void Disconnect() = 0;
-	virtual void *QueryInterface( const char *pInterfaceName ) = 0;
-	virtual InitReturnVal_t Init() = 0;
-	virtual void Shutdown() = 0;
+	bool Connect( CreateInterfaceFn factory ) override = 0;
+	void Disconnect() override = 0;
+	void *QueryInterface( const char *pInterfaceName ) override = 0;
+	InitReturnVal_t Init() override = 0;
+	void Shutdown() override = 0;
 
 	//---------------------------------------------------------
 	// Initialization and shutdown
@@ -664,7 +591,7 @@ public:
 	virtual CreateInterfaceFn	Init( char const* pShaderAPIDLL, 
 		IMaterialProxyFactory *pMaterialProxyFactory,
 		CreateInterfaceFn fileSystemFactory,
-		CreateInterfaceFn cvarFactory=NULL ) = 0;
+		CreateInterfaceFn cvarFactory=nullptr ) = 0;
 
 	// Call this to set an explicit shader version to use 
 	// Must be called before Init().
@@ -878,6 +805,8 @@ public:
 	//---------------------------------------------------------
 	// Material and texture management
 	//---------------------------------------------------------
+	virtual void				SuspendTextureStreaming( ) = 0;
+	virtual void				ResumeTextureStreaming( ) = 0;
 
 	// uncache all materials. .  good for forcing reload of materials.
 	virtual void				UncacheAllMaterials( ) = 0;
@@ -894,7 +823,7 @@ public:
 	virtual void				ReloadTextures( ) = 0;
 
 	// Reloads materials
-	virtual void				ReloadMaterials( const char *pSubString = NULL ) = 0;
+	virtual void				ReloadMaterials( const char *pSubString = nullptr ) = 0;
 
 	// Create a procedural material. The keyvalues looks like a VMT file
 	virtual IMaterial *			CreateMaterial( const char *pMaterialName, KeyValues *pVMTKeyValues ) = 0;
@@ -911,7 +840,7 @@ public:
 	// Note: if the material can't be found, this returns a checkerboard material. You can 
 	// find out if you have that material by calling IMaterial::IsErrorMaterial().
 	// (Or use the global IsErrorMaterial function, which checks if it's null too).
-	virtual IMaterial *			FindMaterial( char const* pMaterialName, const char *pTextureGroupName, bool complain = true, const char *pComplainPrefix = NULL ) = 0;
+	virtual IMaterial *			FindMaterial( char const* pMaterialName, const char *pTextureGroupName, bool complain = true, const char *pComplainPrefix = nullptr ) = 0;
 
 	// Query whether a material is loaded (eg, whether FindMaterial will be nonblocking)
 	virtual bool				IsMaterialLoaded( char const* pMaterialName ) = 0;
@@ -927,7 +856,7 @@ public:
 	virtual MaterialHandle_t	FirstMaterial() const = 0;
 
 	// returns InvalidMaterial if there isn't another material.
-	// WARNING: you must call GetNextMaterial until it returns NULL, 
+	// WARNING: you must call GetNextMaterial until it returns nullptr, 
 	// otherwise there will be a memory leak.
 	virtual MaterialHandle_t	NextMaterial( MaterialHandle_t h ) const = 0;
 
@@ -974,7 +903,7 @@ public:
 		ImageFormat	format, 
 		MaterialRenderTargetDepth_t depth = MATERIAL_RT_DEPTH_SHARED ) = 0;
 
-	virtual ITexture *			CreateNamedRenderTargetTextureEx(  const char *pRTName,				// Pass in NULL here for an unnamed render target.
+	virtual ITexture *			CreateNamedRenderTargetTextureEx(  const char *pRTName,				// Pass in nullptr here for an unnamed render target.
 		int w, 
 		int h, 
 		RenderTargetSizeMode_t sizeMode,	// Controls how size is generated (and regenerated on video mode change).
@@ -993,7 +922,7 @@ public:
 		bool bAutoMipMap = false ) = 0;
 
 	// Must be called between the above Begin-End calls!
-	virtual ITexture *			CreateNamedRenderTargetTextureEx2( const char *pRTName,				// Pass in NULL here for an unnamed render target.
+	virtual ITexture *			CreateNamedRenderTargetTextureEx2( const char *pRTName,				// Pass in nullptr here for an unnamed render target.
 		int w, 
 		int h, 
 		RenderTargetSizeMode_t sizeMode,	// Controls how size is generated (and regenerated on video mode change).
@@ -1119,7 +1048,7 @@ public:
 
 	// Extended version of FindMaterial().
 	// Contains context in so it can make decisions (i.e. if it's a model, ignore certain cheat parameters)
-	virtual IMaterial *			FindMaterialEx( char const* pMaterialName, const char *pTextureGroupName, int nContext, bool complain = true, const char *pComplainPrefix = NULL ) = 0;
+	virtual IMaterial *			FindMaterialEx( char const* pMaterialName, const char *pTextureGroupName, int nContext, bool complain = true, const char *pComplainPrefix = nullptr ) = 0;
 
 #ifdef DX_TO_GL_ABSTRACTION
 	virtual void				DoStartupShaderPreloading( void ) = 0;
@@ -1133,7 +1062,7 @@ public:
 	virtual void				GetRenderTargetFrameBufferDimensions( int & nWidth, int & nHeight ) = 0;
 
 	// returns the display device name that matches the adapter index we were started with
-	virtual char *GetDisplayDeviceName() const = 0;
+	virtual const char *GetDisplayDeviceName() const = 0;
 
 	// creates a texture suitable for use with materials from a raw stream of bits.
 	// The bits will be retained by the material system and can be freed upon return.
@@ -1161,30 +1090,8 @@ public:
 
 	// Performs final verification of all compositor templates (after they've all been initially loaded).
 	virtual bool				VerifyTextureCompositorTemplates( ) = 0;
-
-	virtual RenderBackend_t		GetRenderBackend() const = 0;
-
-	// Stop attempting to stream in textures in response to usage.  Useful for phases such as loading or other explicit
-	// operations that shouldn't take usage of textures as a signal to stream them in at full rez.
-	virtual void				SuspendTextureStreaming() = 0;
-	virtual void				ResumeTextureStreaming() = 0;
 };
 
-extern IMaterialSystem *materials;
-extern IMaterialSystem *g_pMaterialSystem;
-
-FORCEINLINE bool IsOpenGL( void )
-{
-#ifndef DX_TO_GL_ABSTRACTION
-	return false;
-#endif
-	return g_pMaterialSystem->GetRenderBackend() == RENDER_BACKEND_TOGL;
-}
-
-FORCEINLINE bool IsVulkan( void )
-{
-	return g_pMaterialSystem->GetRenderBackend() == RENDER_BACKEND_VULKAN;
-}
 
 //-----------------------------------------------------------------------------
 // 
@@ -1200,7 +1107,7 @@ public:
 	virtual void				BindLocalCubemap( ITexture *pTexture ) = 0;
 
 	// pass in an ITexture (that is build with "rendertarget" "1") or
-	// pass in NULL for the regular backbuffer.
+	// pass in nullptr for the regular backbuffer.
 	virtual void				SetRenderTarget( ITexture *pTexture ) = 0;
 	virtual ITexture *			GetRenderTarget( void ) = 0;
 
@@ -1291,7 +1198,7 @@ public:
 	virtual void				SetNumBoneWeights( int numBones ) = 0;
 
 	// Creates/destroys Mesh
-	virtual IMesh* CreateStaticMesh( VertexFormat_t fmt, const char *pTextureBudgetGroup, IMaterial * pMaterial = NULL ) = 0;
+	virtual IMesh* CreateStaticMesh( VertexFormat_t fmt, const char *pTextureBudgetGroup, IMaterial * pMaterial = nullptr ) = 0;
 	virtual void DestroyStaticMesh( IMesh* mesh ) = 0;
 
 	// Gets the dynamic mesh associated with the currently bound material
@@ -1337,10 +1244,10 @@ public:
 
 	// Selection mode methods
 	virtual int  SelectionMode( bool selectionMode ) = 0;
-	virtual void SelectionBuffer( unsigned int* pBuffer, int size ) = 0;
+	virtual void SelectionBuffer( uintp* pBuffer, int size ) = 0;
 	virtual void ClearSelectionNames( ) = 0;
-	virtual void LoadSelectionName( int name ) = 0;
-	virtual void PushSelectionName( int name ) = 0;
+	virtual void LoadSelectionName( uintp name ) = 0;
+	virtual void PushSelectionName( uintp name ) = 0;
 	virtual void PopSelectionName() = 0;
 
 	// Sets the Clear Color for ClearBuffer....
@@ -1442,7 +1349,7 @@ public:
 		float src_texture_x1, float src_texture_y1,			// which texel you want to appear at
 		// destx+width-1, desty+height-1
 		int src_texture_width, int src_texture_height,		// needed for fixup
-		void *pClientRenderable = NULL,
+		void *pClientRenderable = nullptr,
 		int nXDice = 1,
 		int nYDice = 1 )=0;
 
@@ -1467,8 +1374,8 @@ public:
 	virtual void BindLightmapTexture( ITexture *pLightmapTexture ) = 0;
 
 	// Blit a subrect of the current render target to another texture
-	virtual void CopyRenderTargetToTextureEx( ITexture *pTexture, int nRenderTargetID, Rect_t *pSrcRect, Rect_t *pDstRect = NULL ) = 0;
-	virtual void CopyTextureToRenderTargetEx( int nRenderTargetID, ITexture *pTexture, Rect_t *pSrcRect, Rect_t *pDstRect = NULL ) = 0;
+	virtual void CopyRenderTargetToTextureEx( ITexture *pTexture, int nRenderTargetID, Rect_t *pSrcRect, Rect_t *pDstRect = nullptr ) = 0;
+	virtual void CopyTextureToRenderTargetEx( int nRenderTargetID, ITexture *pTexture, Rect_t *pSrcRect, Rect_t *pDstRect = nullptr ) = 0;
 
 	// Special off-center perspective matrix for DoF, MSAA jitter and poster rendering
 	virtual void PerspectiveOffCenterX( double fovx, double aspect, double zNear, double zFar, double bottom, double top, double left, double right ) = 0;
@@ -1536,11 +1443,11 @@ public:
 	// from changelist 166623:
 	// - replaced obtuse material system batch usage with an explicit and easier to thread API
 	virtual void BeginBatch( IMesh* pIndices ) = 0;
-	virtual void BindBatch( IMesh* pVertices, IMaterial *pAutoBind = NULL ) = 0;
+	virtual void BindBatch( IMesh* pVertices, IMaterial *pAutoBind = nullptr ) = 0;
 	virtual void DrawBatch(int firstIndex, int numIndices ) = 0;
 	virtual void EndBatch() = 0;
 
-	// Raw access to the call queue, which can be NULL if not in a queued mode
+	// Raw access to the call queue, which can be nullptr if not in a queued mode
 	virtual ICallQueue *GetCallQueue() = 0;
 
 	// Returns the world-space camera position
@@ -1627,18 +1534,18 @@ public:
 	virtual void			UnlockRenderData( void *pData ) = 0;
 
 	// Typed version. If specified, pSrcData is copied into the locked memory.
-	template< class E > E*  LockRenderDataTyped( int nCount, const E* pSrcData = NULL );
+	template< class E > E*  LockRenderDataTyped( int nCount, const E* pSrcData = nullptr );
 
 	// Temp render data gets immediately freed after it's all unlocked in single core.
 	// This prevents it from being freed
 	virtual void			AddRefRenderData() = 0;	
 	virtual void			ReleaseRenderData() = 0;
 
-	// Returns whether a pointer is render data. NOTE: passing NULL returns true
+	// Returns whether a pointer is render data. NOTE: passing nullptr returns true
 	virtual bool			IsRenderData( const void *pData ) const = 0;
 	virtual void			PrintfVA( char *fmt, va_list vargs ) = 0;
 	virtual void			Printf( PRINTF_FORMAT_STRING const char *fmt, ... ) = 0;
-	virtual float			Knob( char *knobname, float *setvalue = NULL ) = 0;
+	virtual float			Knob( char *knobname, float *setvalue = nullptr ) = 0;
 	// Allows us to override the alpha write setting of a material
 	virtual void OverrideAlphaWriteEnable( bool bEnable, bool bAlphaWriteEnable ) = 0;
 	virtual void OverrideColorWriteEnable( bool bOverrideEnable, bool bColorWriteEnable ) = 0;
@@ -1649,9 +1556,6 @@ public:
 	// The texture will be created using the destination format, and will optionally have mipmaps generated.
 	// In case of error, the provided callback function will be called with the error texture.
 	virtual void AsyncCreateTextureFromRenderTarget( ITexture* pSrcRt, const char* pDstName, ImageFormat dstFmt, bool bGenMips, int nAdditionalCreationFlags, IAsyncTextureOperationReceiver* pRecipient, void* pExtraArgs ) = 0;
-
-	virtual void FogRadial( bool bRadial ) = 0;
-	virtual bool GetFogRadial() = 0;
 };
 
 template< class E > inline E* IMatRenderContext::LockRenderDataTyped( int nCount, const E* pSrcData )
@@ -1685,12 +1589,12 @@ private:
 
 inline CMatRenderDataReference::CMatRenderDataReference()
 {
-	m_pRenderContext = NULL;
+	m_pRenderContext = nullptr;
 }
 
 inline CMatRenderDataReference::CMatRenderDataReference( IMatRenderContext* pRenderContext )
 {
-	m_pRenderContext = NULL;
+	m_pRenderContext = nullptr;
 	Lock( pRenderContext );
 }
 
@@ -1713,7 +1617,7 @@ inline void CMatRenderDataReference::Release()
 	if ( m_pRenderContext )
 	{
 		m_pRenderContext->ReleaseRenderData( );
-		m_pRenderContext = NULL;
+		m_pRenderContext = nullptr;
 	}
 }
 
@@ -1726,9 +1630,9 @@ class CMatRenderData
 {
 public:
 	CMatRenderData( IMatRenderContext* pRenderContext );
-	CMatRenderData( IMatRenderContext* pRenderContext, int nCount, const E *pSrcData = NULL );
+	CMatRenderData( IMatRenderContext* pRenderContext, int nCount, const E *pSrcData = nullptr );
 	~CMatRenderData();
-	E* Lock( int nCount, const E* pSrcData = NULL ); 
+	E* Lock( int nCount, const E* pSrcData = nullptr ); 
 	void Release();
 	bool IsValid() const;
 	const E* Base() const;
@@ -1771,7 +1675,7 @@ inline CMatRenderData<E>::~CMatRenderData()
 template< typename E >
 inline bool CMatRenderData<E>::IsValid() const
 {
-	return m_pRenderData != NULL;
+	return m_pRenderData != nullptr;
 }
 
 template< typename E >
@@ -1806,7 +1710,7 @@ inline void CMatRenderData<E>::Release()
 			m_pRenderContext->ReleaseRenderData();
 		}
 	}
-	m_pRenderData = NULL;
+	m_pRenderData = nullptr;
 	m_nCount = 0;
 	m_bNeedsUnlock = false;
 }
@@ -1915,6 +1819,7 @@ static void DoMatSysQueueMark( IMaterialSystem *pMaterialSystem, const char *psz
 
 //-----------------------------------------------------------------------------
 
-#include "materialsystem/imaterialsystemhardwareconfig.h"
+extern IMaterialSystem *materials;
+extern IMaterialSystem *g_pMaterialSystem;
 
 #endif // IMATERIALSYSTEM_H
