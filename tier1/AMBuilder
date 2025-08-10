@@ -50,7 +50,8 @@ project.sources = [
 	'utlbuffer.cpp',
 	'utlbufferutil.cpp',
 	'utlstring.cpp',
-	'utlsymbol.cpp'
+	'utlsymbol.cpp',
+	'valve_mutex.cpp'
 ]
 
 for cxx in HL2SDK.targets:
