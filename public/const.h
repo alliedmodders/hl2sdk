@@ -239,7 +239,7 @@ enum LifeState_t
 };
 
 // entity effects
-enum EntityEffects_t
+enum EntityEffects_t : uint16
 {
 	// EF_EMPTY				= (1 << 0),
 	// EF_EMPTY				= (1 << 1),
