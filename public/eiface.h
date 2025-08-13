@@ -629,8 +629,6 @@ public:
 
 	// The client has submitted a keyvalues command
 	virtual void			ClientCommandKeyValues( CPlayerSlot slot, KeyValues *pKeyValues ) = 0;
-	
-	virtual void			unk001() = 0;
 
 	virtual bool			ClientCanPause( CPlayerSlot slot ) = 0;
 
