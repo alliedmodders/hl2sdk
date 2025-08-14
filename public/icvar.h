@@ -74,6 +74,8 @@ public:
 	virtual void			CallChangeCallback( ConVarRef cvar, const CSplitScreenSlot nSlot, const CVValue_t* pNewValue, const CVValue_t* pOldValue, void *__unk01 = nullptr ) = 0;
 	// Would call cb for every change callback defined for this cvar
 	virtual void			IterateConVarCallbacks( ConVarRef cvar, FnCvarCallbacksReader_t cb ) = 0;
+	// If returns false value shouldn't be modified
+	virtual bool			CallFilterCallback( ConVarRef cvar, const CSplitScreenSlot nSlot, const CVValue_t *pNewValue, const CVValue_t *pOldValue, void *__unk01 = nullptr ) = 0;
 
 	// allow_defensive - Allows finding commands with FCVAR_DEFENSIVE flag
 	virtual ConCommandRef	FindConCommand( const char *name, bool allow_defensive = false ) = 0;
@@ -198,10 +200,19 @@ public:
 		return base;
 	}
 
-	struct CConVarChangeCallbackNode_t
+	struct ConVarChangeCallbackData_t
 	{
 		FnGenericChangeCallbackProvider_t m_pProviderCallBack;
 		FnGenericChangeCallback_t m_pCallback;
+
+		// Register index of cvar which change cb comes from
+		int m_ConVarIndex;
+	};
+
+	struct ConVarFilterCallbackData_t
+	{
+		FnGenericFilterCallbackProvider_t m_pProviderCallBack;
+		FnGenericFilterCallback_t m_pCallback;
 
 		// Register index of cvar which change cb comes from
 		int m_ConVarIndex;
@@ -232,7 +243,8 @@ public:
 
 	CUtlLinkedList<ConVarData *> m_ConVarList;
 	CUtlHashtable<CUtlStringToken, uint16> m_ConVarHashes;
-	CUtlLinkedList<CConVarChangeCallbackNode_t, unsigned short, true> m_ConVarChangeCBList;
+	CUtlLinkedList<ConVarChangeCallbackData_t, unsigned short, true> m_ConVarChangeCBList;
+	CUtlLinkedList<ConVarFilterCallbackData_t, unsigned short, true> m_ConVarFilterCBList;
 	int m_ConVarCount;
 
 	CUtlVector<IConVarListener *> m_CvarCreationListeners;
