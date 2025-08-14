@@ -130,7 +130,7 @@ public:
 
 	virtual void unk301() = 0;
 	virtual void unk302() = 0;
-	virtual void unk303() = 0;
+	virtual void RejectNetChannel(void *pNetInfo, ENetworkDisconnectionReason reason, void * = nullptr) = 0;
 	virtual void unk304() = 0;
 	virtual void unk305() = 0;
 
