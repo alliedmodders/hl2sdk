@@ -599,24 +599,27 @@ void ConVarRefAbstract::SetValueInternal( CSplitScreenSlot slot, CVValue_t *valu
 
 	CVValue_t prev;
 	TypeTraits()->Construct( &prev );
-
 	TypeTraits()->Copy( &prev, *curr_value );
-	TypeTraits()->Destruct( curr_value );
 
-	TypeTraits()->Construct( curr_value );
-	TypeTraits()->Copy( curr_value, *value );
-	m_ConVarData->Clamp( slot );
-
-	if(!m_ConVarData->IsEqual( slot, &prev ))
+	if(g_pCVar->CallFilterCallback( *this, slot, value, &prev ))
 	{
-		CBufferString prev_str, new_str;
+		TypeTraits()->Destruct( curr_value );
 
-		TypeTraits()->ValueToString( &prev, prev_str );
-		TypeTraits()->ValueToString( curr_value, new_str );
+		TypeTraits()->Construct( curr_value );
+		TypeTraits()->Copy( curr_value, *value );
+		m_ConVarData->Clamp( slot );
 
-		m_ConVarData->IncrementTimesChanged();
+		if(!m_ConVarData->IsEqual( slot, &prev ))
+		{
+			CBufferString prev_str, new_str;
 
-		CallChangeCallbacks( slot, curr_value, &prev, new_str.Get(), prev_str.Get() );
+			TypeTraits()->ValueToString( &prev, prev_str );
+			TypeTraits()->ValueToString( curr_value, new_str );
+
+			m_ConVarData->IncrementTimesChanged();
+
+			CallChangeCallbacks( slot, curr_value, &prev, new_str.Get(), prev_str.Get() );
+		}
 	}
 
 	TypeTraits()->Destruct( &prev );
