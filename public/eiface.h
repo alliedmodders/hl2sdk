@@ -432,8 +432,6 @@ public:
 	virtual void			UnregisterNavListener( INavListener *pNavListener ) = 0;
 	virtual void			*GetSpawnDebugInterface( void ) = 0;
 
-	virtual void			unk_101() = 0;
-
 	virtual IToolGameSimulationAPI *GetToolGameSimulationAPI( void ) = 0;
 	virtual void			GetAnimationActivityList( CUtlVector<CUtlString> &activityList ) = 0;
 	virtual void			GetAnimationEventList( CUtlVector<CUtlString> &eventList ) = 0;
