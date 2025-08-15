@@ -1612,8 +1612,11 @@ inline void CKeyValues3ContextBase::NodeList<NODE>::Purge()
 template<typename CLUSTER>
 inline void CKeyValues3Context::PurgeClusterNodeChain( ClusterNodeChain<CLUSTER> &cluster_node )
 {
-	for(auto node = cluster_node.m_pTail; node; node = node->GetPrev())
+	CLUSTER *prev = nullptr;
+	for(auto node = cluster_node.m_pTail; node; node = prev)
 	{
+		prev = node->GetPrev();
+
 		if(node->IsAllocatedOnHeap())
 		{
 			node->Purge();
