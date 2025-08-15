@@ -1281,27 +1281,6 @@ public:
 		BaseClass::Register( name, flags, help_string, value_info );
 	}
 
-	CConVar( const char *name, uint64 flags, const char *help_string, const T &default_value, bool min, const T &minValue, bool max, const T &maxValue, FnTypedChangeCallback_t<T> cb = nullptr )
-		: BaseClass()
-	{
-		Assert( name );
-
-		BaseClass::Init( ConVarRef(), TranslateConVarType<T>() );
-
-		ConVarValueInfo_t value_info( TranslateConVarType<T>() );
-		value_info.SetDefaultValue( default_value );
-
-		if(min)
-			value_info.SetMinValue( minValue );
-
-		if(max)
-			value_info.SetMaxValue( maxValue );
-
-		value_info.SetCallback( cb );
-
-		BaseClass::Register( name, flags, help_string, value_info );
-	}
-
 	CConVar( const char *name, uint64 flags, const char *help_string, const T &default_value, bool min, const T &minValue, bool max, const T &maxValue, FnTypedChangeCallback_t<T> cb = nullptr, FnTypedFilterCallback_t<T> filter_cb = nullptr )
 		: BaseClass()
 	{
