@@ -150,13 +150,13 @@ private:
 //-----------------------------------------------------------------------------
 template <class T, class LessFunc, class BaseVector> 
 CUtlSortVector<T, LessFunc, BaseVector>::CUtlSortVector( int nGrowSize, int initSize ) : 
-	m_pLessContext(nullptr), BaseVector( nGrowSize, initSize ), m_bNeedsSort( false )
+	BaseVector( nGrowSize, initSize ), m_pLessContext(nullptr), m_bNeedsSort( false )
 {
 }
 
 template <class T, class LessFunc, class BaseVector> 
 CUtlSortVector<T, LessFunc, BaseVector>::CUtlSortVector( T* pMemory, int numElements ) :
-	m_pLessContext(nullptr), BaseVector( pMemory, numElements ), m_bNeedsSort( false )
+	BaseVector( pMemory, numElements ), m_pLessContext(nullptr), m_bNeedsSort( false )
 {
 }
 

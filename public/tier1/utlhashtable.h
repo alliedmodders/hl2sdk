@@ -82,12 +82,9 @@ public:
 	enum { INT16_STORAGE = ( sizeof( KVPair ) <= 2 ) };
 	typedef typename CTypeSelect< INT16_STORAGE, int16, int32 >::type storage_t;
 
-	enum
-	{
-		FLAG_FREE = INT16_STORAGE ? 0x8000 : 0x80000000, // must be high bit for IsValid and IdealIndex to work
-		FLAG_LAST = INT16_STORAGE ? 0x4000 : 0x40000000,
-		MASK_HASH = INT16_STORAGE ? 0x3FFF : 0x3FFFFFFF
-	};
+	static constexpr storage_t FLAG_FREE = INT16_STORAGE ? 0x8000 : 0x80000000; // must be high bit for IsValid and IdealIndex to work
+	static constexpr storage_t FLAG_LAST = INT16_STORAGE ? 0x4000 : 0x40000000;
+	static constexpr storage_t MASK_HASH = INT16_STORAGE ? 0x3FFF : 0x3FFFFFFF;
 
 	storage_t flags_and_hash;
 	storage_t data[ ( sizeof(KVPair) + sizeof(storage_t) - 1 ) / sizeof(storage_t) ];
@@ -133,9 +130,9 @@ protected:
 	typedef typename ArgumentTypeInfo<AlternateKeyT>::Arg_t KeyAlt_t;
 	typedef CUtlHashtableEntry< KeyT, ValueT > entry_t;
 
-	enum { FLAG_FREE = entry_t::FLAG_FREE };
-	enum { FLAG_LAST = entry_t::FLAG_LAST };
-	enum { MASK_HASH = entry_t::MASK_HASH };
+	static constexpr auto FLAG_FREE = entry_t::FLAG_FREE;
+	static constexpr auto FLAG_LAST = entry_t::FLAG_LAST;
+	static constexpr auto MASK_HASH = entry_t::MASK_HASH;
 
 	CUtlMemory< entry_t > m_table;
 	int m_nUsed;
