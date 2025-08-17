@@ -84,14 +84,6 @@ struct bbox_t
 	Vector maxs;
 };
 
-struct WorkshopMapDesc_t
-{
-	char	szMapName[MAX_PATH];
-	char	szOriginalMapName[MAX_PATH];
-	uint32	uTimestamp;
-	bool	bDownloaded;
-};
-
 //-----------------------------------------------------------------------------
 // Purpose: Interface the engine exposes to the game DLL
 //-----------------------------------------------------------------------------
@@ -237,7 +229,7 @@ public:
 	// Be sure to reset the lock after executing your code!!!
 	virtual bool		LockNetworkStringTables( bool lock ) = 0;
 
-	// Create a bot with the given name.  Returns NULL if fake client can't be created
+	// Create a bot with the given name.  Returns nullptr if fake client can't be created
 	virtual edict_t		*CreateFakeClient( const char *netname ) = 0;
 
 	// Get a convar keyvalue for s specified client
@@ -308,7 +300,7 @@ public:
 	//
 	// USE WITH CARE. Whatever tick the client is really currently on is subject to timing and
 	// ordering differences, so you should account for about a quarter-second discrepancy in here.
-	// Also, this will return NULL if the client doesn't exist or if this client hasn't acked any frames yet.
+	// Also, this will return nullptr if the client doesn't exist or if this client hasn't acked any frames yet.
 	// 
 	// iClientIndex is the CLIENT index, so if you use pPlayer->entindex(), subtract 1.
 	virtual const CBitVec<MAX_EDICTS>* GetEntityTransmitBitsForClient( int iClientIndex ) = 0;
@@ -348,7 +340,7 @@ public:
 
 	// Tells the engine we can immdiately re-use all edict indices
 	// even though we may not have waited enough time
-	virtual void			AllowImmediateEdictReuse( ) = 0;	
+	virtual void			AllowImmediateEdictReuse( ) = 0;
 
 	// Returns true if the engine is an internal build. i.e. is using the internal bugreporter.
 	virtual bool		IsInternalBuild( void ) = 0;
@@ -398,7 +390,7 @@ public:
 	virtual void SetGamestatsData( CGamestatsData *pGamestatsData ) = 0;
 	virtual CGamestatsData *GetGamestatsData() = 0;
 
-	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
+	// Returns the SteamID of the specified player. It'll be nullptr if the player hasn't authenticated yet.
 	virtual const CSteamID	*GetClientSteamID( edict_t *pPlayerEdict ) = 0;
 
 	// Returns the SteamID of the game server
@@ -408,13 +400,13 @@ public:
 	// keyvalues are deleted inside the function
 	virtual void ClientCommandKeyValues( edict_t *pEdict, KeyValues *pCommand ) = 0;
 
-	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
+	// Returns the SteamID of the specified player. It'll be nullptr if the player hasn't authenticated yet.
 	virtual const CSteamID	*GetClientSteamIDByPlayerIndex( int entnum ) = 0;
 	// Gets a list of all clusters' bounds.  Returns total number of clusters.
 	virtual int GetClusterCount() = 0;
 	virtual int GetAllClusterBounds( bbox_t *pBBoxList, int maxBBox ) = 0;
 
-	// Create a bot with the given name.  Returns NULL if fake client can't be created
+	// Create a bot with the given name.  Returns nullptr if fake client can't be created
 	virtual edict_t		*CreateFakeClientEx( const char *netname, bool bReportFakeClient = true ) = 0;
 
 	// Server version from the steam.inf, this will be compared to the GC version
@@ -453,6 +445,7 @@ public:
 	virtual eFindMapResult FindMap( /* in/out */ char *pMapName, int nMapNameMax ) = 0;
 	
 	virtual void SetPausedForced( bool bPaused, float flDuration = -1.f ) = 0;
+	virtual void GetPublicIP( CUtlString &str ) const = 0;
 };
 
 // These only differ in new items added to the end
@@ -462,10 +455,8 @@ typedef IVEngineServer IVEngineServer022;
 
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_8	"ServerGameDLL008"
 #define INTERFACEVERSION_SERVERGAMEDLL_VERSION_9	"ServerGameDLL009"
-#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_10	"ServerGameDLL010"
-#define INTERFACEVERSION_SERVERGAMEDLL_VERSION_11	"ServerGameDLL011"
-#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL012"
-#define INTERFACEVERSION_SERVERGAMEDLL_INT			12
+#define INTERFACEVERSION_SERVERGAMEDLL				"ServerGameDLL010"
+#define INTERFACEVERSION_SERVERGAMEDLL_INT			10
 
 class IServerGCLobby;
 
@@ -587,7 +578,7 @@ public:
 	virtual IServerGCLobby *GetServerGCLobby() = 0;
 
 	// Return override string to show in the server browser
-	// "map" column, or NULL to just use the default value
+	// "map" column, or nullptr to just use the default value
 	// (the map name)
 	virtual const char *GetServerBrowserMapOverride() = 0;
 
@@ -621,7 +612,7 @@ public:
 	};
 	virtual ePrepareLevelResourcesResult AsyncPrepareLevelResources( /* in/out */ char *pszMapName, size_t nMapNameSize,
 	                                                                 /* in/out */ char *pszMapFile, size_t nMapFileSize,
-	                                                                 float *flProgress = NULL ) = 0;
+	                                                                 float *flProgress = nullptr ) = 0;
 
 	// Ask the game DLL to evaluate what it would do with this map name were it passed to PrepareLevelResources.
 	// NOTE That this is this is syncronous and non-blocking, so it is possible that async PrepareLevelResources call
@@ -641,11 +632,6 @@ public:
 
 	// Called to see if the game server is okay with a manual changelevel or map command
 	virtual bool			IsManualMapChangeOkay( const char **pszReason ) = 0;
-
-	// Josh: Allows the engine over all workshop maps and get some information about them.
-	// Used primarily for listmaps code.
-	// Returns true if uIndex was valid, false if invalid.
-	virtual bool			GetWorkshopMap( uint32 uIndex, WorkshopMapDesc_t *pDesc ) = 0;
 };
 
 typedef IServerGameDLL IServerGameDLL008;
@@ -688,8 +674,7 @@ public:
 };
 
 #define INTERFACEVERSION_SERVERGAMECLIENTS_VERSION_3	"ServerGameClients003"
-#define INTERFACEVERSION_SERVERGAMECLIENTS_VERSION_4	"ServerGameClients004"
-#define INTERFACEVERSION_SERVERGAMECLIENTS				"ServerGameClients005"
+#define INTERFACEVERSION_SERVERGAMECLIENTS				"ServerGameClients004"
 
 //-----------------------------------------------------------------------------
 // Purpose: Player / Client related functions
@@ -754,13 +739,10 @@ public:
 
 	// Hook for player spawning
 	virtual void			ClientSpawned( edict_t *pPlayer ) = 0;
-
-	// Hook for player voice
-	virtual void			ClientVoice( edict_t *pPlayer ) = 0;
 };
 
 typedef IServerGameClients IServerGameClients003;
-typedef IServerGameClients IServerGameClients004;
+
 
 #define INTERFACEVERSION_UPLOADGAMESTATS		"ServerUploadGameStats001"
 
@@ -841,9 +823,6 @@ public:
 	virtual bool SteamIDAllowedToConnect( const CSteamID &steamId ) const = 0;
 	virtual void UpdateServerDetails(void) = 0;
 	virtual bool ShouldHibernate() = 0;
-
-	virtual bool MatchAllowsNameChanges() = 0;
-	virtual bool GetPlayerGCMatchName( const CSteamID &steamId, char *pszOutGCMatchName, size_t nGCMatchNameLen ) = 0;
 };
 
 #endif // EIFACE_H

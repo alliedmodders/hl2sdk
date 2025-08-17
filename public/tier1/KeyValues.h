@@ -26,13 +26,13 @@
 #include "Color.h"
 
 #define FOR_EACH_SUBKEY( kvRoot, kvSubKey ) \
-	for ( KeyValues * kvSubKey = kvRoot->GetFirstSubKey(); kvSubKey != NULL; kvSubKey = kvSubKey->GetNextKey() )
+	for ( KeyValues * kvSubKey = kvRoot->GetFirstSubKey(); kvSubKey != nullptr; kvSubKey = kvSubKey->GetNextKey() )
 
 #define FOR_EACH_TRUE_SUBKEY( kvRoot, kvSubKey ) \
-	for ( KeyValues * kvSubKey = kvRoot->GetFirstTrueSubKey(); kvSubKey != NULL; kvSubKey = kvSubKey->GetNextTrueSubKey() )
+	for ( KeyValues * kvSubKey = kvRoot->GetFirstTrueSubKey(); kvSubKey != nullptr; kvSubKey = kvSubKey->GetNextTrueSubKey() )
 
 #define FOR_EACH_VALUE( kvRoot, kvValue ) \
-	for ( KeyValues * kvValue = kvRoot->GetFirstValue(); kvValue != NULL; kvValue = kvValue->GetNextValue() )
+	for ( KeyValues * kvValue = kvRoot->GetFirstValue(); kvValue != nullptr; kvValue = kvValue->GetNextValue() )
 
 class IBaseFileSystem;
 class CUtlBuffer;
@@ -83,8 +83,8 @@ public:
 	//
 	// AutoDelete class to automatically free the keyvalues.
 	// Simply construct it with the keyvalues you allocated and it will free them when falls out of scope.
-	// When you decide that keyvalues shouldn't be deleted call Assign(NULL) on it.
-	// If you constructed AutoDelete(NULL) you can later assign the keyvalues to be deleted with Assign(pKeyValues).
+	// When you decide that keyvalues shouldn't be deleted call Assign(nullptr) on it.
+	// If you constructed AutoDelete(nullptr) you can later assign the keyvalues to be deleted with Assign(pKeyValues).
 	// You can also pass temporary KeyValues object as an argument to a function by wrapping it into KeyValues::AutoDelete
 	// instance:   call_my_function( KeyValues::AutoDelete( new KeyValues( "test" ) ) )
 	//
@@ -120,14 +120,14 @@ public:
 	// File access. Set UsesEscapeSequences true, if resource file/buffer uses Escape Sequences (eg \n, \t)
 	void UsesEscapeSequences(bool state); // default false
 	void UsesConditionals(bool state); // default true
-	bool LoadFromFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID = NULL, bool refreshCache = false );
-	bool SaveToFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID = NULL, bool sortKeys = false, bool bAllowEmptyString = false, bool bCacheResult = false );
+	bool LoadFromFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID = nullptr, bool refreshCache = false );
+	bool SaveToFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID = nullptr, bool sortKeys = false, bool bAllowEmptyString = false, bool bCacheResult = false );
 
 	// Read from a buffer...  Note that the buffer must be null terminated
-	bool LoadFromBuffer( char const *resourceName, const char *pBuffer, IBaseFileSystem* pFileSystem = NULL, const char *pPathID = NULL );
+	bool LoadFromBuffer( char const *resourceName, const char *pBuffer, IBaseFileSystem* pFileSystem = nullptr, const char *pPathID = nullptr );
 
 	// Read from a utlbuffer...
-	bool LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBaseFileSystem* pFileSystem = NULL, const char *pPathID = NULL );
+	bool LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBaseFileSystem* pFileSystem = nullptr, const char *pPathID = nullptr );
 
 	// Find a keyValue, create it if it is not found.
 	// Set bCreate to true to create the key if it doesn't already exist (which ensures a valid pointer will be returned)
@@ -147,7 +147,7 @@ public:
 	const KeyValues *GetNextKey() const { return m_pPeer; }		// returns the next subkey
 
 	void SetNextKey( KeyValues * pDat);
-	KeyValues *FindLastSubKey();	// returns the LAST subkey in the list.  This requires a linked list iteration to find the key.  Returns NULL if we don't have any children
+	KeyValues *FindLastSubKey();	// returns the LAST subkey in the list.  This requires a linked list iteration to find the key.  Returns nullptr if we don't have any children
 
 	//
 	// These functions can be used to treat it like a true key/values tree instead of 
@@ -165,20 +165,20 @@ public:
 	KeyValues* GetFirstTrueSubKey();
 	KeyValues* GetNextTrueSubKey();
 
-	KeyValues* GetFirstValue();	// When you get a value back, you can use GetX and pass in NULL to get the value.
+	KeyValues* GetFirstValue();	// When you get a value back, you can use GetX and pass in nullptr to get the value.
 	KeyValues* GetNextValue();
 
 
 	// Data access
-	int   GetInt( const char *keyName = NULL, int defaultValue = 0 );
-	uint64 GetUint64( const char *keyName = NULL, uint64 defaultValue = 0 );
-	float GetFloat( const char *keyName = NULL, float defaultValue = 0.0f );
-	const char *GetString( const char *keyName = NULL, const char *defaultValue = "" );
-	const wchar_t *GetWString( const char *keyName = NULL, const wchar_t *defaultValue = L"" );
-	void *GetPtr( const char *keyName = NULL, void *defaultValue = (void*)0 );
-	bool GetBool( const char *keyName = NULL, bool defaultValue = false, bool* optGotDefault = NULL );
-	Color GetColor( const char *keyName = NULL /* default value is all black */);
-	bool  IsEmpty(const char *keyName = NULL);
+	int   GetInt( const char *keyName = nullptr, int defaultValue = 0 );
+	uint64 GetUint64( const char *keyName = nullptr, uint64 defaultValue = 0 );
+	float GetFloat( const char *keyName = nullptr, float defaultValue = 0.0f );
+	const char *GetString( const char *keyName = nullptr, const char *defaultValue = "" );
+	const wchar_t *GetWString( const char *keyName = nullptr, const wchar_t *defaultValue = L"" );
+	void *GetPtr( const char *keyName = nullptr, void *defaultValue = (void*)0 );
+	bool GetBool( const char *keyName = nullptr, bool defaultValue = false, bool* optGotDefault = nullptr );
+	Color GetColor( const char *keyName = nullptr /* default value is all black */);
+	bool  IsEmpty(const char *keyName = nullptr);
 
 	// Data access
 	int   GetInt( int keySymbol, int defaultValue = 0 );
@@ -242,7 +242,7 @@ public:
 		TYPE_UINT64,
 		TYPE_NUMTYPES, 
 	};
-	types_t GetDataType(const char *keyName = NULL);
+	types_t GetDataType(const char *keyName = nullptr);
 
 	// Virtual deletion function - ensures that KeyValues object is deleted from correct heap
 	void deleteThis();
@@ -263,14 +263,13 @@ public:
 
 	void AddSubkeyUsingKnownLastChild( KeyValues *pSubKey, KeyValues *pLastChild );
 
-	KeyValues* CreateKey( const char *keyName );
-
 private:
 	KeyValues( KeyValues& );	// prevent copy constructor being used
 
 	// prevent delete being called except through deleteThis()
 	~KeyValues();
 
+	KeyValues* CreateKey( const char *keyName );
 
 	/// Create a child key, given that we know which child is currently the last child.
 	/// This avoids the O(N^2) behaviour when adding children in sequence to KV,
@@ -341,7 +340,6 @@ private:
 	// Function pointers that will determine which mode we are in
 	static int (*s_pfGetSymbolForString)( const char *name, bool bCreate );
 	static const char *(*s_pfGetStringForSymbol)( int symbol );
-	static CKeyValuesGrowableStringTable *s_pGrowableStringTable;
 
 public:
 	// Functions that invoke the default behavior
@@ -372,7 +370,7 @@ enum KeyValuesUnpackDestinationTypes_t
 
 #define UNPACK_FIXED( kname, kdefault, dtype, ofs ) { kname, kdefault, dtype, ofs, 0 }
 #define UNPACK_VARIABLE( kname, kdefault, dtype, ofs, sz ) { kname, kdefault, dtype, ofs, sz }
-#define UNPACK_END_MARKER { NULL, NULL, UNPACK_TYPE_FLOAT, 0 }
+#define UNPACK_END_MARKER { nullptr, nullptr, UNPACK_TYPE_FLOAT, 0 }
 
 struct KeyValuesUnpackStructure
 {
@@ -389,31 +387,31 @@ struct KeyValuesUnpackStructure
 inline int   KeyValues::GetInt( int keySymbol, int defaultValue )
 {
 	KeyValues *dat = FindKey( keySymbol );
-	return dat ? dat->GetInt( (const char *)NULL, defaultValue ) : defaultValue;
+	return dat ? dat->GetInt( (const char *)nullptr, defaultValue ) : defaultValue;
 }
 
 inline float KeyValues::GetFloat( int keySymbol, float defaultValue )
 {
 	KeyValues *dat = FindKey( keySymbol );
-	return dat ? dat->GetFloat( (const char *)NULL, defaultValue ) : defaultValue;
+	return dat ? dat->GetFloat( (const char *)nullptr, defaultValue ) : defaultValue;
 }
 
 inline const char *KeyValues::GetString( int keySymbol, const char *defaultValue )
 {
 	KeyValues *dat = FindKey( keySymbol );
-	return dat ? dat->GetString( (const char *)NULL, defaultValue ) : defaultValue;
+	return dat ? dat->GetString( (const char *)nullptr, defaultValue ) : defaultValue;
 }
 
 inline const wchar_t *KeyValues::GetWString( int keySymbol, const wchar_t *defaultValue )
 {
 	KeyValues *dat = FindKey( keySymbol );
-	return dat ? dat->GetWString( (const char *)NULL, defaultValue ) : defaultValue;
+	return dat ? dat->GetWString( (const char *)nullptr, defaultValue ) : defaultValue;
 }
 
 inline void *KeyValues::GetPtr( int keySymbol, void *defaultValue )
 {
 	KeyValues *dat = FindKey( keySymbol );
-	return dat ? dat->GetPtr( (const char *)NULL, defaultValue ) : defaultValue;
+	return dat ? dat->GetPtr( (const char *)nullptr, defaultValue ) : defaultValue;
 }
 
 inline Color KeyValues::GetColor( int keySymbol )
@@ -428,8 +426,6 @@ inline bool  KeyValues::IsEmpty( int keySymbol )
 	KeyValues *dat = FindKey( keySymbol );
 	return dat ? dat->IsEmpty( ) : true;
 }
-
-bool IsSteamDeck( bool bTrulyHardwareOnly = false );
 
 bool EvaluateConditional( const char *str );
 
@@ -457,9 +453,9 @@ public:
 class IKeyValuesDumpContextAsText : public IKeyValuesDumpContext
 {
 public:
-	virtual bool KvBeginKey( KeyValues *pKey, int nIndentLevel );
-	virtual bool KvWriteValue( KeyValues *pValue, int nIndentLevel );
-	virtual bool KvEndKey( KeyValues *pKey, int nIndentLevel );
+	bool KvBeginKey( KeyValues *pKey, int nIndentLevel ) override;
+	bool KvWriteValue( KeyValues *pValue, int nIndentLevel ) override;
+	bool KvEndKey( KeyValues *pKey, int nIndentLevel ) override;
 
 public:
 	virtual bool KvWriteIndent( int nIndentLevel );
@@ -473,8 +469,8 @@ public:
 	CKeyValuesDumpContextAsDevMsg( int nDeveloperLevel = 1 ) : m_nDeveloperLevel( nDeveloperLevel ) {}
 
 public:
-	virtual bool KvBeginKey( KeyValues *pKey, int nIndentLevel );
-	virtual bool KvWriteText( char const *szText );
+	bool KvBeginKey( KeyValues *pKey, int nIndentLevel ) override;
+	bool KvWriteText( char const *szText ) override;
 
 protected:
 	int m_nDeveloperLevel;

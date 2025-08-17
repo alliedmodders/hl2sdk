@@ -11,8 +11,8 @@
 #elif defined(POSIX)
 #include <wchar.h> // wcslen()
 #define _alloca alloca
-#define _wtoi(arg) wcstol(arg, NULL, 10)
-#define _wtoi64(arg) wcstoll(arg, NULL, 10)
+#define _wtoi(arg) wcstol(arg, nullptr, 10)
+#define _wtoi64(arg) wcstoll(arg, nullptr, 10)
 #endif
 
 #include <KeyValues.h>
@@ -39,7 +39,7 @@ static const char * s_LastFileLoadingFrom = "unknown"; // just needed for error 
 // Statics for the growable string table
 int (*KeyValues::s_pfGetSymbolForString)( const char *name, bool bCreate ) = &KeyValues::GetSymbolForStringClassic;
 const char *(*KeyValues::s_pfGetStringForSymbol)( int symbol ) = &KeyValues::GetStringForSymbolClassic;
-CKeyValuesGrowableStringTable *KeyValues::s_pGrowableStringTable = NULL;
+static CKeyValuesGrowableStringTable *s_pGrowableStringTable = nullptr;
 
 #define KEYVALUES_TOKEN_SIZE	4096
 static char s_pTokenBuf[KEYVALUES_TOKEN_SIZE];
@@ -50,7 +50,7 @@ static char s_pTokenBuf[KEYVALUES_TOKEN_SIZE];
 
 // a simple class to keep track of a stack of valid parsed symbols
 const int MAX_ERROR_STACK = 64;
-class CKeyValuesErrorStack
+static class CKeyValuesErrorStack
 {
 public:
 	CKeyValuesErrorStack() : m_pFilename("NULL"), m_errorIndex(0), m_maxErrorIndex(0) {}
@@ -231,12 +231,12 @@ class CKeyValuesGrowableStringTable
 public: 
 	// Constructor
 	CKeyValuesGrowableStringTable() :
-		m_hashLookup( 2048, 0, 0, m_Functor, m_Functor ),
 		#ifdef PLATFORM_64BITS
 			m_vecStrings( 0, 4 * 512 * 1024 )
 		#else
 			m_vecStrings( 0, 512 * 1024 )
 		#endif
+		, m_hashLookup( 2048, 0, 0, m_Functor, m_Functor )
 	{
 		m_vecStrings.AddToTail( '\0' );
 	}
@@ -285,7 +285,7 @@ private:
 	class CLookupFunctor
 	{
 	public:
-		CLookupFunctor() : m_pchCurString( NULL ), m_pchCurBase( NULL ) {}
+		CLookupFunctor() : m_pchCurString( nullptr ), m_pchCurBase( nullptr ) {}
 
 		// Sets what we are currently inserting or looking for.
 		void SetCurString( const char *pchCurString ) { m_pchCurString = pchCurString; }
@@ -329,7 +329,7 @@ void KeyValues::SetUseGrowableStringTable( bool bUseGrowableTable )
 		s_pfGetStringForSymbol = &(KeyValues::GetStringForSymbolGrowable);
 		s_pfGetSymbolForString = &(KeyValues::GetSymbolForStringGrowable);
 
-		if ( NULL == s_pGrowableStringTable )
+		if ( nullptr == s_pGrowableStringTable )
 		{
 			s_pGrowableStringTable = new CKeyValuesGrowableStringTable;
 		}
@@ -340,7 +340,7 @@ void KeyValues::SetUseGrowableStringTable( bool bUseGrowableTable )
 		s_pfGetSymbolForString = &(KeyValues::GetSymbolForStringClassic);
 
 		delete s_pGrowableStringTable;
-		s_pGrowableStringTable = NULL;
+		s_pGrowableStringTable = nullptr;
 	}
 }
 
@@ -451,13 +451,13 @@ void KeyValues::Init()
 	m_iKeyName = INVALID_KEY_SYMBOL;
 	m_iDataType = TYPE_NONE;
 
-	m_pSub = NULL;
-	m_pPeer = NULL;
-	m_pChain = NULL;
+	m_pSub = nullptr;
+	m_pPeer = nullptr;
+	m_pChain = nullptr;
 
-	m_sValue = NULL;
-	m_wsValue = NULL;
-	m_pValue = NULL;
+	m_sValue = nullptr;
+	m_wsValue = nullptr;
+	m_pValue = nullptr;
 	
 	m_bHasEscapeSequences = false;
 	m_bEvaluateConditionals = true;
@@ -482,25 +482,25 @@ KeyValues::~KeyValues()
 void KeyValues::RemoveEverything()
 {
 	KeyValues *dat;
-	KeyValues *datNext = NULL;
-	for ( dat = m_pSub; dat != NULL; dat = datNext )
+	KeyValues *datNext = nullptr;
+	for ( dat = m_pSub; dat != nullptr; dat = datNext )
 	{
 		datNext = dat->m_pPeer;
-		dat->m_pPeer = NULL;
+		dat->m_pPeer = nullptr;
 		delete dat;
 	}
 
 	for ( dat = m_pPeer; dat && dat != this; dat = datNext )
 	{
 		datNext = dat->m_pPeer;
-		dat->m_pPeer = NULL;
+		dat->m_pPeer = nullptr;
 		delete dat;
 	}
 
 	delete [] m_sValue;
-	m_sValue = NULL;
+	m_sValue = nullptr;
 	delete [] m_wsValue;
-	m_wsValue = NULL;
+	m_wsValue = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -510,7 +510,7 @@ void KeyValues::RemoveEverything()
 
 void KeyValues::RecursiveSaveToFile( CUtlBuffer& buf, int indentLevel, bool sortKeys /*= false*/, bool bAllowEmptyString /*= false*/ )
 {
-	RecursiveSaveToFile( NULL, FILESYSTEM_INVALID_HANDLE, &buf, indentLevel, sortKeys, bAllowEmptyString );
+	RecursiveSaveToFile( nullptr, FILESYSTEM_INVALID_HANDLE, &buf, indentLevel, sortKeys, bAllowEmptyString );
 }
 
 //-----------------------------------------------------------------------------
@@ -541,14 +541,14 @@ const char *KeyValues::ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasCon
 	wasConditional = false;
 
 	if ( !buf.IsValid() )
-		return NULL; 
+		return nullptr; 
 
 	// eating white spaces and remarks loop
 	while ( true )
 	{
 		buf.EatWhiteSpace();
 		if ( !buf.IsValid() )
-			return NULL;	// file ends after reading whitespaces
+			return nullptr;	// file ends after reading whitespaces
 
 		// stop if it's not a comment; a new token starts here
 		if ( !buf.EatCPPComment() )
@@ -557,7 +557,7 @@ const char *KeyValues::ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasCon
 
 	const char *c = (const char*)buf.PeekGet( sizeof(char), 0 );
 	if ( !c )
-		return NULL;
+		return nullptr;
 
 	// read quoted strings specially
 	if ( *c == '\"' )
@@ -653,6 +653,10 @@ bool KeyValues::LoadFromFile( IBaseFileSystem *filesystem, const char *resourceN
 	Assert( IsX360() || ( IsPC() && _heapchk() == _HEAPOK ) );
 #endif
 
+#ifdef STAGING_ONLY
+	static bool s_bCacheEnabled = !!CommandLine()->FindParm( "-enable_keyvalues_cache" );
+	const bool bUseCache = s_bCacheEnabled && ( s_pfGetSymbolForString == KeyValues::GetSymbolForStringClassic );
+#else
 	/*
 	People are cheating with the keyvalue cache enabled by doing the below, so disable it.
 
@@ -678,10 +682,11 @@ bool KeyValues::LoadFromFile( IBaseFileSystem *filesystem, const char *resourceN
 	made of vmt files, so valve's sv_pure 1 bull is pretty redundant.
 	*/
 	const bool bUseCache = false;
+#endif
 
 	// If pathID is null, we cannot cache the result because that has a weird iterate-through-a-bunch-of-locations behavior.
-	const bool bUseCacheForRead = bUseCache && !refreshCache && pathID != NULL; 
-	const bool bUseCacheForWrite = bUseCache && pathID != NULL;
+	const bool bUseCacheForRead = bUseCache && !refreshCache && pathID != nullptr; 
+	const bool bUseCacheForWrite = bUseCache && pathID != nullptr;
 
 	COM_TimestampedLog( "KeyValues::LoadFromFile(%s%s%s): Begin", pathID ? pathID : "", pathID && resourceName ? "/" : "", resourceName ? resourceName : "" );
 
@@ -753,7 +758,7 @@ bool KeyValues::SaveToFile( IBaseFileSystem *filesystem, const char *resourceNam
 	if ( bCacheResult ) {
 		KeyValuesSystem()->AddFileKeyValuesToCache( this, resourceName, pathID );
 	}
-	RecursiveSaveToFile(filesystem, f, NULL, 0, sortKeys, bAllowEmptyString );
+	RecursiveSaveToFile(filesystem, f, nullptr, 0, sortKeys, bAllowEmptyString );
 	filesystem->Close(f);
 
 	return true;
@@ -832,7 +837,7 @@ void KeyValues::RecursiveSaveToFile( IBaseFileSystem *filesystem, FileHandle_t f
 	{
 		CUtlSortVector< KeyValues*, CUtlSortVectorKeyValuesByName > vecSortedKeys;
 
-		for ( KeyValues *dat = m_pSub; dat != NULL; dat = dat->m_pPeer )
+		for ( KeyValues *dat = m_pSub; dat != nullptr; dat = dat->m_pPeer )
 		{
 			vecSortedKeys.InsertNoSort(dat);
 		}
@@ -845,7 +850,7 @@ void KeyValues::RecursiveSaveToFile( IBaseFileSystem *filesystem, FileHandle_t f
 	}
 	else
 	{
-		for ( KeyValues *dat = m_pSub; dat != NULL; dat = dat->m_pPeer )
+		for ( KeyValues *dat = m_pSub; dat != nullptr; dat = dat->m_pPeer )
 			SaveKeyToFile( dat, filesystem, f, pBuf, indentLevel, sortKeys, bAllowEmptyString );
 	}
 
@@ -967,13 +972,13 @@ void KeyValues::SaveKeyToFile( KeyValues *dat, IBaseFileSystem *filesystem, File
 //-----------------------------------------------------------------------------
 KeyValues *KeyValues::FindKey(int keySymbol) const
 {
-	for (KeyValues *dat = m_pSub; dat != NULL; dat = dat->m_pPeer)
+	for (KeyValues *dat = m_pSub; dat != nullptr; dat = dat->m_pPeer)
 	{
 		if (dat->m_iKeyName == keySymbol)
 			return dat;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -983,7 +988,7 @@ KeyValues *KeyValues::FindKey(int keySymbol) const
 //-----------------------------------------------------------------------------
 KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 {
-	// return the current key if a NULL subkey is asked for
+	// return the current key if a nullptr subkey is asked for
 	if (!keyName || !keyName[0])
 		return this;
 
@@ -1006,13 +1011,13 @@ KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 	if ( iSearchStr == INVALID_KEY_SYMBOL )
 	{
 		// not found, couldn't possibly be in key value list
-		return NULL;
+		return nullptr;
 	}
 
-	KeyValues *lastItem = NULL;
+	KeyValues *lastItem = nullptr;
 	KeyValues *dat;
 	// find the searchStr in the current peer list
-	for (dat = m_pSub; dat != NULL; dat = dat->m_pPeer)
+	for (dat = m_pSub; dat != nullptr; dat = dat->m_pPeer)
 	{
 		lastItem = dat;	// record the last item looked at (for if we need to append to the end of the list)
 
@@ -1035,7 +1040,7 @@ KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 		{
 			// we need to create a new key
 			dat = new KeyValues( searchStr );
-//			Assert(dat != NULL);
+//			Assert(dat != nullptr);
 
 			dat->UsesEscapeSequences( m_bHasEscapeSequences != 0 );	// use same format as parent
 			dat->UsesConditionals( m_bEvaluateConditionals != 0 );
@@ -1049,7 +1054,7 @@ KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 			{
 				m_pSub = dat;
 			}
-			dat->m_pPeer = NULL;
+			dat->m_pPeer = nullptr;
 
 			// a key graduates to be a submsg as soon as it's m_pSub is set
 			// this should be the only place m_pSub is set
@@ -1057,7 +1062,7 @@ KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 		}
 		else
 		{
-			return NULL;
+			return nullptr;
 		}
 	}
 	
@@ -1081,8 +1086,8 @@ KeyValues *KeyValues::CreateNewKey()
 	int newID = 1;
 
 	// search for any key with higher values
-	KeyValues *pLastChild = NULL;
-	for (KeyValues *dat = m_pSub; dat != NULL; dat = dat->m_pPeer)
+	KeyValues *pLastChild = nullptr;
+	for (KeyValues *dat = m_pSub; dat != nullptr; dat = dat->m_pPeer)
 	{
 		// case-insensitive string compare
 		int val = atoi(dat->GetName());
@@ -1129,24 +1134,24 @@ KeyValues* KeyValues::CreateKeyUsingKnownLastChild( const char *keyName, KeyValu
 void KeyValues::AddSubkeyUsingKnownLastChild( KeyValues *pSubkey, KeyValues *pLastChild )
 {
 	// Make sure the subkey isn't a child of some other keyvalues
-	Assert( pSubkey != NULL );
-	Assert( pSubkey->m_pPeer == NULL );
+	Assert( pSubkey != nullptr );
+	Assert( pSubkey->m_pPeer == nullptr );
 
 	// Empty child list?
-	if ( pLastChild == NULL )
+	if ( pLastChild == nullptr )
 	{
-		Assert( m_pSub == NULL );
+		Assert( m_pSub == nullptr );
 		m_pSub = pSubkey;
 	}
 	else
 	{
-		Assert( m_pSub != NULL );
-		Assert( pLastChild->m_pPeer == NULL );
+		Assert( m_pSub != nullptr );
+		Assert( pLastChild->m_pPeer == nullptr );
 
 //		// In debug, make sure that they really do know which child is the last one
 //		#ifdef _DEBUG
 //			KeyValues *pTempDat = m_pSub;
-//			while ( pTempDat->GetNextKey() != NULL )
+//			while ( pTempDat->GetNextKey() != nullptr )
 //			{
 //				pTempDat = pTempDat->GetNextKey();
 //			}
@@ -1164,18 +1169,18 @@ void KeyValues::AddSubkeyUsingKnownLastChild( KeyValues *pSubkey, KeyValues *pLa
 void KeyValues::AddSubKey( KeyValues *pSubkey )
 {
 	// Make sure the subkey isn't a child of some other keyvalues
-	Assert( pSubkey != NULL );
-	Assert( pSubkey->m_pPeer == NULL );
+	Assert( pSubkey != nullptr );
+	Assert( pSubkey->m_pPeer == nullptr );
 
 	// add into subkey list
-	if ( m_pSub == NULL )
+	if ( m_pSub == nullptr )
 	{
 		m_pSub = pSubkey;
 	}
 	else
 	{
 		KeyValues *pTempDat = m_pSub;
-		while ( pTempDat->GetNextKey() != NULL )
+		while ( pTempDat->GetNextKey() != nullptr )
 		{
 			pTempDat = pTempDat->GetNextKey();
 		}
@@ -1215,20 +1220,20 @@ void KeyValues::RemoveSubKey(KeyValues *subKey)
 		}
 	}
 
-	subKey->m_pPeer = NULL;
+	subKey->m_pPeer = nullptr;
 }
 
 
 
 //-----------------------------------------------------------------------------
-// Purpose: Locate last child.  Returns NULL if we have no children
+// Purpose: Locate last child.  Returns nullptr if we have no children
 //-----------------------------------------------------------------------------
 KeyValues *KeyValues::FindLastSubKey()
 {
 
 	// No children?
-	if ( m_pSub == NULL )
-		return NULL;
+	if ( m_pSub == nullptr )
+		return nullptr;
 
 	// Scan for the last one
 	KeyValues *pLastChild = m_pSub;
@@ -1332,9 +1337,8 @@ uint64 KeyValues::GetUint64( const char *keyName, uint64 defaultValue )
 			return (int)dat->m_flValue;
 		case TYPE_UINT64:
 			return *((uint64 *)dat->m_sValue);
-		case TYPE_PTR:
-			return (uint64)(uintp)dat->m_pValue;
 		case TYPE_INT:
+		case TYPE_PTR:
 		default:
 			return dat->m_iValue;
 		};
@@ -1362,7 +1366,7 @@ void *KeyValues::GetPtr( const char *keyName, void *defaultValue )
 		case TYPE_INT:
 		case TYPE_UINT64:
 		default:
-			return NULL;
+			return nullptr;
 		};
 	}
 	return defaultValue;
@@ -1420,7 +1424,7 @@ const char *KeyValues::GetString( const char *keyName, const char *defaultValue 
 			SetString( keyName, buf );
 			break;
 		case TYPE_PTR:
-			V_snprintf( buf, sizeof( buf ), "%lld", CastPtrToInt64( dat->m_pValue ) );
+			Q_snprintf( buf, sizeof( buf ), "%lld", (int64)(size_t)dat->m_pValue );
 			SetString( keyName, buf );
 			break;
 		case TYPE_INT:
@@ -1522,17 +1526,15 @@ bool KeyValues::GetBool( const char *keyName, bool defaultValue, bool* optGotDef
 {
 	if ( FindKey( keyName ) )
     {
-        if ( optGotDefault )
-		{
-            *optGotDefault = false;
+        if ( optGotDefault ) {
+            (*optGotDefault) = false;
 		}
 
 		return 0 != GetInt( keyName, 0 );
     }
     
-    if ( optGotDefault )
-	{
-        *optGotDefault = true;
+    if ( optGotDefault ) {
+        (*optGotDefault) = true;
 	}
 
 	return defaultValue;
@@ -1599,7 +1601,7 @@ void KeyValues::SetStringValue( char const *strValue )
 	delete [] m_sValue;
 	// make sure we're not storing the WSTRING  - as we're converting over to STRING
 	delete [] m_wsValue;
-	m_wsValue = NULL;
+	m_wsValue = nullptr;
 
 	if (!strValue)
 	{
@@ -1633,7 +1635,7 @@ void KeyValues::SetString( const char *keyName, const char *value )
 		delete [] dat->m_sValue;
 		// make sure we're not storing the WSTRING  - as we're converting over to STRING
 		delete [] dat->m_wsValue;
-		dat->m_wsValue = NULL;
+		dat->m_wsValue = nullptr;
 
 		if (!value)
 		{
@@ -1662,7 +1664,7 @@ void KeyValues::SetWString( const char *keyName, const wchar_t *value )
 		delete [] dat->m_wsValue;
 		// make sure we're not storing the STRING  - as we're converting over to WSTRING
 		delete [] dat->m_sValue;
-		dat->m_sValue = NULL;
+		dat->m_sValue = nullptr;
 
 		if (!value)
 		{
@@ -1706,7 +1708,7 @@ void KeyValues::SetUint64( const char *keyName, uint64 value )
 		delete [] dat->m_sValue;
 		// make sure we're not storing the WSTRING  - as we're converting over to STRING
 		delete [] dat->m_wsValue;
-		dat->m_wsValue = NULL;
+		dat->m_wsValue = nullptr;
 
 		dat->m_sValue = new char[sizeof(uint64)];
 		*((uint64 *)dat->m_sValue) = value;
@@ -1764,7 +1766,7 @@ void KeyValues::CopyKeyValuesFromRecursive( const KeyValues& rootSrc )
 	};
 
 	char tmp[256];
-	KeyValues* localDst = NULL;
+	KeyValues* localDst = nullptr;
 
 	CUtlQueue<CopyStruct> nodeQ;
 	nodeQ.Insert({ this, &rootSrc });
@@ -1776,23 +1778,23 @@ void KeyValues::CopyKeyValuesFromRecursive( const KeyValues& rootSrc )
 		// Process all the siblings of the current node. If anyone has a child, add it to the queue.
 		while (cs.src)
 		{
-			Assert( (cs.src != NULL) == (cs.dst != NULL) );
+			Assert( (cs.src != nullptr) == (cs.dst != nullptr) );
 
 			// Copy the node contents
 			cs.dst->CopyKeyValue( *cs.src, sizeof(tmp), tmp );
 
 			// Add children to the queue to process later. 
 			if (cs.src->m_pSub) {
-				cs.dst->m_pSub = localDst = new KeyValues( NULL );
+				cs.dst->m_pSub = localDst = new KeyValues( nullptr );
 				nodeQ.Insert({ localDst, cs.src->m_pSub });
 			}
 
 			// Process siblings until we hit the end of the line. 
 			if (cs.src->m_pPeer) {
-				cs.dst->m_pPeer = new KeyValues( NULL );
+				cs.dst->m_pPeer = new KeyValues( nullptr );
 			}
 			else {
-				cs.dst->m_pPeer = NULL;
+				cs.dst->m_pPeer = nullptr;
 			}
 
 			// Advance to the next peer.
@@ -1830,7 +1832,7 @@ void KeyValues::CopyKeyValue( const KeyValues& src, size_t tmpBufferSizeB, char*
 	case TYPE_INT:
 		{
 			m_iValue = src.m_iValue;
-			Q_snprintf( tmpBuffer, (int)tmpBufferSizeB, "%d", m_iValue );
+			Q_snprintf( tmpBuffer, tmpBufferSizeB, "%d", m_iValue );
 			int len = Q_strlen(tmpBuffer) + 1;
 			m_sValue = new char[len];
 			Q_strncpy( m_sValue, tmpBuffer, len  );
@@ -1839,7 +1841,7 @@ void KeyValues::CopyKeyValue( const KeyValues& src, size_t tmpBufferSizeB, char*
 	case TYPE_FLOAT:
 		{
 			m_flValue = src.m_flValue;
-			Q_snprintf( tmpBuffer, (int)tmpBufferSizeB, "%f", m_flValue );
+			Q_snprintf( tmpBuffer, tmpBufferSizeB, "%f", m_flValue );
 			int len = Q_strlen(tmpBuffer) + 1;
 			m_sValue = new char[len];
 			Q_strncpy( m_sValue, tmpBuffer, len );
@@ -1890,8 +1892,8 @@ void KeyValues::CopySubkeys( KeyValues *pParent ) const
 {
 	// recursively copy subkeys
 	// Also maintain ordering....
-	KeyValues *pPrev = NULL;
-	for ( KeyValues *sub = m_pSub; sub != NULL; sub = sub->m_pPeer )
+	KeyValues *pPrev = nullptr;
+	for ( KeyValues *sub = m_pSub; sub != nullptr; sub = sub->m_pPeer )
 	{
 		// take a copy of the subkey
 		KeyValues *dat = sub->MakeCopy();
@@ -1905,7 +1907,7 @@ void KeyValues::CopySubkeys( KeyValues *pParent ) const
 		{
 			pParent->m_pSub = dat;
 		}
-		dat->m_pPeer = NULL;
+		dat->m_pPeer = nullptr;
 		pPrev = dat;
 	}
 }
@@ -2006,7 +2008,7 @@ bool KeyValues::IsEmpty(const char *keyName)
 	if (!dat)
 		return true;
 
-	if (dat->m_iDataType == TYPE_NONE && dat->m_pSub == NULL)
+	if (dat->m_iDataType == TYPE_NONE && dat->m_pSub == nullptr)
 		return true;
 
 	return false;
@@ -2018,7 +2020,7 @@ bool KeyValues::IsEmpty(const char *keyName)
 void KeyValues::Clear( void )
 {
 	delete m_pSub;
-	m_pSub = NULL;
+	m_pSub = nullptr;
 	m_iDataType = TYPE_NONE;
 }
 
@@ -2152,14 +2154,14 @@ void KeyValues::RecursiveMergeKeyValues( KeyValues *baseKV )
 	// we always want to keep our value, so nothing to do here
 
 	// Now merge our children
-	for ( KeyValues *baseChild = baseKV->m_pSub; baseChild != NULL; baseChild = baseChild->m_pPeer )
+	for ( KeyValues *baseChild = baseKV->m_pSub; baseChild != nullptr; baseChild = baseChild->m_pPeer )
 	{
 		// for each child in base, see if we have a matching kv
 
 		bool bFoundMatch = false;
 
 		// If we have a child by the same name, merge those keys
-		for ( KeyValues *newChild = m_pSub; newChild != NULL; newChild = newChild->m_pPeer )
+		for ( KeyValues *newChild = m_pSub; newChild != nullptr; newChild = newChild->m_pPeer )
 		{
 			if ( !Q_strcmp( baseChild->GetName(), newChild->GetName() ) )
 			{
@@ -2179,38 +2181,6 @@ void KeyValues::RecursiveMergeKeyValues( KeyValues *baseKV )
 	}
 }
 
-bool IsSteamDeck( bool bTrulyHardwareOnly )
-{
-	static int s_nSteamDeckCached = -1;
-	static int s_nGamepadUICached = -1;
-
-	if ( s_nGamepadUICached == -1 || s_nSteamDeckCached == -1 )
-	{
-		bool bIsDeck = false;
-		bool bIsGamepadUI = false;
-
-		if ( CommandLine()->CheckParm( "-nogamepadui" ) )
-			bIsGamepadUI = false;
-		else if ( CommandLine()->CheckParm( "-gamepadui" ) )
-			bIsGamepadUI = true;
-		else
-		{
-			const char *deckEnv = getenv( "SteamDeck" );
-			bIsDeck = deckEnv && *deckEnv && atoi( deckEnv ) != 0;
-
-			const char *bigPictureEnv = getenv( "SteamTenFoot" );
-			bIsGamepadUI = bigPictureEnv && *bigPictureEnv && atoi( bigPictureEnv ) != 0;
-		}
-
-		s_nSteamDeckCached = bIsDeck ? 1 : 0;
-		s_nGamepadUICached = bIsGamepadUI ? 1 : 0;
-	}
-
-	if ( bTrulyHardwareOnly )
-		return s_nSteamDeckCached == 1;
-	return s_nGamepadUICached == 1 || s_nSteamDeckCached == 1;
-}
-
 //-----------------------------------------------------------------------------
 // Returns whether a keyvalues conditional evaluates to true or false
 // Needs more flexibility with conditionals, checking convars would be nice.
@@ -2227,14 +2197,25 @@ bool EvaluateConditional( const char *str )
 	if ( *str == '!' )
 		bNot = true;
 
-	if ( Q_stristr( str, "$DECK" ) )
-		return IsSteamDeck() ^ bNot;
-
 	if ( Q_stristr( str, "$X360" ) )
 		return IsX360() ^ bNot;
 	
 	if ( Q_stristr( str, "$WIN32" ) )
 		return IsPC() ^ bNot; // hack hack - for now WIN32 really means IsPC
+
+#ifdef PLATFORM_64BITS
+	if ( V_stristr( str, "$32BIT" ) )
+		return false ^ bNot;
+
+	if ( V_stristr( str, "$64BIT") )
+		return true ^ bNot;
+#else
+	if ( V_stristr( str, "$32BIT" ) )
+		return true ^ bNot;
+
+	if ( V_stristr( str, "$64BIT") )
+		return false ^ bNot;
+#endif
 
 	if ( Q_stristr( str, "$WINDOWS" ) )
 		return IsWindows() ^ bNot;
@@ -2247,19 +2228,32 @@ bool EvaluateConditional( const char *str )
 
 	if ( Q_stristr( str, "$POSIX" ) )
 		return IsPosix() ^ bNot;
+
+#ifdef PVK2_DLL
+
+#ifdef PVK2_DEV_VERSION
+	const bool bDevBuild = true;
+#else
+	const bool bDevBuild = false;
+#endif
+
+	if ( Q_stristr( str, "$PVK2_DEV" ) )
+		return bDevBuild ^ bNot;
+
+#endif
 	
 	return false;
 }
 
 // prevent two threads from entering this at the same time and trying to share the global error reporting and parse buffers
-static CThreadFastMutex g_KVMutex;
+static CThreadFastMutexRecursive g_KVMutex;
 //-----------------------------------------------------------------------------
 // Read from a buffer...
 //-----------------------------------------------------------------------------
 bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBaseFileSystem* pFileSystem, const char *pPathID )
 {
 	AUTO_LOCK( g_KVMutex );
-	KeyValues *pPreviousKey = NULL;
+	KeyValues *pPreviousKey = nullptr;
 	KeyValues *pCurrentKey = this;
 	CUtlVector< KeyValues * > includedKeys;
 	CUtlVector< KeyValues * > baseKeys;
@@ -2351,14 +2345,14 @@ bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBase
 		{
 			if ( pPreviousKey )
 			{
-				pPreviousKey->SetNextKey( NULL );
+				pPreviousKey->SetNextKey( nullptr );
 			}
 			pCurrentKey->Clear();
 		}
 		else
 		{
 			pPreviousKey = pCurrentKey;
-			pCurrentKey = NULL;
+			pCurrentKey = nullptr;
 		}
 	} while ( buf.IsValid() );
 
@@ -2406,7 +2400,7 @@ bool KeyValues::LoadFromBuffer( char const *resourceName, const char *pBuffer, I
 	// Translate Unicode files into UTF-8 before proceeding
 	if ( nLen > 2 && (uint8)pBuffer[0] == 0xFF && (uint8)pBuffer[1] == 0xFE )
 	{
-		int nUTF8Len = V_UnicodeToUTF8( (wchar_t*)(pBuffer+2), NULL, 0 );
+		int nUTF8Len = V_UnicodeToUTF8( (wchar_t*)(pBuffer+2), nullptr, 0 );
 		char *pUTF8Buf = new char[nUTF8Len];
 		V_UnicodeToUTF8( (wchar_t*)(pBuffer+2), pUTF8Buf, nUTF8Len );
 		buf.AssumeMemory( pUTF8Buf, nUTF8Len, nUTF8Len, CUtlBuffer::READ_ONLY | CUtlBuffer::TEXT_BUFFER );
@@ -2511,7 +2505,7 @@ void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &b
 			if (dat->m_sValue)
 			{
 				delete[] dat->m_sValue;
-				dat->m_sValue = NULL;
+				dat->m_sValue = nullptr;
 			}
 
 			int len = Q_strlen( value );
@@ -2591,28 +2585,28 @@ void KeyValues::RecursiveLoadFromBuffer( char const *resourceName, CUtlBuffer &b
 			}
 		}
 
-		Assert( dat->m_pPeer == NULL );
+		Assert( dat->m_pPeer == nullptr );
 		if ( bAccepted )
 		{
-			Assert( pLastChild == NULL || pLastChild->m_pPeer == dat );
+			Assert( pLastChild == nullptr || pLastChild->m_pPeer == dat );
 			pLastChild = dat;
 		}
 		else
 		{
 			//this->RemoveSubKey( dat );
-			if ( pLastChild == NULL )
+			if ( pLastChild == nullptr )
 			{
 				Assert( m_pSub == dat );
-				m_pSub = NULL;
+				m_pSub = nullptr;
 			}
 			else
 			{
 				Assert( pLastChild->m_pPeer == dat );
-				pLastChild->m_pPeer = NULL;
+				pLastChild->m_pPeer = nullptr;
 			}
 
 			dat->deleteThis();
-			dat = NULL;
+			dat = nullptr;
 		}
 	}
 }
@@ -2631,7 +2625,7 @@ bool KeyValues::WriteAsBinary( CUtlBuffer &buffer )
 	// Write subkeys:
 	
 	// loop through all our peers
-	for ( KeyValues *dat = this; dat != NULL; dat = dat->m_pPeer )
+	for ( KeyValues *dat = this; dat != nullptr; dat = dat->m_pPeer )
 	{
 		// write type
 		buffer.PutUnsignedChar( dat->m_iDataType );
@@ -2692,18 +2686,7 @@ bool KeyValues::WriteAsBinary( CUtlBuffer &buffer )
 			}
 		case TYPE_PTR:
 			{
-#if defined( PLATFORM_64BITS )
-				// We only put an int here, because 32-bit clients do not expect 64 bits. It'll cause them to read the wrong
-				// amount of data and then crash. Longer term, we may bump this up in size on all platforms, but short term 
-				// we don't really have much of a choice other than sticking in something that appears to not be NULL.
-				if ( dat->m_pValue != 0 && ( ( (int)(intp)dat->m_pValue ) == 0 ) )
-					buffer.PutInt( 31337 ); // Put not 0, but not a valid number. Yuck.
-				else
-					buffer.PutInt( ( (int)(intp)dat->m_pValue ) );
-#else
 				buffer.PutPtr( dat->m_pValue );
-#endif
-				break;
 			}
 
 		default:
@@ -2808,14 +2791,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer, int nStackDepth )
 			}
 		case TYPE_PTR:
 			{
-#if defined( PLATFORM_64BITS )
-				// We need to ensure we only read 32 bits out of the stream because 32 bit clients only wrote 
-				// 32 bits of data there. The actual pointer is irrelevant, all that we really care about here
-				// contractually is whether the pointer is zero or not zero.
-				dat->m_pValue = ( void* )( intp )buffer.GetInt();
-#else
 				dat->m_pValue = buffer.GetPtr();
-#endif
 			}
 
 		default:
@@ -3008,13 +2984,13 @@ bool KeyValues::ProcessResolutionKeys( const char *pResString )
 		return false;
 	}
 
-	for ( ; pSubKey != NULL; pSubKey = pSubKey->GetNextKey() )
+	for ( ; pSubKey != nullptr; pSubKey = pSubKey->GetNextKey() )
 	{
 		// recursively descend each sub block
 		pSubKey->ProcessResolutionKeys( pResString );
 
 		// check to see if our substring is present
-		if ( Q_stristr( pSubKey->GetName(), pResString ) != NULL )
+		if ( Q_stristr( pSubKey->GetName(), pResString ) != nullptr )
 		{
 			char normalKeyName[128];
 			V_strncpy( normalKeyName, pSubKey->GetName(), sizeof( normalKeyName ) );
@@ -3057,7 +3033,7 @@ bool KeyValues::Dump( IKeyValuesDumpContext *pDump, int nIndentLevel /* = 0 */, 
 		CUtlSortVector< KeyValues*, CUtlSortVectorKeyValuesByName > vecSortedKeys;
 	
 		// Dump values
-		for ( KeyValues *val = this ? GetFirstValue() : NULL; val; val = val->GetNextValue() )
+		for ( KeyValues *val = this ? GetFirstValue() : nullptr; val; val = val->GetNextValue() )
 		{
 			vecSortedKeys.InsertNoSort( val );
 		}
@@ -3072,7 +3048,7 @@ bool KeyValues::Dump( IKeyValuesDumpContext *pDump, int nIndentLevel /* = 0 */, 
 		vecSortedKeys.Purge();
 
 		// Dump subkeys
-		for ( KeyValues *sub = this ? GetFirstTrueSubKey() : NULL; sub; sub = sub->GetNextTrueSubKey() )
+		for ( KeyValues *sub = this ? GetFirstTrueSubKey() : nullptr; sub; sub = sub->GetNextTrueSubKey() )
 		{
 			vecSortedKeys.InsertNoSort( sub );
 		}
@@ -3087,14 +3063,14 @@ bool KeyValues::Dump( IKeyValuesDumpContext *pDump, int nIndentLevel /* = 0 */, 
 	else
 	{
 		// Dump values
-		for ( KeyValues *val = this ? GetFirstValue() : NULL; val; val = val->GetNextValue() )
+		for ( KeyValues *val = this ? GetFirstValue() : nullptr; val; val = val->GetNextValue() )
 		{
 			if ( !pDump->KvWriteValue( val, nIndentLevel + 1 ) )
 				return false;
 		}
 
 		// Dump subkeys
-		for ( KeyValues *sub = this ? GetFirstTrueSubKey() : NULL; sub; sub = sub->GetNextTrueSubKey() )
+		for ( KeyValues *sub = this ? GetFirstTrueSubKey() : nullptr; sub; sub = sub->GetNextTrueSubKey() )
 		{
 			if ( !sub->Dump( pDump, nIndentLevel + 1 ) )
 				return false;

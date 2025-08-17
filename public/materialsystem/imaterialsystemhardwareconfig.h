@@ -13,23 +13,35 @@
 #pragma once
 #endif
 
-#include "tier0/platform.h"
+
 #include "tier1/interface.h"
-#include "imaterialsystem.h"
 
 //-----------------------------------------------------------------------------
 // GL helpers
 //-----------------------------------------------------------------------------
 FORCEINLINE bool IsEmulatingGL()
 {
-	static bool bIsEmulatingGL = ( Plat_GetCommandLineA() ) ? ( strstr( Plat_GetCommandLineA(), "-r_emulate_gl" ) != NULL ) : false;
+	static bool bIsEmulatingGL = ( Plat_GetCommandLineA() ) ? ( strstr( Plat_GetCommandLineA(), "-r_emulate_gl" ) != nullptr ) : false;
 	return bIsEmulatingGL;
+}
+
+FORCEINLINE bool IsOpenGL( void )
+{
+	return IsPlatformOpenGL() || IsEmulatingGL();
 }
 
 //-----------------------------------------------------------------------------
 // Material system interface version
 //-----------------------------------------------------------------------------
 #define MATERIALSYSTEM_HARDWARECONFIG_INTERFACE_VERSION		"MaterialSystemHardwareConfig012"
+
+// HDRFIXME NOTE: must match common_ps_fxc.h
+enum HDRType_t
+{
+	HDR_TYPE_NONE,
+	HDR_TYPE_INTEGER,
+	HDR_TYPE_FLOAT,
+};
 
 // For now, vertex compression is simply "on or off" (for the sake of simplicity
 // and MeshBuilder perf.), but later we may support multiple flavours.

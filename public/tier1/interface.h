@@ -79,7 +79,6 @@ public:
 	const char				*m_pName;
 
 	InterfaceReg			*m_pNext; // For the global list.
-	static InterfaceReg		*s_pInterfaceRegs;
 };
 
 // Use this to expose an interface that can have multiple instances.

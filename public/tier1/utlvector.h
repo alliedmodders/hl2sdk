@@ -104,7 +104,7 @@ public:
 
 	// Is element index valid?
 	bool IsValidIndex( int i ) const;
-	static int InvalidIndex();
+	constexpr static int InvalidIndex();
 
 	// Adds an element, uses default constructor
 	int AddToHead();
@@ -177,11 +177,18 @@ public:
 	void RemoveMultipleFromTail(int num); // removes num elements from tail
 	void RemoveAll();				// doesn't deallocate memory
 
+#ifdef PVK2_DLL
+	void PopTail(); // Removes last element from tail, doesn't deallocate memory
+#endif
+
 	// Memory deallocation
 	void Purge();
 
 	// Purges the list and calls delete on each element in it.
 	void PurgeAndDeleteElements();
+
+	// Purges the list and calls delete[] on each element in it.
+	void PurgeAndDeleteArrayElements();
 
 	// Compacts the vector to the number of elements actually in use 
 	void Compact();
@@ -193,7 +200,7 @@ public:
 
 	void Sort( int (__cdecl *pfnCompare)(const T *, const T *) );
 
-	void Shuffle( IUniformRandomStream* pSteam = NULL );
+	void Shuffle( IUniformRandomStream* pSteam = nullptr );
 	
 	// Call this to quickly sort non-contiguously allocated vectors
 	void InPlaceQuickSort( int (__cdecl *pfnCompare)(const T *, const T *) );
@@ -388,25 +395,25 @@ public:
 
 	T& operator[]( int i )
 	{
-		Assert( IsValidIndex( i ) );
+		DevAssertFatal( IsValidIndex( i ) );
 		return m_pData->m_Elements[i];
 	}
 
 	const T& operator[]( int i ) const
 	{
-		Assert( IsValidIndex( i ) );
+		DevAssertFatal( IsValidIndex( i ) );
 		return m_pData->m_Elements[i];
 	}
 
 	T& Element( int i )
 	{
-		Assert( IsValidIndex( i ) );
+		DevAssertFatal( IsValidIndex( i ) );
 		return m_pData->m_Elements[i];
 	}
 
 	const T& Element( int i ) const
 	{
-		Assert( IsValidIndex( i ) );
+		DevAssertFatal( IsValidIndex( i ) );
 		return m_pData->m_Elements[i];
 	}
 
@@ -474,7 +481,7 @@ public:
 
 	void FastRemove( int elem )
 	{
-		Assert( IsValidIndex(elem) );
+		DevAssertFatal( IsValidIndex( elem ) );
 
 		// Global scope to resolve conflict with Scaleform 4.0
 		::Destruct( &Element(elem) );
@@ -667,7 +674,19 @@ inline CUtlVector<T, A>& CUtlVector<T, A>::operator=( const CUtlVector<T, A> &ot
 	return *this;
 }
 
+#ifdef STAGING_ONLY
+inline void StagingUtlVectorBoundsCheck( int i, int size )
+{
+	if ( (unsigned)i >= (unsigned)size )
+	{
+		Msg( "Array access error: %d / %d\n", i, size );
+		DebuggerBreak();
+	}
+}
+
+#else
 #define StagingUtlVectorBoundsCheck( _i, _size )
+#endif
 
 //-----------------------------------------------------------------------------
 // element access
@@ -676,7 +695,7 @@ template< typename T, class A >
 inline T& CUtlVector<T, A>::operator[]( int i )
 {
 	// Do an inline unsigned check for maximum debug-build performance.
-	Assert( (unsigned)i < (unsigned)m_Size );
+	DevAssertFatal( (unsigned)i < (unsigned)m_Size );
 	StagingUtlVectorBoundsCheck( i, m_Size );
 	return m_Memory[ i ];
 }
@@ -685,7 +704,7 @@ template< typename T, class A >
 inline const T& CUtlVector<T, A>::operator[]( int i ) const
 {
 	// Do an inline unsigned check for maximum debug-build performance.
-	Assert( (unsigned)i < (unsigned)m_Size );
+	DevAssertFatal( (unsigned)i < (unsigned)m_Size );
 	StagingUtlVectorBoundsCheck( i, m_Size );
 	return m_Memory[ i ];
 }
@@ -694,7 +713,7 @@ template< typename T, class A >
 inline T& CUtlVector<T, A>::Element( int i )
 {
 	// Do an inline unsigned check for maximum debug-build performance.
-	Assert( (unsigned)i < (unsigned)m_Size );
+	DevAssertFatal( (unsigned)i < (unsigned)m_Size );
 	StagingUtlVectorBoundsCheck( i, m_Size );
 	return m_Memory[ i ];
 }
@@ -703,7 +722,7 @@ template< typename T, class A >
 inline const T& CUtlVector<T, A>::Element( int i ) const
 {
 	// Do an inline unsigned check for maximum debug-build performance.
-	Assert( (unsigned)i < (unsigned)m_Size );
+	DevAssertFatal( (unsigned)i < (unsigned)m_Size );
 	StagingUtlVectorBoundsCheck( i, m_Size );
 	return m_Memory[ i ];
 }
@@ -711,7 +730,7 @@ inline const T& CUtlVector<T, A>::Element( int i ) const
 template< typename T, class A >
 inline T& CUtlVector<T, A>::Head()
 {
-	Assert( m_Size > 0 );
+	DevAssertFatal( m_Size > 0 );
 	StagingUtlVectorBoundsCheck( 0, m_Size );
 	return m_Memory[ 0 ];
 }
@@ -719,7 +738,7 @@ inline T& CUtlVector<T, A>::Head()
 template< typename T, class A >
 inline const T& CUtlVector<T, A>::Head() const
 {
-	Assert( m_Size > 0 );
+	DevAssertFatal( m_Size > 0 );
 	StagingUtlVectorBoundsCheck( 0, m_Size );
 	return m_Memory[ 0 ];
 }
@@ -727,7 +746,7 @@ inline const T& CUtlVector<T, A>::Head() const
 template< typename T, class A >
 inline T& CUtlVector<T, A>::Tail()
 {
-	Assert( m_Size > 0 );
+	DevAssertFatal( m_Size > 0 );
 	StagingUtlVectorBoundsCheck( 0, m_Size );
 	return m_Memory[ m_Size - 1 ];
 }
@@ -735,7 +754,7 @@ inline T& CUtlVector<T, A>::Tail()
 template< typename T, class A >
 inline const T& CUtlVector<T, A>::Tail() const
 {
-	Assert( m_Size > 0 );
+	DevAssertFatal( m_Size > 0 );
 	StagingUtlVectorBoundsCheck( 0, m_Size );
 	return m_Memory[ m_Size - 1 ];
 }
@@ -753,14 +772,14 @@ inline int CUtlVector<T, A>::Size() const
 template< typename T, class A >
 inline T& CUtlVector<T, A>::Random()
 {
-	Assert( m_Size > 0 );
+	DevAssertFatal( m_Size > 0 );
 	return m_Memory[ RandomInt( 0, m_Size - 1 ) ];
 }
 
 template< typename T, class A >
 inline const T& CUtlVector<T, A>::Random() const
 {
-	Assert( m_Size > 0 );
+	DevAssertFatal( m_Size > 0 );
 	return m_Memory[ RandomInt( 0, m_Size - 1 ) ];
 }
 
@@ -822,7 +841,7 @@ inline bool CUtlVector<T, A>::IsValidIndex( int i ) const
 // Returns in invalid index
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-inline int CUtlVector<T, A>::InvalidIndex()
+inline constexpr int CUtlVector<T, A>::InvalidIndex()
 {
 	return -1;
 }
@@ -1035,14 +1054,13 @@ template< typename T, class A >
 int CUtlVector<T, A>::InsertBefore( int elem )
 {
 	// Can insert at the end
-	Assert( (elem == Count()) || IsValidIndex(elem) );
+	DevAssertFatal( ( elem == Count() ) || IsValidIndex( elem ) );
 
 	GrowVector();
 	ShiftElementsRight(elem);
 	Construct( &Element(elem) );
 	return elem;
 }
-
 
 //-----------------------------------------------------------------------------
 // Adds an element, uses copy constructor
@@ -1051,7 +1069,7 @@ template< typename T, class A >
 inline int CUtlVector<T, A>::AddToHead( const T& src )
 {
 	// Can't insert something that's in the list... reallocation may hose us
-	Assert( (Base() == NULL) || (&src < Base()) || (&src >= (Base() + Count()) ) ); 
+	DevAssertFatal( ( Base() == nullptr ) || ( &src < Base() ) || ( &src >= ( Base() + Count() ) ) ); 
 	return InsertBefore( 0, src );
 }
 
@@ -1059,7 +1077,7 @@ template< typename T, class A >
 inline int CUtlVector<T, A>::AddToTail( const T& src )
 {
 	// Can't insert something that's in the list... reallocation may hose us
-	Assert( (Base() == NULL) || (&src < Base()) || (&src >= (Base() + Count()) ) ); 
+	DevAssertFatal( ( Base() == nullptr ) || ( &src < Base() ) || ( &src >= ( Base() + Count() ) ) ); 
 	return InsertBefore( m_Size, src );
 }
 
@@ -1067,7 +1085,7 @@ template< typename T, class A >
 inline int CUtlVector<T, A>::InsertAfter( int elem, const T& src )
 {
 	// Can't insert something that's in the list... reallocation may hose us
-	Assert( (Base() == NULL) || (&src < Base()) || (&src >= (Base() + Count()) ) ); 
+	DevAssertFatal( ( Base() == nullptr ) || ( &src < Base() ) || ( &src >= ( Base() + Count() ) ) ); 
 	return InsertBefore( elem + 1, src );
 }
 
@@ -1075,10 +1093,10 @@ template< typename T, class A >
 int CUtlVector<T, A>::InsertBefore( int elem, const T& src )
 {
 	// Can't insert something that's in the list... reallocation may hose us
-	Assert( (Base() == NULL) || (&src < Base()) || (&src >= (Base() + Count()) ) ); 
+	DevAssertFatal( ( Base() == nullptr ) || ( &src < Base() ) || ( &src >= ( Base() + Count() ) ) ); 
 
 	// Can insert at the end
-	Assert( (elem == Count()) || IsValidIndex(elem) );
+	DevAssertFatal( ( elem == Count() ) || IsValidIndex( elem ) );
 
 	GrowVector();
 	ShiftElementsRight(elem);
@@ -1106,7 +1124,7 @@ template< typename T, class A >
 inline int CUtlVector<T, A>::AddMultipleToTail( int num, const T *pToCopy )
 {
 	// Can't insert something that's in the list... reallocation may hose us
-	Assert( (Base() == NULL) || !pToCopy || (pToCopy + num <= Base()) || (pToCopy >= (Base() + Count()) ) ); 
+	DevAssertFatal( ( Base() == nullptr ) || !pToCopy || ( pToCopy + num <= Base() ) || ( pToCopy >= ( Base() + Count() ) ) ); 
 
 	return InsertMultipleBefore( m_Size, num, pToCopy );
 }
@@ -1143,7 +1161,7 @@ template< typename T, class A >
 void CUtlVector<T, A>::CopyArray( const T *pArray, int size )
 {
 	// Can't insert something that's in the list... reallocation may hose us
-	Assert( (Base() == NULL) || !pArray || (Base() >= (pArray + size)) || (pArray >= (Base() + Count()) ) ); 
+	DevAssertFatal( ( Base() == nullptr ) || !pArray || ( Base() >= ( pArray + size ) ) || ( pArray >= ( Base() + Count() ) ) ); 
 
 	SetSize( size );
 	for( int i=0; i < size; i++ )
@@ -1166,7 +1184,7 @@ void CUtlVector<T, A>::Swap( CUtlVector< T, A > &vec )
 template< typename T, class A >
 int CUtlVector<T, A>::AddVectorToTail( CUtlVector const &src )
 {
-	Assert( &src != this );
+	DevAssertFatal( &src != this );
 
 	int base = Count();
 	
@@ -1190,7 +1208,7 @@ inline int CUtlVector<T, A>::InsertMultipleBefore( int elem, int num )
 		return elem;
 
 	// Can insert at the end
-	Assert( (elem == Count()) || IsValidIndex(elem) );
+	DevAssertFatal( ( elem == Count() ) || IsValidIndex( elem ) );
 
 	GrowVector(num);
 	ShiftElementsRight( elem, num );
@@ -1211,7 +1229,7 @@ inline int CUtlVector<T, A>::InsertMultipleBefore( int elem, int num, const T *p
 		return elem;
 	
 	// Can insert at the end
-	Assert( (elem == Count()) || IsValidIndex(elem) );
+	DevAssertFatal( ( elem == Count() ) || IsValidIndex( elem ) );
 
 	GrowVector(num);
 	ShiftElementsRight( elem, num );
@@ -1293,7 +1311,7 @@ bool CUtlVector<T, A>::HasElement( const T& src ) const
 template< typename T, class A >
 void CUtlVector<T, A>::FastRemove( int elem )
 {
-	Assert( IsValidIndex(elem) );
+	DevAssertFatal( IsValidIndex( elem ) );
 
 	// Global scope to resolve conflict with Scaleform 4.0
 	::Destruct( &Element(elem) );
@@ -1341,8 +1359,8 @@ bool CUtlVector<T, A>::FindAndFastRemove( const T& src )
 template< typename T, class A >
 void CUtlVector<T, A>::RemoveMultiple( int elem, int num )
 {
-	Assert( elem >= 0 );
-	Assert( elem + num <= Count() );
+	DevAssertFatal( elem >= 0 );
+	DevAssertFatal( elem + num <= Count() );
 
 	// Global scope to resolve conflict with Scaleform 4.0
 	for (int i = elem + num; --i >= elem; )
@@ -1355,7 +1373,7 @@ void CUtlVector<T, A>::RemoveMultiple( int elem, int num )
 template< typename T, class A >
 void CUtlVector<T, A>::RemoveMultipleFromHead( int num )
 {
-	Assert( num <= Count() );
+	DevAssertFatal( num <= Count() );
 
 	// Global scope to resolve conflict with Scaleform 4.0
 	for (int i = num; --i >= 0; )
@@ -1368,7 +1386,7 @@ void CUtlVector<T, A>::RemoveMultipleFromHead( int num )
 template< typename T, class A >
 void CUtlVector<T, A>::RemoveMultipleFromTail( int num )
 {
-	Assert( num <= Count() );
+	DevAssertFatal( num <= Count() );
 
 	// Global scope to resolve conflict with Scaleform 4.0
 	for (int i = m_Size-num; i < m_Size; i++)
@@ -1389,6 +1407,16 @@ void CUtlVector<T, A>::RemoveAll()
 	m_Size = 0;
 }
 
+#ifdef PVK2_DLL
+template< typename T, class A >
+void CUtlVector<T, A>::PopTail()
+{
+	DevAssertFatal( Count() > 0 );
+
+	::Destruct( &Element( m_Size - 1 ) );
+	--m_Size;
+}
+#endif
 
 //-----------------------------------------------------------------------------
 // Memory deallocation
@@ -1410,6 +1438,17 @@ inline void CUtlVector<T, A>::PurgeAndDeleteElements()
 	{
 		delete Element(i);
 	}
+	Purge();
+}
+
+template < typename T, class A >
+inline void CUtlVector<T, A>::PurgeAndDeleteArrayElements()
+{
+	for ( int i = 0; i < m_Size; i++ )
+	{
+		delete[] Element(i);
+	}
+
 	Purge();
 }
 
@@ -1453,9 +1492,18 @@ public:
 
 };
 
+template <class T> class CUtlVectorAutoPurgeArray : public CUtlVector< T, CUtlMemory< T, int > >
+{
+public:
+	~CUtlVectorAutoPurgeArray( void )
+	{
+		this->PurgeAndDeleteArrayElements();
+	}
+};
+
 // easy string list class with dynamically allocated strings. For use with V_SplitString, etc.
 // Frees the dynamic strings in destructor.
-class CUtlStringList : public CUtlVectorAutoPurge< char *>
+class CUtlStringList : public CUtlVectorAutoPurgeArray< char *>
 {
 public:
 	void CopyAndAddToTail( char const *pString )			// clone the string and add to the end
@@ -1501,17 +1549,12 @@ private:
 class CSplitString: public CUtlVector<char*, CUtlMemory<char*, int> >
 {
 public:
-	CSplitString() { m_szBuffer = nullptr; }
 	CSplitString(const char *pString, const char *pSeparator);
 	CSplitString(const char *pString, const char **pSeparators, int nSeparators);
 	~CSplitString();
 	//
 	// NOTE: If you want to make Construct() public and implement Purge() here, you'll have to free m_szBuffer there
 	//
-
-	void Set( const char *pString, const char **pSeparators, int nSeparators );
-	void Set( const char *pString, const char *pSeparator );
-
 private:
 	void Construct(const char *pString, const char **pSeparators, int nSeparators);
 	void PurgeAndDeleteElements();
@@ -1519,32 +1562,5 @@ private:
 	char *m_szBuffer; // a copy of original string, with '\0' instead of separators
 };
 
-inline void CSplitString::Set( const char* pString, const char* pSeparator )
-{
-	Set( pString, &pSeparator, 1 );
-}
-
-inline void CSplitString::Set( const char *pString, const char **pSeparators, int nSeparators )
-{
-	if ( m_szBuffer )
-		delete[] m_szBuffer;
-	Construct( pString, pSeparators, nSeparators );
-}
-
-// A fixed growable vector that's castable to CUtlVector
-template< class T, size_t FIXED_SIZE >
-class CUtlVectorFixedGrowableCompat : public CUtlVector< T >
-{
-	typedef CUtlVector< T > BaseClass;
-
-public:
-	// constructor, destructor
-	CUtlVectorFixedGrowableCompat(int growSize = 0) : BaseClass(nullptr, FIXED_SIZE, growSize)
-	{
-		this->m_Memory.m_pMemory = m_FixedMemory.Base();
-	}
-
-	AlignedByteArray_t< FIXED_SIZE, T > m_FixedMemory;
-};
 
 #endif // CCVECTOR_H

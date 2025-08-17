@@ -43,7 +43,7 @@
 // ------------------------------------------------------------------------------------ //
 // InterfaceReg.
 // ------------------------------------------------------------------------------------ //
-InterfaceReg *InterfaceReg::s_pInterfaceRegs = NULL;
+static InterfaceReg *s_pInterfaceRegs = nullptr;
 
 InterfaceReg::InterfaceReg( InstantiateInterfaceFn fn, const char *pName ) :
 	m_pName(pName)
@@ -69,7 +69,7 @@ void* CreateInterfaceInternal( const char *pName, int *pReturnCode )
 {
 	InterfaceReg *pCur;
 	
-	for (pCur=InterfaceReg::s_pInterfaceRegs; pCur; pCur=pCur->m_pNext)
+	for (pCur=s_pInterfaceRegs; pCur; pCur=pCur->m_pNext)
 	{
 		if (strcmp(pCur->m_pName, pName) == 0)
 		{
@@ -85,7 +85,7 @@ void* CreateInterfaceInternal( const char *pName, int *pReturnCode )
 	{
 		*pReturnCode = IFACE_FAILED;
 	}
-	return NULL;	
+	return nullptr;	
 }
 
 void* CreateInterface( const char *pName, int *pReturnCode )
@@ -101,18 +101,18 @@ void *GetModuleHandle(const char *name)
 {
 	void *handle;
 
-	if( name == NULL )
+	if( name == nullptr )
 	{
 		// hmm, how can this be handled under linux....
 		// is it even needed?
-		return NULL;
+		return nullptr;
 	}
 
-    if( (handle=dlopen(name, RTLD_NOW))==NULL)
+    if( (handle=dlopen(name, RTLD_NOW))==nullptr)
     {
             printf("DLOPEN Error:%s\n",dlerror());
             // couldn't open this file
-            return NULL;
+            return nullptr;
     }
 
 	// read "man dlopen" for details
@@ -176,7 +176,7 @@ static HMODULE InternalLoadLibrary( const char *pName, Sys_Flags flags )
 	if ( flags & SYS_NOLOAD )
 		return GetModuleHandle( pName );
 	else
-		return LoadLibraryEx( pName, NULL, LOAD_WITH_ALTERED_SEARCH_PATH );
+		return LoadLibraryEx( pName, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH );
 #endif
 }
 uintp ThreadedLoadLibraryFunc( void *pParam )
@@ -213,6 +213,8 @@ HMODULE Sys_LoadLibrary( const char *pLibraryName, Sys_Flags flags )
 	}
 
 	Q_FixSlashes( str );
+
+	DevMsg("Attempting to load library: %s\n", str);
 
 #ifdef _WIN32
 	ThreadedLoadLibraryFunc_t threadFunc = GetThreadedLoadLibraryFunc();
@@ -272,8 +274,11 @@ CSysModule *Sys_LoadModule( const char *pModuleName, Sys_Flags flags /* = SYS_NO
 	// If using the Steam filesystem, either the DLL must be a minimum footprint
 	// file in the depot (MFP) or a filesystem GetLocalCopy() call must be made
 	// prior to the call to this routine.
+
+	DevMsg("Loading module %s\n", pModuleName);
+
 	char szCwd[1024];
-	HMODULE hDLL = NULL;
+	HMODULE hDLL = (HMODULE)nullptr;
 
 	if ( !Q_IsAbsolutePath( pModuleName ) )
 	{
@@ -293,40 +298,74 @@ CSysModule *Sys_LoadModule( const char *pModuleName, Sys_Flags flags /* = SYS_NO
 		}
 
 		char szAbsoluteModuleName[1024];
-		if ( strstr( pModuleName, PLATFORM_BIN_DIR ) != NULL )
+		size_t cCwd = strlen( szCwd );
+		if ( strstr( pModuleName, "bin/") == pModuleName || ( szCwd[ cCwd - 1 ] == 'n'  && szCwd[ cCwd - 2 ] == 'i' && szCwd[ cCwd - 3 ] == 'b' )  )
 		{
 			// don't make bin/bin path
-			Q_snprintf( szAbsoluteModuleName, sizeof( szAbsoluteModuleName ), "%s" CORRECT_PATH_SEPARATOR_S "%s", szCwd, pModuleName );
+			Q_snprintf( szAbsoluteModuleName, sizeof(szAbsoluteModuleName), "%s/%s", szCwd, pModuleName );			
 		}
 		else
 		{
-			Q_snprintf( szAbsoluteModuleName, sizeof( szAbsoluteModuleName ), "%s" CORRECT_PATH_SEPARATOR_S PLATFORM_BIN_DIR CORRECT_PATH_SEPARATOR_S "%s", szCwd, pModuleName );
+#ifdef PLATFORM_64BITS
+			Q_snprintf( szAbsoluteModuleName, sizeof(szAbsoluteModuleName), "%s/bin/x64/%s", szCwd, pModuleName );
+#else
+			Q_snprintf( szAbsoluteModuleName, sizeof(szAbsoluteModuleName), "%s/bin/%s", szCwd, pModuleName );
+#endif
 		}
 		hDLL = Sys_LoadLibrary( szAbsoluteModuleName, flags );
-	}
 
-	if ( !hDLL )
-	{
-		// full path failed, let LoadLibrary() try to search the PATH now
-		hDLL = Sys_LoadLibrary( pModuleName, flags );
-#if defined( _DEBUG )
-		if ( !hDLL )
-		{
-// So you can see what the error is in the debugger...
+		if (!hDLL) {
 #if defined( _WIN32 ) && !defined( _X360 )
-			char *lpMsgBuf;
+			char *lpMsgBuf = nullptr;
 			
 			FormatMessage( 
 				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
 				FORMAT_MESSAGE_FROM_SYSTEM | 
 				FORMAT_MESSAGE_IGNORE_INSERTS,
-				NULL,
+				nullptr,
 				GetLastError(),
 				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 				(LPTSTR) &lpMsgBuf,
 				0,
-				NULL 
+				nullptr 
 			);
+
+			DevWarning("Failed to load %s: %s\n", pModuleName, lpMsgBuf);
+
+			LocalFree( (HLOCAL)lpMsgBuf );
+#elif defined( _X360 )
+			DWORD error = GetLastError();
+			Msg( "Error(%d) - Failed to load %s:\n", error, pModuleName );
+#else
+			DevMsg( "Failed to load %s: %s\n", pModuleName, dlerror() );
+#endif // _WIN32
+		}
+	}
+
+	if ( !hDLL )
+	{
+		// full path failed, let LoadLibrary() try to search the PATH now
+		DevMsg("Attempting to load module %s from PATH\n", pModuleName);
+		hDLL = Sys_LoadLibrary( pModuleName, flags );
+
+		if ( !hDLL )
+		{
+#if defined( _WIN32 ) && !defined( _X360 )
+			char *lpMsgBuf = nullptr;
+			
+			FormatMessage( 
+				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+				FORMAT_MESSAGE_FROM_SYSTEM | 
+				FORMAT_MESSAGE_IGNORE_INSERTS,
+				nullptr,
+				GetLastError(),
+				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+				(LPTSTR) &lpMsgBuf,
+				0,
+				nullptr 
+			);
+
+			DevWarning("Failed to load %s: %s\n", pModuleName, lpMsgBuf);
 
 			LocalFree( (HLOCAL)lpMsgBuf );
 #elif defined( _X360 )
@@ -336,7 +375,10 @@ CSysModule *Sys_LoadModule( const char *pModuleName, Sys_Flags flags /* = SYS_NO
 			Msg( "Failed to load %s: %s\n", pModuleName, dlerror() );
 #endif // _WIN32
 		}
-#endif // DEBUG
+	}
+
+	if ( hDLL ) {
+		DevMsg( "Successfully loaded %s\n", pModuleName );
 	}
 
 #if !defined(LINUX)
@@ -360,7 +402,7 @@ CSysModule *Sys_LoadModule( const char *pModuleName, Sys_Flags flags /* = SYS_NO
 			char chMemoryName[ MAX_PATH ];
 			DebugKernelMemoryObjectName( chMemoryName );
 			
-			(void) CreateFileMapping( INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, 1024, chMemoryName );
+			(void) CreateFileMapping( INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 1024, chMemoryName );
 			// Created a shared memory kernel object specific to process id
 			// Existence of this object indicates that we have debug modules loaded
 #endif
@@ -422,7 +464,7 @@ void Sys_UnloadModule( CSysModule *pModule )
 CreateInterfaceFn Sys_GetFactory( CSysModule *pModule )
 {
 	if ( !pModule )
-		return NULL;
+		return nullptr;
 
 	HMODULE	hDLL = reinterpret_cast<HMODULE>(pModule);
 #ifdef _WIN32
@@ -485,7 +527,7 @@ bool Sys_LoadInterface(
 		return false;
 	}
 
-	*pOutInterface = fn( pInterfaceVersionName, NULL );
+	*pOutInterface = fn( pInterfaceVersionName, nullptr );
 	if ( !( *pOutInterface ) )
 	{
 		Sys_UnloadModule( pMod );
@@ -527,7 +569,7 @@ CreateInterfaceFn CDllDemandLoader::GetFactory()
 
 	if ( !m_hModule )
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return Sys_GetFactory( m_hModule );
@@ -542,4 +584,25 @@ void CDllDemandLoader::Unload()
 	}
 }
 
+#if defined( STAGING_ONLY ) && defined( _WIN32 )
+
+typedef USHORT( WINAPI RtlCaptureStackBackTrace_FUNC )(
+	ULONG frames_to_skip,
+	ULONG frames_to_capture,
+	PVOID *backtrace,
+	PULONG backtrace_hash );
+
+extern "C" int backtrace( void **buffer, int size )
+{
+	HMODULE hNTDll = GetModuleHandleA( "ntdll.dll" );
+	static RtlCaptureStackBackTrace_FUNC * const pfnRtlCaptureStackBackTrace =
+		( RtlCaptureStackBackTrace_FUNC * )GetProcAddress( hNTDll, "RtlCaptureStackBackTrace" );
+
+	if ( !pfnRtlCaptureStackBackTrace )
+		return 0;
+
+	return (int)pfnRtlCaptureStackBackTrace( 2, size, buffer, 0 );
+}
+
+#endif // STAGING_ONLY && _WIN32
 
