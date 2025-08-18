@@ -64,7 +64,7 @@ public:
 	// Element removal
 	void RemoveAll(); // doesn't deallocate memory
 
-	bool IsIdxValid( I i ) const { return (i >= 0) && (i < NumAllocated()); }
+	bool IsIdxValid( I i ) const { return (i >= 0) && (i < m_nCount); }
 	
 	// Memory deallocation
 	void Purge();
@@ -286,7 +286,7 @@ public:
 	// Element removal
 	void RemoveAll(); // doesn't deallocate memory
 	
-	bool IsIdxValid( I i ) const { return (i >= 0) && (i < NumAllocated()); }
+	bool IsIdxValid( I i ) const { return (i >= 0) && (i < m_nCount); }
 
 	// Memory deallocation
 	void Purge();
