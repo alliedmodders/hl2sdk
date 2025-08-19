@@ -455,7 +455,7 @@ protected:
 	template <typename T> void PutTypeBin( T src );
 	template <typename T> void PutObject( T *src );
 
-	CUtlLeanVector<unsigned char> m_Memory;
+	CUtlLeanVector<unsigned char, int> m_Memory;
 	int m_Get;
 	int m_Put;
 
