@@ -86,8 +86,6 @@ public:
 	virtual int		SendMessages( const char *pDebugName, bf_write *data ) = 0;
 	virtual void	ClearBitsToSend( void ) = 0;
 
-	virtual const netadr_t &GetRemoteAddress( void ) const = 0;
-
 	virtual void	UpdateMessageStats( int msggroup, int bits, bool ) = 0;
 	
 	virtual void	unk011() = 0;
