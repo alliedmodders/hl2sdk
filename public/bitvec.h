@@ -448,7 +448,8 @@ typedef CBitVec<32> CDWordBitVec;
 template <typename BITCOUNTTYPE>
 inline CVarBitVecBase<BITCOUNTTYPE>::CVarBitVecBase()
 {
-	Plat_FastMemset( this, 0, sizeof( *this ) );
+	// clang gets angry using memset on a non-trivally copyable type. Cast to void*
+	Plat_FastMemset( static_cast<void*>(this), 0, sizeof( *this ) );
 }
 
 //-----------------------------------------------------------------------------

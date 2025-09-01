@@ -137,8 +137,8 @@ void CUtlBlockMemory<T,I>::Swap( CUtlBlockMemory< T, I > &mem )
 {
 	V_swap( m_pMemory, mem.m_pMemory );
 	V_swap( m_nBlocks, mem.m_nBlocks );
-	V_swap( m_nIndexMask, mem.m_nIndexMask );
-	V_swap( m_nIndexShift, mem.m_nIndexShift );
+	V_XOR_SWAP( m_nIndexMask, mem.m_nIndexMask );
+	V_XOR_SWAP( m_nIndexShift, mem.m_nIndexShift );
 }
 
 

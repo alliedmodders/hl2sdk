@@ -86,7 +86,7 @@ public:
 	{
 		SetSize( src.m_nWidth, src.m_nHeight );
 		if ( m_pData )
-			memcpy( m_pData, src.m_pData, m_nHeight*m_nPaddedWidth*sizeof(m_pData[0]) ); 
+			memcpy( static_cast<void*>(m_pData), src.m_pData, m_nHeight*m_nPaddedWidth*sizeof(m_pData[0]) ); // clang gets angry using memset on a non-trivally copyable type. Cast to void*
 		return *this;
 	}
 
@@ -131,7 +131,7 @@ public:
 	void Clear( void )
 	{
 		Assert( m_pData );
-		memset( m_pData, 0, m_nHeight*m_nPaddedWidth*sizeof(m_pData[0]) );
+		memset( static_cast<void*>(m_pData), 0, m_nHeight*m_nPaddedWidth*sizeof(m_pData[0]) ); // clang gets angry using memset on a non-trivally copyable type. Cast to void*
 	}
 
 	void RaiseToPower( float power );
