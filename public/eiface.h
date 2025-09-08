@@ -484,7 +484,7 @@ public:
 abstract_class ISource2GameEntities : public IAppSystem
 {
 public:
-	virtual					~ISource2GameEntities()	{}
+	virtual					~ISource2GameEntities() = 0;
 
 	// This sets a bit in pInfo for each edict in the list that wants to be transmitted to the
 	// client specified in pInfo.
@@ -497,15 +497,12 @@ public:
 	
 	// TERROR: Perform any PVS cleanup before a full update
 	virtual void			PrepareForFullUpdate( CEntityIndex nPlayerEntityIndex ) = 0;
-	
-	// Frees the entity attached to this edict
-	virtual void			FreeContainingEntity( CEntityIndex nEntityIndex ) = 0;
-	
-	virtual bool			GetWorldspaceCenter( CEntityIndex nEntityIndex, Vector *pCenter ) const = 0;
-	
+
 	virtual bool			ShouldClientReceiveStringTableUserData( const INetworkStringTable *pTable, int stringNumber, const CCheckTransmitInfo *pInfo ) = 0;
 	
 	virtual void			ResetChangeAccessorsSerialNumbersToZero() = 0;
+	
+	virtual bool			GetWorldspaceCenter( CEntityIndex nEntityIndex, Vector *pCenter ) const = 0;
 };
 
 #define INTERFACEVERSION_SERVERCONFIG			"Source2ServerConfig001"
