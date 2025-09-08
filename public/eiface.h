@@ -634,19 +634,19 @@ public:
 
 	virtual IHLTVDirector	*GetHLTVDirector( void ) = 0;
 
+	virtual int				GetPlayerTickBase( CPlayerSlot slot ) = 0;
 	virtual void			unk101( CPlayerSlot slot ) = 0;
-	virtual void			unk102( CPlayerSlot slot ) = 0;
 
 	// Handles incoming usermessages from the client
 	virtual void			ClientSvcUserMessage( CPlayerSlot slot, int um_type, uint32 size, const void *buf ) = 0;
 
-	// Something pawn related
+	// Returns this player hltv delay in seconds
+	virtual float			GetPlayerHltvDelay( CPlayerSlot slot, CEntityIndex &replay_ent ) = 0;
+	virtual void			ReplayLastPlayerKill( CPlayerSlot slot, void *kill_info ) = 0;
+
 	virtual void			unk201() = 0;
 	virtual void			unk202() = 0;
-
 	virtual void			unk203() = 0;
-	virtual void			unk204() = 0;
-	virtual void			unk205() = 0;
 };
 
 typedef IVEngineServer2 IVEngineServer;
