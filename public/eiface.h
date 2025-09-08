@@ -646,6 +646,7 @@ public:
 
 	virtual void			unk203() = 0;
 	virtual void			unk204() = 0;
+	virtual void			unk205() = 0;
 };
 
 typedef IVEngineServer2 IVEngineServer;
