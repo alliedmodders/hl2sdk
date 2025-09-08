@@ -484,7 +484,7 @@ public:
 //-----------------------------------------------------------------------------
 // Purpose: Interface to get at server entities
 //-----------------------------------------------------------------------------
-abstract_class ISource2GameEntities : public IAppSystem //, public IEntityListener
+abstract_class ISource2GameEntities : public IAppSystem
 {
 public:
 	virtual					Reset( bool bDestroyAndDelete = false ) = 0;
