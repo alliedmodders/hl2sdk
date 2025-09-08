@@ -487,7 +487,7 @@ public:
 abstract_class ISource2GameEntities : public IAppSystem
 {
 public:
-	virtual					Reset( bool bDestroyAndDelete = false ) = 0;
+	virtual					~ISource2GameEntities() = 0;
 
 	// This sets a bit in pInfo for each edict in the list that wants to be transmitted to the
 	// client specified in pInfo.
