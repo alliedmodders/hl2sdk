@@ -94,6 +94,10 @@ class IHLTVServer;
 class CCompressedResourceManifest;
 class ILoadingSpawnGroup;
 class IToolGameSimulationAPI;
+class CCLCMsg_Move;
+template <typename T>
+class CNetMessagePB;
+class CCLCMsg_Diagnostic;
 
 namespace google
 {
@@ -607,13 +611,12 @@ public:
 
 	// TERROR: A player sent a voice packet
 	virtual void			ClientVoice( CPlayerSlot slot ) = 0;
-
-	// A user has had their network id setup and validated
-	virtual void			NetworkIDValidated( const char *pszUserName, const char *pszNetworkID ) = 0;
-
+	
 	// The client has submitted a keyvalues command
 	virtual void			ClientCommandKeyValues( CPlayerSlot slot, KeyValues *pKeyValues ) = 0;
-
+	
+	virtual void			ClientDiagnostic( CPlayerSlot slot, CCLCMsg_Diagnostic *pDiagnosticMsg ) = 0;
+	
 	virtual bool			ClientCanPause( CPlayerSlot slot ) = 0;
 
 	virtual void			HLTVClientFullyConnect( int index, const CSteamID &steamID ) = 0;
@@ -626,18 +629,19 @@ public:
 
 	virtual IHLTVDirector	*GetHLTVDirector( void ) = 0;
 
+	virtual int				GetPlayerTickBase( CPlayerSlot slot ) = 0;
 	virtual void			unk101( CPlayerSlot slot ) = 0;
-	virtual void			unk102( CPlayerSlot slot ) = 0;
 
 	// Handles incoming usermessages from the client
 	virtual void			ClientSvcUserMessage( CPlayerSlot slot, int um_type, uint32 size, const void *buf ) = 0;
 
-	// Something pawn related
+	// Returns this player hltv delay in seconds
+	virtual float			GetPlayerHltvDelay( CPlayerSlot slot, CEntityIndex &replay_ent ) = 0;
+	virtual bool			ReplayLastPlayerKill( CPlayerSlot slot, void *kill_info ) = 0;
+
 	virtual void			unk201() = 0;
 	virtual void			unk202() = 0;
-
 	virtual void			unk203() = 0;
-	virtual void			unk204() = 0;
 };
 
 typedef IVEngineServer2 IVEngineServer;
