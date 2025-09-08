@@ -642,7 +642,7 @@ public:
 
 	// Returns this player hltv delay in seconds
 	virtual float			GetPlayerHltvDelay( CPlayerSlot slot, CEntityIndex &replay_ent ) = 0;
-	virtual void			ReplayLastPlayerKill( CPlayerSlot slot, void *kill_info ) = 0;
+	virtual bool			ReplayLastPlayerKill( CPlayerSlot slot, void *kill_info ) = 0;
 
 	virtual void			unk201() = 0;
 	virtual void			unk202() = 0;
