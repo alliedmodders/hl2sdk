@@ -97,6 +97,7 @@ class IToolGameSimulationAPI;
 class CCLCMsg_Move;
 template <typename T>
 class CNetMessagePB;
+class CCLCMsg_Diagnostic;
 
 namespace google
 {
@@ -615,13 +616,12 @@ public:
 
 	// TERROR: A player sent a voice packet
 	virtual void			ClientVoice( CPlayerSlot slot ) = 0;
-
-	// A user has had their network id setup and validated
-	virtual void			NetworkIDValidated( const char *pszUserName, const char *pszNetworkID ) = 0;
-
+	
 	// The client has submitted a keyvalues command
 	virtual void			ClientCommandKeyValues( CPlayerSlot slot, KeyValues *pKeyValues ) = 0;
-
+	
+	virtual void			ClientDiagnostic( CPlayerSlot slot, CCLCMsg_Diagnostic *pDiagnosticMsg ) = 0;
+	
 	virtual bool			ClientCanPause( CPlayerSlot slot ) = 0;
 
 	virtual void			HLTVClientFullyConnect( int index, const CSteamID &steamID ) = 0;
