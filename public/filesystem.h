@@ -633,61 +633,7 @@ public:
 	virtual int			GetPathIndex( const FileNameHandle_t &handle ) = 0;
 	virtual long		GetPathTime( const char *pPath, const char *pPathID ) = 0;
 
-	// virtual DVDMode_t	GetDVDMode() = 0;
-
-	//--------------------------------------------------------
-	// Whitelisting for pure servers.
-	//--------------------------------------------------------
-
-	// This should be called ONCE at startup. Multiplayer games (gameinfo.txt does not contain singleplayer_only)
-	// want to enable this so sv_pure works.
-	virtual void			EnableWhitelistFileTracking( bool bEnable ) = 0;
-
-	// This is called when the client connects to a server using a pure_server_whitelist.txt file.
-	//
-	// Files listed in pWantCRCList will have CRCs calculated for them IF they come off disk
-	// (and those CRCs will come out of GetUnverifiedCRCFiles).
-	//
-	// Files listed in pAllowFromDiskList will be allowed to load from disk. All other files will
-	// be forced to come from Steam.
-	//
-	// The filesystem hangs onto the whitelists you pass in here, and it will Release() them when it closes down
-	// or when you call this function again.
-	//
-	// NOTE: The whitelists you pass in here will be accessed from multiple threads, so make sure the 
-	//       IsFileInList function is thread safe.
-	//
-	// If pFilesToReload is non-null, the filesystem will hand back a list of files that should be reloaded because they
-	// are now "dirty". For example, if you were on a non-pure server and you loaded a certain model, and then you connected
-	// to a pure server that said that model had to come from Steam, then pFilesToReload would specify that model
-	// and the engine should reload it so it can come from Steam.
-	//
-	// Be sure to call Release() on pFilesToReload.
-	virtual void			RegisterFileWhitelist( IFileList *pWantCRCList, IFileList *pAllowFromDiskList, IFileList **pFilesToReload ) = 0;
-
-	// Called when the client logs onto a server. Any files that came off disk should be marked as 
-	// unverified because this server may have a different set of files it wants to guarantee.
-	virtual void			MarkAllCRCsUnverified() = 0;
-
-	// As the server loads whitelists when it transitions maps, it calls this to calculate CRCs for any files marked
-	// with check_crc.   Then it calls CheckCachedFileCRC later when it gets client requests to verify CRCs.
-	virtual void			CacheFileCRCs( const char *pPathname, ECacheCRCType eType, IFileList *pFilter ) = 0;
-	virtual EFileCRCStatus	CheckCachedFileCRC( const char *pPathID, const char *pRelativeFilename, CRC32_t *pCRC ) = 0;
-
-	// Fills in the list of files that have been loaded off disk and have not been verified.
-	// Returns the number of files filled in (between 0 and nMaxFiles).
-	//
-	// This also removes any files it's returning from the unverified CRC list, so they won't be
-	// returned from here again.
-	// The client sends batches of these to the server to verify.
-	virtual int				GetUnverifiedCRCFiles( CUnverifiedCRCFile *pFiles, int nMaxFiles ) = 0;
-	
-	// Control debug message output.
-	// Pass a combination of WHITELIST_SPEW_ flags.
-	virtual int				GetWhitelistSpewFlags() = 0;
-	virtual void			SetWhitelistSpewFlags( int flags ) = 0;
-
-	virtual void			GetSearchPathID( CBufferString &inout ) = 0;
+	virtual void		GetSearchPathID( CBufferString &inout ) = 0;
 
 	// File path is "ugc:<UGCHandle_t value>"
 	virtual void AddUGCVPKFile( const char *pszName, const char *pPathID, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) = 0;
