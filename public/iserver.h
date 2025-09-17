@@ -168,7 +168,6 @@ public:
 	// Returns sv_password cvar value, if it's set to "none" nullptr would be returned!
 	virtual const char *GetPassword() = 0;
 
-	virtual bool	IsInPureServerMode() = 0;
 	virtual void	RemoveClientFromGame(CServerSideClientBase *, /*ENetworkDisconnectionReason*/ int ) = 0;
 
 	virtual void	FillServerInfo( CSVCMsg_ServerInfo_t *pServerInfo ) = 0;

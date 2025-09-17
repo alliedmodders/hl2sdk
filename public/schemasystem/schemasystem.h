@@ -152,9 +152,6 @@ public:
 	virtual bool ConvertOldIntrospectedResourceDataToKV3( void*, void*, void*, CKeyValues3Context*, const char* ) = 0;
 	virtual void FindClassesByMeta( const char* pszMetaName, SchemaHierarchyIteration_t iter_type, CUtlVector<const CSchemaClassInfo*> *classes ) = 0;
 	
-	virtual void InstallCompleteModuleRegistrationCallback( CompleteModuleRegistrationCallbackFn_t pfnCallback, void* pArgument ) = 0;
-	virtual void RemoveCompleteModuleRegistrationCallback( CompleteModuleRegistrationCallbackFn_t pfnCallback, void* pArgument ) = 0;
-	
 	virtual SchemaMetaInfoHandle_t<CSchemaType_Builtin> GetSchemaBuiltinType( SchemaBuiltinType_t eBuiltinType ) = 0;
 	
 	virtual ~ISchemaSystem() = 0;
