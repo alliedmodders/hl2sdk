@@ -184,10 +184,14 @@ public:
 
 	virtual void		SetFrameTimeAmnesty( const char *amnesty, int, float frametime ) = 0;
 	virtual const char *GetFrameTimeAmnesty( bool check_cvar ) = 0;
+
+	virtual void		unk101() = 0;
+
 	virtual void		ShowFrameTimeReport( void *, bool ) = 0;
 
 	virtual void		DumpNetStats( void *, void * ) = 0;
-	virtual void		unk101() = 0;
+
+	virtual void		unk201() = 0;
 
 	// Tell engine to change level ( "changelevel s1\n" or "changelevel2 s1 s2\n" )
 	virtual void		ChangeLevel( const char *s1, const char *s2 ) = 0;
@@ -320,8 +324,8 @@ public:
 	virtual void P2PGroupChanged() = 0;
 #endif
 
-	virtual void unk201() = 0;
-	virtual void unk202() = 0;
+	virtual void unk301() = 0;
+	virtual void unk302() = 0;
 	
 	// Use these to setup who can hear whose voice.
 	// Pass in client indices (which are their ent indices - 1).
@@ -329,23 +333,12 @@ public:
 	virtual bool SetClientListening(CPlayerSlot iReceiver, CPlayerSlot iSender, bool bListen) = 0;
 	virtual bool SetClientProximity(CPlayerSlot iReceiver, CPlayerSlot iSender, bool bUseProximity) = 0;
 
-	virtual void unk301() = 0;
-	virtual void unk302() = 0;
+	virtual void unk401() = 0;
+	virtual void unk402() = 0;
 
 	virtual void KickClient( CPlayerSlot nSlot, const char *szInternalReason, ENetworkDisconnectionReason reason ) = 0;
 	virtual void BanClient( CPlayerSlot nSlot, float flDuration, bool bKick ) = 0;
 	virtual void BanClient( CSteamID steamId, float flDuration, bool bKick ) = 0;
-
-	virtual void unk400() = 0;
-	virtual void unk401() = 0;
-	virtual void unk402() = 0;
-	virtual void unk403() = 0;
-	virtual void unk404() = 0;
-	virtual void unk405() = 0;
-	virtual void unk406() = 0;
-	virtual void unk407() = 0;
-
-	virtual void SetClientUpdateRate( CPlayerSlot nSlot, float flUpdateRate ) = 0;
 
 	virtual void unk500() = 0;
 	virtual void unk501() = 0;
@@ -355,8 +348,19 @@ public:
 	virtual void unk505() = 0;
 	virtual void unk506() = 0;
 	virtual void unk507() = 0;
-	virtual void unk508() = 0;
-	virtual void unk509() = 0;
+
+	virtual void SetClientUpdateRate( CPlayerSlot nSlot, float flUpdateRate ) = 0;
+
+	virtual void unk600() = 0;
+	virtual void unk601() = 0;
+	virtual void unk602() = 0;
+	virtual void unk603() = 0;
+	virtual void unk604() = 0;
+	virtual void unk605() = 0;
+	virtual void unk606() = 0;
+	virtual void unk607() = 0;
+	virtual void unk608() = 0;
+	virtual void unk609() = 0;
 };
 
 abstract_class IServerGCLobby
