@@ -121,6 +121,8 @@ public:
 	// if copy_or_cleanup is true, if false would cleanup the buffer
 	virtual void				CopyUserInfoCvarDefaults( ConVarUserInfoSet_t buffer, int from, int to, bool copy_or_cleanup ) = 0;
 
+	virtual void				unk101() = 0;
+
 	// Register, unregister vars
 	virtual void				RegisterConVar( const ConVarCreation_t& setup, uint64 nAdditionalFlags, ConVarRef* pCvarRef, ConVarData** pCvarData ) = 0;
 	// Unregisters convar change callback, but leaves the convar in the lists,
