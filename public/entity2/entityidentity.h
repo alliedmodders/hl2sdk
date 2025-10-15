@@ -68,7 +68,6 @@ enum EntityFlags_t : uint32
 	EF_SUSPEND_OUTSIDE_PVS = 0x8000,
 };
 
-// Size: 0x78
 class CEntityIdentity
 {
 public:
@@ -99,30 +98,29 @@ public:
 	bool ClassMatches( const char* pszClassOrWildcard ) const;
 
 public:
-	CEntityInstance* m_pInstance; // 0x0
-	CEntityClass* m_pClass; // 0x8
-	CEntityHandle m_EHandle; // 0x10
-	int32 m_nameStringableIndex; // 0x14	
-	CUtlSymbolLarge m_name; // 0x18
-	CUtlSymbolLarge m_designerName; // 0x20
+	CEntityInstance* m_pInstance;
+	CEntityClass* m_pClass;
+	CEntityHandle m_EHandle;
+	int32 m_nameStringableIndex;
+	CUtlSymbolLarge m_name;
+	CUtlSymbolLarge m_designerName;
 private:
-	uint64 m_hPublicScope; // 0x28 - CEntityPublicScriptScope
+	uint64 m_hPublicScope; // CEntityPublicScriptScope
 public:
-	EntityFlags_t m_flags; // 0x30	
+	EntityFlags_t m_flags;
 private:
-	SpawnGroupHandle_t m_hSpawnGroup; // 0x34
+	SpawnGroupHandle_t m_hSpawnGroup;
 public:
-	WorldGroupId_t m_worldGroupId; // 0x38
-	uint32 m_fDataObjectTypes; // 0x3c	
-	ChangeAccessorFieldPathIndex_t m_PathIndex; // 0x40
+	WorldGroupId_t m_worldGroupId;
+	uint32 m_fDataObjectTypes;
+	ChangeAccessorFieldPathIndex_t m_PathIndex;
 private:
-	void* m_pAttributes; // 0x48 - CUtlObjectAttributeTable<CEntityIdentity, CUtlStringToken>
-	void* m_pRenderAttrs; // 0x50 - CRenderAttributesDoubleBuffered
+	void* m_pAttributes; // CUtlObjectAttributeTable<CEntityIdentity, CUtlStringToken>
 public:
-	CEntityIdentity* m_pPrev; // 0x58	
-	CEntityIdentity* m_pNext; // 0x60	
-	CEntityIdentity* m_pPrevByClass; // 0x68	
-	CEntityIdentity* m_pNextByClass; // 0x70	
+	CEntityIdentity* m_pPrev;
+	CEntityIdentity* m_pNext;
+	CEntityIdentity* m_pPrevByClass;
+	CEntityIdentity* m_pNextByClass;
 };
 
 #endif // ENTITYIDENTITY_H
