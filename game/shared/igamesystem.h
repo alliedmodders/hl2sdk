@@ -249,78 +249,79 @@ public:
 	GS_EVENT_IMPL( ClientFullySignedOn )					// 9
 	GS_EVENT_IMPL( Disconnect )								// 10
 
-	GS_EVENT_IMPL( GameDeactivate )							// 11
+	virtual void unk_001( const void *const msg ) = 0;		// 11
 
-	GS_EVENT_IMPL( SpawnGroupPrecache )						// 12
-	GS_EVENT_IMPL( SpawnGroupUncache )						// 13
-	GS_EVENT_IMPL( PreSpawnGroupLoad )						// 14
-	GS_EVENT_IMPL( PostSpawnGroupLoad )						// 15
-	GS_EVENT_IMPL( PreSpawnGroupUnload )					// 16
-	GS_EVENT_IMPL( PostSpawnGroupUnload )					// 17
-	GS_EVENT_IMPL( ActiveSpawnGroupChanged )				// 18
+	GS_EVENT_IMPL( GameDeactivate )							// 12
 
-	GS_EVENT_IMPL( ClientPostDataUpdate )					// 19
+	GS_EVENT_IMPL( SpawnGroupPrecache )						// 13
+	GS_EVENT_IMPL( SpawnGroupUncache )						// 14
+	GS_EVENT_IMPL( PreSpawnGroupLoad )						// 15
+	GS_EVENT_IMPL( PostSpawnGroupLoad )						// 16
+	GS_EVENT_IMPL( PreSpawnGroupUnload )					// 17
+	GS_EVENT_IMPL( PostSpawnGroupUnload )					// 18
+	GS_EVENT_IMPL( ActiveSpawnGroupChanged )				// 19
+	GS_EVENT_IMPL( ClientPostDataUpdate )					// 20
 
 	// Called before rendering
-	GS_EVENT_IMPL( ClientPreRender )						// 20
+	GS_EVENT_IMPL( ClientPreRender )						// 21
 
-	GS_EVENT_IMPL( ClientPreEntityThink )					// 21
+	GS_EVENT_IMPL( ClientPreEntityThink )					// 22
 
-	virtual void unk_001( const void *const msg ) = 0;		// 22
-	virtual void unk_002( const void *const msg ) = 0;		// 23
+	virtual void unk_101( const void *const msg ) = 0;		// 23
+	virtual void unk_102( const void *const msg ) = 0;		// 24
 
-	GS_EVENT_IMPL( ClientPollNetworking )					// 24
+	GS_EVENT_IMPL( ClientPollNetworking )					// 25
 
-	virtual void unk_101( const void *const msg ) = 0;		// 25
+	virtual void unk_201( const void *const msg ) = 0;		// 26
 
 	// Gets called each frame
-	GS_EVENT_IMPL( ClientUpdate )							// 26
+	GS_EVENT_IMPL( ClientUpdate )							// 27
 
-	virtual void unk_201( const void *const msg ) = 0;		// 27
+	virtual void unk_301( const void *const msg ) = 0;		// 28
 
 	// Called after rendering
-	GS_EVENT_IMPL( ClientPostRender )						// 28
+	GS_EVENT_IMPL( ClientPostRender )						// 29
 
 	// Called each frame before entities think
-	GS_EVENT_IMPL( ServerPreEntityThink )					// 29
+	GS_EVENT_IMPL( ServerPreEntityThink )					// 30
 	// called after entities think
-	GS_EVENT_IMPL( ServerPostEntityThink )					// 30
+	GS_EVENT_IMPL( ServerPostEntityThink )					// 31
 
-	virtual void unk_301( const void *const msg ) = 0;		// 31
+	virtual void unk_401( const void *const msg ) = 0;		// 32
 
-	GS_EVENT_IMPL( ServerPreClientUpdate )					// 32
-	GS_EVENT_IMPL( ServerAdvanceTick )						// 33
-	GS_EVENT_IMPL( ClientAdvanceTick )						// 34
-	GS_EVENT_IMPL( ServerGamePostSimulate )					// 35
-	GS_EVENT_IMPL( ClientGamePostSimulate )					// 36
-	GS_EVENT_IMPL( ServerPostAdvanceTick )					// 37
-	GS_EVENT_IMPL( ServerBeginAsyncPostTickWork )			// 38
+	GS_EVENT_IMPL( ServerPreClientUpdate )					// 33
+	GS_EVENT_IMPL( ServerAdvanceTick )						// 34
+	GS_EVENT_IMPL( ClientAdvanceTick )						// 35
+	GS_EVENT_IMPL( ServerGamePostSimulate )					// 36
+	GS_EVENT_IMPL( ClientGamePostSimulate )					// 37
+	GS_EVENT_IMPL( ServerPostAdvanceTick )					// 38
+	GS_EVENT_IMPL( ServerBeginAsyncPostTickWork )			// 39
 
-	virtual void unk_401( const void *const msg ) = 0;		// 39
+	virtual void unk_501( const void *const msg ) = 0;		// 40
 
-	GS_EVENT_IMPL( ServerEndAsyncPostTickWork )				// 40
+	GS_EVENT_IMPL( ServerEndAsyncPostTickWork )				// 41
 
-	GS_EVENT_IMPL( ClientFrameSimulate )					// 41
-	GS_EVENT_IMPL( ClientPauseSimulate )					// 42
-	GS_EVENT_IMPL( ClientAdvanceNonRenderedFrame )			// 43
+	GS_EVENT_IMPL( ClientFrameSimulate )					// 42
+	GS_EVENT_IMPL( ClientPauseSimulate )					// 43
+	GS_EVENT_IMPL( ClientAdvanceNonRenderedFrame )			// 44
 
-	GS_EVENT_IMPL( GameFrameBoundary )						// 44
-	GS_EVENT_IMPL( OutOfGameFrameBoundary )					// 45
+	GS_EVENT_IMPL( GameFrameBoundary )						// 45
+	GS_EVENT_IMPL( OutOfGameFrameBoundary )					// 46
 
-	GS_EVENT_IMPL( SaveGame )								// 46
-	GS_EVENT_IMPL( RestoreGame )							// 47
+	GS_EVENT_IMPL( SaveGame )								// 47
+	GS_EVENT_IMPL( RestoreGame )							// 48
 
-	virtual void unk_501( const void *const msg ) = 0;		// 48
-	virtual void unk_502( const void *const msg ) = 0;		// 49
-	virtual void unk_503( const void *const msg ) = 0;		// 50
-	virtual void unk_504( const void *const msg ) = 0;		// 51
-	virtual void unk_505( const void *const msg ) = 0;		// 52
-	virtual void unk_506( const void *const msg ) = 0;		// 53
+	virtual void unk_601( const void *const msg ) = 0;		// 49
+	virtual void unk_602( const void *const msg ) = 0;		// 50
+	virtual void unk_603( const void *const msg ) = 0;		// 51
+	virtual void unk_604( const void *const msg ) = 0;		// 52
+	virtual void unk_605( const void *const msg ) = 0;		// 53
+	virtual void unk_606( const void *const msg ) = 0;		// 54
 
-	virtual const char* GetName() const = 0;				// 54
-	virtual void SetGameSystemGlobalPtrs(void* pValue) = 0;	// 55
-	virtual void SetName(const char* pName) = 0;			// 56
-	virtual bool DoesGameSystemReallocate() = 0;			// 57
+	virtual const char* GetName() const = 0;				// 55
+	virtual void SetGameSystemGlobalPtrs(void* pValue) = 0;	// 56
+	virtual void SetName(const char* pName) = 0;			// 57
+	virtual bool DoesGameSystemReallocate() = 0;			// 58
 	virtual ~IGameSystem() {}
 };
 
@@ -353,6 +354,8 @@ public:
 	GS_EVENT( ClientFullySignedOn ) {}
 	GS_EVENT( Disconnect ) {}
 
+	virtual void unk_001( const void *const msg ) override {}
+
 	GS_EVENT( GameDeactivate ) {}
 
 	GS_EVENT( SpawnGroupPrecache ) {}
@@ -370,17 +373,17 @@ public:
 
 	GS_EVENT( ClientPreEntityThink ) {}
 
-	virtual void unk_001( const void *const msg ) override {}
-	virtual void unk_002( const void *const msg ) override {}
+	virtual void unk_101( const void *const msg ) override {}
+	virtual void unk_102( const void *const msg ) override {}
 
 	GS_EVENT( ClientPollNetworking ) {}
 
-	virtual void unk_101( const void *const msg ) override {}
+	virtual void unk_201( const void *const msg ) override {}
 
 	// Gets called each frame
 	GS_EVENT( ClientUpdate ) {}
 
-	virtual void unk_201( const void *const msg ) override {}
+	virtual void unk_301( const void *const msg ) override {}
 
 	// Called after rendering
 	GS_EVENT( ClientPostRender ) {}
@@ -390,7 +393,7 @@ public:
 	// called after entities think
 	GS_EVENT( ServerPostEntityThink ) {}
 
-	virtual void unk_301( const void *const msg ) override {}
+	virtual void unk_401( const void *const msg ) override {}
 
 	GS_EVENT( ServerPreClientUpdate ) {}
 	GS_EVENT( ServerAdvanceTick ) {}
@@ -400,7 +403,7 @@ public:
 	GS_EVENT( ServerPostAdvanceTick ) {}
 	GS_EVENT( ServerBeginAsyncPostTickWork ) {}
 
-	virtual void unk_401( const void *const msg ) override {}
+	virtual void unk_501( const void *const msg ) override {}
 
 	GS_EVENT( ServerEndAsyncPostTickWork ) {}
 
@@ -414,12 +417,12 @@ public:
 	GS_EVENT( SaveGame ) {}
 	GS_EVENT( RestoreGame ) {}
 
-	virtual void unk_501( const void *const msg ) override {}
-	virtual void unk_502( const void *const msg ) override {}
-	virtual void unk_503( const void *const msg ) override {}
-	virtual void unk_504( const void *const msg ) override {}
-	virtual void unk_505( const void *const msg ) override {}
-	virtual void unk_506( const void *const msg ) override {}
+	virtual void unk_601( const void *const msg ) override {}
+	virtual void unk_602( const void *const msg ) override {}
+	virtual void unk_603( const void *const msg ) override {}
+	virtual void unk_604( const void *const msg ) override {}
+	virtual void unk_605( const void *const msg ) override {}
+	virtual void unk_606( const void *const msg ) override {}
 
 	virtual const char* GetName() const override { return m_pName; }
 	virtual void SetGameSystemGlobalPtrs(void* pValue) override {}
