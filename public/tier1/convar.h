@@ -443,21 +443,21 @@ struct ConCommandCallbackInfo_t
 	bool m_bIsContextLess : 1;
 };
 
-struct ConCommandCompletionCallbackInfo_t
+struct CompletionCallbackInfo_t
 {
-	ConCommandCompletionCallbackInfo_t() :
+	CompletionCallbackInfo_t() :
 		m_fnCompletionCallback( nullptr ),
 		m_bIsFunction( false ),
 		m_bIsInterface( false )
 	{}
 
-	ConCommandCompletionCallbackInfo_t( FnCommandCompletionCallback cb ) :
+	CompletionCallbackInfo_t( FnCommandCompletionCallback cb ) :
 		m_fnCompletionCallback( cb ),
 		m_bIsFunction( cb ? true : false ),
 		m_bIsInterface( false )
 	{}
 
-	ConCommandCompletionCallbackInfo_t( ICommandCompletionCallback *cb ) :
+	CompletionCallbackInfo_t( ICommandCompletionCallback *cb ) :
 		m_pCommandCompletionCallback( cb ),
 		m_bIsFunction( false ),
 		m_bIsInterface( cb ? true : false )
@@ -490,7 +490,7 @@ struct ConCommandCompletionCallbackInfo_t
 struct ConCommandCreation_t : CVarCreationBase_t
 {
 	ConCommandCallbackInfo_t m_CBInfo;
-	ConCommandCompletionCallbackInfo_t m_CompletionCBInfo;
+	CompletionCallbackInfo_t m_CompletionCBInfo;
 };
 
 //-----------------------------------------------------------------------------
@@ -520,7 +520,7 @@ public:
 	const char*				m_pszHelpString;
 	uint64					m_nFlags;
 
-	ConCommandCompletionCallbackInfo_t m_CompletionCB;
+	CompletionCallbackInfo_t m_CompletionCB;
 
 	// Register index of concommand which completion cb comes from
 	int m_CompletionCBCmdIndex;
@@ -591,7 +591,7 @@ public:
 
 	ConCommand( const char *pName, ConCommandCallbackInfo_t callback,
 		const char *pHelpString, uint64 flags = 0,
-		ConCommandCompletionCallbackInfo_t completionFunc = ConCommandCompletionCallbackInfo_t() )
+		CompletionCallbackInfo_t completionFunc = CompletionCallbackInfo_t() )
 		: BaseClass()
 	{
 		Create( pName, callback, pHelpString, flags, completionFunc );
@@ -603,7 +603,7 @@ public:
 	}
 
 private:
-	void Create( const char *pName, const ConCommandCallbackInfo_t &cb, const char *pHelpString, uint64 flags, const ConCommandCompletionCallbackInfo_t &completion_cb );
+	void Create( const char *pName, const ConCommandCallbackInfo_t &cb, const char *pHelpString, uint64 flags, const CompletionCallbackInfo_t &completion_cb );
 	void Destroy( );
 };
 
@@ -640,7 +640,8 @@ struct ConVarValueInfo_t
 		m_fnCallBack( nullptr ),
 		m_fnProviderFilterCallBack( nullptr ),
 		m_fnFilterCallBack( nullptr ),
-		m_eVarType( type )
+		m_eVarType( type ),
+		m_CompletionCallBack()
 	{}
 
 	template <typename T>
@@ -690,6 +691,11 @@ struct ConVarValueInfo_t
 		}
 	}
 
+	void SetCompletionCallback( const CompletionCallbackInfo_t &cb )
+	{
+		m_CompletionCallBack = cb;
+	}
+
 	int32 m_Version;
 
 	bool m_bHasDefault;
@@ -710,6 +716,8 @@ public:
 	FnGenericFilterCallback_t m_fnFilterCallBack;
 
 	EConVarType m_eVarType;
+
+	CompletionCallbackInfo_t m_CompletionCallBack;
 };
 
 struct ConVarCreation_t : CVarCreationBase_t
@@ -998,6 +1006,8 @@ private:
 	unsigned int m_iCallbackIndex;
 	// Index into a linked list of cvar filter callbacks
 	unsigned int m_iFilterCBIndex;
+	// Index into a linked list of cvar completion callbacks
+	unsigned int m_iCompletionCBIndex;
 
 	int m_GameInfoFlags;
 	int m_UserInfoByteIndex;
@@ -1267,7 +1277,7 @@ class CConVar : public CConVarRef<T>
 public:
 	typedef CConVarRef<T> BaseClass;
 
-	CConVar( const char *name, uint64 flags, const char *help_string, const T &default_value, FnTypedChangeCallback_t<T> cb = nullptr )
+	CConVar( const char *name, uint64 flags, const char *help_string, const T &default_value, FnTypedChangeCallback_t<T> cb = nullptr, const CompletionCallbackInfo_t &completion_cb = {} )
 		: BaseClass()
 	{
 		Assert( name );
@@ -1278,10 +1288,16 @@ public:
 		value_info.SetDefaultValue( default_value );
 		value_info.SetCallback( cb );
 
+		if(completion_cb.IsValid())
+		{
+			value_info.SetCompletionCallback( completion_cb );
+			flags |= FCVAR_VCONSOLE_FUZZY_MATCHING;
+		}
+
 		BaseClass::Register( name, flags, help_string, value_info );
 	}
 
-	CConVar( const char *name, uint64 flags, const char *help_string, const T &default_value, bool min, const T &minValue, bool max, const T &maxValue, FnTypedChangeCallback_t<T> cb = nullptr, FnTypedFilterCallback_t<T> filter_cb = nullptr )
+	CConVar( const char *name, uint64 flags, const char *help_string, const T &default_value, bool min, const T &minValue, bool max, const T &maxValue, FnTypedChangeCallback_t<T> cb = nullptr, FnTypedFilterCallback_t<T> filter_cb = nullptr, const CompletionCallbackInfo_t &completion_cb = {} )
 		: BaseClass()
 	{
 		Assert( name );
@@ -1299,6 +1315,12 @@ public:
 
 		value_info.SetCallback( cb );
 		value_info.SetFilterCallback( filter_cb );
+		
+		if(completion_cb.IsValid())
+		{
+			value_info.SetCompletionCallback( completion_cb );
+			flags |= FCVAR_VCONSOLE_FUZZY_MATCHING;
+		}
 
 		BaseClass::Register( name, flags, help_string, value_info );
 	}

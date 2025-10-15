@@ -461,7 +461,7 @@ void ConCommandRef::Dispatch( const CCommandContext &context, const CCommand &co
 	g_pCVar->DispatchConCommand( *this, context, command );
 }
 
-void ConCommand::Create( const char* pName, const ConCommandCallbackInfo_t &cb, const char* pHelpString, uint64 flags, const ConCommandCompletionCallbackInfo_t &completion_cb )
+void ConCommand::Create( const char* pName, const ConCommandCallbackInfo_t &cb, const char* pHelpString, uint64 flags, const CompletionCallbackInfo_t &completion_cb )
 {
 	// Name should be static data
 	Assert(pName);
