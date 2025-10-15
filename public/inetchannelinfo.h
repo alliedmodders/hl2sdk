@@ -59,7 +59,6 @@ public:
 	virtual const netadr_t &GetRemoteAddress( void ) const = 0;
 	virtual float		GetTime( void ) const = 0;	// current net time
 	virtual float		GetTimeConnected( void ) const = 0;	// get connection time in seconds
-	virtual int			GetBufferSize( void ) const = 0;	// netchannel packet history size
 	virtual int			GetDataRate( void ) const = 0; // send data rate in byte/sec
 	
 	virtual bool		IsLocalHost( void ) const = 0;	// true if localhost
