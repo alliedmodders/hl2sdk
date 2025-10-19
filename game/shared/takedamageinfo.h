@@ -80,6 +80,15 @@ public:
 	void			SetAmmoType( int iAmmoType );
 	const char *	GetAmmoName() const;
 
+	Vector			GetDamageDirection() const;
+	void			SetDamageDirection( const Vector &damageDirection );
+
+	float			GetRadius() const;
+	void			SetRadius( float flRadius );
+
+	float			GetVictimIndex() const;
+	void			SetVictimIndex( int iVictimIndex );
+
 	void			Set( CBaseEntity *pInflictor, CBaseEntity *pAttacker, float flDamage, int bitsDamageType, int iKillType = 0 );
 	void			Set( CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBaseEntity *pWeapon, float flDamage, int bitsDamageType, int iKillType = 0 );
 	void			Set( CBaseEntity *pInflictor, CBaseEntity *pAttacker, const Vector &damageForce, const Vector &damagePosition, float flDamage, int bitsDamageType, int iKillType = 0, Vector *reportedPosition = NULL );
@@ -102,7 +111,7 @@ protected:
 	Vector			m_vecDamageForce;
 	Vector			m_vecDamagePosition;
 	Vector			m_vecReportedPosition;	// Position players are told damage is coming from
-	Vector			m_vecUnknown;
+	Vector			m_vecDamageDirection;	// The type matches, but I'm not sure about the name; the name is taken from new games.
 	EHANDLE			m_hInflictor;
 	EHANDLE			m_hAttacker;
 	EHANDLE			m_hWeapon;
@@ -113,6 +122,8 @@ protected:
 	int				m_iDamageCustom;
 	int				m_iDamageStats;
 	int				m_iAmmoType;			// AmmoType of the weapon used to cause this damage, if any
+	int				m_flRadius;
+	int				m_iDamageVictimIndex;
 
 	DECLARE_SIMPLE_DATADESC();
 };
@@ -331,6 +342,35 @@ inline void CTakeDamageInfo::CopyDamageToBaseDamage()
 	m_flBaseDamage = m_flDamage;
 }
 
+inline Vector CTakeDamageInfo::GetDamageDirection() const
+{
+	return m_vecDamageDirection;
+}
+
+inline void CTakeDamageInfo::SetDamageDirection( const Vector &damageDirection )
+{
+	m_vecDamageDirection = damageDirection;
+}
+
+inline float CTakeDamageInfo::GetRadius() const
+{
+	return m_flRadius;
+}
+
+inline void CTakeDamageInfo::SetRadius( float flRadius )
+{
+	m_flRadius = flRadius;
+}
+
+inline float CTakeDamageInfo::GetVictimIndex() const
+{
+	return m_iDamageVictimIndex;
+}
+
+inline void CTakeDamageInfo::SetVictimIndex( int iVictimIndex )
+{
+	m_iDamageVictimIndex = iVictimIndex;
+}
 
 // -------------------------------------------------------------------------------------------------- //
 // Inlines.
