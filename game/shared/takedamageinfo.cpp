@@ -16,18 +16,20 @@ ConVar phys_pushscale( "phys_pushscale", "1", FCVAR_REPLICATED );
 
 BEGIN_SIMPLE_DATADESC( CTakeDamageInfo )
 	DEFINE_FIELD( m_vecDamageForce, FIELD_VECTOR ),
-	DEFINE_FIELD( m_vecDamagePosition, FIELD_POSITION_VECTOR),
-	DEFINE_FIELD( m_vecReportedPosition, FIELD_POSITION_VECTOR),
-	DEFINE_FIELD( m_hInflictor, FIELD_EHANDLE),
-	DEFINE_FIELD( m_hAttacker, FIELD_EHANDLE),
-	DEFINE_FIELD( m_hWeapon, FIELD_EHANDLE),
-	DEFINE_FIELD( m_flDamage, FIELD_FLOAT),
-	DEFINE_FIELD( m_flMaxDamage, FIELD_FLOAT),
+	DEFINE_FIELD( m_vecDamagePosition, FIELD_POSITION_VECTOR ),
+	DEFINE_FIELD( m_vecReportedPosition, FIELD_POSITION_VECTOR ),
+	DEFINE_FIELD( m_hInflictor, FIELD_EHANDLE ),
+	DEFINE_FIELD( m_hAttacker, FIELD_EHANDLE ),
+	DEFINE_FIELD( m_hWeapon, FIELD_EHANDLE ),
+	DEFINE_FIELD( m_flDamage, FIELD_FLOAT ),
+	DEFINE_FIELD( m_flMaxDamage, FIELD_FLOAT ),
 	DEFINE_FIELD( m_flBaseDamage, FIELD_FLOAT ),
-	DEFINE_FIELD( m_bitsDamageType, FIELD_INTEGER),
-	DEFINE_FIELD( m_iDamageCustom, FIELD_INTEGER),
-	DEFINE_FIELD( m_iDamageStats, FIELD_INTEGER),
-	DEFINE_FIELD( m_iAmmoType, FIELD_INTEGER),
+	DEFINE_FIELD( m_bitsDamageType, FIELD_INTEGER ),
+	DEFINE_FIELD( m_iDamageCustom, FIELD_INTEGER ),
+	DEFINE_FIELD( m_iDamageStats, FIELD_INTEGER ),
+	DEFINE_FIELD( m_iAmmoType, FIELD_INTEGER ),
+	DEFINE_FIELD( m_flRadius, FIELD_FLOAT ),
+	DEFINE_FIELD( m_iDamageVictimIndex, FIELD_INTEGER ),
 END_DATADESC()
 
 void CTakeDamageInfo::Init( CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBaseEntity *pWeapon, const Vector &damageForce, const Vector &damagePosition, const Vector &reportedPosition, float flDamage, int bitsDamageType, int iCustomDamage )
@@ -56,6 +58,10 @@ void CTakeDamageInfo::Init( CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBa
 	m_vecDamagePosition = damagePosition;
 	m_vecReportedPosition = reportedPosition;
 	m_iAmmoType = -1;
+
+	m_vecDamageDirection = vec3_origin;
+	m_flRadius = 0.0;
+	m_iDamageVictimIndex = 0;
 }
 
 CTakeDamageInfo::CTakeDamageInfo()
