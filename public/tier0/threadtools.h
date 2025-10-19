@@ -10,6 +10,7 @@
 #define THREADTOOLS_H
 
 #include <limits.h>
+#include <shared_mutex>
 
 #include "tier0/platform.h"
 #include "tier0/dbg.h"
@@ -1179,32 +1180,16 @@ private:
 //
 //-----------------------------------------------------------------------------
 
-#ifdef _WIN32
-class ALIGN8 CThreadSpinRWLock
-#else
-class ALIGN16 CThreadSpinRWLock
-#endif
+class CThreadSpinRWLock
 {
 public:
-	CThreadSpinRWLock( const char* pDebugName = NULL )
-	{
-#ifdef _WIN32
-		COMPILE_TIME_ASSERT( sizeof( LockInfo_t ) == sizeof( int64 ) ); Assert( (intp)this % 8 == 0 );
-#else
-		COMPILE_TIME_ASSERT( sizeof( LockInfo_t ) == sizeof( int128 ) ); Assert( (intp)this % 16 == 0 );
-#endif
-		memset( (void*)this, 0, sizeof( *this ) );
+	bool TryLockForWrite( const char *pFileName = NULL, int nLine = -1 ) { return m_mutex.try_lock(); }
+	bool TryLockForRead( const char *pFileName = NULL, int nLine = -1 ) { return m_mutex.try_lock_shared(); }
 
-		//m_pDebugName = pDebugName;
-	}
-
-	bool TryLockForWrite( const char *pFileName = NULL, int nLine = -1 );
-	bool TryLockForRead( const char *pFileName = NULL, int nLine = -1 );
-
-	PLATFORM_CLASS void LockForRead( const char *pFileName = NULL, int nLine = -1 );
-	PLATFORM_CLASS void UnlockRead( const char *pFileName = NULL, int nLine = -1 );
-	void LockForWrite( const char *pFileName = NULL, int nLine = -1 );
-	PLATFORM_CLASS void UnlockWrite( const char *pFileName = NULL, int nLine = -1 );
+	void LockForRead( const char *pFileName = NULL, int nLine = -1 ) { m_mutex.lock_shared(); }
+	void UnlockRead( const char *pFileName = NULL, int nLine = -1 ) { m_mutex.unlock_shared(); }
+	void LockForWrite( const char *pFileName = NULL, int nLine = -1 ) { m_mutex.lock(); }
+	void UnlockWrite( const char *pFileName = NULL, int nLine = -1 ) { m_mutex.unlock(); }
 
 	bool TryLockForWrite( const char *pFileName = NULL, int nLine = -1 ) const { return const_cast<CThreadSpinRWLock *>(this)->TryLockForWrite( pFileName, nLine ); }
 	bool TryLockForRead( const char *pFileName = NULL, int nLine = -1 ) const { return const_cast<CThreadSpinRWLock *>(this)->TryLockForRead( pFileName, nLine ); }
@@ -1215,28 +1200,8 @@ public:
 	void UnlockWrite( const char *pFileName = NULL, int nLine = -1 ) const { const_cast<CThreadSpinRWLock *>(this)->UnlockWrite( pFileName, nLine ); }
 
 private:
-	struct LockInfo_t
-	{
-		ThreadId_t	m_writerId;
-#ifdef _WIN32
-		int32		m_nReaders;
-#else
-		int64		m_nReaders;
-#endif
-	};
-
-	bool AssignIf( const LockInfo_t &newValue, const LockInfo_t &comperand );
-	bool TryLockForWrite( const char *pFileName, int nLine, const ThreadId_t threadId );
-	PLATFORM_CLASS void SpinLockForWrite( const char *pFileName, int nLine, const ThreadId_t threadId );
-
-	volatile LockInfo_t m_lockInfo;
-	CInterlockedInt m_nWriters;
-	const char* m_pDebugName;
-#ifdef _WIN32
-} ALIGN8_POST;
-#else
-} ALIGN16_POST;
-#endif
+	std::shared_mutex m_mutex;
+};
 
 //-----------------------------------------------------------------------------
 //
@@ -1735,87 +1700,6 @@ inline void CThreadRWLock::UnlockRead()
 		m_CanWrite.Set();
 	}
 	m_mutex.Unlock( __FILE__, __LINE__ );
-}
-
-
-//-----------------------------------------------------------------------------
-//
-// CThreadSpinRWLock inline functions
-//
-//-----------------------------------------------------------------------------
-
-inline bool CThreadSpinRWLock::AssignIf( const LockInfo_t &newValue, const LockInfo_t &comperand )
-{
-#ifdef _WIN32
-	return ThreadInterlockedAssignIf64( (volatile int64 *)&m_lockInfo, *((int64 *)&newValue), *((int64 *)&comperand) );
-#else
-	return ThreadInterlockedAssignIf128( (volatile int128 *)&m_lockInfo, *((int128 *)&newValue), *((int128 *)&comperand) );
-#endif
-}
-
-FORCEINLINE bool CThreadSpinRWLock::TryLockForWrite( const char *pFileName, int nLine, const ThreadId_t threadId )
-{
-	// In order to grab a write lock, there can be no readers and no owners of the write lock
-	if ( m_lockInfo.m_nReaders > 0 || ( m_lockInfo.m_writerId && m_lockInfo.m_writerId != threadId ) )
-	{
-		return false;
-	}
-
-	static const LockInfo_t oldValue = { 0, 0 };
-	LockInfo_t newValue = { threadId, 0 };
-	if ( AssignIf( newValue, oldValue ) )
-	{
-		ThreadMemoryBarrier();
-		return true;
-	}
-	return false;
-}
-
-inline bool CThreadSpinRWLock::TryLockForWrite( const char *pFileName, int nLine )
-{
-	m_nWriters++;
-	if ( !TryLockForWrite( pFileName, nLine, ThreadGetCurrentId() ) )
-	{
-		m_nWriters--;
-		return false;
-	}
-	return true;
-}
-
-FORCEINLINE bool CThreadSpinRWLock::TryLockForRead( const char *pFileName, int nLine )
-{
-	if ( m_nWriters != 0 )
-	{
-		return false;
-	}
-	// In order to grab a write lock, the number of readers must not change and no thread can own the write
-	LockInfo_t oldValue;
-	LockInfo_t newValue;
-
-	oldValue.m_nReaders = m_lockInfo.m_nReaders;
-	oldValue.m_writerId = 0;
-	newValue.m_nReaders = oldValue.m_nReaders + 1;
-	newValue.m_writerId = 0;
-
-	if ( AssignIf( newValue, oldValue ) )
-	{
-		ThreadMemoryBarrier();
-		return true;
-	}
-	return false;
-}
-
-inline void CThreadSpinRWLock::LockForWrite( const char *pFileName, int nLine )
-{
-	const ThreadId_t threadId = ThreadGetCurrentId();
-
-	m_nWriters++;
-
-	if ( !TryLockForWrite( pFileName, nLine, threadId ) )
-	{
-		ThreadPause();
-		SpinLockForWrite( pFileName, nLine, threadId );
-	}
 }
 
 // read data from a memory address
