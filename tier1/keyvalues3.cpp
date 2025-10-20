@@ -1811,6 +1811,8 @@ void CKeyValues3Table::CopyFrom( KeyValues3 *parent, const CKeyValues3Table* src
 		members_base[i]->CopyFrom( src_members_base[i] );
 	}
 
+	m_nCount = new_size;
+
 	if ( new_size >= 128 )
 		EnableFastSearch();
 }
