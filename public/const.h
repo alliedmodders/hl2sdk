@@ -236,7 +236,8 @@ enum LifeState_t
 	LIFE_DYING			= 0x1,	// playing death animation or still falling off of a ledge waiting to hit ground
 	LIFE_DEAD			= 0x2,	// dead. lying still.
 	LIFE_RESPAWNABLE	= 0x3,
-	LIFE_RESPAWNING		= 0x4
+	LIFE_RESPAWNING		= 0x4,
+	NUM_LIFESTATES
 };
 
 // entity effects
