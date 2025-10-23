@@ -55,9 +55,15 @@ public:
 		mousedy = 0;
 
 		hasbeenpredicted = false;
+
 #if defined( HL2_DLL ) || defined( HL2_CLIENT_DLL )
 		entitygroundcontact.RemoveAll();
 #endif
+
+		// TrackIR
+		headangles.Init();
+		headoffset.Init();
+		// TrackIR
 	}
 
 	CUserCmd& operator =( const CUserCmd& src )
@@ -84,6 +90,11 @@ public:
 #if defined( HL2_DLL ) || defined( HL2_CLIENT_DLL )
 		entitygroundcontact			= src.entitygroundcontact;
 #endif
+
+		// TrackIR
+		headangles = src.headangles;
+		headoffset = src.headoffset;
+		// TrackIR
 
 		return *this;
 	}
@@ -152,6 +163,10 @@ public:
 	CUtlVector< CEntityGroundContact > entitygroundcontact;
 #endif
 
+	// TrackIR
+	QAngle headangles;
+	Vector headoffset;
+	// TrackIR
 };
 
 void ReadUsercmd( bf_read *buf, CUserCmd *move, CUserCmd *from );
