@@ -39,6 +39,7 @@ class CUtlBuffer;
 class Color;
 typedef void * FileHandle_t;
 class CKeyValuesGrowableStringTable;
+class IKeyValuesSystem;
 
 //-----------------------------------------------------------------------------
 // Purpose: Simple recursive data access class
@@ -117,9 +118,12 @@ public:
 	// gets the name as a unique int
 	int GetNameSymbol() const { return m_iKeyName; }
 
+	bool IsUsingLocalStorage() const;
+
 	// File access. Set UsesEscapeSequences true, if resource file/buffer uses Escape Sequences (eg \n, \t)
 	void UsesEscapeSequences(bool state); // default false
 	void UsesConditionals(bool state); // default true
+
 	bool LoadFromFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID = NULL, bool refreshCache = false );
 	bool SaveToFile( IBaseFileSystem *filesystem, const char *resourceName, const char *pathID = NULL, bool sortKeys = false, bool bAllowEmptyString = false, bool bCacheResult = false );
 
@@ -330,11 +334,13 @@ private:
 	char	   m_iDataType;
 	char	   m_bHasEscapeSequences; // true, if while parsing this KeyValue, Escape Sequences are used (default false)
 	char	   m_bEvaluateConditionals; // true, if while parsing this KeyValue, conditionals blocks are evaluated (default true)
-	char	   unused[1];
+	char	   m_bLocalStorage;
 
 	KeyValues *m_pPeer;	// pointer to next key in list
 	KeyValues *m_pSub;	// pointer to Start of a new sub key list
 	KeyValues *m_pChain;// Search here if it's not in our list
+
+	CKeyValuesGrowableStringTable* m_pStringTable;
 
 private:
 	// Statics to implement the optional growable string table
