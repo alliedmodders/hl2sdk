@@ -1,0 +1,86 @@
+name: Compilation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, windows-2022]
+        include:
+          - os: ubuntu-22.04
+            cc: clang
+            cxx: clang++
+          - os: windows-2022
+            cc: msvc
+      fail-fast: false
+
+    name: ${{ matrix.os }} - ${{ matrix.cc }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Linux dependencies
+        if: startsWith(runner.os, 'Linux')
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            gcc-multilib g++-multilib libstdc++6 lib32stdc++6 \
+            libc6-dev libc6-dev-i386 linux-libc-dev \
+            linux-libc-dev:i386 lib32z1-dev ${{ matrix.cc }}
+    
+      - uses: actions/setup-python@v5
+        name: Setup Python 3.12
+        with:
+          python-version: 3.12
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          
+      - uses: actions/checkout@v4
+        name: Repository checkout
+        with:
+          fetch-depth: 0
+          submodules: recursive
+          path: repository
+
+      - uses: actions/checkout@v4
+        name: AMBuild checkout
+        with:
+          repository: alliedmodders/ambuild
+          ref: fe8c99ccd24fa926bf6ac6b9935a5fc03df06a72
+          fetch-depth: 0
+          submodules: recursive
+          path: ambuild
+
+      - name: Setup AMBuild
+        shell: bash
+        run: |
+          cd "${{ env.CACHE_PATH }}"
+          python -m pip install ./ambuild
+
+      - name: Select clang compiler
+        if: startsWith(runner.os, 'Linux')
+        run: |
+          echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
+          echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
+          ${{ matrix.cc }} --version
+          ${{ matrix.cxx }} --version
+
+      - name: Build
+        shell: bash
+        working-directory: repository
+        run: |
+          mkdir build
+          cd build
+          python ../configure.py
+          ambuild
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libs_${{ runner.os }}
+          path: repository/build/lib
