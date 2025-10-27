@@ -22,6 +22,7 @@
 #include "tier0/vprof_telemetry.h"
 #include <Color.h>
 #include <stdlib.h>
+#include <cstdlib>
 #include "tier0/dbg.h"
 #include "tier0/mem.h"
 #include "utlbuffer.h"
@@ -1385,15 +1386,8 @@ float KeyValues::GetFloat( const char *keyName, float defaultValue )
 		switch ( dat->m_iDataType )
 		{
 		case TYPE_STRING:
-			return (float)atof(dat->m_sValue);
-		case TYPE_WSTRING:
-#ifdef WIN32
-			return (float) _wtof(dat->m_wsValue);		// no wtof
-#else
-			Assert( !"impl me" );
-			return 0.0;
-#endif
-			case TYPE_FLOAT:
+			return std::strtof(dat->m_sValue, nullptr);
+		case TYPE_FLOAT:
 			return dat->m_flValue;
 		case TYPE_INT:
 			return (float)dat->m_iValue;
