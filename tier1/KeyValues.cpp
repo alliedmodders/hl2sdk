@@ -22,7 +22,6 @@
 #include "tier0/vprof_telemetry.h"
 #include <Color.h>
 #include <stdlib.h>
-#include <cstdlib>
 #include "tier0/dbg.h"
 #include "tier0/mem.h"
 #include "utlbuffer.h"
@@ -462,9 +461,9 @@ void KeyValues::Init()
 	
 	m_bHasEscapeSequences = false;
 	m_bEvaluateConditionals = true;
-	m_bLocalStorage = false;
 
-	m_pStringTable = NULL;
+	// for future proof
+	memset( unused, 0, sizeof(unused) );
 }
 
 //-----------------------------------------------------------------------------
@@ -529,10 +528,7 @@ void KeyValues::ChainKeyValue( KeyValues* pChain )
 //-----------------------------------------------------------------------------
 const char *KeyValues::GetName( void ) const
 {
-	if ( m_bLocalStorage )
-		return m_pStringTable->GetStringForSymbol( m_iKeyName );
-	else
-		return s_pfGetStringForSymbol( m_iKeyName );
+	return s_pfGetStringForSymbol( m_iKeyName );
 }
 
 //-----------------------------------------------------------------------------
@@ -1005,9 +1001,7 @@ KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 	}
 
 	// lookup the symbol for the search string
-	HKeySymbol iSearchStr = m_bLocalStorage
-							? m_pStringTable->GetSymbolForString( searchStr, bCreate )
-							: s_pfGetSymbolForString( searchStr, bCreate );
+	HKeySymbol iSearchStr = s_pfGetSymbolForString( searchStr, bCreate );
 
 	if ( iSearchStr == INVALID_KEY_SYMBOL )
 	{
@@ -1386,8 +1380,15 @@ float KeyValues::GetFloat( const char *keyName, float defaultValue )
 		switch ( dat->m_iDataType )
 		{
 		case TYPE_STRING:
-			return std::strtof(dat->m_sValue, nullptr);
-		case TYPE_FLOAT:
+			return (float)atof(dat->m_sValue);
+		case TYPE_WSTRING:
+#ifdef WIN32
+			return (float) _wtof(dat->m_wsValue);		// no wtof
+#else
+			Assert( !"impl me" );
+			return 0.0;
+#endif
+			case TYPE_FLOAT:
 			return dat->m_flValue;
 		case TYPE_INT:
 			return (float)dat->m_iValue;
@@ -1729,18 +1730,7 @@ void KeyValues::SetFloat( const char *keyName, float value )
 
 void KeyValues::SetName( const char * setName )
 {
-	if ( m_bLocalStorage )
-		m_iKeyName = m_pStringTable->GetSymbolForString( setName );
-	else
-		m_iKeyName = s_pfGetSymbolForString( setName, true );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose:
-//-----------------------------------------------------------------------------
-bool KeyValues::IsUsingLocalStorage() const
-{
-	return m_bLocalStorage != 0;
+	m_iKeyName = s_pfGetSymbolForString( setName, true );
 }
 
 //-----------------------------------------------------------------------------
