@@ -471,7 +471,16 @@ protected:
 	int m_nOffset;
 
 	UtlBufferOverflowFunc_t m_GetOverflowFunc;
+
+#ifdef PLATFORM_POSIX
+    void* m_OverFlowFunc2;
+#endif
+
 	UtlBufferOverflowFunc_t m_PutOverflowFunc;
+
+#ifdef PLATFORM_POSIX
+    void* m_OverFlowFunc4;
+#endif
 
 	CByteswap	m_Byteswap;
 };
@@ -1399,4 +1408,5 @@ inline void CUtlBuffer::Spew( )
 
 
 #endif // UTLBUFFER_H
+
 
