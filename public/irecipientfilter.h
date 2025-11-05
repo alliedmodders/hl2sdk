@@ -27,7 +27,8 @@ public:
 	virtual bool	IsInitMessage( void ) const = 0;
 
 	virtual const CPlayerBitVec &GetRecipients( void ) const = 0;
-	virtual CPlayerSlot GetPredictedByPlayerSlot( void ) const = 0;
+	virtual CPlayerSlot GetPredictedPlayerSlot( void ) const = 0;
 };
 
 #endif // IRECIPIENTFILTER_H
+
