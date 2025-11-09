@@ -198,8 +198,8 @@ static void UpdateStats(struct QuantizedValue *v)
 		N+=s->Count;
 		for(j=0;j<current_ndims;j++)
 		{
-			uint8 v=s->Value[j];
-			Means[j]+=v*s->Count;
+			uint8 v2=s->Value[j];
+			Means[j]+=v2*s->Count;
 		}
 	}
 	for(j=0;j<current_ndims;j++)
@@ -316,7 +316,7 @@ static void SubdivideNode(struct QuantizedValue *n, int whichdim)
 		// extrema instead. LocalMean[i][0] will be the point with the lowest
 		// value on the dimension and LocalMean[i][1] the one with the lowest
 		// value.
-		for(int i=0;i<current_ndims;i++)
+		for(i=0;i<current_ndims;i++)
 		{
 			LocalMean[i][0]=minS->Value[i];
 			LocalMean[i][1]=maxS->Value[i];

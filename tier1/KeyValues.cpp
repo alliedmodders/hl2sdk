@@ -2228,7 +2228,7 @@ bool KeyValues::WriteAsBinary( CUtlBuffer &buffer )
 			}
 		case TYPE_PTR:
 			{
-				buffer.PutUnsignedInt( (int)dat->m_pValue );
+				buffer.PutPtr( dat->m_pValue );
 			}
 
 		default:
@@ -2323,7 +2323,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 			}
 		case TYPE_PTR:
 			{
-				dat->m_pValue = (void*)buffer.GetUnsignedInt();
+				dat->m_pValue = buffer.GetPtr();
 			}
 
 		default:
