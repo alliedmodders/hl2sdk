@@ -28,6 +28,20 @@ const unsigned int INVALID_STRING_INDEX = -1;
 class StringTableInit_t;
 class INetworkStringTable;
 
+class SetStringUserDataRequest_t
+{
+public:
+	void* m_pRawData;
+	unsigned int m_cbDataSize;
+};
+
+class StringUserData_t
+{
+public:
+	unsigned int m_cbDataSize;
+	void* m_pRawData;
+};
+
 //-----------------------------------------------------------------------------
 // Purpose: Game .dll shared string table interfaces
 //-----------------------------------------------------------------------------
@@ -47,11 +61,11 @@ public:
 	virtual int				GetTick( void ) = 0;
 	virtual bool			ChangedBetweenTicks(int tickA, int tickB ) const = 0;
 
-	virtual int				AddString( bool bIsServer, const char *value, const void *userdata = 0 ) = 0; 
+	virtual int				AddString( bool bIsServer, const char *value, const SetStringUserDataRequest_t* userdata = 0 ) = 0;
 
 	virtual const char		*GetString( int stringNumber ) const = 0;
-	virtual bool			SetStringUserData( int stringNumber, const void *userdata, bool unknown ) = 0;
-	virtual const void		*GetStringUserData( int stringNumber ) const = 0;
+	virtual bool			SetStringUserData(int stringNumber, const SetStringUserDataRequest_t *userdata, bool bForceOverride) = 0;
+	virtual const StringUserData_t* GetStringUserData(int stringNumber) const = 0;
 	virtual int				FindStringIndex( char const *string ) = 0; // returns INVALID_STRING_INDEX if not found
 	virtual void			unk001() = 0;
 	virtual void			SetAllowClientSideAddString( bool state ) = 0;
