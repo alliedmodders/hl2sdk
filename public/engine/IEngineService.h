@@ -77,7 +77,7 @@ public:
 	virtual void		ChangeVideoMode( RenderDeviceInfo_t & ) = 0;
 	virtual void		GetVideoModeChange( void ) = 0;
 	virtual int			GetAddonCount( void ) const = 0;
-	virtual const char*	GetAddon( int ) const = 0;
+	virtual const char	*GetAddon( int ) const = 0;
 	virtual bool		IsAddonMounted( const char * ) const = 0;
 	virtual const char	*GetAddonsString( void ) const = 0;
 	virtual void		unk101( void ) = 0;
