@@ -419,7 +419,7 @@ public:
 		if (Count() > 0)
 		{
 			if ( elem != m_pData->m_Size -1 )
-				memcpy( &Element(elem), &Element(m_pData->m_Size-1), sizeof(T) );
+				memcpy( (void *)&Element(elem), (void *)&Element(m_pData->m_Size-1), sizeof(T) );
 			--m_pData->m_Size;
 		}
 		if ( !m_pData->m_Size )
@@ -1065,7 +1065,7 @@ void CUtlVector<T, A>::FastRemove( int elem )
 	if (m_Size > 0)
 	{
 		if ( elem != m_Size -1 )
-			memcpy( &Element(elem), &Element(m_Size-1), sizeof(T) );
+			memcpy( (void *)&Element(elem), (void *)&Element(m_Size-1), sizeof(T) );
 		--m_Size;
 	}
 }
