@@ -13,6 +13,7 @@
 #include <appframework/IAppSystem.h>
 #include <inputsystem/InputEnums.h>
 #include <iloopmode.h>
+#include <localize/ilocalize.h>
 
 class ISwitchLoopModeStatusNotify;
 class IAddonListChangeNotify;
@@ -68,8 +69,6 @@ public:
 	virtual CEventDispatcher<CEventIDManager_Default>* GetEventDispatcher(void) = 0;
 	virtual void		*GetDebugVisualizerMgr( void ) = 0;
 	virtual int			GetActiveLoopClientServerMode( void ) const = 0;
-	virtual void		EnableMaxFramerate( bool ) = 0;
-	virtual void		OverrideMaxFramerate( float ) = 0;
 	virtual void		PrintStatus( void ) = 0;
 	virtual ActiveLoop_t	GetActiveLoop( void ) = 0;
 	virtual bool		IsLoadingLevel( void ) const = 0;
@@ -78,14 +77,34 @@ public:
 	virtual void		ChangeVideoMode( RenderDeviceInfo_t & ) = 0;
 	virtual void		GetVideoModeChange( void ) = 0;
 	virtual int			GetAddonCount( void ) const = 0;
-	virtual void		GetAddon( int ) const = 0;
+	virtual const char	*GetAddon( int ) const = 0;
 	virtual bool		IsAddonMounted( const char * ) const = 0;
 	virtual const char	*GetAddonsString( void ) const = 0;
+	virtual void		unk101( void ) = 0;
+	virtual void		unk102( void ) = 0;
+	virtual void		unk103( void ) = 0;
 	virtual void		InstallSwitchLoopModeStatusNotify( ISwitchLoopModeStatusNotify * ) = 0;
 	virtual void		UninstallSwitchLoopModeStatusNotify( ISwitchLoopModeStatusNotify * ) = 0;
 	virtual void		InstallAddonListChangeNotify( IAddonListChangeNotify * ) = 0;
 	virtual void		UninstallAddonListChangeNotify( IAddonListChangeNotify * ) = 0;
+	virtual void		StartEngineWatchdogThread( void ) = 0;
+	virtual void		AddLogCaptureString( const char * ) = 0;
+	virtual void		AddLogCaptureStringV( const char *pFormat, va_list args ) = 0;
+	virtual void		AddLogCaptureStringF( const char *pFormat, ... ) = 0;
+	virtual void		unk201( void ) = 0;
 	virtual void		ExitMainLoop( void ) = 0;
+	virtual void		RegisterPrerequisite( IPrerequisite * ) = 0;
+	
+	// Same methods as ILocalize
+	virtual LocalizeStringIndex_t LookupLocalizationToken(const char *tokenName) = 0;
+
+	// Same methods as IVEngineServer2 
+	virtual void		SetFrameTimeAmnesty( const char *amnesty, int, float frametime ) = 0;
+	virtual const char *GetFrameTimeAmnesty( bool check_cvar ) = 0;
+	virtual void		unk301() = 0;
+#ifdef _LINUX
+	virtual void		UnregisterPrerequisite( IPrerequisite * ) = 0;
+#endif
 };
 
 #endif // IENGINESERVICE_H
