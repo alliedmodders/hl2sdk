@@ -119,7 +119,6 @@ public:
 abstract_class ILoopModePrerequisiteRegistry : public IPrerequisiteRegistry
 {
 public:
-	virtual void LookupLocalizationToken( const char * ) = 0;
 	virtual void UnregisterPrerequisite( IPrerequisite * ) = 0;
 };
 
