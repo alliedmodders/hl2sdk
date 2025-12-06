@@ -190,6 +190,7 @@ GS_EVENT_MSG_CHILD( ServerGamePostSimulate, Simulate ) { };
 GS_EVENT_MSG_CHILD( ClientGamePostSimulate, Simulate ) { };
 
 GS_EVENT_MSG( ServerPostAdvanceTick );
+GS_EVENT_MSG( ClientPostAdvanceTick );
 GS_EVENT_MSG( ServerBeginAsyncPostTickWork );
 
 GS_EVENT_MSG( ServerEndAsyncPostTickWork );
@@ -295,33 +296,34 @@ public:
 	GS_EVENT_IMPL( ServerGamePostSimulate )					// 36
 	GS_EVENT_IMPL( ClientGamePostSimulate )					// 37
 	GS_EVENT_IMPL( ServerPostAdvanceTick )					// 38
-	GS_EVENT_IMPL( ServerBeginAsyncPostTickWork )			// 39
+	GS_EVENT_IMPL( ClientPostAdvanceTick )					// 39
+	GS_EVENT_IMPL( ServerBeginAsyncPostTickWork )			// 40
 
-	virtual void unk_501( const void *const msg ) = 0;		// 40
+	virtual void unk_501( const void *const msg ) = 0;		// 41
 
-	GS_EVENT_IMPL( ServerEndAsyncPostTickWork )				// 41
+	GS_EVENT_IMPL( ServerEndAsyncPostTickWork )				// 42
 
-	GS_EVENT_IMPL( ClientFrameSimulate )					// 42
-	GS_EVENT_IMPL( ClientPauseSimulate )					// 43
-	GS_EVENT_IMPL( ClientAdvanceNonRenderedFrame )			// 44
+	GS_EVENT_IMPL( ClientFrameSimulate )					// 43
+	GS_EVENT_IMPL( ClientPauseSimulate )					// 44
+	GS_EVENT_IMPL( ClientAdvanceNonRenderedFrame )			// 45
 
-	GS_EVENT_IMPL( GameFrameBoundary )						// 45
-	GS_EVENT_IMPL( OutOfGameFrameBoundary )					// 46
+	GS_EVENT_IMPL( GameFrameBoundary )						// 46
+	GS_EVENT_IMPL( OutOfGameFrameBoundary )					// 47
 
-	GS_EVENT_IMPL( SaveGame )								// 47
-	GS_EVENT_IMPL( RestoreGame )							// 48
+	GS_EVENT_IMPL( SaveGame )								// 48
+	GS_EVENT_IMPL( RestoreGame )							// 49
 
-	virtual void unk_601( const void *const msg ) = 0;		// 49
-	virtual void unk_602( const void *const msg ) = 0;		// 50
-	virtual void unk_603( const void *const msg ) = 0;		// 51
-	virtual void unk_604( const void *const msg ) = 0;		// 52
-	virtual void unk_605( const void *const msg ) = 0;		// 53
-	virtual void unk_606( const void *const msg ) = 0;		// 54
+	virtual void unk_601( const void *const msg ) = 0;		// 50
+	virtual void unk_602( const void *const msg ) = 0;		// 51
+	virtual void unk_603( const void *const msg ) = 0;		// 52
+	virtual void unk_604( const void *const msg ) = 0;		// 53
+	virtual void unk_605( const void *const msg ) = 0;		// 54
+	virtual void unk_606( const void *const msg ) = 0;		// 55
 
-	virtual const char* GetName() const = 0;				// 55
-	virtual void SetGameSystemGlobalPtrs(void* pValue) = 0;	// 56
-	virtual void SetName(const char* pName) = 0;			// 57
-	virtual bool DoesGameSystemReallocate() = 0;			// 58
+	virtual const char* GetName() const = 0;				// 56
+	virtual void SetGameSystemGlobalPtrs(void* pValue) = 0;	// 57
+	virtual void SetName(const char* pName) = 0;			// 58
+	virtual bool DoesGameSystemReallocate() = 0;			// 59
 	virtual ~IGameSystem() {}
 };
 
@@ -401,6 +403,7 @@ public:
 	GS_EVENT( ServerGamePostSimulate ) {}
 	GS_EVENT( ClientGamePostSimulate ) {}
 	GS_EVENT( ServerPostAdvanceTick ) {}
+	GS_EVENT( ClientPostAdvanceTick ) {}
 	GS_EVENT( ServerBeginAsyncPostTickWork ) {}
 
 	virtual void unk_501( const void *const msg ) override {}
