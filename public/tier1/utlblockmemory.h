@@ -139,8 +139,18 @@ void CUtlBlockMemory<T,I>::Swap( CUtlBlockMemory< T, I > &mem )
 {
 	V_swap( m_pMemory, mem.m_pMemory );
 	V_swap( m_nBlocks, mem.m_nBlocks );
-	V_swap( m_nIndexMask, mem.m_nIndexMask );
-	V_swap( m_nIndexShift, mem.m_nIndexShift );
+
+	{
+		int temp = mem.m_nIndexMask;
+		m_nIndexMask = mem.m_nIndexMask;
+		mem.m_nIndexMask = temp;
+	}
+
+	{
+		int temp = mem.m_nIndexShift;
+		m_nIndexShift = mem.m_nIndexShift;
+		mem.m_nIndexShift = temp;
+	}
 }
 
 
