@@ -465,7 +465,7 @@ void CUtlMemory<T,I>::ConvertToGrowableMemory( int nGrowSize )
 
 		int nNumBytes = m_nAllocationCount * sizeof(T);
 		T *pMemory = (T*)malloc( nNumBytes );
-		memcpy( pMemory, m_pMemory, nNumBytes ); 
+		memcpy( (void*)pMemory, (void *)m_pMemory, nNumBytes ); 
 		m_pMemory = pMemory;
 	}
 	else
