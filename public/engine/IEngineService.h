@@ -96,14 +96,14 @@ public:
 	virtual void		RegisterPrerequisite( IPrerequisite * ) = 0;
 	
 	// Same methods as ILocalize
-	virtual LocalizeStringIndex_t FindLocalizeTokenIndex(const char *tokenName) = 0;
+	virtual LocalizeStringIndex_t LookupLocalizationToken(const char *tokenName) = 0;
 
 	// Same methods as IVEngineServer2 
 	virtual void		SetFrameTimeAmnesty( const char *amnesty, int, float frametime ) = 0;
 	virtual const char *GetFrameTimeAmnesty( bool check_cvar ) = 0;
 	virtual void		unk301() = 0;
 #ifdef _LINUX
-	virtual void		unk302() = 0;
+	virtual void		UnregisterPrerequisite( IPrerequisite * ) = 0;
 #endif
 };
 
