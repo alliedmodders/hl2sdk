@@ -602,7 +602,7 @@ public:
 		Destroy();
 	}
 
-private:
+protected:
 	void Create( const char *pName, const ConCommandCallbackInfo_t &cb, const char *pHelpString, uint64 flags, const CompletionCallbackInfo_t &completion_cb );
 	void Destroy( );
 };
