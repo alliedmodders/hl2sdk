@@ -448,7 +448,7 @@ typedef CBitVec<32> CDWordBitVec;
 template <typename BITCOUNTTYPE>
 inline CVarBitVecBase<BITCOUNTTYPE>::CVarBitVecBase()
 {
-	Plat_FastMemset( this, 0, sizeof( *this ) );
+	Plat_FastMemset( (void*)this, 0, sizeof( *this ) );
 }
 
 //-----------------------------------------------------------------------------
