@@ -36,7 +36,7 @@ enum
 {
 	GAMELUMP_DETAIL_PROPS_VERSION = 4,
 	GAMELUMP_DETAIL_PROP_LIGHTING_VERSION = 0,
-	GAMELUMP_STATIC_PROPS_VERSION = 7,
+	GAMELUMP_STATIC_PROPS_VERSION = 11,
 	GAMELUMP_STATIC_PROP_LIGHTING_VERSION = 0,
 	GAMELUMP_DETAIL_PROP_LIGHTING_HDR_VERSION = 0,
 };
@@ -205,7 +205,7 @@ struct StaticPropLumpV6_t
 	//	int				m_Lighting;			// index into the GAMELUMP_STATIC_PROP_LIGHTING lump
 };
 
-struct StaticPropLump_t
+struct StaticPropLumpV10_t
 {
 	DECLARE_BYTESWAP_DATADESC();
 	Vector			m_Origin;
@@ -225,6 +225,29 @@ struct StaticPropLump_t
 	unsigned int	m_Flags;
 	unsigned short  m_nLightmapResolutionX;
 	unsigned short  m_nLightmapResolutionY;
+};
+
+struct StaticPropLump_t
+{
+	DECLARE_BYTESWAP_DATADESC();
+	Vector			m_Origin;
+	QAngle			m_Angles;
+	unsigned short	m_PropType;
+	unsigned short	m_FirstLeaf;
+	unsigned short	m_LeafCount;
+	unsigned char	m_Solid;
+	int				m_Skin;
+	float			m_FadeMinDist;
+	float			m_FadeMaxDist;
+	Vector			m_LightingOrigin;
+	float			m_flForcedFadeScale;
+	unsigned short	m_nMinDXLevel;
+	unsigned short	m_nMaxDXLevel;
+	//	int				m_Lighting;			// index into the GAMELUMP_STATIC_PROP_LIGHTING lump
+	unsigned int	m_Flags;
+	unsigned short	m_nLightmapResolutionX;
+	unsigned short	m_nLightmapResolutionY;
+	char			m_Padding1[8];
 
 
 	StaticPropLump_t& operator=(const StaticPropLumpV4_t& _rhs)
@@ -268,6 +291,16 @@ struct StaticPropLump_t
 
 		m_nMinDXLevel = _rhs.m_nMinDXLevel;
 		m_nMaxDXLevel = _rhs.m_nMaxDXLevel;
+		return *this;
+    }
+
+	StaticPropLump_t& operator=(const StaticPropLumpV10_t& _rhs)
+	{
+		(*this) = reinterpret_cast<const StaticPropLumpV6_t&>(_rhs);
+
+		m_Flags = _rhs.m_Flags;
+		m_nLightmapResolutionX = _rhs.m_nLightmapResolutionX;
+		m_nLightmapResolutionY = _rhs.m_nLightmapResolutionY;
 		return *this;
 	}
 };
