@@ -81,7 +81,7 @@ public:
 	virtual void	ServerSimulate( const EventServerSimulate_t & ) = 0;
 	virtual void	ServerPostSimulate( const EventServerPostSimulate_t & ) = 0;
 
-	virtual void	LoadSpawnGroup( const SpawnGroupDesc_t & ) = 0;
+	virtual SpawnGroupHandle_t LoadSpawnGroup( const SpawnGroupDesc_t & ) = 0;
 	virtual void	AsyncUnloadSpawnGroup( unsigned int, /*ESpawnGroupUnloadOption*/ int ) = 0;
 	virtual void	PrintSpawnGroupStatus( void ) const = 0;
 
