@@ -898,8 +898,8 @@ void bf_read::ReadBits(void *pOutData, int nBits)
 		// read dwords
 		while ( nBitsLeft >= 32 )
 		{
-			*((unsigned long*)pOut) = ReadUBitLong(32);
-			pOut += sizeof(unsigned long);
+			*((uint32*)pOut) = ReadUBitLong(32);
+			pOut += sizeof(uint32);
 			nBitsLeft -= 32;
 		}
 	}

@@ -392,7 +392,7 @@ BITBUF_INLINE void bf_write::WriteUBitLong( unsigned int curData, int numbits, b
 	// Make sure it doesn't overflow.
 	if ( bCheckRange && numbits < 32 )
 	{
-		if ( curData >= (unsigned long)(1 << numbits) )
+		if ( curData >= (uint32)(1 << numbits) )
 		{
 			CallErrorHandler( BITBUFERROR_VALUE_OUT_OF_RANGE, GetDebugName() );
 		}
@@ -426,8 +426,8 @@ BITBUF_INLINE void bf_write::WriteUBitLong( unsigned int curData, int numbits, b
 	
 	// Only look beyond current word if necessary (avoid access violation)
 	int i = mask2 & 1;
-	unsigned long dword1 = LoadLittleDWord( pOut, 0 );
-	unsigned long dword2 = LoadLittleDWord( pOut, i );
+	uint32 dword1 = LoadLittleDWord( pOut, 0 );
+	uint32 dword2 = LoadLittleDWord( pOut, i );
 	
 	// Drop bits into place
 	dword1 ^= ( mask1 & ( curData ^ dword1 ) );
@@ -721,7 +721,7 @@ inline bool bf_read::CheckForOverflow(int nBits)
 inline int bf_read::ReadOneBitNoCheck()
 {
 #if VALVE_LITTLE_ENDIAN
-	unsigned int value = ((unsigned long * RESTRICT)m_pData)[m_iCurBit >> 5] >> (m_iCurBit & 31);
+	unsigned int value = ((uint32 * RESTRICT)m_pData)[m_iCurBit >> 5] >> (m_iCurBit & 31);
 #else
 	unsigned char value = m_pData[m_iCurBit >> 3] >> (m_iCurBit & 7);
 #endif
