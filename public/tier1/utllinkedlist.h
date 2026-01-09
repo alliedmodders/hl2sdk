@@ -178,11 +178,11 @@ protected:
 
 // this is kind of ugly, but until C++ gets templatized typedefs in C++0x, it's our only choice
 template < class T >
-class CUtlFixedLinkedList : public CUtlLinkedList< T, intp, true, intp, CUtlFixedMemory< UtlLinkedListElem_t< T, intp > > >
+class CUtlFixedLinkedList : public CUtlLinkedList< T, intp, true, intp, CUtlLeanVectorFixedGrowable< UtlLinkedListElem_t< T, intp > > >
 {
 public:
 	CUtlFixedLinkedList( int growSize = 0, int initSize = 0 )
-		: CUtlLinkedList< T, intp, true, intp, CUtlFixedMemory< UtlLinkedListElem_t< T, intp > > >( growSize, initSize ) {}
+		: CUtlLinkedList< T, intp, true, intp, CUtlLeanVectorFixedGrowable< UtlLinkedListElem_t< T, intp > > >( growSize, initSize ) {}
 
 	bool IsValidIndex( intp i ) const
 	{
