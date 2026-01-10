@@ -43,7 +43,6 @@ public:
 		command_number = 0;
 		tick_count = 0;
 		viewangles.Init();
-		aimdirection.Init();
 		forwardmove = 0.0f;
 		sidemove = 0.0f;
 		upmove = 0.0f;
@@ -52,9 +51,6 @@ public:
 		weaponselect = 0;
 		weaponsubtype = 0;
 		random_seed = 0;
-#ifndef CLIENT_DLL
-		server_random_seed = 0;
-#endif
 		mousedx = 0;
 		mousedy = 0;
 
@@ -92,7 +88,6 @@ public:
 		command_number		= src.command_number;
 		tick_count			= src.tick_count;
 		viewangles			= src.viewangles;
-		aimdirection		= src.aimdirection;
 		forwardmove			= src.forwardmove;
 		sidemove			= src.sidemove;
 		upmove				= src.upmove;
@@ -101,9 +96,6 @@ public:
 		weaponselect		= src.weaponselect;
 		weaponsubtype		= src.weaponsubtype;
 		random_seed			= src.random_seed;
-#ifndef CLIENT_DLL
-		server_random_seed	= src.server_random_seed;
-#endif
 		mousedx				= src.mousedx;
 		mousedy				= src.mousedy;
 
@@ -148,7 +140,6 @@ public:
 		CRC32_ProcessBuffer( &crc, &command_number, sizeof( command_number ) );
 		CRC32_ProcessBuffer( &crc, &tick_count, sizeof( tick_count ) );
 		CRC32_ProcessBuffer( &crc, &viewangles, sizeof( viewangles ) );  
-		CRC32_ProcessBuffer( &crc, &aimdirection, sizeof( aimdirection ) );
 		CRC32_ProcessBuffer( &crc, &forwardmove, sizeof( forwardmove ) );   
 		CRC32_ProcessBuffer( &crc, &sidemove, sizeof( sidemove ) );      
 		CRC32_ProcessBuffer( &crc, &upmove, sizeof( upmove ) );         
@@ -187,9 +178,7 @@ public:
 	int		tick_count;
 	
 	// Player instantaneous view angles.
-	QAngle	viewangles;     
-	
-	Vector	aimdirection;
+	QAngle	viewangles;
 	
 	// Intended velocities
 	//	forward velocity.
@@ -207,10 +196,6 @@ public:
 	int		weaponsubtype;
 
 	int		random_seed;	// For shared random functions
-
-#ifndef CLIENT_DLL
-	int		server_random_seed;
-#endif
 
 	short	mousedx;		// mouse accum in x from create move
 	short	mousedy;		// mouse accum in y from create move
