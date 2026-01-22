@@ -182,6 +182,12 @@ class CSchemaSystem : public ISchemaSystem
 public:
 	CUtlVector<ResourceManifestDesc_t*> m_ResourceManifestDescs;
 	int m_nNumConnections;
+
+private:
+	// AMNOTE: isn't used anywhere at construction/destruction, most likely padding
+	int m_unk001;
+
+public:
 	CThreadFastMutex m_Mutex;
 
 	CConCommandMemberAccessor<CSchemaSystem> m_SchemaListBindings;
