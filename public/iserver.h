@@ -74,6 +74,8 @@ public:
 	// returns current client limit
 	virtual int		GetMaxClients( void ) const = 0;
 
+	virtual float   unk001() = 0;
+
 	virtual void	ServerAdvanceTick( const EventServerAdvanceTick_t & ) = 0;
 	virtual void	ServerPollNetworking( const EventServerPollNetworking_t & ) = 0;
 	virtual void	ServerProcessNetworking( const EventServerProcessNetworking_t & ) = 0;
@@ -86,7 +88,7 @@ public:
 	virtual void	PrintSpawnGroupStatus( void ) const = 0;
 
 	// returns the game time scale (multiplied in conjunction with host_timescale)
-	virtual float	GetTimescale( void ) const = 0; 
+	virtual float	GetTimescale( void ) const = 0;
 
 	virtual bool	IsSaveRestoreAllowed( void ) const = 0;
 
@@ -123,23 +125,27 @@ public:
 
 	virtual void	PreserveSteamID( void ) = 0;
 
-	virtual void	unk001() = 0;
+	virtual void	unk101() = 0;
 
 	virtual void	ReserveServerForQueuedGame( const char *pszReason ) = 0;
 
-	virtual void	unk101() = 0;
-	virtual void	unk102() = 0;
-	virtual void	unk103() = 0;
+	virtual void	unk201() = 0;
+	virtual void	unk202() = 0;
+	virtual void	unk203() = 0;
 
 	virtual void	BroadcastPrintf( const char *pszFmt, ... ) FMTFUNCTION( 2, 3 ) = 0;
 
-	virtual void	unk201() = 0;
-	virtual void	unk202() = 0;
+	virtual void	unk301() = 0;
+	virtual void	unk302() = 0;
 
 	virtual void	BroadcastMessage( INetworkMessageInternal *pNetMessage, const CNetMessage *pData, IRecipientFilter *filter ) = 0;
 	virtual bool	IsRecordingDemo() = 0;
 
-	virtual void	unk301() = 0;
+	virtual uint8	GetClientConnectionType( CPlayerSlot slot ) = 0;
+	virtual bool	unk401() = 0;
+	virtual float	unk402() = 0;
+	virtual uint64	unk403() = 0;
+	virtual void 	DirectUpdate() = 0;
 };
 
 abstract_class CNetworkGameServerBase : public INetworkGameServer, protected IConnectionlessPacketHandler, public IConVarListener
