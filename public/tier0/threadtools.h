@@ -813,8 +813,7 @@ public:
 	int	GetDepth() const				{ return m_depth; }
 private:
 	volatile ThreadId_t m_ownerID;
-	int					m_depth;
-	int64_t				m_pad0;
+	int					m_depth;ś
 };
 
 class ALIGN128 CAlignedThreadFastMutex : public CThreadSpinMutex
