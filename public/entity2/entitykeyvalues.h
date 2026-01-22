@@ -68,7 +68,7 @@ public:
 class CEntityKeyValues
 {
 public:
-	CEntityKeyValues( CKeyValues3Context* allocator = NULL, EntityKVAllocatorType_t allocator_type = EKV_ALLOCATOR_NORMAL );
+	CEntityKeyValues( CKV3Arena* allocator = NULL, EntityKVAllocatorType_t allocator_type = EKV_ALLOCATOR_NORMAL );
 	~CEntityKeyValues();
 
 	class Iterator_t
@@ -186,7 +186,7 @@ private:
 		EntityComplexKeyListElem_t* m_pNext;
 	};
 
-	CKeyValues3Context* m_pAllocator;
+	CKV3Arena* m_pAllocator;
 	EntityComplexKeyListElem_t* m_pComplexKeys;
 	KeyValues3* m_pValues;
 	KeyValues3* m_pAttributes;

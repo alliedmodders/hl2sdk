@@ -18,7 +18,7 @@
 #define MAX_SPAWN_GROUP_WORLD_NAME_LENGTH 4096
 
 class matrix3x4a_t;
-class CKeyValues3Context;
+class CKV3Arena;
 class CEntityKeyValues;
 class ILoadingSpawnGroup;
 class CGameResourceManifest;
@@ -298,7 +298,7 @@ public:
 	virtual bool IsLevelTransition() const = 0;
 	virtual const char *GetLevelTransitionPreviousMap() const = 0;
 	virtual const char *GetLevelTransitionLandmarkName() const = 0;
-	virtual CKeyValues3Context *GetEntityKeyValuesAllocator() = 0;
+	virtual CKV3Arena *GetEntityKeyValuesAllocator() = 0;
 	virtual CEntityInstance *CreateEntityToSpawn(SpawnGroupHandle_t hSpawnGroup, const matrix3x4a_t &vecSpawnOffset, CreateSpawnGroupType_t createType, const CEntityKeyValues *pEntityKeyValues) = 0;
 	virtual void SpawnEntities() = 0;
 	virtual void Release() = 0;

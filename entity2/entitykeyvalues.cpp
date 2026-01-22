@@ -4,7 +4,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-CEntityKeyValues::CEntityKeyValues( CKeyValues3Context* allocator, EntityKVAllocatorType_t allocator_type ) :
+CEntityKeyValues::CEntityKeyValues( CKV3Arena* allocator, EntityKVAllocatorType_t allocator_type ) :
 	m_pComplexKeys( NULL ),
 	m_nRefCount( 0 ),
 	m_nQueuedForSpawnCount( 0 ),
@@ -64,7 +64,7 @@ void CEntityKeyValues::ValidateAllocator()
 		else
 		{
 			Assert( m_eAllocatorType != EKV_ALLOCATOR_EXTERNAL );
-			m_pAllocator = new CKeyValues3Context( true );
+			m_pAllocator = new CKV3Arena( true );
 		}
 
 		m_pValues = m_pAllocator->AllocKV();
