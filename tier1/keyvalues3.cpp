@@ -377,7 +377,7 @@ CKeyValues3Cluster* KeyValues3::GetCluster() const
 	return GET_OUTER( CKeyValues3Cluster, m_Values[ m_nClusterElement ] );
 }
 
-CKeyValues3Context* KeyValues3::GetContext() const
+CKV3Arena* KeyValues3::GetContext() const
 { 
 	CKeyValues3Cluster* cluster = GetCluster();
 
@@ -387,7 +387,7 @@ CKeyValues3Context* KeyValues3::GetContext() const
 		return nullptr;
 }
 
-KV3MetaData_t* KeyValues3::GetMetaData( CKeyValues3Context** ppCtx ) const
+KV3MetaData_t* KeyValues3::GetMetaData( CKV3Arena** ppCtx ) const
 {
 	CKeyValues3Cluster* cluster = GetCluster();
 
@@ -1196,7 +1196,7 @@ void KeyValues3::CopyFrom( const KeyValues3* pSrc )
 
 	SetToNull();
 
-	CKeyValues3Context* context;
+	CKV3Arena* context;
 	KV3MetaData_t* pDestMetaData = GetMetaData( &context );
 
 	if ( pDestMetaData )
@@ -1356,7 +1356,7 @@ CKeyValues3ArrayCluster* CKeyValues3Array::GetCluster() const
 	return GET_OUTER( CKeyValues3ArrayCluster, m_Values[ m_nClusterElement ] );
 }
 
-CKeyValues3Context* CKeyValues3Array::GetContext() const
+CKV3Arena* CKeyValues3Array::GetContext() const
 { 
 	CKeyValues3ArrayCluster* cluster = GetCluster();
 
@@ -1531,7 +1531,7 @@ CKeyValues3TableCluster* CKeyValues3Table::GetCluster() const
 	return GET_OUTER( CKeyValues3TableCluster, m_Values[ m_nClusterElement ] );
 }
 
-CKeyValues3Context* CKeyValues3Table::GetContext() const
+CKV3Arena* CKeyValues3Table::GetContext() const
 { 
 	CKeyValues3TableCluster* cluster = GetCluster();
 
@@ -1931,7 +1931,7 @@ void CKeyValues3Table::PurgeBuffers()
 	m_nCount = 0;
 }
 
-CKeyValues3ContextBase::CKeyValues3ContextBase( CKeyValues3Context* context ) : 	
+CKV3ArenaBase::CKV3ArenaBase( CKV3Arena* context ) :
 	m_pContext( context ),
 	m_KV3BaseCluster( context ),
 	m_bMetaDataEnabled( false ),
@@ -1942,7 +1942,7 @@ CKeyValues3ContextBase::CKeyValues3ContextBase( CKeyValues3Context* context ) :
 	m_KV3PartialClusters.AddToChain( &m_KV3BaseCluster );
 }
 
-void CKeyValues3ContextBase::Clear()
+void CKV3ArenaBase::Clear()
 {
 	m_BinaryData.Clear();
 	m_KV3BaseCluster.Clear();
@@ -1951,7 +1951,7 @@ void CKeyValues3ContextBase::Clear()
 	m_bFormatConverted = false;
 }
 
-void CKeyValues3ContextBase::Purge()
+void CKV3ArenaBase::Purge()
 {
 	m_BinaryData.Purge();
 	m_KV3BaseCluster.Purge();
@@ -1960,7 +1960,7 @@ void CKeyValues3ContextBase::Purge()
 	m_bFormatConverted = false;
 }
 
-CKeyValues3Context::CKeyValues3Context( bool bNoRoot ) : BaseClass( this ), pad{}
+CKV3Arena::CKV3Arena( bool bNoRoot ) : BaseClass( this ), pad{}
 {
 	if ( bNoRoot )
 	{
@@ -1976,7 +1976,7 @@ CKeyValues3Context::CKeyValues3Context( bool bNoRoot ) : BaseClass( this ), pad{
 	m_bFormatConverted = false;
 }
 
-void CKeyValues3Context::Clear()
+void CKV3Arena::Clear()
 {
 	BaseClass::Clear();
 
@@ -1998,7 +1998,7 @@ void CKeyValues3Context::Clear()
 		m_KV3BaseCluster.Alloc();
 }
 
-void CKeyValues3Context::Purge()
+void CKV3Arena::Purge()
 {
 	BaseClass::Purge();
 
@@ -2018,7 +2018,7 @@ void CKeyValues3Context::Purge()
 		m_KV3BaseCluster.Alloc();
 }
 
-KeyValues3* CKeyValues3Context::Root()
+KeyValues3* CKV3Arena::Root()
 {
 	if ( !m_bRootAvailabe )
 	{
@@ -2029,7 +2029,7 @@ KeyValues3* CKeyValues3Context::Root()
 	return &m_KV3BaseCluster.Head()->m_Value;
 }
 
-const char* CKeyValues3Context::AllocString( const char* pString, UtlSymLargeId_t *out_symid )
+const char* CKV3Arena::AllocString( const char* pString, UtlSymLargeId_t *out_symid )
 {
 	UtlSymLargeId_t sym = m_Symbols.AddStringRaw( pString );
 
@@ -2042,12 +2042,12 @@ const char* CKeyValues3Context::AllocString( const char* pString, UtlSymLargeId_
 	return m_Symbols.String( sym );
 }
 
-const char* CKeyValues3Context::LookupString( UtlSymLargeId_t symid ) const
+const char* CKV3Arena::LookupString( UtlSymLargeId_t symid ) const
 {
 	return m_Symbols.String( symid );
 }
 
-void CKeyValues3Context::EnableMetaData( bool bEnable )
+void CKV3Arena::EnableMetaData( bool bEnable )
 {
 	if ( bEnable != m_bMetaDataEnabled )
 	{
@@ -2057,7 +2057,7 @@ void CKeyValues3Context::EnableMetaData( bool bEnable )
 	}
 }
 
-void CKeyValues3Context::CopyMetaData( KV3MetaData_t* pDest, const KV3MetaData_t* pSrc )
+void CKV3Arena::CopyMetaData( KV3MetaData_t* pDest, const KV3MetaData_t* pSrc )
 {
 	pDest->m_nLine = pSrc->m_nLine;
 	pDest->m_nColumn = pSrc->m_nColumn;
@@ -2073,14 +2073,14 @@ void CKeyValues3Context::CopyMetaData( KV3MetaData_t* pDest, const KV3MetaData_t
 	}
 }
 
-KeyValues3* CKeyValues3Context::AllocKV( KV3TypeEx_t type, KV3SubType_t subtype )
+KeyValues3* CKV3Arena::AllocKV( KV3TypeEx_t type, KV3SubType_t subtype )
 {
 	return Alloc( m_KV3PartialClusters, m_KV3FullClusters, CKeyValues3Cluster::CLUSTER_SIZE, type, subtype );
 }
 
-void CKeyValues3Context::FreeKV( KeyValues3* kv )
+void CKV3Arena::FreeKV( KeyValues3* kv )
 {
-	CKeyValues3Context* context;
+	CKV3Arena* context;
 	KV3MetaData_t* metadata = kv->GetMetaData( &context );
 
 	if ( metadata )
