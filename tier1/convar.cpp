@@ -146,15 +146,49 @@ public:
 
 	static void RegisterConVar( const Entry_t &cvar )
 	{
-		g_pCVar->RegisterConVar( cvar.m_Info, s_nCVarFlag, cvar.m_pConVar, cvar.m_pConVarData );
-		if(!cvar.m_pConVar->IsValidRef())
+		Assert( g_pCVar );
+
+#ifdef _DEBUG
+		ConVarRefAbstract hConVar = g_pCVar->FindConVar( cvar.m_Info.m_pszName );
+		if ( hConVar.IsValidRef() )
 		{
-			Plat_FatalErrorFunc( "RegisterConVar: Unknown error registering convar \"%s\"!\n", cvar.m_Info.m_pszName );
+			ConVarData* pExisting =
+				g_pCVar->GetConVarData( static_cast<ConVarRef>( hConVar ) );
+
+			if ( pExisting->GetType() != cvar.m_Info.m_valueInfo.m_eVarType )
+			{
+				const char* newType =
+					cvar.m_pConVar->GetConVarData()->GetDataTypeName();
+				const char* oldType = pExisting->GetDataTypeName();
+
+				Plat_FatalError(
+					"RegisterConVar: Convar \"%s\" already exists with different type! "
+					"(expected: %s, given: %s)\n",
+					cvar.m_Info.m_pszName, oldType, newType );
+
+				DebuggerBreakIfDebugging();
+				return;
+			}
+		}
+#endif
+
+		g_pCVar->RegisterConVar(
+			cvar.m_Info, s_nCVarFlag, cvar.m_pConVar, cvar.m_pConVarData );
+
+		Assert( cvar.m_pConVar );
+		if ( !cvar.m_pConVar->IsValidRef() )
+		{
+			Plat_FatalError(
+				"RegisterConVar: Unknown error registering convar \"%s\"!\n",
+				cvar.m_Info.m_pszName );
 			DebuggerBreakIfDebugging();
 		}
 		// Don't let references pass as a newly registered cvar
-		else if(s_ConVarRegCB && (cvar.m_Info.m_nFlags & FCVAR_REFERENCE) == 0)
+		else if ( s_ConVarRegCB &&
+				 (cvar.m_Info.m_nFlags & FCVAR_REFERENCE) == 0 )
+		{
 			s_ConVarRegCB( cvar.m_pConVar );
+		}
 	}
 
 	static void RegisterAll()
