@@ -29,7 +29,7 @@
 class KeyValues3;
 class CKeyValues3Array;
 class CKeyValues3Table;
-class CKeyValues3Context;
+class CKV3Arena;
 struct KV1ToKV3Translation_t;
 struct KV3ToKV1Translation_t;
 
@@ -40,7 +40,7 @@ struct KV3ToKV1Translation_t;
 
 	There are 2 ways to create KeyValues3:
 
-	1. Via CKeyValues3Context:
+	1. Via CKV3Arena:
 	- KV's, arrays and tables are stored in fixed memory blocks (clusters) and therefore memory is allocated only when clusters are created.
 	- Supports metadata and some other things.
 
@@ -86,10 +86,10 @@ PLATFORM_OVERLOAD void DebugPrintKV3( const KeyValues3* kv );
 
 // When using some LoadKV3/SaveKV3 functions, KV3ID_t structures must be filled in, which specify the format or encoding of the data.
 
-PLATFORM_OVERLOAD bool LoadKV3( CKeyValues3Context* context, CUtlString* error, CUtlBuffer* input, const KV3ID_t& format, const char* kv_name, uint loadFlags = 0);
+PLATFORM_OVERLOAD bool LoadKV3( CKV3Arena* context, CUtlString* error, CUtlBuffer* input, const KV3ID_t& format, const char* kv_name, uint loadFlags = 0);
 PLATFORM_OVERLOAD bool LoadKV3( KeyValues3* kv, CUtlString* error, CUtlBuffer* input, const KV3ID_t& format, const char* kv_name, uint loadFlags = 0);
 PLATFORM_OVERLOAD bool LoadKV3( KeyValues3* kv, CUtlString* error, const char* input, const KV3ID_t& format, const char* kv_name, uint loadFlags = 0);
-PLATFORM_OVERLOAD bool LoadKV3FromFile( CKeyValues3Context* context, CUtlString* error, const char* filename, const char* path, const KV3ID_t& format, uint loadFlags = 0);
+PLATFORM_OVERLOAD bool LoadKV3FromFile( CKV3Arena* context, CUtlString* error, const char* filename, const char* path, const KV3ID_t& format, uint loadFlags = 0);
 PLATFORM_OVERLOAD bool LoadKV3FromFile( KeyValues3* kv, CUtlString* error, const char* filename, const char* path, const KV3ID_t& format, uint loadFlags = 0);
 PLATFORM_OVERLOAD bool LoadKV3FromJSON( KeyValues3* kv, CUtlString* error, const char* input, const char* kv_name, uint loadFlags = 0);
 PLATFORM_OVERLOAD bool LoadKV3FromJSONFile( KeyValues3* kv, CUtlString* error, const char* path, const char* filename, uint loadFlags = 0);
@@ -383,8 +383,8 @@ public:
 	KeyValues3( int cluster_elem, KV3TypeEx_t type, KV3SubType_t subtype );
 	~KeyValues3();
 
-	CKeyValues3Context* GetContext() const;
-	KV3MetaData_t* GetMetaData( CKeyValues3Context** ppCtx = nullptr ) const;
+	CKV3Arena* GetContext() const;
+	KV3MetaData_t* GetMetaData( CKV3Arena** ppCtx = nullptr ) const;
 
 	bool HasFlag( KeyValues3Flag_t flag ) const { return (m_nFlags & flag) != 0; }
 	bool HasAnyFlags() const { return m_nFlags != 0; }
@@ -681,7 +681,7 @@ private:
 	friend CKeyValues3Cluster;
 	friend CKeyValues3ArrayCluster;
 	friend CKeyValues3TableCluster;
-	friend class CKeyValues3Context;
+	friend class CKV3Arena;
 	friend class CKeyValues3Table;
 	friend class CKeyValues3Array;
 };
@@ -725,7 +725,7 @@ public:
 	void SetClusterElement( int element ) { m_nClusterElement = element; }
 
 	CKeyValues3ArrayCluster* GetCluster() const;
-	CKeyValues3Context* GetContext() const;
+	CKV3Arena* GetContext() const;
 
 	Element_t *Base() { return IsBaseStatic() ? &m_StaticElements[0] : m_pDynamicElements; };
 	Element_t const *Base() const { return const_cast<CKeyValues3Array *>(this)->Base(); }
@@ -802,7 +802,7 @@ public:
 	void SetClusterElement( int element ) { m_nClusterElement = element; }
 
 	CKeyValues3TableCluster* GetCluster() const;
-	CKeyValues3Context* GetContext() const;
+	CKV3Arena* GetContext() const;
 
 	int GetMemberCount() const { return m_nCount; }
 	Member_t GetMember( KV3MemberId_t id );
@@ -928,10 +928,10 @@ public:
 		FLAGS_MASK = ~(HEAP_MARKER)
 	};
 
-	CKeyValues3ClusterImpl( CKeyValues3Context *context, bool allocated_on_heap = false, int initial_size = SIZE );
+	CKeyValues3ClusterImpl( CKV3Arena *context, bool allocated_on_heap = false, int initial_size = SIZE );
 	~CKeyValues3ClusterImpl() { Purge(); }
 
-	CKeyValues3Context *GetContext() const { return m_pContext; }
+	CKV3Arena *GetContext() const { return m_pContext; }
 
 	bool IsFull() const { return NumCount() >= NumAllocated(); }
 	bool IsAllocatedOnHeap() const { return (m_nAllocatedElements & HEAP_MARKER) != 0; }
@@ -989,7 +989,7 @@ private:
 		KV3MetaData_t m_elements[SIZE];
 	};
 
-	CKeyValues3Context *m_pContext;
+	CKV3Arena *m_pContext;
 	Node *m_pFirstFreeNode;
 
 	int m_nAllocatedElements;
@@ -1003,11 +1003,11 @@ private:
 	Node m_Values[SIZE];
 };
 
-class CKeyValues3ContextBase
+class CKV3ArenaBase
 {
 public:
-	CKeyValues3ContextBase( CKeyValues3Context* context );
-	~CKeyValues3ContextBase() { Purge(); }
+	CKV3ArenaBase( CKV3Arena* context );
+	~CKV3ArenaBase() { Purge(); }
 
 	void Clear();
 	void Purge();
@@ -1072,7 +1072,7 @@ protected:
 		ListEntry *m_pData;
 	};
 
-	CKeyValues3Context* m_pContext;
+	CKV3Arena* m_pContext;
 	CUtlBuffer m_BinaryData;
 
 	CKeyValues3Cluster m_KV3BaseCluster;
@@ -1099,13 +1099,13 @@ protected:
 	friend class KeyValues3;
 };
 
-class CKeyValues3Context : public CKeyValues3ContextBase
+class CKV3Arena : public CKV3ArenaBase
 {
-	typedef CKeyValues3ContextBase BaseClass;
+	typedef CKV3ArenaBase BaseClass;
 
 public:
-	CKeyValues3Context( bool bNoRoot = false );
-	~CKeyValues3Context() { Purge(); }
+	CKV3Arena( bool bNoRoot = false );
+	~CKV3Arena() { Purge(); }
 
 	KeyValues3* AllocKV( KV3TypeEx_t type = KV3_TYPEEX_NULL, KV3SubType_t subtype = KV3_SUBTYPE_UNSPECIFIED );
 	// WARNING: kv must belong to this context!!!
@@ -1113,7 +1113,7 @@ public:
 	
 	// gets the pre-allocated kv if we indicated its existence when creating the context
 	KeyValues3* Root();
-	const KeyValues3* Root() const { return const_cast<CKeyValues3Context*>(this)->Root(); }
+	const KeyValues3* Root() const { return const_cast<CKV3Arena*>(this)->Root(); }
 
 	bool IsMetaDataEnabled() const { return m_bMetaDataEnabled; }
 	// returns true if the desired format was converted to another after loading via LoadKV3*
@@ -1167,7 +1167,7 @@ private:
 
 	friend class KeyValues3;
 };
-COMPILE_TIME_ASSERT(sizeof(CKeyValues3Context) == KV3_CONTEXT_SIZE);
+COMPILE_TIME_ASSERT(sizeof(CKV3Arena) == KV3_CONTEXT_SIZE);
 
 template < typename T > inline T KeyValues3::FromString( T defaultValue ) const { Assert( 0 ); return defaultValue; }
 template <> inline bool KeyValues3::FromString( bool defaultValue ) const		{ return V_StringToBool( GetString(), defaultValue ); }
@@ -1342,7 +1342,7 @@ void KeyValues3::AllocArray( int size, const T* data, KV3ArrayAllocType_t alloc_
 }
 
 template<size_t SIZE, typename T>
-inline CKeyValues3ClusterImpl<SIZE, T>::CKeyValues3ClusterImpl( CKeyValues3Context *context, bool allocated_on_heap, int initial_size ) :
+inline CKeyValues3ClusterImpl<SIZE, T>::CKeyValues3ClusterImpl( CKV3Arena *context, bool allocated_on_heap, int initial_size ) :
 	m_pContext( context ),
 	m_pFirstFreeNode( nullptr ),
 	m_nAllocatedElements( initial_size | (allocated_on_heap ? HEAP_MARKER : 0) ),
@@ -1526,7 +1526,7 @@ KV3MetaData_t *CKeyValues3ClusterImpl<SIZE, T>::GetMetaData( int element ) const
 }
 
 template<typename CLUSTER>
-inline void CKeyValues3ContextBase::ClusterNodeChain<CLUSTER>::AddToChain( CLUSTER *cluster )
+inline void CKV3ArenaBase::ClusterNodeChain<CLUSTER>::AddToChain( CLUSTER *cluster )
 {
 	if(m_pTail)
 		m_pTail->SetNext( cluster );
@@ -1540,7 +1540,7 @@ inline void CKeyValues3ContextBase::ClusterNodeChain<CLUSTER>::AddToChain( CLUST
 }
 
 template<typename CLUSTER>
-inline void CKeyValues3ContextBase::ClusterNodeChain<CLUSTER>::RemoveFromChain( CLUSTER *cluster )
+inline void CKV3ArenaBase::ClusterNodeChain<CLUSTER>::RemoveFromChain( CLUSTER *cluster )
 {
 	auto prev = cluster->GetPrev();
 	auto next = cluster->GetNext();
@@ -1560,7 +1560,7 @@ inline void CKeyValues3ContextBase::ClusterNodeChain<CLUSTER>::RemoveFromChain( 
 }
 
 template<typename NODE>
-inline void CKeyValues3ContextBase::NodeList<NODE>::EnsureByteSize( int bytes_needed )
+inline void CKV3ArenaBase::NodeList<NODE>::EnsureByteSize( int bytes_needed )
 {
 	if(bytes_needed < m_nAllocatedBytes)
 		return;
@@ -1572,7 +1572,7 @@ inline void CKeyValues3ContextBase::NodeList<NODE>::EnsureByteSize( int bytes_ne
 }
 
 template<typename NODE>
-inline NODE *CKeyValues3ContextBase::NodeList<NODE>::Alloc( int initial_size )
+inline NODE *CKV3ArenaBase::NodeList<NODE>::Alloc( int initial_size )
 {
 	int byte_size_needed = m_nUsedBytes + NODE::TotalSizeOf( initial_size ) + 8;
 	EnsureByteSize( byte_size_needed );
@@ -1587,7 +1587,7 @@ inline NODE *CKeyValues3ContextBase::NodeList<NODE>::Alloc( int initial_size )
 }
 
 template<typename NODE>
-inline void CKeyValues3ContextBase::NodeList<NODE>::Clear()
+inline void CKV3ArenaBase::NodeList<NODE>::Clear()
 {
 	if(m_nAllocatedBytes > 0)
 	{
@@ -1601,7 +1601,7 @@ inline void CKeyValues3ContextBase::NodeList<NODE>::Clear()
 }
 
 template<typename NODE>
-inline void CKeyValues3ContextBase::NodeList<NODE>::Purge()
+inline void CKV3ArenaBase::NodeList<NODE>::Purge()
 {
 	Clear();
 
@@ -1610,7 +1610,7 @@ inline void CKeyValues3ContextBase::NodeList<NODE>::Purge()
 }
 
 template<typename CLUSTER>
-inline void CKeyValues3Context::PurgeClusterNodeChain( ClusterNodeChain<CLUSTER> &cluster_node )
+inline void CKV3Arena::PurgeClusterNodeChain( ClusterNodeChain<CLUSTER> &cluster_node )
 {
 	CLUSTER *prev = nullptr;
 	for(auto node = cluster_node.m_pTail; node; node = prev)
@@ -1632,7 +1632,7 @@ inline void CKeyValues3Context::PurgeClusterNodeChain( ClusterNodeChain<CLUSTER>
 }
 
 template<typename CLUSTER>
-inline void CKeyValues3Context::ClearClusterNodeChain( ClusterNodeChain<CLUSTER> &cluster_node )
+inline void CKV3Arena::ClearClusterNodeChain( ClusterNodeChain<CLUSTER> &cluster_node )
 {
 	for(auto node = cluster_node.m_pTail; node; node = node->GetPrev())
 	{
@@ -1641,7 +1641,7 @@ inline void CKeyValues3Context::ClearClusterNodeChain( ClusterNodeChain<CLUSTER>
 }
 
 template<typename CLUSTER>
-inline void CKeyValues3Context::MoveToPartial( ClusterNodeChain<CLUSTER> &full_cluster, ClusterNodeChain<CLUSTER> &partial_cluster )
+inline void CKV3Arena::MoveToPartial( ClusterNodeChain<CLUSTER> &full_cluster, ClusterNodeChain<CLUSTER> &partial_cluster )
 {
 	CLUSTER *prev;
 	for(auto node = full_cluster.m_pTail; node; node = prev)
@@ -1654,7 +1654,7 @@ inline void CKeyValues3Context::MoveToPartial( ClusterNodeChain<CLUSTER> &full_c
 }
 
 template <typename CLUSTER, typename... Args, typename>
-auto CKeyValues3Context::Alloc( ClusterNodeChain<CLUSTER> &partial_clusters,
+auto CKV3Arena::Alloc( ClusterNodeChain<CLUSTER> &partial_clusters,
 								ClusterNodeChain<CLUSTER> &full_clusters,
 								int initial_size, Args&&... args )
 {
@@ -1685,7 +1685,7 @@ auto CKeyValues3Context::Alloc( ClusterNodeChain<CLUSTER> &partial_clusters,
 }
 
 template<typename CLUSTER, typename NODE, typename ...Args, typename>
-inline NODE *CKeyValues3Context::RawAlloc( NodeList<NODE> &raw_array, ClusterNodeChain<CLUSTER> &partial_clusters, ClusterNodeChain<CLUSTER> &full_clusters, int initial_size, Args && ...args )
+inline NODE *CKV3Arena::RawAlloc( NodeList<NODE> &raw_array, ClusterNodeChain<CLUSTER> &partial_clusters, ClusterNodeChain<CLUSTER> &full_clusters, int initial_size, Args && ...args )
 {
 	int needed_byte_size = MAX( NODE::TotalSizeOf( initial_size ), 32 );
 
@@ -1701,7 +1701,7 @@ inline NODE *CKeyValues3Context::RawAlloc( NodeList<NODE> &raw_array, ClusterNod
 }
 
 template<typename CLUSTER, typename NODE>
-void CKeyValues3Context::Free( NODE *element, ClusterNodeChain<CLUSTER> &partial_clusters, ClusterNodeChain<CLUSTER> &full_clusters )
+void CKV3Arena::Free( NODE *element, ClusterNodeChain<CLUSTER> &partial_clusters, ClusterNodeChain<CLUSTER> &full_clusters )
 {
 	auto cluster = element->GetCluster();
 
