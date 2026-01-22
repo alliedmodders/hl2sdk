@@ -67,6 +67,9 @@ struct NetworkStateChangedData
 class CEntityInstance
 {
 public:
+	virtual void unk001() = 0;
+	virtual void unk002() = 0;
+
 	virtual void* GetScriptDesc() = 0;
 	
 	virtual ~CEntityInstance() = 0;
@@ -77,7 +80,7 @@ public:
 	virtual void AddedToEntityDatabase() = 0;
 	virtual void Spawn( const CEntityKeyValues* pKeyValues ) = 0;
 
-	virtual void unk001() = 0;
+	virtual void unk101() = 0;
 
 	virtual void PostDataUpdate( /*DataUpdateType_t*/int updateType ) = 0;
 	virtual void OnDataUnchangedInPVS() = 0;
@@ -98,7 +101,7 @@ public:
 	virtual void OnSave() = 0;
 	virtual void OnRestore() = 0;
 	
-	virtual void unk101() = 0;
+	virtual void unk201() = 0;
 
 	virtual int ObjectCaps() = 0;
 	virtual CEntityIndex RequiredEdictIndex() = 0;
@@ -107,8 +110,8 @@ public:
 	virtual void NetworkStateChanged( const NetworkStateChangedData& data ) = 0;
 
 	// AMNOTE: NetworkState related methods
-	virtual void unk201( const void* data ) = 0;
-	virtual void unk202( const void* data ) = 0;
+	virtual void unk301( const void* data ) = 0;
+	virtual void unk302( const void* data ) = 0;
 
 	// Toggles network update state, if set to false would skip network updates
 	virtual void NetworkUpdateState( bool state ) = 0;
@@ -116,21 +119,21 @@ public:
 
 	virtual bool FullEdictChanged() = 0;
 
-	virtual void unk301() = 0;
-	virtual void unk302() = 0;
+	virtual void unk401() = 0;
+	virtual void unk402() = 0;
 
 	virtual ChangeAccessorFieldPathIndex_t AddChangeAccessorPath( const CFieldPath& path ) = 0;
 	virtual void AssignChangeAccessorPathIds() = 0;
 	virtual ChangeAccessorFieldPathIndexInfo_t* GetChangeAccessorPathInfo_1() = 0;
 	virtual ChangeAccessorFieldPathIndexInfo_t* GetChangeAccessorPathInfo_2() = 0;
 	
-	virtual void unk401() = 0;
-	virtual void unk402() = 0;
+	virtual void unk501() = 0;
+	virtual void unk502() = 0;
 
 	virtual void ReloadPrivateScripts() = 0;
 	virtual datamap_t* GetDataDescMap() = 0;
 
-	virtual void unk501() = 0;
+	virtual void unk601() = 0;
 
 	virtual SchemaMetaInfoHandle_t<CSchemaClassInfo> Schema_DynamicBinding() = 0;
 
