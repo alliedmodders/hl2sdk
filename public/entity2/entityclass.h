@@ -96,6 +96,11 @@ public:
 	int m_nOutputCount; // 0x1c
 	CEntitySharedPulseSignature* m_pSharedPulseSignature; // 0x20
 	EntClassComponentOverride_t* m_pComponentOverrides; // 0x28
+	
+private:
+	char m_unk001[0x48];
+
+public:
 	CEntityClassInfo* m_pClassInfo; // 0x30
 	CEntityClassInfo* m_pBaseClassInfo; // 0x38
 	CUtlSymbolLarge m_designerName; // 0x40
