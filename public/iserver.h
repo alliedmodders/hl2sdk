@@ -74,6 +74,8 @@ public:
 	// returns current client limit
 	virtual int		GetMaxClients( void ) const = 0;
 
+	virtual float   unk000() = 0;
+
 	virtual void	ServerAdvanceTick( const EventServerAdvanceTick_t & ) = 0;
 	virtual void	ServerPollNetworking( const EventServerPollNetworking_t & ) = 0;
 	virtual void	ServerProcessNetworking( const EventServerProcessNetworking_t & ) = 0;
