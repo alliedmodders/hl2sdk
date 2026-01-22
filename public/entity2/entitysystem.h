@@ -134,7 +134,7 @@ struct EventQueuePrioritizedEvent_t
 class CEventQueue
 {
 public:
-	CThreadMutex m_Mutex;
+	CAtomicMutex m_Mutex;
 	EventQueuePrioritizedEvent_t m_Events;
 	int m_iListCount;
 };

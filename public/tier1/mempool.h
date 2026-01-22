@@ -91,7 +91,7 @@ private:
 	MemAllocAttribute_t m_AllocAttribute;
 	
 	bool 			m_Unk1;
-	CThreadMutex	m_Mutex;
+	CAtomicMutex	m_Mutex;
 	CBlob*			m_pBlobHead;
 	int				m_TotalSize;
 };
