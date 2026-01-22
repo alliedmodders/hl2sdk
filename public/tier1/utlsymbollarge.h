@@ -406,8 +406,8 @@ typedef CUtlSymbolTableLargeBase< false, 2048, CThreadNullMutex > CUtlSymbolTabl
 // Case-insensitive
 typedef CUtlSymbolTableLargeBase< true, 2048, CThreadNullMutex > CUtlSymbolTableLarge_CI;
 // Multi-threaded case-sensitive
-typedef CUtlSymbolTableLargeBase< false, 2048, CThreadMutex > CUtlSymbolTableLargeMT;
+typedef CUtlSymbolTableLargeBase< false, 2048, CAtomicMutex > CUtlSymbolTableLargeMT;
 // Multi-threaded case-insensitive
-typedef CUtlSymbolTableLargeBase< true, 2048, CThreadMutex > CUtlSymbolTableLargeMT_CI;
+typedef CUtlSymbolTableLargeBase< true, 2048, CAtomicMutex > CUtlSymbolTableLargeMT_CI;
 
 #endif // UTLSYMBOLLARGE_H

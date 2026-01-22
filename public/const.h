@@ -479,8 +479,8 @@ enum
 
 #define SOURCE_MT
 #ifdef SOURCE_MT
-class CThreadMutex;
-typedef CThreadMutex CSourceMutex;
+class CAtomicMutex;
+typedef CAtomicMutex CSourceMutex;
 #else
 class CThreadNullMutex;
 typedef CThreadNullMutex CSourceMutex;
