@@ -308,17 +308,8 @@ enum EntityEffects_t : uint16
 enum RenderMode_t : unsigned char
 {	
 	kRenderNormal = 0,		// src
-	kRenderTransColor,		// c*a+dest*(1-a)
-	kRenderTransTexture,	// src*a+dest*(1-a)
-	kRenderGlow,			// src*a+dest -- No Z buffer checks -- Fixed size in screen space
 	kRenderTransAlpha,		// src*srca+dest*(1-srca)
-	kRenderTransAdd,		// src*a+dest
-	kRenderEnvironmental,	// not drawn, used for environmental effects
-	kRenderTransAddFrameBlend, // use a fractional frame value to blend between animation frames
-	kRenderTransAlphaAdd,	// src + dest*(1-a)
-	kRenderWorldGlow,		// Same as kRenderGlow but not fixed size in screen space
 	kRenderNone,			// Don't render.
-	kRenderDevVisualizer,
 
 	kRenderModeCount,		// must be last
 };
@@ -341,12 +332,10 @@ enum RenderFx_t : unsigned char
 	kRenderFxStrobeFaster, 
 	kRenderFxFlickerSlow, 
 	kRenderFxFlickerFast,
-	kRenderFxNoDissipation,
 
 	kRenderFxFadeOut,
 	kRenderFxFadeIn,
 	kRenderFxPulseFastWider,
-	kRenderFxGlowShell,			// Glowing Shell
 
 	kRenderFxMax
 };
