@@ -293,7 +293,8 @@ public:
 		
 		m_nHierarchyIds[0] = 0;
 		m_nHierarchyIds[1] = 0;
-		
+		m_nIncludedDetailLayers = -1;
+		m_nTargetDetailLayer = 0;
 		m_nObjectSetMask = RNQUERY_OBJECTS_ALL;
 		m_nCollisionGroup = COLLISION_GROUP_ALWAYS;
 		
@@ -331,6 +332,8 @@ public:
 	uint32 m_nEntityIdsToIgnore[2]; // this is the ID of the game entity which should be ignored
 	uint32 m_nOwnerIdsToIgnore[2];	// this is the ID of the owner of the game entity which should be ignored
 	uint16 m_nHierarchyIds[2];		// this is an ID for the hierarchy of game entities (used to disable collision among objects in a hierarchy)
+	uint16 m_nIncludedDetailLayers;	// which detail layers the query can interact with, eg. can the query interact with the target's layer?
+	uint8 m_nTargetDetailLayer;	// which detail layer the query is on, eg. can the target interact with the query's layer?
 	uint8 m_nObjectSetMask; 		// set of RnQueryObjectSet bits
 	uint8 m_nCollisionGroup; 		// one of the registered collision groups
 
