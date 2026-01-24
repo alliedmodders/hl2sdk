@@ -262,7 +262,6 @@ namespace panorama
 DECLARE_TIER1_INTERFACE( IApplication, g_pApplication );
 
 #define CVAR_INTERFACE_VERSION					"VEngineCvar007"
-DECLARE_TIER1_INTERFACE( ICvar, cvar );
 DECLARE_TIER1_INTERFACE( ICvar, g_pCVar );
 
 #define STRINGTOKENSYSTEM_INTERFACE_VERSION		"VStringTokenSystem001"

@@ -307,7 +307,6 @@ public:
 //-----------------------------------------------------------------------------
 
 // These are marked DLL_EXPORT for Linux.
-DECLARE_TIER1_INTERFACE( ICvar, cvar );
 DECLARE_TIER1_INTERFACE( ICvar, g_pCVar );
 
 

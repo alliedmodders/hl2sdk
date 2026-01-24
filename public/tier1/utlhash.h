@@ -804,7 +804,7 @@ template<class Data, class HashFuncs>
 	int bucketCount = m_aBuckets.Count();
 	for ( int bucket = iter.bucket+1 ; bucket < bucketCount ; ++bucket )
 	{
-		UtlHashFastHandle_t next = m_aBuckets[bucket]; // get the head of the bucket
+		next = m_aBuckets[bucket]; // get the head of the bucket
 		if (next != invalidIndex)
 			return UtlHashFastIterator_t( bucket, next );
 	}
