@@ -11,17 +11,20 @@
 #include "entityhandle.h"
 #include "networksystem/iflattenedserializers.h"
 
-#define FENTCLASS_NON_NETWORKABLE		(1 << 0) // If the EntityClass is non-networkable
-#define FENTCLASS_ALIAS					(1 << 1) // If the EntityClass is an alias
-#define FENTCLASS_NO_SPAWNGROUP			(1 << 2) // Don't use spawngroups when creating entity
-#define FENTCLASS_FORCE_EHANDLE			(1 << 3) // Forces m_requiredEHandle on created entities
-#define FENTCLASS_UNK004				(1 << 4)
-#define FENTCLASS_SUSPEND_OUTSIDE_PVS	(1 << 5) // Suspend entities outside of PVS
-#define FENTCLASS_ANONYMOUS				(1 << 6) // If the EntityClass is anonymous
-#define FENTCLASS_UNK007				(1 << 7)
-#define FENTCLASS_UNK008				(1 << 8)
-#define FENTCLASS_UNK009				(1 << 9)
-#define FENTCLASS_FORCE_WORLDGROUPID	(1 << 10) // Forces worldgroupid to be 1 on created entities
+enum EntityClassFlags_t
+{
+	ECF_NOT_NETWORKED						= (1 << 0), // If the EntityClass is non-networkable
+	ECF_ALIAS								= (1 << 1), // If the EntityClass is an alias
+	ECF_SPAWN_GROUP_HANDLE_INVALID			= (1 << 2), // Don't use spawngroups when creating entity
+	ECF_HAS_REQUIRED_ENTITY_HANDLE			= (1 << 3), // Forces m_requiredEHandle on created entities
+	ECF_ALWAYS_SPAWN_ON_CLIENT				= (1 << 4),
+	ECF_BECOME_SUSPENDED_INSTEAD_OF_DORMANT = (1 << 5), // Suspend entities outside of PVS
+	ECF_ANONYMOUS_ENTITY					= (1 << 6), // If the EntityClass is anonymous
+	ECF_PRECACHE_NETWORKED_ENTITY_ON_CLIENT	= (1 << 7),
+	ECF_UNK001								= (1 << 8),
+	ECF_UNK002								= (1 << 9),
+	ECF_FORCE_WORLDGROUPID					= (1 << 10) // Forces worldgroupid to be 1 on created entities
+};
 
 class CSchemaClassInfo;
 class CEntityClass;
@@ -89,45 +92,50 @@ public:
 	}
 	
 public:
-	void* m_pScriptDesc; // 0x0
-	EntInput_t* m_pInputs; // 0x8
-	EntOutput_t* m_pOutputs; // 0x10
-	int m_nInputCount; // 0x18
-	int m_nOutputCount; // 0x1c
-	CEntitySharedPulseSignature* m_pSharedPulseSignature; // 0x20
-	EntClassComponentOverride_t* m_pComponentOverrides; // 0x28
-	
+	void *m_pScriptDesc;
+	void *m_unk001;
+
+	EntInput_t* m_pInputs;
+	EntOutput_t* m_pOutputs;
+	int m_nInputCount;
+	int m_nOutputCount;
+
 private:
-	char m_unk001[0x48];
+	char m_unk101[56];
 
 public:
-	CEntityClassInfo* m_pClassInfo; // 0x30
-	CEntityClassInfo* m_pBaseClassInfo; // 0x38
-	CUtlSymbolLarge m_designerName; // 0x40
+	CEntitySharedPulseSignature *m_pSharedPulseSignature;
+	CEntitySharedPulseSignature *m_unk201;
 
-	// Uses FENTCLASS_* flags
-	uint m_flags; // 0x48
+	EntClassComponentOverride_t* m_pComponentOverrides;
+	
+	CEntityClassInfo* m_pClassInfo;
+	CEntityClassInfo* m_pBaseClassInfo;
+	CUtlSymbolLarge m_designerName;
+
+	// Uses EntityClassFlags_t flags
+	uint m_flags;
 
 	// Special class group?
-	int m_Unk1; // 0x4c
+	int m_unk301;
 	
-	uint m_nAllHelpersFlags; // 0x50
+	uint m_nAllHelpersFlags;
 
-	CUtlVector<ComponentOffsets_t> m_ComponentOffsets; // 0x58
-	CUtlVector<ComponentHelper_t> m_AllHelpers; // 0x70
+	CUtlVector<ComponentOffsets_t> m_ComponentOffsets;
+	CUtlVector<ComponentHelper_t> m_AllHelpers;
 	
-	ComponentUnserializerClassInfo_t m_componentUnserializerClassInfo; // 0x88
+	ComponentUnserializerClassInfo_t m_componentUnserializerClassInfo;
 	
-	FlattenedSerializerDesc_t m_flattenedSerializer; // 0xb8
+	FlattenedSerializerDesc_t m_flattenedSerializer;
 
-	CUtlVector<ClassInputInfo_t> m_classInputInfos; // 0xc8
-	CUtlVector<ClassOutputInfo_t> m_classOutputInfos; // 0xe0
+	CUtlVector<ClassInputInfo_t> m_classInputInfos;
+	CUtlVector<ClassOutputInfo_t> m_classOutputInfos;
 	
-	CEntityHandle m_requiredEHandle; // 0xf8
+	CEntityHandle m_requiredEHandle;
 
-	CEntityClass* m_pNext; // 0x100
-	CEntityIdentity* m_pFirstEntity; // 0x108
-	ServerClass* m_pServerClass; // 0x110
+	CEntityClass* m_pNext;
+	CEntityIdentity* m_pFirstEntity;
+	ServerClass* m_pServerClass;
 };
 
 #endif // ENTITYCLASS_H
