@@ -462,6 +462,9 @@ public:
 	uint32 m_nEntityId; 			// this is the ID of the game entity
 	uint32 m_nOwnerId;  			// this is the ID of the owner of the game entity
 	uint16 m_nHierarchyId; 			// this is an ID for the hierarchy of game entities (used to disable collision among objects in a hierarchy)
+	uint16 m_nDetailLayerMask;
+	uint8 m_nDetailLayerMaskType;
+	uint8 m_nTargetDetailLayer;
 	uint8 m_nCollisionGroup;		// one of the registered collision groups
 	uint8 m_nCollisionFunctionMask;	// set of CollisionFunctionMask_t bits
 };
