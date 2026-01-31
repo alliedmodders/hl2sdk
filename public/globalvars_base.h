@@ -90,7 +90,7 @@ public:
 	// Simulation tick interval
 	float m_flIntervalPerTick;
 
-	float unknown10;
+	unsigned long m_nThreadId; // ThreadId_t
 };
 
 inline CGlobalVarsBase::CGlobalVarsBase()
