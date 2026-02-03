@@ -11,6 +11,8 @@
 #pragma once
 #endif
 
+#include "threadtools.h"
+
 enum GlobalVarsUsageWarning_t
 {
 	GV_RENDERTIME_CALLED_DURING_SIMULATION,
@@ -90,7 +92,7 @@ public:
 	// Simulation tick interval
 	float m_flIntervalPerTick;
 
-	float unknown10;
+	ThreadId_t m_nThreadId;
 };
 
 inline CGlobalVarsBase::CGlobalVarsBase()
