@@ -54,7 +54,6 @@ public:
 	datamap_t* m_pPredDescMap;
 };
 
-// Size: 0x118
 class CEntityClass
 {
 	struct ComponentOffsets_t
@@ -101,7 +100,11 @@ public:
 	int m_nOutputCount;
 
 private:
+#ifdef _WIN32
 	char m_unk101[56];
+#else
+	char m_unk101[24];
+#endif
 
 public:
 	CEntitySharedPulseSignature *m_pSharedPulseSignature;
