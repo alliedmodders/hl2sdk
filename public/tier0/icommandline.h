@@ -42,7 +42,7 @@ public:
 
 	virtual const char **GetParms() const = 0;
 	virtual const char *GetCmdLine( void ) const = 0;
-	virtual void		AppendParm( CUtlStringToken param, const char *pszValues ) = 0;
+	virtual void		AppendParm( const char* param, const char *pszValues ) = 0;
 	
 	// Returns true if there's atleast one parm available
 	virtual bool		HasParms( void ) const = 0;
