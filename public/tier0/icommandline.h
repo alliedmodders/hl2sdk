@@ -49,6 +49,8 @@ public:
 
 	virtual const char *GetParmBuffer() = 0;
 
+	// Unrestricted access to command line parms, alternative methods above won't return anything if
+	// they are executed in a secure environment (i.e. wasn't launched with -tools, -dedicated or -insecure)
 	virtual	const char *CheckParmUnrestricted( CUtlStringToken param, const char **ppszValue = 0 ) const = 0;
 	virtual bool		HasParmUnrestricted( CUtlStringToken param ) const = 0;
 
