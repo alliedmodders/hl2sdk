@@ -46,6 +46,10 @@ class IEntityPrecacheConfiguration;
 struct EngineLoopState_t;
 struct EntitySpawnInfo_t;
 
+#define DECLARE_GAME_SYSTEM() \
+	virtual void YouForgot_DECLARE_GAME_SYSTEM_InYourClassDefinition() override {}; \
+	struct YouForgot { } m_YouForgot;
+
 #define GS_EVENT_MSG( name ) struct Event##name##_t
 #define GS_EVENT_MSG_CHILD( name, parent ) struct Event##name##_t : Event##parent##_t
 
@@ -326,6 +330,7 @@ public:
 	virtual void SetName(const char* pName) = 0;			// 59
 	virtual bool DoesGameSystemReallocate() = 0;			// 60
 	virtual ~IGameSystem() {}
+	virtual void YouForgot_DECLARE_GAME_SYSTEM_InYourClassDefinition() = 0;
 };
 
 // Quick and dirty server system for users who don't care about precise ordering
