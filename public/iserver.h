@@ -146,6 +146,7 @@ public:
 	virtual float	unk402() = 0;
 	virtual uint64	unk403() = 0;
 	virtual void 	DirectUpdate() = 0;
+	virtual int64	unk501() = 0;
 };
 
 abstract_class CNetworkGameServerBase : public INetworkGameServer, protected IConnectionlessPacketHandler, public IConVarListener
