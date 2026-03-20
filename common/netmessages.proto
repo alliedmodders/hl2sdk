@@ -1,4 +1,5 @@
 import "networkbasetypes.proto";
+import "source2_steam_stats.proto";
 
 enum CLC_Messages {
 	clc_ClientInfo = 20;
@@ -6,7 +7,6 @@ enum CLC_Messages {
 	clc_VoiceData = 22;
 	clc_BaselineAck = 23;
 	clc_RespondCvarValue = 25;
-	clc_FileCRCCheck = 26;
 	clc_LoadingProgress = 27;
 	clc_SplitPlayerConnect = 28;
 	clc_SplitPlayerDisconnect = 30;
@@ -15,6 +15,7 @@ enum CLC_Messages {
 	clc_CmdKeyValues = 34;
 	clc_RconServerDetails = 35;
 	clc_HltvReplay = 36;
+	clc_Diagnostic = 37;
 }
 
 enum SVC_Messages {
@@ -48,6 +49,7 @@ enum SVC_Messages {
 	svc_Broadcast_Command = 74;
 	svc_HltvFixupOperatorStatus = 75;
 	svc_UserCmds = 76;
+	svc_NextMsgPredicted = 77;
 }
 
 enum VoiceDataFormat_t {
@@ -94,6 +96,7 @@ enum Bidirectional_Messages {
 	bi_RebroadcastGameEvent = 16;
 	bi_RebroadcastSource = 17;
 	bi_GameEvent = 18;
+	bi_PredictionEvent = 19;
 }
 
 enum Bidirectional_Messages_LowFrequency {
@@ -119,8 +122,7 @@ message CCLCMsg_ClientInfo {
 
 message CCLCMsg_Move {
 	optional bytes data = 3;
-	optional uint32 command_number = 4;
-	optional uint32 num_commands = 5;
+	optional uint32 last_command_number = 4;
 }
 
 message CMsgVoiceAudio {
@@ -157,14 +159,6 @@ message CCLCMsg_RespondCvarValue {
 	optional string value = 4;
 }
 
-message CCLCMsg_FileCRCCheck {
-	optional int32 code_path = 1;
-	optional string path = 2;
-	optional int32 code_filename = 3;
-	optional string filename = 4;
-	optional fixed32 crc = 5;
-}
-
 message CCLCMsg_LoadingProgress {
 	optional int32 progress = 1;
 }
@@ -187,6 +181,8 @@ message CCLCMsg_RequestPause {
 }
 
 message CCLCMsg_CmdKeyValues {
+	option (maximum_size_bytes) = 1500;
+
 	optional bytes data = 1;
 }
 
@@ -194,7 +190,19 @@ message CCLCMsg_RconServerDetails {
 	optional bytes token = 1;
 }
 
+message CCLCMsg_Diagnostic {
+	option (maximum_size_bytes) = 16384;
+
+	optional .CMsgSource2SystemSpecs system_specs = 1;
+	optional .CMsgSource2VProfLiteReport vprof_report = 2;
+	optional .CMsgSource2NetworkFlowQuality downstream_flow = 3;
+	optional .CMsgSource2NetworkFlowQuality upstream_flow = 4;
+	repeated .CMsgSource2PerfIntervalSample perf_samples = 5;
+}
+
 message CSVCMsg_ServerInfo {
+	option (maximum_size_bytes) = 409600;
+
 	optional int32 protocol = 1;
 	optional int32 server_count = 2;
 	optional bool is_dedicated = 3;
@@ -214,6 +222,8 @@ message CSVCMsg_ServerInfo {
 }
 
 message CSVCMsg_ClassInfo {
+	option (maximum_size_bytes) = 8192;
+
 	message class_t {
 		optional int32 class_id = 1;
 		optional string class_name = 3;
@@ -234,6 +244,8 @@ message CSVCMsg_VoiceInit {
 }
 
 message CSVCMsg_Print {
+	option (maximum_size_bytes) = 8192;
+
 	optional string text = 1;
 }
 
@@ -348,6 +360,8 @@ message CSVCMsg_GameEventList {
 }
 
 message CSVCMsg_PacketEntities {
+	option (maximum_size_bytes) = 0;
+
 	message alternate_baseline_t {
 		optional int32 entity_index = 1;
 		optional int32 baseline_index = 2;
@@ -355,6 +369,11 @@ message CSVCMsg_PacketEntities {
 
 	message non_transmitted_entities_t {
 		optional int32 header_count = 1;
+		optional bytes data = 2;
+	}
+
+	message outofpvs_entity_updates_t {
+		optional int32 count = 1;
 		optional bytes data = 2;
 	}
 
@@ -373,11 +392,12 @@ message CSVCMsg_PacketEntities {
 	optional uint32 server_tick = 12;
 	optional bytes serialized_entities = 13;
 	repeated .CSVCMsg_PacketEntities.alternate_baseline_t alternate_baselines = 15;
-	optional uint32 has_pvs_vis_bits = 16;
-	optional uint32 last_cmd_recv_margin = 18;
+	optional uint32 has_pvs_vis_bits_deprecated = 16;
+	repeated sint32 cmd_recv_status = 22 [packed = true];
 	optional .CSVCMsg_PacketEntities.non_transmitted_entities_t non_transmitted_entities = 19;
 	optional uint32 cq_starved_command_ticks = 20;
 	optional uint32 cq_discarded_command_ticks = 21;
+	optional .CSVCMsg_PacketEntities.outofpvs_entity_updates_t outofpvs_entity_updates = 23;
 	optional bytes dev_padding = 999;
 }
 
@@ -388,6 +408,8 @@ message CSVCMsg_TempEntities {
 }
 
 message CSVCMsg_CreateStringTable {
+	option (maximum_size_bytes) = 102400;
+
 	optional string name = 1;
 	optional int32 num_entries = 2;
 	optional bool user_data_fixed_size = 3;
@@ -401,6 +423,8 @@ message CSVCMsg_CreateStringTable {
 }
 
 message CSVCMsg_UpdateStringTable {
+	option (maximum_size_bytes) = 262144;
+
 	optional int32 table_id = 1;
 	optional int32 num_changed_entries = 2;
 	optional bytes string_data = 3;
@@ -499,6 +523,8 @@ message ProtoFlattenedSerializer_t {
 }
 
 message CSVCMsg_FlattenedSerializer {
+	option (maximum_size_bytes) = 0;
+
 	repeated .ProtoFlattenedSerializer_t serializers = 1;
 	repeated string symbols = 2;
 	repeated .ProtoFlattenedSerializerField_t fields = 3;
@@ -517,6 +543,18 @@ message CBidirMsg_RebroadcastGameEvent {
 
 message CBidirMsg_RebroadcastSource {
 	optional int32 eventsource = 1;
+}
+
+message CBidirMsg_PredictionEvent {
+	enum ESyncType {
+		ST_Tick = 0;
+		ST_UserCmdNum = 1;
+	}
+
+	optional uint32 event_id = 1;
+	optional bytes event_data = 2;
+	optional uint32 sync_type = 3;
+	optional uint32 sync_val_uint32 = 4;
 }
 
 message CMsgServerNetworkStats {
@@ -607,8 +645,14 @@ message CMsgServerUserCmd {
 	optional int32 cmd_number = 2;
 	optional int32 player_slot = 3 [default = -1];
 	optional int32 server_tick_executed = 4;
+	optional int32 client_tick = 5;
 }
 
 message CSVCMsg_UserCommands {
 	repeated .CMsgServerUserCmd commands = 1;
+}
+
+message CSVCMsg_NextMsgPredicted {
+	optional int32 predicted_by_player_slot = 1 [default = -1];
+	optional uint32 message_type_id = 2;
 }

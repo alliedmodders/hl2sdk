@@ -1,5 +1,6 @@
 import "steammessages.proto";
 import "gcsdk_gcmessages.proto";
+import "base_gcmessages.proto";
 import "citadel_gcmessages_common.proto";
 
 enum EGCCitadelServerMessages {
@@ -23,6 +24,14 @@ enum EGCCitadelServerMessages {
 	k_EMsgGCToServerSetServerConVar = 10039;
 	k_EMsgGCToServerSetServerConVarResponse = 10040;
 	k_EMsgServerToGCUpdateMatchInfo = 10041;
+	k_EMsgServerToGCRequestPlayerHeroData = 10044;
+	k_EMsgServerToGCRequestPlayerHeroDataResponse = 10045;
+	k_EMsgGCToServerAllocateForHideout = 10046;
+	k_EMsgGCToServerAllocateForHideoutResponse = 10047;
+}
+
+enum ECitadelMatchAuxStat {
+	k_eMatchAuxStat_Dummy = 1;
 }
 
 enum EGCServerLobbyData {
@@ -30,6 +39,7 @@ enum EGCServerLobbyData {
 	k_EServerLobbyData_PlayerInfo = 2;
 	k_EServerLobbyData_PostMatchSurvey = 3;
 	k_EServerLobbyData_AutoTest = 4;
+	k_EServerLobbyData_PlayerStatValues = 5;
 }
 
 enum EGCServerSignoutData {
@@ -40,6 +50,13 @@ enum EGCServerSignoutData {
 	k_EServerSignoutData_PerfData = 6;
 	k_EServerSignoutData_PlayerChat = 7;
 	k_EServerSignoutData_BookRewards = 8;
+	k_EServerSignoutData_PenalizedPlayers = 9;
+	k_EServerSignoutData_MatchDevStats = 11;
+	k_EServerSignoutData_ChallengeProgress = 12;
+	k_EServerSignoutData_HeroXPGrant = 13;
+	k_EServerSignoutData_MatchKills = 14;
+	k_EServerSignoutData_PlayerBehavior = 15;
+	k_EServerSignoutData_StreetBrawlData = 16;
 }
 
 message CMsgServerCrashSentinelFile {
@@ -56,27 +73,43 @@ message CMsgServerCrashSentinelFile {
 		optional .ECitadelMatchMode match_mode = 6 [default = k_ECitadelMatchMode_Invalid];
 		optional .ECitadelGameMode game_mode = 7 [default = k_ECitadelGameMode_Invalid];
 		optional bool was_server_shutdown = 8;
+		optional uint64 hideout_lobby_id = 9;
+		optional bool allow_matches = 10;
+		optional bool allow_hideout = 11;
+		optional bool was_lost_lobby = 12;
 	}
 
 	optional uint32 version = 1;
 	optional fixed64 server_steam_id = 2;
 	optional fixed32 server_public_ip_addr = 3;
 	optional uint32 server_port = 4;
-	optional uint32 server_cluster = 5;
+	optional uint32 server_cluster_id = 5;
 	optional uint32 pid = 6;
 	optional uint32 saved_time = 7;
 	optional uint32 server_version = 8;
 	optional .CMsgServerCrashSentinelFile.GameInfo game_info = 9;
 	optional uint32 server_private_ip_addr = 10;
 	optional uint32 instance_id = 11;
+	optional uint32 server_region_id = 12;
+}
+
+message CMsgAccountChallengesActive {
+	message Challenge {
+		optional uint64 challenge_id = 1;
+		optional uint32 progress = 2;
+		optional uint32 max_progress = 3;
+	}
+
+	repeated .CMsgAccountChallengesActive.Challenge challenges = 1;
 }
 
 message CServerLobbyData_PlayerMMR {
 	message Player {
-		optional uint32 account_id = 1;
 		optional uint32 player_mmr = 2;
 		optional uint32 player_uncertainty = 3;
 		optional uint32 hero_mmr = 4;
+		optional uint32 hero_mmr_with_uncertainty = 5;
+		optional uint32 player_slot = 6;
 	}
 
 	repeated .CServerLobbyData_PlayerMMR.Player players = 1;
@@ -85,8 +118,9 @@ message CServerLobbyData_PlayerMMR {
 message CServerLobbyData_PlayerInfo {
 	optional uint32 account_id = 1;
 	repeated .CMsgAccountHeroStats account_stats = 2;
-	optional uint32 mmr_level = 4;
 	repeated .CMsgAccountBookStats book_info = 5;
+	optional .CMsgAccountChallengesActive challenges = 7;
+	optional .CMsgEquippedItemList global_equips = 8;
 }
 
 message CServerLobbyData_PostMatchSurvey {
@@ -102,9 +136,27 @@ message CServerLobbyData_AutoTest {
 	optional uint32 max_duration_s = 2;
 }
 
+message CServerLobbyData_PlayerStatValues {
+	message AccoladeThresholds {
+		optional uint32 accolade_id = 1;
+		repeated uint32 thresholds = 2;
+	}
+
+	message StatDistribution {
+		optional uint32 tracked_stat_id = 1;
+		optional float tracked_stat_mean = 2;
+		optional float tracked_stat_std_dev = 3;
+	}
+
+	repeated .CServerLobbyData_PlayerStatValues.AccoladeThresholds accolades = 1;
+	repeated .CServerLobbyData_PlayerStatValues.StatDistribution stat_distributions = 2;
+}
+
 message CSOCitadelServerDynamicLobby {
 	optional uint64 lobby_id = 1;
 	repeated uint32 left_account_ids = 2 [packed = true];
+	optional bool broadcast_active = 3;
+	optional uint32 spectator_count = 4;
 }
 
 message CSOCitadelServerStaticLobby {
@@ -117,6 +169,15 @@ message CSOCitadelServerStaticLobby {
 		optional uint32 party_index = 6;
 		optional .EGCPlatform platform = 7 [default = k_eGCPlatform_None];
 		repeated .CSOCitadelServerStaticLobby.EAwardIDs award_ids = 8;
+		optional bool is_comms_restricted = 9;
+		optional uint32 lane_id = 10;
+		optional .CMsgGCAccountData gc_account_data = 13;
+		optional bool party_desires_laning_together = 14;
+		optional .ECitadelBotDifficulty bot_difficulty = 16 [default = k_ECitadelBotDifficulty_None];
+		optional bool requires_skill_calibration = 18;
+		optional .CMsgPlayerHeroData hero_data = 19;
+		optional uint32 match_number = 20;
+		optional bool randomed_hero = 21;
 	}
 
 	message DevSettings {
@@ -124,8 +185,7 @@ message CSOCitadelServerStaticLobby {
 	}
 
 	enum EAwardIDs {
-		k_eAward_KingPanda = 1;
-		k_eAward_DevTeamMember = 2;
+		k_eAward_KingPanda_DEPRECATED = 1;
 	}
 
 	repeated .CExtraMsgBlock extra_messages = 1;
@@ -139,7 +199,23 @@ message CSOCitadelServerStaticLobby {
 	optional .ECitadelBotDifficulty bot_difficulty = 9 [default = k_ECitadelBotDifficulty_None];
 	optional fixed32 metadata_salt = 10;
 	optional uint32 match_start_time = 11;
-	optional uint32 experimental_gameplay_state = 15;
+	optional .ECitadelRegionMode region_mode = 16 [default = k_ECitadelRegionMode_ROW];
+	optional string broadcast_url = 17;
+	optional bool new_player_pool = 18;
+	optional bool low_pri_pool = 19;
+	optional bool is_restricted_access = 20;
+	optional bool cheats_enabled = 21;
+	optional bool duplicate_heroes_enabled = 22;
+	optional bool is_high_skill_range_parties = 23;
+	optional uint32 average_badge_team_0 = 25;
+	optional uint32 average_badge_team_1 = 26;
+	optional string gameplay_experiment = 27;
+	optional bool rewards_eligible = 28;
+	repeated uint32 banned_heroes = 29;
+}
+
+message CSOCitadelServerHideoutLobby {
+	optional uint64 hideout_lobby_id = 1;
 }
 
 message CMsgServerSignoutData_ServerPerfStats {
@@ -189,6 +265,8 @@ message CMsgServerToGCUpdateMatchInfo {
 	optional uint32 open_spectator_slots = 8;
 	optional uint64 objectives_mask_team0 = 9;
 	optional uint64 objectives_mask_team1 = 10;
+	optional uint32 brawl_score_team0 = 11;
+	optional uint32 brawl_score_team1 = 12;
 }
 
 message CMsgServerToGCMatchSignoutPermission {
@@ -201,7 +279,7 @@ message CMsgServerToGCMatchSignoutPermission {
 message CMsgServerToGCMatchSignoutPermissionResponse {
 	optional bool can_sign_out = 1;
 	optional uint32 retry_time_s = 2;
-	repeated .EGCServerSignoutData requested_data = 3;
+	repeated uint32 requested_data = 3;
 }
 
 message CMsgServerSignoutData_Disconnections {
@@ -216,6 +294,14 @@ message CMsgServerSignoutData_Disconnections {
 	}
 
 	repeated .CMsgServerSignoutData_Disconnections.CMsgMatchDisconnection disconnections = 1;
+}
+
+message CMsgServerSignoutData_MatchDevStats {
+	message PlayerSlot {
+		optional uint32 player_slot = 1;
+	}
+
+	repeated .CMsgServerSignoutData_MatchDevStats.PlayerSlot players = 1;
 }
 
 message CMsgServerSignoutData_DetailedStats {
@@ -252,6 +338,13 @@ message CMsgServerSignoutData_DetailedStats {
 			optional uint32 absorption_provided = 23;
 			optional uint32 heal_prevented = 26;
 			optional uint32 heal_lost = 27;
+			optional uint32 player_barriering = 28;
+			optional uint32 teammate_healing = 45;
+			optional uint32 teammate_barriering = 46;
+			optional uint32 self_damage = 47;
+			repeated uint32 damage_per_hero_ability = 48;
+			optional uint32 player_bullet_damage = 49;
+			optional uint32 player_ability_damage = 50;
 		}
 
 		message GoldStats {
@@ -266,6 +359,14 @@ message CMsgServerSignoutData_DetailedStats {
 			optional uint32 death_loss = 9;
 			optional uint32 lane_creep = 10;
 			optional uint32 neutral_creep = 11;
+			optional uint32 team_bonus = 12;
+			optional uint32 ability_assassinate = 13;
+			optional uint32 item_trophy_collector = 14;
+			optional uint32 item_cultist_sacrifice = 15;
+			optional uint32 comeback_kills = 16;
+			optional uint32 comeback_treasure = 17;
+			optional uint32 comeback_misc = 18;
+			optional uint32 item_goose_egg = 19;
 		}
 
 		optional uint32 match_time_s = 1;
@@ -278,10 +379,13 @@ message CMsgServerSignoutData_DetailedStats {
 		optional uint32 creep_damage = 4;
 		optional uint32 creep_damage_mitigated = 5;
 		optional uint32 player_damage = 6;
-		optional uint32 player_damage_mitigated = 7;
 		optional uint32 first_damage_time_s = 8;
 		optional .ECitadelTeamObjective team_objective_id = 9 [default = k_eCitadelTeamObjective_Core];
 		optional .ECitadelLobbyTeam team = 10 [default = k_ECitadelLobbyTeam_Team0];
+		optional uint32 players_damaged = 11;
+		optional uint32 players_destroyed = 12;
+		repeated uint32 enemy_count_dmg_mitigated = 13;
+		optional uint32 player_spirit_damage = 14;
 	}
 
 	message MidBoss {
@@ -339,6 +443,52 @@ message CMsgServerSignoutData_BookRewards {
 	repeated .CMsgServerSignoutData_BookRewards.AccountRewards account_rewards = 1;
 }
 
+message CMsgServerSignoutData_ChallengeProgress {
+	message ChallengeProgress {
+		optional uint64 challenge_id = 1;
+		optional uint32 progress = 2;
+	}
+
+	message AccountChallenges {
+		optional uint32 account_id = 1;
+		repeated .CMsgServerSignoutData_ChallengeProgress.ChallengeProgress challenges = 2;
+	}
+
+	repeated .CMsgServerSignoutData_ChallengeProgress.AccountChallenges account_challenges = 1;
+}
+
+message CMsgServerSignoutData_HeroXPGrant {
+	message HeroXPGrant {
+		optional uint32 hero_id = 1;
+		optional uint32 xp_grant = 2;
+		optional .CMsgServerSignoutData_HeroXPGrant.EGrantReason reason = 3 [default = k_eGrant_Win];
+	}
+
+	message AccountXPGrant {
+		optional uint32 account_id = 1;
+		repeated .CMsgServerSignoutData_HeroXPGrant.HeroXPGrant xp_grant = 2;
+	}
+
+	enum EGrantReason {
+		k_eGrant_Win = 0;
+		k_eGrant_Loss = 1;
+		k_eGrant_Award = 2;
+	}
+
+	repeated .CMsgServerSignoutData_HeroXPGrant.AccountXPGrant account_xp = 1;
+}
+
+message CMsgServerSignoutData_MatchKills {
+	message Kill {
+		optional uint32 killer = 1;
+		optional uint32 victim = 2;
+		optional uint32 match_time = 3;
+		optional uint32 killer_streak = 4;
+	}
+
+	repeated .CMsgServerSignoutData_MatchKills.Kill kills = 1;
+}
+
 message CMsgServerSignoutData_AccountStatChanges {
 	message Stat {
 		optional uint32 hero_id = 1;
@@ -366,6 +516,93 @@ message CMsgServerSignoutData_PlayerChat {
 	repeated .CMsgServerSignoutData_PlayerChat.ChatLine chat_lines = 1;
 }
 
+message CMsgServerSignoutData_PlayerBehavior {
+	message Player {
+		optional uint32 account_id = 1;
+		optional uint32 team_chat_messages = 2;
+		optional uint32 all_chat_messages = 3;
+		optional uint32 pings = 4;
+		optional uint32 voice_chat_seconds = 5;
+		optional uint32 pauses = 6;
+		optional uint32 total_pause_time = 7;
+		optional uint32 disconnects = 8;
+		optional uint32 first_all_chat_gametime = 9;
+		optional uint32 first_voice_chat_gametime = 10;
+		optional uint32 total_idle_time = 11;
+		optional uint32 total_inactive_time = 12;
+		optional uint32 total_disconnect_time = 13;
+		optional uint32 first_team_chat_gametime = 14;
+		optional uint32 first_all_chat_time = 15;
+		optional uint32 first_voice_chat_time = 16;
+		optional uint32 first_team_chat_time = 17;
+	}
+
+	repeated .CMsgServerSignoutData_PlayerBehavior.Player players = 1;
+}
+
+message CMsgServerSignoutData_StreetBrawlData {
+	message DraftItem {
+		optional uint32 ability_id = 1;
+		optional uint32 flags = 2;
+		optional .CMsgServerSignoutData_StreetBrawlData.EDraftItemOutcome outcome = 3 [default = k_eNotChosen];
+	}
+
+	message DraftItemSet {
+		repeated .CMsgServerSignoutData_StreetBrawlData.DraftItem items = 1;
+	}
+
+	message RoundPlayer {
+		optional uint32 player_slot = 1;
+		optional uint32 player_damage = 2;
+		optional uint32 kills = 3;
+		optional uint32 player_healing = 4;
+		optional uint32 deaths = 5;
+		optional uint32 assists = 6;
+		optional uint32 objective_damage = 7;
+		optional uint32 objective_spirit_damage = 8;
+		repeated .CMsgServerSignoutData_StreetBrawlData.DraftItemSet draft_item_sets = 9;
+	}
+
+	message Round {
+		optional uint32 round_number = 1;
+		optional uint32 round_time = 2;
+		optional .ECitadelLobbyTeam winning_team = 3 [default = k_ECitadelLobbyTeam_Team0];
+		repeated .CMsgServerSignoutData_StreetBrawlData.RoundPlayer players = 5;
+	}
+
+	enum EDraftItemOutcome {
+		k_eNotChosen = 0;
+		k_eChosen = 1;
+		k_eRerolled = 2;
+	}
+
+	enum EDraftItemFlags {
+		k_eHasUpgradeBit = 1;
+		k_eHasAdditionalItem = 2;
+		k_eRareItem = 4;
+	}
+
+	repeated .CMsgServerSignoutData_StreetBrawlData.Round rounds = 1;
+}
+
+message CMsgServerSignoutData_PenalizedPlayers {
+	message Penalty {
+		optional uint32 account_id = 1;
+		optional .CMsgServerSignoutData_PenalizedPlayers.EPenaltyReason reason = 2 [default = k_EPenaltyReason_Abandon];
+		optional uint32 match_time_s = 3;
+		optional uint32 time_stamp = 4;
+	}
+
+	enum EPenaltyReason {
+		k_EPenaltyReason_Abandon = 0;
+		k_EPenaltyReason_DisconnectedTooLong = 1;
+		k_EPenaltyReason_AFK = 2;
+		k_EPenaltyReason_DisconnectedTooLongPregame = 3;
+	}
+
+	repeated .CMsgServerSignoutData_PenalizedPlayers.Penalty penalized_players = 1;
+}
+
 message CMsgMatchData {
 	message PlayerItem {
 		optional uint32 item_id = 1;
@@ -376,11 +613,16 @@ message CMsgMatchData {
 		optional uint32 imbued_ability_id = 6;
 	}
 
+	message AuxStat {
+		optional .ECitadelMatchAuxStat stat_id = 1 [default = k_eMatchAuxStat_Dummy];
+		optional uint32 stat_value = 2;
+	}
+
 	message PlayerInfo {
 		optional uint32 account_id = 1;
 		optional .ECitadelLobbyTeam team = 2 [default = k_ECitadelLobbyTeam_Team0];
 		optional uint32 player_slot = 3;
-		optional bool conceded = 4;
+		optional uint32 hero_mmr_with_uncertainty = 4;
 		optional uint32 player_mmr = 5;
 		optional uint32 player_uncertainty = 6;
 		optional uint32 hero_id = 7;
@@ -417,10 +659,33 @@ message CMsgMatchData {
 		optional uint32 player_bullet_damage = 38;
 		optional uint32 player_ability_damage = 39;
 		optional uint32 player_melee_damage = 40;
+		optional uint32 abandon_match_time_s = 41;
+		optional uint32 abandon_time_stamp = 42;
+		optional uint32 trooper_kill_excluded = 43;
+		optional uint32 hero_bullets_lucky_shots = 44;
+		optional uint32 hero_build_id = 45;
+		optional uint32 objective_damage = 46;
+		optional float avg_time_to_kill_s = 47;
+		optional bool requires_skill_calibration = 48;
+		optional uint32 player_barriering = 49;
+		optional uint32 teammate_healing = 50;
+		optional uint32 teammate_barriering = 51;
+		optional uint32 self_damage = 52;
+		optional uint32 match_number = 53;
+		repeated uint32 damage_per_hero_ability = 54;
+		repeated .CMsgMatchData.AuxStat aux_stats = 55;
+		repeated .CMsgTrackedStat player_tracked_stats = 56;
+		optional float new_player_score = 57;
+	}
+
+	message TeamInfo {
+		optional .ECitadelLobbyTeam team = 1 [default = k_ECitadelLobbyTeam_Team0];
+		repeated .CMsgTrackedStat team_tracked_stats = 2;
 	}
 
 	enum EEndReason {
 		k_EEndReason_TeamWin = 0;
+		k_EEndReason_MatchDraw = 1;
 		k_EEndReason_AllAbandoned = 2;
 		k_EEndReason_NetworkIssues = 3;
 		k_EEndReason_MatchLength = 4;
@@ -438,6 +703,18 @@ message CMsgMatchData {
 	optional uint64 objectives_mask_team0 = 9;
 	optional uint64 objectives_mask_team1 = 10;
 	optional uint32 match_end_time = 11;
+	optional float stomp_score = 12;
+	optional bool safe_to_abandon = 13;
+	optional bool team_abandon = 14;
+	optional bool new_player_pool = 15;
+	optional bool low_pri_pool = 16;
+	optional bool not_scored = 17;
+	repeated uint32 team_score = 18;
+	repeated .CMsgMatchData.TeamInfo teams = 19;
+	repeated .CMsgTrackedStat match_tracked_stats = 20;
+	optional float winner_pct_time_in_enemy = 21;
+	optional bool forgive_existing_abandons = 22;
+	optional uint32 brawl_avg_round_time_s = 23;
 }
 
 message CMsgServerToGCMatchSignout {
@@ -479,6 +756,15 @@ message CMsgGCToServerAllocateForMatchResponse {
 	optional bool success = 1;
 }
 
+message CMsgGCToServerAllocateForHideout {
+	optional uint64 hideout_lobby_id = 1;
+}
+
+message CMsgGCToServerAllocateForHideoutResponse {
+	optional uint64 hideout_lobby_id = 1;
+	optional bool success = 2;
+}
+
 message CMsgServerToGCEnterMatchmaking {
 	optional uint32 server_version = 1;
 	optional string search_key = 2;
@@ -487,17 +773,21 @@ message CMsgServerToGCEnterMatchmaking {
 	optional uint32 server_public_ip = 5;
 	optional uint32 server_private_ip = 6;
 	optional uint32 server_port = 7;
-	optional uint32 hltv_port = 8;
 	optional bytes sdr_address = 9;
+	optional uint32 replay_group_id = 10;
+	optional bool allow_matches = 11;
+	optional bool allow_hideout = 12;
 }
 
 message CMsgGCToServerCancelAllocateForMatch {
 	optional uint64 match_id = 1;
+	optional uint64 hideout_lobby_id = 2;
 }
 
 message CMsgServerToGCUpdateLobbyServerState {
 	optional uint64 lobby_id = 1;
 	optional .ELobbyServerState server_state = 2 [default = k_eLobbyServerState_Assign];
+	optional bool safe_to_abandon = 3;
 }
 
 message CMsgServerToGCAbandonMatch {
@@ -528,6 +818,12 @@ message CMsgServerToGCAbandonMatch {
 	optional .ECitadelMatchMode match_mode = 15 [default = k_ECitadelMatchMode_Invalid];
 	optional .ECitadelGameMode game_mode = 16 [default = k_ECitadelGameMode_Invalid];
 	optional bool was_server_shutdown = 17;
+	optional uint32 region_id = 18;
+	optional uint64 hideout_lobby_id = 19;
+	optional uint64 routing_id = 20;
+	optional bool allow_matches = 21;
+	optional bool allow_hideout = 22;
+	optional bool was_lost_lobby = 23;
 }
 
 message CMsgServerToGCAbandonMatchResponse {
@@ -537,8 +833,6 @@ message CMsgServerToGCTestConnection {
 }
 
 message CMsgServerToGCTestConnectionResponse {
-	optional uint32 state = 1;
-	optional uint64 lobby_id = 2;
 }
 
 message CMsgGCToServerSetServerConVar {
@@ -565,4 +859,59 @@ message CMsgGCToServerAddSpectatorResponse {
 
 	optional .CMsgGCToServerAddSpectatorResponse.EResponse result = 1 [default = k_eInternalError];
 	optional uint32 requesting_account_id = 2;
+}
+
+message CMsgServerToGCRequestPlayerHeroData {
+	optional uint32 account_id = 1;
+	optional uint32 hero_id = 2;
+}
+
+message CMsgServerToGCRequestPlayerHeroDataResponse {
+	enum EResult {
+		k_eInternalError = 0;
+		k_eSuccess = 1;
+		k_eTooBusy = 2;
+		k_eDisabled = 3;
+		k_eTimeout = 4;
+		k_eInvalidPermission = 5;
+	}
+
+	optional .CMsgServerToGCRequestPlayerHeroDataResponse.EResult result = 1 [default = k_eInternalError];
+	optional .CMsgPlayerHeroData hero_data = 2;
+}
+
+message CMsgServerSteamLearnCitadelSignOutPlayerInfo {
+	optional int32 account_id = 1;
+	optional uint32 hero_id = 2;
+	optional uint32 mmr = 3;
+	optional uint32 total_games_played = 4;
+	optional .ECitadelMatchMode match_mode = 10 [default = k_ECitadelMatchMode_Invalid];
+	optional .ECitadelGameMode game_mode = 11 [default = k_ECitadelGameMode_Invalid];
+}
+
+message CMsgServerSteamLearnCitadelPlayerMechanicalBehavior {
+	optional uint32 net_worth = 1;
+	optional uint32 deaths = 2;
+	optional uint32 team_net_worth = 3;
+	optional uint32 enemy_team_net_worth = 4;
+	optional uint32 team_kills = 5;
+	optional uint32 enemy_team_kills = 6;
+	optional float game_time = 7;
+	optional float velocity_ratio_veryfast = 8;
+	optional float velocity_ratio_fast = 9;
+	optional float velocity_ratio_normal = 10;
+	optional float velocity_ratio_slow = 11;
+	optional float slide_ratio = 12;
+	optional float item_cooldown_ratio = 13;
+	optional uint32 parries = 14;
+	optional float time_in_shop_ratio = 15;
+	optional uint32 denies = 16;
+	optional uint32 mmr = 18;
+	optional uint32 total_games_played = 19;
+	optional float build_effectiveness = 20;
+	optional float net_worth_team_ratio = 21;
+	optional float net_worth_game_ratio = 22;
+	optional float time_spent_not_contributing_to_game_events_ratio = 23;
+	optional float dash_jumps_per_minute = 24;
+	optional float wall_jumps_per_minute = 25;
 }

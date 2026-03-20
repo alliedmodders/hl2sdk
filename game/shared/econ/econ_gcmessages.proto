@@ -81,6 +81,7 @@ enum EGCItemMsg {
 	k_EMsgGCToGCRefreshSOCache = 2549;
 	k_EMsgGCToGCGrantAccountRolledItems = 2554;
 	k_EMsgGCToGCGrantSelfMadeItemToAccount = 2555;
+	k_EMsgGCToGCUnlockCrate = 2556;
 	k_EMsgGCStatueCraft = 2561;
 	k_EMsgGCRedeemCode = 2562;
 	k_EMsgGCRedeemCodeResponse = 2563;
@@ -136,6 +137,8 @@ enum EGCItemMsg {
 	k_EMsgClientToGCPurchaseChargeCostItemsResponse = 2616;
 	k_EMsgClientToGCCancelUnfinalizedTransactions = 2617;
 	k_EMsgClientToGCCancelUnfinalizedTransactionsResponse = 2618;
+	k_EMsgClientToGCRecycleMultipleItems = 2619;
+	k_EMsgClientToGCRecycleMultipleItemsResponse = 2620;
 }
 
 enum EGCMsgInitiateTradeResponse {
@@ -361,6 +364,12 @@ message CMsgGCToGCBetaDeleteItems {
 message CMsgGCToGCGrantSelfMadeItemToAccount {
 	optional uint32 item_def_index = 1;
 	optional uint32 accountid = 2;
+}
+
+message CMsgGCToGCUnlockCrate {
+	optional uint32 account_id = 1;
+	optional uint64 crate_item_id = 2;
+	optional uint64 key_item_id = 3;
 }
 
 message CMsgUseItem {
@@ -890,6 +899,7 @@ message CMsgGCToGCBroadcastConsoleCommand {
 	optional bool report_output = 2;
 	optional int32 sending_gc = 3 [default = -1];
 	optional string output_initiator = 4;
+	optional string sender_source = 5;
 }
 
 message CMsgGCToGCConsoleOutput {
@@ -1073,4 +1083,18 @@ message CMsgGCToGCUpdateWelcomeMsg {
 	optional bool server = 1;
 	optional .CExtraMsgBlock new_msg = 2;
 	optional bool broadcast = 3;
+}
+
+message CMsgClientToGCRecycleMultipleItems {
+	message Item {
+		optional uint64 item_id = 1;
+		optional uint32 slot_id = 2;
+		optional uint32 recipe_def_index = 3;
+	}
+
+	repeated .CMsgClientToGCRecycleMultipleItems.Item items = 1;
+}
+
+message CMsgClientToGCRecycleMultipleItemsResponse {
+	repeated .CMsgClientToGCCreateStaticRecipeResponse responses = 1;
 }

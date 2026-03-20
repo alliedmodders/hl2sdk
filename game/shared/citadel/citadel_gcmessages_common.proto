@@ -1,12 +1,14 @@
 import "steammessages.proto";
 import "gcsdk_gcmessages.proto";
+import "base_gcmessages.proto";
+import "valveextensions.proto";
 
 enum CMsgLaneColor {
-	k_ELaneColor_Invalid = 0;
-	k_ELaneColor_Yellow = 1;
-	k_ELaneColor_Orange = 3;
-	k_ELaneColor_Blue = 4;
-	k_ELaneColor_Purple = 6;
+	k_ELaneColor_Invalid = 0 [(schema_friendly_name) = "None"];
+	k_ELaneColor_Yellow = 1 [(schema_friendly_name) = "Yellow"];
+	k_ELaneColor_Green = 3 [(schema_friendly_name) = "Green"];
+	k_ELaneColor_Blue = 4 [(schema_friendly_name) = "Blue"];
+	k_ELaneColor_Purple = 6 [(schema_friendly_name) = "Purple"];
 }
 
 enum EGCCitadelCommonMessages {
@@ -22,6 +24,8 @@ enum ECitadelMatchMode {
 	k_ECitadelMatchMode_Ranked = 4;
 	k_ECitadelMatchMode_ServerTest = 5;
 	k_ECitadelMatchMode_Tutorial = 6;
+	k_ECitadelMatchMode_HeroLabs = 7;
+	k_ECitadelMatchMode_Calibration = 8;
 }
 
 enum ECitadelLobbyTeam {
@@ -35,6 +39,12 @@ enum ECitadelAccountStatMedal {
 	k_eBronze = 1;
 	k_eSilver = 2;
 	k_eGold = 3;
+}
+
+enum ECitadelMMPreference {
+	k_ECitadelMMPreference_Invalid = 0;
+	k_ECitadelMMPreference_Casual = 1;
+	k_ECitadelMMPreference_Serious = 2;
 }
 
 enum ECitadelObjective {
@@ -103,7 +113,20 @@ enum ECitadelBotDifficulty {
 
 enum ECitadelRegionMode {
 	k_ECitadelRegionMode_ROW = 0;
-	k_ECitadelRegionMode_China = 1;
+	k_ECitadelRegionMode_Europe = 1;
+	k_ECitadelRegionMode_SEAsia = 2;
+	k_ECitadelRegionMode_SAmerica = 3;
+	k_ECitadelRegionMode_Russia = 4;
+	k_ECitadelRegionMode_Oceania = 5;
+}
+
+enum ECitadelLeaderboardRegion {
+	k_ECitadelLeaderboardRegion_None = 0;
+	k_ECitadelLeaderboardRegion_Europe = 1;
+	k_ECitadelLeaderboardRegion_Asia = 2;
+	k_ECitadelLeaderboardRegion_NAmerica = 3;
+	k_ECitadelLeaderboardRegion_SAmerica = 4;
+	k_ECitadelLeaderboardRegion_Oceania = 5;
 }
 
 enum ECitadelGameMode {
@@ -111,6 +134,9 @@ enum ECitadelGameMode {
 	k_ECitadelGameMode_Normal = 1;
 	k_ECitadelGameMode_1v1Test = 2;
 	k_ECitadelGameMode_Sandbox = 3;
+	k_ECitadelGameMode_StreetBrawl = 4;
+	k_ECitadelGameMode_ExploreNYC = 5;
+	k_ECitadelGameMode_Internal = 6;
 }
 
 enum ELobbyServerState {
@@ -119,6 +145,21 @@ enum ELobbyServerState {
 	k_eLobbyServerState_PostMatch = 2;
 	k_eLobbyServerState_SignedOut = 3;
 	k_eLobbyServerState_Abandoned = 4;
+}
+
+enum EBannedFeature {
+	k_eBannedFeature_Invalid = 0;
+	k_eBannedFeature_LowPriorityMatchmaking = 1;
+	k_eBannedFeature_CommsRestricted = 2;
+	k_eBannedFeature_ReportingDisabled = 3;
+}
+
+enum EFeatureBanReason {
+	k_eFeatureBanReason_Invalid = 0;
+	k_eFeatureBanReason_DevCommand = 1;
+	k_eFeatureBanReason_ReportedByOtherPlayers = 2;
+	k_eFeatureBanReason_MatchAbandons = 3;
+	k_eFeatureBanReason_TooManyReportsSubmitted = 4;
 }
 
 message CSOCitadelLobby {
@@ -135,6 +176,28 @@ message CSOCitadelLobby {
 	optional bytes sdr_address = 12;
 	optional uint32 server_version = 13;
 	optional bool safe_to_abandon = 14;
+	optional bool match_punishes_abandons = 15;
+	optional uint32 game_mode_version = 16;
+}
+
+message CSOCitadelHideoutLobby {
+	message Member {
+		optional uint32 account_id = 1;
+		optional bool hideout_holiday_award_2024 = 30;
+		optional bool hideout_holiday_award_2025 = 32;
+	}
+
+	optional uint64 hideout_lobby_id = 1;
+	optional uint64 party_id = 2;
+	optional fixed64 server_steam_id = 3;
+	optional uint32 udp_connect_ip = 4;
+	optional uint32 udp_connect_port = 5;
+	optional bytes sdr_address = 6;
+	optional uint32 server_version = 7;
+	optional uint32 compat_version = 8;
+	repeated .CSOCitadelHideoutLobby.Member members = 9;
+	optional uint32 active_account_hideout = 10;
+	repeated .CExtraMsgBlock extra_messages = 11;
 }
 
 message CLobbyData_PostMatchSurvey {
@@ -153,6 +216,7 @@ message CMsgHeroSelectionMatchInfo {
 	}
 
 	repeated .CMsgHeroSelectionMatchInfo.Hero hero_selections = 1;
+	repeated uint32 banned_heroes = 2;
 }
 
 message CMsgStartFindingMatchInfo {
@@ -160,8 +224,10 @@ message CMsgStartFindingMatchInfo {
 	optional string server_command_string = 2;
 	optional .ECitadelMatchMode match_mode = 3 [default = k_ECitadelMatchMode_Invalid];
 	optional .ECitadelGameMode game_mode = 5 [default = k_ECitadelGameMode_Invalid];
-	optional bool solo_match = 6;
 	optional .ECitadelBotDifficulty bot_difficulty = 7 [default = k_ECitadelBotDifficulty_None];
+	optional .ECitadelRegionMode region_mode = 8 [default = k_ECitadelRegionMode_ROW];
+	optional bool prefer_solo_only = 9;
+	optional .ECitadelMMPreference mm_preference = 10 [default = k_ECitadelMMPreference_Invalid];
 }
 
 message CMsgAnyToGCReportAsserts {
@@ -178,6 +244,7 @@ message CMsgAnyToGCReportAsserts {
 
 	optional uint32 version = 1;
 	repeated .CMsgAnyToGCReportAsserts.TrackedAssert asserts = 2;
+	optional uint64 match_id = 3;
 }
 
 message CMsgAnyToGCReportAssertsResponse {
@@ -189,7 +256,36 @@ message CMsgRegionPingTimesClient {
 	repeated uint32 ping_times = 2 [packed = true];
 }
 
+message CMsgEquippedItemList {
+	repeated .CSOEconItem items = 1;
+}
+
+message CMsgPlayerHeroData {
+	optional uint32 hero_xp = 1;
+	optional .CMsgEquippedItemList hero_equips = 2;
+}
+
 message CSOCitadelParty {
+	message PrivateLobbySlot {
+		optional uint32 slot_id = 1;
+		optional uint32 player_account_id = 2;
+	}
+
+	message ServerRegion {
+		optional uint32 region_id = 1;
+	}
+
+	message PrivateLobbySettings {
+		optional uint32 min_roster_size = 1;
+		repeated .CSOCitadelParty.PrivateLobbySlot match_slots = 2;
+		optional bool randomize_lanes = 3;
+		optional uint32 server_region = 4;
+		optional bool is_publicly_visible = 6;
+		optional bool cheats_enabled = 7;
+		repeated .CSOCitadelParty.ServerRegion available_regions = 8;
+		optional bool duplicate_heroes_enabled = 9;
+	}
+
 	message Member {
 		optional uint32 account_id = 1;
 		optional string persona_name = 2;
@@ -203,6 +299,7 @@ message CSOCitadelParty {
 		optional uint64 permissions = 10;
 		optional uint64 new_player_progress = 11;
 		repeated uint32 owned_heroes = 12 [packed = true];
+		optional uint32 low_priority_games_remaining = 13;
 	}
 
 	message LeftMember {
@@ -227,6 +324,12 @@ message CSOCitadelParty {
 		k_ePlayerType_Spectator = 1;
 	}
 
+	enum EChatMode {
+		k_eNone = 0;
+		k_ePartyChat = 1;
+		k_eTeamChat = 2;
+	}
+
 	optional uint64 party_id = 1;
 	repeated .CSOCitadelParty.Member members = 2;
 	repeated .CSOCitadelParty.Invite invites = 3;
@@ -239,6 +342,13 @@ message CSOCitadelParty {
 	optional uint32 match_making_start_time = 11;
 	optional string server_search_key = 12;
 	optional bool is_high_skill_range_party = 13;
+	optional .CSOCitadelParty.EChatMode chat_mode = 14 [default = k_eNone];
+	optional .ECitadelRegionMode region_mode = 15 [default = k_ECitadelRegionMode_ROW];
+	optional bool is_private_lobby = 16;
+	optional .CSOCitadelParty.PrivateLobbySettings private_lobby_settings = 17;
+	optional bool desires_laning_together = 18;
+	optional .ECitadelMMPreference mm_preference = 19 [default = k_ECitadelMMPreference_Invalid];
+	optional string hideout_search_key = 21;
 }
 
 message CMsgMatchPlayerPathsData {
@@ -250,8 +360,28 @@ message CMsgMatchPlayerPathsData {
 		optional float y_max = 5;
 		repeated uint32 x_pos = 6 [packed = true];
 		repeated uint32 y_pos = 7 [packed = true];
-		repeated bool alive = 8 [packed = true];
 		repeated uint32 health = 9 [packed = true];
+		repeated .CMsgMatchPlayerPathsData.ECombatType combat_type = 10 [packed = true];
+		repeated .CMsgMatchPlayerPathsData.EMoveType move_type = 11 [packed = true];
+	}
+
+	enum ECombatType {
+		k_eCombatType_Out = 0;
+		k_eCombatType_Player = 1;
+		k_eCombatType_EnemyNPC = 2;
+		k_eCombatType_Neutral = 3;
+	}
+
+	enum EMoveType {
+		k_eMoveType_Normal = 0;
+		k_eMoveType_Ability = 1;
+		k_eMoveType_AbilityDebuff = 2;
+		k_eMoveType_GroundDash = 3;
+		k_eMoveType_Slide = 4;
+		k_eMoveType_RopeClimbing = 5;
+		k_eMoveType_Ziplining = 6;
+		k_eMoveType_InAir = 7;
+		k_eMoveType_AirDash = 8;
 	}
 
 	optional uint32 version = 1;
@@ -288,6 +418,7 @@ message CMsgMatchPlayerDamageMatrix {
 		k_eType_HealPrevented = 2;
 		k_eType_Mitigated = 3;
 		k_eType_LethalDamage = 4;
+		k_eType_Regen = 5;
 	}
 
 	repeated .CMsgMatchPlayerDamageMatrix.DamageDealer damage_dealers = 1;
@@ -304,6 +435,7 @@ message CMsgMatchMetaDataContents {
 
 	message Deaths {
 		optional uint32 game_time_s = 1;
+		optional float time_to_kill_s = 2;
 		optional uint32 killer_player_slot = 9;
 		optional .CMsgMatchMetaDataContents.Position death_pos = 10;
 		optional .CMsgMatchMetaDataContents.Position killer_pos = 11;
@@ -341,6 +473,12 @@ message CMsgMatchMetaDataContents {
 	message CustomUserStat {
 		optional uint32 value = 2;
 		optional uint32 id = 3;
+	}
+
+	message PowerUpBuff {
+		optional string type = 1;
+		optional uint32 value = 2;
+		optional bool is_permanent = 3;
 	}
 
 	message PlayerStats {
@@ -387,6 +525,14 @@ message CMsgMatchMetaDataContents {
 		repeated .CMsgMatchMetaDataContents.CustomUserStat custom_user_stats = 41;
 		optional uint32 damage_mitigated = 42;
 		optional uint32 level = 43;
+		optional uint32 player_barriering = 44;
+		optional uint32 teammate_healing = 45;
+		optional uint32 teammate_barriering = 46;
+		optional uint32 self_damage = 47;
+		optional uint32 bullet_kills = 48;
+		optional uint32 melee_kills = 49;
+		optional uint32 ability_kills = 50;
+		optional uint32 headshot_kills = 51;
 	}
 
 	message AbilityStat {
@@ -398,6 +544,12 @@ message CMsgMatchMetaDataContents {
 		optional uint32 book_id = 1;
 		optional uint32 xp_amount = 2;
 		optional uint32 starting_xp = 3;
+	}
+
+	message PlayerAccolade {
+		optional uint32 accolade_id = 1;
+		optional int32 accolade_stat_value = 2;
+		optional int32 accolade_threshold_achieved = 3;
 	}
 
 	message Players {
@@ -415,13 +567,25 @@ message CMsgMatchMetaDataContents {
 		optional uint32 last_hits = 13;
 		optional uint32 denies = 14;
 		optional uint32 ability_points = 15;
-		optional uint32 party = 16;
 		optional uint32 assigned_lane = 17;
 		optional uint32 level = 18;
 		repeated .CMsgMatchMetaDataContents.Ping pings = 19;
 		repeated .CMsgMatchMetaDataContents.AbilityStat ability_stats = 20;
 		repeated float stats_type_stat = 21 [packed = true];
 		repeated .CMsgMatchMetaDataContents.BookReward book_rewards = 22;
+		optional uint32 abandon_match_time_s = 23;
+		optional .CMsgPlayerHeroData hero_data = 25;
+		optional bool rewards_eligible = 26;
+		repeated .CMsgTrackedStat player_tracked_stats = 48;
+		repeated .CMsgMatchMetaDataContents.PlayerAccolade accolades = 27;
+		optional uint32 mvp_rank = 28;
+		optional bool earned_holiday_award_2025 = 29;
+		repeated .CMsgMatchMetaDataContents.PowerUpBuff power_up_buffs = 30;
+	}
+
+	message Teams {
+		optional .ECitadelLobbyTeam team = 1 [default = k_ECitadelLobbyTeam_Team0];
+		repeated .CMsgTrackedStat team_tracked_stats = 2;
 	}
 
 	message Objective {
@@ -434,6 +598,7 @@ message CMsgMatchMetaDataContents {
 		optional uint32 first_damage_time_s = 8;
 		optional .ECitadelTeamObjective team_objective_id = 9 [default = k_eCitadelTeamObjective_Core];
 		optional .ECitadelLobbyTeam team = 10 [default = k_ECitadelLobbyTeam_Team0];
+		optional uint32 player_spirit_damage = 11;
 	}
 
 	message MidBoss {
@@ -451,6 +616,11 @@ message CMsgMatchMetaDataContents {
 	message WatchedDeathReplay {
 		optional uint32 game_time_s = 1;
 		optional uint32 player_slot = 2;
+	}
+
+	message StreetBrawlRound {
+		optional uint32 round_duration_s = 1;
+		optional .ECitadelLobbyTeam winning_team = 2 [default = k_ECitadelLobbyTeam_Team0];
 	}
 
 	message MatchInfo {
@@ -472,11 +642,25 @@ message CMsgMatchMetaDataContents {
 		optional uint64 objectives_mask_team0 = 17;
 		optional uint64 objectives_mask_team1 = 18;
 		repeated .CMsgMatchMetaDataContents.MidBoss mid_boss = 19;
+		optional bool is_high_skill_range_parties = 20;
+		optional bool low_pri_pool = 21;
+		optional bool new_player_pool = 22;
+		optional uint32 average_badge_team0 = 23;
+		optional uint32 average_badge_team1 = 24;
+		optional uint32 game_mode_version = 25;
+		optional bool rewards_eligible = 26;
+		optional bool not_scored = 27;
+		repeated uint32 team_score = 28;
+		repeated .CMsgTrackedStat match_tracked_stats = 29;
+		repeated .CMsgMatchMetaDataContents.Teams teams = 30;
+		optional .ECitadelBotDifficulty bot_difficulty = 32 [default = k_ECitadelBotDifficulty_None];
+		repeated .CMsgMatchMetaDataContents.StreetBrawlRound street_brawl_rounds = 33;
 	}
 
 	enum EMatchOutcome {
 		k_eOutcome_TeamWin = 0;
 		k_eOutcome_Error = 1;
+		k_eOutcome_MatchDraw = 2;
 	}
 
 	enum EGoldSource {
@@ -487,6 +671,12 @@ message CMsgMatchMetaDataContents {
 		k_eTreasure = 5;
 		k_eAssists = 6;
 		k_eDenies = 7;
+		k_eTeamBonus = 8;
+		k_eAbilityAssassinate = 9;
+		k_eItemTrophyCollector = 10;
+		k_eItemCultistSacrifice = 11;
+		k_eBreakable = 12;
+		k_eItemGooseEgg = 13;
 	}
 
 	optional .CMsgMatchMetaDataContents.MatchInfo match_info = 2;
@@ -522,4 +712,75 @@ message CMsgAccountBookStats {
 message CMsgAccountStats {
 	optional uint32 account_id = 1;
 	repeated .CMsgAccountHeroStats stats = 2;
+}
+
+message CMsgTrackedStat {
+	optional uint32 tracked_stat_id = 1;
+	optional int32 tracked_stat_value = 2;
+}
+
+message CMsgGCAccountData {
+	optional uint32 account_id = 1;
+	optional float cheater_report_score = 2;
+}
+
+message CMsgHeroBuild {
+	message BuildModEntry {
+		optional uint32 ability_id = 1;
+		optional string annotation = 2;
+		optional uint32 required_flex_slots = 3;
+		optional uint32 sell_priority = 4;
+		optional uint32 imbue_target_ability_id = 5;
+	}
+
+	message BuildModCategory {
+		repeated .CMsgHeroBuild.BuildModEntry mods = 1;
+		optional string name = 2;
+		optional string description = 3;
+		optional float width = 4;
+		optional float height = 5;
+		optional bool optional = 6;
+	}
+
+	message CurrencyChange {
+		optional uint32 ability_id = 1;
+		optional int32 currency_type = 2;
+		optional int32 delta = 3;
+		optional string annotation = 4;
+	}
+
+	message AbilityOrder {
+		repeated .CMsgHeroBuild.CurrencyChange currency_changes = 1;
+	}
+
+	message Details_V0 {
+		repeated .CMsgHeroBuild.BuildModCategory mod_categories = 1;
+		optional .CMsgHeroBuild.AbilityOrder ability_order = 2;
+	}
+
+	optional uint32 hero_build_id = 1;
+	optional uint32 hero_id = 2;
+	optional uint32 author_account_id = 3;
+	optional uint32 last_updated_timestamp = 4;
+	optional string name = 5;
+	optional string description = 6;
+	optional uint32 language = 7;
+	optional uint32 version = 8;
+	optional uint32 origin_build_id = 9;
+	optional .CMsgHeroBuild.Details_V0 details = 10;
+	repeated uint32 tags = 11;
+	optional bool development_build = 12;
+	optional uint32 publish_timestamp = 13;
+}
+
+message CMsgHeroBuildPreference {
+	optional bool favorited = 1;
+	optional bool ignored = 2;
+	optional bool reported = 3;
+}
+
+message CMsgHeroReleaseVoteTally {
+	optional uint32 remaining_votes = 1;
+	repeated uint32 votes_cast = 2 [packed = true];
+	optional uint32 daily_reward_time_stamp = 3;
 }

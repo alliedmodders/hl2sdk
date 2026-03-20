@@ -1,4 +1,9 @@
+import "google/protobuf/descriptor.proto";
 import "network_connection.proto";
+
+extend .google.protobuf.MessageOptions {
+	optional int32 maximum_size_bytes = 50000;
+}
 
 enum SignonState_t {
 	SIGNONSTATE_NONE = 0;
@@ -107,16 +112,15 @@ message CNETMsg_SplitScreenUser {
 
 message CNETMsg_Tick {
 	optional uint32 tick = 1;
-	optional uint32 host_frametime = 2;
-	optional uint32 host_frametime_std_deviation = 3;
 	optional uint32 host_computationtime = 4;
 	optional uint32 host_computationtime_std_deviation = 5;
-	optional uint32 host_framestarttime_std_deviation = 6;
-	optional uint32 host_loss = 7;
+	optional uint32 legacy_host_loss = 7;
 	optional uint32 host_unfiltered_frametime = 8;
 	optional uint32 hltv_replay_flags = 9;
 	optional uint32 expected_long_tick = 10;
 	optional string expected_long_tick_reason = 11;
+	optional uint32 host_frame_dropped_pct_x10 = 12;
+	optional uint32 host_frame_irregular_arrival_pct_x10 = 13;
 }
 
 message CNETMsg_StringCmd {
@@ -125,6 +129,8 @@ message CNETMsg_StringCmd {
 }
 
 message CNETMsg_SetConVar {
+	option (maximum_size_bytes) = 4096;
+
 	optional .CMsg_CVars convars = 1;
 }
 
@@ -164,6 +170,8 @@ message CSVCMsgList_GameEvents {
 }
 
 message CNETMsg_SpawnGroup_Load {
+	option (maximum_size_bytes) = 131072;
+
 	optional string worldname = 1;
 	optional string entitylumpname = 2;
 	optional string entityfiltername = 3;
@@ -187,6 +195,8 @@ message CNETMsg_SpawnGroup_Load {
 }
 
 message CNETMsg_SpawnGroup_ManifestUpdate {
+	option (maximum_size_bytes) = 2048;
+
 	optional uint32 spawngrouphandle = 1;
 	optional bytes spawngroupmanifest = 2;
 	optional bool manifestincomplete = 3;
