@@ -192,6 +192,7 @@ public:
 	virtual void		DumpNetStats( void *, void * ) = 0;
 
 	virtual void		unk201() = 0;
+	virtual void		unk202() = 0;
 
 	// Tell engine to change level ( "changelevel s1\n" or "changelevel2 s1 s2\n" )
 	virtual void		ChangeLevel( const char *s1, const char *s2 ) = 0;
