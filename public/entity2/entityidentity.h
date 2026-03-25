@@ -101,7 +101,7 @@ public:
 	CEntityInstance* m_pInstance;
 	CEntityClass* m_pClass;
 	CEntityHandle m_EHandle;
-	int32 m_nameStringableIndex;
+	int32 m_nameStringTableIndex;
 	CUtlSymbolLarge m_name;
 	CUtlSymbolLarge m_designerName;
 private:
