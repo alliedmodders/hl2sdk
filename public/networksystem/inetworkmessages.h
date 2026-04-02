@@ -96,8 +96,6 @@ public:
 
 	virtual void AssociateNetMessageGroupIdWithChannelCategory(NetworkCategoryId nCategoryId, char const *szGroup) = 0;
 
-	virtual void RegisterSchemaAtomicTypeOverride(uint, CSchemaType *) = 0;
-
 	virtual void SetNetworkSerializationContextData(char const *szContext, NetworkSerializationMode_t, void *) = 0;
 	virtual void *GetNetworkSerializationContextData(char const *szContext) = 0;
 
