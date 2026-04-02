@@ -324,11 +324,12 @@ public:
 	virtual void unk_604( const void *const msg ) = 0;		// 54
 	virtual void unk_605( const void *const msg ) = 0;		// 55
 	virtual void unk_606( const void *const msg ) = 0;		// 56
+	virtual void unk_607( const void *const msg ) = 0;		// 57
 
-	virtual const char* GetName() const = 0;				// 57
-	virtual void SetGameSystemGlobalPtrs(void* pValue) = 0;	// 58
-	virtual void SetName(const char* pName) = 0;			// 59
-	virtual bool DoesGameSystemReallocate() = 0;			// 60
+	virtual const char* GetName() const = 0;				// 58
+	virtual void SetGameSystemGlobalPtrs(void* pValue) = 0;	// 59
+	virtual void SetName(const char* pName) = 0;			// 60
+	virtual bool DoesGameSystemReallocate() = 0;			// 61
 	virtual ~IGameSystem() {}
 	virtual void YouForgot_DECLARE_GAME_SYSTEM_InYourClassDefinition() = 0;
 };
@@ -433,6 +434,7 @@ public:
 	virtual void unk_604( const void *const msg ) override {}
 	virtual void unk_605( const void *const msg ) override {}
 	virtual void unk_606( const void *const msg ) override {}
+	virtual void unk_607( const void *const msg ) override {}
 
 	virtual const char* GetName() const override { return m_pName; }
 	virtual void SetGameSystemGlobalPtrs(void* pValue) override {}
