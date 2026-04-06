@@ -16,12 +16,13 @@
 #include "utlvector.h"
 #include "utllinkedlist.h"
 #include "utllinkedlist.h"
+#include "utlcommon.h"
 #include "commonmacros.h"
 #include "generichash.h"
 
 typedef unsigned int UtlHashHandle_t;
 
-template<class Data, typename C = bool (*)( Data const&, Data const& ), typename K = unsigned int (*)( Data const& ) >
+template<class Data, typename C = DefaultEqualFunctor<Data>, typename K = DefaultHashFunctor<Data> >
 class CUtlHash
 {
 public:
