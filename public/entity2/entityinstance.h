@@ -11,6 +11,7 @@
 #include "schemasystem/schematypes.h"
 #include <initializer_list>
 
+class CNetworkSerializerClassInfo;
 class CEntityKeyValues;
 class CFieldPath;
 class ISave;
@@ -67,6 +68,8 @@ struct NetworkStateChangedData
 class CEntityInstance
 {
 public:
+	virtual CNetworkSerializerClassInfo* GetNetworkSerializerInfo() = 0;
+
 	virtual void unk001() = 0;
 	virtual void unk002() = 0;
 
