@@ -137,6 +137,7 @@ public:
 
 	virtual void	unk301() = 0;
 	virtual void	unk302() = 0;
+	virtual void	unk303() = 0;
 
 	virtual void	BroadcastMessage( INetworkMessageInternal *pNetMessage, const CNetMessage *pData, IRecipientFilter *filter ) = 0;
 	virtual bool	IsRecordingDemo() = 0;
@@ -144,8 +145,10 @@ public:
 	virtual uint8	GetClientConnectionType( CPlayerSlot slot ) = 0;
 	virtual bool	unk401() = 0;
 	virtual float	unk402() = 0;
-	virtual uint64	unk403() = 0;
+
+	virtual void	PreWorldUpdate() = 0;
 	virtual void 	DirectUpdate() = 0;
+
 	virtual int64	unk501() = 0;
 };
 
