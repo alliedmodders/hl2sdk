@@ -30,6 +30,7 @@ class CSchemaClassInfo;
 class CEntityClass;
 class CEntityIdentity;
 class CEntitySharedPulseSignature;
+class CNetworkSerializerClassInfo;
 class ServerClass;
 struct EntInput_t;
 struct EntOutput_t;
@@ -91,24 +92,21 @@ public:
 	}
 	
 public:
+	using FuncToNameCb = const char *(*)(void (*)(CEntityInstance *ent));
+
 	void *m_pScriptDesc;
-	void *m_unk001;
+	CNetworkSerializerClassInfo *m_NetworkSerializerInfo;
 
 	EntInput_t* m_pInputs;
 	EntOutput_t* m_pOutputs;
 	int m_nInputCount;
 	int m_nOutputCount;
 
-private:
-#ifdef _WIN32
-	char m_unk101[56];
-#else
-	char m_unk101[24];
-#endif
-
-public:
 	CEntitySharedPulseSignature *m_pSharedPulseSignature;
-	CEntitySharedPulseSignature *m_unk201;
+	void *m_unk101;
+
+	FuncToNameCb m_unk102;
+	FuncToNameCb m_unk103;
 
 	EntClassComponentOverride_t* m_pComponentOverrides;
 	
