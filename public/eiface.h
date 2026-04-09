@@ -512,6 +512,8 @@ public:
 	virtual void			ResetChangeAccessorsSerialNumbersToZero() = 0;
 	
 	virtual bool			GetWorldspaceCenter( CEntityIndex nEntityIndex, Vector *pCenter ) const = 0;
+
+	virtual void			OnPrePackEntities( CUtlVector<Entity2Networkable_t *> ents ) const = 0;
 };
 
 #define INTERFACEVERSION_SERVERCONFIG			"Source2ServerConfig001"
