@@ -125,7 +125,7 @@ public:
 
 	virtual void	PreserveSteamID( void ) = 0;
 
-	virtual void	unk101() = 0;
+	virtual GameSessionConfiguration_t *GetGameSessionConfig() = 0;
 
 	virtual void	ReserveServerForQueuedGame( const char *pszReason ) = 0;
 
