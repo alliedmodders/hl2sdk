@@ -44,11 +44,11 @@ public:
 	int maxClients;
 
 	// zer0k: Command queue related
-	int unknown1;
-	int unknown2;
-	int unknown3;
-	int unknown4;
-	int unknown5;
+	int m_unk001;
+	int m_unk002;
+	int m_unk003;
+	int m_unk004;
+	int m_unk005;
 
 	FnGlobalVarsWarningFunc m_pfnWarningFunc;
 
@@ -74,8 +74,8 @@ public:
 	float frametime;
 
 	// zer0k: Command queue + interpolation related 
-	float unknown6;
-	float unknown7;
+	float m_unk101;
+	float m_unk102;
 
 	bool m_bInSimulation;
 	bool m_bEnableAssertions;
@@ -83,14 +83,15 @@ public:
 	// Simulation ticks - does not increase when game is paused
 	int tickcount;
 
-	int unknown8;
-	int unknown9;
+	int m_unk201;
+	int m_unk202;
 	
 	// Non-zero when during movement processing, it's the part after the decimal point of the "when" field in player's subtick moves.
 	float m_flSubtickFraction;
 
-	// Simulation tick interval
-	float m_flIntervalPerTick;
+	// AMNOTE: Set to unknown value during CLoopModeGame::OnServerBeginAsyncPostTickWork call
+	// and restored to false at CLoopModeGame::OnServerEndAsyncPostTickWork
+	bool m_unk301;
 
 	ThreadId_t m_nThreadId;
 };
