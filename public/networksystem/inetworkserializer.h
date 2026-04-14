@@ -199,7 +199,7 @@ public:
 	CUtlString m_TypeOverride;
 	CUtlString m_BuiltinUnderlyingType;
 
-	char m_PathExtension[8];
+	char m_ResourceTypeForInfoType[8];
 	int m_FixedArraySize;
 	char m_IsAtomic;
 	char m_IsBuiltIn;
