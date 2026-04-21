@@ -47,6 +47,7 @@ class ISpawnGroupPrerequisiteRegistry;
 class IEntityPrecacheConfiguration;
 struct EngineLoopState_t;
 struct EntitySpawnInfo_t;
+struct Entity2Networkable_t;
 
 #define DECLARE_GAME_SYSTEM() \
 	virtual void YouForgot_DECLARE_GAME_SYSTEM_InYourClassDefinition() override {}; \
