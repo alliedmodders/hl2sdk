@@ -31,9 +31,9 @@ class CUtlLeanVectorBase
 	typedef A CAllocator;
 
 public:
-	enum : I
+	enum : std::make_unsigned_t<I>
 	{
-		EXTERNAL_BUFFER_MARKER = (I { 1 } << ((sizeof(I) * 8) - 1))
+		EXTERNAL_BUFFER_MARKER = std::make_unsigned_t<I> { 1 } << ((sizeof( I ) * 8) - 1)
 	};
 
 	// constructor, destructor
@@ -262,9 +262,9 @@ class CUtlLeanVectorFixedGrowableBase
 	typedef A CAllocator;
 
 public:
-	enum : I
+	enum : std::make_unsigned_t<I>
 	{
-		EXTERNAL_BUFFER_MARKER = (I { 1 } << ((sizeof(I) * 8) - 1))
+		EXTERNAL_BUFFER_MARKER = std::make_unsigned_t<I> { 1 } << ((sizeof( I ) * 8) - 1)
 	};
 
 	// constructor, destructor
