@@ -336,6 +336,7 @@ public:
 
 	virtual void unk401() = 0;
 	virtual void unk402() = 0;
+    virtual void unk403() = 0;
 
 	virtual void KickClient( CPlayerSlot nSlot, const char *szInternalReason, ENetworkDisconnectionReason reason ) = 0;
 	virtual void BanClient( CPlayerSlot nSlot, float flDuration, bool bKick ) = 0;
