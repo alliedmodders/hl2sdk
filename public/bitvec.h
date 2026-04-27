@@ -434,7 +434,7 @@ typedef CBitVec<32> CDWordBitVec;
 
 inline CVarBitVecBase::CVarBitVecBase()
 {
-	Plat_FastMemset( this, 0, sizeof( *this ) );
+	Plat_FastMemset( (void *)this, 0, sizeof( *this ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -463,7 +463,7 @@ inline CVarBitVecBase::CVarBitVecBase( const CVarBitVecBase &from )
 		memcpy( m_pInt, from.m_pInt, m_numInts * sizeof(int) );
 	}
 	else
-		memset( this, 0, sizeof( *this ) );
+		memset( (void *)this, 0, sizeof( *this ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -527,7 +527,7 @@ inline bool CVarBitVecBase::Detach( uint32 **ppBits, int *pNumBits )
 		free( m_pInt );
 	}
 
-	memset( this, 0, sizeof( *this ) );
+	memset( (void *)this, 0, sizeof( *this ) );
 	return true;
 }
 

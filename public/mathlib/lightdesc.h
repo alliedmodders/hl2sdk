@@ -76,7 +76,7 @@ public:
 
 	LightDesc_t &operator=( const LightDesc_t &src )
 	{
-		memcpy( this, &src, sizeof(LightDesc_t) );
+		memcpy( (void *)this, &src, sizeof(LightDesc_t) );
 		return *this;
 	}
 
