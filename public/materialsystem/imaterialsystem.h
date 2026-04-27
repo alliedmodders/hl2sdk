@@ -248,7 +248,7 @@ struct MaterialLightingState_t
 
 	MaterialLightingState_t &operator=( const MaterialLightingState_t &src )
 	{
-		memcpy( this, &src, sizeof(MaterialLightingState_t) - MATERIAL_MAX_LIGHT_COUNT * sizeof(LightDesc_t) );
+		memcpy( (void *)this, &src, sizeof(MaterialLightingState_t) - MATERIAL_MAX_LIGHT_COUNT * sizeof(LightDesc_t) );
 		memcpy( m_pLocalLightDesc, &src.m_pLocalLightDesc, src.m_nLocalLightCount * sizeof(LightDesc_t) );
 		return *this;
 	}
