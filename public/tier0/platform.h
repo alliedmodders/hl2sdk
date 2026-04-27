@@ -1186,7 +1186,7 @@ inline uint64 Plat_Rdtsc()
 	public:												\
 		_classname &operator=( const _classname &src )	\
 		{												\
-			memcpy( this, &src, sizeof(_classname) );	\
+			memcpy( (void *)this, &src, sizeof(_classname) );	\
 			return *this;								\
 		}
 

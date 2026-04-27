@@ -448,7 +448,7 @@ typedef CBitVec<32> CDWordBitVec;
 template <typename BITCOUNTTYPE>
 inline CVarBitVecBase<BITCOUNTTYPE>::CVarBitVecBase()
 {
-	Plat_FastMemset( this, 0, sizeof( *this ) );
+	Plat_FastMemset( (void *)this, 0, sizeof( *this ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -479,7 +479,7 @@ inline CVarBitVecBase<BITCOUNTTYPE>::CVarBitVecBase( const CVarBitVecBase<BITCOU
 		memcpy( m_pInt, from.m_pInt, m_numInts * sizeof(int) );
 	}
 	else
-		memset( this, 0, sizeof( *this ) );
+		memset( (void *)this, 0, sizeof( *this ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -547,7 +547,7 @@ inline bool CVarBitVecBase<BITCOUNTTYPE>::Detach( uint32 **ppBits, int *pNumBits
 		free( m_pInt );
 	}
 
-	memset( this, 0, sizeof( *this ) );
+	memset( (void *)this, 0, sizeof( *this ) );
 	return true;
 }
 
