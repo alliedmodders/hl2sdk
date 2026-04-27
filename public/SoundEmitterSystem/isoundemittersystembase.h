@@ -107,7 +107,7 @@ struct sound_interval_t
 
 	interval_t &ToInterval( interval_t &dest ) const	{ dest.start = start; dest.range = range; return dest; }
 	void FromInterval( const interval_t &from )			{ start = static_cast<T>(from.start); range = static_cast<T>(from.range); }
-	float Random() const								{ interval_t temp = { start, range }; return this->RandomInterval( temp ); }
+	float Random() const								{ return RandomFloat( start, start + range ); }
 };
 
 
