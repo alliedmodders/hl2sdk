@@ -48,7 +48,7 @@ public:
 	CBasePhonemeTag();
 	CBasePhonemeTag( const CBasePhonemeTag& from );
 
-	CBasePhonemeTag &operator=( const CBasePhonemeTag &from )	{ memcpy( this, &from, sizeof(*this) ); return *this; }
+	CBasePhonemeTag &operator=( const CBasePhonemeTag &from )	{ memcpy( (void *)this, &from, sizeof(*this) ); return *this; }
 
 	float GetStartTime() const				{ return m_flStartTime; }
 	void SetStartTime( float startTime )	{ m_flStartTime = startTime; }
