@@ -245,7 +245,9 @@ private:
 
 	// For handling #base "filename"
 	void MergeBaseKeys( CUtlVector< KeyValues * >& baseKeys );
+public:
 	void RecursiveMergeKeyValues( KeyValues *baseKV );
+private:
 
 	// NOTE: If both filesystem and pBuf are non-null, it'll save to both of them.
 	// If filesystem is null, it'll ignore f.
