@@ -33,6 +33,13 @@ public:
 	int GetSerialNumber() const;
 
 	int ToInt() const;
+
+	// AMNOTE: Packs handle to an int used in net messages for example, replicates Server_EHandleToInt logic
+	int ToPackedInt() const;
+	// AMNOTE: Unpacks previously packed handle, mostly used in net messages.
+	// Note: this is implemented in game code (ehandle.h)
+	static CEntityHandle FromPackedInt( int packed_handle );
+
 	bool operator !=(const CEntityHandle& other) const;
 	bool operator ==(const CEntityHandle& other) const;
 	bool operator ==(const CEntityInstance* pEnt) const;
@@ -114,6 +121,14 @@ inline int CEntityHandle::GetSerialNumber() const
 inline int CEntityHandle::ToInt() const
 {
 	return m_Index;
+}
+
+inline int CEntityHandle::ToPackedInt() const
+{
+	if(!IsValid())
+		return 0xFFFFFF;
+
+	return GetEntryIndex() | ((GetSerialNumber() & 0x3FF) << 14);
 }
 
 inline bool CEntityHandle::operator !=(const CEntityHandle& other) const
