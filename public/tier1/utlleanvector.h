@@ -21,6 +21,7 @@
 #include "tier0/dbg.h"
 
 #include <limits>
+#include <type_traits>
 
 #define FOR_EACH_LEANVEC( vecName, iteratorName ) \
 	for ( auto iteratorName = vecName.First(); vecName.IsValidIterator( iteratorName ); iteratorName = vecName.Next( iteratorName ) )
