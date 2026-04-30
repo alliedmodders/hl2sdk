@@ -117,8 +117,7 @@ public:
 	// Uses EntityClassFlags_t flags
 	uint m_flags;
 
-	// Special class group?
-	int m_unk301;
+	int m_SpawnOrder;
 	
 	uint m_nAllHelpersFlags;
 
