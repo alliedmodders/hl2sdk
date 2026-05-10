@@ -88,22 +88,25 @@ enum EConVarType : int16_t
 template<typename T>
 constexpr EConVarType TranslateConVarType();
 
-template<> constexpr EConVarType TranslateConVarType<bool>( void )		{ return EConVarType_Bool; }
-template<> constexpr EConVarType TranslateConVarType<int16>( void )		{ return EConVarType_Int16; }
-template<> constexpr EConVarType TranslateConVarType<uint16>( void )	{ return EConVarType_UInt16; }
-template<> constexpr EConVarType TranslateConVarType<int32>( void )		{ return EConVarType_Int32; }
-template<> constexpr EConVarType TranslateConVarType<uint32>( void )	{ return EConVarType_UInt32; }
-template<> constexpr EConVarType TranslateConVarType<int64>( void )		{ return EConVarType_Int64; }
-template<> constexpr EConVarType TranslateConVarType<uint64>( void )	{ return EConVarType_UInt64; }
-template<> constexpr EConVarType TranslateConVarType<float32>( void )	{ return EConVarType_Float32; }
-template<> constexpr EConVarType TranslateConVarType<float64>( void )	{ return EConVarType_Float64; }
-template<> constexpr EConVarType TranslateConVarType<CUtlString>( void ){ return EConVarType_String; }
-template<> constexpr EConVarType TranslateConVarType<Color>( void )		{ return EConVarType_Color; }
-template<> constexpr EConVarType TranslateConVarType<Vector2D>( void )	{ return EConVarType_Vector2; }
-template<> constexpr EConVarType TranslateConVarType<Vector>( void )	{ return EConVarType_Vector3; }
-template<> constexpr EConVarType TranslateConVarType<Vector4D>( void )	{ return EConVarType_Vector4; }
-template<> constexpr EConVarType TranslateConVarType<QAngle>( void )	{ return EConVarType_Qangle; }
-template<> constexpr EConVarType TranslateConVarType<void*>( void )		{ return EConVarType_Invalid; }
+template<> constexpr EConVarType TranslateConVarType<bool>( void )             { return EConVarType_Bool; }
+template<> constexpr EConVarType TranslateConVarType<int16>( void )            { return EConVarType_Int16; }
+template<> constexpr EConVarType TranslateConVarType<uint16>( void )           { return EConVarType_UInt16; }
+template<> constexpr EConVarType TranslateConVarType<int32>( void )            { return EConVarType_Int32; }
+template<> constexpr EConVarType TranslateConVarType<uint32>( void )           { return EConVarType_UInt32; }
+template<> constexpr EConVarType TranslateConVarType<int64>( void )            { return EConVarType_Int64; }
+template<> constexpr EConVarType TranslateConVarType<uint64>( void )           { return EConVarType_UInt64; }
+template<> constexpr EConVarType TranslateConVarType<float32>( void )          { return EConVarType_Float32; }
+template<> constexpr EConVarType TranslateConVarType<float64>( void )          { return EConVarType_Float64; }
+template<> constexpr EConVarType TranslateConVarType<CUtlString>( void )       { return EConVarType_String; }
+template<> constexpr EConVarType TranslateConVarType<const char*>( void )      { return EConVarType_String; }
+template<> constexpr EConVarType TranslateConVarType<char*>( void )            { return EConVarType_String; }
+template<> constexpr EConVarType TranslateConVarType<const char* const>( void ){ return EConVarType_String; }
+template<> constexpr EConVarType TranslateConVarType<Color>( void )            { return EConVarType_Color; }
+template<> constexpr EConVarType TranslateConVarType<Vector2D>( void )         { return EConVarType_Vector2; }
+template<> constexpr EConVarType TranslateConVarType<Vector>( void )           { return EConVarType_Vector3; }
+template<> constexpr EConVarType TranslateConVarType<Vector4D>( void )         { return EConVarType_Vector4; }
+template<> constexpr EConVarType TranslateConVarType<QAngle>( void )           { return EConVarType_Qangle; }
+template<> constexpr EConVarType TranslateConVarType<void*>( void )            { return EConVarType_Invalid; }
 
 union CVValue_t
 {
