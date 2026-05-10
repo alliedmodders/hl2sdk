@@ -139,7 +139,6 @@ public:
 	virtual void unk601() = 0;
 	virtual void unk602() = 0;
 
-	// Part of CBaseEntity
 	virtual SchemaMetaInfoHandle_t<CSchemaClassInfo> Schema_DynamicBinding() = 0;
 
 public:
