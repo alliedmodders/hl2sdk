@@ -137,6 +137,7 @@ public:
 	virtual datamap_t* GetDataDescMap() = 0;
 
 	virtual void unk601() = 0;
+	virtual void unk602() = 0;
 
 	virtual SchemaMetaInfoHandle_t<CSchemaClassInfo> Schema_DynamicBinding() = 0;
 
