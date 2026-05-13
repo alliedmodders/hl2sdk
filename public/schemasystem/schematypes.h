@@ -514,15 +514,4 @@ struct TypeAndCountInfo_t
 	CSchemaType* m_pElementType;
 };
 
-template<size_t Size, size_t Align>
-struct SchemaOpaqueType
-{
-	alignas(Align) unsigned char data[Size];
-};
-
-using BASEPTR = SchemaOpaqueType<16, 8>;
-using ENTITYFUNCPTR = SchemaOpaqueType<16, 8>;
-using USEPTR = SchemaOpaqueType<16, 8>;
-using CTypedBitVec = SchemaOpaqueType<8, 4>;
-
 #endif // SCHEMATYPES_H

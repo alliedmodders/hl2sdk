@@ -1412,6 +1412,25 @@ inline CBitVecAccessor::operator uint32()
 }
 
 
+//-----------------------------------------------------------------------------
+// CTypedBitVec<N> — schema atomic bit vector with integer template parameter
+//-----------------------------------------------------------------------------
+
+template <int N>
+class alignas(4) CTypedBitVec
+{
+	static_assert( N > 0 && N <= 64, "CTypedBitVec: N must be between 1 and 64" );
+public:
+	void ClearAll()               { for ( int i = 0; i < (N + 31) / 32; i++ ) m_nFlags[i] = 0; }
+	void SetAll()                 { for ( int i = 0; i < (N + 31) / 32; i++ ) m_nFlags[i] = ~0u; }
+	bool IsBitSet( int nBit ) const { return !!( m_nFlags[nBit >> 5] & ( 1u << ( nBit & 31 ) ) ); }
+	void Set( int nBit )          { m_nFlags[nBit >> 5] |=  ( 1u << ( nBit & 31 ) ); }
+	void Clear( int nBit )        { m_nFlags[nBit >> 5] &= ~( 1u << ( nBit & 31 ) ); }
+
+private:
+	uint32 m_nFlags[(N + 31) / 32];
+};
+
 //=============================================================================
 
 #endif // BITVEC_H
