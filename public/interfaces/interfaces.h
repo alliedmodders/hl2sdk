@@ -184,6 +184,7 @@ class ISceneUtils;
 class IResourceManifestRegistry;
 class IResourceHandleUtils;
 class ISchemaSystem;
+class IGameEventSystem;
 class IResourceCompilerSystem;
 class IPostProcessingSystem;
 class ISoundOpSystemEdit;
@@ -290,6 +291,9 @@ DECLARE_TIER2_INTERFACE( IResourceHandleUtils, g_pResourceHandleUtils );
 
 #define SCHEMASYSTEM_INTERFACE_VERSION				"SchemaSystem_001"
 DECLARE_TIER2_INTERFACE( ISchemaSystem, g_pSchemaSystem );
+
+#define GAMEEVENTSYSTEM_INTERFACE_VERSION				"GameEventSystemServerV001"
+DECLARE_TIER2_INTERFACE( IGameEventSystem, g_pGameEventSystem );
 
 #define RESOURCECOMPILERSYSTEM_INTERFACE_VERSION		"ResourceCompilerSystem001"
 DECLARE_TIER2_INTERFACE( IResourceCompilerSystem, g_pResourceCompilerSystem );

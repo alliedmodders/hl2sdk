@@ -20,6 +20,7 @@ IResourceSystem *g_pResourceSystem;
 IResourceManifestRegistry *g_pResourceManifestRegistry;
 IResourceHandleUtils *g_pResourceHandleUtils;
 ISchemaSystem *g_pSchemaSystem;
+IGameEventSystem *g_pGameEventSystem;
 IResourceCompilerSystem *g_pResourceCompilerSystem;
 IMaterialSystem2 *g_pMaterialSystem2;
 IPostProcessingSystem *g_pPostProcessingSystem;
@@ -150,6 +151,7 @@ static const InterfaceGlobals_t g_pInterfaceGlobals[] =
 	{ RESOURCEMANIFESTREGISTRY_INTERFACE_VERSION, &g_pResourceManifestRegistry },
 	{ RESOURCEHANDLEUTILS_INTERFACE_VERSION, &g_pResourceHandleUtils },
 	{ SCHEMASYSTEM_INTERFACE_VERSION, &g_pSchemaSystem },
+	{ GAMEEVENTSYSTEM_INTERFACE_VERSION, &g_pGameEventSystem },
 	{ RESOURCECOMPILERSYSTEM_INTERFACE_VERSION, &g_pResourceCompilerSystem },
 	{ MATERIAL_SYSTEM2_INTERFACE_VERSION, &g_pMaterialSystem2 },
 	{ POSTPROCESSINGSYSTEM_INTERFACE_VERSION, &g_pPostProcessingSystem },
