@@ -425,6 +425,22 @@ public:
 	}
 };
 
+//-----------------------------------------------------------------------------
+
+// AMNOTE: Mostly a stub, real meaning for "Typed" version is unknown
+template < int NUM_BITS >
+class CTypedBitVec : public CBitVecT< CFixedBitVecBase<NUM_BITS> >
+{
+public:
+	CTypedBitVec()
+	{
+	}
+
+	CTypedBitVec(int numBits)
+	 : CBitVecT< CFixedBitVecBase<NUM_BITS> >(numBits)
+	{
+	}
+};
 
 //-----------------------------------------------------------------------------
 
@@ -1410,7 +1426,6 @@ inline CBitVecAccessor::operator uint32()
 {
 	return m_pDWords[m_iBit >> 5] & (1 << (m_iBit & 31));
 }
-
 
 //=============================================================================
 
