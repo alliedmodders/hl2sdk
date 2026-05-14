@@ -425,6 +425,25 @@ public:
 	}
 };
 
+//-----------------------------------------------------------------------------
+// CTypedBitVec<N> — schema atomic bit vector with integer template parameter
+//-----------------------------------------------------------------------------
+
+template < int NUM_BITS >
+class CTypedBitVecT : public CBitVecT< CFixedBitVecBase<NUM_BITS> >
+{
+public:
+	CTypedBitVecT()
+	{
+	}
+
+	CTypedBitVecT(int numBits)
+	 : CBitVecT< CFixedBitVecBase<NUM_BITS> >(numBits)
+	{
+	}
+};
+
+using CTypedBitVec = CTypedBitVecT<64>;
 
 //-----------------------------------------------------------------------------
 
@@ -1410,27 +1429,6 @@ inline CBitVecAccessor::operator uint32()
 {
 	return m_pDWords[m_iBit >> 5] & (1 << (m_iBit & 31));
 }
-
-
-//-----------------------------------------------------------------------------
-// CTypedBitVec<N> — schema atomic bit vector with integer template parameter
-//-----------------------------------------------------------------------------
-
-template <int N>
-class alignas(4) CTypedBitVecT
-{
-public:
-	void ClearAll()               { for ( int i = 0; i < (N + 31) / 32; i++ ) m_nFlags[i] = 0; }
-	void SetAll()                 { for ( int i = 0; i < (N + 31) / 32; i++ ) m_nFlags[i] = ~0u; }
-	bool IsBitSet( int nBit ) const { return !!( m_nFlags[nBit >> 5] & ( 1u << ( nBit & 31 ) ) ); }
-	void Set( int nBit )          { m_nFlags[nBit >> 5] |=  ( 1u << ( nBit & 31 ) ); }
-	void Clear( int nBit )        { m_nFlags[nBit >> 5] &= ~( 1u << ( nBit & 31 ) ); }
-
-private:
-	uint32 m_nFlags[(N + 31) / 32];
-};
-
-using CTypedBitVec = CTypedBitVecT<64>;
 
 //=============================================================================
 
