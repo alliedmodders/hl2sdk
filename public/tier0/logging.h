@@ -235,6 +235,13 @@ enum LoggingChannelFlags_t
 	LCF_DO_NOT_ECHO = 0x00000002,
 };
 
+enum ModificationFlags_t : int
+{
+	MODIFIED_FLAGS = 1,
+	MODIFIED_VERBOSITY = 2,
+	MODIFIED_SPEWCOLOR = 4,
+};
+
 //-----------------------------------------------------------------------------
 // A callback function used to register tags on a logging channel 
 // during initialization.
@@ -250,13 +257,11 @@ struct LeafCodeInfo_t
 
 struct LoggingMetaData_t
 {
-	int m_Unknown;
-	int m_Unknown2;
-	int m_Unknown3;
-	int m_Unknown4;
-	int m_Unknown5;
-	int m_Unknown6;
-	int m_Unknown7;
+	LoggingMetaData_t *m_pNext;
+	uint64 m_TypeID;
+	uint8 *m_pData;
+	size_t m_nDataSize;
+	uint8 m_nVerbosity;
 };
 
 //-----------------------------------------------------------------------------
@@ -295,6 +300,7 @@ class ILoggingListener
 {
 public:
 	virtual void Log( const LoggingContext_t *pContext, const tchar *pMessage ) = 0;
+	virtual void OnFlush() { };
 	virtual void OnChannelRegistered( LoggingChannelID_t channelID ) { };
 	virtual void OnChannelVerbosityChanged( LoggingChannelID_t channelID ) { };
 	virtual void OnChannelFlagsChanged( LoggingChannelID_t channelID ) { };
@@ -655,16 +661,23 @@ public:
 			return false;
 		}
 		bool IsEnabled( LoggingVerbosity_t verbosity ) const { return verbosity <= m_Verbosity; }
-		void SetVerbosity( LoggingVerbosity_t verbosity ) { m_Verbosity = verbosity; }
+		// It is recommended to use LoggingSystem_SetChannelVerbosity instead, as SetVerbosity bypasses ILoggingListener::OnChannelVerbosityChanged callbacks.
+		void SetVerbosity( LoggingVerbosity_t verbosity ) 
+		{ 
+			m_Verbosity = verbosity;
+			m_nModifiedFields = static_cast<ModificationFlags_t>(m_nModifiedFields | MODIFIED_VERBOSITY);
+		}
 
 		LoggingChannelID_t m_ID;
-		int m_Unknown;	// Appears to be the same as m_Flags?
-		LoggingChannelFlags_t m_Flags; // an OR'd combination of LoggingChannelFlags_t
-		int m_Unknown2;	// Appears to be the same as m_Verbosity?
-		LoggingVerbosity_t m_Verbosity;	// The maximum verbosity level allowed to activate this channel.
+		LoggingChannelFlags_t m_DefaultFlags;	
+		LoggingChannelFlags_t m_Flags;
+		LoggingVerbosity_t m_DefaultVerbosity;	
+		LoggingVerbosity_t m_Verbosity;
+		int m_nIndent;
 		Color m_SpewColor;
 		char m_Name[MAX_LOGGING_IDENTIFIER_LENGTH];
 		LoggingTag_t *m_pFirstTag;
+		ModificationFlags_t m_nModifiedFields;
 	};
 
 private:
