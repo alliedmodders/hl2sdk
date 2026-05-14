@@ -426,24 +426,21 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// CTypedBitVec<N> — schema atomic bit vector with integer template parameter
-//-----------------------------------------------------------------------------
 
+// AMNOTE: Mostly a stub, real meaning for "Typed" version is unknown
 template < int NUM_BITS >
-class CTypedBitVecT : public CBitVecT< CFixedBitVecBase<NUM_BITS> >
+class CTypedBitVec : public CBitVecT< CFixedBitVecBase<NUM_BITS> >
 {
 public:
-	CTypedBitVecT()
+	CTypedBitVec()
 	{
 	}
 
-	CTypedBitVecT(int numBits)
+	CTypedBitVec(int numBits)
 	 : CBitVecT< CFixedBitVecBase<NUM_BITS> >(numBits)
 	{
 	}
 };
-
-using CTypedBitVec = CTypedBitVecT<64>;
 
 //-----------------------------------------------------------------------------
 
