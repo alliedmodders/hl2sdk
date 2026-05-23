@@ -49,6 +49,7 @@
 #include <sys/statvfs.h>
 #endif
 #include <sched.h>
+#define int64 int64_t
 
 #define _A_SUBDIR S_IFDIR
 

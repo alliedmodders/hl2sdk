@@ -121,11 +121,12 @@ public:
 	// Use this for va_list formatting
 	const char *sprintf_argv(const char *pszFormat, va_list arg_ptr)
 	{
+		int result; 
 		bool bTruncated = false; 
 		static int s_nWarned = 0; 
 
 		InitQuietTruncation();
-		V_vsnprintfRet( m_szBuf, SIZE_BUF - 1, pszFormat, arg_ptr, &bTruncated );
+		result = V_vsnprintfRet( m_szBuf, SIZE_BUF - 1, pszFormat, arg_ptr, &bTruncated );
 		m_szBuf[SIZE_BUF - 1] = 0; 
 		if ( bTruncated && !m_bQuietTruncation && ( s_nWarned < 5 ) ) 
 		{ 
