@@ -18,7 +18,9 @@ typedef unsigned char uint8;
 #endif
 
 #if defined(__LP64__) || defined(__x86_64__) || defined(_WIN64) || defined(__aarch64__) || defined(__s390x__)
+#if !defined(X64BITS)
 #define X64BITS
+#endif
 #endif
 
 #if !defined(VALVE_BIG_ENDIAN)
