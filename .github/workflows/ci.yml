@@ -23,7 +23,6 @@ jobs:
       image: ${{ matrix.container_image }}
 
     steps:
-          
       - uses: actions/checkout@v4
         name: Repository checkout
         with:
@@ -33,6 +32,7 @@ jobs:
 
       - uses: actions/checkout@v4
         name: AMBuild checkout
+        if: startsWith(runner.os, 'Windows')
         with:
           repository: alliedmodders/ambuild
           ref: fe8c99ccd24fa926bf6ac6b9935a5fc03df06a72
@@ -43,7 +43,7 @@ jobs:
       - name: Setup AMBuild
         shell: bash
         run: |
-          python -m pip install ./ambuild
+          python3 -m pip install ./ambuild
 
       - name: Select clang compiler
         if: startsWith(runner.os, 'Linux')
@@ -59,7 +59,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          python ../configure.py
+          python3 ../configure.py
           ambuild
 
       - name: Upload artifact
