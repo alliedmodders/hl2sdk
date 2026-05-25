@@ -8,17 +8,19 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-22.04, windows-2022]
         include:
           - os: ubuntu-22.04
             cc: clang
             cxx: clang++
+            container_image: ghcr.io/alliedmodders/build-containers/debian11-clang22:latest
           - os: windows-2022
             cc: msvc
       fail-fast: false
 
     name: ${{ matrix.os }} - ${{ matrix.cc }}
     runs-on: ${{ matrix.os }}
+    container:
+      image: ${{ matrix.container_image }}
 
     steps:
       - name: Linux dependencies
@@ -59,7 +61,6 @@ jobs:
       - name: Setup AMBuild
         shell: bash
         run: |
-          cd "${{ env.CACHE_PATH }}"
           python -m pip install ./ambuild
 
       - name: Select clang compiler
