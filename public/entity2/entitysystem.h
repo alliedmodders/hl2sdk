@@ -111,7 +111,7 @@ enum EntityDormancyType_t
 
 struct EventQueuePrioritizedEvent_t
 {
-	int m_unk001;
+	WorldGroupId_t m_WorldGroupId;
 	GameTime_t m_flFireTime;
 	EntityIOTargetType_t m_eTargetType;
 	CUtlSymbolLarge m_iTarget;
