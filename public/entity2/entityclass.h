@@ -36,6 +36,8 @@ struct EntInput_t;
 struct EntOutput_t;
 struct datamap_t;
 
+typedef void (*BASEPTR)(CEntityInstance *ent);
+
 struct EntClassComponentOverride_t
 {
 	const char* pszBaseComponent;
@@ -92,7 +94,8 @@ public:
 	}
 	
 public:
-	using FuncToNameCb = const char *(*)(void (*)(CEntityInstance *ent));
+	using FuncToNameCb = const char *(*)(BASEPTR think_fn);
+	using NameToFuncCb = BASEPTR (*)(const char *fn_name);
 
 	void *m_pScriptDesc;
 	CNetworkSerializerClassInfo *m_NetworkSerializerInfo;
@@ -105,8 +108,10 @@ public:
 	CEntitySharedPulseSignature *m_pSharedPulseSignature;
 	void *m_unk101;
 
-	FuncToNameCb m_unk102;
-	FuncToNameCb m_unk103;
+	// Allows to get any think functions in use or to get its string name for this class
+	// does searches to the parent classes as well
+	NameToFuncCb m_NameToThinkFunc;
+	FuncToNameCb m_ThinkFuncToName;
 
 	EntClassComponentOverride_t* m_pComponentOverrides;
 	
