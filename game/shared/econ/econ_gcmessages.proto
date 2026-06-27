@@ -437,7 +437,18 @@ message CMsgDevNewItemRequest {
 }
 
 message CMsgDevNewItemRequestResponse {
-	optional bool success = 1;
+	enum EResponse {
+		k_eInternalError = 0;
+		k_eSuccess = 1;
+		k_eTooBusy = 2;
+		k_eDisabled = 3;
+		k_eTimeout = 4;
+		k_eNotAllowed = 5;
+		k_eUnknownItemDef = 6;
+		k_eItemDefNotAllowed = 7;
+	}
+
+	optional .CMsgDevNewItemRequestResponse.EResponse result = 1 [default = k_eInternalError];
 }
 
 message CMsgDevUnlockAllItemStyles {
