@@ -71,7 +71,7 @@ public:
 	virtual ConVarRef		FindFirstConVar() = 0;
 	virtual ConVarRef		FindNextConVar( ConVarRef prev ) = 0;
 
-	virtual void			CallChangeCallback( ConVarRef cvar, const CSplitScreenSlot nSlot, const CVValue_t* pNewValue, const CVValue_t* pOldValue, void *__unk01 = nullptr ) = 0;
+	virtual void			CallChangeCallback( ConVarRef cvar, const CSplitScreenSlot nSlot, const CVValue_t *pNewValue, const CVValue_t *pOldValue, void *__unk01 = nullptr ) = 0;
 	// Would call cb for every change callback defined for this cvar
 	virtual void			IterateConVarCallbacks( ConVarRef cvar, FnCvarCallbacksReader_t cb ) = 0;
 	// If returns false value shouldn't be modified
@@ -86,19 +86,17 @@ public:
 	// Install a global change callback (to be called when any convar changes) 
 	virtual void			InstallGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
 	virtual void			RemoveGlobalChangeCallback( FnChangeCallbackGlobal_t callback ) = 0;
-	virtual void			CallGlobalChangeCallbacks( ConVarRefAbstract* ref, CSplitScreenSlot nSlot, const char* newValue, const char* oldValue, void *__unk01 = nullptr ) = 0;
+	virtual void			CallGlobalChangeCallbacks( ConVarRefAbstract *ref, CSplitScreenSlot nSlot, const char *newValue, const char *oldValue, void *__unk01 = nullptr ) = 0;
 
 	// Reverts cvars to default values which contain a specific flag,
 	// cvars with a flag FCVAR_COMMANDLINE_ENFORCED would be skipped
 	virtual void			ResetConVarsToDefaultValuesByFlag( uint64 nFlag ) = 0;
 
 	virtual void			SetMaxSplitScreenSlots( int nSlots ) = 0;
-	virtual int				GetMaxSplitScreenSlots() const = 0;
+	int						GetMaxSplitScreenSlots() const { return m_MaxSplitScreenSlots; }
 
 	virtual void			RegisterCreationListeners( IConVarListener *callbacks ) = 0;
 	virtual void			RemoveCreationListeners( IConVarListener *callbacks ) = 0;
-
-	virtual void			unk001() = 0;
 
 	// Reverts cvars to default values which match pszPrefix string,
 	// ignores FCVAR_COMMANDLINE_ENFORCED
@@ -148,6 +146,9 @@ public:
 
 	// Queues up value (creates a copy of it) to be set when convar is ready to be edited
 	virtual void				QueueThreadSetValue( ConVarRefAbstract* ref, CSplitScreenSlot nSlot, void* __unk01, CVValue_t* value ) = 0;
+
+private:
+	int m_MaxSplitScreenSlots;
 };
 
 #include "memdbgon.h"
@@ -271,8 +272,6 @@ public:
 	CUtlHashtable<CUtlStringToken, uint16> m_ConCommandHashes;
 	CUtlLinkedList<ConCommandCallbackInfoNode_t, unsigned short, true> m_CallbackInfoList;
 	int m_ConCommandCount;
-
-	int m_SplitScreenSlots;
 
 	CAtomicMutex m_Mutex;
 	characterset_t m_CharacterSet;
