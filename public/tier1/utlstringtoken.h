@@ -24,7 +24,6 @@ class CFormatStringElement;
 
 // AMNOTE: See VStringTokenSystem001
 // Interact with stringtokendatabase.txt
-PLATFORM_INTERFACE bool g_bUpdateStringTokenDatabase;
 PLATFORM_INTERFACE void RegisterStringToken( uint32 nHashCode, const char *pStart, const char *pEnd = NULL, bool bExtraAddToDatabase = true );
 
 class CUtlStringToken
@@ -36,10 +35,6 @@ public:
 		if(str && *str)
 		{
 			m_nHashCode = MurmurHash2LowerCase( str, STRINGTOKEN_MURMURHASH_SEED );
-			if(g_bUpdateStringTokenDatabase)
-			{
-				RegisterStringToken( m_nHashCode, str, 0, true );
-			}
 		}
 	}
 
