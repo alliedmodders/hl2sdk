@@ -24,6 +24,7 @@
 #include "bufferstring.h"
 #include "tier1/characterset.h"
 #include "Color.h"
+#include "vectorws.h"
 #include "playerslot.h"
 
 #include <cstdint>
@@ -82,6 +83,7 @@ enum EConVarType : int16_t
 	EConVarType_Vector3,
 	EConVarType_Vector4,
 	EConVarType_Qangle,
+	EConVarType_VectorWS,
 	EConVarType_MAX
 };
 
@@ -103,6 +105,7 @@ template<> constexpr EConVarType TranslateConVarType<Vector2D>( void )	{ return 
 template<> constexpr EConVarType TranslateConVarType<Vector>( void )	{ return EConVarType_Vector3; }
 template<> constexpr EConVarType TranslateConVarType<Vector4D>( void )	{ return EConVarType_Vector4; }
 template<> constexpr EConVarType TranslateConVarType<QAngle>( void )	{ return EConVarType_Qangle; }
+template<> constexpr EConVarType TranslateConVarType<VectorWS>( void )	{ return EConVarType_VectorWS; }
 template<> constexpr EConVarType TranslateConVarType<void*>( void )		{ return EConVarType_Invalid; }
 
 union CVValue_t
@@ -129,6 +132,7 @@ union CVValue_t
 	CVValue_t( const Vector &value ) : m_vec3Value( value ) {}
 	CVValue_t( const Vector4D &value ) : m_vec4Value( value ) {}
 	CVValue_t( const QAngle &value ) : m_angValue( value ) {}
+	CVValue_t( const VectorWS &value ) : m_vecwsValue( value ) {}
 	~CVValue_t() {}
 
 	operator bool() const				{ return m_bValue; }
@@ -147,6 +151,7 @@ union CVValue_t
 	operator const Vector&() const		{ return m_vec3Value; }
 	operator const Vector4D&() const	{ return m_vec4Value; }
 	operator const QAngle&() const 		{ return m_angValue; }
+	operator const VectorWS&() const 	{ return m_vecwsValue; }
 
 	bool		m_bValue;
 	int16		m_i16Value;
@@ -163,6 +168,7 @@ union CVValue_t
 	Vector		m_vec3Value;
 	Vector4D	m_vec4Value;
 	QAngle		m_angValue;
+	VectorWS	m_vecwsValue;
 };
 
 struct CVarCreationBase_t
@@ -761,6 +767,7 @@ template<> void CvarTypeTrait_ValueToStringFn<Vector2D>( const CVValue_t *obj, C
 template<> void CvarTypeTrait_ValueToStringFn<Vector>( const CVValue_t *obj, CBufferString &buf ) { buf.Format( "%f %f %f", obj->m_vec3Value[0], obj->m_vec3Value[1], obj->m_vec3Value[2] ); }
 template<> void CvarTypeTrait_ValueToStringFn<Vector4D>( const CVValue_t *obj, CBufferString &buf ) { buf.Format( "%f %f %f %f", obj->m_vec4Value[0], obj->m_vec4Value[1], obj->m_vec4Value[2], obj->m_vec4Value[3] ); }
 template<> void CvarTypeTrait_ValueToStringFn<QAngle>( const CVValue_t *obj, CBufferString &buf ) { buf.Format( "%f %f %f", obj->m_angValue[0], obj->m_angValue[1], obj->m_angValue[2] ); }
+template<> void CvarTypeTrait_ValueToStringFn<VectorWS>( const CVValue_t *obj, CBufferString &buf ) { buf.Format( "%f %f %f", obj->m_vecwsValue[0], obj->m_vecwsValue[1], obj->m_vecwsValue[2] ); }
 template<> void CvarTypeTrait_ValueToStringFn<Color>( const CVValue_t *obj, CBufferString &buf )
 {
 	if( obj->m_clrValue.a() == 255 )
@@ -794,6 +801,11 @@ template<> void CvarTypeTrait_ClampFn<QAngle>( CVValue_t *obj, const CVValue_t *
 {
 	if(min) for(int i = 0; i < 3; i++) obj->m_angValue[i] = Max( obj->m_angValue[i], min->m_angValue[i] );
 	if(max) for(int i = 0; i < 3; i++) obj->m_angValue[i] = Min( obj->m_angValue[i], max->m_angValue[i] );
+}
+template<> void CvarTypeTrait_ClampFn<VectorWS>( CVValue_t *obj, const CVValue_t *min, const CVValue_t *max )
+{
+	if(min) for(int i = 0; i < 3; i++) obj->m_vecwsValue[i] = Max( obj->m_vecwsValue[i], min->m_vecwsValue[i] );
+	if(max) for(int i = 0; i < 3; i++) obj->m_vecwsValue[i] = Min( obj->m_vecwsValue[i], max->m_vecwsValue[i] );
 }
 
 class ConVarData;
@@ -857,7 +869,8 @@ static CVarTypeTraits *GetCvarTypeTraits( EConVarType type )
 		*CVarTypeTraits().InitAs<Vector2D>( "vector2", "0 0" ),
 		*CVarTypeTraits().InitAs<Vector>( "vector3", "0 0 0" ),
 		*CVarTypeTraits().InitAs<Vector4D>( "vector4", "0 0 0 0" ),
-		*CVarTypeTraits().InitAs<QAngle>( "qangle", "0 0 0" )
+		*CVarTypeTraits().InitAs<QAngle>( "qangle", "0 0 0" ),
+		*CVarTypeTraits().InitAs<VectorWS>( "vectorws", "0 0 0" )
 	};
 
 	return &s_TypeTraits[type];
@@ -1050,6 +1063,7 @@ static ConVarData *GetInvalidConVarData( EConVarType type )
 		ConVarData( TranslateConVarType<Vector>() ),
 		ConVarData( TranslateConVarType<Vector4D>() ),
 		ConVarData( TranslateConVarType<QAngle>() ),
+		ConVarData( TranslateConVarType<VectorWS>() ),
 		ConVarData( TranslateConVarType<void *>() ) // EConVarType_MAX
 	};
 
