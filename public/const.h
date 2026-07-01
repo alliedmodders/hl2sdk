@@ -249,8 +249,10 @@ enum SolidFlags_t
 	FSOLID_USE_TRIGGER_BOUNDS	= 0x0080,	// Uses a special trigger bounds separate from the normal OBB
 	FSOLID_ROOT_PARENT_ALIGNED	= 0x0100,	// Collisions are defined in root parent's local coordinate space
 	FSOLID_TRIGGER_TOUCH_DEBRIS	= 0x0200,	// This trigger will touch debris objects
+	FSOLID_UNKNOWN_BIT11		= 0x0400,	// Unknown FSOLID flag bit 11
+	FSOLID_UNKNOWN_BIT12		= 0x0800,	// Unknown FSOLID flag bit 12, some prop_physics entites on dm_crossfire have their m_usSolidFlags set to this. Set in CPhysicsProp::CreateVPhysics
 
-	FSOLID_MAX_BITS	= 10
+	FSOLID_MAX_BITS	= 12
 };
 
 //-----------------------------------------------------------------------------
