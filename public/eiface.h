@@ -693,7 +693,7 @@ public:
 
 	// Client is going active
 	// If bLoadGame is true, don't spawn the player because its state is already setup.
-	virtual void			ClientActive( edict_t *pEntity, bool bLoadGame ) = 0;
+	virtual void			ClientActive(edict_t* pEntity, bool bLoadGame, bool bUnknown) = 0;
 	
 	// Client is disconnecting from server
 	virtual void			ClientDisconnect( edict_t *pEntity ) = 0;

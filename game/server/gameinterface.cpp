@@ -2623,7 +2623,7 @@ bool CServerGameClients::ClientConnect( edict_t *pEdict, const char *pszName, co
 // Purpose: Called when a player is fully active (i.e. ready to receive messages)
 // Input  : *pEntity - the player
 //-----------------------------------------------------------------------------
-void CServerGameClients::ClientActive( edict_t *pEdict, bool bLoadGame )
+void CServerGameClients::ClientActive( edict_t *pEdict, bool bLoadGame, bool bUnknown)
 {
 	MDLCACHE_CRITICAL_SECTION();
 	

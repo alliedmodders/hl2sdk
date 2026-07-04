@@ -29,7 +29,7 @@ class CServerGameClients : public IServerGameClients
 {
 public:
 	virtual bool			ClientConnect( edict_t *pEntity, char const* pszName, char const* pszAddress, char *reject, int maxrejectlen ) OVERRIDE;
-	virtual void			ClientActive( edict_t *pEntity, bool bLoadGame ) OVERRIDE;
+	virtual void			ClientActive( edict_t *pEntity, bool bLoadGame, bool bUnknown ) OVERRIDE;
 	virtual void			ClientDisconnect( edict_t *pEntity ) OVERRIDE;
 	virtual void			ClientPutInServer( edict_t *pEntity, const char *playername ) OVERRIDE;
 	virtual void			ClientCommand( edict_t *pEntity, const CCommand &args ) OVERRIDE;
