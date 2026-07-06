@@ -1491,16 +1491,6 @@ public:
 };
 #endif
 
-
-#if defined _LINUX || defined __APPLE__
-WRAP_READ( CBitRead );
-#else
-WRAP_READ( CBitRead );
-#endif
 WRAP_WRITE( old_bf_write );
 
-
 #endif
-
-
-
