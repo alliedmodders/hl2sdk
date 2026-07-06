@@ -1491,6 +1491,7 @@ public:
 };
 #endif
 
+WRAP_READ( CBitRead );
 WRAP_WRITE( old_bf_write );
 
 #endif
