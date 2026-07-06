@@ -1493,7 +1493,7 @@ public:
 
 
 #if defined _LINUX || defined __APPLE__
-WRAP_READ( old_bf_read );
+WRAP_READ( CBitRead );
 #else
 WRAP_READ( CBitRead );
 #endif
