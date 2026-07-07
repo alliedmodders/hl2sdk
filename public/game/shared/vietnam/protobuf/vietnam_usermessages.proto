@@ -86,6 +86,8 @@ enum ECstrike15UserMessages {
 	CS_UM_Heal = 82;
 	CS_UM_Ammo = 83;
 	CS_UM_ActionProgress = 84;
+	CS_UM_Smoke = 85;
+	CS_UM_SpawnablePropData = 86;
 }
 
 message CCSUsrMsg_VGUIMenu {
@@ -183,6 +185,7 @@ message CCSUsrMsg_SendAudio {
 	optional string radio_sound = 1;
 	optional bool isradio = 2;
 	optional bool iscommander = 3;
+	optional bool iszombiemusic = 4;
 }
 
 message CCSUsrMsg_RawAudio {
@@ -229,10 +232,11 @@ message CCSUsrMsg_HintTextExtended {
 }
 
 message CCSUsrMsg_PlayerScore {
-	optional int32 amount = 1;
-	optional int32 scoretype = 2;
-	optional string killedplayername = 3;
-	optional int32 killedplayerteam = 4;
+	optional int32 playerindex = 1;
+	optional int32 amount = 2;
+	optional int32 scoretype = 3;
+	optional string killedplayername = 4;
+	optional int32 killedplayerteam = 5;
 }
 
 message CCSUsrMsg_SpottedDuration {
@@ -240,10 +244,13 @@ message CCSUsrMsg_SpottedDuration {
 	optional int32 myindex = 2;
 	optional bool spotted = 3;
 	optional float spottedduration = 4;
+	optional bool ignorelos = 5;
 }
 
 message CCSUsrMsg_Ribbon {
-	optional int32 ribbontype = 1;
+	optional int32 playerindex = 1;
+	optional int32 ribbontype = 2;
+	optional int32 ribbonscore = 3;
 }
 
 message CCSUsrMsg_PointOfInterest {
@@ -493,6 +500,7 @@ message CCSUsrMsg_WeaponSound {
 message CCSUsrMsg_EntityOutlineHighlight {
 	optional int32 entidx = 1;
 	optional float duration = 2;
+	optional int32 colorteam = 3;
 }
 
 message CCSUsrMsg_SquadMemberDied {
@@ -534,4 +542,14 @@ message CCSUsrMsg_Ammo {
 
 message CCSUsrMsg_ActionProgress {
 	optional float duration = 2;
+}
+
+message CCSUsrMsg_Smoke {
+	optional int32 amount = 1;
+}
+
+message CCSUsrMsg_SpawnablePropData {
+	optional .CMsgVector origin = 1;
+	optional .CMsgQAngle angles = 2;
+	optional bool ready = 3;
 }

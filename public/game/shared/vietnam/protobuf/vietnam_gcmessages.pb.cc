@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
@@ -16,58 +17,80 @@
 #include <google/protobuf/wire_format.h>
 // @@protoc_insertion_point(includes)
 
+namespace protobuf_vietnam_5fgcmessages_2eproto {
+
+
 namespace {
 
 
 }  // namespace
 
-
-void protobuf_AssignDesc_vietnam_5fgcmessages_2eproto() {
-  protobuf_AddDesc_vietnam_5fgcmessages_2eproto();
-  const ::google::protobuf::FileDescriptor* file =
-    ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
-      "vietnam_gcmessages.proto");
-  GOOGLE_CHECK(file != NULL);
-}
-
+const ::google::protobuf::uint32 TableStruct::offsets[] = { ~0u };
+static const ::google::protobuf::internal::MigrationSchema* schemas = NULL;
+static const ::google::protobuf::Message* const* file_default_instances = NULL;
 namespace {
 
-GOOGLE_PROTOBUF_DECLARE_ONCE(protobuf_AssignDescriptors_once_);
-inline void protobuf_AssignDescriptorsOnce() {
-  ::google::protobuf::GoogleOnceInit(&protobuf_AssignDescriptors_once_,
-                 &protobuf_AssignDesc_vietnam_5fgcmessages_2eproto);
+void protobuf_AssignDescriptors() {
+  AddDescriptors();
+  ::google::protobuf::MessageFactory* factory = NULL;
+  AssignDescriptors(
+      "vietnam_gcmessages.proto", schemas, file_default_instances, TableStruct::offsets, factory,
+      NULL, NULL, NULL);
 }
 
+void protobuf_AssignDescriptorsOnce() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &protobuf_AssignDescriptors);
+}
+
+void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
 }
 
 }  // namespace
 
-void protobuf_ShutdownFile_vietnam_5fgcmessages_2eproto() {
+void TableStruct::Shutdown() {
 }
 
-void protobuf_AddDesc_vietnam_5fgcmessages_2eproto() {
-  static bool already_here = false;
-  if (already_here) return;
-  already_here = true;
+void TableStruct::InitDefaultsImpl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-  ::protobuf_AddDesc_engine_5fgcmessages_2eproto();
-  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\030vietnam_gcmessages.proto\032\027engine_gcmes"
-    "sages.protoB\005H\001\200\001\000", 58);
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
-    "vietnam_gcmessages.proto", &protobuf_RegisterTypes);
-  ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_vietnam_5fgcmessages_2eproto);
+  ::google::protobuf::internal::InitProtobufDefaults();
+  ::protobuf_engine_5fgcmessages_2eproto::InitDefaults();
 }
 
+void InitDefaults() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &TableStruct::InitDefaultsImpl);
+}
+void AddDescriptorsImpl() {
+  InitDefaults();
+  static const char descriptor[] = {
+      "\n\030vietnam_gcmessages.proto\032\027engine_gcmes"
+      "sages.protoB\005H\001\200\001\000"
+  };
+  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
+      descriptor, 58);
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
+    "vietnam_gcmessages.proto", &protobuf_RegisterTypes);
+  ::protobuf_engine_5fgcmessages_2eproto::AddDescriptors();
+  ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
+}
+
+void AddDescriptors() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &AddDescriptorsImpl);
+}
 // Force AddDescriptors() to be called at static initialization time.
-struct StaticDescriptorInitializer_vietnam_5fgcmessages_2eproto {
-  StaticDescriptorInitializer_vietnam_5fgcmessages_2eproto() {
-    protobuf_AddDesc_vietnam_5fgcmessages_2eproto();
+struct StaticDescriptorInitializer {
+  StaticDescriptorInitializer() {
+    AddDescriptors();
   }
-} static_descriptor_initializer_vietnam_5fgcmessages_2eproto_;
+} static_descriptor_initializer;
+
+}  // namespace protobuf_vietnam_5fgcmessages_2eproto
+
 
 // @@protoc_insertion_point(namespace_scope)
 

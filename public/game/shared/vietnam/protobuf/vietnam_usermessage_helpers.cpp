@@ -94,6 +94,8 @@ CVietnamUsermessageHelpers::CVietnamUsermessageHelpers()
 	SETUP_MESSAGE( Heal );
 	SETUP_MESSAGE( Ammo );
 	SETUP_MESSAGE( ActionProgress );
+	SETUP_MESSAGE( Smoke );
+	SETUP_MESSAGE( SpawnablePropData );
 }
 
 const google::protobuf::Message *CVietnamUsermessageHelpers::GetPrototype( int index ) const
