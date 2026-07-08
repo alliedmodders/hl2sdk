@@ -91,6 +91,14 @@
 #include <stdlib.h>  // NOLINT(build/include)
 #elif defined(__APPLE__)
 #include <libkern/OSByteOrder.h>
+#elif defined(__GNUC__)
+// Use compiler intrinsics rather than <byteswap.h> to avoid issue with include
+// path having public/tier1/byteswap.h ahead of the system header, with that
+// not having bswap_* and dragging in tier0/basetypes.h with its "schema" macro
+// that then clashes with a parameter named "schema" another protobuf header
+#define bswap_16(x) __builtin_bswap16(x)
+#define bswap_32(x) __builtin_bswap32(x)
+#define bswap_64(x) __builtin_bswap64(x)
 #elif defined(__GLIBC__) || defined(__CYGWIN__)
 #include <byteswap.h>  // IWYU pragma: export
 #endif
