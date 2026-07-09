@@ -147,7 +147,6 @@ class IProcessUtils;
 class ILocalize;
 class IMediaFoundation;
 class IVPhysics2;
-class VPhys2HandleInterface;
 class IModelDocUtils;
 class IAnimGraphEditorUtils;
 class IExportSystem;
@@ -241,11 +240,14 @@ class IGameUIService;
 class ISoundService;
 class IBenchmarkService;
 class IKeyValueCache;
+class ISharedHandleSystem;
 class IGameResourceService;
 class IVEngineClient2;
 class IVEngineServer2;
 class INetworkStringTableContainer;
 class IGameTypes;
+class ILocalServerClientAccess;
+class IClientLocalServerAccess;
 
 class IPanoramaUIEngine;
 class IPanoramaUIClient;
@@ -552,6 +554,9 @@ DECLARE_TIER3_INTERFACE( IBenchmarkService, g_pBenchmarkService );
 #define KEYVALUECACHE_INTERFACE_VERSION		"KeyValueCache001"
 DECLARE_TIER3_INTERFACE( IKeyValueCache, g_pKeyValueCache );
 
+#define SHAREDHANDLESYSTEM_INTERFACE_VERSION		"ClientServerSharedHandleSystem001"
+DECLARE_TIER3_INTERFACE( ISharedHandleSystem, g_pSharedHandleSystem );
+
 #define GAMERESOURCESERVICECLIENT_INTERFACE_VERSION		"GameResourceServiceClientV001"
 DECLARE_TIER3_INTERFACE( IGameResourceService, g_pGameResourceServiceClient );
 
@@ -572,9 +577,6 @@ DECLARE_TIER3_INTERFACE( INetworkStringTableContainer, g_pNetworkStringTableClie
 
 #define VPHYSICS2_INTERFACE_VERSION				"VPhysics2_Interface_001"
 DECLARE_TIER3_INTERFACE( IVPhysics2, g_pVPhysics2 );
-
-#define VPHYSICS2HANDLE_INTERFACE_VERSION				"VPhysics2_Handle_Interface_001"
-DECLARE_TIER3_INTERFACE( VPhys2HandleInterface, g_pVPhys2HandleInterface );
 
 #define MODELDOCUTILS_INTERFACE_VERSION				"ModelDocUtils001"
 DECLARE_TIER3_INTERFACE( IModelDocUtils, g_pModelDocUtils );
@@ -599,6 +601,12 @@ DECLARE_TIER3_INTERFACE( INavSystem, g_pNavSystem );
 
 #define NAVGAMETEST_INTERFACE_VERSION				"NavGameTest001"
 DECLARE_TIER3_INTERFACE( INavGameTest, g_pNavGameTest );
+
+#define LOCALSERVERCLIENTACCESS_INTERFACE_VERSION	"LocalServerClientAccess001"
+DECLARE_TIER3_INTERFACE( ILocalServerClientAccess, g_pLocalServerClientAccess );
+
+#define CLIENTLOCALSERVERACCESS_INTERFACE_VERSION	"ClientLocalServerAccess001"
+DECLARE_TIER3_INTERFACE( IClientLocalServerAccess, g_pClientLocalServerAccess );
 
 //-----------------------------------------------------------------------------
 // Fills out global DLL exported interface pointers

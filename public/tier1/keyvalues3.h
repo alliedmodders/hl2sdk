@@ -672,9 +672,9 @@ private:
 	uint64 m_bFreeArrayMemory : 1;
 	uint64 m_TypeEx : 8;
 	uint64 m_SubType : 8;
-	uint64 m_nFlags : 8;
 	uint64 m_nClusterElement : 16;
 	uint64 m_nNumArrayElements : 5;
+	uint64 m_nFlags : 8;
 	uint64 m_nReserved : 17;
 	Data_t m_Data;
 

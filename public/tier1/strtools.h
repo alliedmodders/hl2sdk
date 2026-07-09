@@ -27,6 +27,7 @@ class CBufferString;
 class Vector;
 class Vector2D;
 class Vector4D;
+class VectorWS;
 class Quaternion;
 class Color;
 class QAngle;
@@ -356,6 +357,9 @@ PLATFORM_INTERFACE void V_StringToQAngle(const char *buf, QAngle &out_ang, bool 
 // Parses string into a Quaternion structure
 PLATFORM_INTERFACE void V_StringToQuaternion(const char *buf, Quaternion &out_quat, bool *successful = NULL, char **remainder = NULL, uint flags = PARSING_FLAG_NONE, IParsingErrorListener *err_listener = NULL);
 
+// Parses string into a VectorWS structure
+PLATFORM_INTERFACE void V_StringToVectorWS(const char *buf, VectorWS &out_vecws, bool *successful = NULL, char **remainder = NULL, uint flags = PARSING_FLAG_NONE, IParsingErrorListener *err_listener = NULL);
+
 // Parses string as a uint64 value, where if the value exceeds min/max limits (inclusive), the parsing fails and default_value is returned
 PLATFORM_INTERFACE uint64 V_StringToUint64Limit(const char *buf, uint64 min, uint64 max, uint64 default_value, bool *successful = NULL, char **remainder = NULL, uint flags = PARSING_FLAG_NONE, IParsingErrorListener *err_listener = NULL);
 
@@ -440,6 +444,8 @@ template <> inline bool V_StringToValue<QAngle>( const char *string, QAngle &val
 { bool success = false; V_StringToQAngle( string, value, &success, nullptr, flags ); return success; }
 template <> inline bool V_StringToValue<Quaternion>( const char *string, Quaternion &value, uint flags )
 { bool success = false; V_StringToQuaternion( string, value, &success, nullptr, flags ); return success; }
+template <> inline bool V_StringToValue<VectorWS>( const char *string, VectorWS &value, uint flags )
+{ bool success = false; V_StringToVectorWS( string, value, &success, nullptr, flags ); return success; }
 
 // returns string immediately following prefix, (ie str+strlen(prefix)) or NULL if prefix not found
 PLATFORM_INTERFACE const char *_V_StringAfterPrefix( const char *str, const char *prefix );
