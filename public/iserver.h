@@ -150,6 +150,7 @@ public:
 	virtual void 	DirectUpdate() = 0;
 
 	virtual int64	unk501() = 0;
+	virtual int64	BroadcastEntityVoice( int64, int, int64, int64 ) = 0;
 };
 
 abstract_class CNetworkGameServerBase : public INetworkGameServer, protected IConnectionlessPacketHandler, public IConVarListener
