@@ -490,6 +490,7 @@ public:
 		m_vHitPoint.Init();
 		m_flHitOffset = 0.0f;
 		m_flFraction = 1.0f;
+		m_unk001 = -1;
 		m_nTriangle = -1;
 		m_nHitboxBoneIndex = -1;
 		m_eRayType = RAY_TYPE_LINE;
@@ -524,6 +525,8 @@ public:
 	float m_flHitOffset;				// surface normal hit offset
 	float m_flFraction;					// time completed, 1.0 = didn't hit anything
 	
+	int32 m_unk001;
+
 	int32 m_nTriangle;					// the index of the triangle that was hit
 	int16 m_nHitboxBoneIndex; 			// the index of the hitbox bone that was hit
 	

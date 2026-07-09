@@ -45,6 +45,7 @@ class KeyValues3;
 class CSVCMsg_ServerInfo_t;
 class CServerSideClientBase;
 class C2S_CONNECT_Message;
+class CMsgVoiceAudio;
 
 typedef int ChallengeType_t;
 typedef int PauseGroup_t;
@@ -150,6 +151,7 @@ public:
 	virtual void 	DirectUpdate() = 0;
 
 	virtual int64	unk501() = 0;
+	virtual void	BroadcastEntityVoice( int entity, CMsgVoiceAudio *data, uint64 xuid ) = 0;
 };
 
 abstract_class CNetworkGameServerBase : public INetworkGameServer, protected IConnectionlessPacketHandler, public IConVarListener
