@@ -92,7 +92,7 @@ public:
 	virtual void OnSetDormant( /*EntityDormancyType_t*/int prevDormancyType, /*EntityDormancyType_t*/int newDormancyType ) = 0;
 
 	virtual void* ScriptEntityIO() = 0;
-	virtual int ScriptAcceptInput( const CUtlSymbolLarge &sInputName, CEntityInstance* pActivator, CEntityInstance* pCaller, const variant_t &value, int nOutputID, void* pUnk1, void* pUnk2 ) = 0;
+	virtual int ScriptAcceptInput( const CUtlSymbolLarge &sInputName, CEntityInstance* pActivator, CEntityInstance* pCaller, const variant_t &value, void* pUnk1, void* pUnk2 ) = 0;
 	
 	virtual void PreDataUpdate( /*DataUpdateType_t*/int updateType ) = 0;
 	
