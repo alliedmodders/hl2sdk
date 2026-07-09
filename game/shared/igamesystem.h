@@ -345,7 +345,7 @@ public:
 	GS_EVENT_IMPL( ServerPostAdvanceTick )					// 39
 	GS_EVENT_IMPL( ClientPostAdvanceTick )					// 40
 
-	virtual void unk_102( const void *const msg ) = 0;		// 41
+	virtual void unk_201( const void *const msg ) = 0;		// 41
 
 	GS_EVENT_IMPL( ServerBeginAsyncPostTickWork )			// 42
 	GS_EVENT_IMPL( ServerPreEndAsyncPostTickWork )			// 43
@@ -364,11 +364,11 @@ public:
 	GS_EVENT_IMPL( NewLevelPlayerConnect )					// 52
 
 	// AMNOTE: CSpawnGroupMgrGameSystem related
-	virtual void unk_201( const void *const msg ) = 0;		// 53
-	virtual void unk_202( const void *const msg ) = 0;		// 54
+	virtual void unk_301( const void *const msg ) = 0;		// 53
+	virtual void unk_302( const void *const msg ) = 0;		// 54
 
-	virtual void unk_203( const void *const msg ) = 0;		// 55
-	virtual void unk_204( const void *const msg ) = 0;		// 56
+	virtual void unk_303( const void *const msg ) = 0;		// 55
+	virtual void unk_304( const void *const msg ) = 0;		// 56
 
 	// Same as to demo_skip event
 	GS_EVENT_IMPL( DemoSkip )								// 57
@@ -459,8 +459,8 @@ public:
 	GS_EVENT( ServerPostAdvanceTick ) {}
 	GS_EVENT( ClientPostAdvanceTick ) {}
 
-	virtual void unk_102( const void *const msg ) override {}
-	
+	virtual void unk_201( const void *const msg ) override {}
+
 	GS_EVENT( ServerBeginAsyncPostTickWork ) {}
 	GS_EVENT( ServerPreEndAsyncPostTickWork ) {}
 	GS_EVENT( ServerPostEndAsyncPostTickWork ) {}
@@ -476,10 +476,10 @@ public:
 
 	GS_EVENT( NewLevelPlayerConnect ) {}
 
-	virtual void unk_201( const void *const msg ) override {}
-	virtual void unk_202( const void *const msg ) override {}
-	virtual void unk_203( const void *const msg ) override {}
-	virtual void unk_204( const void *const msg ) override {}
+	virtual void unk_301( const void *const msg ) override {}
+	virtual void unk_302( const void *const msg ) override {}
+	virtual void unk_303( const void *const msg ) override {}
+	virtual void unk_304( const void *const msg ) override {}
 
 	GS_EVENT( DemoSkip ) {}
 
