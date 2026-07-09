@@ -106,12 +106,13 @@ public:
 	int m_nOutputCount;
 
 	CEntitySharedPulseSignature *m_pSharedPulseSignature;
-	void *m_unk101;
 
+	void *m_unk101;
 	// Allows to get any think functions in use or to get its string name for this class
 	// does searches to the parent classes as well
 	NameToFuncCb m_NameToThinkFunc;
 	FuncToNameCb m_ThinkFuncToName;
+	void *m_unk201;
 
 	EntClassComponentOverride_t* m_pComponentOverrides;
 	
