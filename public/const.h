@@ -197,6 +197,7 @@ enum SolidType_t : uint8
 	SOLID_POINT			= 5,
 	SOLID_VPHYSICS		= 6,	// solid vphysics object, get vcollide from the model and collide with that
 	SOLID_CAPSULE		= 7,
+	SOLID_CYLINDER		= 8,
 	SOLID_LAST,
 };
 
