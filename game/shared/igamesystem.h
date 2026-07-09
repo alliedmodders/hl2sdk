@@ -344,38 +344,41 @@ public:
 	GS_EVENT_IMPL( ClientGamePostSimulate )					// 38
 	GS_EVENT_IMPL( ServerPostAdvanceTick )					// 39
 	GS_EVENT_IMPL( ClientPostAdvanceTick )					// 40
-	GS_EVENT_IMPL( ServerBeginAsyncPostTickWork )			// 41
-	GS_EVENT_IMPL( ServerPreEndAsyncPostTickWork )			// 42
-	GS_EVENT_IMPL( ServerPostEndAsyncPostTickWork )			// 43
-	GS_EVENT_IMPL( ClientFrameSimulate )					// 44
-	GS_EVENT_IMPL( ClientPauseSimulate )					// 45
-	GS_EVENT_IMPL( ClientAdvanceNonRenderedFrame )			// 46
 
-	GS_EVENT_IMPL( GameFrameBoundary )						// 47
-	GS_EVENT_IMPL( OutOfGameFrameBoundary )					// 48
+	virtual void unk_102( const void *const msg ) = 0;		// 41
 
-	GS_EVENT_IMPL( SaveGame )								// 49
-	GS_EVENT_IMPL( RestoreGame )							// 50
+	GS_EVENT_IMPL( ServerBeginAsyncPostTickWork )			// 42
+	GS_EVENT_IMPL( ServerPreEndAsyncPostTickWork )			// 43
+	GS_EVENT_IMPL( ServerPostEndAsyncPostTickWork )			// 44
+	GS_EVENT_IMPL( ClientFrameSimulate )					// 45
+	GS_EVENT_IMPL( ClientPauseSimulate )					// 46
+	GS_EVENT_IMPL( ClientAdvanceNonRenderedFrame )			// 47
+
+	GS_EVENT_IMPL( GameFrameBoundary )						// 48
+	GS_EVENT_IMPL( OutOfGameFrameBoundary )					// 49
+
+	GS_EVENT_IMPL( SaveGame )								// 50
+	GS_EVENT_IMPL( RestoreGame )							// 51
 
 	// AMNOTE: Called only when gpGlobals->maxplayer == 1 on player_connect_full
-	GS_EVENT_IMPL( NewLevelPlayerConnect )					// 51
+	GS_EVENT_IMPL( NewLevelPlayerConnect )					// 52
 
 	// AMNOTE: CSpawnGroupMgrGameSystem related
-	virtual void unk_201( const void *const msg ) = 0;		// 52
-	virtual void unk_202( const void *const msg ) = 0;		// 53
+	virtual void unk_201( const void *const msg ) = 0;		// 53
+	virtual void unk_202( const void *const msg ) = 0;		// 54
 
-	virtual void unk_203( const void *const msg ) = 0;		// 54
-	virtual void unk_204( const void *const msg ) = 0;		// 55
+	virtual void unk_203( const void *const msg ) = 0;		// 55
+	virtual void unk_204( const void *const msg ) = 0;		// 56
 
 	// Same as to demo_skip event
-	GS_EVENT_IMPL( DemoSkip )								// 56
+	GS_EVENT_IMPL( DemoSkip )								// 57
 
-	GS_EVENT_IMPL( PrePackEntities )						// 57
+	GS_EVENT_IMPL( PrePackEntities )						// 58
 
-	virtual const char* GetName() const = 0;				// 58
-	virtual void SetGameSystemGlobalPtrs(void* pValue) = 0;	// 59
-	virtual void SetName(const char* pName) = 0;			// 60
-	virtual bool DoesGameSystemReallocate() = 0;			// 61
+	virtual const char* GetName() const = 0;				// 59
+	virtual void SetGameSystemGlobalPtrs(void* pValue) = 0;	// 60
+	virtual void SetName(const char* pName) = 0;			// 61
+	virtual bool DoesGameSystemReallocate() = 0;			// 62
 	virtual ~IGameSystem() {}
 	virtual void YouForgot_DECLARE_GAME_SYSTEM_InYourClassDefinition() = 0;
 };
@@ -455,6 +458,9 @@ public:
 	GS_EVENT( ClientGamePostSimulate ) {}
 	GS_EVENT( ServerPostAdvanceTick ) {}
 	GS_EVENT( ClientPostAdvanceTick ) {}
+
+	virtual void unk_102( const void *const msg ) override {}
+	
 	GS_EVENT( ServerBeginAsyncPostTickWork ) {}
 	GS_EVENT( ServerPreEndAsyncPostTickWork ) {}
 	GS_EVENT( ServerPostEndAsyncPostTickWork ) {}
