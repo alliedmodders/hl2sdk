@@ -264,7 +264,7 @@ DECLARE_DEDUCE_FIELDTYPE( FIELD_QUATERNION,	Quaternion );
 DECLARE_DEDUCE_FIELDTYPE( FIELD_QUATERNION,	const Quaternion & );
 //DECLARE_DEDUCE_FIELDTYPE( FIELD_UTLSTRINGTOKEN,	CUtlStringToken );
 
-#define VariantDeduceType( T ) ((fieldtype_t)VariantDeducer_t<T>::FIELD_TYPE)
+#define VariantDeduceType( T ) ((ExtendedFieldType_t)VariantDeducer_t<T>::FIELD_TYPE)
 
 template <typename T>
 inline const char * VariantFieldTypeName() 
