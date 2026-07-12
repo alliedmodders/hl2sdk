@@ -59,7 +59,7 @@ public:
 	void		Purge() { m_heap.Purge(); }
 
 protected:
-	CUtlVector<T, M>	m_heap;
+	CUtlVector<T, int, M>	m_heap;
 	T					m_current;
 };
 

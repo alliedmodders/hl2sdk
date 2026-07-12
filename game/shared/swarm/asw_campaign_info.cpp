@@ -130,7 +130,7 @@ bool CASW_Campaign_Info::LoadCampaign(const char *szCampaignName)
 		if (!m_pMission[i] || !m_pMission[i]->m_LinksString)
 			continue;
 
-		CUtlVector<char*, CUtlMemory<char*> > missions;
+		CUtlVector<char*, int, CUtlMemory<char*> > missions;
 		Q_SplitString(STRING(m_pMission[i]->m_LinksString), " ", missions);
 		int missions_count = missions.Count();
 		for (int k=0; k<missions_count; k++)

@@ -631,7 +631,7 @@ private:
 	float							m_flOldModelScale;
 	int								m_nOldSequence;
 	
-	CUtlVector< matrix3x4a_t, CUtlMemoryAligned<matrix3x4a_t,16> >		m_CachedBoneData; // never access this directly. Use m_BoneAccessor.
+	CUtlVector< matrix3x4a_t, int, CUtlMemoryAligned<matrix3x4a_t,16> >		m_CachedBoneData; // never access this directly. Use m_BoneAccessor.
 	float							m_flLastBoneSetupTime;
 	CJiggleBones					*m_pJiggleBones;
 	bool							m_isJiggleBonesEnabled;

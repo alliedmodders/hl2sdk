@@ -69,7 +69,7 @@ public:
 	inline const T &	Element( int index ) const { return m_heap.Element(index); }
 
 protected:
-	CUtlVector<T, A>	m_heap;
+	CUtlVector<T, int, A>	m_heap;
 
 	void		Swap( int index1, int index2 );
 
