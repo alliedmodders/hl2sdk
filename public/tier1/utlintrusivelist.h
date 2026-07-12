@@ -14,7 +14,7 @@
 #endif
 
 #include "tier0/basetypes.h"
-#include "utlmemory.h"
+#include "utlvectormemory.h"
 #include "tier0/dbg.h"
 #include "tier1/generichash.h"
 #include "tier0/threadtools.h"

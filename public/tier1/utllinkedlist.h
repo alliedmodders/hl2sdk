@@ -14,7 +14,7 @@
 #endif
 
 #include "tier0/basetypes.h"
-#include "utlmemory.h"
+#include "utlvectormemory.h"
 #include "utlfixedmemory.h"
 #include "utlleanvector.h"
 #include "utlblockmemory.h"

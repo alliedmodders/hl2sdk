@@ -42,7 +42,7 @@
 #pragma once
 
 #include "utlcommon.h"
-#include "utlmemory.h"
+#include "utlvectormemory.h"
 #include "mathlib/mathlib.h"
 #include "utllinkedlist.h"
 

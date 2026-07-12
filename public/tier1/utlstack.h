@@ -12,7 +12,7 @@
 
 #include <assert.h>
 #include <string.h>
-#include "utlmemory.h"
+#include "utlvectormemory.h"
 
 
 //-----------------------------------------------------------------------------

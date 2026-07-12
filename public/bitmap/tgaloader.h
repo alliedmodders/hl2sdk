@@ -15,7 +15,7 @@
 #endif
 
 #include "bitmap/imageformat.h"
-#include "tier1/utlmemory.h"
+#include "tier1/utlvectormemory.h"
 
 
 //-----------------------------------------------------------------------------

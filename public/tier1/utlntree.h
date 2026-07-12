@@ -14,7 +14,7 @@
 #endif
 
 #include "basetypes.h"
-#include "utlmemory.h"
+#include "utlvectormemory.h"
 #include "tier0/dbg.h"
 
 

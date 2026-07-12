@@ -17,7 +17,7 @@
 #include "unitlib/unitlib.h" // just here for tests - remove before checking in!!!
 
 #include "platform.h"
-#include "tier1/utlmemory.h"
+#include "tier1/utlvectormemory.h"
 #include "tier1/cbyteswap.h"
 #include "tier1/bufferstring.h"
 #include "tier1/utlleanvector.h"
