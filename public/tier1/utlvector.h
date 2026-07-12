@@ -21,6 +21,7 @@
 #include "tier0/dbg.h"
 #include "tier0/threadtools.h"
 #include "tier1/utlmemory.h"
+#include "tier1/utlvectormemory.h"
 #include "tier1/utlblockmemory.h"
 #include "tier1/strtools.h"
 
@@ -43,7 +44,7 @@ struct base_vector_t
 	enum { IsUtlVector = true };
 };
 
-template< class T, class I = int, class A = CUtlMemory<T, I> >
+template< class T, class I = int, class A = CUtlVectorMemory_Growable<T, I, 0> >
 class CUtlVectorBase : public base_vector_t
 {
 	typedef A CAllocator;
@@ -184,7 +185,7 @@ protected:
 // The CUtlVector class:
 // The default growable vector. A thin wrapper over CUtlVectorBase.
 //-----------------------------------------------------------------------------
-template< class T, class I = int, class A = CUtlMemory<T, I> >
+template< class T, class I = int, class A = CUtlVectorMemory_Growable<T, I, 0> >
 class CUtlVector : public CUtlVectorBase< T, I, A >
 {
 	typedef CUtlVectorBase< T, I, A > BaseClass;
@@ -227,9 +228,9 @@ public:
 // A array class with a fixed allocation scheme
 //-----------------------------------------------------------------------------
 template< class T, size_t MAX_SIZE, class I = int >
-class CUtlVectorFixed : public CUtlVectorBase< T, I, CUtlMemoryFixed<T, MAX_SIZE > >
+class CUtlVectorFixed : public CUtlVectorBase< T, I, CUtlVectorMemory_Fixed<T, MAX_SIZE > >
 {
-	typedef CUtlVectorBase< T, I, CUtlMemoryFixed<T, MAX_SIZE > > BaseClass;
+	typedef CUtlVectorBase< T, I, CUtlVectorMemory_Fixed<T, MAX_SIZE > > BaseClass;
 public:
 
 	// constructor, destructor
@@ -243,9 +244,9 @@ public:
 // A array class with a fixed allocation scheme backed by a dynamic one
 //-----------------------------------------------------------------------------
 template< class T, size_t MAX_SIZE, class I = int >
-class CUtlVectorFixedGrowable : public CUtlVectorBase< T, I, CUtlMemoryFixedGrowable<T, MAX_SIZE, I> >
+class CUtlVectorFixedGrowable : public CUtlVectorBase< T, I, CUtlVectorMemory_FixedGrowable<T, MAX_SIZE, I> >
 {
-	typedef CUtlVectorBase< T, I, CUtlMemoryFixedGrowable<T, MAX_SIZE, I> > BaseClass;
+	typedef CUtlVectorBase< T, I, CUtlVectorMemory_FixedGrowable<T, MAX_SIZE, I> > BaseClass;
 
 public:
 	// constructor, destructor
@@ -257,9 +258,9 @@ public:
 // A array class with a conservative allocation scheme
 //-----------------------------------------------------------------------------
 template< class T, class I = int >
-class CUtlVectorConservative : public CUtlVectorBase< T, I, CUtlMemoryConservative<T> >
+class CUtlVectorConservative : public CUtlVectorBase< T, I, CUtlVectorMemory_Conservative<T> >
 {
-	typedef CUtlVectorBase< T, I, CUtlMemoryConservative<T> > BaseClass;
+	typedef CUtlVectorBase< T, I, CUtlVectorMemory_Conservative<T> > BaseClass;
 public:
 
 	// constructor, destructor
@@ -268,9 +269,9 @@ public:
 };
 
 template< class T, class I = int, class A = CMemAllocAllocator >
-class CUtlVectorRawAllocator : public CUtlVectorBase< T, I, CUtlMemory_RawAllocator<T, A> >
+class CUtlVectorRawAllocator : public CUtlVectorBase< T, I, CUtlVectorMemory_RawAllocator<T, A> >
 {
-	typedef CUtlVectorBase< T, I, CUtlMemory_RawAllocator<T, A> > BaseClass;
+	typedef CUtlVectorBase< T, I, CUtlVectorMemory_RawAllocator<T, A> > BaseClass;
 	typedef A CAllocator;
 
 public:
@@ -539,9 +540,9 @@ private:
 // Only use this when nesting a CUtlVectorBase() inside of another one of our container classes (i.e a CUtlMap)
 //-----------------------------------------------------------------------------
 template< class T >
-class CCopyableUtlVector : public CUtlVector< T, int, CUtlMemory<T> >
+class CCopyableUtlVector : public CUtlVector< T, int, CUtlVectorMemory<T> >
 {
-	typedef CUtlVector< T, int, CUtlMemory<T> > BaseClass;
+	typedef CUtlVector< T, int, CUtlVectorMemory<T> > BaseClass;
 public:
 	CCopyableUtlVector( int growSize = 0, int initSize = 0 ) : BaseClass( growSize, initSize ) {}
 	CCopyableUtlVector( T* pMemory, int numElements ) : BaseClass( pMemory, numElements ) {}
@@ -1222,7 +1223,7 @@ void CUtlVectorBase<T, I, A>::Validate( CValidator &validator, char *pchName )
 
 // A vector class for storing pointers, so that the elements pointed to by the pointers are deleted
 // on exit.
-template<class T> class CUtlVectorAutoPurge : public CUtlVector< T, int, CUtlMemory< T, int> >
+template<class T> class CUtlVectorAutoPurge : public CUtlVector< T, int, CUtlVectorMemory< T, int> >
 {
 public:
 	~CUtlVectorAutoPurge( void )
@@ -1267,7 +1268,7 @@ public:
 
 
 // <Sergiy> placing it here a few days before Cert to minimize disruption to the rest of codebase
-class CSplitString : public CUtlVector<char *, int, CUtlMemory<char *, int>>
+class CSplitString : public CUtlVector<char *, int, CUtlVectorMemory<char *, int>>
 {
 public:
 	// Splits the string based on separator provided

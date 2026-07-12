@@ -157,6 +157,9 @@
     <ClInclude Include="..\public\tier1\utlmemory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\tier1\utlvectormemory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\tier1\utlmultilist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
