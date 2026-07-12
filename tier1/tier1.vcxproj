@@ -319,7 +319,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bitbuf.cpp" />
-    <ClCompile Include="commandbuffer.cpp" />
     <ClCompile Include="generichash.cpp" />
     <ClCompile Include="rangecheckedvar.cpp" />
     <ClCompile Include="tier1.cpp" />
