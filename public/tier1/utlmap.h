@@ -201,11 +201,7 @@ protected:
 
 //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-// CUtlOrderedMap: the Source2 name for the red-black-tree ordered map.
-// Storage is identical to CUtlMap.
-// The argument order matches the engine: < Key, Type, LessFunc, Index >
-//-----------------------------------------------------------------------------
+// AMNOTE: Currently a stub over CUtlMap, needs a complete implementation
 template <typename K, typename T, typename L = CDefLess<K>, typename I = int>
 class CUtlOrderedMap : public CUtlMap<K, T, I, L>
 {
