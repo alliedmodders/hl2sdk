@@ -1500,7 +1500,7 @@ void CDetailObjectSystem::LevelInitPreEntity()
 
 	// Unserialize
 	int size = engine->GameLumpSize( GAMELUMP_DETAIL_PROPS );
-	CUtlVectorMemory<unsigned char> fileMemory;
+	CUtlMemory<unsigned char> fileMemory;
 	fileMemory.EnsureCapacity( size );
 	if (engine->LoadGameLump( GAMELUMP_DETAIL_PROPS, fileMemory.Base(), size ))
 	{
