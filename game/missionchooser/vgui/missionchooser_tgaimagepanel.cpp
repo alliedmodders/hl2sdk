@@ -59,7 +59,7 @@ void CMissionChooserTGAImagePanel::SetTGA( const char *filename, char const *pPa
 	m_nLoadedTextureIndex = -1;
 }
 
-bool LoadTGAOrError( char const *szTGAName, char const *errorTGA, CUtlMemory< byte >& tga, int& w, int& h )
+bool LoadTGAOrError( char const *szTGAName, char const *errorTGA, CUtlVectorMemory< byte >& tga, int& w, int& h )
 {
 	if ( TGALoader::LoadRGBA8888( szTGAName, tga, w, h ) )
 	{
@@ -101,7 +101,7 @@ void CMissionChooserTGAImagePanel::Paint()
 	if ( m_nLoadedTextureIndex == -1 )
 	{
 		// Load the file
-		CUtlMemory<unsigned char> tga;
+		CUtlVectorMemory<unsigned char> tga;
 		int nWidth, nHeight;
 		if ( LoadTGAOrError( m_szTGAName, ASW_ERROR_TGA, tga, nWidth, nHeight ) )
 		{

@@ -221,7 +221,7 @@ public:
 	void			Spew( );
 
 	DLL_CLASS_IMPORT void Swap( CUtlBuffer &other );
-	DLL_CLASS_IMPORT void Swap( CUtlMemory<unsigned char> &other );
+	DLL_CLASS_IMPORT void Swap( CUtlVectorMemory<unsigned char> &other );
 
 	DLL_CLASS_IMPORT bool WriteToFile( const char *, bool );
 	DLL_CLASS_IMPORT bool WriteToFileIfDifferent( const char * );

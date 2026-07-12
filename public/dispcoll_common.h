@@ -23,7 +23,7 @@ class CDispVector : public CUtlVector<T, int, CHunkMemory<T> >
 };
 #else
 template<typename T>
-class CDispVector : public CUtlVector<T, int, CUtlMemoryAligned<T,16> >
+class CDispVector : public CUtlVector<T, int, CUtlVectorMemory_Aligned<T,16> >
 {
 };
 #endif

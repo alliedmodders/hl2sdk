@@ -148,10 +148,10 @@ private:
 	CMaterialReference m_ShadowBuild;
 	IMatRenderContext *m_pRenderContext;
 
-	CUtlMemoryFixedGrowable< DataCacheHandle_t, 1024 > m_ColorMeshHandles;
-	CUtlMemoryFixedGrowable< ModelListByType_t, 128 > m_ModelList;
-	CUtlMemoryFixedGrowable< ModelListNode_t, 1024 > m_ModelListNode;
-	CUtlMemoryFixedGrowable< RenderModelInfo_t, 1024 > m_RenderModelInfo;
+	CUtlVectorMemory_FixedGrowable< DataCacheHandle_t, 1024 > m_ColorMeshHandles;
+	CUtlVectorMemory_FixedGrowable< ModelListByType_t, 128 > m_ModelList;
+	CUtlVectorMemory_FixedGrowable< ModelListNode_t, 1024 > m_ModelListNode;
+	CUtlVectorMemory_FixedGrowable< RenderModelInfo_t, 1024 > m_RenderModelInfo;
 	int m_nColorMeshHandles;
 	int m_nModelTypeCount;
 	int m_nTotalModelCount;

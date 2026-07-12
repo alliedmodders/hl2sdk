@@ -14,7 +14,7 @@
 #include "utlvector.h"
 
 // T is the type stored in the stack
-template< class T, class M = CUtlMemory< T > > 
+template< class T, class M = CUtlVectorMemory< T > > 
 class CUtlQueue
 {
 public:
@@ -68,9 +68,9 @@ protected:
 // A queue class with a fixed allocation scheme
 //-----------------------------------------------------------------------------
 template< class T, size_t MAX_SIZE >
-class CUtlQueueFixed : public CUtlQueue< T, CUtlMemoryFixed<T, MAX_SIZE > >
+class CUtlQueueFixed : public CUtlQueue< T, CUtlVectorMemory_Fixed<T, MAX_SIZE > >
 {
-	typedef CUtlQueue< T, CUtlMemoryFixed<T, MAX_SIZE > > BaseClass;
+	typedef CUtlQueue< T, CUtlVectorMemory_Fixed<T, MAX_SIZE > > BaseClass;
 public:
 
 	// constructor, destructor

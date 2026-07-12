@@ -317,7 +317,7 @@ void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::DoReal
 {
 	Assert( !m_bSizeLocked ); 
 
-	CUtlMemoryConservative<entry_t> oldTable;
+	CUtlVectorMemory_Conservative<entry_t> oldTable;
 	entry_t * RESTRICT pOldBase = m_table.Detach();
 	int nOldSize = m_nTableSize;
 
