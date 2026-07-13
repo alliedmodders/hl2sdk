@@ -352,6 +352,7 @@
     <ClInclude Include="..\public\mathlib\simdvectormatrix.h" />
     <ClInclude Include="..\public\mathlib\ssemath.h" />
     <ClInclude Include="..\public\mathlib\ssequaternion.h" />
+    <ClInclude Include="..\public\mathlib\vec3d.h" />
     <ClInclude Include="..\public\mathlib\vector.h" />
     <ClInclude Include="..\public\mathlib\vector2d.h" />
     <ClInclude Include="..\public\mathlib\vector4d.h" />
