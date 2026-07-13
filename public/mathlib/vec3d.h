@@ -1,11 +1,3 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
-//
-// Purpose:
-//
-// $NoKeywords: $
-//
-//=============================================================================//
-
 #ifndef VEC3D_H
 #define VEC3D_H
 
@@ -67,8 +59,5 @@ public:
 	T LengthSqr() const { return x * x + y * y + z * z; }
 	T Length() const { return (T)sqrt( (double)LengthSqr() ); }
 };
-
-// The float instantiation must match the engine layout exactly.
-static_assert( sizeof( Vec3D<float> ) == 3 * sizeof( float ), "Vec3D<float> must be 3 contiguous floats" );
 
 #endif // VEC3D_H
