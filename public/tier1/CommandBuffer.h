@@ -66,9 +66,7 @@ public:
 	DLL_CLASS_IMPORT void SetWaitDelayTime( int nTickDelay );
 
 	// Splits pText into individual commands, appending each to pOut.
-	// The engine takes CUtlVector< CUtlString > with the CUtlVectorMemory_Growable allocator.
-	// Enable once the CUtlVectorMemory transition lands.
-	// DLL_CLASS_IMPORT static void SplitCommands( const char *pText, int nLength, CUtlVector< CUtlString > *pOut );
+	DLL_CLASS_IMPORT static void SplitCommands( const char *pText, int nLength, CUtlVector< CUtlString > &pOut );
 
 	// Returns a handle to the next command to process
 	// (useful when inserting commands into the buffer during processing
