@@ -49,7 +49,7 @@ public:
 	bool operator==( const CUtlBinaryBlock &src ) const;
 
 private:
-	CUtlVectorMemory<unsigned char> m_Memory;
+	CUtlVectorMemory_Growable<unsigned char> m_Memory;
 	int m_nActualLength;
 };
 

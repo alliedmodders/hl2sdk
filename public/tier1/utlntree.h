@@ -121,7 +121,7 @@ protected:
 	// copy constructors not allowed
 	CUtlNTree( CUtlNTree<T, I> const& tree ) { Assert(0); }
 	   
-	CUtlVectorMemory<Node_t> m_Memory;
+	CUtlVectorMemory_Growable<Node_t> m_Memory;
 	I	m_Root;
 	I	m_FirstFree;
 	I	m_ElementCount;		// The number actually in the tree

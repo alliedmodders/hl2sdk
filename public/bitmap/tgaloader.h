@@ -37,8 +37,8 @@ bool Load( unsigned char *imageData, const char *fileName, int width, int height
 bool Load( unsigned char *imageData, CUtlBuffer &buf, int width, int height, 
 			ImageFormat imageFormat, float targetGamma, bool mipmap );
 
-bool LoadRGBA8888( const char *pFileName, CUtlVectorMemory<unsigned char> &outputData, int &outWidth, int &outHeight );
-bool LoadRGBA8888( CUtlBuffer &buf, CUtlVectorMemory<unsigned char> &outputData, int &outWidth, int &outHeight );
+bool LoadRGBA8888( const char *pFileName, CUtlVectorMemory_Growable<unsigned char> &outputData, int &outWidth, int &outHeight );
+bool LoadRGBA8888( CUtlBuffer &buf, CUtlVectorMemory_Growable<unsigned char> &outputData, int &outWidth, int &outHeight );
 
 } // end namespace TGALoader
 

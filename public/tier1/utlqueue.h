@@ -14,7 +14,7 @@
 #include "utlvector.h"
 
 // T is the type stored in the stack
-template< class T, class M = CUtlVectorMemory< T > > 
+template< class T, class M = CUtlVectorMemory_Growable< T > > 
 class CUtlQueue
 {
 public:

@@ -14,6 +14,8 @@
 #pragma once
 #endif
 
+#include <limits>
+
 #include "tier0/dbg.h"
 #include <string.h>
 #include "tier0/platform.h"
@@ -45,21 +47,21 @@
 
 
 //-----------------------------------------------------------------------------
-// The CUtlVectorMemory class:
+// The CUtlVectorMemory_Growable class:
 // A growable memory class which doubles in size by default.
 //-----------------------------------------------------------------------------
-template< class T, class I = int >
-class CUtlVectorMemory
+template< class T, class I = int, int UNK = 0 >
+class CUtlVectorMemory_Growable
 {
 public:
 	// constructor, destructor
-	CUtlVectorMemory( int nGrowSize = 0, int nInitSize = 0 );
-	CUtlVectorMemory( T* pMemory, int numElements );
-	CUtlVectorMemory( const T* pMemory, int numElements );
-	~CUtlVectorMemory();
+	CUtlVectorMemory_Growable( I nGrowSize = 0, I nInitSize = 0 );
+	CUtlVectorMemory_Growable( T* pMemory, I numElements );
+	CUtlVectorMemory_Growable( const T* pMemory, I numElements );
+	~CUtlVectorMemory_Growable();
 
 	// Set the size by which the memory grows
-	void Init( int nGrowSize = 0, int nInitSize = 0 );
+	void Init( I nGrowSize = 0, I nInitSize = 0 );
 
 	class Iterator_t
 	{
@@ -87,7 +89,7 @@ public:
 	bool IsIdxValid( I i ) const;
 
 	// Specify the invalid ('null') index that we'll only return on failure
-	static const I INVALID_INDEX = ( I )-1; // For use with COMPILE_TIME_ASSERT
+	static inline const I INVALID_INDEX = ( I )-1; // For use with COMPILE_TIME_ASSERT
 	static I InvalidIndex() { return INVALID_INDEX; }
 
 	// Gets the base address (can change when adding elements!)
@@ -95,34 +97,34 @@ public:
 	const T* Base() const;
 
 	// Attaches the buffer to external memory....
-	void SetExternalBuffer( T* pMemory, int numElements );
-	void SetExternalBuffer( const T* pMemory, int numElements );
-	void AssumeMemory( T *pMemory, int nSize );
+	void SetExternalBuffer( T* pMemory, I numElements );
+	void SetExternalBuffer( const T* pMemory, I numElements );
+	void AssumeMemory( T *pMemory, I nSize );
 	T* Detach();
 	void *DetachMemory();
 
 	// Fast swap
-	void Swap( CUtlVectorMemory< T, I > &mem );
+	void Swap( CUtlVectorMemory_Growable &mem );
 
 	// Switches the buffer from an external memory buffer to a reallocatable buffer
 	// Will copy the current contents of the external buffer to the reallocatable buffer
-	void ConvertToGrowableMemory( int nGrowSize );
+	void ConvertToGrowableMemory( I nGrowSize );
 
 	// Size
-	int NumAllocated() const;
-	int Count() const;
+	I NumAllocated() const;
+	I Count() const;
 
 	// Grows the memory, so that at least allocated + num elements are allocated
-	void Grow( int num = 1 );
+	void Grow( I num = 1 );
 
 	// Makes sure we've got at least this much memory
-	void EnsureCapacity( int num );
+	void EnsureCapacity( I num );
 
 	// Memory deallocation
 	void Purge();
 
 	// Purge all but the given number of elements
-	void Purge( int numElements );
+	void Purge( I numElements );
 
 	// is the memory externally allocated?
 	bool IsExternallyAllocated() const;
@@ -131,7 +133,7 @@ public:
 	bool IsReadOnly() const;
 
 	// Set the size by which the memory grows
-	void SetGrowSize( int size );
+	void SetGrowSize( I size );
 
 protected:
 	void ValidateGrowSize()
@@ -156,32 +158,18 @@ protected:
 	};
 
 	T* m_pMemory;
-	int m_nAllocationCount;
-	int m_nGrowSize;
+	I m_nAllocationCount;
+	I m_nGrowSize;
 };
-
-
-//-----------------------------------------------------------------------------
-// The CUtlVectorMemory_Growable class:
-// The default vector allocator. A thin CUtlVectorMemory that grows by doubling.
-//-----------------------------------------------------------------------------
-template< class T, class I = int, size_t N = 0 >
-class CUtlVectorMemory_Growable : public CUtlVectorMemory< T, I >
-{
-	typedef CUtlVectorMemory< T, I > BaseClass;
-public:
-	using BaseClass::BaseClass;
-};
-
 
 //-----------------------------------------------------------------------------
 // The CUtlVectorMemory_FixedGrowable class:
 // A growable memory class backed by a fixed allocation.
 //-----------------------------------------------------------------------------
 template< class T, size_t SIZE, class I = int >
-class CUtlVectorMemory_FixedGrowable : public CUtlVectorMemory< T, I >
+class CUtlVectorMemory_FixedGrowable : public CUtlVectorMemory_Growable< T, I >
 {
-	typedef CUtlVectorMemory< T, I > BaseClass;
+	typedef CUtlVectorMemory_Growable< T, I > BaseClass;
 
 public:
 	CUtlVectorMemory_FixedGrowable( int nGrowSize = 0, int nInitSize = SIZE ) : BaseClass( m_pFixedMemory, SIZE ) 
@@ -398,8 +386,8 @@ private:
 // constructor, destructor
 //-----------------------------------------------------------------------------
 
-template< class T, class I >
-CUtlVectorMemory<T,I>::CUtlVectorMemory( int nGrowSize, int nInitAllocationCount ) : m_pMemory(0), 
+template< class T, class I, int UNK >
+CUtlVectorMemory_Growable<T,I,UNK>::CUtlVectorMemory_Growable( I nGrowSize, I nInitAllocationCount ) : m_pMemory(0), 
 	m_nAllocationCount( nInitAllocationCount ), m_nGrowSize( nGrowSize & ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER) )
 {
 	ValidateGrowSize();
@@ -411,30 +399,30 @@ CUtlVectorMemory<T,I>::CUtlVectorMemory( int nGrowSize, int nInitAllocationCount
 	}
 }
 
-template< class T, class I >
-CUtlVectorMemory<T,I>::CUtlVectorMemory( T* pMemory, int numElements ) : m_pMemory(pMemory),
+template< class T, class I, int UNK >
+CUtlVectorMemory_Growable<T,I,UNK>::CUtlVectorMemory_Growable( T* pMemory, I numElements ) : m_pMemory(pMemory),
 	m_nAllocationCount( numElements )
 {
 	// Special marker indicating externally supplied modifyable memory
 	m_nGrowSize = EXTERNAL_BUFFER_MARKER;
 }
 
-template< class T, class I >
-CUtlVectorMemory<T,I>::CUtlVectorMemory( const T* pMemory, int numElements ) : m_pMemory( (T*)pMemory ),
+template< class T, class I, int UNK >
+CUtlVectorMemory_Growable<T,I,UNK>::CUtlVectorMemory_Growable( const T* pMemory, I numElements ) : m_pMemory( (T*)pMemory ),
 	m_nAllocationCount( numElements )
 {
 	// Special marker indicating externally supplied modifyable memory
 	m_nGrowSize = EXTERNAL_CONST_BUFFER_MARKER;
 }
 
-template< class T, class I >
-CUtlVectorMemory<T,I>::~CUtlVectorMemory()
+template< class T, class I, int UNK >
+CUtlVectorMemory_Growable<T,I,UNK>::~CUtlVectorMemory_Growable()
 {
 	Purge();
 }
 
-template< class T, class I >
-void CUtlVectorMemory<T,I>::Init( int nGrowSize /*= 0*/, int nInitSize /*= 0*/ )
+template< class T, class I, int UNK >
+void CUtlVectorMemory_Growable<T,I,UNK>::Init( I nGrowSize /*= 0*/, I nInitSize /*= 0*/ )
 {
 	Purge();
 
@@ -452,8 +440,8 @@ void CUtlVectorMemory<T,I>::Init( int nGrowSize /*= 0*/, int nInitSize /*= 0*/ )
 //-----------------------------------------------------------------------------
 // Fast swap
 //-----------------------------------------------------------------------------
-template< class T, class I >
-void CUtlVectorMemory<T,I>::Swap( CUtlVectorMemory<T,I> &mem )
+template< class T, class I, int UNK >
+void CUtlVectorMemory_Growable<T,I,UNK>::Swap( CUtlVectorMemory_Growable &mem )
 {
 	V_swap( m_nGrowSize, mem.m_nGrowSize );
 	V_swap( m_pMemory, mem.m_pMemory );
@@ -464,8 +452,8 @@ void CUtlVectorMemory<T,I>::Swap( CUtlVectorMemory<T,I> &mem )
 //-----------------------------------------------------------------------------
 // Switches the buffer from an external memory buffer to a reallocatable buffer
 //-----------------------------------------------------------------------------
-template< class T, class I >
-void CUtlVectorMemory<T,I>::ConvertToGrowableMemory( int nGrowSize )
+template< class T, class I, int UNK >
+void CUtlVectorMemory_Growable<T,I,UNK>::ConvertToGrowableMemory( I nGrowSize )
 {
 	if ( !IsExternallyAllocated() )
 		return;
@@ -476,7 +464,7 @@ void CUtlVectorMemory<T,I>::ConvertToGrowableMemory( int nGrowSize )
 		UTLMEMORY_TRACK_ALLOC();
 		MEM_ALLOC_CREDIT_CLASS();
 
-		int nNumBytes = m_nAllocationCount * sizeof(T);
+		size_t nNumBytes = m_nAllocationCount * sizeof(T);
 		T *pMemory = (T*)malloc( nNumBytes );
 		memcpy( (void*)pMemory, (void *)m_pMemory, nNumBytes ); 
 		m_pMemory = pMemory;
@@ -491,8 +479,8 @@ void CUtlVectorMemory<T,I>::ConvertToGrowableMemory( int nGrowSize )
 //-----------------------------------------------------------------------------
 // Attaches the buffer to external memory....
 //-----------------------------------------------------------------------------
-template< class T, class I >
-void CUtlVectorMemory<T,I>::SetExternalBuffer( T* pMemory, int numElements )
+template< class T, class I, int UNK >
+void CUtlVectorMemory_Growable<T,I,UNK>::SetExternalBuffer( T* pMemory, I numElements )
 {
 	// Blow away any existing allocated memory
 	Purge();
@@ -504,8 +492,8 @@ void CUtlVectorMemory<T,I>::SetExternalBuffer( T* pMemory, int numElements )
 	m_nGrowSize = EXTERNAL_BUFFER_MARKER;
 }
 
-template< class T, class I >
-void CUtlVectorMemory<T,I>::SetExternalBuffer( const T* pMemory, int numElements )
+template< class T, class I, int UNK >
+void CUtlVectorMemory_Growable<T,I,UNK>::SetExternalBuffer( const T* pMemory, I numElements )
 {
 	// Blow away any existing allocated memory
 	Purge();
@@ -517,8 +505,8 @@ void CUtlVectorMemory<T,I>::SetExternalBuffer( const T* pMemory, int numElements
 	m_nGrowSize = EXTERNAL_CONST_BUFFER_MARKER;
 }
 
-template< class T, class I >
-void CUtlVectorMemory<T,I>::AssumeMemory( T* pMemory, int numElements )
+template< class T, class I, int UNK >
+void CUtlVectorMemory_Growable<T,I,UNK>::AssumeMemory( T* pMemory, I numElements )
 {
 	// Blow away any existing allocated memory
 	Purge();
@@ -530,8 +518,8 @@ void CUtlVectorMemory<T,I>::AssumeMemory( T* pMemory, int numElements )
 	m_nGrowSize &= ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER);
 }
 
-template< class T, class I >
-void *CUtlVectorMemory<T,I>::DetachMemory()
+template< class T, class I, int UNK >
+void *CUtlVectorMemory_Growable<T,I,UNK>::DetachMemory()
 {
 	if ( IsExternallyAllocated() )
 		return NULL;
@@ -542,8 +530,8 @@ void *CUtlVectorMemory<T,I>::DetachMemory()
 	return pMemory;
 }
 
-template< class T, class I >
-inline T* CUtlVectorMemory<T,I>::Detach()
+template< class T, class I, int UNK >
+inline T* CUtlVectorMemory_Growable<T,I,UNK>::Detach()
 {
 	return (T*)DetachMemory();
 }
@@ -552,31 +540,31 @@ inline T* CUtlVectorMemory<T,I>::Detach()
 //-----------------------------------------------------------------------------
 // element access
 //-----------------------------------------------------------------------------
-template< class T, class I >
-inline T& CUtlVectorMemory<T,I>::operator[]( I i )
+template< class T, class I, int UNK >
+inline T& CUtlVectorMemory_Growable<T,I,UNK>::operator[]( I i )
 {
 	Assert( !IsReadOnly() );
 	Assert( IsIdxValid(i) );
 	return m_pMemory[i];
 }
 
-template< class T, class I >
-inline const T& CUtlVectorMemory<T,I>::operator[]( I i ) const
+template< class T, class I, int UNK >
+inline const T& CUtlVectorMemory_Growable<T,I,UNK>::operator[]( I i ) const
 {
 	Assert( IsIdxValid(i) );
 	return m_pMemory[i];
 }
 
-template< class T, class I >
-inline T& CUtlVectorMemory<T,I>::Element( I i )
+template< class T, class I, int UNK >
+inline T& CUtlVectorMemory_Growable<T,I,UNK>::Element( I i )
 {
 	Assert( !IsReadOnly() );
 	Assert( IsIdxValid(i) );
 	return m_pMemory[i];
 }
 
-template< class T, class I >
-inline const T& CUtlVectorMemory<T,I>::Element( I i ) const
+template< class T, class I, int UNK >
+inline const T& CUtlVectorMemory_Growable<T,I,UNK>::Element( I i ) const
 {
 	Assert( IsIdxValid(i) );
 	return m_pMemory[i];
@@ -586,8 +574,8 @@ inline const T& CUtlVectorMemory<T,I>::Element( I i ) const
 //-----------------------------------------------------------------------------
 // is the memory externally allocated?
 //-----------------------------------------------------------------------------
-template< class T, class I >
-bool CUtlVectorMemory<T,I>::IsExternallyAllocated() const
+template< class T, class I, int UNK >
+bool CUtlVectorMemory_Growable<T,I,UNK>::IsExternallyAllocated() const
 {
 	return (m_nGrowSize & (EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER)) != 0;
 }
@@ -596,15 +584,15 @@ bool CUtlVectorMemory<T,I>::IsExternallyAllocated() const
 //-----------------------------------------------------------------------------
 // is the memory read only?
 //-----------------------------------------------------------------------------
-template< class T, class I >
-bool CUtlVectorMemory<T,I>::IsReadOnly() const
+template< class T, class I, int UNK >
+bool CUtlVectorMemory_Growable<T,I,UNK>::IsReadOnly() const
 {
 	return (m_nGrowSize & EXTERNAL_CONST_BUFFER_MARKER) != 0;
 }
 
 
-template< class T, class I >
-void CUtlVectorMemory<T,I>::SetGrowSize( int nSize )
+template< class T, class I, int UNK >
+void CUtlVectorMemory_Growable<T,I,UNK>::SetGrowSize( I nSize )
 {
 	m_nGrowSize |= nSize & ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER);
 	ValidateGrowSize();
@@ -614,15 +602,15 @@ void CUtlVectorMemory<T,I>::SetGrowSize( int nSize )
 //-----------------------------------------------------------------------------
 // Gets the base address (can change when adding elements!)
 //-----------------------------------------------------------------------------
-template< class T, class I >
-inline T* CUtlVectorMemory<T,I>::Base()
+template< class T, class I, int UNK >
+inline T* CUtlVectorMemory_Growable<T,I,UNK>::Base()
 {
 	Assert( !IsReadOnly() );
 	return m_pMemory;
 }
 
-template< class T, class I >
-inline const T *CUtlVectorMemory<T,I>::Base() const
+template< class T, class I, int UNK >
+inline const T *CUtlVectorMemory_Growable<T,I,UNK>::Base() const
 {
 	return m_pMemory;
 }
@@ -631,14 +619,14 @@ inline const T *CUtlVectorMemory<T,I>::Base() const
 //-----------------------------------------------------------------------------
 // Size
 //-----------------------------------------------------------------------------
-template< class T, class I >
-inline int CUtlVectorMemory<T,I>::NumAllocated() const
+template< class T, class I, int UNK >
+inline I CUtlVectorMemory_Growable<T,I,UNK>::NumAllocated() const
 {
 	return m_nAllocationCount;
 }
 
-template< class T, class I >
-inline int CUtlVectorMemory<T,I>::Count() const
+template< class T, class I, int UNK >
+inline I CUtlVectorMemory_Growable<T,I,UNK>::Count() const
 {
 	return m_nAllocationCount;
 }
@@ -647,8 +635,8 @@ inline int CUtlVectorMemory<T,I>::Count() const
 //-----------------------------------------------------------------------------
 // Is element index valid?
 //-----------------------------------------------------------------------------
-template< class T, class I >
-inline bool CUtlVectorMemory<T,I>::IsIdxValid( I i ) const
+template< class T, class I, int UNK >
+inline bool CUtlVectorMemory_Growable<T,I,UNK>::IsIdxValid( I i ) const
 {
 	// GCC warns if I is an unsigned type and we do a ">= 0" against it (since the comparison is always 0).
 	// We get the warning even if we cast inside the expression. It only goes away if we assign to another variable.
@@ -663,8 +651,8 @@ PLATFORM_INTERFACE void		UtlVectorMemory_FailedAllocation( int nTotalElements, i
 //-----------------------------------------------------------------------------
 // Grows the memory
 //-----------------------------------------------------------------------------
-template< class T, class I >
-void CUtlVectorMemory<T,I>::Grow( int num )
+template< class T, class I, int UNK >
+void CUtlVectorMemory_Growable<T,I,UNK>::Grow( I num )
 {
 	Assert( num > 0 );
 
@@ -675,33 +663,33 @@ void CUtlVectorMemory<T,I>::Grow( int num )
 		return;
 	}
 
-	if ( ( ( int64 )m_nAllocationCount + num ) > INT_MAX )
+	if ( ( ( size_t )m_nAllocationCount + num ) > (std::numeric_limits<I>::max)() )
 		UtlVectorMemory_FailedAllocation( m_nAllocationCount, num );
 
 	// Make sure we have at least numallocated + num allocations.
 	// Use the grow rules specified for this memory (in m_nGrowSize)
-	int nAllocationRequested = m_nAllocationCount + num;
+	I nAllocationRequested = m_nAllocationCount + num;
 
 	UTLMEMORY_TRACK_FREE();
 
-	int nNewAllocationCount = UtlVectorMemory_CalcNewAllocationCount( m_nAllocationCount, m_nGrowSize & ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER), nAllocationRequested, sizeof(T) );
+	I nNewAllocationCount = (I)UtlVectorMemory_CalcNewAllocationCount( m_nAllocationCount, m_nGrowSize & ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER), nAllocationRequested, sizeof(T) );
 
 	// if m_nAllocationRequested wraps index type I, recalculate
-	if ( ( int )( I )nNewAllocationCount < nAllocationRequested )
+	if ( nNewAllocationCount < nAllocationRequested )
 	{
-		if ( ( int )( I )nNewAllocationCount == 0 && ( int )( I )( nNewAllocationCount - 1 ) >= nAllocationRequested )
+		if ( nNewAllocationCount == 0 && ( nNewAllocationCount - 1 ) >= nAllocationRequested )
 		{
 			--nNewAllocationCount; // deal w/ the common case of m_nAllocationCount == MAX_USHORT + 1
 		}
 		else
 		{
-			if ( ( int )( I )nAllocationRequested != nAllocationRequested )
+			if ( nAllocationRequested != nAllocationRequested )
 			{
 				// we've been asked to grow memory to a size s.t. the index type can't address the requested amount of memory
 				Assert( 0 );
 				return;
 			}
-			while ( ( int )( I )nNewAllocationCount < nAllocationRequested )
+			while ( nNewAllocationCount < nAllocationRequested )
 			{
 				nNewAllocationCount = ( nNewAllocationCount + nAllocationRequested ) / 2;
 			}
@@ -709,7 +697,7 @@ void CUtlVectorMemory<T,I>::Grow( int num )
 	}
 
 	MEM_ALLOC_CREDIT_CLASS();
-	m_pMemory = (T*)UtlVectorMemory_Alloc( m_pMemory, !IsExternallyAllocated(), nNewAllocationCount * sizeof(T), m_nAllocationCount * sizeof(T) );
+	m_pMemory = (T*)UtlVectorMemory_Alloc( m_pMemory, !IsExternallyAllocated(), (int)nNewAllocationCount * sizeof(T), (int)m_nAllocationCount * sizeof(T) );
 	Assert( m_pMemory );
 
 	if ( IsExternallyAllocated() )
@@ -724,8 +712,8 @@ void CUtlVectorMemory<T,I>::Grow( int num )
 //-----------------------------------------------------------------------------
 // Makes sure we've got at least this much memory
 //-----------------------------------------------------------------------------
-template< class T, class I >
-inline void CUtlVectorMemory<T,I>::EnsureCapacity( int num )
+template< class T, class I, int UNK >
+inline void CUtlVectorMemory_Growable<T,I,UNK>::EnsureCapacity( I num )
 {
 	if (m_nAllocationCount >= num)
 		return;
@@ -737,10 +725,13 @@ inline void CUtlVectorMemory<T,I>::EnsureCapacity( int num )
 		return;
 	}
 
+	if(( size_t )num > (std::numeric_limits<I>::max)())
+		UtlVectorMemory_FailedAllocation( m_nAllocationCount, num );
+
 	UTLMEMORY_TRACK_FREE();
 
 	MEM_ALLOC_CREDIT_CLASS();
-	m_pMemory = (T*)UtlVectorMemory_Alloc( m_pMemory, !IsExternallyAllocated(), num * sizeof(T), m_nAllocationCount * sizeof(T) );
+	m_pMemory = (T*)UtlVectorMemory_Alloc( m_pMemory, !IsExternallyAllocated(), (int)num * sizeof(T), (int)m_nAllocationCount * sizeof(T) );
 
 	if ( IsExternallyAllocated() )
 		m_nGrowSize &= ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER);
@@ -754,8 +745,8 @@ inline void CUtlVectorMemory<T,I>::EnsureCapacity( int num )
 //-----------------------------------------------------------------------------
 // Memory deallocation
 //-----------------------------------------------------------------------------
-template< class T, class I >
-void CUtlVectorMemory<T,I>::Purge()
+template< class T, class I, int UNK >
+void CUtlVectorMemory_Growable<T,I,UNK>::Purge()
 {
 	if ( !IsExternallyAllocated() )
 	{
@@ -769,8 +760,8 @@ void CUtlVectorMemory<T,I>::Purge()
 	}
 }
 
-template< class T, class I >
-void CUtlVectorMemory<T,I>::Purge( int numElements )
+template< class T, class I, int UNK >
+void CUtlVectorMemory_Growable<T,I,UNK>::Purge( I numElements )
 {
 	Assert( numElements >= 0 );
 
@@ -811,7 +802,7 @@ void CUtlVectorMemory<T,I>::Purge( int numElements )
 	UTLMEMORY_TRACK_FREE();
 
 	MEM_ALLOC_CREDIT_CLASS();
-	m_pMemory = (T*)UtlVectorMemory_Alloc( m_pMemory, !IsExternallyAllocated(), numElements * sizeof(T), m_nAllocationCount * sizeof(T) );
+	m_pMemory = (T*)UtlVectorMemory_Alloc( m_pMemory, !IsExternallyAllocated(), (int)numElements * sizeof(T), (int)m_nAllocationCount * sizeof(T) );
 
 	if ( IsExternallyAllocated() )
 		m_nGrowSize &= ~(EXTERNAL_CONST_BUFFER_MARKER | EXTERNAL_BUFFER_MARKER);
@@ -822,11 +813,11 @@ void CUtlVectorMemory<T,I>::Purge( int numElements )
 }
 
 //-----------------------------------------------------------------------------
-// The CUtlVectorMemory class:
+// The CUtlVectorMemory_Growable class:
 // A growable memory class which doubles in size by default.
 //-----------------------------------------------------------------------------
 template< class T, int nAlignment >
-class CUtlVectorMemory_Aligned	: public CUtlVectorMemory<T>
+class CUtlVectorMemory_Aligned	: public CUtlVectorMemory_Growable<T>
 {
 public:
 	// constructor, destructor
@@ -873,19 +864,19 @@ void *CUtlVectorMemory_Aligned<T, nAlignment>::Align( const void *pAddr )
 template< class T, int nAlignment >
 CUtlVectorMemory_Aligned<T, nAlignment>::CUtlVectorMemory_Aligned( int nGrowSize, int nInitAllocationCount )
 {
-	CUtlVectorMemory<T>::m_pMemory = 0; 
-	CUtlVectorMemory<T>::m_nAllocationCount = nInitAllocationCount;
-	CUtlVectorMemory<T>::m_nGrowSize = nGrowSize;
+	CUtlVectorMemory_Growable<T>::m_pMemory = 0; 
+	CUtlVectorMemory_Growable<T>::m_nAllocationCount = nInitAllocationCount;
+	CUtlVectorMemory_Growable<T>::m_nGrowSize = nGrowSize;
 	this->ValidateGrowSize();
 
 	// Alignment must be a power of two
 	COMPILE_TIME_ASSERT( (nAlignment & (nAlignment-1)) == 0 );
-	Assert( (nGrowSize >= 0) && (nGrowSize & CUtlVectorMemory<T>::EXTERNAL_BUFFER_MARKER) == 0 );
-	if ( CUtlVectorMemory<T>::m_nAllocationCount )
+	Assert( (nGrowSize >= 0) && (nGrowSize & CUtlVectorMemory_Growable<T>::EXTERNAL_BUFFER_MARKER) == 0 );
+	if ( CUtlVectorMemory_Growable<T>::m_nAllocationCount )
 	{
 		UTLMEMORY_TRACK_ALLOC();
 		MEM_ALLOC_CREDIT_CLASS();
-		CUtlVectorMemory<T>::m_pMemory = (T*)_aligned_malloc( nInitAllocationCount * sizeof(T), nAlignment );
+		CUtlVectorMemory_Growable<T>::m_pMemory = (T*)_aligned_malloc( nInitAllocationCount * sizeof(T), nAlignment );
 	}
 }
 
@@ -893,20 +884,20 @@ template< class T, int nAlignment >
 CUtlVectorMemory_Aligned<T, nAlignment>::CUtlVectorMemory_Aligned( T* pMemory, int numElements )
 {
 	// Special marker indicating externally supplied memory
-	CUtlVectorMemory<T>::m_nGrowSize = CUtlVectorMemory<T>::EXTERNAL_BUFFER_MARKER;
+	CUtlVectorMemory_Growable<T>::m_nGrowSize = CUtlVectorMemory_Growable<T>::EXTERNAL_BUFFER_MARKER;
 
-	CUtlVectorMemory<T>::m_pMemory = (T*)Align( pMemory );
-	CUtlVectorMemory<T>::m_nAllocationCount = ( (int)(pMemory + numElements) - (int)CUtlVectorMemory<T>::m_pMemory ) / sizeof(T);
+	CUtlVectorMemory_Growable<T>::m_pMemory = (T*)Align( pMemory );
+	CUtlVectorMemory_Growable<T>::m_nAllocationCount = ( (int)(pMemory + numElements) - (int)CUtlVectorMemory_Growable<T>::m_pMemory ) / sizeof(T);
 }
 
 template< class T, int nAlignment >
 CUtlVectorMemory_Aligned<T, nAlignment>::CUtlVectorMemory_Aligned( const T* pMemory, int numElements )
 {
 	// Special marker indicating externally supplied memory
-	CUtlVectorMemory<T>::m_nGrowSize = CUtlVectorMemory<T>::EXTERNAL_CONST_BUFFER_MARKER;
+	CUtlVectorMemory_Growable<T>::m_nGrowSize = CUtlVectorMemory_Growable<T>::EXTERNAL_CONST_BUFFER_MARKER;
 
-	CUtlVectorMemory<T>::m_pMemory = (T*)Align( pMemory );
-	CUtlVectorMemory<T>::m_nAllocationCount = ( (int)(pMemory + numElements) - (int)CUtlVectorMemory<T>::m_pMemory ) / sizeof(T);
+	CUtlVectorMemory_Growable<T>::m_pMemory = (T*)Align( pMemory );
+	CUtlVectorMemory_Growable<T>::m_nAllocationCount = ( (int)(pMemory + numElements) - (int)CUtlVectorMemory_Growable<T>::m_pMemory ) / sizeof(T);
 }
 
 template< class T, int nAlignment >
@@ -925,11 +916,11 @@ void CUtlVectorMemory_Aligned<T, nAlignment>::SetExternalBuffer( T* pMemory, int
 	// Blow away any existing allocated memory
 	Purge();
 
-	CUtlVectorMemory<T>::m_pMemory = (T*)Align( pMemory );
-	CUtlVectorMemory<T>::m_nAllocationCount = ( (int)(pMemory + numElements) - (int)CUtlVectorMemory<T>::m_pMemory ) / sizeof(T);
+	CUtlVectorMemory_Growable<T>::m_pMemory = (T*)Align( pMemory );
+	CUtlVectorMemory_Growable<T>::m_nAllocationCount = ( (int)(pMemory + numElements) - (int)CUtlVectorMemory_Growable<T>::m_pMemory ) / sizeof(T);
 
 	// Indicate that we don't own the memory
-	CUtlVectorMemory<T>::m_nGrowSize = CUtlVectorMemory<T>::EXTERNAL_BUFFER_MARKER;
+	CUtlVectorMemory_Growable<T>::m_nGrowSize = CUtlVectorMemory_Growable<T>::EXTERNAL_BUFFER_MARKER;
 }
 
 template< class T, int nAlignment >
@@ -938,11 +929,11 @@ void CUtlVectorMemory_Aligned<T, nAlignment>::SetExternalBuffer( const T* pMemor
 	// Blow away any existing allocated memory
 	Purge();
 
-	CUtlVectorMemory<T>::m_pMemory = (T*)Align( pMemory );
-	CUtlVectorMemory<T>::m_nAllocationCount = ( (int)(pMemory + numElements) - (int)CUtlVectorMemory<T>::m_pMemory ) / sizeof(T);
+	CUtlVectorMemory_Growable<T>::m_pMemory = (T*)Align( pMemory );
+	CUtlVectorMemory_Growable<T>::m_nAllocationCount = ( (int)(pMemory + numElements) - (int)CUtlVectorMemory_Growable<T>::m_pMemory ) / sizeof(T);
 
 	// Indicate that we don't own the memory
-	CUtlVectorMemory<T>::m_nGrowSize = CUtlVectorMemory<T>::EXTERNAL_CONST_BUFFER_MARKER;
+	CUtlVectorMemory_Growable<T>::m_nGrowSize = CUtlVectorMemory_Growable<T>::EXTERNAL_CONST_BUFFER_MARKER;
 }
 
 
@@ -965,23 +956,23 @@ void CUtlVectorMemory_Aligned<T, nAlignment>::Grow( int num )
 
 	// Make sure we have at least numallocated + num allocations.
 	// Use the grow rules specified for this memory (in m_nGrowSize)
-	int nAllocationRequested = CUtlVectorMemory<T>::m_nAllocationCount + num;
+	int nAllocationRequested = CUtlVectorMemory_Growable<T>::m_nAllocationCount + num;
 
-	CUtlVectorMemory<T>::m_nAllocationCount = UtlVectorMemory_CalcNewAllocationCount( CUtlVectorMemory<T>::m_nAllocationCount, CUtlVectorMemory<T>::m_nGrowSize, nAllocationRequested, sizeof(T) );
+	CUtlVectorMemory_Growable<T>::m_nAllocationCount = UtlVectorMemory_CalcNewAllocationCount( CUtlVectorMemory_Growable<T>::m_nAllocationCount, CUtlVectorMemory_Growable<T>::m_nGrowSize, nAllocationRequested, sizeof(T) );
 
 	UTLMEMORY_TRACK_ALLOC();
 
-	if ( CUtlVectorMemory<T>::m_pMemory )
+	if ( CUtlVectorMemory_Growable<T>::m_pMemory )
 	{
 		MEM_ALLOC_CREDIT_CLASS();
-		CUtlVectorMemory<T>::m_pMemory = (T*)MemAlloc_ReallocAligned( CUtlVectorMemory<T>::m_pMemory, CUtlVectorMemory<T>::m_nAllocationCount * sizeof(T), nAlignment );
-		Assert( CUtlVectorMemory<T>::m_pMemory );
+		CUtlVectorMemory_Growable<T>::m_pMemory = (T*)MemAlloc_ReallocAligned( CUtlVectorMemory_Growable<T>::m_pMemory, CUtlVectorMemory_Growable<T>::m_nAllocationCount * sizeof(T), nAlignment );
+		Assert( CUtlVectorMemory_Growable<T>::m_pMemory );
 	}
 	else
 	{
 		MEM_ALLOC_CREDIT_CLASS();
-		CUtlVectorMemory<T>::m_pMemory = (T*)MemAlloc_AllocAligned( CUtlVectorMemory<T>::m_nAllocationCount * sizeof(T), nAlignment );
-		Assert( CUtlVectorMemory<T>::m_pMemory );
+		CUtlVectorMemory_Growable<T>::m_pMemory = (T*)MemAlloc_AllocAligned( CUtlVectorMemory_Growable<T>::m_nAllocationCount * sizeof(T), nAlignment );
+		Assert( CUtlVectorMemory_Growable<T>::m_pMemory );
 	}
 }
 
@@ -992,7 +983,7 @@ void CUtlVectorMemory_Aligned<T, nAlignment>::Grow( int num )
 template< class T, int nAlignment >
 inline void CUtlVectorMemory_Aligned<T, nAlignment>::EnsureCapacity( int num )
 {
-	if ( CUtlVectorMemory<T>::m_nAllocationCount >= num )
+	if ( CUtlVectorMemory_Growable<T>::m_nAllocationCount >= num )
 		return;
 
 	if ( this->IsExternallyAllocated() )
@@ -1004,19 +995,19 @@ inline void CUtlVectorMemory_Aligned<T, nAlignment>::EnsureCapacity( int num )
 
 	UTLMEMORY_TRACK_FREE();
 
-	CUtlVectorMemory<T>::m_nAllocationCount = num;
+	CUtlVectorMemory_Growable<T>::m_nAllocationCount = num;
 
 	UTLMEMORY_TRACK_ALLOC();
 
-	if ( CUtlVectorMemory<T>::m_pMemory )
+	if ( CUtlVectorMemory_Growable<T>::m_pMemory )
 	{
 		MEM_ALLOC_CREDIT_CLASS();
-		CUtlVectorMemory<T>::m_pMemory = (T*)MemAlloc_ReallocAligned( CUtlVectorMemory<T>::m_pMemory, CUtlVectorMemory<T>::m_nAllocationCount * sizeof(T), nAlignment );
+		CUtlVectorMemory_Growable<T>::m_pMemory = (T*)MemAlloc_ReallocAligned( CUtlVectorMemory_Growable<T>::m_pMemory, CUtlVectorMemory_Growable<T>::m_nAllocationCount * sizeof(T), nAlignment );
 	}
 	else
 	{
 		MEM_ALLOC_CREDIT_CLASS();
-		CUtlVectorMemory<T>::m_pMemory = (T*)MemAlloc_AllocAligned( CUtlVectorMemory<T>::m_nAllocationCount * sizeof(T), nAlignment );
+		CUtlVectorMemory_Growable<T>::m_pMemory = (T*)MemAlloc_AllocAligned( CUtlVectorMemory_Growable<T>::m_nAllocationCount * sizeof(T), nAlignment );
 	}
 }
 
@@ -1029,13 +1020,13 @@ void CUtlVectorMemory_Aligned<T, nAlignment>::Purge()
 {
 	if ( !this->IsExternallyAllocated() )
 	{
-		if ( CUtlVectorMemory<T>::m_pMemory )
+		if ( CUtlVectorMemory_Growable<T>::m_pMemory )
 		{
 			UTLMEMORY_TRACK_FREE();
-			MemAlloc_FreeAligned( CUtlVectorMemory<T>::m_pMemory );
-			CUtlVectorMemory<T>::m_pMemory = 0;
+			MemAlloc_FreeAligned( CUtlVectorMemory_Growable<T>::m_pMemory );
+			CUtlVectorMemory_Growable<T>::m_pMemory = 0;
 		}
-		CUtlVectorMemory<T>::m_nAllocationCount = 0;
+		CUtlVectorMemory_Growable<T>::m_nAllocationCount = 0;
 	}
 }
 

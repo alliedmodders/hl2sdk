@@ -24,7 +24,7 @@
 // by index (they should *never* maintain pointers to elements in the stack).
 //-----------------------------------------------------------------------------
 
-template< class T, class M = CUtlVectorMemory< T > > 
+template< class T, class M = CUtlVectorMemory_Growable< T > > 
 class CUtlStack
 {
 public:
