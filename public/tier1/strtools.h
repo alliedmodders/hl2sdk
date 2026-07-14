@@ -98,11 +98,6 @@ typedef char *  va_list;
 //-----------------------------------------------------------------------------
 // Portable versions of standard string functions
 //-----------------------------------------------------------------------------
-PLATFORM_INTERFACE void			V_tier0_memset( void *dest, int fill, size_t count );
-PLATFORM_INTERFACE void			V_tier0_memcpy( void *dest, const void *src, size_t count );
-PLATFORM_INTERFACE void			V_tier0_memmove( void *dest, const void *src, size_t count );
-PLATFORM_INTERFACE int			V_tier0_memcmp( const void *m1, const void *m2, size_t count );
-
 PLATFORM_INTERFACE int			V_tier0_strlen( const char *str );
 PLATFORM_INTERFACE int			V_tier0_strlen16( const uchar16 *str );
 PLATFORM_INTERFACE int			V_tier0_strlen32( const uchar32 *str );
@@ -283,11 +278,6 @@ inline bool V_isspace(char c) { return isspace( (unsigned char)c ) != 0; }
 PLATFORM_INTERFACE bool	V_iswspace( wchar_t c );
 
 // Short form remaps
-#define V_memset(dest, fill, count)		V_tier0_memset		((dest), (fill), (count))
-#define V_memcpy(dest, src, count)		V_tier0_memcpy		((dest), (src), (count))
-#define V_memmove(dest, src, count)		V_tier0_memmove		((dest), (src), (count))
-#define V_memcmp(m1, m2, count)			V_tier0_memcmp		((m1), (m2), (count))
-
 #define V_strlen(str)					V_tier0_strlen		((str))
 #define V_strlen16(str)					V_tier0_strlen16	((str))
 #define V_strlen32(str)					V_tier0_strlen32	((str))
