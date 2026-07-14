@@ -207,7 +207,7 @@ private:
 	};
 
 	typedef CUtlHashtable<UtlSymLargeId_t, empty_t, UtlSymTableLargeHashFunctor, UtlSymTableLargeEqualFunctor, UtlSymTableLargeAltKey> Hashtable_t;
-	typedef CUtlLeanVector< MemBlockHandle_t, int > MemBlocksVec_t;
+	typedef CUtlLeanVector< MemBlockHandle_t > MemBlocksVec_t;
 
 	Hashtable_t						m_HashTable;
 	MemBlocksVec_t					m_MemBlocks;
