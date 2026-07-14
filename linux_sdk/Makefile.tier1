@@ -30,7 +30,6 @@ DO_CC += -o $@ -c $<
 
 LIB_OBJS= \
 	$(LIB_OBJ_DIR)/bitbuf.o \
-	$(LIB_OBJ_DIR)/commandbuffer.o \
 	$(LIB_OBJ_DIR)/generichash.o \
 	$(LIB_OBJ_DIR)/rangecheckedvar.o \
 	$(LIB_OBJ_DIR)/tier1.o \
