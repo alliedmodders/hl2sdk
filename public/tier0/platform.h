@@ -39,6 +39,7 @@
 #define __STDC_LIMIT_MACROS
 #include <stdint.h>
 #include <stddef.h>
+#include <cstdlib>
 
 #include "wchartypes.h"
 #include "tier0/valve_off.h"
@@ -1809,12 +1810,14 @@ DECLARE_ALIGNED_BYTE_ARRAY(128);
 
 #include "tier0/valve_on.h"
 
-#if defined(TIER0_DLL_EXPORT)
-extern int V_tier0_stricmp(const char *s1, const char *s2 );
-#undef stricmp
-#undef strcmpi
-#define stricmp(s1,s2) V_tier0_stricmp( s1, s2 )
-#define strcmpi(s1,s2) V_tier0_stricmp( s1, s2 )
-#endif
+PLATFORM_INTERFACE void			V_tier0_memset( void *dest, int fill, size_t count );
+PLATFORM_INTERFACE void			V_tier0_memcpy( void *dest, const void *src, size_t count );
+PLATFORM_INTERFACE void			V_tier0_memmove( void *dest, const void *src, size_t count );
+PLATFORM_INTERFACE int			V_tier0_memcmp( const void *m1, const void *m2, size_t count );
+
+#define V_memset(dest, fill, count)		V_tier0_memset		((dest), (fill), (count))
+#define V_memcpy(dest, src, count)		V_tier0_memcpy		((dest), (src), (count))
+#define V_memmove(dest, src, count)		V_tier0_memmove		((dest), (src), (count))
+#define V_memcmp(m1, m2, count)			V_tier0_memcmp		((m1), (m2), (count))
 
 #endif /* PLATFORM_H */

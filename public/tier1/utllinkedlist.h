@@ -14,7 +14,6 @@
 #endif
 
 #include "tier0/basetypes.h"
-#include "utlmemory.h"
 #include "utlfixedmemory.h"
 #include "utlleanvector.h"
 #include "utlblockmemory.h"
@@ -315,7 +314,7 @@ inline bool CUtlLinkedList<T,S,ML,I,M>::IndexInRange( I index ) // Static method
 {
 	// Since S is not necessarily the type returned by M, we need to check that M returns indices
 	// which are representable by S. A common case is 'S === unsigned short', 'I == int', in which
-	// case CUtlMemory will have 'InvalidIndex == (int)-1' (which casts to 65535 in S), and will
+	// case CUtlVectorMemory_Growable will have 'InvalidIndex == (int)-1' (which casts to 65535 in S), and will
 	// happily return elements at index 65535 and above.
 
 	// Do some static checks here:

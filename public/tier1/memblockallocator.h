@@ -98,7 +98,7 @@ public:
 		T				*m_pMemory = nullptr;
 	};
 
-	typedef CUtlLeanVector<MemPage_t, int> MemPagesVec_t;
+	typedef CUtlLeanVector<MemPage_t> MemPagesVec_t;
 
 	unsigned int			m_nPageOffsetBits;
 	unsigned int			m_nPageOffsetMask;
