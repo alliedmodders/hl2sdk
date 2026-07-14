@@ -15,8 +15,9 @@
 #pragma once
 #endif
 
-#include "tier1/utllinkedlist.h"
-#include "tier1/convar.h"
+#include "tier0/platform.h"
+#include "tier1/utlstring.h"
+#include "tier1/utlvector.h"
 
 
 //-----------------------------------------------------------------------------
@@ -28,7 +29,7 @@ class CUtlBuffer;
 //-----------------------------------------------------------------------------
 // Invalid command handle
 //-----------------------------------------------------------------------------
-typedef int CommandHandle_t;
+typedef intp CommandHandle_t;
 enum
 {
 	COMMAND_BUFFER_INVALID_COMMAND_HANDLE = 0
@@ -43,31 +44,29 @@ class CCommandBuffer
 {
 public:
 	// Constructor, destructor
-	CCommandBuffer( );
-	~CCommandBuffer();
+	DLL_CLASS_IMPORT CCommandBuffer();
+	DLL_CLASS_IMPORT ~CCommandBuffer();
 
-    // Inserts text into the command buffer
-	bool AddText( const char *pText, int nTickDelay = 0 );
+	// Inserts text into the command buffer
+	DLL_CLASS_IMPORT bool AddText( const char *pText, int nSource = 0, int nTickDelay = 0, bool unk3 = false, double unk4 = 0.0, uint64 nRequiredFlags = 0 );
 
 	// Used to iterate over all commands appropriate for the current time
-	void BeginProcessingCommands( int nDeltaTicks );
-	bool DequeueNextCommand( );
-	int DequeueNextCommand( const char **& ppArgv );
-	int ArgC() const;
-	const char **ArgV() const;
-	const char *ArgS() const;		// All args that occur after the 0th arg, in string form
-	const char *GetCommandString() const;	// The entire command in string form, including the 0th arg
-	const CCommand& GetCommand() const;
-	void EndProcessingCommands();
+	DLL_CLASS_IMPORT void BeginProcessingCommands( int nDeltaTicks );
+	DLL_CLASS_IMPORT bool DequeueNextCommand();
+	DLL_CLASS_IMPORT int DequeueNextCommand( const char **&ppArgv );
+	DLL_CLASS_IMPORT void EndProcessingCommands();
 
 	// Are we in the middle of processing commands?
-	bool IsProcessingCommands();
+	DLL_CLASS_IMPORT bool IsProcessingCommands();
 
 	// Delays all queued commands to execute at a later time
-	void DelayAllQueuedCommands( int nTickDelay );
+	DLL_CLASS_IMPORT void DelayAllQueuedCommands( int nTickDelay );
 
-	// Indicates how long to delay when encoutering a 'wait' command
-	void SetWaitDelayTime( int nTickDelay );
+	// Indicates how long to delay when encountering a 'wait' command
+	DLL_CLASS_IMPORT void SetWaitDelayTime( int nTickDelay );
+
+	// Splits pText into individual commands, appending each to pOut.
+	DLL_CLASS_IMPORT static void SplitCommands( const char *pText, int nLength, CUtlVector< CUtlString > *pOut );
 
 	// Returns a handle to the next command to process
 	// (useful when inserting commands into the buffer during processing
@@ -75,86 +74,43 @@ public:
 	// most relevantly, to implement a feature where you stream a file
 	// worth of commands into the buffer, where the file size is too large
 	// to entirely contain in the buffer).
-    CommandHandle_t GetNextCommandHandle();
+	DLL_CLASS_IMPORT CommandHandle_t GetNextCommandHandle();
 
 	// Specifies a max limit of the args buffer. For unittesting. Size == 0 means use default
-	void LimitArgumentBufferSize( int nSize );
+	DLL_CLASS_IMPORT void LimitArgumentBufferSize( int nSize );
+
+	// Sets the flag mask a command must satisfy to be dequeued. Returns the previous mask.
+	DLL_CLASS_IMPORT uint64 SetRequiredFlags( uint64 nRequiredFlags );
+
+	// Locks/unlocks the command buffer.
+	DLL_CLASS_IMPORT void LockCommandBuffer( bool bLock );
 
 private:
 	enum
 	{
-		ARGS_BUFFER_LENGTH = 8192,
+		ARGS_BUFFER_LENGTH = 0x8000,
 	};
 
-	struct Command_t
-	{
-		int m_nTick;
-		int m_nFirstArgS;
-		int m_nBufferSize;
-	};
-
-	// Insert a command into the command queue at the appropriate time
-	void InsertCommandAtAppropriateTime( int hCommand );
-						   
-	// Insert a command into the command queue
-	// Only happens if it's inserted while processing other commands
-	void InsertImmediateCommand( int hCommand );
-
-	// Insert a command into the command queue
-	bool InsertCommand( const char *pArgS, int nCommandSize, int nTick );
-
-	// Returns the length of the next command, as well as the offset to the next command
-	void GetNextCommandLength( const char *pText, int nMaxLen, int *pCommandLength, int *pNextCommandOffset );
-
-	// Compacts the command buffer
-	void Compact();
-
-	// Parses argv0 out of the buffer
-	bool ParseArgV0( CUtlBuffer &buf, char *pArgv0, int nMaxLen, const char **pArgs );
-
-	char	m_pArgSBuffer[ ARGS_BUFFER_LENGTH ];
-	int		m_nLastUsedArgSSize;
-	int		m_nArgSBufferSize;
-	CUtlFixedLinkedList< Command_t >	m_Commands;
-	int		m_nCurrentTick;
-	int		m_nLastTickToProcess;
-	int		m_nWaitDelayTicks;
-	int		m_hNextCommand;
-	int		m_nMaxArgSBufferLength;
-	bool	m_bIsProcessingCommands;
-
-	// NOTE: This is here to avoid the pointers returned by DequeueNextCommand
-	// to become invalid by calling AddText. Is there a way we can avoid the memcpy?
-	CCommand m_CurrentCommand;
-};
-
-
-//-----------------------------------------------------------------------------
-// Returns the next command
-//-----------------------------------------------------------------------------
-inline int CCommandBuffer::ArgC() const
-{
-	return m_CurrentCommand.ArgC();
-}
-
-inline const char **CCommandBuffer::ArgV() const
-{
-	return m_CurrentCommand.ArgV();
-}
-
-inline const char *CCommandBuffer::ArgS() const
-{
-	return m_CurrentCommand.ArgS();
-}
-
-inline const char *CCommandBuffer::GetCommandString() const
-{
-	return m_CurrentCommand.GetCommandString();
-}
-
-inline const CCommand& CCommandBuffer::GetCommand() const
-{
-	return m_CurrentCommand;
-}
+	char			m_ArgSBuffer[ ARGS_BUFFER_LENGTH ];	// 0x0000
+	CommandHandle_t	m_hNextCommand;				// 0x8000
+	uint8			m_unk001[ 0x30 ];			// 0x8008
+	uint64			m_nRequiredFlags;			// 0x8038
+	uint8			m_unk002[ 0x18 ];			// 0x8040
+	int			    m_nWaitDelayTicks;			// 0x8058
+	int			    m_nMaxArgSBufferLength;	    // 0x805C
+	uint8			m_unk003[ 0x02 ];			// 0x8060
+	bool			m_bIsLocked;				// 0x8062
+	uint8			m_unk004[ 0x15 ];			// 0x8063
+	char			*m_pArgSCursor;				// 0x8078
+	uint8			m_unk005[ 0x420 ];			// 0x8080  args pool / command list
+	int			    m_nArgc;					// 0x84A0
+	uint8			m_unk006[ 0x04 ];			// 0x84A4
+	const char		**m_ppArgv;					// 0x84A8
+	uint8			m_unk007[ 0x208 ];			// 0x84B0
+	bool			m_bIsProcessingCommands;	// 0x86B8
+	uint8			m_unk008[ 0x07 ];			// 0x86B9
+	double			m_unk009;					// 0x86C0
+	uint8			m_unk010[ 0x10 ];			// 0x86C8
+};												// sizeof == 0x86D8
 
 #endif // COMMANDBUFFER_H
