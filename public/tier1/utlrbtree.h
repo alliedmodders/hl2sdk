@@ -9,7 +9,6 @@
 #ifndef UTLRBTREE_H
 #define UTLRBTREE_H
 
-#include "tier1/utlmemory.h"
 #include "tier1/utlleanvector.h"
 #include "tier1/utlfixedmemory.h"
 #include "tier1/utlblockmemory.h"
@@ -217,7 +216,7 @@ public:
 
 	// Max "size" of the vector
 	// it's not generally safe to iterate from index 0 to MaxElement()-1
-	// it IS safe to do so when using CUtlMemory as the allocator,
+	// it IS safe to do so when using CUtlVectorMemory_Growable as the allocator,
 	// but we should really remove patterns using this anyways, for safety and generality
 	I  MaxElement() const;
 

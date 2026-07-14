@@ -367,7 +367,7 @@
     <ClInclude Include="..\public\tier1\utlhash.h" />
     <ClInclude Include="..\public\tier1\utllinkedlist.h" />
     <ClInclude Include="..\public\tier1\utlmap.h" />
-    <ClInclude Include="..\public\tier1\utlmemory.h" />
+    <ClInclude Include="..\public\tier1\utlvectormemory.h" />
     <ClInclude Include="..\public\tier1\utlmultilist.h" />
     <ClInclude Include="..\public\tier1\utlpriorityqueue.h" />
     <ClInclude Include="..\public\tier1\utlqueue.h" />

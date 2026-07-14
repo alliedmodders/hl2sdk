@@ -12,7 +12,6 @@
 #pragma once
 
 #include <limits.h>
-#include "utlmemory.h"
 #include "utlvector.h"
 #include "utllinkedlist.h"
 #include "utllinkedlist.h"

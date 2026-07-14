@@ -17,7 +17,6 @@
 #include "unitlib/unitlib.h" // just here for tests - remove before checking in!!!
 
 #include "platform.h"
-#include "tier1/utlmemory.h"
 #include "tier1/cbyteswap.h"
 #include "tier1/bufferstring.h"
 #include "tier1/utlleanvector.h"
@@ -221,7 +220,7 @@ public:
 	void			Spew( );
 
 	DLL_CLASS_IMPORT void Swap( CUtlBuffer &other );
-	DLL_CLASS_IMPORT void Swap( CUtlMemory<unsigned char> &other );
+	DLL_CLASS_IMPORT void Swap( CUtlLeanVector<unsigned char> &other );
 
 	DLL_CLASS_IMPORT bool WriteToFile( const char *, bool );
 	DLL_CLASS_IMPORT bool WriteToFileIfDifferent( const char * );
@@ -455,7 +454,7 @@ protected:
 	template <typename T> void PutTypeBin( T src );
 	template <typename T> void PutObject( T *src );
 
-	CUtlLeanVector<unsigned char, int> m_Memory;
+	CUtlLeanVector<unsigned char> m_Memory;
 	int m_Get;
 	int m_Put;
 

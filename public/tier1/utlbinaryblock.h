@@ -10,7 +10,7 @@
 #pragma once
 #endif
 
-#include "tier1/utlmemory.h"
+#include "tier1/utlvectormemory.h"
 #include "tier1/strtools.h"
 #include "limits.h"
 
@@ -49,7 +49,7 @@ public:
 	bool operator==( const CUtlBinaryBlock &src ) const;
 
 private:
-	CUtlMemory<unsigned char> m_Memory;
+	CUtlVectorMemory_Growable<unsigned char> m_Memory;
 	int m_nActualLength;
 };
 

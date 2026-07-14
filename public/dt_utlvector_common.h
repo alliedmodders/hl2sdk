@@ -29,7 +29,7 @@ class UtlVectorTemplate
 public:
 	static void ResizeUtlVector( void *pStruct, int offsetToUtlVector, int len )
 	{
-		CUtlVector<T,A> *pVec = (CUtlVector<T,A>*)((char*)pStruct + offsetToUtlVector);
+		CUtlVector<T, int, A> *pVec = (CUtlVector<T, int, A>*)((char*)pStruct + offsetToUtlVector);
 		if ( pVec->Count() < len )
 			pVec->AddMultipleToTail( len - pVec->Count() );
 		else if ( pVec->Count() > len )
@@ -48,7 +48,7 @@ public:
 
 	static void EnsureCapacity( void *pStruct, int offsetToUtlVector, int len )
 	{
-		CUtlVector<T,A> *pVec = (CUtlVector<T,A>*)((char*)pStruct + offsetToUtlVector);
+		CUtlVector<T, int, A> *pVec = (CUtlVector<T, int, A>*)((char*)pStruct + offsetToUtlVector);
 
 		pVec->EnsureCapacity( len );
 		
@@ -62,13 +62,13 @@ public:
 };
 
 template< class T, class A >
-inline ResizeUtlVectorFn GetResizeUtlVectorTemplate( CUtlVector<T,A> &vec )
+inline ResizeUtlVectorFn GetResizeUtlVectorTemplate( CUtlVector<T, int, A> &vec )
 {
 	return &UtlVectorTemplate<T,A>::ResizeUtlVector;
 }
 
 template< class T, class A >
-inline EnsureCapacityFn GetEnsureCapacityTemplate( CUtlVector<T,A> &vec )
+inline EnsureCapacityFn GetEnsureCapacityTemplate( CUtlVector<T, int, A> &vec )
 {
 	return &UtlVectorTemplate<T,A>::EnsureCapacity;
 }
