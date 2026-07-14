@@ -999,10 +999,6 @@ PLATFORM_INTERFACE void V_CopyMemory3D(
 // We need to DLL-export the Q methods in vstdlib but not link to them in other projects
 #if !defined( VSTDLIB_BACKWARD_COMPAT )
 
-#define Q_memset				V_memset
-#define Q_memcpy				V_memcpy
-#define Q_memmove				V_memmove
-#define Q_memcmp				V_memcmp
 #define Q_strlen				V_strlen
 #define Q_strcpy				V_strcpy
 #define Q_strrchr				V_strrchr

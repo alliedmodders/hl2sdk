@@ -1820,4 +1820,9 @@ PLATFORM_INTERFACE int			V_tier0_memcmp( const void *m1, const void *m2, size_t 
 #define V_memmove(dest, src, count)		V_tier0_memmove		((dest), (src), (count))
 #define V_memcmp(m1, m2, count)			V_tier0_memcmp		((m1), (m2), (count))
 
+#define Q_memset				V_memset
+#define Q_memcpy				V_memcpy
+#define Q_memmove				V_memmove
+#define Q_memcmp				V_memcmp
+
 #endif /* PLATFORM_H */
