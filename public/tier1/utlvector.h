@@ -43,7 +43,7 @@ struct base_vector_t
 	enum { IsUtlVector = true };
 };
 
-template< class T, class I = int, class A = CUtlVectorMemory_Growable<T, I, 0> >
+template< class T, class I = int, class A = CUtlVectorMemory_Growable<T, I> >
 class CUtlVectorBase : public base_vector_t
 {
 	typedef A CAllocator;
@@ -227,9 +227,9 @@ public:
 // A array class with a fixed allocation scheme
 //-----------------------------------------------------------------------------
 template< class T, size_t MAX_SIZE, class I = int >
-class CUtlVectorFixed : public CUtlVectorBase< T, I, CUtlVectorMemory_Fixed<T, MAX_SIZE > >
+class CUtlVectorFixed : public CUtlVectorBase< T, I, CUtlVectorMemory_Fixed<T, MAX_SIZE, I > >
 {
-	typedef CUtlVectorBase< T, I, CUtlVectorMemory_Fixed<T, MAX_SIZE > > BaseClass;
+	typedef CUtlVectorBase< T, I, CUtlVectorMemory_Fixed<T, MAX_SIZE, I > > BaseClass;
 public:
 
 	using BaseClass::BaseClass;

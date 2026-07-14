@@ -172,7 +172,7 @@ class CUtlVectorMemory_FixedGrowable : public CUtlVectorMemory_Growable< T, I >
 	typedef CUtlVectorMemory_Growable< T, I > BaseClass;
 
 public:
-	CUtlVectorMemory_FixedGrowable( int nGrowSize = 0, int nInitSize = SIZE ) : BaseClass( m_pFixedMemory, SIZE ) 
+	CUtlVectorMemory_FixedGrowable( I nGrowSize = 0, I nInitSize = SIZE ) : BaseClass( m_pFixedMemory, SIZE ) 
 	{
 		Assert( nInitSize == 0 || nInitSize == SIZE );
 	}
@@ -185,68 +185,68 @@ private:
 // The CUtlVectorMemory_Fixed class:
 // A fixed memory class
 //-----------------------------------------------------------------------------
-template< typename T, size_t SIZE, int nAlignment = 0 >
+template< typename T, size_t SIZE, class I = int, int nAlignment = 0 >
 class CUtlVectorMemory_Fixed
 {
 public:
 	// constructor, destructor
-	CUtlVectorMemory_Fixed( int nGrowSize = 0, int nInitSize = 0 )	{ Assert( nInitSize == 0 || nInitSize == SIZE ); 	}
-	CUtlVectorMemory_Fixed( T* pMemory, int numElements )			{ Assert( 0 ); 										}
+	CUtlVectorMemory_Fixed( I nGrowSize = 0, I nInitSize = 0 )	{ Assert( nInitSize == 0 || nInitSize == (I)SIZE ); }
+	CUtlVectorMemory_Fixed( T* pMemory, I numElements )			{ Assert( 0 ); 										}
 
 	// Can we use this index?
-	bool IsIdxValid( int i ) const							{ return (i >= 0) && (i < SIZE); }
+	bool IsIdxValid( I i ) const							{ return (i >= 0) && (i < (I)SIZE); }
 
 	// Specify the invalid ('null') index that we'll only return on failure
-	static const int INVALID_INDEX = -1; // For use with COMPILE_TIME_ASSERT
-	static int InvalidIndex() { return INVALID_INDEX; }
+	static inline const I INVALID_INDEX = -1; // For use with COMPILE_TIME_ASSERT
+	static I InvalidIndex() { return INVALID_INDEX; }
 
 	// Gets the base address
 	T* Base()												{ if ( nAlignment == 0 ) return (T*)(&m_Memory[0]); else return (T*)AlignValue( &m_Memory[0], nAlignment ); }
 	const T* Base() const									{ if ( nAlignment == 0 ) return (T*)(&m_Memory[0]); else return (T*)AlignValue( &m_Memory[0], nAlignment ); }
 
 	// element access
-	T& operator[]( int i )									{ Assert( IsIdxValid(i) ); return Base()[i];	}
-	const T& operator[]( int i ) const						{ Assert( IsIdxValid(i) ); return Base()[i];	}
-	T& Element( int i )										{ Assert( IsIdxValid(i) ); return Base()[i];	}
-	const T& Element( int i ) const							{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	T& operator[]( I i )									{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	const T& operator[]( I i ) const						{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	T& Element( I i )										{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	const T& Element( I i ) const							{ Assert( IsIdxValid(i) ); return Base()[i];	}
 
 	// Attaches the buffer to external memory....
-	void SetExternalBuffer( T* pMemory, int numElements )	{ Assert( 0 ); }
+	void SetExternalBuffer( T* pMemory, I numElements )		{ Assert( 0 ); }
 
 	// Size
-	int NumAllocated() const								{ return SIZE; }
-	int Count() const										{ return SIZE; }
+	I NumAllocated() const									{ return (I)SIZE; }
+	I Count() const											{ return (I)SIZE; }
 
 	// Grows the memory, so that at least allocated + num elements are allocated
-	void Grow( int num = 1 )								{ Assert( 0 ); }
+	void Grow( I num = 1 )									{ Assert( 0 ); }
 
 	// Makes sure we've got at least this much memory
-	void EnsureCapacity( int num )							{ Assert( num <= SIZE ); }
+	void EnsureCapacity( I num )							{ Assert( num <= (I)SIZE ); }
 
 	// Memory deallocation
 	void Purge()											{}
 
 	// Purge all but the given number of elements (NOT IMPLEMENTED IN CUtlVectorMemory_Fixed)
-	void Purge( int numElements )							{ Assert( 0 ); }
+	void Purge( I numElements )								{ Assert( 0 ); }
 
 	// is the memory externally allocated?
 	bool IsExternallyAllocated() const						{ return false; }
 
 	// Set the size by which the memory grows
-	void SetGrowSize( int size )							{}
+	void SetGrowSize( I size )								{}
 
 	class Iterator_t
 	{
 	public:
-		Iterator_t( int i ) : index( i ) {}
-		int index;
+		Iterator_t( I i ) : index( i ) {}
+		I index;
 		bool operator==( const Iterator_t it ) const	{ return index == it.index; }
 		bool operator!=( const Iterator_t it ) const	{ return index != it.index; }
 	};
 	Iterator_t First() const							{ return Iterator_t( IsIdxValid( 0 ) ? 0 : InvalidIndex() ); }
 	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( IsIdxValid( it.index + 1 ) ? it.index + 1 : InvalidIndex() ); }
-	int GetIndex( const Iterator_t &it ) const			{ return it.index; }
-	bool IsIdxAfter( int i, const Iterator_t &it ) const { return i > it.index; }
+	I GetIndex( const Iterator_t &it ) const			{ return it.index; }
+	bool IsIdxAfter( I i, const Iterator_t &it ) const { return i > it.index; }
 	bool IsValidIterator( const Iterator_t &it ) const	{ return IsIdxValid( it.index ); }
 	Iterator_t InvalidIterator() const					{ return Iterator_t( InvalidIndex() ); }
 
@@ -262,38 +262,38 @@ private:
 // The CUtlVectorMemory_Conservative class:
 // A dynamic memory class that tries to minimize overhead (itself small, no custom grow factor)
 //-----------------------------------------------------------------------------
-template< typename T >
+template< typename T, class I = int >
 class CUtlVectorMemory_Conservative
 {
 
 public:
 	// constructor, destructor
-	CUtlVectorMemory_Conservative( int nGrowSize = 0, int nInitSize = 0 ) : m_pMemory( NULL )
+	CUtlVectorMemory_Conservative( I nGrowSize = 0, I nInitSize = 0 ) : m_pMemory( NULL )
 	{
 #ifdef REMEMBER_ALLOC_SIZE_FOR_VALGRIND
 		m_nCurAllocSize = 0;
 #endif
 
 	}
-	CUtlVectorMemory_Conservative( T* pMemory, int numElements )								{ Assert( 0 ); }
+	CUtlVectorMemory_Conservative( T* pMemory, I numElements )		{ Assert( 0 ); }
 	~CUtlVectorMemory_Conservative()								{ if ( m_pMemory ) free( m_pMemory ); }
 
 	// Can we use this index?
-	bool IsIdxValid( int i ) const							{ return ( IsDebug() ) ? ( i >= 0 && i < NumAllocated() ) : ( i >= 0 ); }
-	static int InvalidIndex()								{ return -1; }
+	bool IsIdxValid( I i ) const							{ return ( IsDebug() ) ? ( i >= 0 && i < NumAllocated() ) : ( i >= 0 ); }
+	static I InvalidIndex()									{ return (I)-1; }
 
 	// Gets the base address
 	T* Base()												{ return m_pMemory; }
 	const T* Base() const									{ return m_pMemory; }
 
 	// element access
-	T& operator[]( int i )									{ Assert( IsIdxValid(i) ); return Base()[i];	}
-	const T& operator[]( int i ) const						{ Assert( IsIdxValid(i) ); return Base()[i];	}
-	T& Element( int i )										{ Assert( IsIdxValid(i) ); return Base()[i];	}
-	const T& Element( int i ) const							{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	T& operator[]( I i )									{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	const T& operator[]( I i ) const						{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	T& Element( I i )										{ Assert( IsIdxValid(i) ); return Base()[i];	}
+	const T& Element( I i ) const							{ Assert( IsIdxValid(i) ); return Base()[i];	}
 
 	// Attaches the buffer to external memory....
-	void SetExternalBuffer( T* pMemory, int numElements )	{ Assert( 0 ); }
+	void SetExternalBuffer( T* pMemory, I numElements )		{ Assert( 0 ); }
 
 	// Size
 	FORCEINLINE void RememberAllocSize( size_t sz )
@@ -312,11 +312,11 @@ public:
 #endif
 	}
 
-	int NumAllocated() const
+	I NumAllocated() const
 	{
 		return AllocSize() / sizeof( T );
 	}
-	int Count() const
+	I Count() const
 	{
 		return NumAllocated();
 	}
@@ -327,16 +327,16 @@ public:
 		RememberAllocSize( sz );
 	}
 	// Grows the memory, so that at least allocated + num elements are allocated
-	void Grow( int num = 1 )
+	void Grow( I num = 1 )
 	{
-		int nCurN = NumAllocated();
-		ReAlloc( ( nCurN + num ) * sizeof( T ) );
+		I nCurN = NumAllocated();
+		ReAlloc( ( (size_t)nCurN + num ) * sizeof( T ) );
 	}
 
 	// Makes sure we've got at least this much memory
-	void EnsureCapacity( int num )
+	void EnsureCapacity( I num )
 	{
-		size_t nSize = sizeof( T ) * MAX( num, Count() );
+		size_t nSize = sizeof( T ) * (size_t)MAX( num, Count() );
 		ReAlloc( nSize );
 	}
 
@@ -349,27 +349,27 @@ public:
 	}
 
 	// Purge all but the given number of elements
-	void Purge( int numElements )							{ ReAlloc( numElements * sizeof(T) ); }
+	void Purge( I numElements )								{ ReAlloc( (size_t)numElements * sizeof(T) ); }
 
 	// is the memory externally allocated?
 	bool IsExternallyAllocated() const						{ return false; }
 
 	// Set the size by which the memory grows
-	void SetGrowSize( int size )							{}
+	void SetGrowSize( I size )								{}
 
 	class Iterator_t
 	{
 	public:
-		Iterator_t( int i, int _limit ) : index( i ), limit( _limit ) {}
-		int index;
-		int limit;
+		Iterator_t( I i, I _limit ) : index( i ), limit( _limit ) {}
+		I index;
+		I limit;
 		bool operator==( const Iterator_t it ) const	{ return index == it.index; }
 		bool operator!=( const Iterator_t it ) const	{ return index != it.index; }
 	};
-	Iterator_t First() const							{ int limit = NumAllocated(); return Iterator_t( limit ? 0 : InvalidIndex(), limit ); }
+	Iterator_t First() const							{ I limit = NumAllocated(); return Iterator_t( limit ? 0 : InvalidIndex(), limit ); }
 	Iterator_t Next( const Iterator_t &it ) const		{ return Iterator_t( ( it.index + 1 < it.limit ) ? it.index + 1 : InvalidIndex(), it.limit ); }
-	int GetIndex( const Iterator_t &it ) const			{ return it.index; }
-	bool IsIdxAfter( int i, const Iterator_t &it ) const { return i > it.index; }
+	I GetIndex( const Iterator_t &it ) const			{ return it.index; }
+	bool IsIdxAfter( I i, const Iterator_t &it ) const	{ return i > it.index; }
 	bool IsValidIterator( const Iterator_t &it ) const	{ return IsIdxValid( it.index ) && ( it.index < it.limit ); }
 	Iterator_t InvalidIterator() const					{ return Iterator_t( InvalidIndex(), 0 ); }
 
