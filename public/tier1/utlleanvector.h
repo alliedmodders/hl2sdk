@@ -15,6 +15,7 @@
 #pragma once
 #endif
 
+#include "mathlib.h"
 #include "commonmacros.h"
 #include "rawallocator.h"
 #include "tier0/platform.h"
