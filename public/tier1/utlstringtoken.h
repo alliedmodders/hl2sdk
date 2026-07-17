@@ -16,6 +16,8 @@
 #include <limits.h>
 #include "tier1/generichash.h"
 
+#include <type_traits>
+
 #define STRINGTOKEN_MURMURHASH_SEED 0x31415926
 
 class CUtlString;
@@ -30,13 +32,18 @@ class CUtlStringToken
 {
 public:
 	FORCEINLINE CUtlStringToken( uint32 nHashCode = 0 ) : m_nHashCode( nHashCode ) {}
-	FORCEINLINE CUtlStringToken( const char *str ) : m_nHashCode( 0 ) 
+
+	template <size_t N>
+	FORCEINLINE CUtlStringToken( const char (&str)[N] ) : m_nHashCode( MurmurHash2LowerCase( str, STRINGTOKEN_MURMURHASH_SEED ) ) { }
+
+	// AMNOTE: Template is required to enforce compiler to pick the correct overload when inlining
+	// as otherwise non templated overload would always win the pick thus no const folding would happen
+	template <typename T, std::enable_if_t<std::is_same_v<T, const char *>, int> = 0>
+	FORCEINLINE CUtlStringToken( T str ) : m_nHashCode( 0 )
 	{
 		if(str && *str)
-		{
 			m_nHashCode = MurmurHash2LowerCase( str, STRINGTOKEN_MURMURHASH_SEED );
-		}
-	}
+	};
 
 	FORCEINLINE bool operator==( CUtlStringToken const &other ) const { return ( other.m_nHashCode == m_nHashCode ); }
 	FORCEINLINE bool operator!=( CUtlStringToken const &other ) const { return !operator==( other ); }
@@ -52,10 +59,5 @@ public:
 private:
 	uint32 m_nHashCode;
 };
-
-FORCEINLINE CUtlStringToken MakeStringToken( const char *str )
-{
-	return CUtlStringToken( str );
-}
 
 #endif // UTLSTRINGTOKEN_H

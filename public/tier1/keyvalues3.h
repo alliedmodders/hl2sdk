@@ -347,12 +347,18 @@ struct KV3BinaryBlob_t
 class CKV3MemberName
 {
 public:
-	inline CKV3MemberName(const char* pszString, UtlSymLargeId_t symid = UTL_INVAL_SYMBOL_LARGE ): m_nHashCode(), m_SymId( symid ), m_pszString("")
-	{	
-		if (!pszString || !pszString[0])
+	template <size_t N>
+	inline CKV3MemberName( const char (&pszString)[N], UtlSymLargeId_t symid = UTL_INVAL_SYMBOL_LARGE ) : m_nHashCode( pszString ), m_SymId( symid ), m_pszString( pszString ) {}
+
+	// AMNOTE: Template is required to enforce compiler to pick the correct overload when inlining
+	// as otherwise non templated overload would always win the pick thus no const folding would happen
+	template <typename T, std::enable_if_t<std::is_same_v<T, const char *>, int> = 0>
+	inline CKV3MemberName( T pszString, UtlSymLargeId_t symid = UTL_INVAL_SYMBOL_LARGE ) : m_nHashCode( 0 ), m_SymId( symid ), m_pszString( "" )
+	{
+		if(!pszString || !pszString[0])
 			return;
 
-		m_nHashCode = MakeStringToken( pszString );
+		m_nHashCode = CUtlStringToken( pszString );
 		m_pszString = pszString;
 	}
 
