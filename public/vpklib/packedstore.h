@@ -189,7 +189,7 @@ private:
 
 	// For cache-ing directory and contents data
 	CUtlStringList m_directoryList; // The index of this list of directories...
-	CUtlMap<int, CUtlStringList*> m_dirContents; // ...is the key to this map of filenames
+	CUtlOrderedMap<int, CUtlStringList*> m_dirContents; // ...is the key to this map of filenames
 	void BuildFindFirstCache();
 
 };
