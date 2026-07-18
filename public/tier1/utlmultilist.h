@@ -45,7 +45,7 @@ protected:
 		I m_Count;
 	};
 
-	typedef CUtlMemory<ListElem_t> M; // Keep naming similar to CUtlLinkedList
+	typedef CUtlVectorMemory_Growable<ListElem_t> M; // Keep naming similar to CUtlLinkedList
 public:
 	typedef I ListHandle_t;
 
@@ -302,7 +302,7 @@ inline bool CUtlMultiList<T,I>::IndexInRange( int index ) // Static method
 {
 	// Since I is not necessarily the type returned by M (int), we need to check that M returns
 	// indices which are representable by I. A common case is 'I === unsigned short', in which case
-	// case CUtlMemory will have 'InvalidIndex == (int)-1' (which casts to 65535 in I), and will
+	// case CUtlVectorMemory_Growable will have 'InvalidIndex == (int)-1' (which casts to 65535 in I), and will
 	// happily return elements at index 65535 and above.
 
 	// Do a couple of static checks here: the invalid index should be (I)~0 given how we use m_MaxElementIndex,

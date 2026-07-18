@@ -16,7 +16,6 @@
 #include "tier1/characterset.h"
 #include "tier1/utlvector.h"
 #include "tier1/utlbuffer.h"
-#include "tier1/tier1.h"
 #include "icvar.h"
 #include "tier0/dbg.h"
 #include "Color.h"

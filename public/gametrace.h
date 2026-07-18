@@ -265,7 +265,7 @@ public:
 		m_sSurfaceProperty = m_tempSurfaceProp;
 
 		m_sBoneName = m_tempBoneName;
-		m_nBoneNameHash = MakeStringToken( m_tempBoneName );
+		m_nBoneNameHash = CUtlStringToken( m_tempBoneName );
 
 		m_cRenderColor.SetColor( 0, 0, 0, 0 );
 	}

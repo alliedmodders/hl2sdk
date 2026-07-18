@@ -10,8 +10,6 @@
 #pragma once
 #endif
 
-#include "tier1/utlstringtoken.h"
-#include "tier1/utlmemory.h"
 #include "tier1/strtools.h"
 #include "limits.h"
 

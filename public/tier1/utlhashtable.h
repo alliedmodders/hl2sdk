@@ -42,7 +42,7 @@
 #pragma once
 
 #include "utlcommon.h"
-#include "utlmemory.h"
+#include "utlvectormemory.h"
 #include "mathlib/mathlib.h"
 #include "utllinkedlist.h"
 
@@ -103,7 +103,7 @@ public:
 	}
 };
 
-template <typename KeyT, typename ValueT = empty_t, typename KeyHashT = DefaultHashFunctor<KeyT>, typename KeyIsEqualT = DefaultEqualFunctor<KeyT>, typename AlternateKeyT = typename ArgumentTypeInfo<KeyT>::Alt_t, typename TableT = CUtlLeanVector<CUtlHashtableEntry<KeyT, ValueT>, int>>
+template <typename KeyT, typename ValueT = empty_t, typename KeyHashT = DefaultHashFunctor<KeyT>, typename KeyIsEqualT = DefaultEqualFunctor<KeyT>, typename AlternateKeyT = typename ArgumentTypeInfo<KeyT>::Alt_t, typename TableT = CUtlLeanVector<CUtlHashtableEntry<KeyT, ValueT>>>
 class CUtlHashtable
 {
 public:
@@ -317,7 +317,7 @@ void CUtlHashtable<KeyT, ValueT, KeyHashT, KeyIsEqualT, AltKeyT, TableT>::DoReal
 {
 	Assert( !m_bSizeLocked ); 
 
-	CUtlMemoryConservative<entry_t> oldTable;
+	CUtlVectorMemory_Conservative<entry_t> oldTable;
 	entry_t * RESTRICT pOldBase = m_table.Detach();
 	int nOldSize = m_nTableSize;
 
