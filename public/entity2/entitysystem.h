@@ -314,7 +314,7 @@ public:
 	CUtlOrderedMap<const char*, CEntityClass*, CDefFastCaselessStringLess, uint16> m_entClassesByCPPClassname;
 	CUtlOrderedMap<const char*, CEntityClass*, CDefFastCaselessStringLess, uint16> m_entClassesByClassname;
 	CUtlOrderedMap<const char*, CEntityComponentHelper*, CDefFastCaselessStringLess, uint16> m_entityComponentHelpers;
-	CUtlOrderedMap<CUtlSymbolLarge, CUtlVector<CEntityHandle>*, uint16, CDefLess<CUtlSymbolLarge>> m_entityNames;
+	CUtlOrderedMap<CUtlSymbolLarge, CUtlVector<CEntityHandle>*, CDefLess<CUtlSymbolLarge>, uint16> m_entityNames;
 
 	CEventQueue m_EventQueue;
 	CUtlVectorFixedGrowable<IEntityIONotify*, 2> m_entityIONotifiers;
