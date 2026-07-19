@@ -122,7 +122,7 @@ protected:
 	int				m_iDamageCustom;
 	int				m_iDamageStats;
 	int				m_iAmmoType;			// AmmoType of the weapon used to cause this damage, if any
-	int				m_flRadius;
+	float			m_flRadius;
 	int				m_iDamageVictimIndex;
 
 	DECLARE_SIMPLE_DATADESC();
