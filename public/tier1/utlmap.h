@@ -31,7 +31,7 @@
 #define FOR_EACH_MAP_FAST( mapName, iteratorName ) \
 	for ( int iteratorName = 0; iteratorName < mapName.MaxElement(); ++iteratorName ) if ( !mapName.IsValidIndex( iteratorName ) ) continue; else
 
-template <typename K, typename T, typename I = int, typename LF = bool (*)(const K&, const K&)>
+template <typename K, typename T, typename LF = CDefLess<K>, typename I = int>
 class CUtlOrderedMap
 {
 public:
@@ -151,7 +151,7 @@ public:
 		return Insert( key, insert );
 	}
 
-	void Swap( CUtlOrderedMap< K, T, I > &that )
+	void Swap( CUtlOrderedMap< K, T, LF, I > &that )
 	{
 		m_Tree.Swap( that.m_Tree );
 	}
