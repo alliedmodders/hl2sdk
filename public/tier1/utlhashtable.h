@@ -215,7 +215,13 @@ public:
 	// Alternate-type key insertion or lookup, always returns a valid handle
 	handle_t Insert( KeyAlt_t k ) { return DoInsert<KeyAlt_t>( k, m_hash(k) ); }
 	handle_t Insert( KeyAlt_t k, ValueArg_t v, bool *pDidInsert = NULL ) { return DoInsert<KeyAlt_t>( k, v, m_hash(k), pDidInsert ); }
-	handle_t Insert( KeyAlt_t k, ValueArg_t v, unsigned int hash, bool *pDidInsert = NULL ) { Assert( hash == m_hash(k) ); return DoInsert<KeyAlt_t>( k, v, hash, pDidInsert ); }
+	// AMNOTE: Assert here triggers a false crash on CUtlSymbolTableLarge when it uses its altkey when adding a string
+	// not sure how else s2 altkey for it is setup, but what we have as an altkey union falls apart here
+	// when it tries to call hash func on it and UtlSymLargeId_t is actually stored there instead of a string
+	// you get a SIGSEGV crash since there's no way to differentiate.
+	// This affects primarily debug builds and has no effect on runtime logic.
+	// So while no other better solutions available this assert is commented out.
+	handle_t Insert( KeyAlt_t k, ValueArg_t v, unsigned int hash, bool *pDidInsert = NULL ) { /*Assert( hash == m_hash(k) );*/ return DoInsert<KeyAlt_t>( k, v, hash, pDidInsert ); }
 
 	// Key removal, returns false if not found
 	bool Remove( KeyArg_t k ) { return DoRemove<KeyArg_t>( k, m_hash(k) ) >= 0; }
