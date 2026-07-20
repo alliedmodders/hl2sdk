@@ -1,0 +1,69 @@
+name: Compilation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            cc: clang
+            cxx: clang++
+            container_image: ghcr.io/alliedmodders/build-containers/debian11-clang22:latest
+          - os: windows-2022
+            cc: msvc
+      fail-fast: false
+
+    name: ${{ matrix.os }} - ${{ matrix.cc }}
+    runs-on: ${{ matrix.os }}
+    container:
+      image: ${{ matrix.container_image }}
+
+    steps:
+      - uses: actions/checkout@v4
+        name: Repository checkout
+        with:
+          fetch-depth: 0
+          submodules: recursive
+          path: repository
+
+      - uses: actions/checkout@v4
+        name: AMBuild checkout
+        if: startsWith(runner.os, 'Windows')
+        with:
+          repository: alliedmodders/ambuild
+          ref: fe8c99ccd24fa926bf6ac6b9935a5fc03df06a72
+          fetch-depth: 0
+          submodules: recursive
+          path: ambuild
+
+      - name: Setup AMBuild
+        shell: bash
+        run: |
+          python3 -m pip install ./ambuild
+
+      - name: Select clang compiler
+        if: startsWith(runner.os, 'Linux')
+        run: |
+          echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
+          echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
+          ${{ matrix.cc }} --version
+          ${{ matrix.cxx }} --version
+
+      - name: Build
+        shell: bash
+        working-directory: repository
+        run: |
+          mkdir build
+          cd build
+          python3 ../configure.py
+          ambuild
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libs_${{ runner.os }}
+          path: repository/build/lib

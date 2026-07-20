@@ -204,6 +204,12 @@ typedef unsigned int uint;
 #define abstract_class class NO_VTABLE
 #endif
 
+
+// MSVC CRT uses 0x7fff while gcc uses MAX_INT, leading to mismatches between platforms
+// As a result, we pick the least common denominator here.  This should be used anywhere
+// you might typically want to use RAND_MAX
+#define VALVE_RAND_MAX 0x7fff
+
 /*
 FIXME: Enable this when we no longer fear change =)
 
@@ -471,6 +477,42 @@ typedef void * HINSTANCE;
 #pragma warning( disable : 4312 )	// conversion from 'unsigned int' to 'memhandle_t' of greater size
 #endif
 
+
+#ifdef POSIX
+#define _stricmp stricmp
+#define strcmpi stricmp
+#define stricmp strcasecmp
+#define _vsnprintf vsnprintf
+#define _alloca alloca
+#ifdef _snprintf
+#undef _snprintf
+#endif
+#define _snprintf snprintf
+#define GetProcAddress dlsym
+#define _chdir chdir
+#define _strnicmp strnicmp
+#define strnicmp strncasecmp
+#define _getcwd getcwd
+#define _snwprintf swprintf
+#define swprintf_s swprintf
+#define wcsicmp _wcsicmp
+#define _wcsicmp wcscmp
+#define _finite finite
+#define _tempnam tempnam
+#define _unlink unlink
+#define _access access
+#define _mkdir(dir) mkdir( dir, S_IRWXU | S_IRWXG | S_IRWXO )
+#define _wtoi(arg) wcstol(arg, NULL, 10)
+#define _wtoi64(arg) wcstoll(arg, NULL, 10)
+
+#define _O_RDONLY O_RDONLY
+
+#define _stat stat
+#define _open open
+#define _lseek lseek
+#define _read read
+#define _close close
+#endif
 
 //-----------------------------------------------------------------------------
 // fsel

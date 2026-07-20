@@ -518,9 +518,9 @@ inline void Vector::Init( vec_t ix, vec_t iy, vec_t iz )
 
 inline void Vector::Random( vec_t minVal, vec_t maxVal )
 {
-	x = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
-	y = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
-	z = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
+	x = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
+	y = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
+	z = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
 	CHECK_VALID(*this);
 }
 
@@ -1854,9 +1854,9 @@ inline void QAngle::Init( vec_t ix, vec_t iy, vec_t iz )
 
 inline void QAngle::Random( vec_t minVal, vec_t maxVal )
 {
-	x = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
-	y = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
-	z = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
+	x = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
+	y = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
+	z = minVal + ((float)rand() / VALVE_RAND_MAX) * (maxVal - minVal);
 	CHECK_VALID(*this);
 }
 

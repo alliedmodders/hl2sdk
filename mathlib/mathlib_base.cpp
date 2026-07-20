@@ -3027,7 +3027,7 @@ void CalcClosestPointOnLineSegment( const Vector &P, const Vector &vLineA, const
 {
 	Vector vDir;
 	float t = CalcClosestPointToLineT( P, vLineA, vLineB, vDir );
-	t = clamp( t, 0, 1 );
+	t = clamp( t, 0.f, 1.f );
 	if ( outT ) 
 	{
 		*outT = t;
@@ -3099,7 +3099,7 @@ void CalcClosestPointOnLineSegment2D( const Vector2D &P, const Vector2D &vLineA,
 {
 	Vector2D vDir;
 	float t = CalcClosestPointToLineT2D( P, vLineA, vLineB, vDir );
-	t = clamp( t, 0, 1 );
+	t = clamp( t, 0.f, 1.f );
 	if ( outT )
 	{
 		*outT = t;
