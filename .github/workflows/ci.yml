@@ -23,14 +23,14 @@ jobs:
       image: ${{ matrix.container_image }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         name: Repository checkout
         with:
           fetch-depth: 0
           submodules: recursive
           path: repository
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         name: AMBuild checkout
         if: startsWith(runner.os, 'Windows')
         with:
@@ -41,6 +41,7 @@ jobs:
           path: ambuild
 
       - name: Setup AMBuild
+        if: startsWith(runner.os, 'Windows')
         shell: bash
         run: |
           python3 -m pip install ./ambuild
