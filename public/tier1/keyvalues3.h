@@ -324,7 +324,7 @@ struct KV3MetaData_t
 		m_Comments.Purge();
 	}
 
-	typedef CUtlOrderedMap<int, CBufferString, CDefLess<int>, int> CommentsMap_t;
+	typedef CUtlOrderedMap<int, CBufferString> CommentsMap_t;
 
 	int 			m_nLine;
 	int 			m_nColumn;
