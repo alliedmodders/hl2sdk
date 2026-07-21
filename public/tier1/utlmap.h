@@ -78,7 +78,7 @@ public:
 
 	
 	// Num elements
-	unsigned int Count() const								{ return m_Tree.Count(); }
+	IndexType_t  Count() const								{ return m_Tree.Count(); }
 
 	bool IsEmpty() const									{ return Count() == 0; }
 	
@@ -232,6 +232,23 @@ public:
 	IndexType_t  NextInorder( IndexType_t i ) const			{ return m_Tree.NextInorder( i ); }
 	IndexType_t  PrevInorder( IndexType_t i ) const			{ return m_Tree.PrevInorder( i ); }
 	IndexType_t  LastInorder() const						{ return m_Tree.LastInorder(); }		
+
+	// InvalidIndex once the neighbouring element has a different key
+	IndexType_t NextInorderSameKey( IndexType_t i ) const
+	{
+		IndexType_t iNext = NextInorder( i );
+		if ( !IsValidIndex( iNext ) || Key( iNext ) != Key( i ) )
+			return InvalidIndex();
+		return iNext;
+	}
+
+	IndexType_t PrevInorderSameKey( IndexType_t i ) const
+	{
+		IndexType_t iPrev = PrevInorder( i );
+		if ( !IsValidIndex( iPrev ) || Key( iPrev ) != Key( i ) )
+			return InvalidIndex();
+		return iPrev;
+	}
 	
 	// If you change the search key, this can be used to reinsert the 
 	// element into the map.
