@@ -106,7 +106,7 @@ public:
 		T *m_pPanel;
 	};
 
-	typedef CUtlMap< CUtlString, PanelMapElem_s > PanelMap_t;
+	typedef CUtlOrderedMap< CUtlString, PanelMapElem_s > PanelMap_t;
 
 	virtual void CreateVguiWindow( const char *pPanelName )
 	{

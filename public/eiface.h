@@ -391,7 +391,7 @@ public:
 
 	virtual void			PreWorldUpdate( bool simulating ) = 0;
 
-	virtual CUtlMap<int, Entity2Networkable_t>	*GetEntity2Networkables( void ) const = 0;
+	virtual CUtlOrderedMap<int, Entity2Networkable_t, CDefLess<int>, unsigned short>	*GetEntity2Networkables( void ) const = 0;
 
 	virtual void			*GetEntityInfo() = 0;
 

@@ -311,10 +311,10 @@ public:
 	CConcreteEntityList m_EntityList;
 	CUtlString m_sEntSystemName;
 
-	CUtlMap<const char*, CEntityClass*, uint16, CDefFastCaselessStringLess> m_entClassesByCPPClassname;
-	CUtlMap<const char*, CEntityClass*, uint16, CDefFastCaselessStringLess> m_entClassesByClassname;
-	CUtlMap<const char*, CEntityComponentHelper*, uint16, CDefFastCaselessStringLess> m_entityComponentHelpers;
-	CUtlMap<CUtlSymbolLarge, CUtlVector<CEntityHandle>*, uint16, CDefLess<CUtlSymbolLarge>> m_entityNames;
+	CUtlOrderedMap<const char*, CEntityClass*, CDefFastCaselessStringLess, uint16> m_entClassesByCPPClassname;
+	CUtlOrderedMap<const char*, CEntityClass*, CDefFastCaselessStringLess, uint16> m_entClassesByClassname;
+	CUtlOrderedMap<const char*, CEntityComponentHelper*, CDefFastCaselessStringLess, uint16> m_entityComponentHelpers;
+	CUtlOrderedMap<CUtlSymbolLarge, CUtlVector<CEntityHandle>*, CDefLess<CUtlSymbolLarge>, uint16> m_entityNames;
 
 	CEventQueue m_EventQueue;
 	CUtlVectorFixedGrowable<IEntityIONotify*, 2> m_entityIONotifiers;
