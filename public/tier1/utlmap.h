@@ -25,19 +25,23 @@
 
 // This is a useful macro to iterate from start to end in order in a map
 #define FOR_EACH_MAP( mapName, iteratorName ) \
-	for ( int iteratorName = mapName.FirstInorder(); iteratorName != mapName.InvalidIndex(); iteratorName = mapName.NextInorder( iteratorName ) )
+	for ( int iteratorName = (mapName).FirstInorder(); (mapName).IsUtlMap && iteratorName != (mapName).InvalidIndex(); iteratorName = (mapName).NextInorder( iteratorName ) )
 
 // faster iteration, but in an unspecified order
 #define FOR_EACH_MAP_FAST( mapName, iteratorName ) \
-	for ( int iteratorName = 0; iteratorName < mapName.MaxElement(); ++iteratorName ) if ( !mapName.IsValidIndex( iteratorName ) ) continue; else
+	for ( int iteratorName = 0; (mapName).IsUtlMap && iteratorName < (mapName).MaxElement(); ++iteratorName ) if ( !(mapName).IsValidIndex( iteratorName ) ) continue; else
 
 struct base_utlmap_t
 {
 public:
-	// Marker so map types can be identified at compile time
-	enum
+	// This enum exists so that FOR_EACH_MAP and FOR_EACH_MAP_FAST cannot accidentally
+	// be used on a type that is not a CUtlOrderedMapBase. If the code compiles then all is well.
+	// The check for IsUtlMap being true should be free.
+	// Using an enum rather than a static const bool ensures that this trick works even
+	// with optimizations disabled on gcc.
+	enum CompileTimeCheck
 	{
-		IsUtlMap = true
+		IsUtlMap = 1
 	};
 };
 
