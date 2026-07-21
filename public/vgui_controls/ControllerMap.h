@@ -42,7 +42,7 @@ private:
 		CUtlSymbol	text;
 		CUtlSymbol	icon;
 	};
-	CUtlMap< int, button_t > m_buttonMap;
+	CUtlOrderedMap< int, button_t > m_buttonMap;
 };
 
 #endif // CONTROLLERMAP_H

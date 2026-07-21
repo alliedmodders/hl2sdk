@@ -333,7 +333,7 @@ public:
 		);
 
 protected:
-	typedef CUtlMap< CStudioHdr const *, ModelPoseDebugInfo > MapModel;
+	typedef CUtlOrderedMap< CStudioHdr const *, ModelPoseDebugInfo > MapModel;
 	MapModel m_mapModel, m_mapModelOld;
 	int m_nPosPrint;
 
