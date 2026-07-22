@@ -14,6 +14,7 @@
 #include <tier1/utldict.h>
 #include <tier1/utlhash.h>
 #include "Color.h"
+#include "schemasystem/schematypes.h"
 
 #include <memory>
 

@@ -36,7 +36,18 @@ struct EntInput_t;
 struct EntOutput_t;
 struct datamap_t;
 
+typedef enum
+{
+	USE_OFF = 0,
+	USE_ON = 1,
+	USE_SET = 2,
+	USE_TOGGLE = 3
+} USE_TYPE;
+
+// AMNOTE: In action these are member function ptrs instead of raw pointers
 typedef void (*BASEPTR)(CEntityInstance *ent);
+typedef void (*ENTITYFUNCPTR)(CEntityInstance *pOther);
+typedef void (*USEPTR)(CEntityInstance *pActivator, CEntityInstance *pCaller, USE_TYPE useType, float value);
 
 struct EntClassComponentOverride_t
 {

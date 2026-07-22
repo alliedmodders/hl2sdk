@@ -13,17 +13,10 @@
 #include "tier1/utlsymbollarge.h"
 #include "entity2/entitycomponent.h"
 #include "entityhandle.h"
+#include "edict.h"
 
 class CEntityClass;
 class CEntityInstance;
-
-struct ChangeAccessorFieldPathIndex_t
-{
-	ChangeAccessorFieldPathIndex_t() { m_Value = -1; }
-	ChangeAccessorFieldPathIndex_t( int32 value ) { m_Value = value; }
-	
-	int32 m_Value;
-};
 
 typedef uint32 SpawnGroupHandle_t;
 typedef CUtlStringToken WorldGroupId_t;

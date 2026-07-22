@@ -1,6 +1,7 @@
 #include "const.h"
 #include "entity2/entitysystem.h"
 #include "entity2/entityclass.h"
+#include "entity2/entityinstance.h"
 
 CEntityIdentity* CEntitySystem::GetEntityIdentity(CEntityIndex entnum)
 {
