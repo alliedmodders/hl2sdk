@@ -16,6 +16,7 @@
 #include "soundflags.h"
 #include "mathlib/compressed_vector.h"
 #include "appframework/IAppSystem.h"
+#include "stddef.h"
 
 
 #define SOUNDEMITTERSYSTEM_INTERFACE_VERSION	"VSoundEmitter002"
@@ -43,11 +44,16 @@ struct CSoundParameters
 		pitchhigh	= PITCH_NORM;
 
 		soundlevel	= SNDLVL_NORM; // 75dB
-		soundname[ 0 ] = 0;
 		play_to_owner_only = false;
-		count		= 0;
+		count = 0;
+		soundname[ 0 ] = 0;
 
 		delay_msec	= 0;
+
+		//for some info on these, read https://developer.valvesoftware.com/wiki/Music_track
+		m_fBPM = 0.0f;
+		m_fSignature = 0.0f;
+		m_fFadeTime = 0.0f;
 	}
 
 	int				channel;
@@ -60,7 +66,13 @@ struct CSoundParameters
 	int				count;
 	char 			soundname[ 128 ];
 	int				delay_msec;
+	
+	float			m_fBPM;              //0xA4
+	float			m_fSignature;        //0xA8
+	float			m_fFadeTime;         //0xAC
 };
+
+COMPILE_TIME_ASSERT(sizeof(CSoundParameters) == 0xB0); //this is the size we must have
 
 // A bit of a hack, but these are just utility function which are implemented in the SouneParametersInternal.cpp file which all users of this lib also compile
 const char *SoundLevelToString( soundlevel_t level );
