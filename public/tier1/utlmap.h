@@ -31,8 +31,8 @@
 #define FOR_EACH_MAP_FAST( mapName, iteratorName ) \
 	for ( int iteratorName = 0; iteratorName < mapName.MaxElement(); ++iteratorName ) if ( !mapName.IsValidIndex( iteratorName ) ) continue; else
 
-template <typename K, typename T, typename I = short unsigned int, typename LF = bool (*)(const K&, const K&)>
-class CUtlMap
+template <typename K, typename T, typename LF = CDefLess<K>, typename I = int>
+class CUtlOrderedMap
 {
 public:
 	typedef K KeyType_t;
@@ -47,12 +47,12 @@ public:
 	// Left at growSize = 0, the memory will first allocate 1 element and double in size
 	// at each increment.
 	// LessFunc_t is required, but may be set after the constructor using SetLessFunc() below
-	CUtlMap( int growSize = 0, int initSize = 0, LessFunc_t lessfunc = 0 )
+	CUtlOrderedMap( int growSize = 0, int initSize = 0, LessFunc_t lessfunc = 0 )
 	 : m_Tree( growSize, initSize, CKeyLess( lessfunc ) )
 	{
 	}
-	
-	CUtlMap( LessFunc_t lessfunc )
+
+	CUtlOrderedMap( LessFunc_t lessfunc )
 	 : m_Tree( CKeyLess( lessfunc ) )
 	{
 	}
@@ -151,7 +151,7 @@ public:
 		return Insert( key, insert );
 	}
 
-	void Swap( CUtlMap< K, T, I > &that )
+	void Swap( CUtlOrderedMap< K, T, LF, I > &that )
 	{
 		m_Tree.Swap( that.m_Tree );
 	}
@@ -198,12 +198,5 @@ public:
 protected:
 	CTree 	   m_Tree;
 };
-
-//-----------------------------------------------------------------------------
-
-// AMNOTE: Currently a stub over CUtlMap, needs a complete implementation
-template <typename K, typename T, typename I = int, typename LF = CDefLess<K>>
-struct CUtlOrderedMap : public CUtlMap<K, T, I, LF>
-{};
 
 #endif // UTLMAP_H

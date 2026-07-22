@@ -466,12 +466,12 @@ struct MemAllocFileLine_t
 };
 
 #define MEMALLOC_DEFINE_EXTERNAL_TRACKING( tag ) \
-	static CUtlMap<void *, MemAllocFileLine_t, int> s_##tag##Allocs( DefLessFunc( void *) ); \
-	CUtlMap<void *, MemAllocFileLine_t, int> * g_p##tag##Allocs = &s_##tag##Allocs; \
+	static CUtlOrderedMap<void *, MemAllocFileLine_t> s_##tag##Allocs; \
+	CUtlOrderedMap<void *, MemAllocFileLine_t> * g_p##tag##Allocs = &s_##tag##Allocs; \
 	const char * g_psz##tag##Alloc = strcpy( (char *)MemAlloc_Alloc( strlen( #tag "Alloc" ) + 1, "intentional leak", 0 ), #tag "Alloc" );
 
 #define MEMALLOC_DECLARE_EXTERNAL_TRACKING( tag ) \
-	extern CUtlMap<void *, MemAllocFileLine_t, int> * g_p##tag##Allocs; \
+	extern CUtlOrderedMap<void *, MemAllocFileLine_t> * g_p##tag##Allocs; \
 	extern const char * g_psz##tag##Alloc;
 
 #define MemAlloc_RegisterExternalAllocation( tag, p, size ) \
@@ -495,7 +495,7 @@ struct MemAllocFileLine_t
 	else \
 	{ \
 		MemAllocFileLine_t fileLine = { g_psz##tag##Alloc, 0 }; \
-		CUtlMap<void *, MemAllocFileLine_t, int>::IndexType_t iRecordedFileLine = g_p##tag##Allocs->Find( p ); \
+		CUtlOrderedMap<void *, MemAllocFileLine_t>::IndexType_t iRecordedFileLine = g_p##tag##Allocs->Find( p ); \
 		if ( iRecordedFileLine !=  g_p##tag##Allocs->InvalidIndex() ) \
 		{ \
 			fileLine = (*g_p##tag##Allocs)[iRecordedFileLine]; \

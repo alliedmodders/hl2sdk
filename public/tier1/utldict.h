@@ -106,7 +106,7 @@ public:
 	typedef I IndexType_t;
 
 protected:
-	typedef CUtlMap<const char *, T, I, typename CDictCompareTypeDeducer<COMPARE_TYPE>::Type_t> DictElementMap_t;
+	typedef CUtlOrderedMap<const char *, T, typename CDictCompareTypeDeducer<COMPARE_TYPE>::Type_t, I> DictElementMap_t;
 	DictElementMap_t m_Elements;
 };
 

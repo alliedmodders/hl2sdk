@@ -2070,7 +2070,7 @@ struct StudioHdrToActivityMapEntry_t
 	CStudioHdr::CActivityToSequenceMapping *pMap;
 };
 
-CUtlMap<const studiohdr_t *, StudioHdrToActivityMapEntry_t> g_StudioHdrToActivityMaps( DefLessFunc( const studiohdr_t * ) );
+CUtlOrderedMap<const studiohdr_t *, StudioHdrToActivityMapEntry_t> g_StudioHdrToActivityMaps;
 CThreadFastMutex g_StudioHdrToActivityMapsLock;
 
 CStudioHdr::CActivityToSequenceMapping *CStudioHdr::CActivityToSequenceMapping::FindMapping( const CStudioHdr *pHdr )

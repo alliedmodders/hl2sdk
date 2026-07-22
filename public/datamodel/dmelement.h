@@ -307,7 +307,7 @@ protected:
 	template< class T >	static void DeleteAttributeVarElementArray( T &array );
 
 private:
-	typedef CUtlMap< DmElementHandle_t, DmElementHandle_t, int > CRefMap;
+	typedef CUtlOrderedMap< DmElementHandle_t, DmElementHandle_t > CRefMap;
 
 	// Bogus constructor
 	CDmElement();
@@ -1043,7 +1043,7 @@ void CopyElements( const CUtlVector< T* > &from, CUtlVector< T* > &to, Traversal
 {
 	CDisableUndoScopeGuard sg;
 
-	CUtlMap< DmElementHandle_t, DmElementHandle_t, int > refmap( DefLessFunc( DmElementHandle_t ) );
+	CUtlOrderedMap< DmElementHandle_t, DmElementHandle_t > refmap;
 
 	int c = from.Count();
 	for ( int i = 0; i < c; ++i )

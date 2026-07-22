@@ -51,7 +51,7 @@ struct CEventIDManager_Default : CEventIDManager_SchemaBinding
 template <typename T>
 struct CEventDispatcher_Identified : CEventDispatcher_Base
 {
-	CUtlMap< const ISchemaBinding*, CCopyableUtlVector<CEventDispatcher_Base::EventListenerInfo_t>, unsigned int, bool (*)(const ISchemaBinding* const&, const ISchemaBinding* const&)> m_EventListenerMap;
+	CUtlOrderedMap< const ISchemaBinding*, CCopyableUtlVector<CEventDispatcher_Base::EventListenerInfo_t>, CDefLess<const ISchemaBinding*>, unsigned int> m_EventListenerMap;
 };
 
 template <typename T>
