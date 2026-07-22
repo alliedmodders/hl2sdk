@@ -16,7 +16,8 @@
 #include "tier1/bitbuf.h"
 #include "tier1/netadr.h"
 #include "tier1/utldelegate.h"
-#include <eiface.h>
+#include "convar.h"
+#include "network_connection.pb.h"
 
 class	IDemoRecorderBase;
 class	IInstantReplayIntercept;

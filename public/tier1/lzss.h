@@ -15,6 +15,8 @@
 #define LZSS_ID				(('L'<<24)|('Z'<<16)|('S'<<8)|('S'))
 #endif
 
+#include "platform.h"
+
 // bind the buffer for correct identification
 struct lzss_header_t
 {
@@ -29,13 +31,13 @@ class CUtlBuffer;
 class CLZSS
 {
 public:
-	unsigned char*	Compress( unsigned char *pInput, int inputlen, unsigned int *pOutputSize );
-	unsigned char*	CompressNoAlloc( unsigned char *pInput, int inputlen, unsigned char *pOutput, unsigned int *pOutputSize );
-	unsigned int	Uncompress( unsigned char *pInput, unsigned char *pOutput );
+	DLL_CLASS_IMPORT unsigned char*	Compress( unsigned char *pInput, int inputlen, bool );
+	DLL_CLASS_IMPORT unsigned char*	CompressNoAlloc( unsigned char *pInput, int inputlen, unsigned char *pOutput, bool );
+	DLL_CLASS_IMPORT unsigned int	Uncompress( unsigned char *pInput, unsigned char *pOutput );
 	//unsigned int	Uncompress( unsigned char *pInput, CUtlBuffer &buf );
-	unsigned int	SafeUncompress( unsigned char *pInput, unsigned char *pOutput, unsigned int unBufSize );
-	bool			IsCompressed( unsigned char *pInput );
-	unsigned int	GetActualSize( unsigned char *pInput );
+	DLL_CLASS_IMPORT unsigned int	SafeUncompress( unsigned char *pInput, unsigned char *pOutput, unsigned int unBufSize );
+	DLL_CLASS_IMPORT bool			IsCompressed( unsigned char *pInput );
+	DLL_CLASS_IMPORT unsigned int	GetActualSize( unsigned char *pInput );
 
 	// windowsize must be a power of two.
 	FORCEINLINE CLZSS( int nWindowSize = DEFAULT_LZSS_WINDOW_SIZE );
