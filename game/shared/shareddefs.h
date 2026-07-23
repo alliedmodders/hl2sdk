@@ -11,9 +11,11 @@
 #pragma once
 #endif
 
-#include "bittools.h"
+#include "platform.h"
+#include "vector.h"
 
-#define TICK_INTERVAL			(gpGlobals->interval_per_tick)
+#include "const.h"
+#include "in_buttons.h"
 
 
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
