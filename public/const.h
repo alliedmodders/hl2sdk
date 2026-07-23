@@ -13,6 +13,7 @@
 #endif
 
 #include "platform.h"
+#include "bitvec.h"
 
 // the command line param that tells the engine to use steam
 #define STEAM_PARM					"-steam"
