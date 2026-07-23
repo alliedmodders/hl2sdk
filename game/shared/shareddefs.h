@@ -11,7 +11,11 @@
 #pragma once
 #endif
 
+#include "platform.h"
+#include "vector.h"
+
 #include "const.h"
+#include "in_buttons.h"
 
 #define TICK_INTERVAL			(1 / 64)
 
