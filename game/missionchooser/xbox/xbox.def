@@ -1,3 +1,0 @@
-LIBRARY	missionchooser_360.dll
-EXPORTS
-	CreateInterface		@1

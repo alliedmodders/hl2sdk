@@ -16,9 +16,8 @@
 #include "tier1/convar.h"
 #include "icvar.h"
 #include "edict.h"
+#include "globalvars.h"
 #include "mathlib/vplane.h"
-#include "iserverentity.h"
-#include "engine/ivmodelinfo.h"
 #include "soundflags.h"
 #include "bitvec.h"
 #include "tier1/bitbuf.h"
@@ -29,6 +28,9 @@
 #include "playerslot.h"
 #include <iloopmode.h>
 #include "network_connection.pb.h"
+#include "entityidentity.h"
+#include "checktransmitinfo.h"
+#include "networksystem/inetworksystem.h"
 
 //-----------------------------------------------------------------------------
 // forward declarations

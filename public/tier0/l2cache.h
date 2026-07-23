@@ -44,4 +44,3 @@ private:
 };
 
 #endif   // CL2CACHE_H
-

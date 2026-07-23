@@ -11,67 +11,14 @@
 #pragma once
 #endif
 
-#include "mathlib/vector.h"
-#include "cmodel.h"
 #include "const.h"
-#include "iserverentity.h"
-#include "globalvars_base.h"
-#include "engine/ICollideable.h"
-#include "iservernetworkable.h"
-#include "bitvec.h"
-#include "tier1/convar.h"
+#include "utlhashtable.h"
+#include "utlvector.h"
 
 struct edict_t;
 
-
-//-----------------------------------------------------------------------------
-// Purpose: Defines the ways that a map can be loaded.
-//-----------------------------------------------------------------------------
-enum MapLoadType_t
-{
-	MapLoad_NewGame = 0,
-	MapLoad_LoadGame,
-	MapLoad_Transition,
-	MapLoad_Background,
-};
-
-
-//-----------------------------------------------------------------------------
-// Purpose: Global variables shared between the engine and the game .dll
-//-----------------------------------------------------------------------------
-class CGlobalVars : public CGlobalVarsBase
-{	
-public:
-
-	CGlobalVars();
-
-public:
-	// Current map
-	string_t		mapname;
-	string_t		startspot;
-	MapLoadType_t	eLoadType;		// How the current map was loaded
-	bool mp_teamplay;
-
-	// current maxentities
-	int				maxEntities;
-
-	int				serverCount;
-};
-
-inline CGlobalVars::CGlobalVars() : 
-	CGlobalVarsBase()
-{
-	serverCount = 0;
-}
-
-
-class CPlayerState;
-class IServerNetworkable;
-class IServerEntity;
-
-
 #define FL_EDICT_CHANGED	(1<<0)	// Game DLL sets this when the entity state changes
-									// Mutually exclusive with FL_EDICT_PARTIAL_CHANGE.
+// Mutually exclusive with FL_EDICT_PARTIAL_CHANGE.
 
 // This is used internally to edict_t to remember that it's carrying a 
 // "full change list" - all its properties might have changed their value.
@@ -88,13 +35,57 @@ class IServerEntity;
 #define MAX_CHANGE_OFFSETS	19
 #define MAX_EDICT_CHANGE_INFOS	100
 
+struct OffsetIgnore_t
+{
+	typedef uint16 OffsetIgnoreValueType_t;
+
+	CUtlHashtable<uint16, empty_t> m_OffsetHashtable;
+	OffsetIgnoreValueType_t m_unMaxOffset;
+};
+
+struct ChangeAccessorFieldPathIndex_t
+{
+	ChangeAccessorFieldPathIndex_t() { m_Value = -1; }
+	ChangeAccessorFieldPathIndex_t( int32 value ) { m_Value = value; }
+
+	int32 m_Value;
+};
+
+struct ChangeAccessorFieldPathIndexInfo_t
+{
+	struct IgnoreCache_t
+	{
+		uint16 m_Offsets[16];
+		ChangeAccessorFieldPathIndex_t m_FieldPaths[16];
+		int m_nCount;
+		int m_nFirstElement;
+	};
+
+	typedef CUtlLeanVectorFixedGrowable<uint32> PackedFieldPathVec_t;
+
+	PackedFieldPathVec_t m_ChangeAccessorFieldPathIdList;
+	const OffsetIgnore_t *m_pBaseOffsetToIgnore;
+	CUtlVectorFixedGrowable<const OffsetIgnore_t *, 4> m_OffsetsToIgnoreForPaths;
+	IgnoreCache_t m_ShouldIgnore;
+	IgnoreCache_t m_ShouldNotIgnore;
+};
+
+struct VarChangeInfo_t
+{
+	ChangeAccessorFieldPathIndex_t m_nRootPathIndex;
+	int16 m_nArrayIndex;
+	uint32 m_nFieldOffset : 31;
+	uint32 m_bResolved : 1;
+};
+
 
 class CEdictChangeInfo
 {
 public:
+	ChangeAccessorFieldPathIndexInfo_t *m_pChangeAccessorFieldPathInfo;
 	// Edicts remember the offsets of properties that change 
-	unsigned short m_ChangeOffsets[MAX_CHANGE_OFFSETS];
-	unsigned short m_nChangeOffsets;
+	VarChangeInfo_t m_ChangeOffsets[MAX_CHANGE_OFFSETS];
+	uint32 m_nChangeOffsets;
 };
 
 // Shared between engine and game DLL.
@@ -105,44 +96,14 @@ public:
 	{
 		m_iSerialNumber = 1;
 	}
-	
+
 	// Matched against edict_t::m_iChangeInfoSerialNumber to determine if its
 	// change info is valid.
 	unsigned short m_iSerialNumber;
-	
-#ifdef NETWORK_VARS_ENABLED
+
 	CEdictChangeInfo m_ChangeInfos[MAX_EDICT_CHANGE_INFOS];
 	unsigned short m_nChangeInfos;	// How many are in use this frame.
-#endif
 };
 extern CSharedEdictChangeInfo *g_pSharedChangeInfo;
-
-class IChangeInfoAccessor
-{
-public:
-	inline void SetChangeInfo( unsigned short info )
-	{
-		m_iChangeInfo = info;
-	}
-
-	inline void SetChangeInfoSerialNumber( unsigned short sn )
-	{
-		m_iChangeInfoSerialNumber = sn;
-	}
-
-	inline unsigned short	 GetChangeInfo() const
-	{
-		return m_iChangeInfo;
-	}
-
-	inline unsigned short	 GetChangeInfoSerialNumber() const
-	{
-		return m_iChangeInfoSerialNumber;
-	}
-
-private:
-	unsigned short m_iChangeInfo;
-	unsigned short m_iChangeInfoSerialNumber;
-};
 
 #endif // EDICT_H
