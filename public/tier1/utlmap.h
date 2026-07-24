@@ -116,6 +116,30 @@ public:
 		return m_Tree.Insert( node );
 	}
 
+	// Inserts allowing duplicate keys
+	IndexType_t  InsertWithDupes( const KeyType_t &key, const ElemType_t &insert )
+	{
+		Node_t node;
+		node.key = key;
+		node.elem = insert;
+		return m_Tree.Insert( node, k_eInsertAllowDupes );
+	}
+
+	IndexType_t  InsertWithDupes( const KeyType_t &key )
+	{
+		Node_t node;
+		node.key = key;
+		return m_Tree.Insert( node, k_eInsertAllowDupes );
+	}
+
+	// Insert with the given behavior, returns a pointer to the element
+	ElemType_t  *InsertGetPtr( const KeyType_t &key, ERBTreeInsertBehavior eInsertBehavior )
+	{
+		Node_t node;
+		node.key = key;
+		return &Element( m_Tree.Insert( node, eInsertBehavior ) );
+	}
+
 	// Returns the existing index if the key is already present
 	IndexType_t InsertIfNotFound( const KeyType_t &key, const ElemType_t &insert )
 	{
@@ -162,6 +186,30 @@ public:
 		Node_t dummyNode;
 		dummyNode.key = key;
 		return m_Tree.Find( dummyNode );
+	}
+
+	// Finds the key, or the nearest lesser/greater element per eFindCondition
+	IndexType_t  Find( const KeyType_t &key, FindCondition_t eFindCondition ) const
+	{
+		Node_t dummyNode;
+		dummyNode.key = key;
+		return m_Tree.Find( dummyNode, eFindCondition );
+	}
+
+	// Finds the first element (inorder) with this key when duplicates exist
+	IndexType_t  FindFirst( const KeyType_t &key ) const
+	{
+		Node_t dummyNode;
+		dummyNode.key = key;
+		return m_Tree.FindFirst( dummyNode );
+	}
+
+	// Finds the closest element to the key per the comparison criteria
+	IndexType_t  FindClosest( const KeyType_t &key, CompareOperands_t eFindCriteria ) const
+	{
+		Node_t dummyNode;
+		dummyNode.key = key;
+		return m_Tree.FindClosest( dummyNode, eFindCriteria );
 	}
 
 	const ElemType_t &FindElement( const KeyType_t &key ) const
