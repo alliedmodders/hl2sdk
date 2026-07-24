@@ -169,6 +169,22 @@ enum CompareOperands_t
 	k_ELessThanOrEqualTo = k_ELessThan | k_EEqual,
 };
 
+// For use with Find.
+enum FindCondition_t
+{
+	EXACT_MATCH = 0,
+	MATCH_OR_LESS = 1,
+	MATCH_OR_GREATER = 2,
+};
+
+// For use with Insert.
+enum ERBTreeInsertBehavior
+{
+	k_eInsertAssertAboutDupes = 0,
+	k_eInsertAllowDupes = 1,
+	k_eInsertUpdateDupes = 2,
+};
+
 //-----------------------------------------------------------------------------
 // A red-black binary search tree
 //-----------------------------------------------------------------------------
@@ -269,11 +285,18 @@ public:
 	void Insert( const T *pArray, int nItems );
 	I  InsertIfNotFound( T const &insert );
 
+	// Insert with the given duplicate-key behavior
+	I  Insert( T const &insert, ERBTreeInsertBehavior eInsertBehavior );
+	void Insert( const T *pArray, int nItems, ERBTreeInsertBehavior eInsertBehavior );
+
 	// pInserted reports whether a new element was inserted
 	I  FindOrInsert( T const &insert, bool *pInserted = NULL );
 
 	// Find method
 	I  Find( T const &search ) const;
+
+	// Finds the key, or the nearest lesser/greater element per eFindCondition
+	I  Find( T const &search, FindCondition_t eFindCondition ) const;
 
 	// Finds the first element (inorder) with this key when duplicates exist
 	I  FindFirst( T const &search ) const;
@@ -1590,6 +1613,51 @@ void CUtlRBTree<T, I, L, M>::Insert( const T *pArray, int nItems )
 }
 
 
+template < class T, class I, typename L, class M >
+I CUtlRBTree<T, I, L, M>::Insert( T const &insert, ERBTreeInsertBehavior eInsertBehavior )
+{
+	I parent = InvalidIndex();
+	bool leftchild = false;
+
+	I current = m_Root;
+	while ( current != InvalidIndex() )
+	{
+		parent = current;
+		if ( m_LessFunc( insert, Element( current ) ) )
+		{
+			leftchild = true;
+			current = LeftChild( current );
+		}
+		else
+		{
+			if ( eInsertBehavior == k_eInsertUpdateDupes && !m_LessFunc( Element( current ), insert ) )
+			{
+				// Key already present, overwrite the existing element
+				Element( current ) = insert;
+				return current;
+			}
+			leftchild = false;
+			current = RightChild( current );
+		}
+	}
+
+	// The non-update behaviors insert allowing dupes. AssertAboutDupes only asserts in debug.
+	I newNode = InsertAt( parent, leftchild, false );
+	CopyConstruct( &Element( newNode ), insert );
+	return newNode;
+}
+
+
+template < class T, class I, typename L, class M >
+void CUtlRBTree<T, I, L, M>::Insert( const T *pArray, int nItems, ERBTreeInsertBehavior eInsertBehavior )
+{
+	while ( nItems-- )
+	{
+		Insert( *pArray++, eInsertBehavior );
+	}
+}
+
+
 template < class T, class I, typename L, class M > 
 I CUtlRBTree<T, I, L, M>::InsertIfNotFound( T const &insert )
 {
@@ -1661,6 +1729,57 @@ I CUtlRBTree<T, I, L, M>::Find( T const &search ) const
 			break;
 	}
 	return current;
+}
+
+
+//-----------------------------------------------------------------------------
+// finds the node matching or nearest the key, per eFindCondition
+//-----------------------------------------------------------------------------
+template < class T, class I, typename L, class M >
+I CUtlRBTree<T, I, L, M>::Find( T const &search, FindCondition_t eFindCondition ) const
+{
+	Assert( m_LessFunc );
+
+	I current = m_Root;
+	bool leftchild = false;
+	while ( current != InvalidIndex() )
+	{
+		if ( m_LessFunc( search, Element( current ) ) )
+		{
+			leftchild = true;
+			I child = LeftChild( current );
+			if ( child == InvalidIndex() )
+				break;
+			current = child;
+		}
+		else if ( m_LessFunc( Element( current ), search ) )
+		{
+			leftchild = false;
+			I child = RightChild( current );
+			if ( child == InvalidIndex() )
+				break;
+			current = child;
+		}
+		else
+		{
+			return current; // exact match
+		}
+	}
+
+	if ( current == InvalidIndex() )
+		return InvalidIndex();
+
+	// No exact match. current is the closest node, leftchild gives its side.
+	switch ( eFindCondition )
+	{
+	case MATCH_OR_LESS:
+		return leftchild ? PrevInorder( current ) : current;
+	case MATCH_OR_GREATER:
+		return leftchild ? current : NextInorder( current );
+	case EXACT_MATCH:
+	default:
+		return InvalidIndex();
+	}
 }
 
 
