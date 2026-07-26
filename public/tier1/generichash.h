@@ -66,7 +66,7 @@ inline uint32 HashStringFastCaselessConventional( const char *pszKey )
 	return hash;
 }
 
-inline uint32 HashStringConventional( const char *pszKey )
+constexpr uint32 HashStringConventional( const char *pszKey )
 {
 	uint32 hash = 0xAAAAAAAA; // Alternating 1's and 0's to maximize the effect of the later multiply and add
 
@@ -78,7 +78,7 @@ inline uint32 HashStringConventional( const char *pszKey )
 	return hash;
 }
 
-inline uint32 HashInt( const int n )
+constexpr uint32 HashInt( const int n )
 {
 	uint32 even = 0, odd = 0;
 	even  = GenericHash::detail::kRandVals[n & 0xff];
@@ -220,7 +220,7 @@ inline uint32 HashBlock( const void *pKey, uint32 size )
 }
 
 // hash a uint32 into a uint32
-inline uint32 HashIntAlternate( uint32 n)
+constexpr uint32 HashIntAlternate( uint32 n)
 {
 	n = ( n + 0x7ed55d16 ) + ( n << 12 );
 	n = ( n ^ 0xc761c23c ) ^ ( n >> 19 );
@@ -231,7 +231,7 @@ inline uint32 HashIntAlternate( uint32 n)
 	return n;
 }
 
-inline uint32 HashIntConventional( const int n ) // faster but less effective
+constexpr uint32 HashIntConventional( const int n ) // faster but less effective
 {
 	// first byte
 	uint32 hash = 0xAAAAAAAA + (n & 0xFF);
@@ -273,12 +273,12 @@ inline uint32 HashItem( const T &item )
 		return HashBlock( &item, sizeof(item) );
 }
 
-template <> inline uint32 HashItem<int>(const int &key )
+template <> constexpr uint32 HashItem<int>(const int &key )
 {
 	return HashInt( key );
 }
 
-template <> inline uint32 HashItem<uint32>(const uint32 &key )
+template <> constexpr uint32 HashItem<uint32>(const uint32 &key )
 {
 	return HashInt( (int)key );
 }
@@ -295,7 +295,7 @@ template <> inline uint32 HashItem<uint32>(const uint32 &key )
 // Very picky about its internal code so edit with care and little of changes could break constant folding.
 // In complex cases might still result in a bytecode being emitted instead of direct hash.
 template <bool CASELESS = false, size_t N>
-inline uint32 MurmurHash2( const char (&key)[N], uint32 seed )
+constexpr uint32 MurmurHash2( const char (&key)[N], uint32 seed )
 {
 	// 'm' and 'r' are mixing constants generated offline.
 	// They're not really 'magic', they just happen to work well.
@@ -456,12 +456,12 @@ inline uint32 MurmurHash2( const void *key, int len, uint32 seed )
 }
 
 template <size_t N>
-inline uint32 MurmurHash2LowerCase( char const (&key)[N], uint32 seed )
+constexpr uint32 MurmurHash2LowerCase( const char (&key)[N], uint32 seed )
 {
 	return MurmurHash2<true>( key, seed );
 }
 
-inline uint32 MurmurHash2LowerCase( char const *key, int len, uint32 seed )
+inline uint32 MurmurHash2LowerCase( const char *key, int len, uint32 seed )
 {
 	return MurmurHash2<true>( key, len, seed );
 }
