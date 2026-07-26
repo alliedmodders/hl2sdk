@@ -189,8 +189,18 @@ inline float FractionUnDucked( int msecs )
 // Start your team numbers after this
 #define LAST_SHARED_TEAM		TEAM_SPECTATOR
 
-// The first team that's game specific (i.e. not unassigned / spectator)
-#define FIRST_GAME_TEAM			(LAST_SHARED_TEAM+1)
+	// Start your team numbers after this
+	LAST_SHARED_TEAM	= TEAM_SPECTATOR,
+
+	// CS Specific teams
+	CS_TEAM_NONE		= TEAM_UNASSIGNED,
+	CS_TEAM_SPECTATOR	= TEAM_SPECTATOR,
+	CS_TEAM_T			= 2,
+	CS_TEAM_CT			= 3,
+
+	// The first team that's game specific (i.e. not unassigned / spectator)
+	FIRST_GAME_TEAM = LAST_SHARED_TEAM + 1
+};
 
 #define MAX_TEAMS				32	// Max number of teams in a game
 #define MAX_TEAM_NAME_LENGTH	32	// Max length of a team's name
@@ -262,7 +272,7 @@ enum
 #define TRACER_DONT_USE_ATTACHMENT	-1
 
 // Entity Dissolve types
-enum
+enum EntityDissolveType_t
 {
 	ENTITY_DISSOLVE_NORMAL = 0,
 	ENTITY_DISSOLVE_ELECTRICAL,
