@@ -1641,7 +1641,7 @@ I CUtlRBTree<T, I, L, M>::Insert( T const &insert, ERBTreeInsertBehavior eInsert
 		}
 	}
 
-	// The non-update behaviors insert allowing dupes. AssertAboutDupes only asserts in debug.
+	// Both non-update behaviors insert the element, allowing duplicates.
 	I newNode = InsertAt( parent, leftchild, false );
 	CopyConstruct( &Element( newNode ), insert );
 	return newNode;
