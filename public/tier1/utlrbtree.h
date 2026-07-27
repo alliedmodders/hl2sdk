@@ -1616,6 +1616,8 @@ void CUtlRBTree<T, I, L, M>::Insert( const T *pArray, int nItems )
 template < class T, class I, typename L, class M >
 I CUtlRBTree<T, I, L, M>::Insert( T const &insert, ERBTreeInsertBehavior eInsertBehavior )
 {
+	Assert( m_LessFunc );
+
 	I parent = InvalidIndex();
 	bool leftchild = false;
 
