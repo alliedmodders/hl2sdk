@@ -9,6 +9,7 @@
 #ifndef UTLRBTREE_H
 #define UTLRBTREE_H
 
+#include "dbg.h"
 #include "tier1/strtools.h"
 #include "tier1/utlleanvector.h"
 #include "tier1/utlfixedmemory.h"
@@ -281,13 +282,9 @@ public:
 	I  NewNode( bool bConstructElement );
 
 	// Insert method (inserts in order)
-	I  Insert( T const &insert );
-	void Insert( const T *pArray, int nItems );
+	I  Insert( T const &insert, ERBTreeInsertBehavior eInsertBehavior = k_eInsertAssertAboutDupes );
+	void Insert( const T *pArray, int nItems, ERBTreeInsertBehavior eInsertBehavior = k_eInsertAssertAboutDupes );
 	I  InsertIfNotFound( T const &insert );
-
-	// Insert with the given duplicate-key behavior
-	I  Insert( T const &insert, ERBTreeInsertBehavior eInsertBehavior );
-	void Insert( const T *pArray, int nItems, ERBTreeInsertBehavior eInsertBehavior );
 
 	// pInserted reports whether a new element was inserted
 	I  FindOrInsert( T const &insert, bool *pInserted = NULL );
@@ -1591,29 +1588,6 @@ void CUtlRBTree<T, I, L, M>::FindInsertionPosition( T const &insert, I &parent, 
 }
 
 template < class T, class I, typename L, class M > 
-I CUtlRBTree<T, I, L, M>::Insert( T const &insert )
-{
-	// use copy constructor to copy it in
-	I parent;
-	bool leftchild;
-	FindInsertionPosition( insert, parent, leftchild );
-	I newNode = InsertAt( parent, leftchild, false );
-	CopyConstruct( &Element( newNode ), insert );
-	return newNode;
-}
-
-
-template < class T, class I, typename L, class M > 
-void CUtlRBTree<T, I, L, M>::Insert( const T *pArray, int nItems )
-{
-	while ( nItems-- )
-	{
-		Insert( *pArray++ );
-	}
-}
-
-
-template < class T, class I, typename L, class M >
 I CUtlRBTree<T, I, L, M>::Insert( T const &insert, ERBTreeInsertBehavior eInsertBehavior )
 {
 	Assert( m_LessFunc );
@@ -1622,22 +1596,38 @@ I CUtlRBTree<T, I, L, M>::Insert( T const &insert, ERBTreeInsertBehavior eInsert
 	bool leftchild = false;
 
 	I current = m_Root;
-	while ( current != InvalidIndex() )
+	while(current != InvalidIndex())
 	{
 		parent = current;
-		if ( m_LessFunc( insert, Element( current ) ) )
+		if(m_LessFunc( insert, Element( current ) ))
 		{
 			leftchild = true;
 			current = LeftChild( current );
 		}
 		else
 		{
-			if ( eInsertBehavior == k_eInsertUpdateDupes && !m_LessFunc( Element( current ), insert ) )
+			// See if we've got a duplicate entry
+			if(!m_LessFunc( Element( current ), insert ))
 			{
-				// Key already present, overwrite the existing element
-				Element( current ) = insert;
-				return current;
+				switch(eInsertBehavior)
+				{
+					// Don't do anything on dupes if we allow them
+					case k_eInsertAllowDupes: break;
+
+					case k_eInsertUpdateDupes:
+					{
+						// Key already present, overwrite the existing element
+						Element( current ) = insert;
+						return current;
+					}
+
+					case k_eInsertAssertAboutDupes:
+					{
+						AssertMsg( false, "Allowing insert of dupe without explicit dupe insertion. Fix code callpoint to allow dupes." );
+					}
+				}
 			}
+
 			leftchild = false;
 			current = RightChild( current );
 		}
