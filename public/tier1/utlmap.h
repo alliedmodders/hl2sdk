@@ -62,9 +62,8 @@ public:
 	// at each increment.
 	// LessFunc_t is required, but may be set after the constructor using SetLessFunc() below
 	CUtlOrderedMapBase( int growSize, int initSize, const LessFunc_t &lessfunc )
-	 : m_Tree( growSize, initSize, CKeyLess( lessfunc ) )
-	{
-	}
+		: m_Tree( growSize, initSize, CKeyLess( lessfunc ) )
+	{}
 	
 	void EnsureCapacity( int num )							{ m_Tree.EnsureCapacity( num ); }
 
@@ -78,18 +77,18 @@ public:
 
 	
 	// Num elements
-	IndexType_t  Count() const								{ return m_Tree.Count(); }
+	IndexType_t Count() const								{ return m_Tree.Count(); }
 
 	bool IsEmpty() const									{ return Count() == 0; }
 	
 	// Max "size" of the vector
-	IndexType_t  MaxElement() const							{ return m_Tree.MaxElement(); }
+	IndexType_t MaxElement() const							{ return m_Tree.MaxElement(); }
 	
 	// Checks if a node is valid and in the map
-	bool  IsValidIndex( IndexType_t i ) const				{ return m_Tree.IsValidIndex( i ); }
+	bool IsValidIndex( IndexType_t i ) const				{ return m_Tree.IsValidIndex( i ); }
 	
 	// Checks if the map as a whole is valid
-	bool  IsValid() const									{ return m_Tree.IsValid(); }
+	bool IsValid() const									{ return m_Tree.IsValid(); }
 	
 	// Invalid index
 	static IndexType_t InvalidIndex()						{ return CTree::InvalidIndex(); }
@@ -101,7 +100,7 @@ public:
 	}
 	
 	// Insert method (inserts in order)
-	IndexType_t  Insert( const KeyType_t &key, const ElemType_t &insert )
+	IndexType_t Insert( const KeyType_t &key, const ElemType_t &insert )
 	{
 		Node_t node;
 		node.key = key;
@@ -109,24 +108,39 @@ public:
 		return m_Tree.Insert( node );
 	}
 	
-	IndexType_t  Insert( const KeyType_t &key )
+	IndexType_t Insert( const KeyType_t &key )
 	{
 		Node_t node;
 		node.key = key;
 		return m_Tree.Insert( node );
 	}
 
-	// Returns the existing index if the key is already present
-	IndexType_t InsertIfNotFound( const KeyType_t &key, const ElemType_t &insert )
+	// Inserts allowing duplicate keys
+	IndexType_t InsertWithDupes( const KeyType_t &key, const ElemType_t &insert )
 	{
 		Node_t node;
 		node.key = key;
 		node.elem = insert;
-		return m_Tree.InsertIfNotFound( node );
+		return m_Tree.Insert( node, k_eInsertAllowDupes );
+	}
+
+	IndexType_t InsertWithDupes( const KeyType_t &key )
+	{
+		Node_t node;
+		node.key = key;
+		return m_Tree.Insert( node, k_eInsertAllowDupes );
+	}
+
+	// Insert with the given behavior, returns a pointer to the element
+	ElemType_t *InsertGetPtr( const KeyType_t &key, ERBTreeInsertBehavior eInsertBehavior )
+	{
+		Node_t node;
+		node.key = key;
+		return &Element( m_Tree.Insert( node, eInsertBehavior ) );
 	}
 
 	// pInserted reports whether an insert happened
-	IndexType_t FindOrInsert( const KeyType_t &key, const ElemType_t &insert, bool *pInserted = NULL )
+	IndexType_t FindOrInsert( const KeyType_t &key, const ElemType_t &insert = ElemType_t(), bool *pInserted = nullptr )
 	{
 		IndexType_t i = Find( key );
 		if ( i != InvalidIndex() )
@@ -141,70 +155,89 @@ public:
 		return Insert( key, insert );
 	}
 
-	IndexType_t FindOrInsertDefault( const KeyType_t &key, bool *pInserted = NULL )
-	{
-		return FindOrInsert( key, ElemType_t(), pInserted );
-	}
-
-	ElemType_t *FindOrInsertGetPtr( const KeyType_t &key, const ElemType_t &insert, bool *pInserted = NULL )
+	ElemType_t *FindOrInsertGetPtr( const KeyType_t &key, const ElemType_t &insert = ElemType_t(), bool *pInserted = nullptr )
 	{
 		return &Element( FindOrInsert( key, insert, pInserted ) );
 	}
 
-	ElemType_t *FindOrInsertDefaultGetPtr( const KeyType_t &key, bool *pInserted = NULL )
-	{
-		return &Element( FindOrInsertDefault( key, pInserted ) );
-	}
-
 	// Find method
-	IndexType_t  Find( const KeyType_t &key ) const
+	IndexType_t Find( const KeyType_t &key ) const
 	{
 		Node_t dummyNode;
 		dummyNode.key = key;
 		return m_Tree.Find( dummyNode );
 	}
 
-	const ElemType_t &FindElement( const KeyType_t &key ) const
+	// Finds the key, or the nearest lesser/greater element per eFindCondition
+	IndexType_t Find( const KeyType_t &key, FindCondition_t eFindCondition ) const
 	{
-		return Element( Find( key ) );
+		Node_t dummyNode;
+		dummyNode.key = key;
+		return m_Tree.Find( dummyNode, eFindCondition );
+	}
+
+	// Finds the first element (inorder) with this key when duplicates exist
+	IndexType_t FindFirst( const KeyType_t &key ) const
+	{
+		Node_t dummyNode;
+		dummyNode.key = key;
+		return m_Tree.FindFirst( dummyNode );
+	}
+
+	// Finds the closest element to the key per the comparison criteria
+	IndexType_t FindClosest( const KeyType_t &key, CompareOperands_t eFindCriteria ) const
+	{
+		Node_t dummyNode;
+		dummyNode.key = key;
+		return m_Tree.FindClosest( dummyNode, eFindCriteria );
+	}
+
+	ElemType_t FindFirstElement( const KeyType_t &key, const ElemType_t &defaultValue ) const
+	{
+		IndexType_t i = FindFirst( key );
+		return i == InvalidIndex() ? defaultValue : Element( i );
+	}
+
+	ElemType_t FindClosestElement( const KeyType_t &key, const ElemType_t &defaultValue, CompareOperands_t eFindCriteria ) const
+	{
+		IndexType_t i = FindClosest( key, eFindCriteria );
+		return i == InvalidIndex() ? defaultValue : Element( i );
 	}
 
 	// By value, so a temporary defaultValue is safe
-	ElemType_t FindElement( const KeyType_t &key, const ElemType_t &defaultValue ) const
+	ElemType_t FindElement( const KeyType_t &key, const ElemType_t &defaultValue, FindCondition_t eFindCondition = FindCondition_t::EXACT_MATCH ) const
 	{
-		IndexType_t i = Find( key );
-		if ( i == InvalidIndex() )
-			return defaultValue;
-		return Element( i );
+		IndexType_t i = Find( key, eFindCondition );
+		return i == InvalidIndex() ? defaultValue : Element( i );
 	}
 
-	// NULL when the key isn't present
-	ElemType_t *FindGetPtr( const KeyType_t &key )
+	// nullptr when the key isn't present
+	ElemType_t *FindGetPtr( const KeyType_t &key, FindCondition_t eFindCondition = FindCondition_t::EXACT_MATCH )
 	{
-		IndexType_t i = Find( key );
-		return i == InvalidIndex() ? NULL : &Element( i );
+		IndexType_t i = Find( key, eFindCondition );
+		return i == InvalidIndex() ? nullptr : &Element( i );
 	}
 
-	const ElemType_t *FindGetPtr( const KeyType_t &key ) const
+	const ElemType_t *FindGetPtr( const KeyType_t &key, FindCondition_t eFindCondition = FindCondition_t::EXACT_MATCH ) const
 	{
-		IndexType_t i = Find( key );
-		return i == InvalidIndex() ? NULL : &Element( i );
+		IndexType_t i = Find( key, eFindCondition );
+		return i == InvalidIndex() ? nullptr : &Element( i );
 	}
 
 	bool HasElement( const KeyType_t &key ) const			{ return Find( key ) != InvalidIndex(); }
 	bool HasKey( const KeyType_t &key ) const				{ return Find( key ) != InvalidIndex(); }
 	
 	// Remove methods
-	void     RemoveAt( IndexType_t i )						{ m_Tree.RemoveAt( i ); }
-	bool     Remove( const KeyType_t &key )
+	void RemoveAt( IndexType_t i )							{ m_Tree.RemoveAt( i ); }
+	bool Remove( const KeyType_t &key )
 	{
 		Node_t dummyNode;
 		dummyNode.key = key;
 		return m_Tree.Remove( dummyNode );
 	}
 	
-	void     RemoveAll( )									{ m_Tree.RemoveAll(); }
-	void     Purge( )										{ m_Tree.Purge(); }
+	void RemoveAll( )										{ m_Tree.RemoveAll(); }
+	void Purge( )											{ m_Tree.Purge(); }
 
 	// Only valid when ElemType_t is a pointer
 	void PurgeAndDeleteElements()
@@ -228,10 +261,10 @@ public:
 	}
 			
 	// Iteration
-	IndexType_t  FirstInorder() const						{ return m_Tree.FirstInorder(); }
-	IndexType_t  NextInorder( IndexType_t i ) const			{ return m_Tree.NextInorder( i ); }
-	IndexType_t  PrevInorder( IndexType_t i ) const			{ return m_Tree.PrevInorder( i ); }
-	IndexType_t  LastInorder() const						{ return m_Tree.LastInorder(); }		
+	IndexType_t FirstInorder() const						{ return m_Tree.FirstInorder(); }
+	IndexType_t NextInorder( IndexType_t i ) const			{ return m_Tree.NextInorder( i ); }
+	IndexType_t PrevInorder( IndexType_t i ) const			{ return m_Tree.PrevInorder( i ); }
+	IndexType_t LastInorder() const							{ return m_Tree.LastInorder(); }
 
 	// InvalidIndex once the neighbouring element has a different key
 	IndexType_t NextInorderSameKey( IndexType_t i ) const
@@ -252,7 +285,7 @@ public:
 	
 	// If you change the search key, this can be used to reinsert the 
 	// element into the map.
-	void	Reinsert( const KeyType_t &key, IndexType_t i )
+	void Reinsert( const KeyType_t &key, IndexType_t i )
 	{
 		m_Tree[i].key = key;
 		m_Tree.Reinsert(i);
@@ -260,14 +293,10 @@ public:
 
 	IndexType_t InsertOrReplace( const KeyType_t &key, const ElemType_t &insert )
 	{
-		IndexType_t i = Find( key );
-		if ( i != InvalidIndex() )
-		{
-			Element( i ) = insert;
-			return i;
-		}
-		
-		return Insert( key, insert );
+		Node_t node;
+		node.key = key;
+		node.elem = insert;
+		return m_Tree.Insert( node, k_eInsertUpdateDupes );
 	}
 
 	void Swap( CUtlOrderedMapBase< K, T, LF, I > &that )
@@ -294,10 +323,9 @@ public:
 		}
 
 		Node_t( const Node_t &from )
-		  : key( from.key ),
+			: key( from.key ),
 			elem( from.elem )
-		{
-		}
+		{}
 
 		KeyType_t	key;
 		ElemType_t	elem;
@@ -326,7 +354,7 @@ public:
 	CTree *AccessTree()	{ return &m_Tree; }
 
 protected:
-	CTree 	   m_Tree;
+	CTree	m_Tree;
 };
 
 // Adds the default LessFunc and index type. Storage and logic live in the base.
@@ -337,14 +365,12 @@ public:
 	typedef CUtlOrderedMapBase< K, T, LF, I > BaseClass;
 
 	CUtlOrderedMap( int growSize, int initSize, const LF &lessfunc = LF() )
-	 : BaseClass( growSize, initSize, lessfunc )
-	{
-	}
+		: BaseClass( growSize, initSize, lessfunc )
+	{}
 
 	CUtlOrderedMap( const LF &lessfunc = LF() )
-	 : BaseClass( 0, 0, lessfunc )
-	{
-	}
+		: BaseClass( 0, 0, lessfunc )
+	{}
 };
 
 #endif // UTLMAP_H
