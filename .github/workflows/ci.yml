@@ -10,8 +10,8 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
-            cc: clang
-            cxx: clang++
+            cc: clang-22
+            cxx: clang++-22
             container_image: ghcr.io/alliedmodders/build-containers/debian11-clang22:latest
           - os: windows-2022
             cc: msvc
@@ -23,14 +23,14 @@ jobs:
       image: ${{ matrix.container_image }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         name: Repository checkout
         with:
           fetch-depth: 0
           submodules: recursive
           path: repository
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         name: AMBuild checkout
         if: startsWith(runner.os, 'Windows')
         with:
@@ -41,6 +41,7 @@ jobs:
           path: ambuild
 
       - name: Setup AMBuild
+        if: startsWith(runner.os, 'Windows')
         shell: bash
         run: |
           python3 -m pip install ./ambuild
