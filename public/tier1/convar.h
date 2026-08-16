@@ -776,6 +776,7 @@ template<> void CvarTypeTrait_ValueToStringFn<Color>( const CVValue_t *obj, CBuf
 		buf.Format( "%d %d %d %d", obj->m_clrValue[0], obj->m_clrValue[1], obj->m_clrValue[2], obj->m_clrValue[3] );
 }
 
+template<> void CvarTypeTrait_ClampFn<bool>( CVValue_t *obj, const CVValue_t *min, const CVValue_t *max ) { }
 template<> void CvarTypeTrait_ClampFn<CUtlString>( CVValue_t *obj, const CVValue_t *min, const CVValue_t *max ) { }
 template<> void CvarTypeTrait_ClampFn<Color>( CVValue_t *obj, const CVValue_t *min, const CVValue_t *max )
 {
@@ -981,6 +982,7 @@ public:
 
 	// AMNOTE: Expects you to manually allocate its value and for it to be alive while it's used by the cvar
 	// Also you should be responsible for clearing memory on cleanup, by default game uses CCvar memory allocator for this
+	// These are ignored for string and bool types!
 	void SetMinValue( CVValue_t *value ) { m_minValue = value; }
 	void SetMaxValue( CVValue_t *value ) { m_maxValue = value; }
 
