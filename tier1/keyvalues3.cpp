@@ -1623,19 +1623,17 @@ void CKeyValues3Table::EnsureMemberCapacity( int count, bool force, bool dont_mo
 	const int new_count = force ? count : CalcNewDoublingCount( m_nAllocatedChunks, count, ALLOC_KV3TABLE_MIN, ALLOC_KV3TABLE_MAX );
 	const int new_byte_size = TotalSizeOfData( new_count );
 
-	void *new_base = nullptr;
-
 	if(m_bIsDynamicallySized)
 	{
-		new_base = realloc( m_pDynamicBuffer, new_byte_size );
+		m_pDynamicBuffer = realloc( m_pDynamicBuffer, new_byte_size );
 
-		memmove( (uint8 *)new_base + OffsetToFlagsBase( new_count ), FlagsBase(), m_nCount * sizeof( Flags_t ) );
-		memmove( (uint8 *)new_base + OffsetToNamesBase( new_count ), NamesBase(), m_nCount * sizeof( Name_t ) );
-		memmove( (uint8 *)new_base + OffsetToMembersBase( new_count ), MembersBase(), m_nCount * sizeof( Member_t ) );
+		memmove( (uint8 *)m_pDynamicBuffer + OffsetToFlagsBase( new_count ), FlagsBase(), m_nCount * sizeof( Flags_t ) );
+		memmove( (uint8 *)m_pDynamicBuffer + OffsetToNamesBase( new_count ), NamesBase(), m_nCount * sizeof( Name_t ) );
+		memmove( (uint8 *)m_pDynamicBuffer + OffsetToMembersBase( new_count ), MembersBase(), m_nCount * sizeof( Member_t ) );
 	}
 	else
 	{
-		new_base = malloc( new_byte_size );
+		void *new_base = malloc( new_byte_size );
 
 		if(m_nCount > 0 && !dont_move)
 		{
@@ -1644,11 +1642,12 @@ void CKeyValues3Table::EnsureMemberCapacity( int count, bool force, bool dont_mo
 			memmove( (uint8 *)new_base + OffsetToNamesBase( new_count ), NamesBase(), m_nCount * sizeof( Name_t ) );
 			memmove( (uint8 *)new_base + OffsetToFlagsBase( new_count ), FlagsBase(), m_nCount * sizeof( Flags_t ) );
 		}
+
+		m_pDynamicBuffer = new_base;
+		m_bIsDynamicallySized = true;
 	}
 
-	m_pDynamicBuffer = new_base;
 	m_nAllocatedChunks = new_count;
-	m_bIsDynamicallySized = true;
 }
 
 KV3MemberId_t CKeyValues3Table::FindMember( const KeyValues3* kv ) const
