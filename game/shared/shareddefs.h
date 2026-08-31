@@ -268,6 +268,27 @@ enum DamageTypes_t
 	DMG_HEADSHOT		= (1 << 19)
 };
 
+enum TakeDamageFlags_t : uint64
+{
+	DFLAG_NONE = 0,
+	DFLAG_SUPPRESS_HEALTH_CHANGES = uint64(1) << 0,
+	DFLAG_SUPPRESS_PHYSICS_FORCE = uint64(1) << 1,
+	DFLAG_SUPPRESS_EFFECTS = uint64(1) << 2,
+	DFLAG_PREVENT_DEATH = uint64(1) << 3,
+	DFLAG_FORCE_DEATH = uint64(1) << 4,
+	DFLAG_ALWAYS_GIB = uint64(1) << 5,
+	DFLAG_NEVER_GIB = uint64(1) << 6,
+	DFLAG_REMOVE_NO_RAGDOLL = uint64(1) << 7,
+	DFLAG_SUPPRESS_DAMAGE_MODIFICATION = uint64(1) << 8,
+	DFLAG_ALWAYS_FIRE_DAMAGE_EVENTS = uint64(1) << 9,
+	DFLAG_RADIUS_DMG = uint64(1) << 10,
+	DFLAG_FORCEREDUCEARMOR_DMG = uint64(1) << 11,
+	DFLAG_SUPPRESS_INTERRUPT_FLINCH = uint64(1) << 12,
+	DFLAG_IGNORE_DESTRUCTIBLE_PARTS = uint64(1) << 13,
+	DFLAG_IGNORE_ARMOR = uint64(1) << 14,
+	DFLAG_SUPPRESS_UTILREMOVE = uint64(1) << 15,
+};
+
 // settings for m_takedamage
 #define	DAMAGE_NO				0
 #define DAMAGE_EVENTS_ONLY		1		// Call damage functions, but don't modify health
