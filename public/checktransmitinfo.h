@@ -6,19 +6,33 @@
 
 #include "bitvec.h"
 #include "const.h"
+#include "entity2/entityidentity.h"
+#include "playerslot.h"
+#include "tier1/utlvector.h"
 
 // Entities can span this many clusters before we revert to a slower area checking algorithm
 #define	MAX_FAST_ENT_CLUSTERS	4
 #define	MAX_ENT_CLUSTERS	64
 #define MAX_WORLD_AREAS		8
 
+struct vis_info_t
+{
+	uint32 m_uVisBitsBufSize;
+	SpawnGroupHandle_t m_SpawnGroupHandle;
+	CBitVec<4096> m_VisBits;
+};
+
 class CCheckTransmitInfo
 {
 public:
-	CBitVec<MAX_EDICTS>	*m_pTransmitEntity;	// entity n is already marked for transmission
-	CBitVec<MAX_EDICTS>	*m_pTransmitAlways; // entity n is always send even if not in PVS (HLTV and Replay only)
-
-	// AMNOTE: This is incomplete and may require further reversing in the future.
+	CBitVec<MAX_EDICTS> *m_pTransmitEntity;
+	CBitVec<MAX_EDICTS> *m_pTransmitNonPlayers;
+	CBitVec<MAX_EDICTS> *m_pTransmitOutOfPVS;
+	CBitVec<MAX_EDICTS> *m_pTransmitAlways;
+	CUtlVector<CPlayerSlot> m_vecTargetSlots;
+	vis_info_t m_VisInfo;
+	CPlayerSlot m_nPlayerSlot;
+	bool m_bFullUpdate;
 };
 
 //-----------------------------------------------------------------------------
