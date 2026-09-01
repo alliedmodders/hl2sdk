@@ -8,6 +8,7 @@
 #include "tier1/keyvalues3.h"
 #include "tier1/utlleanvector.h"
 #include "entity2/entitysystem.h"
+#include "schemasystem/schematypes.h"
 
 #include "tier0/memdbgon.h"
 
@@ -35,6 +36,30 @@ struct EntityIOConnectionDescFat_t
 	int32 m_nTimesToFire;
 
 	KeyValues3 m_KV3Value;
+};
+
+struct EntityIOConnection_t;
+class CKV3TransferSaveContext;
+class CKV3TransferLoadContext;
+
+struct EntityIOOutputDesc_t
+{
+	const char *m_pName;
+	uint32 m_nFlags;
+	uint32 m_nOutputOffset;
+};
+
+class CEntityIOOutput
+{
+public:
+	virtual SchemaMetaInfoHandle_t<CSchemaClassInfo> Schema_DynamicBinding() = 0;
+	// Named after the exported CUtlStringAndTokenWithStorage::KV3Transfer* pair that takes the same contexts
+	virtual void KV3TransferSave( CKV3TransferSaveContext *pContext ) const = 0;
+	virtual void KV3TransferLoad( CKV3TransferLoadContext *pContext ) = 0;
+
+public:
+	EntityIOConnection_t *m_pConnections;
+	EntityIOOutputDesc_t *m_pDesc;
 };
 
 abstract_class IEntityKeyComplex
