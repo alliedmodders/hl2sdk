@@ -11,6 +11,7 @@
 #include "schemasystem/schematypes.h"
 #include <initializer_list>
 
+class CEntityInstance;
 class CNetworkSerializerClassInfo;
 class CEntityKeyValues;
 class CFieldPath;
@@ -63,6 +64,16 @@ struct NetworkStateChangedData
 	ChangeAccessorFieldPathIndex_t m_nPathIndex;
 
 	int16 m_unk101; // default 0, if m_LocalOffsets has multiple values, it is set to 1
+};
+
+struct CNetworkVarChainer
+{
+	void NetworkStateChanged( uint32 nLocalOffset, int32 nArrayIndex = -1 ) const;
+
+	CEntityInstance *m_pEntity;
+	uint8 m_Reserved0[24];
+	ChangeAccessorFieldPathIndex_t m_PathIndex;
+	uint8 m_Reserved1[4];
 };
 
 class CEntityInstance
@@ -189,6 +200,14 @@ inline const CEntityHandle &CEntityHandle::Set( const CEntityInstance *pEntity )
 	}
 
 	return *this;
+}
+
+inline void CNetworkVarChainer::NetworkStateChanged( uint32 nLocalOffset, int32 nArrayIndex ) const
+{
+	if ( m_pEntity )
+	{
+		m_pEntity->NetworkStateChanged( NetworkStateChangedData( nLocalOffset, nArrayIndex, m_PathIndex ) );
+	}
 }
 
 #endif // ENTITYINSTANCE_H
