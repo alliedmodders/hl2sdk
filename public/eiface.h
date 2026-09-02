@@ -73,6 +73,7 @@ class CNavData;
 struct EconItemInfo_t;
 struct EconControlPointInfo_t;
 class CEntityHandle;
+class IEconItemSystem;
 struct RenderDeviceInfo_t;
 
 enum RenderMultisampleType_t : uint8
@@ -470,7 +471,7 @@ public:
 	virtual void			GetCharacterList( CUtlVector<CUtlString> &characterNames ) = 0;
 	virtual void			GetDefaultChoreoDirForModel( const char *pModelName, CBufferString &defaultVCDDir ) = 0;
 
-	virtual void			*GetEconItemSystem( void ) = 0;
+	virtual IEconItemSystem	*GetEconItemSystem( void ) = 0;
 
 	virtual void			ServerConVarChanged( const char *pVarName, const char *pValue ) = 0;
 
