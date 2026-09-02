@@ -17,6 +17,7 @@ class CEntityKeyValues;
 class CFieldPath;
 class ISave;
 class IRestore;
+struct ScriptClassDesc_t;
 struct CEntityPrecacheContext;
 struct ChangeAccessorFieldPathIndexInfo_t;
 struct datamap_t;
@@ -84,7 +85,7 @@ public:
 	virtual void unk001() = 0;
 	virtual void unk002() = 0;
 
-	virtual void* GetScriptDesc() = 0;
+	virtual ScriptClassDesc_t* GetScriptDesc() = 0;
 	
 	virtual ~CEntityInstance() = 0;
 	
