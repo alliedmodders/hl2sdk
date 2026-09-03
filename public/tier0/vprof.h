@@ -12,6 +12,7 @@
 #include "tier0/fasttimer.h"
 #include "tier0/l2cache.h"
 #include "tier0/threadtools.h"
+#include "tier1/utlvector.h"
 
 // VProf is enabled by default in all configurations -except- X360 Retail.
 #if !( defined( _X360 ) && defined( _CERT ) )
@@ -583,6 +584,45 @@ protected:
 //-------------------------------------
 
 PLATFORM_INTERFACE CVProfile g_VProfCurrentProfile;
+
+// Layout used by VProfLite_GetHistoricalData in libtier0.
+struct VProfLiteReportItem_t
+{
+	int m_nBudgetGroupID;
+	const char *m_pszName;
+	int m_nActiveSamples;
+	int m_nActiveSamples1SecondMax;
+	float m_flActiveAverage;
+	float m_flActiveP25;
+	float m_flActiveP50;
+	float m_flActiveP95;
+	float m_flActiveP99;
+	float m_flAllAverage;
+	float m_flAllP25;
+	float m_flAllP50;
+	float m_flAllP95;
+	float m_flAllP99;
+	float m_flActive1SecondMaxAverage;
+	float m_flActive1SecondMaxP25;
+	float m_flActive1SecondMaxP50;
+	float m_flActive1SecondMaxP95;
+	float m_flActive1SecondMaxP99;
+	float m_flAll1SecondMaxAverage;
+	float m_flAll1SecondMaxP25;
+	float m_flAll1SecondMaxP50;
+	float m_flAll1SecondMaxP95;
+	float m_flAll1SecondMaxP99;
+	float m_flMax;
+};
+
+struct VProfLiteReport_t
+{
+	int m_nDiscardedFrames;
+	CUtlVector<VProfLiteReportItem_t> m_Items;
+};
+
+PLATFORM_INTERFACE void VProfLite_GetHistoricalData( VProfLiteReport_t *pReport );
+PLATFORM_INTERFACE bool VProfLite_GetEnabled();
 
 
 //-----------------------------------------------------------------------------
