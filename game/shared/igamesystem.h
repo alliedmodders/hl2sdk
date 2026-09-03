@@ -101,6 +101,7 @@ GS_EVENT_MSG( SpawnGroupPrecache )
 	CUtlString m_SpawnGroupName;
 	CUtlString m_EntityLumpName;
 	SpawnGroupHandle_t m_SpawnGroupHandle;
+	WorldGroupId_t m_hWorldGroupId;
 	int m_nEntityCount;
 	const EntitySpawnInfo_t *m_pEntitiesToSpawn;
 	ISpawnGroupPrerequisiteRegistry *m_pRegistry;
