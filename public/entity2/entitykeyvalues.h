@@ -136,6 +136,7 @@ public:
 	void RemoveConnectionDesc( int nDesc );
 
 	EntityIOConnectionDescFat_t* GetConnectionDesc( int nDesc ) { return &m_connectionDescs[nDesc]; }
+	const EntityIOConnectionDescFat_t* GetConnectionDesc( int nDesc ) const { return &m_connectionDescs[nDesc]; }
 	int GetNumConnectionDescs() const { return m_connectionDescs.Count(); }
 
 	void CopyFrom( const CEntityKeyValues* pSrc, bool bRemoveAllKeys = false, bool bSkipEHandles = false );
