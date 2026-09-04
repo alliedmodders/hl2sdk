@@ -361,7 +361,7 @@ public:
 	void RecursiveSaveToFile( CUtlBuffer &buf, int indentLevel, bool bSortKeys = false, bool bAllowEmptyString = false ) const;
 	void RecursiveSaveToLocalizationFile( IFileSystem *filesystem, void *buf, int indentLevel, bool bAllowEmptyString = false );
 
-	bool WriteAsBinary( CUtlBuffer &buffer );
+	bool WriteAsBinary( CUtlBuffer &buffer ) const;
 	bool WriteAsBinaryFiltered( CUtlBuffer &buffer );
 	bool ReadAsBinary( CUtlBuffer &buffer );
 	bool ReadAsBinaryFiltered( CUtlBuffer &buffer );
