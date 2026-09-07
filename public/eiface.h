@@ -527,10 +527,6 @@ public:
 
 	virtual int			GetNetworkVersion( void ) = 0;
 
-	// Get the simulation interval (must be compiled with identical values into both client and game .dll for MOD!!!)
-	// Right now this is only requested at server startup time so it can't be changed on the fly, etc.
-	virtual float			GetTickInterval( void ) const = 0;
-
 	// Get server maxplayers and lower bound for same
 	virtual void			GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers, bool &bIsMultiplayer ) const = 0;
 
