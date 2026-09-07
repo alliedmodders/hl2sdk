@@ -17,7 +17,7 @@
 #include "const.h"
 #include "in_buttons.h"
 
-#define TICK_INTERVAL			(1 / 64)
+#define TICK_INTERVAL			(1.0f / 64.0f)
 
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
 #define TICKS_TO_TIME( t )		( TICK_INTERVAL *( t ) )
