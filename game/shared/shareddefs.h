@@ -17,7 +17,7 @@
 #include "const.h"
 #include "in_buttons.h"
 
-#define TICK_INTERVAL			(1 / 64)
+#define TICK_INTERVAL			(1.0f / 64.0f)
 
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
 #define TICKS_TO_TIME( t )		( TICK_INTERVAL *( t ) )
@@ -268,6 +268,27 @@ enum DamageTypes_t
 	DMG_HEADSHOT		= (1 << 19)
 };
 
+enum TakeDamageFlags_t : uint64
+{
+	DFLAG_NONE = 0,
+	DFLAG_SUPPRESS_HEALTH_CHANGES = uint64(1) << 0,
+	DFLAG_SUPPRESS_PHYSICS_FORCE = uint64(1) << 1,
+	DFLAG_SUPPRESS_EFFECTS = uint64(1) << 2,
+	DFLAG_PREVENT_DEATH = uint64(1) << 3,
+	DFLAG_FORCE_DEATH = uint64(1) << 4,
+	DFLAG_ALWAYS_GIB = uint64(1) << 5,
+	DFLAG_NEVER_GIB = uint64(1) << 6,
+	DFLAG_REMOVE_NO_RAGDOLL = uint64(1) << 7,
+	DFLAG_SUPPRESS_DAMAGE_MODIFICATION = uint64(1) << 8,
+	DFLAG_ALWAYS_FIRE_DAMAGE_EVENTS = uint64(1) << 9,
+	DFLAG_RADIUS_DMG = uint64(1) << 10,
+	DFLAG_FORCEREDUCEARMOR_DMG = uint64(1) << 11,
+	DFLAG_SUPPRESS_INTERRUPT_FLINCH = uint64(1) << 12,
+	DFLAG_IGNORE_DESTRUCTIBLE_PARTS = uint64(1) << 13,
+	DFLAG_IGNORE_ARMOR = uint64(1) << 14,
+	DFLAG_SUPPRESS_UTILREMOVE = uint64(1) << 15,
+};
+
 // settings for m_takedamage
 #define	DAMAGE_NO				0
 #define DAMAGE_EVENTS_ONLY		1		// Call damage functions, but don't modify health
@@ -514,49 +535,45 @@ struct ModelScale
 
 #include "soundflags.h"
 
-struct CSoundParameters;
-typedef short HSOUNDSCRIPTHANDLE;
-//-----------------------------------------------------------------------------
-// Purpose: Aggregates and sets default parameters for EmitSound function calls
-//-----------------------------------------------------------------------------
+typedef uint32 SoundEventGuid_t;
+
+struct SndOpEventGuid_t
+{
+	SoundEventGuid_t m_nGuid;
+	uint32 m_hStackHash;
+};
+
+#pragma pack(push, 1)
+struct StartSoundEventInfo
+{
+	SndOpEventGuid_t m_nSndOpEventGuid;
+	int32 m_nFlags;
+	uint64 m_nRecipients;
+};
+#pragma pack(pop)
+
 struct EmitSound_t
 {
 	EmitSound_t() :
-		m_nChannel( 0 ),
-		m_pSoundName( 0 ),
+		m_pSoundName( nullptr ),
+		m_vecSoundOrigin(),
 		m_flVolume( VOL_NORM ),
-		m_SoundLevel( SNDLVL_NONE ),
-		m_nFlags( 0 ),
-		m_nPitch( PITCH_NORM ),
-		m_pOrigin( 0 ),
 		m_flSoundTime( 0.0f ),
-		m_pflSoundDuration( 0 ),
-		m_bEmitCloseCaption( true ),
-		m_bWarnOnMissingCloseCaption( false ),
-		m_bWarnOnDirectWaveReference( false ),
-		m_nSpeakerEntity( -1 ),
-		m_UtlVecSoundOrigin(),
-		m_hSoundScriptHandle( -1 )
+		m_nForceGuid( 0 ),
+		m_nPitch( PITCH_NORM ),
+		m_nFlags( 0 )
 	{
 	}
 
-	EmitSound_t( const CSoundParameters &src );
-
-	int							m_nChannel;
-	char const					*m_pSoundName;
-	float						m_flVolume;
-	soundlevel_t				m_SoundLevel;
-	int							m_nFlags;
-	int							m_nPitch;
-	const Vector				*m_pOrigin;
-	float						m_flSoundTime; ///< NOT DURATION, but rather, some absolute time in the future until which this sound should be delayed
-	float						*m_pflSoundDuration;
-	bool						m_bEmitCloseCaption;
-	bool						m_bWarnOnMissingCloseCaption;
-	bool						m_bWarnOnDirectWaveReference;
-	int							m_nSpeakerEntity;
-	mutable CUtlVector< Vector >	m_UtlVecSoundOrigin;  ///< Actual sound origin(s) (can be multiple if sound routed through speaker entity(ies) )
-	mutable HSOUNDSCRIPTHANDLE		m_hSoundScriptHandle;
+	const char *m_pSoundName;
+	Vector m_vecSoundOrigin;
+	float m_flVolume;
+	float m_flSoundTime;
+	uint8 m_Pad1C[4] = {};
+	uint32 m_nForceGuid;
+	uint8 m_Pad24[4] = {};
+	int16 m_nPitch;
+	uint8 m_nFlags;
 };
 
 #define MAX_ACTORS_IN_SCENE 16

@@ -183,9 +183,8 @@ public:
 	// Returns hostname of this server instance
 	virtual const char *GetHostName() = 0;
 
-	// AMNOTE: arg names are speculative and might be incorrect!
 	// Sums up across all the connected players.
-	virtual void	GetNetStats( float &inflow, float &outflow ) = 0;
+	virtual void	GetNetStats( float &avgIn, float &avgOut ) = 0;
 
 	virtual void	FillKV3ServerInfo( KeyValues3 *out ) = 0;
 
