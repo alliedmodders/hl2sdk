@@ -72,6 +72,14 @@ public:
 	bool	operator!=( T *val ) const;
 	const CBaseHandle& operator=( const T *val );
 
+	// Assigning a handle of another entity type (CHandle<CCSPlayerController> into a
+	// CHandle<CBaseEntity> field, say). An exact match, so it wins over the two
+	// otherwise-equal user conversions -- operator U*() into operator=( const T* )
+	// and CHandle( const CBaseHandle& ) into the copy assignment -- that made such an
+	// assignment ambiguous. Same-type assignment still takes the implicit copy.
+	template< class U >
+	CHandle<T>& operator=( const CHandle<U> &other );
+
 	T*		operator->() const;
 };
 
@@ -165,6 +173,14 @@ template<class T>
 inline const CBaseHandle& CHandle<T>::operator=( const T *val )
 {
 	Set( val );
+	return *this;
+}
+
+template<class T>
+template<class U>
+inline CHandle<T>& CHandle<T>::operator=( const CHandle<U> &other )
+{
+	Init( other.GetEntryIndex(), other.GetSerialNumber() );
 	return *this;
 }
 
