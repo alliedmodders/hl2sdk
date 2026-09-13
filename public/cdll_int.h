@@ -59,6 +59,8 @@ class IFileList;
 class CRenamedRecvTableInfo;
 class CMouthInfo;
 class IConVar;
+class IClientEntity;
+class IClientNetworkable;
 
 //-----------------------------------------------------------------------------
 // Purpose: This data structure is filled in by the engine when the client .dll requests information about
@@ -185,7 +187,7 @@ struct OcclusionParams_t
 #define VENGINE_CLIENT_RANDOM_INTERFACE_VERSION	"VEngineRandom001"
 
 // change this when the new version is incompatable with the old
-#define VENGINE_CLIENT_INTERFACE_VERSION		"VEngineClient014"
+#define VENGINE_CLIENT_INTERFACE_VERSION		"VEngineClient015"
 #define VENGINE_CLIENT_INTERFACE_VERSION_13		"VEngineClient013"
 
 //-----------------------------------------------------------------------------
@@ -425,6 +427,8 @@ public:
 	virtual bool		IsTakingScreenshot( void ) = 0;
 	// Is this a HLTV broadcast ?
 	virtual bool		IsHLTV( void ) = 0;
+	// Is this a Replay demo?
+	virtual bool		IsReplay( void ) = 0;
 	// is this level loaded as just the background to the main menu? (active, but unplayable)
 	virtual bool		IsLevelMainMenuBackground( void ) = 0;
 	// returns the name of the background level
@@ -474,6 +478,7 @@ public:
 	// returns if the loaded map was processed with HDR info. This will be set regardless
 	// of what HDR mode the player is in.
 	virtual bool MapHasHDRLighting(void) = 0;
+	virtual bool MapHasLightmapAlphaData(void) = 0;
 
 	virtual int	GetAppID() = 0;
 
@@ -548,6 +553,13 @@ public:
 	//  returns the string name of the key to which this string is bound. Returns NULL if no such binding exists
 	// Unlike Key_LookupBinding, leading '+' characters are not stripped from bindings.
 	virtual	const char			*Key_LookupBindingExact( const char *pBinding ) = 0;
+
+	virtual void			AddPhonemeFile( const char *pszPhonemeFile ) = 0;
+	virtual float			GetPausedExpireTime( void ) = 0;
+
+	virtual bool			StartDemoRecording( const char *pszFilename, const char *pszFolder = NULL ) = 0;
+	virtual void			StopDemoRecording( void ) = 0;
+	virtual void			TakeScreenshot( const char *pszFilename, const char *pszFolder = NULL ) = 0;
 };
 
 abstract_class IVEngineClient : public IVEngineClient013
@@ -577,9 +589,15 @@ public:
 abstract_class IBaseClientDLL
 {
 public:
-	// Called once when the client DLL is loaded
-	virtual int				Init( CreateInterfaceFn appSystemFactory, 
-									CreateInterfaceFn physicsFactory,
+	// Connect app-system components and acquire global interfaces.
+	virtual int				Connect( CreateInterfaceFn appSystemFactory,
+									CGlobalVarsBase *pGlobals ) = 0;
+
+	// Disconnect components registered by Connect().
+	virtual void			Disconnect() = 0;
+
+	// Called once when the client DLL is loaded.
+	virtual int				Init( CreateInterfaceFn appSystemFactory,
 									CGlobalVarsBase *pGlobals ) = 0;
 
 	virtual void			PostInit() = 0;
@@ -782,9 +800,19 @@ public:
 	virtual bool DisconnectAttempt( void ) = 0;
 
 	virtual bool IsConnectedUserInfoChangeAllowed( IConVar *pCvar ) = 0;
+
+	// The engine wants to mark two client entities as touching.
+	virtual void MarkEntitiesAsTouching( IClientEntity *e1, IClientEntity *e2 ) = 0;
+
+	// Black Mesa VClient018 slot 80. The retail binaries are stripped, so the
+	// original method name is unknown. Its implementation calls
+	// ParseParticleEffects( true, true ).
+	virtual void BMS_Unknown80_PreloadParticleEffects() = 0;
+
+	virtual void DeleteNetworkedEntity( IClientNetworkable *pNetworkable ) = 0;
 };
 
-#define CLIENT_DLL_INTERFACE_VERSION		"VClient017"
+#define CLIENT_DLL_INTERFACE_VERSION		"VClient018"
 
 //-----------------------------------------------------------------------------
 // Purpose: Interface exposed from the client .dll back to the engine for specifying shared .dll IAppSystems (e.g., ISoundEmitterSystem)

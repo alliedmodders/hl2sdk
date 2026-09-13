@@ -596,7 +596,9 @@ class CHLClient : public IBaseClientDLL
 public:
 	CHLClient();
 
-	virtual int						Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physicsFactory, CGlobalVarsBase *pGlobals );
+	virtual int						Connect( CreateInterfaceFn appSystemFactory, CGlobalVarsBase *pGlobals );
+	virtual void					Disconnect();
+	virtual int						Init( CreateInterfaceFn appSystemFactory, CGlobalVarsBase *pGlobals );
 
 	virtual void					PostInit();
 	virtual void					Shutdown( void );
@@ -728,6 +730,10 @@ public:
 
 	virtual bool IsConnectedUserInfoChangeAllowed( IConVar *pCvar );
 
+	virtual void MarkEntitiesAsTouching( IClientEntity *e1, IClientEntity *e2 );
+	virtual void BMS_Unknown80_PreloadParticleEffects();
+	virtual void DeleteNetworkedEntity( IClientNetworkable *pNetworkable );
+
 private:
 	void UncacheAllMaterials( );
 	void ResetStringTablePointers();
@@ -849,19 +855,13 @@ extern IGameSystem *ViewportClientSystem();
 //-----------------------------------------------------------------------------
 ISourceVirtualReality *g_pSourceVR = NULL;
 
-// Purpose: Called when the DLL is first loaded.
-// Input  : engineFactory - 
+// Purpose: Connect app-system components before the client is initialized.
 // Output : int
 //-----------------------------------------------------------------------------
-int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physicsFactory, CGlobalVarsBase *pGlobals )
+int CHLClient::Connect( CreateInterfaceFn appSystemFactory, CGlobalVarsBase *pGlobals )
 {
 	InitCRTMemDebug();
 	MathLib_Init( 2.2f, 2.2f, 0.0f, 2.0f );
-
-
-#ifdef SIXENSE
-	g_pSixenseInput = new SixenseInput;
-#endif
 
 	// Hook up global variables
 	gpGlobals = pGlobals;
@@ -872,6 +872,34 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 #ifndef NO_STEAM
 	ClientSteamContext().Activate();
+#endif
+
+	// Console variables are connected before Init(), matching the retail
+	// VClient018 lifecycle.
+	ConVar_Register( FCVAR_CLIENTDLL );
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Disconnect components registered by Connect().
+//-----------------------------------------------------------------------------
+void CHLClient::Disconnect()
+{
+	ConVar_Unregister();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Called when the DLL is first loaded.
+// Input  : appSystemFactory - unified engine/app-system factory
+// Output : int
+//-----------------------------------------------------------------------------
+int CHLClient::Init( CreateInterfaceFn appSystemFactory, CGlobalVarsBase *pGlobals )
+{
+	(void)pGlobals;
+
+#ifdef SIXENSE
+	g_pSixenseInput = new SixenseInput;
 #endif
 
 	// We aren't happy unless we get all of our interfaces.
@@ -952,7 +980,9 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 	factorylist_t factories;
 	factories.appSystemFactory = appSystemFactory;
-	factories.physicsFactory = physicsFactory;
+	// VClient018 no longer receives a separate physics factory. The engine's
+	// app-system factory exposes the physics interfaces as well.
+	factories.physicsFactory = appSystemFactory;
 	FactoryList_Store( factories );
 
 	// Yes, both the client and game .dlls will try to Connect, the soundemittersystem.dll will handle this gracefully
@@ -975,9 +1005,6 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 	// Hook up the gaussian random number generator
 	s_GaussianRandomStream.AttachToStream( random );
-
-	// Initialize the console variables.
-	ConVar_Register( FCVAR_CLIENTDLL );
 
 	g_pcv_ThreadMode = g_pCVar->FindVar( "host_thread_mode" );
 
@@ -1066,7 +1093,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 		GetClientVoiceMgr()->Init( &g_VoiceStatusHelper, parent );
 	}
 
-	if ( !PhysicsDLLInit( physicsFactory ) )
+	if ( !PhysicsDLLInit( appSystemFactory ) )
 		return false;
 
 	g_pGameSaveRestoreBlockSet->AddBlockHandler( GetEntitySaveRestoreBlockHandler() );
@@ -1213,7 +1240,6 @@ void CHLClient::Shutdown( void )
 	// This call disconnects the VGui libraries which we rely on later in the shutdown path, so don't do it
 //	DisconnectTier3Libraries( );
 	DisconnectTier2Libraries( );
-	ConVar_Unregister();
 	DisconnectTier1Libraries( );
 
 	gameeventmanager = NULL;
@@ -2609,6 +2635,53 @@ bool CHLClient::DisconnectAttempt( void )
 bool CHLClient::IsConnectedUserInfoChangeAllowed( IConVar *pCvar )
 {
 	return GameRules() ? GameRules()->IsConnectedUserInfoChangeAllowed( NULL ) : true;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: The engine wants to mark two client entities as touching.
+//-----------------------------------------------------------------------------
+void CHLClient::MarkEntitiesAsTouching( IClientEntity *e1, IClientEntity *e2 )
+{
+	if ( !e1 || !e2 )
+		return;
+
+	C_BaseEntity *pEntity = e1->GetBaseEntity();
+	C_BaseEntity *pEntityTouched = e2->GetBaseEntity();
+	if ( !pEntity || !pEntityTouched )
+		return;
+
+	trace_t tr;
+	memset( &tr, 0, sizeof( tr ) );
+	tr.endpos = ( pEntity->GetAbsOrigin() + pEntityTouched->GetAbsOrigin() ) * 0.5f;
+	pEntity->PhysicsMarkEntitiesAsTouching( pEntityTouched, tr );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Black Mesa VClient018 slot 80.
+//-----------------------------------------------------------------------------
+void CHLClient::BMS_Unknown80_PreloadParticleEffects()
+{
+	ParseParticleEffects( true, true );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Black Mesa VClient018 slot 81, called by the engine when it has
+// finished with a client entity.
+//-----------------------------------------------------------------------------
+void CHLClient::DeleteNetworkedEntity( IClientNetworkable *pNetworkable )
+{
+	if ( !pNetworkable )
+		return;
+
+	IClientUnknown *pUnknown = pNetworkable->GetIClientUnknown();
+	C_BaseEntity *pBaseEntity = pUnknown ? pUnknown->GetBaseEntity() : NULL;
+	if ( pBaseEntity )
+	{
+		// Retail Black Mesa routes this through CClientEntityList's deferred
+		// deletion queue. This SDK branch predates that queue, so preserve its
+		// existing immediate-release behavior.
+		pBaseEntity->Release();
+	}
 }
 
 #ifndef NO_STEAM

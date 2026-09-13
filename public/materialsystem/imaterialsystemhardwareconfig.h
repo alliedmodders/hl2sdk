@@ -15,6 +15,7 @@
 
 
 #include "tier1/interface.h"
+#include "bitmap/imageformat.h"
 
 //-----------------------------------------------------------------------------
 // GL helpers
@@ -86,6 +87,46 @@ virtual ret_type method const = 0;
 //-----------------------------------------------------------------------------
 // Material system configuration
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// Shadow filtering / cascaded-shadow modes used by the current Black Mesa ABI.
+// The names and values match the later Valve MaterialSystem headers.
+//-----------------------------------------------------------------------------
+enum ShadowFilterMode_t
+{
+	SHADOWFILTERMODE_DEFAULT = 0,
+	NVIDIA_PCF = 0,
+	ATI_NO_PCF_FETCH4 = 1,
+	NVIDIA_PCF_CHEAP = 2,
+	ATI_NOPCF = 3,
+
+#if defined( _X360 )
+	GAMECONSOLE_NINE_TAP_PCF = 0,
+	GAMECONSOLE_SINGLE_TAP_PCF = 1,
+	SHADOWFILTERMODE_FIRST_CHEAP_MODE = GAMECONSOLE_SINGLE_TAP_PCF,
+#else
+	SHADOWFILTERMODE_FIRST_CHEAP_MODE = NVIDIA_PCF_CHEAP,
+#endif
+};
+
+enum CSMQualityMode_t
+{
+	CSMQUALITY_VERY_LOW = 0,
+	CSMQUALITY_LOW,
+	CSMQUALITY_MEDIUM,
+	CSMQUALITY_HIGH,
+	CSMQUALITY_TOTAL_MODES
+};
+
+enum CSMShaderMode_t
+{
+	CSMSHADERMODE_LOW_OR_VERY_LOW = 0,
+	CSMSHADERMODE_MEDIUM = 1,
+	CSMSHADERMODE_HIGH = 2,
+	CSMSHADERMODE_ATIFETCH4 = 3,
+	CSMSHADERMODE_TOTAL_MODES
+};
+
 class IMaterialSystemHardwareConfig
 {
 public:
@@ -116,7 +157,6 @@ public:
 	// The number of texture stages represents the number of computations
 	// we can do in the fixed-function pipeline, it is *not* related to the
 	// simultaneous number of textures we can use
-	virtual int  GetTextureStageCount() const = 0;
 	virtual int	 NumVertexShaderConstants() const = 0;
 	virtual int	 NumPixelShaderConstants() const = 0;
 	virtual int	 MaxNumLights() const = 0;
@@ -184,6 +224,7 @@ public:
 
 	virtual void OverrideStreamOffsetSupport( bool bOverrideEnabled, bool bEnableSupport ) = 0;
 
+	virtual ShadowFilterMode_t GetShadowFilterMode( bool bForceLowQualityShadows, bool bPS30 ) const = 0;
 	virtual int GetShadowFilterMode() const = 0;
 
 	virtual int NeedsShaderSRGBConversion() const = 0;
@@ -205,8 +246,44 @@ public:
 	virtual bool SupportsBorderColor( void ) const = 0;
 	virtual bool SupportsFetch4( void ) const = 0;
 
+	virtual bool CanStretchRectFromTextures() const = 0;
+	virtual float GetShadowDepthBias() const = 0;
+	virtual float GetShadowSlopeScaleDepthBias() const = 0;
+	virtual bool SupportsShadowDepthTextures() const = 0;
+	virtual ImageFormat GetShadowDepthTextureFormat() const = 0;
+	virtual ImageFormat GetHighPrecisionShadowDepthTextureFormat() const = 0;
+	virtual ImageFormat GetNullTextureFormat() const = 0;
+
+	virtual ImageFormat GetCSMDepthTextureFormat_Low() const = 0;
+	virtual ImageFormat GetCSMDepthTextureFormat_High() const = 0;
+	virtual ImageFormat GetDefShadow_DepthTextureFormat_Low() const = 0;
+	virtual ImageFormat GetDefShadow_DepthTextureFormat_High() const = 0;
+	virtual ImageFormat GetGbuffer_DepthRT_32() const = 0;
+	virtual ImageFormat GetGbuffer_DepthRT_16() const = 0;
+	virtual ImageFormat GetGbuffer_Normal_32() const = 0;
+	virtual ImageFormat GetGbuffer_Normal_64() const = 0;
+	virtual ImageFormat GetGbuffer_Warp_RGB() const = 0;
+	virtual ImageFormat GetGbuffer_Warp_ARGB() const = 0;
+	virtual ImageFormat GetGbuffer_Diff_RGB8() const = 0;
+	virtual ImageFormat GetGbuffer_Diff_RGB10() const = 0;
+	virtual ImageFormat GetGbuffer_Diff_RGB16() const = 0;
+
+	virtual float GetLightMapScaleFactor() const = 0;
+	virtual bool SupportsCascadedShadowMapping() const = 0;
+	virtual CSMQualityMode_t GetCSMQuality() const = 0;
+	virtual bool SupportsBilinearPCFSampling() const = 0;
+	virtual CSMShaderMode_t GetCSMShaderMode( CSMQualityMode_t nQualityLevel ) const = 0;
+	virtual bool GetCSMAccurateBlending() const = 0;
+	virtual void SetCSMAccurateBlending( bool bEnable ) = 0;
+
+	virtual bool PlatformRequiresNonNullPixelShaders() const = 0;
+	virtual int NumBooleanVertexShaderConstants() const = 0;
+	virtual int NumIntegerVertexShaderConstants() const = 0;
+	virtual bool UseFastZReject() const = 0;
+	virtual bool HasFastZReject() const = 0;
+	virtual bool IsDX10Card() const = 0;
+
 	inline bool ShouldAlwaysUseShaderModel2bShaders() const { return IsOpenGL(); }
-	inline bool PlatformRequiresNonNullPixelShaders() const { return IsOpenGL(); }
 };
 
 #endif // IMATERIALSYSTEMHARDWARECONFIG_H

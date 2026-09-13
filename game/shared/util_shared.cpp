@@ -1029,6 +1029,40 @@ float CountdownTimer::Now( void ) const
 }
 
 
+BEGIN_DATADESC_NO_BASE( IntervalTimer )
+END_DATADESC()
+
+BEGIN_NETWORK_TABLE_NOBASE( IntervalTimer, DT_IntervalTimer )
+#ifdef CLIENT_DLL
+	RecvPropFloat( RECVINFO( m_timestamp ) ),
+#else
+	SendPropFloat( SENDINFO( m_timestamp ), 0, SPROP_NOSCALE ),
+#endif
+END_NETWORK_TABLE()
+
+#ifdef CLIENT_DLL
+BEGIN_PREDICTION_DATA_NO_BASE( IntervalTimer )
+	DEFINE_PRED_FIELD( m_timestamp, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
+END_PREDICTION_DATA()
+#endif
+
+#ifdef CLIENT_DLL
+BEGIN_RECV_TABLE_NOBASE( CountdownTimer, DT_CountdownTimer )
+	RecvPropFloat( RECVINFO( m_duration ) ),
+	RecvPropFloat( RECVINFO( m_timestamp ) ),
+END_RECV_TABLE()
+BEGIN_PREDICTION_DATA_NO_BASE( CountdownTimer )
+	DEFINE_PRED_FIELD( m_duration, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
+	DEFINE_PRED_FIELD( m_timestamp, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
+END_PREDICTION_DATA()
+#else
+BEGIN_SEND_TABLE_NOBASE( CountdownTimer, DT_CountdownTimer )
+	SendPropFloat( SENDINFO( m_duration ), 0, SPROP_NOSCALE ),
+	SendPropFloat( SENDINFO( m_timestamp ), 0, SPROP_NOSCALE ),
+END_SEND_TABLE()
+#endif
+
+
 #ifdef CLIENT_DLL
 	CBasePlayer *UTIL_PlayerByIndex( int entindex )
 	{

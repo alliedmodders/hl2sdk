@@ -53,6 +53,30 @@ class ICallQueue;
 struct MorphWeight_t;
 class IFileList;
 
+class ITextureCompositor;
+class IAsyncTextureOperationReceiver;
+
+// Black Mesa renderer payloads. Their pointer/reference ABI is known from the
+// exported C++ symbols. Their field layouts are intentionally not guessed here.
+struct CascadedShadowMappingState_t;
+struct GPU_GBufferState_t;
+struct GPU_GodRayState_t;
+struct GPU_XogState_t;
+struct GPU_NIHI_SHIELD_DATA_t;
+struct GPU_NEXTGEN_BLOOM_t;
+struct GPU_GBCsmData_t;
+
+// The type name and integer range are ABI-confirmed. Original retail enum
+// enumerator spellings are not present in C++ symbols, so neutral names are used.
+enum GPU_GBUFFER_MODES_TYPE_T
+{
+	GPU_GBUFFER_MODE_0 = 0,
+	GPU_GBUFFER_MODE_1 = 1,
+	GPU_GBUFFER_MODE_2 = 2,
+	GPU_GBUFFER_MODE_3 = 3,
+	GPU_GBUFFER_MODE_4 = 4
+};
+
 
 //-----------------------------------------------------------------------------
 // The vertex format type
@@ -65,7 +89,7 @@ typedef uint64 VertexFormat_t;
 
 // NOTE NOTE NOTE!!!!  If you up this, grep for "NEW_INTERFACE" to see if there is anything
 // waiting to be enabled during an interface revision.
-#define MATERIAL_SYSTEM_INTERFACE_VERSION "VMaterialSystem080"
+#define MATERIAL_SYSTEM_INTERFACE_VERSION "VMaterialSystem081"
 
 #ifdef POSIX
 #define ABSOLUTE_MINIMUM_DXLEVEL 90
@@ -785,6 +809,9 @@ public:
 	//---------------------------------------------------------
 
 	// uncache all materials. .  good for forcing reload of materials.
+
+	virtual void SuspendTextureStreaming() = 0;
+	virtual void ResumeTextureStreaming() = 0;
 	virtual void				UncacheAllMaterials( ) = 0;
 
 	// Remove any materials from memory that aren't in use as determined
@@ -986,6 +1013,20 @@ public:
 	// Vendor-dependent shadow depth texture format
 	virtual ImageFormat			GetShadowDepthTextureFormat() = 0;
 
+	virtual ImageFormat GetCSMDepthTextureFormat_Low() = 0;
+	virtual ImageFormat GetCSMDepthTextureFormat_High() = 0;
+	virtual ImageFormat GetDefShadow_DepthTextureFormat_Low() = 0;
+	virtual ImageFormat GetDefShadow_DepthTextureFormat_High() = 0;
+	virtual ImageFormat GetGbuffer_DepthRT_32() = 0;
+	virtual ImageFormat GetGbuffer_DepthRT_16() = 0;
+	virtual ImageFormat GetGbuffer_Normal_32() = 0;
+	virtual ImageFormat GetGbuffer_Normal_64() = 0;
+	virtual ImageFormat GetGbuffer_Warp_RGB() = 0;
+	virtual ImageFormat GetGbuffer_Warp_ARGB() = 0;
+	virtual ImageFormat GetGbuffer_Diff_RGB8() = 0;
+	virtual ImageFormat GetGbuffer_Diff_RGB10() = 0;
+	virtual ImageFormat GetGbuffer_Diff_RGB16() = 0;
+
 	virtual bool				SupportsFetch4( void ) = 0;
 
 	// Create a custom render context. Cannot be used to create MATERIAL_HARDWARE_CONTEXT
@@ -1020,6 +1061,9 @@ public:
 
 	// For sv_pure mode. The filesystem figures out which files the client needs to reload to be "pure" ala the server's preferences.
 	virtual void ReloadFilesInList( IFileList *pFilesToReload ) = 0;
+
+	virtual void FinishRenderTargetAllocation() = 0;
+	virtual void ReEnableRenderTargetAllocation_IRealizeIfICallThisAllTexturesWillBeUnloadedAndLoadTimeWillSufferHorribly() = 0;
 	virtual	bool				AllowThreading( bool bAllow, int nServiceThread ) = 0;
 
 	// Extended version of FindMaterial().
@@ -1043,6 +1087,16 @@ public:
 	// creates a texture suitable for use with materials from a raw stream of bits.
 	// The bits will be retained by the material system and can be freed upon return.
 	virtual ITexture*			CreateTextureFromBits(int w, int h, int mips, ImageFormat fmt, int srcBufferSize, byte* srcBits) = 0;
+
+	virtual ITextureCompositor *NewTextureCompositor( int w, int h, const char *pCompositeName,
+		int nTeamNum, uint64 randomSeed, KeyValues *stageDesc, uint32 texCompositeCreateFlags ) = 0;
+	virtual void AsyncFindTexture( const char *pFilename, const char *pTextureGroupName,
+		IAsyncTextureOperationReceiver *pRecipient, void *pExtraArgs,
+		bool bComplain = true, int nAdditionalCreationFlags = 0 ) = 0;
+	virtual ITexture *CreateNamedTextureFromBitsEx( const char *pName, const char *pTextureGroupName,
+		int w, int h, int mips, ImageFormat fmt, int srcBufferSize, byte *srcBits, int nFlags ) = 0;
+	virtual bool AddTextureCompositorTemplate( const char *pName, KeyValues *pTemplate, int nFlags ) = 0;
+	virtual bool VerifyTextureCompositorTemplates() = 0;
 };
 
 
@@ -1243,6 +1297,51 @@ public:
 	virtual void SetFlashlightMode( bool bEnable ) = 0;
 
 	virtual void SetFlashlightState( const FlashlightState_t &state, const VMatrix &worldToTexture ) = 0;
+
+	// Black Mesa renderer extensions. Order is ABI-significant.
+	virtual bool IsCascadedShadowMapping() const = 0;
+	virtual void SetCascadedShadowMapping( bool bEnable ) = 0;
+	virtual bool IsCSMDeferred() const = 0;
+	virtual void SetCSMDeferred( bool bEnable ) = 0;
+	virtual void SetCascadedShadowMappingState( const CascadedShadowMappingState_t &state, ITexture *pDepthTextureAtlas ) = 0;
+	virtual void SetCSMQualityMode( CSMQualityMode_t nQualityMode ) = 0;
+	virtual CSMQualityMode_t GetCSMQualityMode() const = 0;
+
+	virtual void SetGBufferViewModelMode( int nMode ) = 0;
+	virtual void SetGBufferEnableNoise( int nEnable ) = 0;
+	virtual void SetGBufferMode( GPU_GBUFFER_MODES_TYPE_T nMode ) = 0;
+	virtual void SetGBufferQualityLevel( int nQualityLevel ) = 0;
+	virtual void SetGBLightBufferQualityLevel( int nQualityLevel ) = 0;
+	virtual void SetGBNormalCompressMode( int nMode ) = 0;
+	virtual void SetGBufferState( const GPU_GBufferState_t &state ) = 0;
+
+	virtual void SetGBufferTexDepth( ITexture *pTexture ) = 0;
+	virtual void SetGBufferTexNormal( ITexture *pTexture ) = 0;
+	virtual void SetGBufferTexData( ITexture *pTexture ) = 0;
+	virtual void SetGBufferTexLightDiff( ITexture *pTexture ) = 0;
+	virtual void SetGBufferTexLightDiffNeg( ITexture *pTexture ) = 0;
+	virtual void SetGBufferTexLightSpec( ITexture *pTexture ) = 0;
+	virtual void SetGBufferTexLightRim( ITexture *pTexture ) = 0;
+	virtual void SetGBufferShadowMap( ITexture *pTexture ) = 0;
+	virtual void SetGBufferShadowMapStatic( ITexture *pTexture ) = 0;
+	virtual void SetGBufferNoise( ITexture *pTexture ) = 0;
+	virtual void SetGpuCsmData( GPU_GBCsmData_t *pData ) = 0;
+	virtual void SetGBufferTexCSM( ITexture *pTexture ) = 0;
+
+	virtual void SetCSM_StaticMap( ITexture *pTexture ) = 0;
+	virtual void SetCSM_StaticMapRT( ITexture *pTexture ) = 0;
+	virtual void SetCSM_AtlasMap( ITexture *pTexture ) = 0;
+	virtual void SetCSM_AtlasMapRT( ITexture *pTexture ) = 0;
+
+	virtual void SetGodRayState( const GPU_GodRayState_t &state ) = 0;
+	virtual void SetGodRayBackBuffer( ITexture *pTexture ) = 0;
+	virtual void SetGodRayBlur( ITexture *pTexture ) = 0;
+	virtual void SetGodRayMask( ITexture *pTexture ) = 0;
+
+	virtual void SetXogState( const GPU_XogState_t &state ) = 0;
+	virtual void SetXogGradientTex( ITexture *pTexture ) = 0;
+	virtual void SetNihiShieldState( const GPU_NIHI_SHIELD_DATA_t &state ) = 0;
+	virtual void SetNextGenBloomState( const GPU_NEXTGEN_BLOOM_t &state ) = 0;
 
 	// Gets the current height clip mode
 	virtual MaterialHeightClipMode_t GetHeightClipMode( ) = 0;
@@ -1468,6 +1567,7 @@ public:
 	virtual void LoadLookup( ColorCorrectionHandle_t handle, const char *pLookupName ) = 0;
 	virtual void UnlockLookup( ColorCorrectionHandle_t handle ) = 0;
 	virtual void SetLookupWeight( ColorCorrectionHandle_t handle, float flWeight ) = 0;
+	virtual void SetExclusive( unsigned int nColorCorrectionHandle, bool bExclusive ) = 0;
 	virtual void ResetLookupWeights( ) = 0;
 	virtual void SetResetable( ColorCorrectionHandle_t handle, bool bResetable ) = 0;
 
@@ -1504,6 +1604,10 @@ public:
 	virtual void OverrideColorWriteEnable( bool bOverrideEnable, bool bColorWriteEnable ) = 0;
 
 	virtual void ClearBuffersObeyStencilEx( bool bClearColor, bool bClearAlpha, bool bClearDepth ) = 0;
+
+	virtual void AsyncCreateTextureFromRenderTarget( ITexture *pSrcRt, const char *pDstName,
+		ImageFormat dstFormat, bool bGenMipmaps, int nAdditionalCreationFlags,
+		IAsyncTextureOperationReceiver *pRecipient, void *pExtraArgs ) = 0;
 };
 
 template< class E > inline E* IMatRenderContext::LockRenderDataTyped( int nCount, const E* pSrcData )

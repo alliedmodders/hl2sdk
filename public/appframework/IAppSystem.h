@@ -97,6 +97,14 @@ public:
 	// Init, shutdown
 	virtual InitReturnVal_t Init() { return INIT_OK; }
 	virtual void Shutdown() {}
+
+	// Black Mesa uses the extended 8-slot IAppSystem ABI.
+	virtual const AppSystemInfo_t *GetDependencies() { return NULL; }
+	virtual AppSystemTier_t GetTier() { return APP_SYSTEM_TIER_OTHER; }
+	virtual void Reconnect( CreateInterfaceFn factory, const char *pInterfaceName )
+	{
+		ReconnectInterface( factory, pInterfaceName );
+	}
 };
 
 
@@ -124,6 +132,9 @@ protected:
 
 private:
 	bool m_bIsPrimaryAppSystem;
+
+public:
+	virtual AppSystemTier_t GetTier() { return APP_SYSTEM_TIER0; }
 };
 
 

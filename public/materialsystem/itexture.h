@@ -68,6 +68,11 @@ public:
 	virtual void IncrementReferenceCount( void ) = 0;
 	virtual void DecrementReferenceCount( void ) = 0;
 
+	// Shared-texture synchronization slots present in current Black Mesa.
+	virtual void *GetShareableHandle() = 0;
+	virtual uint32 CompareExchangeShareableTextureLock( uint32 nOldValue, uint32 nNewValue ) = 0;
+	virtual uint32 LoadShareableTextureLock() = 0;
+
 	inline void AddRef() { IncrementReferenceCount(); }
 	inline void Release() { DecrementReferenceCount(); }
 
@@ -120,6 +125,12 @@ public:
 
 	// Save texture to a file.
 	virtual bool SaveToFile( const char *fileName ) = 0;
+
+	// Copy this render-target/renderable texture to a staging texture.
+	virtual void CopyToStagingTexture( ITexture *pDstTexture ) = 0;
+
+	// Controls the value returned by IsError().
+	virtual void SetErrorTexture( bool bIsErrorTexture ) = 0;
 };
 
 

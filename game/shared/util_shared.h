@@ -473,6 +473,13 @@ inline float DistanceToRay( const Vector &pos, const Vector &rayStart, const Vec
 class IntervalTimer
 {
 public:
+#ifdef CLIENT_DLL
+	DECLARE_PREDICTABLE();
+#endif
+	DECLARE_DATADESC();
+	DECLARE_CLASS_NOBASE( IntervalTimer );
+	DECLARE_EMBEDDED_NETWORKVAR();
+
 	IntervalTimer( void )
 	{
 		m_timestamp = -1.0f;
@@ -486,6 +493,11 @@ public:
 	void Start( void )
 	{
 		m_timestamp = Now();
+	}
+
+	void StartFromTime( float startTime )
+	{
+		m_timestamp = startTime;
 	}
 
 	void Invalidate( void )
@@ -514,10 +526,21 @@ public:
 		return (Now() - m_timestamp > duration) ? true : false;
 	}
 
-private:
-	float m_timestamp;
+	float GetStartTime( void ) const
+	{
+		return m_timestamp;
+	}
+
+protected:
+	CNetworkVar( float, m_timestamp );
 	float Now( void ) const;		// work-around since client header doesn't like inlined gpGlobals->curtime
 };
+
+#ifdef CLIENT_DLL
+EXTERN_RECV_TABLE( DT_IntervalTimer );
+#else
+EXTERN_SEND_TABLE( DT_IntervalTimer );
+#endif
 
 
 //--------------------------------------------------------------------------------------------------------------
@@ -528,10 +551,16 @@ private:
 class CountdownTimer
 {
 public:
+#ifdef CLIENT_DLL
+	DECLARE_PREDICTABLE();
+#endif
+	DECLARE_CLASS_NOBASE( CountdownTimer );
+	DECLARE_EMBEDDED_NETWORKVAR();
+
 	CountdownTimer( void )
 	{
-		m_timestamp = -1.0f;
 		m_duration = 0.0f;
+		m_timestamp = -1.0f;
 	}
 
 	void Reset( void )
@@ -542,6 +571,12 @@ public:
 	void Start( float duration )
 	{
 		m_timestamp = Now() + duration;
+		m_duration = duration;
+	}
+
+	void StartFromTime( float startTime, float duration )
+	{
+		m_timestamp = startTime + duration;
 		m_duration = duration;
 	}
 
@@ -576,11 +611,33 @@ public:
 		return (m_timestamp > 0.0f) ? m_duration : 0.0f;
 	}
 
+	/// 1.0 for newly started, 0.0 for elapsed
+	float GetRemainingRatio( void ) const
+	{
+		if ( HasStarted() )
+		{
+			float left = GetRemainingTime() / m_duration;
+			if ( left < 0.0f )
+				return 0.0f;
+			if ( left > 1.0f )
+				return 1.0f;
+			return left;
+		}
+
+		return 0.0f;
+	}
+
 private:
-	float m_duration;
-	float m_timestamp;
-	float Now( void ) const;		// work-around since client header doesn't like inlined gpGlobals->curtime
+	CNetworkVar( float, m_duration );
+	CNetworkVar( float, m_timestamp );
+	virtual float Now( void ) const;		// work-around since client header doesn't like inlined gpGlobals->curtime
 };
+
+#ifdef CLIENT_DLL
+EXTERN_RECV_TABLE( DT_CountdownTimer );
+#else
+EXTERN_SEND_TABLE( DT_CountdownTimer );
+#endif
 
 char* ReadAndAllocStringValue( KeyValues *pSub, const char *pName, const char *pFilename = NULL );
 

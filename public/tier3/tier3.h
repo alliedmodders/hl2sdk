@@ -107,6 +107,8 @@ public:
 		}
 		BaseClass::Disconnect();
 	}
+
+	virtual AppSystemTier_t GetTier() { return APP_SYSTEM_TIER3; }
 };
 
 

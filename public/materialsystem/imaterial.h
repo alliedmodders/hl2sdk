@@ -503,6 +503,10 @@ public:
 
 	// Are we translucent?
 	virtual bool			IsTranslucent() = 0;
+	
+	//black mesa adds these two here
+	virtual void 			IncrementTranslucencyCount() = 0;
+	virtual void 			DecrementTranslucencyCount() = 0;
 
 	// Are we alphatested?
 	virtual bool			IsAlphaTested() = 0;
