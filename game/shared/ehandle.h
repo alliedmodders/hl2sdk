@@ -14,6 +14,7 @@
 #include "entity2/entitysystem.h"
 #include "entity2/entityinstance.h"
 #include "entityhandle.h"
+#include <type_traits>
 
 // -------------------------------------------------------------------------------------------------- //
 // Game-code CBaseHandle implementation.
@@ -71,6 +72,15 @@ public:
 	bool	operator==( T *val ) const;
 	bool	operator!=( T *val ) const;
 	const CBaseHandle& operator=( const T *val );
+
+	// Assigning a handle of a derived entity type -- a CHandle<CCSPlayerController>
+	// into a CHandle<CBaseEntity>, say. Upcasts only: U must derive from T. An exact
+	// match, so it wins over the two otherwise-equal user conversions -- operator U*()
+	// into operator=( const T* ) and CHandle( const CBaseHandle& ) into the copy
+	// assignment -- that made such an assignment ambiguous. Same-type assignment
+	// still takes the implicit copy assignment.
+	template< class U, class = std::enable_if_t< std::is_base_of_v< T, U > > >
+	CHandle<T>& operator=( const CHandle<U> &other );
 
 	T*		operator->() const;
 };
@@ -165,6 +175,14 @@ template<class T>
 inline const CBaseHandle& CHandle<T>::operator=( const T *val )
 {
 	Set( val );
+	return *this;
+}
+
+template<class T>
+template<class U, class>
+inline CHandle<T>& CHandle<T>::operator=( const CHandle<U> &other )
+{
+	Init( other.GetEntryIndex(), other.GetSerialNumber() );
 	return *this;
 }
 
