@@ -304,6 +304,12 @@ public:
 		int8_t m_nFlags;
 	};
 
+	CNetworkSerializerClassInfo *FindClass( const char *class_name ) const
+	{
+		int index = m_ClassInfos.Find( class_name );
+		return index == m_ClassInfos.InvalidIndex() ? nullptr : m_ClassInfos[index];
+	}
+
 	CUtlString m_ModuleName;
 	CUtlDict<CNetworkSerializerClassInfo *> m_ClassInfos;
 	CUtlDict<CNetworkSerializerCodeGenDatabase::EnumInfo_t> m_EnumInfos;

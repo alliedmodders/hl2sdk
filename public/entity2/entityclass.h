@@ -44,10 +44,18 @@ typedef enum
 	USE_TOGGLE = 3
 } USE_TYPE;
 
+struct EntityUseInput_t
+{
+	CEntityInstance *m_pActivator;
+	CEntityInstance *m_pCaller;
+	USE_TYPE m_nType;
+	float m_flValue;
+};
+
 // AMNOTE: In action these are member function ptrs instead of raw pointers
 typedef void (*BASEPTR)(CEntityInstance *ent);
 typedef void (*ENTITYFUNCPTR)(CEntityInstance *pOther);
-typedef void (*USEPTR)(CEntityInstance *pActivator, CEntityInstance *pCaller, USE_TYPE useType, float value);
+typedef void (*USEPTR)(const EntityUseInput_t *input);
 
 struct EntClassComponentOverride_t
 {
