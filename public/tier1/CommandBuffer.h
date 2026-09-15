@@ -48,7 +48,7 @@ public:
 	DLL_CLASS_IMPORT ~CCommandBuffer();
 
 	// Inserts text into the command buffer
-	DLL_CLASS_IMPORT bool AddText( const char *pText, int nSource = 0, int nTickDelay = 0, bool unk3 = false, double unk4 = 0.0, uint64 nRequiredFlags = 0 );
+	DLL_CLASS_IMPORT bool AddText( const char *pText, int nTickDelay = 0, int nMaxCommands = 0, bool unk3 = false, double unk4 = 0.0, uint64 unk5 = 0 );
 
 	// Used to iterate over all commands appropriate for the current time
 	DLL_CLASS_IMPORT void BeginProcessingCommands( int nDeltaTicks );
@@ -66,7 +66,7 @@ public:
 	DLL_CLASS_IMPORT void SetWaitDelayTime( int nTickDelay );
 
 	// Splits pText into individual commands, appending each to pOut.
-	DLL_CLASS_IMPORT static void SplitCommands( const char *pText, int nLength, CUtlVector< CUtlString > *pOut );
+	DLL_CLASS_IMPORT static void SplitCommands( const char *pText, int nMaxCommands, CUtlVector< CUtlString > *pOut );
 
 	// Returns a handle to the next command to process
 	// (useful when inserting commands into the buffer during processing
@@ -79,7 +79,7 @@ public:
 	// Specifies a max limit of the args buffer. For unittesting. Size == 0 means use default
 	DLL_CLASS_IMPORT void LimitArgumentBufferSize( int nSize );
 
-	// Sets the flag mask a command must satisfy to be dequeued. Returns the previous mask.
+	// Sets required flags recorded on subsequently added commands. Returns the previous mask.
 	DLL_CLASS_IMPORT uint64 SetRequiredFlags( uint64 nRequiredFlags );
 
 	// Locks/unlocks the command buffer.
@@ -98,7 +98,8 @@ private:
 	uint8			m_unk002[ 0x18 ];			// 0x8040
 	int			    m_nWaitDelayTicks;			// 0x8058
 	int			    m_nMaxArgSBufferLength;	    // 0x805C
-	uint8			m_unk003[ 0x02 ];			// 0x8060
+	bool			m_bIsProcessingCommands;	// 0x8060
+	uint8			m_unk003[ 0x01 ];			// 0x8061
 	bool			m_bIsLocked;				// 0x8062
 	uint8			m_unk004[ 0x15 ];			// 0x8063
 	char			*m_pArgSCursor;				// 0x8078
@@ -107,7 +108,7 @@ private:
 	uint8			m_unk006[ 0x04 ];			// 0x84A4
 	const char		**m_ppArgv;					// 0x84A8
 	uint8			m_unk007[ 0x208 ];			// 0x84B0
-	bool			m_bIsProcessingCommands;	// 0x86B8
+	bool			m_unk011;				// 0x86B8
 	uint8			m_unk008[ 0x07 ];			// 0x86B9
 	double			m_unk009;					// 0x86C0
 	uint8			m_unk010[ 0x10 ];			// 0x86C8
