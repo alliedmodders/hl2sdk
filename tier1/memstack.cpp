@@ -31,7 +31,8 @@ MEMALLOC_DEFINE_EXTERNAL_TRACKING(CMemoryStack);
 //-----------------------------------------------------------------------------
 
 CMemoryStack::CMemoryStack()
- : 	m_pNextAlloc( NULL ),
+ :
+	m_pNextAlloc( NULL ),
 	m_pCommitLimit( NULL ),
 	m_pAllocLimit( NULL ),
 	m_pBase( NULL ),
