@@ -102,15 +102,15 @@ public:
 			for( unsigned int nBitsLeft=0; nBitsLeft < 33; nBitsLeft++ )
 			{
 				unsigned int endbit = startbit + nBitsLeft;
-				g_BitWriteMasks[startbit][nBitsLeft] = BitForBitnum(startbit) - 1;
+				g_BitWriteMasks[startbit][nBitsLeft] = uint32( BitForBitnum( startbit ) ) - 1u;
 				if(endbit < 32)
-					g_BitWriteMasks[startbit][nBitsLeft] |= ~(BitForBitnum(endbit) - 1);
+					g_BitWriteMasks[startbit][nBitsLeft] |= ~( uint32( BitForBitnum( endbit ) ) - 1u );
 			}
 		}
 
 		for ( unsigned int maskBit=0; maskBit < 32; maskBit++ )
-			g_ExtraMasks[maskBit] = BitForBitnum(maskBit) - 1;
-		g_ExtraMasks[32] = ~0ul;
+			g_ExtraMasks[maskBit] = uint32( BitForBitnum( maskBit ) ) - 1u;
+		g_ExtraMasks[32] = ~uint32( 0 );
 
 		for ( unsigned int littleBit=0; littleBit < 32; littleBit++ )
 			StoreLittleDWord( &g_LittleBits[littleBit], 0, 1u<<littleBit );
