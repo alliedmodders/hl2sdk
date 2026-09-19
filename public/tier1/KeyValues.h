@@ -332,6 +332,10 @@ private:
 	char	   m_bEvaluateConditionals; // true, if while parsing this KeyValue, conditionals blocks are evaluated (default true)
 	char	   unused[1];
 
+#ifdef _WIN32
+	int		   unknown;
+#endif
+
 	KeyValues *m_pPeer;	// pointer to next key in list
 	KeyValues *m_pSub;	// pointer to Start of a new sub key list
 	KeyValues *m_pChain;// Search here if it's not in our list
