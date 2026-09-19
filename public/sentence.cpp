@@ -240,7 +240,7 @@ CBasePhonemeTag::CBasePhonemeTag()
 
 CBasePhonemeTag::CBasePhonemeTag( const CBasePhonemeTag& from )
 {
-	memcpy( (void *)this, &from, sizeof(*this) );
+	memcpy( this, &from, sizeof(*this) );
 }
 
 

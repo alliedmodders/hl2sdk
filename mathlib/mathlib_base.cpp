@@ -2500,7 +2500,7 @@ float Hermite_Spline(
 }
 
 
-void Hermite_SplineBasis( float t, float basis[] )
+void Hermite_SplineBasis( float t, float basis[4] )
 {
 	float tSqr = t*t;
 	float tCube = t*tSqr;

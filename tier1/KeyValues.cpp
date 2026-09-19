@@ -229,7 +229,7 @@ static CLeakTrack track;
 class CKeyValuesGrowableStringTable
 {
 public: 
-	// Constructor
+	// Constructor for global singleton string table
 	CKeyValuesGrowableStringTable() :
 		m_hashLookup( 2048, 0, 0, m_Functor, m_Functor ),
 		#ifdef PLATFORM_64BITS
@@ -237,6 +237,14 @@ public:
 		#else
 			m_vecStrings( 0, 512 * 1024 )
 		#endif
+	{
+		m_vecStrings.AddToTail( '\0' );
+	}
+
+	// Constructor for per-instance string table
+	CKeyValuesGrowableStringTable( int nInitialStringCapacity ) :
+		m_hashLookup( 16, 0, 0, m_Functor, m_Functor ),
+		m_vecStrings( 0, nInitialStringCapacity )
 	{
 		m_vecStrings.AddToTail( '\0' );
 	}
@@ -382,6 +390,22 @@ KeyValues::KeyValues( const char *setName )
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: Constructor with optional per-instance string table
+//-----------------------------------------------------------------------------
+KeyValues::KeyValues( const char *setName, bool bUsesLocalStorage )
+{
+	TRACK_KV_ADD( this, setName );
+
+	Init();
+	if ( bUsesLocalStorage )
+	{
+		m_pLocalStringTable = new CKeyValuesGrowableStringTable( 256 );
+		m_bIsUsingLocalStringTable = true;
+	}
+	SetName( setName );
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
 KeyValues::KeyValues( const char *setName, const char *firstKey, const char *firstValue )
@@ -461,9 +485,8 @@ void KeyValues::Init()
 	
 	m_bHasEscapeSequences = false;
 	m_bEvaluateConditionals = true;
-
-	// for future proof
-	memset( unused, 0, sizeof(unused) );
+	m_bIsUsingLocalStringTable = false;
+	m_pLocalStringTable = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -501,6 +524,8 @@ void KeyValues::RemoveEverything()
 	m_sValue = NULL;
 	delete [] m_wsValue;
 	m_wsValue = NULL;
+	delete m_pLocalStringTable;
+	m_pLocalStringTable = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -528,6 +553,11 @@ void KeyValues::ChainKeyValue( KeyValues* pChain )
 //-----------------------------------------------------------------------------
 const char *KeyValues::GetName( void ) const
 {
+	if ( m_bIsUsingLocalStringTable )
+	{
+		Assert( m_pLocalStringTable );
+		return m_pLocalStringTable->GetStringForSymbol( m_iKeyName );
+	}
 	return s_pfGetStringForSymbol( m_iKeyName );
 }
 

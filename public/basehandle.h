@@ -33,8 +33,6 @@ friend class CBaseEntityList;
 
 public:
 
-	// HACK HACK FOR SOURCEMOD
-	CBaseHandle(int index);
 	CBaseHandle();
 	CBaseHandle( INVALID_EHANDLE_tag );
 	CBaseHandle( const CBaseHandle &other );
@@ -85,11 +83,6 @@ protected:
 
 #include "ihandleentity.h"
 
-// HACK HACK FOR SOURCEMOD
-inline CBaseHandle::CBaseHandle(int index)
-{
-	m_Index = index;
-}
 
 inline CBaseHandle::CBaseHandle()
 {

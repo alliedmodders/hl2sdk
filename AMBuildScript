@@ -93,6 +93,8 @@ class SDKConfig(object):
       '-Wno-tautological-overlap-compare',
       '-Wno-tautological-constant-out-of-range-compare',
       '-Wno-undefined-bool-conversion',
+      '-Wno-nontrivial-memcall',
+      '-Wno-sync-alignment',
       '-msse',
       '-fPIC'
     ]
