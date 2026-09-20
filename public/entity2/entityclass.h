@@ -65,7 +65,6 @@ public:
 	CEntityClassInfo *m_pBaseClassInfo;
 	CSchemaClassInfo* m_pSchemaBinding;
 	datamap_t* m_pDataDescMap;
-	datamap_t* m_pPredDescMap;
 };
 
 class CEntityClass
