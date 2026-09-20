@@ -334,6 +334,7 @@ private:
 	char	   m_bHasEscapeSequences; // true, if while parsing this KeyValue, Escape Sequences are used (default false)
 	char	   m_bEvaluateConditionals; // true, if while parsing this KeyValue, conditionals blocks are evaluated (default true)
 	char	   m_bIsUsingLocalStringTable; // true if this node uses a per-instance growable string table
+	char	   m_bIsUsingLocalStringTable2; // true if this node uses a per-instance growable string table
 
 	KeyValues *m_pPeer;	// pointer to next key in list
 	KeyValues *m_pSub;	// pointer to Start of a new sub key list

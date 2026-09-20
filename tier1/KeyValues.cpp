@@ -401,6 +401,7 @@ KeyValues::KeyValues( const char *setName, bool bUsesLocalStorage )
 	{
 		m_pLocalStringTable = new CKeyValuesGrowableStringTable( 256 );
 		m_bIsUsingLocalStringTable = true;
+		m_bIsUsingLocalStringTable2 = true;
 	}
 	SetName( setName );
 }
