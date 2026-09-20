@@ -381,7 +381,10 @@ const char *KeyValues::GetStringForSymbolGrowable( int symbol )
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName )
+KeyValues::KeyValues( const char *setName ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_bOwnsLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -392,7 +395,10 @@ KeyValues::KeyValues( const char *setName )
 //-----------------------------------------------------------------------------
 // Purpose: Constructor with optional per-instance string table
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, bool bUsesLocalStorage )
+KeyValues::KeyValues( const char *setName, bool bUsesLocalStorage ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_bOwnsLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -401,14 +407,32 @@ KeyValues::KeyValues( const char *setName, bool bUsesLocalStorage )
 	{
 		m_pLocalStringTable = new CKeyValuesGrowableStringTable( 256 );
 		m_bIsUsingLocalStringTable = true;
+		m_bOwnsLocalStringTable = true;
 	}
+	SetName( setName );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Constructor for child nodes sharing a per-instance string table
+//-----------------------------------------------------------------------------
+KeyValues::KeyValues( const char *setName, CKeyValuesGrowableStringTable *pLocalStringTable ) :
+	m_bIsUsingLocalStringTable( pLocalStringTable != NULL ),
+	m_bOwnsLocalStringTable( false ),
+	m_pLocalStringTable( pLocalStringTable )
+{
+	TRACK_KV_ADD( this, setName );
+
+	Init();
 	SetName( setName );
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, const char *firstKey, const char *firstValue )
+KeyValues::KeyValues( const char *setName, const char *firstKey, const char *firstValue ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_bOwnsLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -420,7 +444,10 @@ KeyValues::KeyValues( const char *setName, const char *firstKey, const char *fir
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, const char *firstKey, const wchar_t *firstValue )
+KeyValues::KeyValues( const char *setName, const char *firstKey, const wchar_t *firstValue ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_bOwnsLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -432,7 +459,10 @@ KeyValues::KeyValues( const char *setName, const char *firstKey, const wchar_t *
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue )
+KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_bOwnsLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -444,7 +474,10 @@ KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, const char *firstKey, const char *firstValue, const char *secondKey, const char *secondValue )
+KeyValues::KeyValues( const char *setName, const char *firstKey, const char *firstValue, const char *secondKey, const char *secondValue ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_bOwnsLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -457,7 +490,10 @@ KeyValues::KeyValues( const char *setName, const char *firstKey, const char *fir
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue, const char *secondKey, int secondValue )
+KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue, const char *secondKey, int secondValue ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_bOwnsLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -485,8 +521,6 @@ void KeyValues::Init()
 	
 	m_bHasEscapeSequences = false;
 	m_bEvaluateConditionals = true;
-	m_bIsUsingLocalStringTable = false;
-	m_pLocalStringTable = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -497,6 +531,11 @@ KeyValues::~KeyValues()
 	TRACK_KV_REMOVE( this );
 
 	RemoveEverything();
+	if ( m_bOwnsLocalStringTable )
+	{
+		delete m_pLocalStringTable;
+		m_pLocalStringTable = NULL;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -524,8 +563,6 @@ void KeyValues::RemoveEverything()
 	m_sValue = NULL;
 	delete [] m_wsValue;
 	m_wsValue = NULL;
-	delete m_pLocalStringTable;
-	m_pLocalStringTable = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -559,6 +596,18 @@ const char *KeyValues::GetName( void ) const
 		return m_pLocalStringTable->GetStringForSymbol( m_iKeyName );
 	}
 	return s_pfGetStringForSymbol( m_iKeyName );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Create a child that shares this node's local string table, if any
+//-----------------------------------------------------------------------------
+KeyValues *KeyValues::CreateChild( const char *keyName ) const
+{
+	if ( m_bIsUsingLocalStringTable )
+	{
+		return new KeyValues( keyName, m_pLocalStringTable );
+	}
+	return new KeyValues( keyName );
 }
 
 //-----------------------------------------------------------------------------
@@ -1031,7 +1080,9 @@ KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 	}
 
 	// lookup the symbol for the search string
-	HKeySymbol iSearchStr = s_pfGetSymbolForString( searchStr, bCreate );
+	HKeySymbol iSearchStr = m_bIsUsingLocalStringTable
+		? m_pLocalStringTable->GetSymbolForString( searchStr, bCreate )
+		: s_pfGetSymbolForString( searchStr, bCreate );
 
 	if ( iSearchStr == INVALID_KEY_SYMBOL )
 	{
@@ -1064,7 +1115,7 @@ KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 		if (bCreate)
 		{
 			// we need to create a new key
-			dat = new KeyValues( searchStr );
+			dat = CreateChild( searchStr );
 //			Assert(dat != NULL);
 
 			dat->UsesEscapeSequences( m_bHasEscapeSequences != 0 );	// use same format as parent
@@ -1144,7 +1195,7 @@ KeyValues* KeyValues::CreateKey( const char *keyName )
 KeyValues* KeyValues::CreateKeyUsingKnownLastChild( const char *keyName, KeyValues *pLastChild )
 {
 	// Create a new key
-	KeyValues* dat = new KeyValues( keyName );
+	KeyValues* dat = CreateChild( keyName );
 
 	dat->UsesEscapeSequences( m_bHasEscapeSequences != 0 ); // use same format as parent does
 	dat->UsesConditionals( m_bEvaluateConditionals != 0 );
@@ -1760,7 +1811,9 @@ void KeyValues::SetFloat( const char *keyName, float value )
 
 void KeyValues::SetName( const char * setName )
 {
-	m_iKeyName = s_pfGetSymbolForString( setName, true );
+	m_iKeyName = m_bIsUsingLocalStringTable
+		? m_pLocalStringTable->GetSymbolForString( setName, true )
+		: s_pfGetSymbolForString( setName, true );
 }
 
 //-----------------------------------------------------------------------------
@@ -1813,13 +1866,13 @@ void KeyValues::CopyKeyValuesFromRecursive( const KeyValues& rootSrc )
 
 			// Add children to the queue to process later. 
 			if (cs.src->m_pSub) {
-				cs.dst->m_pSub = localDst = new KeyValues( NULL );
+				cs.dst->m_pSub = localDst = cs.dst->CreateChild( NULL );
 				nodeQ.Insert({ localDst, cs.src->m_pSub });
 			}
 
 			// Process siblings until we hit the end of the line. 
 			if (cs.src->m_pPeer) {
-				cs.dst->m_pPeer = new KeyValues( NULL );
+				cs.dst->m_pPeer = cs.dst->CreateChild( NULL );
 			}
 			else {
 				cs.dst->m_pPeer = NULL;
@@ -2340,7 +2393,7 @@ bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBase
 
 		if ( !pCurrentKey )
 		{
-			pCurrentKey = new KeyValues( s );
+			pCurrentKey = CreateChild( s );
 			Assert( pCurrentKey );
 
 			pCurrentKey->UsesEscapeSequences( m_bHasEscapeSequences != 0 ); // same format has parent use
@@ -2787,7 +2840,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer, int nStackDepth )
 		{
 		case TYPE_NONE:
 			{
-				dat->m_pSub = new KeyValues("");
+				dat->m_pSub = dat->CreateChild( "" );
 				if ( !dat->m_pSub->ReadAsBinary( buffer, nStackDepth + 1 ) )
 					return false;
 				break;
@@ -2861,7 +2914,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer, int nStackDepth )
 			break;
 
 		// new peer follows
-		dat->m_pPeer = new KeyValues("");
+		dat->m_pPeer = dat->CreateChild( "" );
 		dat = dat->m_pPeer;
 	}
 
