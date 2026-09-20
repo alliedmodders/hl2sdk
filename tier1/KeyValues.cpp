@@ -381,7 +381,9 @@ const char *KeyValues::GetStringForSymbolGrowable( int symbol )
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName )
+KeyValues::KeyValues( const char *setName ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -392,7 +394,9 @@ KeyValues::KeyValues( const char *setName )
 //-----------------------------------------------------------------------------
 // Purpose: Constructor with optional per-instance string table
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, bool bUsesLocalStorage )
+KeyValues::KeyValues( const char *setName, bool bUsesLocalStorage ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -408,7 +412,9 @@ KeyValues::KeyValues( const char *setName, bool bUsesLocalStorage )
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, const char *firstKey, const char *firstValue )
+KeyValues::KeyValues( const char *setName, const char *firstKey, const char *firstValue ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -420,7 +426,9 @@ KeyValues::KeyValues( const char *setName, const char *firstKey, const char *fir
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, const char *firstKey, const wchar_t *firstValue )
+KeyValues::KeyValues( const char *setName, const char *firstKey, const wchar_t *firstValue ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -432,7 +440,9 @@ KeyValues::KeyValues( const char *setName, const char *firstKey, const wchar_t *
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue )
+KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -444,7 +454,9 @@ KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, const char *firstKey, const char *firstValue, const char *secondKey, const char *secondValue )
+KeyValues::KeyValues( const char *setName, const char *firstKey, const char *firstValue, const char *secondKey, const char *secondValue ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -457,7 +469,9 @@ KeyValues::KeyValues( const char *setName, const char *firstKey, const char *fir
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue, const char *secondKey, int secondValue )
+KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue, const char *secondKey, int secondValue ) :
+	m_bIsUsingLocalStringTable( false ),
+	m_pLocalStringTable( NULL )
 {
 	TRACK_KV_ADD( this, setName );
 
@@ -485,8 +499,6 @@ void KeyValues::Init()
 	
 	m_bHasEscapeSequences = false;
 	m_bEvaluateConditionals = true;
-	m_bIsUsingLocalStringTable = false;
-	m_pLocalStringTable = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -497,6 +509,11 @@ KeyValues::~KeyValues()
 	TRACK_KV_REMOVE( this );
 
 	RemoveEverything();
+	if ( m_bIsUsingLocalStringTable )
+	{
+		delete m_pLocalStringTable;
+		m_pLocalStringTable = NULL;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -524,8 +541,6 @@ void KeyValues::RemoveEverything()
 	m_sValue = NULL;
 	delete [] m_wsValue;
 	m_wsValue = NULL;
-	delete m_pLocalStringTable;
-	m_pLocalStringTable = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -1031,7 +1046,9 @@ KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 	}
 
 	// lookup the symbol for the search string
-	HKeySymbol iSearchStr = s_pfGetSymbolForString( searchStr, bCreate );
+	HKeySymbol iSearchStr = m_bIsUsingLocalStringTable
+		? m_pLocalStringTable->GetSymbolForString( searchStr, bCreate )
+		: s_pfGetSymbolForString( searchStr, bCreate );
 
 	if ( iSearchStr == INVALID_KEY_SYMBOL )
 	{
@@ -1760,7 +1777,9 @@ void KeyValues::SetFloat( const char *keyName, float value )
 
 void KeyValues::SetName( const char * setName )
 {
-	m_iKeyName = s_pfGetSymbolForString( setName, true );
+	m_iKeyName = m_bIsUsingLocalStringTable
+		? m_pLocalStringTable->GetSymbolForString( setName, true )
+		: s_pfGetSymbolForString( setName, true );
 }
 
 //-----------------------------------------------------------------------------
