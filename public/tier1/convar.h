@@ -238,9 +238,10 @@ struct CVarCreationBase_t
 											// Note: IVEngineClient::ClientCmd_Unrestricted can run any client command.
 
 #define FCVAR_EXECUTE_PER_TICK		(1ull<<29)
-
+#define FCVAR_SNAPSHOT_IGNORED		(1ull<<30) // TakeConVarSnapshot and ResetConVarsToSnapshot ignores cvars with this flag set
 #define FCVAR_DEFENSIVE				(1ull<<32)
 
+#define FCVAR_GAMEINFO_CANNOT_OVERRIDE (1ull<<34) // Code defaults can't be overridden from gameinfo
 
 //-----------------------------------------------------------------------------
 // Called when a ConCommand needs to execute
