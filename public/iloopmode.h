@@ -14,6 +14,7 @@
 #include <inputsystem/InputEnums.h>
 #include <KeyValues.h>
 #include <engine/eventdispatcher.h>
+#include <tier1/convar.h>
 
 class ISource2WorldSession;
 class ISceneView;
