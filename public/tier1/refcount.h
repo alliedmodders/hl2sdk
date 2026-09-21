@@ -23,6 +23,7 @@
 class IRefCounted
 {
 public:
+	virtual ~IRefCounted() {}
 	virtual int AddRef() = 0;
 	virtual int Release() = 0;
 };
