@@ -30,9 +30,11 @@ class CSchemaClassInfo;
 class CEntityClass;
 class CEntityIdentity;
 class CEntitySharedPulseSignature;
+class CPulseAPIExtensionRegistrationContext;
 class CNetworkSerializerClassInfo;
 class ServerClass;
 struct EntInput_t;
+struct ScriptClassDesc_t;
 struct EntOutput_t;
 struct datamap_t;
 
@@ -55,19 +57,31 @@ struct EntClassComponentOverride_t
 	const char* pszOverrideComponent;
 };
 
+enum EntityClassInfoFlags_t
+{
+	ECIF_NOT_SPAWNABLE = (1 << 0), // CreateEntityByName refuses to spawn the entity if set
+};
+
+struct EntComponentNameEntry_t
+{
+	const char* pszComponentClassName;
+	size_t nOffsetInEntity;
+};
+
 class CEntityClassInfo
 {
 public:
 	const char* m_pszClassname;
 	const char* m_pszCPPClassname;
-	const char* m_pszDescription;
+	uint32 m_nFlags; // EntityClassInfoFlags_t
+
 	CEntityClass *m_pClass;
 	CEntityClassInfo *m_pBaseClassInfo;
 	CSchemaClassInfo* m_pSchemaBinding;
 	datamap_t* m_pDataDescMap;
-	datamap_t* m_pPredDescMap;
 };
 
+// Size: 0x148
 class CEntityClass
 {
 	struct ComponentOffsets_t
@@ -108,7 +122,12 @@ public:
 	using FuncToNameCb = const char *(*)(BASEPTR think_fn);
 	using NameToFuncCb = BASEPTR (*)(const char *fn_name);
 
-	void *m_pScriptDesc;
+	// Registers this class' pulse bindings, called base classes first
+	using RegisterPulseBindingsCb = void (*)(CPulseAPIExtensionRegistrationContext *pContext);
+	// Appends the components this class owns, overrides are applied by the caller
+	using EnumerateComponentsCb = void (*)(CUtlVector<EntComponentNameEntry_t> *pOut);
+
+	ScriptClassDesc_t* m_pScriptDesc;
 	CNetworkSerializerClassInfo *m_NetworkSerializerInfo;
 
 	EntInput_t* m_pInputs;
@@ -118,12 +137,12 @@ public:
 
 	CEntitySharedPulseSignature *m_pSharedPulseSignature;
 
-	void *m_unk101;
+	RegisterPulseBindingsCb m_pfnRegisterPulseBindings;
 	// Allows to get any think functions in use or to get its string name for this class
 	// does searches to the parent classes as well
 	NameToFuncCb m_NameToThinkFunc;
 	FuncToNameCb m_ThinkFuncToName;
-	void *m_unk201;
+	EnumerateComponentsCb m_pfnEnumerateComponents;
 
 	EntClassComponentOverride_t* m_pComponentOverrides;
 	
@@ -153,6 +172,9 @@ public:
 	CEntityClass* m_pNext;
 	CEntityIdentity* m_pFirstEntity;
 	ServerClass* m_pServerClass;
+
+	// Assigned from the global class counter on registration, used as a bit index by CEntitySystem
+	int m_nClassIndex;
 };
 
 #endif // ENTITYCLASS_H
