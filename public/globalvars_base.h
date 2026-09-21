@@ -37,18 +37,22 @@ public:
 	// Absolute frame counter - continues to increase even if game is paused
 	int framecount;
 
-	// Non-paused frametime
+	// Clamped to [0.0001, 0.1]
 	float absoluteframetime;
-	float absoluteframestarttimestddev;
+	// Frametime before clamping, also sent as CNETMsg_Tick::host_unfiltered_frametime
+	float absoluteframetime_unbounded;
 
 	int maxClients;
 
-	// zer0k: Command queue related
-	int m_unk001;
-	int m_unk002;
-	int m_unk003;
-	int m_unk004;
-	int m_unk005;
+	// Index of the tick being simulated within this frame
+	int m_nCurrentTickThisFrame;
+	// Number of ticks simulated this frame
+	int m_nTotalTicksThisFrame;
+
+	// Client only: real time per usercmd tick (tick interval / host_timescale)
+	float m_flUsercmdTickInterval;
+	// Client only: Plat_FloatTime() at which the current usercmd tick started
+	double m_flUsercmdTickStartTime;
 
 	FnGlobalVarsWarningFunc m_pfnWarningFunc;
 
@@ -73,9 +77,10 @@ public:
 	// Time spent on last server or client frame (has nothing to do with think intervals)
 	float frametime;
 
-	// zer0k: Command queue + interpolation related 
-	float m_unk101;
-	float m_unk102;
+	// Client only, zero during simulation: fraction into the next simulation tick
+	float interpolation_amount;
+	// Client only, zero during simulation: fraction into the current usercmd tick, stamps subtick moves
+	float m_flUsercmdTickFraction;
 
 	bool m_bInSimulation;
 	bool m_bEnableAssertions;
@@ -83,15 +88,15 @@ public:
 	// Simulation ticks - does not increase when game is paused
 	int tickcount;
 
-	int m_unk201;
-	int m_unk202;
-	
+	// Client only: ticks simulated since the client started ticking, reset per connection
+	int m_nClientTickCount;
+	// Client only: m_nClientTickCount in seconds
+	float m_flClientTime;
+
 	// Non-zero when during movement processing, it's the part after the decimal point of the "when" field in player's subtick moves.
 	float m_flSubtickFraction;
 
-	// AMNOTE: Set to unknown value during CLoopModeGame::OnServerBeginAsyncPostTickWork call
-	// and restored to false at CLoopModeGame::OnServerEndAsyncPostTickWork
-	bool m_unk301;
+	bool m_bIsOncePerFrameAsyncWorkPhase;
 
 	ThreadId_t m_nThreadId;
 };

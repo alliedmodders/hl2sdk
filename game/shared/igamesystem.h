@@ -219,8 +219,7 @@ GS_EVENT_MSG( ClientPostAdvanceTick ) {};
 
 GS_EVENT_MSG( ServerBeginAsyncPostTickWork )
 {
-	// AMNOTE: Also is set on gpGlobals->m_unk301
-	bool m_unk001;
+	bool m_bIsOncePerFrameAsyncWorkPhase;
 };
 
 GS_EVENT_MSG( ServerPreEndAsyncPostTickWork ) {};
