@@ -355,7 +355,7 @@ public:
 	INetworkFieldChangedEventQueue* m_pNetworkFieldChangedEventQueue;
 	INetworkFieldScratchData* m_pNetworkFieldScratchData;
 	IFieldChangeLimitSpew* m_pFieldChangeLimitSpew;
-	CUtlHashtable<fieldtype_t, KeyUnserializerDelegate, MurmurHash2HashFunctor> m_DataDescKeyUnserializers;
+	CUtlHashtable<SpawnKeyType_t, KeyUnserializerDelegate, MurmurHash2HashFunctor> m_DataDescKeyUnserializers;
 	CUtlScratchMemoryPool m_ComponentUnserializerInfoAllocator;
 	CKV3Arena m_EntityKeyValuesAllocator;
 	CUtlSymbolTableLargeMT_CI m_Symbols;

@@ -81,7 +81,7 @@ public:
 	datamap_t* m_pDataDescMap;
 };
 
-// Size: 0x148
+// Size: 0x128
 class CEntityClass
 {
 	struct ComponentOffsets_t
@@ -164,7 +164,6 @@ public:
 	
 	FlattenedSerializerDesc_t m_flattenedSerializer;
 
-	CUtlVector<ClassInputInfo_t> m_classInputInfos;
 	CUtlVector<ClassOutputInfo_t> m_classOutputInfos;
 	
 	CEntityHandle m_requiredEHandle;
