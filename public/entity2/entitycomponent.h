@@ -48,12 +48,10 @@ struct ComponentUnserializerClassInfo_t
 
 	ComponentUnserializerKeyNamesChunk_t* m_pKeyNamesChunks;
 	ComponentUnserializerFieldInfo_t* m_pFieldInfos;
-	EntOutput_t* m_pOutputs;
 	ComponentUnserializerPtrToClassInfo_t* m_pClassInfoPtrs;
 
 	uint16 m_nFieldInfoCount;
 	uint16 m_nKeyNamesChunkCount;
-	uint16 m_nOutputCount;
 	uint16 m_nClassInfoPtrCount;
 };
 
