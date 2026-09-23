@@ -240,6 +240,24 @@ public:
 		}
 	}
 
+	void CopyData( const Color &src, bool )
+	{
+		uint32 color = src.GetRawColor();
+		Free();
+		m_color32 = color;
+		m_type = FIELD_COLOR32;
+	}
+
+	void CopyData( const Color *src, bool bForceCopy )
+	{
+		CopyData( *src, bForceCopy );
+	}
+
+	void CopyData( Color *src, bool bForceCopy )
+	{
+		CopyData( *src, bForceCopy );
+	}
+
 	operator int32() const					{ Assert( m_type == FIELD_INT32 );			return m_int32; }
 	operator uint32() const					{ Assert( m_type == FIELD_UINT32 );			return m_uint32; }
 	operator int64() const					{ Assert( m_type == FIELD_INT64);			return m_int64; }
@@ -253,7 +271,7 @@ public:
 	operator const Vector4D &() const		{ Assert( m_type == FIELD_VECTOR4D );		static Vector4D vecNull(0, 0, 0, 0); return (m_pVector4D) ? *m_pVector4D : vecNull; }
 	operator const QAngle &() const			{ Assert( m_type == FIELD_QANGLE);			static QAngle angNull(0, 0, 0); return (m_pQAngle) ? *m_pQAngle : angNull; }
 	operator const Quaternion &() const		{ Assert( m_type == FIELD_QUATERNION);		static Quaternion quatNull(0, 0, 0, 0); return (m_pQuaternion) ? *m_pQuaternion : quatNull; }
-	operator const Color &() const			{ Assert( m_type == FIELD_COLOR32);			static Color colorNull(0, 0, 0); return (m_pColor) ? *m_pColor : colorNull; }
+	operator Color() const					{ Assert( m_type == FIELD_COLOR32 ); return Color( m_color32 & 0xff, ( m_color32 >> 8 ) & 0xff, ( m_color32 >> 16 ) & 0xff, m_color32 >> 24 ); }
 	operator char() const					{ Assert( m_type == FIELD_CHARACTER );		return m_char; }
 	operator bool() const					{ Assert( m_type == FIELD_BOOLEAN );		return m_bool; }
 	operator HSCRIPT() const				{ Assert( m_type == FIELD_HSCRIPT );		return m_hScript; }
@@ -277,8 +295,8 @@ public:
 	void operator=( const QAngle *ang )		{ m_type = FIELD_QANGLE; m_pQAngle = ang; }
 	void operator=( const Quaternion &quat ){ m_type = FIELD_QUATERNION; *(Quaternion *)m_pQuaternion = quat; }
 	void operator=( const Quaternion *quat ){ m_type = FIELD_QUATERNION; m_pQuaternion = quat; }
-	void operator=( const Color &color )	{ m_type = FIELD_COLOR32; *(Color *)m_pColor = color; }
-	void operator=( const Color *color )	{ m_type = FIELD_COLOR32; m_pColor = color; }
+	void operator=( const Color &color )	{ CopyData( color, true ); }
+	void operator=( const Color *color )	{ CopyData( *color, true ); }
 	void operator=( string_t psz )			{ m_type = FIELD_STRING; m_stringt = psz; }
 	void operator=( const char *psz )		{ m_type = FIELD_CSTRING; m_pszString = psz; }
 	void operator=( char c )				{ m_type = FIELD_CHARACTER; m_char = c; }
@@ -325,7 +343,7 @@ public:
 			case FIELD_CSTRING:		buf.Insert(0, m_pszString ? m_pszString : "(null)"); return true;
 			case FIELD_CHARACTER:	buf.Format("%c", m_char); return true;
 			case FIELD_VECTOR2D:	buf.Format("%g %g", m_pVector2D->x, m_pVector2D->y); return true;
-			case FIELD_COLOR32:		buf.Format("%d %d %d %d", m_pColor->r(), m_pColor->g(), m_pColor->b(), m_pColor->a()); return true;
+			case FIELD_COLOR32:		buf.Format( "%d %d %d %d", m_color32 & 0xff, ( m_color32 >> 8 ) & 0xff, ( m_color32 >> 16 ) & 0xff, m_color32 >> 24 ); return true;
 
 			case FIELD_VECTOR:
 			case FIELD_QANGLE:
@@ -778,7 +796,7 @@ public:
 			case FIELD_VECTOR4D:	pDest->CopyData(*m_pVector4D, true); return true;
 			case FIELD_QUATERNION:	pDest->CopyData(*m_pQuaternion, true); return true;
 			case FIELD_QANGLE:		pDest->CopyData(*m_pQAngle, true); return true;
-			case FIELD_COLOR32:		pDest->CopyData(*m_pColor, true); return true;
+			case FIELD_COLOR32:		pDest->CopyData( Color( *this ), true ); return true;
 			case FIELD_CSTRING:		pDest->CopyData(m_pszString, true); return true;
 			default:
 			{
@@ -840,7 +858,7 @@ public:
 			case FIELD_VECTOR4D:	CopyData(*m_pVector4D, true); break;
 			case FIELD_QUATERNION:	CopyData(*m_pQuaternion, true); break;
 			case FIELD_QANGLE:		CopyData(*m_pQAngle, true); break;
-			case FIELD_COLOR32:		CopyData(*m_pColor, true); break;
+			case FIELD_COLOR32:		break;
 			case FIELD_CSTRING:		CopyData(m_pszString, true); break;
 			default:
 			{
@@ -880,7 +898,7 @@ public:
 			case FIELD_VECTOR:			CopyData((Vector *)pData, false); return;
 			case FIELD_VECTOR2D:		CopyData((Vector2D *)pData, false); return;
 			case FIELD_VECTOR4D:		CopyData((Vector4D *)pData, false); return;
-			case FIELD_COLOR32:			CopyData((Color *)pData, false); return;
+			case FIELD_COLOR32:			CopyData( *(Color *)pData, false ); return;
 			case FIELD_QANGLE:			CopyData((QAngle *)pData, false); return;
 			case FIELD_QUATERNION:		CopyData((Quaternion *)pData, false); return;
 			case FIELD_HSCRIPT:			CopyData(*(HSCRIPT *)pData, false); return;
@@ -955,7 +973,7 @@ public:
 		const Vector2D *m_pVector2D;
 		const Vector4D *m_pVector4D;
 		const Quaternion *m_pQuaternion;
-		const Color *m_pColor;
+		uint32 m_color32;
 		void *m_pData;
 		char m_char;
 		bool m_bool;
