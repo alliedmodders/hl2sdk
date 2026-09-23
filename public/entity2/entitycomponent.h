@@ -29,7 +29,7 @@ struct ComponentUnserializerFieldInfo_t
 	uint16 m_nOffset;
 	uint16 m_nArraySize;
 	
-	fieldtype_t m_Type;
+	SpawnKeyType_t m_Type;
 	
 	bool m_bUnserializeAsMatrix : 1;
 	bool m_bArrayElement : 1;
@@ -48,12 +48,10 @@ struct ComponentUnserializerClassInfo_t
 
 	ComponentUnserializerKeyNamesChunk_t* m_pKeyNamesChunks;
 	ComponentUnserializerFieldInfo_t* m_pFieldInfos;
-	EntOutput_t* m_pOutputs;
 	ComponentUnserializerPtrToClassInfo_t* m_pClassInfoPtrs;
 
 	uint16 m_nFieldInfoCount;
 	uint16 m_nKeyNamesChunkCount;
-	uint16 m_nOutputCount;
 	uint16 m_nClassInfoPtrCount;
 };
 
