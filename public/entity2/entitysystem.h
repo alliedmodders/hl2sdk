@@ -108,33 +108,42 @@ enum EntityDormancyType_t
 
 // Event queue //
 
-struct EventQueuePrioritizedEvent_t
+struct alignas(8) CPulseArgumentPack
+{
+	uint8 pad_0000[144];
+};
+
+struct CPulseInputParamMap
+{
+	KeyValues3 m_KV3;
+	KeyValues3::Data_t m_KV3Data;
+};
+
+struct EntityIOQueuePrioritizedEvent_t
 {
 	WorldGroupId_t m_WorldGroupId;
 	GameTime_t m_flFireTime;
-	EntityIOTargetType_t m_eTargetType;
-	CUtlSymbolLarge m_iTarget;
-	CUtlSymbolLarge m_iTargetInput;
-	CEntityHandle m_pActivator;
-	CEntityHandle m_pCaller;
-	int m_iOutputID;
-	CEntityHandle m_pEntTarget; // a pointer to the entity to target; overrides m_iTarget
+	EntityIOTargetType_t m_targetType;
+	CUtlSymbolLarge m_pTarget;
+	CUtlSymbolLarge m_pTargetInput;
+	CEntityHandle m_hActivator;
+	CEntityHandle m_hCaller;
+	CEntityHandle m_hEntTarget; // a pointer to the entity to target; overrides m_pTarget
 
-	variant_t m_VariantValue; // variable-type parameter
+	CVariant m_variantValue; // variable-type parameter
 
-	void *m_unk101;
-	KeyValues3 m_KV3;
-	KeyValues3::Data_t m_KV3Data;
+	CPulseArgumentPack m_PulseArguments;
+	CPulseInputParamMap m_paramMap;
 
-	EventQueuePrioritizedEvent_t *m_pNext;
-	EventQueuePrioritizedEvent_t *m_pPrev;
+	EntityIOQueuePrioritizedEvent_t *m_pNext;
+	EntityIOQueuePrioritizedEvent_t *m_pPrev;
 };
 
 class CEventQueue
 {
 public:
 	CAtomicMutex m_Mutex;
-	EventQueuePrioritizedEvent_t m_Events;
+	EntityIOQueuePrioritizedEvent_t m_Events;
 };
 
 // Entity notifications //
