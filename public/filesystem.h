@@ -568,10 +568,6 @@ public:
 	virtual FileNameHandle_t	FindOrAddFileName( char const *pFileName ) = 0;
 	virtual bool				String( const FileNameHandle_t& handle, char *buf, int buflen ) = 0;
 
-	virtual void unk006() = 0;
-	virtual void unk007() = 0;
-	virtual void unk008() = 0;
-
 	virtual void			Trace_DumpUnclosedFiles() = 0;
 
 	virtual void			PrintSearchPaths( void ) = 0;
