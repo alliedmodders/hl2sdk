@@ -13,6 +13,7 @@
 
 #include "platform.h"
 #include "vector.h"
+#include "utlvector.h"
 
 #include "const.h"
 #include "in_buttons.h"
