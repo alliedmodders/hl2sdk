@@ -29,7 +29,7 @@ struct ComponentUnserializerFieldInfo_t
 	uint16 m_nOffset;
 	uint16 m_nArraySize;
 	
-	fieldtype_t m_Type;
+	SpawnKeyType_t m_Type;
 	
 	bool m_bUnserializeAsMatrix : 1;
 	bool m_bArrayElement : 1;
