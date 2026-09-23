@@ -235,6 +235,8 @@ enum ScriptFuncBindingFlags_t
 	SF_MEMBER_FUNC	= 0x01,
 };
 
+struct ScriptClassDesc_t;
+
 typedef bool (*ScriptBindingFunc_t)( void *pFunction, void *pContext, ScriptVariant_t *pArguments, int nArguments, ScriptVariant_t *pReturn );
 
 struct ScriptFunctionBinding_t
