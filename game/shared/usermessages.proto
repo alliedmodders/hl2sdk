@@ -51,6 +51,8 @@ enum EBaseUserMessages {
 	UM_PlayResponseConditional = 166;
 	UM_UserSentBugBug = 167;
 	UM_UsageReport = 168;
+	UM_RemoteServerCommand = 169;
+	UM_RemoteServerResponse = 170;
 	UM_MAX_BASE = 200;
 }
 
@@ -856,4 +858,28 @@ message CUserMessage_PlayResponseConditional {
 
 message CUserMessage_UsageReport {
 	optional string usage = 1;
+}
+
+message CUserMessage_RemoteServerCommand {
+	enum ECommand {
+		ECommandChangeConVar = 1;
+	}
+
+	optional .CUserMessage_RemoteServerCommand.ECommand command = 1 [default = ECommandChangeConVar];
+	optional string convar = 2;
+	optional string value = 3;
+}
+
+message CUserMessageRemoteServerResponse {
+	enum ECommandResult {
+		EResultSuccess = 1;
+		EResultServerDoesntAllow = 2;
+		EResultClientNotAuthenticated = 3;
+		EResultClientNotAllowed = 4;
+		EResultCommandNotAllowed = 5;
+	}
+
+	optional .CUserMessageRemoteServerResponse.ECommandResult command_result = 1 [default = EResultSuccess];
+	optional string convar = 2;
+	optional string results = 3;
 }
