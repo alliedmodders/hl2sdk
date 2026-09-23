@@ -166,7 +166,7 @@ DECLARE_POINTER_HANDLE( HSCRIPT );
 
 #include "variant.h"
 
-typedef uint8 ScriptDataType_t;
+typedef fieldtype_t ScriptDataType_t;
 typedef CVariant ScriptVariant_t;
 
 #define SCRIPT_VARIANT_NULL ScriptVariant_t()
@@ -240,6 +240,7 @@ typedef bool (*ScriptBindingFunc_t)( void *pFunction, void *pContext, ScriptVari
 struct ScriptFunctionBinding_t
 {
 	ScriptFuncDescriptor_t	m_desc;
+    ScriptClassDesc_t      *m_pClassDesc;
 	ScriptBindingFunc_t		m_pfnBinding;
 	void *					m_pFunction;
 	unsigned				m_flags;
