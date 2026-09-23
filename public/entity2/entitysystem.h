@@ -1,6 +1,10 @@
 #ifndef ENTITYSYSTEM_H
 #define ENTITYSYSTEM_H
 
+#ifdef _WIN32
+#pragma once
+#endif
+
 #include "tier0/platform.h"
 #include "tier0/threadtools.h"
 #include "tier1/generichash.h"
@@ -108,15 +112,28 @@ enum EntityDormancyType_t
 
 // Event queue //
 
-struct alignas(8) CPulseArgumentPack
+// Storage declarations for engine-owned Pulse arguments; lifetime stays with the engine.
+class CPulseArgumentPack
 {
-	uint8 pad_0000[144];
+	CPulseArgumentPack() = delete;
+	CPulseArgumentPack( const CPulseArgumentPack & ) = delete;
+	CPulseArgumentPack &operator=( const CPulseArgumentPack & ) = delete;
+	~CPulseArgumentPack() = delete;
+
+	int32 m_nCount;
+	void *m_pValues[16];
+	void *m_pOwnedData;
 };
 
-struct CPulseInputParamMap
+class CPulseInputParamMap
 {
-	KeyValues3 m_KV3;
-	KeyValues3::Data_t m_KV3Data;
+	CPulseInputParamMap() = delete;
+	CPulseInputParamMap( const CPulseInputParamMap & ) = delete;
+	CPulseInputParamMap &operator=( const CPulseInputParamMap & ) = delete;
+	~CPulseInputParamMap() = delete;
+
+	KeyValues3 m_Values;
+	uint8 m_nUnk;
 };
 
 struct EntityIOQueuePrioritizedEvent_t
