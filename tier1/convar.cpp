@@ -37,81 +37,62 @@ static FnConCommandRegisterCallback s_ConCommandRegCB = nullptr;
 static uint64 s_nCVarFlag = 0;
 static bool s_bRegistered = false;
 
-class ConCommandRegList
-{
-public:
-	struct Entry_t
-	{
-		ConCommandCreation_t m_Info;
-		ConCommandRef *m_Command = nullptr;
-	};
-
-	static void RegisterConCommand( const Entry_t &cmd )
-	{
-		*cmd.m_Command = g_pCVar->RegisterConCommand( cmd.m_Info, s_nCVarFlag );
-		if(!cmd.m_Command->IsValidRef())
-		{
-			Plat_FatalErrorFunc( "RegisterConCommand: Unknown error registering con command \"%s\"!\n", cmd.m_Info.m_pszName );
-			DebuggerBreakIfDebugging();
-		}
-		else if(s_ConCommandRegCB)
-			s_ConCommandRegCB( cmd.m_Command );
-	}
-
-	static void RegisterAll()
-	{
-		if (!s_bConCommandsRegistered && g_pCVar)
-		{
-			s_bConCommandsRegistered = true;
-
-			ConCommandRegList *prev = nullptr;
-			for(auto list = s_pRoot; list; list = prev)
-			{
-				for(size_t i = 0; i < list->m_nSize; i++)
-				{
-					RegisterConCommand( list->m_Entries[i] );
-				}
-
-				prev = list->m_pPrev;
-				delete list;
-			};
-		}
-	}
-
-	static void AddToList( const Entry_t &cmd )
-	{
-		if(s_bConCommandsRegistered)
-		{
-			RegisterConCommand( cmd );
-			return;
-		}
-
-		auto list = s_pRoot;
-
-		if(!list || list->m_nSize >= (sizeof( m_Entries ) / sizeof( m_Entries[0] )))
-		{
-			list = new ConCommandRegList;
-			list->m_nSize = 0;
-			list->m_pPrev = s_pRoot;
-
-			s_pRoot = list;
-		}
-
-		list->m_Entries[list->m_nSize++] = cmd;
-	}
-
-private:
-	uint32 m_nSize;
-	Entry_t m_Entries[100];
-	ConCommandRegList *m_pPrev;
-
-public:
-	static bool s_bConCommandsRegistered;
-	static ConCommandRegList *s_pRoot;
-};
-
 bool ConCommandRegList::s_bConCommandsRegistered = false;
 ConCommandRegList *ConCommandRegList::s_pRoot = nullptr;
+
+void ConCommandRegList::RegisterConCommand( const Entry_t &cmd )
+{
+	*cmd.m_Command = g_pCVar->RegisterConCommand( cmd.m_Info, s_nCVarFlag );
+	if(!cmd.m_Command->IsValidRef())
+	{
+		Plat_FatalErrorFunc( "RegisterConCommand: Unknown error registering con command \"%s\"!\n", cmd.m_Info.m_pszName );
+		DebuggerBreakIfDebugging();
+	}
+	else if(s_ConCommandRegCB)
+		s_ConCommandRegCB( cmd.m_Command );
+}
+
+void ConCommandRegList::RegisterAll()
+{
+	if(!s_bConCommandsRegistered && g_pCVar)
+	{
+		s_bConCommandsRegistered = true;
+
+		ConCommandRegList *prev = nullptr;
+		for(auto list = s_pRoot; list; list = prev)
+		{
+			for(size_t i = 0; i < list->m_nSize; i++)
+			{
+				RegisterConCommand( list->m_Entries[i] );
+			}
+
+			prev = list->m_pPrev;
+			delete list;
+		};
+	}
+}
+
+void ConCommandRegList::AddToList( const Entry_t &cmd )
+{
+	if(s_bConCommandsRegistered)
+	{
+		RegisterConCommand( cmd );
+		return;
+	}
+
+	auto list = s_pRoot;
+
+	if(!list || list->m_nSize >= (sizeof( m_Entries ) / sizeof( m_Entries[0] )))
+	{
+		list = new ConCommandRegList;
+		list->m_nSize = 0;
+		list->m_pPrev = s_pRoot;
+
+		s_pRoot = list;
+	}
+
+	list->m_Entries[list->m_nSize++] = cmd;
+}
 
 void SetupConCommand( ConCommand *cmd, const ConCommandCreation_t& info )
 {
@@ -133,84 +114,63 @@ void UnRegisterConCommand( ConCommand *cmd )
 	}
 }
 
-class ConVarRegList
-{
-public:
-	struct Entry_t
-	{
-		ConVarCreation_t m_Info;
-
-		ConVarRefAbstract *m_pConVar = nullptr;
-		ConVarData **m_pConVarData = nullptr;
-	};
-
-	static void RegisterConVar( const Entry_t &cvar )
-	{
-		g_pCVar->RegisterConVar( cvar.m_Info, s_nCVarFlag, cvar.m_pConVar, cvar.m_pConVarData );
-		if(!cvar.m_pConVar->IsValidRef())
-		{
-			Plat_FatalErrorFunc( "RegisterConVar: Unknown error registering convar \"%s\"!\n", cvar.m_Info.m_pszName );
-			DebuggerBreakIfDebugging();
-		}
-		// Don't let references pass as a newly registered cvar
-		else if(s_ConVarRegCB && (cvar.m_Info.m_nFlags & FCVAR_REFERENCE) == 0)
-			s_ConVarRegCB( cvar.m_pConVar );
-	}
-
-	static void RegisterAll()
-	{
-		if(!s_bConVarsRegistered && g_pCVar)
-		{
-			s_bConVarsRegistered = true;
-
-			ConVarRegList *prev = nullptr;
-			for(auto list = s_pRoot; list; list = prev)
-			{
-				for(size_t i = 0; i < list->m_nSize; i++)
-				{
-					RegisterConVar( list->m_Entries[i] );
-				}
-
-				prev = list->m_pPrev;
-				delete list;
-			};
-		}
-	}
-
-	static void AddToList( const Entry_t &cvar )
-	{
-		if(s_bConVarsRegistered)
-		{
-			RegisterConVar( cvar );
-			return;
-		}
-
-		auto list = s_pRoot;
-
-		if(!list || list->m_nSize >= (sizeof( m_Entries ) / sizeof( m_Entries[0] )))
-		{
-			list = new ConVarRegList;
-			list->m_nSize = 0;
-			list->m_pPrev = s_pRoot;
-
-			s_pRoot = list;
-		}
-
-		list->m_Entries[list->m_nSize++] = cvar;
-	}
-
-private:
-	uint32 m_nSize;
-	Entry_t m_Entries[100];
-	ConVarRegList *m_pPrev;
-
-public:
-	static bool s_bConVarsRegistered;
-	static ConVarRegList *s_pRoot;
-};
-
 bool ConVarRegList::s_bConVarsRegistered = false;
 ConVarRegList *ConVarRegList::s_pRoot = nullptr;
+
+void ConVarRegList::RegisterConVar( const Entry_t &cvar )
+{
+	g_pCVar->RegisterConVar( cvar.m_Info, s_nCVarFlag, cvar.m_pConVar, cvar.m_pConVarData );
+	if(!cvar.m_pConVar->IsValidRef())
+	{
+		Plat_FatalErrorFunc( "RegisterConVar: Unknown error registering convar \"%s\"!\n", cvar.m_Info.m_pszName );
+		DebuggerBreakIfDebugging();
+	}
+	// Don't let references pass as a newly registered cvar
+	else if(s_ConVarRegCB && (cvar.m_Info.m_nFlags & FCVAR_REFERENCE) == 0)
+		s_ConVarRegCB( cvar.m_pConVar );
+}
+
+void ConVarRegList::RegisterAll()
+{
+	if(!s_bConVarsRegistered && g_pCVar)
+	{
+		s_bConVarsRegistered = true;
+
+		ConVarRegList *prev = nullptr;
+		for(auto list = s_pRoot; list; list = prev)
+		{
+			for(size_t i = 0; i < list->m_nSize; i++)
+			{
+				RegisterConVar( list->m_Entries[i] );
+			}
+
+			prev = list->m_pPrev;
+			delete list;
+		};
+	}
+}
+
+void ConVarRegList::AddToList( const Entry_t &cvar )
+{
+	if(s_bConVarsRegistered)
+	{
+		RegisterConVar( cvar );
+		return;
+	}
+
+	auto list = s_pRoot;
+
+	if(!list || list->m_nSize >= (sizeof( m_Entries ) / sizeof( m_Entries[0] )))
+	{
+		list = new ConVarRegList;
+		list->m_nSize = 0;
+		list->m_pPrev = s_pRoot;
+
+		s_pRoot = list;
+	}
+
+	list->m_Entries[list->m_nSize++] = cvar;
+}
 
 void SetupConVar( ConVarRefAbstract *cvar, ConVarData **cvar_data, ConVarCreation_t &info )
 {
