@@ -47,7 +47,7 @@ enum SchemaClassFlags1_t : uint32
 	SCHEMA_CF1_INFO_TAG_MDisableDataDescValidation = (1 << 13),
 	SCHEMA_CF1_INFO_TAG_MClassHasEntityLimitedDataDesc = (1 << 14),
 	SCHEMA_CF1_INFO_TAG_MClassHasCustomAlignedNewDelete = (1 << 15),
-	SCHEMA_CF1_UNK016 = (1 << 16),
+	SCHEMA_CF1_INFO_TAG_MNonConstructibleClassBase = (1 << 16),
 	SCHEMA_CF1_INFO_TAG_MConstructibleClassBase = (1 << 17),
 	SCHEMA_CF1_INFO_TAG_MHasKV3TransferPolymorphicClassname = (1 << 18),
 };
@@ -59,6 +59,9 @@ enum SchemaEnumFlags_t : uint8
 	SCHEMA_EF_IS_REGISTERED = (1 << 0),
 	SCHEMA_EF_MODULE_LOCAL_TYPE_SCOPE = (1 << 1),
 	SCHEMA_EF_GLOBAL_TYPE_SCOPE = (1 << 2),
+	SCHEMA_EF_UNK003 = (1 << 3),
+	SCHEMA_EF_UNK004 = (1 << 4), 
+	SCHEMA_EF_UNK005 = (1 << 5)
 };
 
 enum SchemaTypeCategory_t : uint8
