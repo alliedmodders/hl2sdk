@@ -561,6 +561,7 @@ struct EmitSound_t
 		m_flVolume( VOL_NORM ),
 		m_flSoundTime( 0.0f ),
 		m_nForceGuid( 0 ),
+		m_nSourceSoundscape( 0 ),
 		m_nPitch( PITCH_NORM ),
 		m_nFlags( 0 )
 	{
@@ -570,9 +571,9 @@ struct EmitSound_t
 	Vector m_vecSoundOrigin;
 	float m_flVolume;
 	float m_flSoundTime;
-	uint8 m_Pad1C[4] = {};
+	uint8 m_Pad1C[4] = { 0xff, 0xff, 0xff, 0xff };
 	uint32 m_nForceGuid;
-	uint8 m_Pad24[4] = {};
+	int32 m_nSourceSoundscape;
 	int16 m_nPitch;
 	uint8 m_nFlags;
 };
