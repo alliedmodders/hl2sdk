@@ -185,30 +185,19 @@ DECLARE_FIELD_SIZE( FIELD_SOUNDNAME,	sizeof(int))
 #define FTYPEDESC_KEY				(1 << 2)		// This field can be requested and written to by string name at load time
 #define FTYPEDESC_INPUT				(1 << 3)		// This field can be written to by string name at run time, and a function called
 #define FTYPEDESC_OUTPUT			(1 << 4)		// This field propogates it's value to all targets whenever it changes
-#define FTYPEDESC_FUNCTIONTABLE		(1 << 5)		// This is a table entry for a member function pointer
-#define FTYPEDESC_PTR				(1 << 6)		// This field is a pointer, not an embedded object
-#define FTYPEDESC_OVERRIDE			(1 << 7)		// The field is an override for one in a base class (only used by prediction system for now)
+#define FTYPEDESC_PTR				(1 << 5)		// This field is a pointer, not an embedded object
+// #define FTYPEDESC_UNK			(1 << 6)
+#define FTYPEDESC_ADDED_KEYFIELD	(1 << 7)
 
-// Flags used by other systems (e.g., prediction system)
-#define FTYPEDESC_INSENDTABLE		(1 << 8)		// This field is present in a network SendTable
-#define FTYPEDESC_PRIVATE			(1 << 9)		// The field is local to the client or server only (not referenced by prediction code and not replicated by networking)
-#define FTYPEDESC_NOERRORCHECK		(1 << 10)		// The field is part of the prediction typedescription, but doesn't get compared when checking for errors
-
-#define FTYPEDESC_MODELINDEX		(1 << 11)		// The field is a model index (used for debugging output)
-
-#define FTYPEDESC_INDEX				(1 << 12)		// The field is an index into file data, used for byteswapping. 
-
-#define FTYPEDESC_OVERRIDE_RECURSIVE	(1 << 13)
-#define FTYPEDESC_SCHEMA_INITIALIZED	(1 << 14)
-#define FTYPEDESC_GEN_ARRAY_KEYNAMES_0	(1 << 15)
-#define FTYPEDESC_GEN_ARRAY_KEYNAMES_1	(1 << 16)
-#define FTYPEDESC_ADDITIONAL_FIELDS		(1 << 17)
-#define FTYPEDESC_EXPLICIT_BASE			(1 << 18)
-#define FTYPEDESC_PROCEDURAL_KEYFIELD	(1 << 19)
-#define FTYPEDESC_ENUM					(1 << 20)	// Used if the typedesc is enum, no datamap_t info would be available
-#define FTYPEDESC_REMOVED_KEYFIELD		(1 << 21)
-#define FTYPEDESC_WAS_INPUT				(1 << 22)
-#define FTYPEDESC_WAS_OUTPUT			(1 << 23)
+#define FTYPEDESC_GEN_ARRAY_KEYNAMES_0	(1 << 8)
+#define FTYPEDESC_GEN_ARRAY_KEYNAMES_1	(1 << 9)
+#define FTYPEDESC_ADDITIONAL_FIELDS		(1 << 10)
+#define FTYPEDESC_EXPLICIT_BASE			(1 << 11)
+#define FTYPEDESC_PROCEDURAL_KEYFIELD	(1 << 12)
+#define FTYPEDESC_ENUM					(1 << 13)	// Used if the typedesc is enum, no datamap_t info would be available
+#define FTYPEDESC_REMOVED_KEYFIELD		(1 << 14)
+#define FTYPEDESC_WAS_INPUT				(1 << 15)
+#define FTYPEDESC_WAS_OUTPUT			(1 << 16)
 
 #define TD_MSECTOLERANCE		0.001f		// This is a FIELD_FLOAT and should only be checked to be within 0.001 of the networked info
 
