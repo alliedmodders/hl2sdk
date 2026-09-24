@@ -74,7 +74,8 @@ struct CNetworkVarChainer
 	CEntityInstance *m_pEntity;
 	uint8 m_Reserved0[24];
 	ChangeAccessorFieldPathIndex_t m_PathIndex;
-	uint8 m_Reserved1[4];
+	bool m_bNetworkingEnabled;
+	uint8 m_Reserved1[3];
 };
 
 class CEntityInstance
@@ -207,7 +208,7 @@ inline const CEntityHandle &CEntityHandle::Set( const CEntityInstance *pEntity )
 
 inline void CNetworkVarChainer::NetworkStateChanged( uint32 nLocalOffset, int32 nArrayIndex ) const
 {
-	if ( m_pEntity )
+	if ( m_bNetworkingEnabled && m_pEntity )
 	{
 		m_pEntity->NetworkStateChanged( NetworkStateChangedData( nLocalOffset, nArrayIndex, m_PathIndex ) );
 	}
