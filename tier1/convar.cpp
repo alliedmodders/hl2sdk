@@ -39,6 +39,17 @@ static bool s_bRegistered = false;
 bool ConCommandRegList::s_bConCommandsRegistered = false;
 ConCommandRegList *ConCommandRegList::s_pRoot = nullptr;
 
+void UnRegisterConCommand( ConCommandRef *cmd )
+{
+	if(cmd->IsValidRef())
+	{
+		if(g_pCVar)
+			g_pCVar->UnregisterConCommandCallbacks( *cmd );
+
+		cmd->InvalidateRef();
+	}
+}
+
 void ConCommandRegList::RegisterConCommand( const Entry_t &cmd )
 {
 	*cmd.m_Command = g_pCVar->RegisterConCommand( cmd.m_Info, s_nCVarFlag );
@@ -63,6 +74,25 @@ void ConCommandRegList::RegisterAll()
 			for(size_t i = 0; i < list->m_nSize; i++)
 			{
 				RegisterConCommand( list->m_Entries[i] );
+			}
+
+			prev = list->m_pPrev;
+		};
+	}
+}
+
+void ConCommandRegList::UnregisterAll()
+{
+	if(s_bConCommandsRegistered && g_pCVar)
+	{
+		s_bConCommandsRegistered = false;
+
+		ConCommandRegList *prev = nullptr;
+		for(auto list = s_pRoot; list; list = prev)
+		{
+			for(size_t i = 0; i < list->m_nSize; i++)
+			{
+				UnRegisterConCommand( list->m_Entries[i].m_Command );
 			}
 
 			prev = list->m_pPrev;
@@ -102,19 +132,19 @@ void SetupConCommand( ConCommand *cmd, const ConCommandCreation_t& info )
 	ConCommandRegList::AddToList( entry );
 }
 
-void UnRegisterConCommand( ConCommand *cmd )
-{
-	if(cmd->IsValidRef())
-	{
-		if(g_pCVar)
-			g_pCVar->UnregisterConCommandCallbacks( *cmd );
-
-		cmd->InvalidateRef();
-	}
-}
-
 bool ConVarRegList::s_bConVarsRegistered = false;
 ConVarRegList *ConVarRegList::s_pRoot = nullptr;
+
+void UnRegisterConVar( ConVarRef *cvar )
+{
+	if(cvar->IsValidRef())
+	{
+		if(g_pCVar)
+			g_pCVar->UnregisterConVarCallbacks( *cvar );
+
+		cvar->InvalidateRef();
+	}
+}
 
 void ConVarRegList::RegisterConVar( const Entry_t &cvar )
 {
@@ -141,6 +171,25 @@ void ConVarRegList::RegisterAll()
 			for(size_t i = 0; i < list->m_nSize; i++)
 			{
 				RegisterConVar( list->m_Entries[i] );
+			}
+
+			prev = list->m_pPrev;
+		};
+	}
+}
+
+void ConVarRegList::UnregisterAll()
+{
+	if(s_bConVarsRegistered && g_pCVar)
+	{
+		s_bConVarsRegistered = false;
+
+		ConVarRegList *prev = nullptr;
+		for(auto list = s_pRoot; list; list = prev)
+		{
+			for(size_t i = 0; i < list->m_nSize; i++)
+			{
+				UnRegisterConVar( list->m_Entries[i].m_pConVar );
 			}
 
 			prev = list->m_pPrev;
@@ -179,17 +228,6 @@ void SetupConVar( ConVarRefAbstract *cvar, ConVarData **cvar_data, ConVarCreatio
 	entry.m_pConVarData = cvar_data;
 
 	ConVarRegList::AddToList( entry );
-}
-
-void UnRegisterConVar( ConVarRef *cvar )
-{
-	if(cvar->IsValidRef())
-	{
-		if(g_pCVar)
-			g_pCVar->UnregisterConVarCallbacks( *cvar );
-
-		cvar->InvalidateRef();
-	}
 }
 
 uint64 SanitiseConVarFlags( uint64 flags )
@@ -236,6 +274,12 @@ void ConVar_Unregister( )
 		return;
 
 	s_bRegistered = false;
+	s_nCVarFlag = FCVAR_NONE;
+	s_ConVarRegCB = nullptr;
+	s_ConCommandRegCB = nullptr;
+
+	ConCommandRegList::UnregisterAll();
+	ConVarRegList::UnregisterAll();
 }
 
 

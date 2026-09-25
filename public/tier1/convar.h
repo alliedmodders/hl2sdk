@@ -1562,6 +1562,7 @@ class ConCommandRegList
 {
 public:
 	friend void ConVar_Register( uint64 nCVarFlag, FnConVarRegisterCallback cvar_reg_cb, FnConCommandRegisterCallback cmd_reg_cb );
+	friend void ConVar_Unregister();
 	friend void SetupConCommand( ConCommand *cmd, const ConCommandCreation_t &info );
 
 	struct Entry_t
@@ -1573,6 +1574,7 @@ public:
 private:
 	static void RegisterConCommand( const Entry_t &cmd );
 	static void RegisterAll();
+	static void UnregisterAll();
 	static void AddToList( const Entry_t &cmd );
 
 public:
@@ -1590,6 +1592,7 @@ class ConVarRegList
 {
 public:
 	friend void ConVar_Register( uint64 nCVarFlag, FnConVarRegisterCallback cvar_reg_cb, FnConCommandRegisterCallback cmd_reg_cb );
+	friend void ConVar_Unregister();
 	friend void SetupConVar( ConVarRefAbstract *cvar, ConVarData **cvar_data, ConVarCreation_t &info );
 
 	struct Entry_t
@@ -1603,6 +1606,7 @@ public:
 private:
 	static void RegisterConVar( const Entry_t &cvar );
 	static void RegisterAll();
+	static void UnregisterAll();
 	static void AddToList( const Entry_t &cvar );
 
 public:
