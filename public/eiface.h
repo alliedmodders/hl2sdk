@@ -73,6 +73,7 @@ class CNavData;
 struct EconItemInfo_t;
 struct EconControlPointInfo_t;
 class CEntityHandle;
+class IEconItemSystem;
 struct RenderDeviceInfo_t;
 
 enum RenderMultisampleType_t : uint8
@@ -304,7 +305,7 @@ public:
 	// Returns the XUID of the specified player. It'll be NULL if the player hasn't connected yet.
 	virtual uint64 GetClientXUID( CPlayerSlot nSlot ) = 0;
 
-	virtual void				*GetPVSForSpawnGroup( SpawnGroupHandle_t spawnGroup ) = 0;
+	virtual IPVS				*GetPVSForSpawnGroup( SpawnGroupHandle_t spawnGroup ) = 0;
 	virtual SpawnGroupHandle_t	FindSpawnGroupByName( const char *szName ) = 0;
 
 	// Returns the SteamID of the game server
@@ -470,7 +471,7 @@ public:
 	virtual void			GetCharacterList( CUtlVector<CUtlString> &characterNames ) = 0;
 	virtual void			GetDefaultChoreoDirForModel( const char *pModelName, CBufferString &defaultVCDDir ) = 0;
 
-	virtual void			*GetEconItemSystem( void ) = 0;
+	virtual IEconItemSystem	*GetEconItemSystem( void ) = 0;
 
 	virtual void			ServerConVarChanged( const char *pVarName, const char *pValue ) = 0;
 
@@ -525,10 +526,6 @@ public:
 	virtual const char *GetGameDescription( void ) = 0;
 
 	virtual int			GetNetworkVersion( void ) = 0;
-
-	// Get the simulation interval (must be compiled with identical values into both client and game .dll for MOD!!!)
-	// Right now this is only requested at server startup time so it can't be changed on the fly, etc.
-	virtual float			GetTickInterval( void ) const = 0;
 
 	// Get server maxplayers and lower bound for same
 	virtual void			GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers, bool &bIsMultiplayer ) const = 0;

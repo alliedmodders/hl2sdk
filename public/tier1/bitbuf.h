@@ -400,6 +400,9 @@ BITBUF_INLINE void bf_write::WriteUBitLong( unsigned int curData, int numbits, b
 	Assert( numbits >= 0 && numbits <= 32 );
 #endif
 
+	if ( numbits == 0 )
+		return;
+
 	if ( GetNumBitsLeft() < numbits )
 	{
 		m_iCurBit = m_nDataBits;
@@ -417,10 +420,10 @@ BITBUF_INLINE void bf_write::WriteUBitLong( unsigned int curData, int numbits, b
 	uint32 * RESTRICT pOut = &m_pData[iDWord];
 
 	// Rotate data into dword alignment
-	curData = (curData << iCurBitMasked) | (curData >> (32 - iCurBitMasked));
+	curData = (curData << iCurBitMasked) | (curData >> ( (32 - iCurBitMasked) & 31 ));
 
 	// Calculate bitmasks for first and second word
-	unsigned int temp = 1 << (numbits-1);
+	unsigned int temp = 1u << (numbits-1);
 	unsigned int mask1 = (temp*2-1) << iCurBitMasked;
 	unsigned int mask2 = (temp-1) >> (31 - iCurBitMasked);
 	
@@ -787,14 +790,14 @@ BITBUF_INLINE unsigned int bf_read::ReadUBitLong( int numbits ) RESTRICT
 	m_iCurBit += numbits;
 	
 #if __i386__
-	unsigned int bitmask = (2 << (numbits-1)) - 1;
+	unsigned int bitmask = (2u << (numbits-1)) - 1u;
 #else
 	extern uint32 g_ExtraMasks[33];
 	unsigned int bitmask = g_ExtraMasks[numbits];
 #endif
 
 	unsigned int dw1 = LoadLittleDWord( (uint32* RESTRICT)m_pData, iWordOffset1 ) >> iStartBit;
-	unsigned int dw2 = LoadLittleDWord( (uint32* RESTRICT)m_pData, iWordOffset2 ) << (32 - iStartBit);
+	unsigned int dw2 = LoadLittleDWord( (uint32* RESTRICT)m_pData, iWordOffset2 ) << ( (32 - iStartBit) & 31 );
 
 	return (dw1 | dw2) & bitmask;
 }
