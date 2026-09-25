@@ -186,6 +186,7 @@ public:
 
 	int m_unk201;
 	int8 m_unk202;
+	int8 m_unk203;
 
 	bool m_NetworkPolymorphic;
 	CUtlString m_pszCodeGenType;
@@ -260,7 +261,7 @@ public:
 	CUtlHash<SerializerFieldLookup_t> m_FieldLookupTable;
 	int m_nTotalFieldEntries;
 
-	CUtlVector<CNetworkSerializerClassInfo> m_ParentClassInfo;
+	CUtlVector<CNetworkSerializerClassInfo *> m_ParentClassInfo;
 	CNetworkSerializerClassInfo *m_ParentClassInfoBuffer;
 	CUtlVector<int> m_ParentClassOffset;
 
