@@ -98,6 +98,8 @@ void ConCommandRegList::UnregisterAll()
 			prev = list->m_pPrev;
 			delete list;
 		};
+
+		s_pRoot = nullptr;
 	}
 }
 
@@ -195,6 +197,8 @@ void ConVarRegList::UnregisterAll()
 			prev = list->m_pPrev;
 			delete list;
 		};
+
+		s_pRoot = nullptr;
 	}
 }
 
