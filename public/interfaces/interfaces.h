@@ -149,6 +149,7 @@ class IMediaFoundation;
 class IVPhysics2;
 class IModelDocUtils;
 class IAnimGraphEditorUtils;
+class ISmartPropSystem;
 class IExportSystem;
 class IServerToolsInfo;
 class IClientToolsInfo;
@@ -580,6 +581,9 @@ DECLARE_TIER3_INTERFACE( IVPhysics2, g_pVPhysics2 );
 
 #define MODELDOCUTILS_INTERFACE_VERSION				"ModelDocUtils001"
 DECLARE_TIER3_INTERFACE( IModelDocUtils, g_pModelDocUtils );
+
+#define SMARTPROPSYSTEM_INTERFACE_VERSION				"SmartPropsSystem_001"
+DECLARE_TIER3_INTERFACE( ISmartPropSystem, g_pSmartPropSystem );
 
 #define ANIMGRAPHEDITORUTILS_INTERFACE_VERSION				"AnimGraphEditorUtils001"
 DECLARE_TIER3_INTERFACE( IAnimGraphEditorUtils, g_pAnimGraphEditorUtils );

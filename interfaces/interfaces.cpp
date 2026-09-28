@@ -116,6 +116,7 @@ INetworkStringTableContainer *g_pNetworkStringTableServer;
 INetworkStringTableContainer *g_pNetworkStringTableClient;
 IVPhysics2 *g_pVPhysics2;
 IModelDocUtils *g_pModelDocUtils;
+ISmartPropSystem *g_pSmartPropSystem;
 IAnimGraphEditorUtils *g_pAnimGraphEditorUtils;
 IExportSystem *g_pExportSystem;
 IServerToolsInfo *g_pServerToolsInfo;
@@ -246,6 +247,7 @@ static const InterfaceGlobals_t g_pInterfaceGlobals[] =
 	{ SOURCE2ENGINETOCLIENTSTRINGTABLE_INTERFACE_VERSION, &g_pNetworkStringTableClient },
 	{ VPHYSICS2_INTERFACE_VERSION, &g_pVPhysics2 },
 	{ MODELDOCUTILS_INTERFACE_VERSION, &g_pModelDocUtils },
+	{ SMARTPROPSYSTEM_INTERFACE_VERSION, &g_pSmartPropSystem },
 	{ ANIMGRAPHEDITORUTILS_INTERFACE_VERSION, &g_pAnimGraphEditorUtils },
 	{ EXPORTSYSTEM_INTERFACE_VERSION, &g_pExportSystem },
 	{ SERVERTOOLSINFO_INTERFACE_VERSION, &g_pServerToolsInfo },
