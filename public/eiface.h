@@ -526,10 +526,6 @@ public:
 
 	virtual int			GetNetworkVersion( void ) = 0;
 
-	// Get the simulation interval (must be compiled with identical values into both client and game .dll for MOD!!!)
-	// Right now this is only requested at server startup time so it can't be changed on the fly, etc.
-	virtual float			GetTickInterval( void ) const = 0;
-
 	// Get server maxplayers and lower bound for same
 	virtual void			GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers, bool &bIsMultiplayer ) const = 0;
 
@@ -541,8 +537,6 @@ public:
 
 	virtual bool			ShouldNotifyLocalClientConnectionStateChanges() = 0;
 
-	virtual bool			AllowPlayerToTakeOverBots() = 0;
-
 	virtual void			OnClientFullyConnect( CEntityIndex nEntityIndex ) = 0;
 
 	virtual void		GetHostStateLoopModeInfo( HostStateLoopModeType_t type, CUtlString &loopModeName, KeyValues **ppLoopModeOptions ) = 0;
@@ -552,6 +546,14 @@ public:
 	virtual void		GetConVarPrefixesToResetToDefaults( CUtlString &sSemicolonDelimitedPrefixList ) const = 0;
 
 	virtual bool		AllowSaveRestore() = 0;
+
+	virtual bool		unk101() = 0;
+	virtual bool		unk102() = 0;
+	virtual float		unk103() = 0;
+	virtual bool		unk104() = 0;
+	virtual bool		unk105() = 0;
+	virtual bool		unk106() = 0;
+	virtual bool 		unk107() = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMECLIENTS		"Source2GameClients001"
