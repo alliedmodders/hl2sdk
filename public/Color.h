@@ -34,6 +34,10 @@ public:
 	{
 		SetColor(_r, _g, _b, _a);
 	}
+	Color(color32 clr)
+	{
+		SetColor( clr.r, clr.g, clr.b, clr.a );
+	}
 	
 	// set the color
 	// r - red component (0-255)
