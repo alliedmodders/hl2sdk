@@ -256,10 +256,10 @@ inline UtlSymLargeId_t CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUT
 
 	MemBlockHandle_t block = m_MemBlockAllocator.Alloc( nLength + sizeof( LargeSymbolTableHashDecoration_t ) + 1 );
 
-	CUtlSymbolTableLargeBaseTreeEntry_t *entry = (CUtlSymbolTableLargeBaseTreeEntry_t *)m_MemBlockAllocator.GetBlock( block );
+	byte *pEntry = (byte *)m_MemBlockAllocator.GetBlock( block );
 
-	entry->m_Hash = hash;
-	char *pText = (char *)&entry->m_String[ 0 ];
+	V_memcpy( pEntry, &hash, sizeof( hash ) );
+	char *pText = (char *)( pEntry + sizeof( LargeSymbolTableHashDecoration_t ) );
 	V_memmove( pText, pString, nLength );
 	pText[ nLength ] = '\0';
 
@@ -292,9 +292,11 @@ inline unsigned int CUtlSymbolTableLargeBase< CASEINSENSITIVE, PAGE_SIZE, MUTEX_
 	if(id == UTL_INVAL_SYMBOL_LARGE || id >= m_MemBlocks.Count())
 		return 0;
 
-	CUtlSymbolTableLargeBaseTreeEntry_t *entry = (CUtlSymbolTableLargeBaseTreeEntry_t *)m_MemBlockAllocator.GetBlock( m_MemBlocks[ id ] - sizeof( LargeSymbolTableHashDecoration_t ) );
+	const void *pEntry = m_MemBlockAllocator.GetBlock( m_MemBlocks[ id ] - sizeof( LargeSymbolTableHashDecoration_t ) );
+	LargeSymbolTableHashDecoration_t hash;
+	V_memcpy( &hash, pEntry, sizeof( hash ) );
 
-	return entry->HashValue();
+	return hash;
 }
 
 template < bool CASEINSENSITIVE, size_t PAGE_SIZE, class MUTEX_TYPE >
