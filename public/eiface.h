@@ -527,17 +527,17 @@ public:
 	virtual int			GetNetworkVersion( void ) = 0;
 
 	// Get server maxplayers and lower bound for same
-	virtual void			GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers, bool &bIsMultiplayer ) const = 0;
+	virtual void		GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers, bool &bIsMultiplayer ) const = 0;
 
 	// Returns max splitscreen slot count ( 1 == no splits, 2 for 2-player split screen )
-	virtual int		GetMaxSplitscreenPlayers( void ) = 0;
+	virtual int			GetMaxSplitscreenPlayers( void ) = 0;
 
 	// Return # of human slots, -1 if can't determine or don't care (engine will assume it's == maxplayers )
-	virtual int				GetMaxHumanPlayers() = 0;
+	virtual int			GetMaxHumanPlayers() = 0;
 
-	virtual bool			ShouldNotifyLocalClientConnectionStateChanges() = 0;
+	virtual bool		ShouldNotifyLocalClientConnectionStateChanges() = 0;
 
-	virtual void			OnClientFullyConnect( CEntityIndex nEntityIndex ) = 0;
+	virtual void		OnClientFullyConnect( CEntityIndex nEntityIndex ) = 0;
 
 	virtual void		GetHostStateLoopModeInfo( HostStateLoopModeType_t type, CUtlString &loopModeName, KeyValues **ppLoopModeOptions ) = 0;
 
@@ -548,12 +548,14 @@ public:
 	virtual bool		AllowSaveRestore() = 0;
 
 	virtual bool		unk101() = 0;
-	virtual bool		unk102() = 0;
-	virtual float		unk103() = 0;
-	virtual bool		unk104() = 0;
-	virtual bool		unk105() = 0;
-	virtual bool		unk106() = 0;
-	virtual bool 		unk107() = 0;
+
+	virtual bool		IsCommandQueueEnabled() = 0;
+	virtual float		GetCommandQueueDilationPercentage() = 0;
+
+	virtual bool		unk201() = 0;
+	virtual bool		unk202() = 0;
+	virtual bool		unk203() = 0;
+	virtual bool 		unk204() = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMECLIENTS		"Source2GameClients001"
