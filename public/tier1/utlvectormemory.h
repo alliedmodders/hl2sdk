@@ -185,7 +185,7 @@ private:
 // The CUtlVectorMemory_Fixed class:
 // A fixed memory class
 //-----------------------------------------------------------------------------
-template< typename T, size_t SIZE, class I = int, int nAlignment = 0 >
+template< typename T, size_t SIZE, class I = int >
 class CUtlVectorMemory_Fixed
 {
 public:
@@ -201,8 +201,8 @@ public:
 	static I InvalidIndex() { return INVALID_INDEX; }
 
 	// Gets the base address
-	T* Base()												{ if ( nAlignment == 0 ) return (T*)(&m_Memory[0]); else return (T*)AlignValue( &m_Memory[0], nAlignment ); }
-	const T* Base() const									{ if ( nAlignment == 0 ) return (T*)(&m_Memory[0]); else return (T*)AlignValue( &m_Memory[0], nAlignment ); }
+	T* Base()												{ return (T*)(&m_Memory[0]); }
+	const T* Base() const									{ return (T*)(&m_Memory[0]); }
 
 	// element access
 	T& operator[]( I i )									{ Assert( IsIdxValid(i) ); return Base()[i];	}
@@ -251,7 +251,7 @@ public:
 	Iterator_t InvalidIterator() const					{ return Iterator_t( InvalidIndex() ); }
 
 private:
-	char m_Memory[ SIZE*sizeof(T) + nAlignment ];
+	alignas(T) char m_Memory[ SIZE*sizeof(T) ];
 };
 
 #if defined(POSIX)
