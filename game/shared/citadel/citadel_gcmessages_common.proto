@@ -25,7 +25,7 @@ enum ECitadelMatchMode {
 	k_ECitadelMatchMode_ServerTest = 5;
 	k_ECitadelMatchMode_Tutorial = 6;
 	k_ECitadelMatchMode_HeroLabs = 7;
-	k_ECitadelMatchMode_Calibration = 8;
+	k_ECitadelMatchMode_NewPlayerPlacement = 8;
 }
 
 enum ECitadelLobbyTeam {
@@ -41,10 +41,23 @@ enum ECitadelAccountStatMedal {
 	k_eGold = 3;
 }
 
+enum ECitadelRankedType {
+	k_eCitadelRankedType_Invalid = 0;
+	k_eCitadelRankedType_Normal = 1;
+}
+
 enum ECitadelMMPreference {
 	k_ECitadelMMPreference_Invalid = 0;
 	k_ECitadelMMPreference_Casual = 1;
 	k_ECitadelMMPreference_Serious = 2;
+}
+
+enum ECitadelCabalMMTier {
+	k_eCabalMMTier_Invalid = 0;
+	k_eCabalMMTier_Bronze = 1;
+	k_eCabalMMTier_Silver = 2;
+	k_eCabalMMTier_Gold = 3;
+	k_eCabalMMTier_Platinum = 4;
 }
 
 enum ECitadelObjective {
@@ -160,6 +173,64 @@ enum EFeatureBanReason {
 	k_eFeatureBanReason_ReportedByOtherPlayers = 2;
 	k_eFeatureBanReason_MatchAbandons = 3;
 	k_eFeatureBanReason_TooManyReportsSubmitted = 4;
+	k_eFeatureBanReason_ToxicChat = 5;
+}
+
+enum EHeroXPGrantReason {
+	k_eGrant_Win = 0;
+	k_eGrant_Loss = 1;
+	k_eGrant_Award = 2;
+}
+
+enum EPlayerMatchOutcome {
+	k_EPlayerMatchOutcome_Invalid = 0;
+	k_EPlayerMatchOutcome_Win = 1;
+	k_EPlayerMatchOutcome_Loss = 2;
+	k_EPlayerMatchOutcome_Penalized = 3;
+	k_EPlayerMatchOutcome_PenalizedParty = 4;
+	k_EPlayerMatchOutcome_NotScored = 5;
+}
+
+enum EMatchMetadataExtraMessage {
+	k_EMatchMetadataExtraMessage_HeroReleaseVotes = 2;
+}
+
+enum ECitadelCombatLogTypes {
+	k_eCitadelCombatLog_Invalid = -1;
+	k_eCitadelCombatLog_Damage = 0;
+	k_eCitadelCombatLog_Heal = 1;
+	k_eCitadelCombatLog_ModifierAdd = 2;
+	k_eCitadelCombatLog_ModifierRemove = 3;
+	k_eCitadelCombatLog_Death = 4;
+	k_eCitadelCombatLog_AbilityUse = 5;
+	k_eCitadelCombatLog_AbilityTrigger = 42;
+	k_eCitadelCombatLog_ItemUse = 6;
+	k_eCitadelCombatLog_Location = 7;
+	k_eCitadelCombatLog_CurrencyChange = 8;
+	k_eCitadelCombatLog_ItemPurchase = 11;
+	k_eCitadelCombatLog_SoulSecure = 10;
+	k_eCitadelCombatLog_Multikill = 15;
+	k_eCitadelCombatLog_Killstreak = 16;
+	k_eCitadelCombatLog_ObjectiveKill = 17;
+	k_eCitadelCombatLog_FirstBlood = 18;
+	k_eCitadelCombatLog_ModifierStackEvent = 19;
+	k_eCitadelCombatLog_ActivatePowerup = 21;
+	k_eCitadelCombatLog_HeroSaved = 23;
+	k_eCitadelCombatLog_HeroLevelup = 25;
+	k_eCitadelCombatLog_InterruptChannel = 28;
+	k_eCitadelCombatLog_AlliedGold = 29;
+	k_eCitadelCombatLog_RejuvTaken = 30;
+	k_eCitadelCombatLog_UnitSummoned = 33;
+	k_eCitadelCombatLog_EndKillstreak = 37;
+	k_eCitadelCombatLog_CriticalDamage = 39;
+	k_eCitadelCombatLog_SpellAbsorb = 40;
+	k_eCitadelCombatLog_UnitTeleported = 41;
+}
+
+message CMsgHeroXPGrant {
+	optional uint32 hero_id = 1;
+	optional uint32 xp_grant = 2;
+	optional .EHeroXPGrantReason reason = 3 [default = k_eGrant_Win];
 }
 
 message CSOCitadelLobby {
@@ -284,6 +355,15 @@ message CSOCitadelParty {
 		optional bool cheats_enabled = 7;
 		repeated .CSOCitadelParty.ServerRegion available_regions = 8;
 		optional bool duplicate_heroes_enabled = 9;
+		optional uint32 corrupted_item_shop_spawn_minutes = 10;
+	}
+
+	message RankedScores {
+		optional .ECitadelRankedType rank_type = 1 [default = k_eCitadelRankedType_Invalid];
+		optional uint32 rank_interval = 2;
+		optional uint32 rank_display_badge = 3;
+		repeated uint32 unlocked_heroes = 5;
+		optional bool in_calibration = 6;
 	}
 
 	message Member {
@@ -300,6 +380,8 @@ message CSOCitadelParty {
 		optional uint64 new_player_progress = 11;
 		repeated uint32 owned_heroes = 12 [packed = true];
 		optional uint32 low_priority_games_remaining = 13;
+		repeated .CSOCitadelParty.RankedScores ranked_scores = 14;
+		repeated uint64 player_cabals = 15 [packed = true];
 	}
 
 	message LeftMember {
@@ -349,6 +431,12 @@ message CSOCitadelParty {
 	optional bool desires_laning_together = 18;
 	optional .ECitadelMMPreference mm_preference = 19 [default = k_ECitadelMMPreference_Invalid];
 	optional string hideout_search_key = 21;
+	repeated uint64 candidate_cabals = 22 [packed = true];
+	optional uint64 active_cabal = 23;
+	optional .ECitadelCabalMMTier party_min_cabal_tier = 24 [default = k_eCabalMMTier_Invalid];
+	optional .ECitadelCabalMMTier party_active_cabal_tier = 25 [default = k_eCabalMMTier_Invalid];
+	optional .ECitadelRankedType ranked_type = 26 [default = k_eCitadelRankedType_Invalid];
+	optional uint32 rank_interval = 27;
 }
 
 message CMsgMatchPlayerPathsData {
@@ -426,6 +514,17 @@ message CMsgMatchPlayerDamageMatrix {
 	optional .CMsgMatchPlayerDamageMatrix.SourceDetails source_details = 3;
 }
 
+message CMsgMatchPlayerRankData {
+	optional uint32 initial_display_rank = 1;
+	optional uint32 initial_flat_progress = 2;
+	optional uint32 final_flat_progress = 3;
+	optional int32 desired_progress_change = 4;
+	optional uint32 initial_calibration_games = 6;
+	optional uint32 initial_demotion_protection_games = 7;
+	optional bool consumed_demotion_protection = 8;
+	optional uint32 initial_win_streak = 9;
+}
+
 message CMsgMatchMetaDataContents {
 	message Position {
 		optional float x = 1;
@@ -449,6 +548,7 @@ message CMsgMatchMetaDataContents {
 		optional uint32 sold_time_s = 4;
 		optional uint32 flags = 5;
 		optional uint32 imbued_ability_id = 6;
+		optional uint32 upgrade_info = 7;
 	}
 
 	message Ping {
@@ -479,6 +579,8 @@ message CMsgMatchMetaDataContents {
 		optional string type = 1;
 		optional uint32 value = 2;
 		optional bool is_permanent = 3;
+		repeated uint32 pickup_times_s = 4 [packed = true];
+		repeated float pickup_stat_values = 5 [packed = true];
 	}
 
 	message PlayerStats {
@@ -546,6 +648,10 @@ message CMsgMatchMetaDataContents {
 		optional uint32 starting_xp = 3;
 	}
 
+	message HeroXPReward {
+		optional .CMsgHeroXPGrant xp_grant = 1;
+	}
+
 	message PlayerAccolade {
 		optional uint32 accolade_id = 1;
 		optional int32 accolade_stat_value = 2;
@@ -581,6 +687,9 @@ message CMsgMatchMetaDataContents {
 		optional uint32 mvp_rank = 28;
 		optional bool earned_holiday_award_2025 = 29;
 		repeated .CMsgMatchMetaDataContents.PowerUpBuff power_up_buffs = 30;
+		repeated .CMsgMatchMetaDataContents.HeroXPReward hero_xp_rewards = 31;
+		optional .CMsgMatchPlayerRankData player_rank_data = 32;
+		optional .EPlayerMatchOutcome player_match_outcome = 33 [default = k_EPlayerMatchOutcome_Invalid];
 	}
 
 	message Teams {
@@ -655,6 +764,10 @@ message CMsgMatchMetaDataContents {
 		repeated .CMsgMatchMetaDataContents.Teams teams = 30;
 		optional .ECitadelBotDifficulty bot_difficulty = 32 [default = k_ECitadelBotDifficulty_None];
 		repeated .CMsgMatchMetaDataContents.StreetBrawlRound street_brawl_rounds = 33;
+		optional .ECitadelRankedType ranked_type = 34 [default = k_eCitadelRankedType_Invalid];
+		optional uint32 rank_interval = 35;
+		optional uint32 corrupted_penalty_seed = 36;
+		repeated .CExtraMsgBlock extra_messages = 37;
 	}
 
 	enum EMatchOutcome {
@@ -722,6 +835,7 @@ message CMsgTrackedStat {
 message CMsgGCAccountData {
 	optional uint32 account_id = 1;
 	optional float cheater_report_score = 2;
+	optional uint32 num_comms_reports = 3;
 }
 
 message CMsgHeroBuild {
@@ -779,8 +893,103 @@ message CMsgHeroBuildPreference {
 	optional bool reported = 3;
 }
 
+message CMsgCitadelCombatLogEntry {
+	optional .ECitadelCombatLogTypes type = 1 [default = k_eCitadelCombatLog_Invalid];
+	optional uint32 target_name = 2;
+	optional uint32 target_source_name = 3;
+	optional uint32 attacker_name = 4;
+	optional uint32 damage_source_name = 5;
+	optional uint32 inflictor_name = 6;
+	optional bool is_attacker_hero = 7;
+	optional bool is_target_hero = 8;
+	optional bool is_visible_sapphire = 9;
+	optional bool is_visible_amber = 10;
+	optional uint32 value = 11;
+	optional int32 health = 12;
+	optional float timestamp = 13;
+	optional float timestamp_raw = 14;
+	optional uint32 attacker_team = 17;
+	optional uint32 target_team = 18;
+	optional bool is_ability_toggle_on = 19;
+	optional bool is_ability_toggle_off = 20;
+	optional uint32 damage_type = 21;
+	optional uint32 networth = 22;
+	optional uint32 currency_type = 24;
+	optional uint32 currency_source = 45;
+	optional float location_x = 25;
+	optional float location_y = 26;
+	optional int32 ability_upgrade_bits = 27;
+	optional float modifier_duration = 28;
+	repeated int32 assist_players = 29;
+	optional uint32 target_objective_id = 23;
+	optional bool target_is_self = 31;
+	optional int32 target_class = 54;
+	optional bool is_ultimate_ability = 32;
+	optional bool uses_charges = 33;
+	optional bool inflictor_is_stolen_ability = 34;
+	optional bool spell_generated_attack = 35;
+	optional bool heal_from_lifesteal = 36;
+	optional float regenerated_health = 37;
+	optional bool will_reincarnate = 38;
+	optional uint32 modifier_ability = 39;
+	optional bool modifier_hidden = 40;
+	optional float modifier_elapsed_duration = 41;
+	optional bool hidden_modifier = 42;
+	optional bool silence_modifier = 43;
+	optional bool modifier_purged = 44;
+	optional bool long_range_kill = 46;
+	optional bool aura_modifier = 47;
+	optional bool immobilize_modifier = 48;
+	optional int32 modifier_purge_npc = 49;
+	optional int32 modifier_purge_ability = 50;
+	optional float modifier_purged_duration = 51;
+	optional bool movement_control_modifier = 52;
+	optional int32 powerup_type = 53;
+	optional bool is_primary_weapon = 55;
+	optional bool is_headshot = 56;
+	optional int32 ability_name = 57;
+	optional int32 full_refresh = 59;
+	optional int32 hits = 60;
+}
+
+message CSerializedCombatLog {
+	message Dictionary {
+		message DictString {
+			optional uint32 id = 1;
+			optional string value = 2;
+		}
+
+		repeated .CSerializedCombatLog.Dictionary.DictString strings = 1;
+	}
+
+	optional uint32 version = 1;
+	optional .CSerializedCombatLog.Dictionary dictionary = 2;
+	repeated .CMsgCitadelCombatLogEntry entries = 3;
+}
+
 message CMsgHeroReleaseVoteTally {
 	optional uint32 remaining_votes = 1;
 	repeated uint32 votes_cast = 2 [packed = true];
 	optional uint32 daily_reward_time_stamp = 3;
+}
+
+message CMsgMatchHeroReleaseVotes {
+	message HeroVote {
+		optional uint32 vote_player_slot = 1;
+		optional uint32 vote_hero_id = 2;
+		optional uint32 vote_count = 3 [default = 1];
+	}
+
+	message Category {
+		optional .CMsgMatchHeroReleaseVotes.EHeroReleaseVoteCategory vote_category = 1 [default = k_eMatchCompleted];
+		repeated .CMsgMatchHeroReleaseVotes.HeroVote hero_votes = 2;
+	}
+
+	enum EHeroReleaseVoteCategory {
+		k_eMatchCompleted = 0;
+		k_eMatchWon = 1;
+		k_eDailyBonus = 2;
+	}
+
+	repeated .CMsgMatchHeroReleaseVotes.Category categories = 1;
 }

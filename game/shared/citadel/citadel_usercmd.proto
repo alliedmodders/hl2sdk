@@ -1,10 +1,13 @@
+import "valveextensions.proto";
 import "networkbasetypes.proto";
 import "usercmd.proto";
 
 message CCitadelUserCmdPB {
+	option (codegen_delta_encoder) = true;
+
 	optional .CBaseUserCmdPB base = 1;
 	optional .CMsgVector vec_camera_position = 2;
-	optional .CMsgQAngle ang_camera_angles = 3;
+	optional .CMsgQAngle ang_camera_angles_deprecated = 3;
 	optional int32 execute_ability_indices = 4;
 	optional bool in_shop = 5;
 	optional float camera_roaming_speed = 6;

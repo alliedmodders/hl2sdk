@@ -58,6 +58,11 @@ message CMsgFireBullets {
 	optional float bullet_gravity_override = 23 [default = 0];
 	optional int32 muzzle_number = 24;
 	optional bool ability_as_bullet = 25;
+	optional bool friendly_fire = 26;
+	optional uint32 friendly_fire_damage_type = 27;
+	optional uint32 bullet_state = 28;
+	optional uint32 weapon_info_id = 29;
+	optional .CMsgVector target_pos = 30;
 }
 
 message CMsgBulletImpact {
@@ -72,6 +77,7 @@ message CMsgBulletImpact {
 	optional uint32 weapon_subclass_id = 10;
 	optional uint32 shooter_ehandle = 11 [default = 16777215];
 	optional float bullet_radius_override = 12;
+	optional uint32 weapon_info_id = 13;
 }
 
 message CMsgPlayerAnimEvent {
@@ -189,6 +195,7 @@ message CMsgEnableSatVolumesEvent {
 	optional fixed32 sat_tint = 3;
 	optional fixed32 desat_tint = 4;
 	optional fixed32 outline_color = 5;
+	optional float outline_width = 6;
 }
 
 message CMsgPlaceSatVolumeEvent {

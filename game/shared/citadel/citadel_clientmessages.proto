@@ -24,6 +24,11 @@ enum ECitadelClientMessages {
 	CITADEL_CM_PlayerStatsUpdated = 1021;
 	CITADEL_CM_HideoutUpdateHeroReleaseVoteTally = 1022;
 	CITADEL_CM_ExecuteMapPositionAbility = 1023;
+	CITADEL_CM_HeroEconChanged = 1024;
+	CITADEL_CM_RequestBulkCombatLog = 1025;
+	CITADEL_CM_PlayerTyping = 1026;
+	CITADEL_CM_HideoutInteract = 1027;
+	CITADEL_CM_HeroReleaseVote = 1028;
 }
 
 message CCitadelClientMsg_Pause {
@@ -36,6 +41,9 @@ message CCitadelClientMsg_MapPing {
 	optional bool is_aggressive_ping = 4;
 	optional bool is_minimap_ping = 5;
 	optional bool is_blind_ping = 6;
+	optional bool zipline_toward_own_base = 7;
+	optional int32 nearby_visible_enemies = 8;
+	optional int32 consecutive_pings = 9;
 }
 
 message CCitadelClientMsg_PingWheel {
@@ -43,6 +51,12 @@ message CCitadelClientMsg_PingWheel {
 	optional uint32 subnav_message_id = 2;
 	optional .CMsgVector ping_location = 3;
 	optional int32 entity_index = 4 [default = -1];
+	optional int32 ping_anim_type = 5;
+	optional bool pinged_enemy_entity = 6;
+	optional bool is_blind_ping = 7;
+	optional uint32 pinged_ability_id = 8;
+	optional int32 nearby_visible_enemies = 9;
+	optional bool pinged_item_corrupted = 10;
 }
 
 message CCitadelClientMsg_AbilityPing {
@@ -134,22 +148,14 @@ message CCitadelClientMsg_HitMismatch {
 }
 
 message CCitadelClientMsg_HideoutStart {
+	optional .CMsgVector intro_lineup_origin = 1;
 }
 
 message CCitadelClientMsg_HeroBuild {
 	option (maximum_size_bytes) = 16384;
 
 	optional .CMsgHeroBuild hero_build = 1;
-}
-
-message CCitadelClientMsg_HideoutMenuState {
-	enum MenuState {
-		k_eNone = 0;
-		k_eEscapeMenu = 1;
-		k_eDashboard = 2;
-	}
-
-	optional .CCitadelClientMsg_HideoutMenuState.MenuState menu_state = 1 [default = k_eNone];
+	optional bool allow_autoqueue = 2;
 }
 
 message CCitadelClientMsg_HideoutSpawn {
@@ -159,6 +165,8 @@ message CCitadelClientMsg_HideoutSpawn {
 
 message CCitadelClientMsg_HideoutMatchmakingState {
 	optional bool is_matchmaking = 1;
+	optional .ECitadelMatchMode match_mode = 2 [default = k_ECitadelMatchMode_Invalid];
+	optional .ECitadelGameMode game_mode = 3 [default = k_ECitadelGameMode_Invalid];
 }
 
 message CCitadelClientMsg_PlayerStatsUpdated {
@@ -178,4 +186,29 @@ message CCitadelClientMsg_ExecuteMapPositionAbility {
 	optional float pos_x = 2;
 	optional float pos_y = 3;
 	optional float pos_z = 4;
+}
+
+message CCitadelClientMsg_HeroEconChanged {
+	optional uint32 hero_id = 1;
+}
+
+message CCitadelClientMsg_RequestBulkCombatLog {
+	optional float game_time = 1;
+	optional float duration = 2;
+	optional bool recent_player_death = 3;
+	optional int32 player_slot = 4 [default = -1];
+}
+
+message CCitadelClientMsg_PlayerTyping {
+	optional float game_time = 1;
+	optional bool all_chat = 2;
+	optional bool typing = 3;
+}
+
+message CCitadelClientMsg_HideoutInteract {
+	optional uint32 interactable_entity = 1 [default = 16777215];
+}
+
+message CCitadelClientMsg_HeroReleaseVote {
+	optional uint32 voted_hero_id = 1;
 }

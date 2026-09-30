@@ -68,7 +68,7 @@ message CMsgClientPingData {
 	repeated uint32 relay_pings = 5 [packed = true];
 	repeated uint32 region_codes = 8 [packed = true];
 	repeated uint32 region_pings = 9 [packed = true];
-	optional uint32 region_ping_failed_bitmask = 10;
+	optional uint64 region_ping_failed_bitmask = 10;
 }
 
 message CMsgInviteToParty {
@@ -124,6 +124,7 @@ message CMsgServerAvailable {
 
 message CMsgLANServerAvailable {
 	optional fixed64 lobby_id = 1;
+	optional fixed64 nonce = 2;
 }
 
 message CSOEconGameAccountClient {
