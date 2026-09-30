@@ -209,12 +209,15 @@ public:
 	CVariantBase( const Quaternion *val, bool bCopy = false ) :	m_type( FIELD_QUATERNION ), m_flags( 0 )	{ CopyData(*val, bCopy); }
 	CVariantBase( const char *val, bool bCopy = false ) :		m_type( FIELD_CSTRING ), m_flags( 0 )		{ CopyData(val, bCopy); }
 
-	CVariantBase( const CVariantBase<CValueAllocator> &variant ) : m_flags( 0 ), m_type( FIELD_VOID ) { variant.AssignTo( this ); }
+	CVariantBase( const CVariantBase<CValueAllocator> &variant ) : m_type( FIELD_VOID ), m_flags( 0 )		{ variant.AssignTo( this ); }
 	void operator=( const CVariantBase<CValueAllocator> &variant ) { variant.AssignTo( this ); }
 
 	// Checks if the stored value is of type FIELD_VOID
 	bool IsNull() const						{ return (m_type == FIELD_VOID ); }
 
+	operator uint8() const					{ Assert( m_type == FIELD_UINT8 );			return m_uint8; }
+	operator int16() const					{ Assert( m_type == FIELD_INT16 );			return m_int16; }
+	operator uint16() const					{ Assert( m_type == FIELD_UINT16 );			return m_uint16; }
 	operator int32() const					{ Assert( m_type == FIELD_INT32 );			return m_int32; }
 	operator uint32() const					{ Assert( m_type == FIELD_UINT32 );			return m_uint32; }
 	operator int64() const					{ Assert( m_type == FIELD_INT64);			return m_int64; }
@@ -238,6 +241,9 @@ public:
 	operator CUtlStringToken() const		{ Assert( m_type == FIELD_UTLSTRINGTOKEN);	return m_utlStringToken; }
 	operator ResourceHandle_t() const		{ Assert( m_type == FIELD_RESOURCE);		return m_hResource; }
 
+	void operator=( uint8 i ) 				{ Free(); m_type = FIELD_UINT8; m_uint8 = i; }
+	void operator=( int16 i ) 				{ Free(); m_type = FIELD_INT16; m_int16 = i; }
+	void operator=( uint16 i ) 				{ Free(); m_type = FIELD_UINT16; m_uint16 = i; }
 	void operator=( int32 i ) 				{ Free(); m_type = FIELD_INT32; m_int32 = i; }
 	void operator=( uint32 u )				{ Free(); m_type = FIELD_UINT32; m_uint32 = u; }
 	void operator=( int64 i ) 				{ Free(); m_type = FIELD_INT64; m_int64 = i; }
