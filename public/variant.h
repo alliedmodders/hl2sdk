@@ -52,8 +52,8 @@ typedef enum _fieldtypes : uint8
 	FIELD_VMATRIX,			// a vmatrix (output coords are NOT worldspace)
 
 	// NOTE: Use float arrays for local transformations that don't need to be fixed up.
-	FIELD_VMATRIX_WORLDSPACE,// A VMatrix that maps some local space to world space (translation is fixed up on level transitions)
-	FIELD_MATRIX3X4_WORLDSPACE,	// matrix3x4_t that maps some local space to world space (translation is fixed up on level transitions)
+	FIELD_xxxAvail1,// A VMatrix that maps some local space to world space (translation is fixed up on level transitions)
+	FIELD_xxxAvail2,	// matrix3x4_t that maps some local space to world space (translation is fixed up on level transitions)
 
 	FIELD_INTERVAL,			// a start and range floating point interval ( e.g., 3.2->3.6 == 3.2 and 0.4 )
 	FIELD_UNUSED,
