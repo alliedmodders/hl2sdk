@@ -833,7 +833,7 @@ inline bool CVariantBase<CValueAllocator>::AssignTo( VectorWS *pDest ) const
 {
 	switch(m_type)
 	{
-		case FIELD_VOID:			*pDest = VectorWS( vec3_origin ); return false;
+		case FIELD_VOID:			*pDest = VectorWS( vec3_origin.x, vec3_origin.y, vec3_origin.z ); return false;
 		case FIELD_POSITION_VECTOR:	*pDest = *m_pVectorWS; return true;
 		case FIELD_VECTOR:			*pDest = *(VectorWS *)m_pVector; return true;
 		case FIELD_CSTRING:
