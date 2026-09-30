@@ -110,7 +110,7 @@ enum EntityDormancyType_t
 
 struct alignas(8) CPulseArgumentPack
 {
-	uint8 pad_0000[144];
+	uint8 pad_0000[56];
 };
 
 struct CPulseInputParamMap
