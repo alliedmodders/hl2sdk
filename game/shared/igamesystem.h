@@ -386,11 +386,14 @@ public:
 };
 
 // Quick and dirty server system for users who don't care about precise ordering
-// and usually only want to implement a few of the callbacks
-class CBaseGameSystem : public IGameSystem
+// and usually only want to implement a few of the callbacks.
+// The game's own systems (CCSChickenManager, CInventoryManager, ...) derive from
+// CAutoGameSystem, which derives from IGameSystem directly and implements every
+// callback as a no-op; GetName/SetName use the name at +8.
+class CAutoGameSystem : public IGameSystem
 {
 public:
-	CBaseGameSystem(const char* pszInitName = "unnamed")
+	CAutoGameSystem(const char* pszInitName = "unnamed")
 	 :  m_pName(pszInitName)
 	{
 	}
@@ -491,16 +494,18 @@ public:
 	virtual void SetGameSystemGlobalPtrs(void* pValue) override {}
 	virtual void SetName(const char* pName) override { m_pName = pName; }
 	virtual bool DoesGameSystemReallocate() override { return false; }
-	virtual ~CBaseGameSystem() {}
+	virtual ~CAutoGameSystem() {}
 
 private:
 	const char* m_pName;
 };
 
-class CAutoGameSystem : public CBaseGameSystem
+// Not a class of the game's (it has no RTTI for it): kept so code deriving from it
+// keeps building.
+class CBaseGameSystem : public CAutoGameSystem
 {
-protected:
-	virtual ~CAutoGameSystem() {};
+public:
+	using CAutoGameSystem::CAutoGameSystem;
 };
 
 #endif // IGAMESYSTEM_H
