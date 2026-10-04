@@ -386,10 +386,7 @@ public:
 };
 
 // Quick and dirty server system for users who don't care about precise ordering
-// and usually only want to implement a few of the callbacks.
-// The game's own systems (CCSChickenManager, CInventoryManager, ...) derive from
-// CAutoGameSystem, which derives from IGameSystem directly and implements every
-// callback as a no-op; GetName/SetName use the name at +8.
+// and usually only want to implement a few of the callbacks
 class CAutoGameSystem : public IGameSystem
 {
 public:
@@ -500,12 +497,7 @@ private:
 	const char* m_pName;
 };
 
-// Not a class of the game's (it has no RTTI for it): kept so code deriving from it
-// keeps building.
-class CBaseGameSystem : public CAutoGameSystem
-{
-public:
-	using CAutoGameSystem::CAutoGameSystem;
-};
+// AMNOTE: Deprecated, use CAutoGameSystem instead
+using CBaseGameSystem = CAutoGameSystem;
 
 #endif // IGAMESYSTEM_H
