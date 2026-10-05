@@ -41,8 +41,11 @@ bool s_bMathlibInitialized = false;
 void Sys_Error (char *error, ...);
 #endif
 
+const Vector vec3_origin(0,0,0);
+const VectorWS vec3ws_origin(0,0,0);
 const QAngle vec3_angle(0,0,0);
 const Quaternion quat_identity(0,0,0,1);
+const QuaternionWS quatws_identity(0,0,0,1);
 const Vector vec3_invalid( FLT_MAX, FLT_MAX, FLT_MAX );
 const int nanmask = 255<<23;
 
