@@ -296,6 +296,7 @@
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
       <AdditionalOptions>/Zo %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <PreLinkEvent>
       <Command>
@@ -331,7 +332,6 @@
     <ClCompile Include="sse.cpp" />
     <ClCompile Include="sseconst.cpp" />
     <ClCompile Include="ssenoise.cpp" />
-    <ClCompile Include="vector.cpp" />
     <ClCompile Include="vmatrix.cpp" />
   </ItemGroup>
   <ItemGroup>

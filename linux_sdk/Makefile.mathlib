@@ -47,7 +47,6 @@ LIB_OBJS= \
 	$(LIB_OBJ_DIR)/sse.o \
 	$(LIB_OBJ_DIR)/sseconst.o \
 	$(LIB_OBJ_DIR)/ssenoise.o \
-	$(LIB_OBJ_DIR)/vector.o \
 	$(LIB_OBJ_DIR)/vmatrix.o \
 
 all: dirs $(NAME).$(SHLIBEXT)
