@@ -20,6 +20,7 @@
 #include "entityhandle.h"
 #include "concreteentitylist.h"
 #include "entitydatainstantiator.h"
+#include "gametime.h"
 
 class CKV3Arena;
 class CEntityClass;
@@ -42,18 +43,6 @@ struct ComponentUnserializerFieldInfo_t;
 extern CGameEntitySystem* GameEntitySystem();
 
 typedef void (*EntityResourceManifestCreationCallback_t)(IEntityResourceManifest *, void *);
-
-struct GameTime_t
-{
-public:
-	GameTime_t( float value = 0.0f ) : m_Value( value ) {}
-
-	float GetTime() const { return m_Value; }
-	void SetTime( float value ) { m_Value = value; }
-
-private:
-	float m_Value;
-};
 
 enum EntityIOTargetType_t
 {
