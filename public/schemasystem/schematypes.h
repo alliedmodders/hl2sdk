@@ -323,7 +323,7 @@ struct SchemaClassFieldData_t
 	
 	int m_nSingleInheritanceOffset;
 	
-	int m_nStaticMetadataCount;
+	uint16 m_nStaticMetadataCount;
 	SchemaMetadataEntryData_t* m_pStaticMetadata;
 };
 
@@ -335,7 +335,7 @@ struct SchemaStaticFieldData_t
 	
 	void* m_pInstance;
 	
-	int m_nStaticMetadataCount;
+	uint16 m_nStaticMetadataCount;
 	SchemaMetadataEntryData_t* m_pStaticMetadata;
 };
 
@@ -402,7 +402,7 @@ struct SchemaEnumInfoData_t
 	uint8 m_nSize;
 	uint8 m_nAlignment;
 	
-	uint8 m_nFlags;
+	uint16 m_nFlags;
 
 	uint16 m_nEnumeratorCount;
 	uint16 m_nStaticMetadataCount;
