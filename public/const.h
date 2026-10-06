@@ -134,7 +134,7 @@ enum Flags_t : uint32
 	FL_DONTTOUCH 				= (1 << 22), // Doesn't generate touch functions, generates Untouch() for anything it was touching when this flag was set
 	// FL_EMPTY 				= (1 << 23),
 	// FL_EMPTY 				= (1 << 24),
-	FL_OBJECT 					= (1 << 25), // Terrible name. This is an object that NPCs should see. Missiles, for example.
+	// FL_EMPTY 				= (1 << 25),
 	// FL_EMPTY 				= (1 << 26),
 	FL_ONFIRE 					= (1 << 27), // You know...
 	FL_DISSOLVING 				= (1 << 28), // We're dissolving!
