@@ -529,6 +529,8 @@ public:
 
 	virtual int			GetNetworkVersion( void ) = 0;
 
+	virtual float		GetTickInterval( void ) const = 0;
+
 	// Get server maxplayers and lower bound for same
 	virtual void		GetPlayerLimits( int& minplayers, int& maxplayers, int &defaultMaxPlayers, bool &bIsMultiplayer ) const = 0;
 
