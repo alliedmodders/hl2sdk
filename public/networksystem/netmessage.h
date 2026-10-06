@@ -26,7 +26,6 @@ public:
 	virtual INetworkMessageInternal *GetNetMessage() const = 0;
 	virtual CNetMessage *CopyConstruct( const CNetMessage *other ) const = 0;
 	virtual NetworkMessageId GetMessageId() const = 0;
-	virtual const char *GetName() const = 0;
 
 	// Helper function to cast up the abstract message to a concrete CNetMessagePB<T> type.
 	// Doesn't do any validity checks itself!
