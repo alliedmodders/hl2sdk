@@ -217,7 +217,7 @@ public:
 	// Dump the buffer to stdout
 	void			Spew( );
 
-	DLL_CLASS_IMPORT void Swap( CUtlBuffer &other );
+	DLL_CLASS_IMPORT void Swap( CUtlBuffer &other, bool );
 	DLL_CLASS_IMPORT void Swap( CUtlLeanVector<unsigned char> &other );
 
 	DLL_CLASS_IMPORT bool WriteToFile( const char *, bool );
