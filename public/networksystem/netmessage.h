@@ -23,7 +23,7 @@ public:
 	virtual void *AsProto() const = 0;
 	virtual void *AsProto2() const = 0;
 
-	virtual INetworkMessageInternal *GetNetMessage() const = 0;
+	virtual NetMessageInfo_t *GetNetMessage() const = 0;
 	virtual CNetMessage *CopyConstruct( const CNetMessage *other ) const = 0;
 	virtual NetworkMessageId GetMessageId() const = 0;
 
@@ -56,10 +56,10 @@ private:
 // This is mainly to access the game constructed objects, and not for direct initialization of them
 // since this misses the CNetMessage implementation which requires supplying other proto related info like
 // proto binding object, proto msg id/group, etc.
-// So to allocate the message yourself use INetworkMessageInternal::AllocateMessage() or INetworkMessages::AllocateNetMessageAbstract()
-// functions instead of direct initialization (they both are equivalent)!
+// So to allocate the message yourself use NetMessageInfo_t::AllocateMessage()
+// instead of direct initialization!
 // Example usage:
-// CNetMessagePB<ProtoClass> *msg = INetworkMessageInternal::AllocateMessage()->ToPB<ProtoClass>();
+// CNetMessagePB<ProtoClass> *msg = pNetMessageInfo->AllocateMessage()->ToPB<ProtoClass>();
 // msg->field1( 2 );
 // msg->field2( 3 );
 // IGameEventSystem::PostEventAbstract( ..., msg, ... );
