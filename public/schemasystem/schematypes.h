@@ -388,7 +388,7 @@ struct SchemaEnumeratorInfoData_t
 	
 	int64 m_nValue;
 	
-	int m_nStaticMetadataCount;
+	uint16 m_nStaticMetadataCount;
 	SchemaMetadataEntryData_t* m_pStaticMetadata;
 };
 
