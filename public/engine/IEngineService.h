@@ -100,7 +100,7 @@ public:
 	// Same methods as IVEngineServer2 
 	virtual void		SetFrameTimeAmnesty( const char *amnesty, int, float frametime ) = 0;
 	virtual const char *GetFrameTimeAmnesty( bool check_cvar ) = 0;
-	virtual void		unk301( const char *, int, int, float ) = 0;
+	virtual void		unk301( const char *, uint16 ) = 0;
 #ifdef _LINUX
 	virtual void		UnregisterPrerequisite( IPrerequisite * ) = 0;
 #endif
