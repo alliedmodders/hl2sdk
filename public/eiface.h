@@ -467,14 +467,14 @@ public:
 	virtual bool			unk_102( const char *pszSaveName, CUtlString &fileName ) = 0;
 	virtual bool			unk_103( const char *pszSaveName, CUtlString &requiredAddons ) = 0;
 	virtual void			GetLevelsFromSaveFile( const char *pszSaveName, CUtlVector<CCreateGameServerLoadInfo> &levels, bool bWipeAndExtract, int, CUtlString *pComment ) = 0;
-	virtual void			unk_104( void ) = 0;
+	virtual void			unk_201( void ) = 0;
 	virtual void			PreSaveGameLoaded( const char *pszSaveName ) = 0;
 	virtual void			AppendSaveGameResources( HGameResourceManifest hManifest, ILoadingSpawnGroup *pLoadingSpawnGroup, SpawnGroupHandle_t hSpawnGroup, const void * ) = 0;
 	virtual void			AppendTransitionResources( HGameResourceManifest hManifest, ILoadingSpawnGroup *pLoadingSpawnGroup, SpawnGroupHandle_t hSpawnGroup, const void * ) = 0;
 	virtual /*SaveGameResult_t*/ int SaveGame( const SaveGameParams_t &params ) = 0;
-	virtual bool			unk_105( void ) = 0;
-	virtual bool			unk_106( void ) = 0;
-	virtual bool			unk_107( void ) = 0;
+	virtual bool			unk_301( void ) = 0;
+	virtual bool			unk_302( void ) = 0;
+	virtual bool			unk_303( void ) = 0;
 	virtual void			FinishAsyncSave( void ) = 0;
 
 	virtual const char		*GetEntityUniqueHammerID( CEntityIndex nEntityIndex ) = 0;
