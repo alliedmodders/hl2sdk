@@ -656,6 +656,8 @@ public:
 	virtual void			unk201() = 0;
 	virtual void			unk202() = 0;
 	virtual void			unk203() = 0;
+	virtual bool			unk204( const char *, CBufferString * ) = 0;
+	virtual bool			unk205( CPlayerSlot, int ) = 0;
 };
 
 typedef IVEngineServer2 IVEngineServer;
