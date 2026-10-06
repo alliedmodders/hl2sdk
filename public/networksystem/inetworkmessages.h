@@ -61,7 +61,7 @@ abstract_class INetworkMessages
 public:
 	virtual void RegisterNetworkCategory(NetworkCategoryId nCategoryId, char const *szDebugName) = 0;
 
-	virtual void AssociateNetMessageWithChannelCategoryAbstract(INetworkMessageInternal *pNetMessage, NetworkCategoryId nCategoryId, bool) = 0;
+	virtual void AssociateNetMessageWithChannelCategoryAbstract(NetMessageInfo_t *pNetMessage, NetworkCategoryId nCategoryId, bool) = 0;
 
 	virtual bool Serialize(bf_write &pBuf, const CNetMessage *pData) = 0;
 
@@ -76,10 +76,10 @@ public:
 	virtual void *RegisterNetworkArrayFieldSerializer(char const *, NetworkSerializationMode_t, NetworkFieldSerializeBufferCB, NetworkFieldUnserializeBufferCB, NetworkFieldInfoCB,
 		NetworkFieldMetaInfoCB, NetworkFieldSerializeBufferCB, NetworkFieldUnserializeBufferCB) = 0;
 
-	virtual NetMessageInfo_t *GetNetMessageInfo(INetworkMessageInternal *pNetMessage) = 0;
+	virtual NetMessageInfo_t *GetNetMessageInfo(NetMessageInfo_t *pNetMessage) = 0;
 
-	virtual INetworkMessageInternal* FindNetworkMessage(char const *szName) = 0;
-	virtual INetworkMessageInternal* FindNetworkMessagePartial(char const *szPartialName) = 0;
+	virtual NetMessageInfo_t* FindNetworkMessage(char const *szName) = 0;
+	virtual NetMessageInfo_t* FindNetworkMessagePartial(char const *szPartialName) = 0;
 
 	virtual NetworkGroupId FindNetworkGroup(char const *szGroup, bool bCreateIfNotFound = false) = 0;
 	virtual int GetNetworkGroupCount() = 0;
@@ -95,7 +95,7 @@ public:
 	virtual void unk102() = 0;
 
 	// Passing nMessasgeId as -1 would auto-assign the id even if bCannotBeNetworked is false based on the message name hash.
-	virtual INetworkMessageInternal *FindOrCreateNetMessage(int nMessageId, CNetMessage *(*pfnAllocateMessage)(), int nGroup, NetChannelBufType_t nDefaultBufferType, bool, bool bCannotBeNetworked) = 0;
+	virtual NetMessageInfo_t *FindOrCreateNetMessage(int nMessageId, NetMessageAllocateFn pfnAllocateMessage, int nGroup, NetChannelBufType_t nDefaultBufferType, bool bOkayToRedispatch, bool bCannotBeNetworked) = 0;
 
 	// Doesn't support duplicated callbacks per field
 	virtual void RegisterNetworkFieldChangeCallbackInternal(char const *szFieldName, uint64, NetworkFieldChangedDelegateType_t fieldType, CUtlAbstractDelegate pCallback, NetworkFieldChangeCallbackPerformType_t cbPerformType, int unkflag ) = 0;
@@ -108,7 +108,7 @@ public:
 
 	virtual void RegisterFieldChangeCallbackPriority(int nPriority) = 0;
 
-	virtual INetworkMessageInternal *FindNetworkMessageById(int nMessageId) = 0;
+	virtual NetMessageInfo_t *FindNetworkMessageById(int nMessageId) = 0;
 
 	virtual void SetIsForServer(bool bIsForServer) = 0;
 	virtual bool GetIsForServer() = 0;
