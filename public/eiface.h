@@ -542,8 +542,6 @@ public:
 
 	virtual bool			ShouldNotifyLocalClientConnectionStateChanges() = 0;
 
-	virtual bool			AllowPlayerToTakeOverBots() = 0;
-
 	virtual void			OnClientFullyConnect( CEntityIndex nEntityIndex ) = 0;
 
 	virtual void		GetHostStateLoopModeInfo( HostStateLoopModeType_t type, CUtlString &loopModeName, KeyValues **ppLoopModeOptions ) = 0;
@@ -553,6 +551,16 @@ public:
 	virtual void		GetConVarPrefixesToResetToDefaults( CUtlString &sSemicolonDelimitedPrefixList ) const = 0;
 
 	virtual bool		AllowSaveRestore() = 0;
+
+	virtual bool		unk101() = 0;
+
+	virtual bool		IsCommandQueueEnabled() = 0;
+	virtual float		GetCommandQueueDilationPercentage() = 0;
+
+	virtual bool		unk201() = 0;
+	virtual bool		unk202() = 0;
+	virtual bool		unk203() = 0;
+	virtual bool 		unk204() = 0;
 };
 
 #define INTERFACEVERSION_SERVERGAMECLIENTS		"Source2GameClients001"
