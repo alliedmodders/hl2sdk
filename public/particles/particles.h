@@ -1547,6 +1547,7 @@ private:
 struct CPathParameters
 {
 	int m_nStartControlPointNumber;
+	int m_nMidControlPointNumber;
 	int m_nEndControlPointNumber;
 	int m_nBulgeControl;
 	float m_flBulge;
