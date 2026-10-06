@@ -106,7 +106,6 @@ struct EventQueuePrioritizedEvent_t
 	CUtlSymbolLarge m_iTargetInput;
 	CEntityHandle m_pActivator;
 	CEntityHandle m_pCaller;
-	int m_iOutputID;
 	CEntityHandle m_pEntTarget; // a pointer to the entity to target; overrides m_iTarget
 
 	variant_t m_VariantValue; // variable-type parameter
