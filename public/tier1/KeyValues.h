@@ -119,7 +119,7 @@ private:
 	HKeySymbol Internal_GetNameSymbol() const;
 	HKeySymbol Internal_GetNameSymbolCaseSensitive() const;
 
-	void Internal_SetName( char const *szName );
+	bool Internal_SetName( char const *szName );
 	void Internal_SetNameFrom( CKeyValues_Data const &pOther );
 
 	Color Internal_GetColor( Color defaultClr ) const;
