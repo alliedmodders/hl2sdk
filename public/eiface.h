@@ -512,7 +512,7 @@ public:
 	
 	virtual bool			GetWorldspaceCenter( CEntityIndex nEntityIndex, Vector *pCenter ) const = 0;
 
-	virtual void			OnPrePackEntities( CUtlVector<Entity2Networkable_t *> ents ) const = 0;
+	virtual void			OnPrePackEntities( const CUtlVector<Entity2Networkable_t *> &ents ) const = 0;
 };
 
 #define INTERFACEVERSION_SERVERCONFIG			"Source2ServerConfig001"
