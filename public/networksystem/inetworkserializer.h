@@ -40,7 +40,7 @@ enum NetworkSerializationMode_t
 	NET_SERIALIZATION_MODE_CLIENT = 0x1,
 };
 
-typedef uint16 NetworkMessageId;
+typedef uint32 NetworkMessageId;
 typedef uint8 NetworkGroupId;
 typedef uint NetworkCategoryId;
 
@@ -57,7 +57,6 @@ struct NetMessageInfo_t
 	// (1 << 7) - FLAG_UNK001
 	uint8 m_nFlags;
 
-	int m_unk001;
 	int m_unk002;
 	bool m_bOkayToRedispatch;
 };
@@ -70,7 +69,7 @@ public:
 	virtual const char *GetUnscopedName() = 0;
 	virtual NetMessageInfo_t *GetNetMessageInfo() = 0;
 
-	virtual void SetMessageId( unsigned short nMessageId ) = 0;
+	virtual void SetMessageId( NetworkMessageId nMessageId ) = 0;
 
 	virtual void AddCategoryMask( int nMask, bool ) = 0;
 
