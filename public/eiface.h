@@ -31,6 +31,7 @@
 #include "entity2/entityidentity.h"
 #include "checktransmitinfo.h"
 #include "networksystem/inetworksystem.h"
+#include "resourcefile/resourcetype.h"
 
 //-----------------------------------------------------------------------------
 // forward declarations
@@ -70,8 +71,6 @@ struct Entity2Networkable_t;
 class CCreateGameServerLoadInfo;
 class INavListener;
 class CNavData;
-struct EconItemInfo_t;
-struct EconControlPointInfo_t;
 class CEntityHandle;
 struct RenderDeviceInfo_t;
 
@@ -95,6 +94,8 @@ struct vis_info_t;
 class IHLTVServer;
 class CCompressedResourceManifest;
 class ILoadingSpawnGroup;
+class KeyValues3;
+struct SaveGameParams_t;
 class IToolGameSimulationAPI;
 class CCLCMsg_Move;
 template <typename T>
@@ -454,28 +455,29 @@ public:
 	virtual void			PreFatalShutdown( void ) const = 0;
 	virtual void			UpdateWhenNotInGame( float flFrameTime ) = 0;
 
-	virtual void			GetEconItemNamesForModel( const char *pModelName, bool bExcludeItemSets, bool bExcludeIndividualItems, CUtlVector<CUtlString> &econItemNames ) = 0;
-	virtual void			GetEconItemNamesForCharacter( const char *pCharacterName, bool bExcludeItemSets, bool bExcludeIndividualItems, CUtlVector<CUtlString> &econItemNames ) = 0;
-	virtual void			GetEconItemsInfoForModel( const char *pModelName, const char *pEconItemName, bool bExcludeItemSets, bool bExcludeIndividualItems, bool bExcludeStockItemSet, CUtlVector<EconItemInfo_t> &econInfo ) = 0;
-	virtual void			GetEconItemsInfoForCharacter( const char *pCharacterName, const char *pEconItemName, bool bExcludeItemSets, bool bExcludeIndividualItems, bool bExcludeStockItemSet, CUtlVector<EconItemInfo_t> &econInfo ) = 0;
-
-	virtual void			GetDefaultScaleForModel( const char *pModelName, bool bCheckLoadoutScale ) = 0;
-	virtual void			GetDefaultScaleForCharacter( const char *pCharacterName, bool bCheckLoadoutScale ) = 0;
-	virtual void			GetDefaultControlPointAutoUpdates( const char *pParticleSystemName, CUtlVector<EconControlPointInfo_t> &autoUpdates ) = 0;
-
-	virtual void			unk_201() = 0;
-
-	virtual void			GetCharacterNameForModel( const char *pModelName, bool bCheckItemModifiers, CUtlString &characterName ) = 0;
-	virtual void			GetModelNameForCharacter( const char *pCharacterNamel, int nIndex, CBufferString &modelName ) = 0;
-	virtual void			GetCharacterList( CUtlVector<CUtlString> &characterNames ) = 0;
-	virtual void			GetDefaultChoreoDirForModel( const char *pModelName, CBufferString &defaultVCDDir ) = 0;
-
 	virtual void			*GetEconItemSystem( void ) = 0;
 
 	virtual void			ServerConVarChanged( const char *pVarName, const char *pValue ) = 0;
 
 	// Returns a list of values and names corresponding to HitGroup_t enum
 	virtual void			GetHitGroupEnumInfo( CUtlVector<int> &values, CUtlVector<CUtlString> &names ) = 0;
+
+	virtual void			unk_101( KeyValues3 *pKV ) = 0;
+
+	virtual bool			unk_102( const char *pszSaveName, CUtlString &fileName ) = 0;
+	virtual bool			unk_103( const char *pszSaveName, CUtlString &requiredAddons ) = 0;
+	virtual void			GetLevelsFromSaveFile( const char *pszSaveName, CUtlVector<CCreateGameServerLoadInfo> &levels, bool bWipeAndExtract, int, CUtlString *pComment ) = 0;
+	virtual void			unk_104( void ) = 0;
+	virtual void			PreSaveGameLoaded( const char *pszSaveName ) = 0;
+	virtual void			AppendSaveGameResources( HGameResourceManifest hManifest, ILoadingSpawnGroup *pLoadingSpawnGroup, SpawnGroupHandle_t hSpawnGroup, const void * ) = 0;
+	virtual void			AppendTransitionResources( HGameResourceManifest hManifest, ILoadingSpawnGroup *pLoadingSpawnGroup, SpawnGroupHandle_t hSpawnGroup, const void * ) = 0;
+	virtual /*SaveGameResult_t*/ int SaveGame( const SaveGameParams_t &params ) = 0;
+	virtual bool			unk_105( void ) = 0;
+	virtual bool			unk_106( void ) = 0;
+	virtual bool			unk_107( void ) = 0;
+	virtual void			FinishAsyncSave( void ) = 0;
+
+	virtual const char		*GetEntityUniqueHammerID( CEntityIndex nEntityIndex ) = 0;
 };
 
 //-----------------------------------------------------------------------------
