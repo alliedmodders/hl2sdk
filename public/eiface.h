@@ -466,6 +466,7 @@ public:
 
 	virtual bool			unk_102( const char *pszSaveName, CUtlString &fileName ) = 0;
 	virtual bool			unk_103( const char *pszSaveName, CUtlString &requiredAddons ) = 0;
+	virtual bool			unk_104( void ) = 0;
 	virtual void			GetLevelsFromSaveFile( const char *pszSaveName, CUtlVector<CCreateGameServerLoadInfo> &levels, bool bWipeAndExtract, int, CUtlString *pComment ) = 0;
 	virtual void			unk_201( void ) = 0;
 	virtual void			PreSaveGameLoaded( const char *pszSaveName ) = 0;
