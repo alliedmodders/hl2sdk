@@ -232,7 +232,7 @@ public:
 	virtual bool	IsServerRunning( void ) const = 0;
 	virtual void	DisconnectGameNow( /*ENetworkDisconnectionReason*/ int ) = 0;
 	virtual void	PrintSpawnGroupStatus( void ) const = 0;
-	//virtual int		GetTickInterval( void ) const = 0;
+	virtual float	GetTickInterval( void ) const = 0;
 	//virtual void	ProcessSocket( void ) = 0;
 	virtual netadr_t GetServerNetworkAddress( void ) = 0;
 	virtual bool	GameLoadFailed( void ) const = 0;
