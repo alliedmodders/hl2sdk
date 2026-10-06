@@ -60,6 +60,7 @@ public:
 	virtual int			GetEngineDeviceWidth( void ) const = 0;
 	virtual int			GetEngineDeviceHeight( void ) const = 0;
 	virtual void		GetEngineSwapChainSize(int* w, int* h) const = 0;
+	virtual void		GetWindowSafeArea(void) = 0;
 	virtual bool		IsLoopSwitchQueued(void) const = 0;
 	virtual bool		IsLoopSwitchRequested(void) const = 0;
 
