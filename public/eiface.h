@@ -188,7 +188,7 @@ public:
 	virtual void		SetFrameTimeAmnesty( const char *amnesty, int, float frametime ) = 0;
 	virtual const char *GetFrameTimeAmnesty( bool check_cvar ) = 0;
 
-	virtual void		unk101( const char *, int, int, float ) = 0;
+	virtual void		unk101( const char *, uint16 ) = 0;
 
 	virtual void		ShowFrameTimeReport( void *, bool ) = 0;
 
