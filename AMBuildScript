@@ -1,0 +1,81 @@
+# vim: set ts=2 sw=2 tw=99 noet ft=python:
+import os
+
+from ambuild2 import util
+
+
+class SDKConfig(object):
+  def __init__(self):
+    self.libs = []
+    self.targets = []
+
+    # This build only supports x64. DetectCxx chooses the native platform's
+    # compiler (MSVC on Windows, GCC or Clang on Linux).
+    target_archs = (builder.options.targets.split(',')
+                    if builder.options.targets else ['x86_64'])
+    for arch in target_archs:
+      arch = arch.strip()
+      if arch != 'x86_64':
+        raise Exception('Unsupported target architecture: {} (only x86_64 is supported).'
+                        .format(arch))
+      try:
+        cxx = builder.DetectCxx(target_arch=arch)
+      except Exception as e:
+        raise Exception('Could not find an x64 C/C++ compiler: {}'.format(e))
+      if cxx.target.platform not in ('windows', 'linux'):
+        raise Exception('AMBuild supports only Windows and Linux x64 targets.')
+      self.targets.append(cxx)
+
+  @property
+  def tag(self):
+    return 'Debug' if builder.options.debug == '1' else 'Release'
+
+  def configure_cxx(self, cxx):
+    if cxx.like('gcc'):
+      cxx.cflags += ['-Wall', '-fPIC']
+      cxx.cxxflags += ['-std=c++11']
+      cxx.defines += ['COMPILER_GCC']
+      if builder.options.opt == '1':
+        cxx.cflags += ['-O3']
+      if cxx.target.platform == 'linux':
+        cxx.defines += [
+          '_LINUX', 'LINUX', 'POSIX', 'GNUC',
+          '_finite=finite', 'strnicmp=strncasecmp', '_vsnprintf=vsnprintf',
+          '_alloca=alloca', 'NO_MALLOC_OVERRIDE'
+        ]
+    elif cxx.family == 'msvc':
+      cxx.defines += ['COMPILER_MSVC', 'COMPILER_MSVC64']
+      cxx.cxxflags += ['/WX']
+      if builder.options.opt == '1':
+        cxx.cflags += ['/Ox', '/Zo']
+        cxx.linkflags += ['/OPT:ICF', '/OPT:REF']
+      cxx.defines += ['_WINDOWS', 'WINDOWS', 'WIN32', 'WIN64']
+
+    cxx.defines += ['X64BITS', 'PLATFORM_64BITS', 'RAD_TELEMETRY_DISABLED']
+    if builder.options.opt == '1':
+      cxx.defines += ['NDEBUG']
+    if builder.options.debug == '1':
+      cxx.defines += ['DEBUG', '_DEBUG']
+
+  def configure(self):
+    for cxx in self.targets:
+      self.configure_cxx(cxx)
+
+  def ConfigureLibrary(self, project, compiler, context):
+    binary = project.Configure(compiler, project.name,
+                               '{} - x86_64'.format(self.tag))
+    binary.compiler.cxxincludes += [context.currentSourcePath]
+    return binary
+
+
+HL2SDK = SDKConfig()
+HL2SDK.configure()
+
+BuildScripts = [
+  'mathlib/AMBuilder',
+  'tier1/AMBuilder',
+  'interfaces/AMBuilder',
+  'PackageScript',
+]
+util.StaticLibPrefix = ''
+builder.Build(BuildScripts, {'HL2SDK': HL2SDK})

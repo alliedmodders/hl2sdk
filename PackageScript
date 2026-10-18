@@ -1,0 +1,16 @@
+# vim: set ts=2 sw=2 tw=99 noet ft=python:
+
+# Place the finished archives in the SDK's existing x64 library directories.
+builder.SetBuildFolder('lib')
+
+destinations = {}
+for task in HL2SDK.libs:
+  if task.target.platform == 'windows':
+    destinations['windows'] = builder.AddFolder('public/win64')
+  elif task.target.platform == 'linux':
+    destinations['linux'] = builder.AddFolder('linux64')
+
+for task in HL2SDK.libs:
+  destination = destinations.get(task.target.platform)
+  if destination:
+    builder.AddCopy(task.binary, destination)
