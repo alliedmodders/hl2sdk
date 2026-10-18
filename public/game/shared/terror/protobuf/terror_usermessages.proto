@@ -1,0 +1,253 @@
+import "google/protobuf/descriptor.proto";
+import "netmessages.proto";
+import "base_usermessages.proto";
+
+option optimize_for = SPEED;
+option cc_generic_services = false;
+
+enum ETerrorUserMessages {
+	UM_Terror_Splatter = 201;
+	UM_Terror_MeleeSlashSplatter = 202;
+	UM_Terror_MeleeClubSplatter = 203;
+	UM_Terror_MudSplatter = 204;
+	UM_Terror_SplatterClear = 205;
+	UM_Terror_MessageText = 206;
+	UM_Terror_TransitionRestore = 207;
+	UM_Terror_Spawn = 208;
+	UM_Terror_CreditsLine = 209;
+	UM_Terror_CreditsMsg = 210;
+	UM_Terror_JoinLateMsg = 211;
+	UM_Terror_StatsCrawlMsg = 212;
+	UM_Terror_StatsSkipState = 213;
+	UM_Terror_ShowStats = 214;
+	UM_Terror_BlurFade = 215;
+	UM_Terror_MusicCmd = 216;
+	UM_Terror_WitchBloodSplatter = 217;
+	UM_Terror_AchievementEvent = 218;
+	UM_Terror_PZDmgMsg = 219;
+	UM_Terror_AllPlayersConnectedGameStarting = 220;
+	UM_Terror_VoteRegistered = 221;
+	UM_Terror_DisconnectToLobby = 222;
+	UM_Terror_CallVoteFailed = 223;
+	UM_Terror_SteamWeaponStatData = 224;
+	UM_Terror_CurrentTimescale = 225;
+	UM_Terror_DesiredTimescale = 226;
+	UM_Terror_PZEndGamePanelMsg = 227;
+	UM_Terror_PZEndGamePanelVoteRegisteredMsg = 228;
+	UM_Terror_PZEndGameVoteStatsMsg = 229;
+	UM_Terror_VoteStart = 230;
+	UM_Terror_VotePass = 231;
+	UM_Terror_VoteFail = 232;
+	UM_Terror_SavedConvar = 233;
+	UM_Terror_KillCam = 234;
+	UM_Terror_FirearmSlashSplatter = 235;
+	UM_Terror_FirearmClubSplatter = 236;
+}
+
+enum EMusicCmdType {
+	MUSIC_PLAY = 0;
+	MUSIC_PLAYPOS = 1;
+	MUSIC_STOP = 2;
+	MUSIC_STOPTRACK = 3;
+	MUSIC_CMD = 4;
+}
+
+message CUsrMsg_Terror_Splatter {
+	optional int32 count = 1;
+}
+
+message CUsrMsg_Terror_MeleeSlashSplatter {
+	optional int32 count = 1;
+}
+
+message CUsrMsg_Terror_MeleeClubSplatter {
+	optional int32 count = 1;
+}
+
+message CUsrMsg_Terror_MudSplatter {
+	optional int32 count = 1;
+}
+
+message CUsrMsg_Terror_SplatterClear {
+	optional int32 dummy = 1;
+}
+
+message CUsrMsg_Terror_MessageText {
+}
+
+message CUsrMsg_Terror_TransitionRestore {
+	optional int32 dummy = 1;
+}
+
+message CUsrMsg_Terror_Spawn {
+	optional int32 team = 1;
+}
+
+message CUsrMsg_Terror_CreditsLine {
+	optional string line = 1;
+}
+
+message CUsrMsg_Terror_CreditsMsg {
+	optional int32 dummy = 1;
+}
+
+message CUsrMsg_Terror_JoinLateMsg {
+	optional int32 dummy = 1;
+}
+
+message CUsrMsg_Terror_StatsCrawlMsg {
+	optional int32 dummy = 1;
+}
+
+message CUsrMsg_Terror_StatsSkipState {
+	optional int32 skips = 1;
+	optional int32 players = 2;
+}
+
+message CUsrMsg_Terror_ShowStats {
+}
+
+message CUsrMsg_Terror_BlurFade {
+}
+
+message CUsrMsg_Terror_MusicCmd {
+	message sound_t {
+		oneof sound {
+			int32 hash = 1;
+			string name = 2;
+		}
+	}
+
+	message play_t {
+		optional .CUsrMsg_Terror_MusicCmd.sound_t sound = 1;
+		optional float fadeTime = 2;
+		optional .CMsgEntity emit = 3;
+		optional .CMsgVector pos = 4;
+	}
+
+	message stop_t {
+		optional .CUsrMsg_Terror_MusicCmd.sound_t sound = 1;
+		optional float fadeTime = 2;
+		optional bool track = 3;
+	}
+
+	message cmd_t {
+		optional string cmd = 1;
+		optional string arg1 = 2;
+		optional string arg2 = 3;
+		optional .CMsgEntity arg3 = 4;
+	}
+
+	optional .CMsgEntity player = 1;
+
+	oneof cmds {
+		.CUsrMsg_Terror_MusicCmd.play_t play = 2;
+		.CUsrMsg_Terror_MusicCmd.stop_t stop = 3;
+		.CUsrMsg_Terror_MusicCmd.cmd_t cmd = 4;
+	}
+}
+
+message CUsrMsg_Terror_WitchBloodSplatter {
+	optional .CMsgVector pos = 1;
+}
+
+message CUsrMsg_Terror_AchievementEvent {
+}
+
+message CUsrMsg_Terror_PZDmgMsg {
+	optional int32 type = 1;
+	optional int32 attacker = 2;
+	optional int32 target = 3;
+	optional int32 assistingPlayer = 4;
+	optional int32 extraNum = 5;
+}
+
+message CUsrMsg_Terror_AllPlayersConnectedGameStarting {
+	optional int32 dummy = 1;
+}
+
+message CUsrMsg_Terror_VoteRegistered {
+	optional bool yes = 1;
+}
+
+message CUsrMsg_Terror_DisconnectToLobby {
+	optional int32 dummy = 1;
+}
+
+message CUsrMsg_Terror_CallVoteFailed {
+	optional int32 reason = 1;
+}
+
+message CUsrMsg_Terror_SteamWeaponStatData {
+	message weapon_t {
+		optional int32 weaponID = 1;
+		optional int32 shotfired = 2;
+		optional int32 hit = 3;
+		optional int32 headshot = 4;
+		optional int32 kills = 5;
+		optional int32 damage = 6;
+	}
+
+	repeated .CUsrMsg_Terror_SteamWeaponStatData.weapon_t weapons = 1;
+}
+
+message CUsrMsg_Terror_CurrentTimescale {
+}
+
+message CUsrMsg_Terror_DesiredTimescale {
+}
+
+message CUsrMsg_Terror_PZEndGamePanelMsg {
+	optional bool show = 1;
+}
+
+message CUsrMsg_Terror_PZEndGamePanelVoteRegisteredMsg {
+	optional bool yes = 1;
+}
+
+message CUsrMsg_Terror_PZEndGameVoteStatsMsg {
+	message PZVoteData {
+		optional int32 numPlayers = 1;
+		optional int32 votesYes = 2;
+		optional int32 votesNo = 3;
+		optional int32 votesFinished = 4;
+	}
+
+	repeated .CUsrMsg_Terror_PZEndGameVoteStatsMsg.PZVoteData pz_vote_data = 1;
+}
+
+message CUsrMsg_Terror_VoteStart {
+	optional int32 team = 1;
+	optional .CMsgEntity entity = 2;
+	optional string issue = 3;
+	optional string param1 = 4;
+	optional string votecaller = 5;
+}
+
+message CUsrMsg_Terror_VotePass {
+	optional int32 team = 1;
+	optional string result = 2;
+	optional string param1 = 3;
+}
+
+message CUsrMsg_Terror_VoteFail {
+	optional int32 team = 1;
+}
+
+message CUsrMsg_Terror_SavedConvar {
+	optional string convar = 1;
+}
+
+message CUsrMsg_Terror_KillCam {
+	optional int32 mode = 1;
+	optional .CMsgEntity first = 2;
+	optional .CMsgEntity second = 3;
+}
+
+message CUsrMsg_Terror_FirearmSlashSplatter {
+	optional int32 count = 1;
+}
+
+message CUsrMsg_Terror_FirearmClubSplatter {
+	optional int32 count = 1;
+}

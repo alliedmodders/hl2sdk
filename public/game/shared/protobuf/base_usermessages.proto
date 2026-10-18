@@ -1,0 +1,368 @@
+import "google/protobuf/descriptor.proto";
+import "netmessages.proto";
+
+option optimize_for = SPEED;
+option cc_generic_services = false;
+
+enum EUserMessages {
+	UM_VGUIMenu = 1;
+	UM_Geiger = 2;
+	UM_Train = 3;
+	UM_HudText = 4;
+	UM_SayText = 5;
+	UM_SayText2 = 6;
+	UM_TextMsg = 7;
+	UM_HudMsg = 8;
+	UM_ResetHud = 9;
+	UM_Shake = 12;
+	UM_Fade = 13;
+	UM_Rumble = 14;
+	UM_CloseCaption = 15;
+	UM_CloseCaptionDirect = 16;
+	UM_SendAudio = 17;
+	UM_RawAudio = 18;
+	UM_VoiceMask = 19;
+	UM_RequestState = 20;
+	UM_Damage = 21;
+	UM_RadioText = 22;
+	UM_HintText = 23;
+	UM_KeyHintText = 24;
+	UM_UpdateTeamMoney = 28;
+	UM_StopSpectatorMode = 29;
+	UM_DesiredTimescale = 31;
+	UM_CurrentTimescale = 32;
+	UM_AchievementEvent = 33;
+	UM_PlayerStatsUpdate = 36;
+	UM_CallVoteFailed = 45;
+	UM_VoteStart = 46;
+	UM_VotePass = 47;
+	UM_VoteFailed = 48;
+	UM_VoteSetup = 49;
+	UM_SendLastKillerDamageToClient = 51;
+	UM_ItemPickup = 53;
+	UM_ShowMenu = 54;
+	UM_BarTime = 55;
+	UM_AmmoDenied = 56;
+	UM_MarkAchievement = 57;
+	UM_GlowPropTurnOff = 60;
+	UM_SendPlayerItemDrops = 61;
+	UM_SendPlayerItemFound = 63;
+	UM_XpUpdate = 65;
+	UM_ScoreLeaderboardData = 67;
+	UM_PlayerDecalDigitalSignature = 68;
+	UM_WeaponSound = 69;
+	UM_UpdateScreenHealthBar = 70;
+	UM_EntityOutlineHighlight = 71;
+	UM_SSUI = 72;
+	UM_SurvivalStats = 73;
+	UM_DisconnectToLobby2 = 74;
+	UM_Tilt = 250;
+	UM_Battery = 251;
+	UM_CreditsMsg = 253;
+	UM_LogoTimeMsg = 254;
+	UM_UpdateJalopyRadar = 255;
+	UM_MessageText = 256;
+	UM_StatsSkipState = 258;
+	UM_PanoramaEvent = 512;
+}
+
+message CMsgEntity {
+	optional uint32 handle = 1;
+}
+
+message CUsrMsg_VGUIMenu {
+	message Subkey {
+		optional string name = 1;
+		optional string str = 2;
+	}
+
+	optional string name = 1;
+	optional bool show = 2;
+	repeated .CUsrMsg_VGUIMenu.Subkey subkeys = 3;
+}
+
+message CUsrMsg_Geiger {
+	optional int32 range = 1;
+}
+
+message CUsrMsg_Train {
+	optional int32 train = 1;
+}
+
+message CUsrMsg_HudText {
+	optional string text = 1;
+}
+
+message CUsrMsg_SayText {
+	optional int32 ent_idx = 1;
+	optional string text = 2;
+	optional bool chat = 3;
+	optional bool textallchat = 4;
+}
+
+message CUsrMsg_SayText2 {
+	optional int32 ent_idx = 1;
+	optional bool chat = 2;
+	optional string msg_name = 3;
+	repeated string params = 4;
+	optional bool textallchat = 5;
+}
+
+message CUsrMsg_TextMsg {
+	optional int32 msg_dst = 1;
+	repeated string params = 3;
+}
+
+message CUsrMsg_HudMsg {
+	optional int32 channel = 1;
+	optional .CMsgVector2D pos = 2;
+	optional .CMsgRGBA clr1 = 3;
+	optional .CMsgRGBA clr2 = 4;
+	optional int32 effect = 5;
+	optional float fade_in_time = 6;
+	optional float fade_out_time = 7;
+	optional float hold_time = 9;
+	optional float fx_time = 10;
+	optional string text = 11;
+}
+
+message CUsrMsg_Shake {
+	optional int32 command = 1;
+	optional float local_amplitude = 2;
+	optional float frequency = 3;
+	optional float duration = 4;
+}
+
+message CUsrMsg_Fade {
+	optional int32 duration = 1;
+	optional int32 hold_time = 2;
+	optional int32 flags = 3;
+	optional .CMsgRGBA clr = 4;
+}
+
+message CUsrMsg_Rumble {
+	optional int32 index = 1;
+	optional int32 data = 2;
+	optional int32 flags = 3;
+}
+
+message CUsrMsg_CloseCaption {
+	optional uint32 hash = 1;
+	optional int32 duration = 2;
+	optional bool from_player = 3;
+}
+
+message CUsrMsg_CloseCaptionDirect {
+	optional uint32 hash = 1;
+	optional int32 duration = 2;
+	optional bool from_player = 3;
+}
+
+message CUsrMsg_SendAudio {
+	optional string radio_sound = 1;
+}
+
+message CUsrMsg_RawAudio {
+	optional int32 pitch = 1;
+	optional .CMsgEntity entity = 2;
+	optional float duration = 3;
+	optional string voice_filename = 4;
+}
+
+message CUsrMsg_VoiceMask {
+	message PlayerMask {
+		optional uint64 game_rules_mask = 1;
+		optional uint64 ban_masks = 2;
+	}
+
+	repeated .CUsrMsg_VoiceMask.PlayerMask player_masks = 1;
+	optional bool player_mod_enable = 2;
+}
+
+message CUsrMsg_Damage {
+	optional int32 amount = 1;
+	optional .CMsgVector inflictor_world_pos = 2;
+	optional .CMsgEntity inflictor = 3;
+	optional .CMsgEntity victim = 4;
+	optional int32 amount_min = 5;
+	optional int32 amount_max = 6;
+}
+
+message CUsrMsg_RadioText {
+	optional int32 msg_dst = 1;
+	optional int32 client = 2;
+	optional string msg_name = 3;
+	repeated string params = 4;
+}
+
+message CUsrMsg_HintText {
+	optional string text = 1;
+}
+
+message CUsrMsg_KeyHintText {
+	repeated string hints = 1;
+}
+
+message CUsrMsg_WeaponSound {
+	optional .CMsgEntity entity = 1;
+	optional float origin_x = 2;
+	optional float origin_y = 3;
+	optional float origin_z = 4;
+	optional string sound = 5;
+	optional float timestamp = 6;
+}
+
+message CUsrMsg_UpdateScreenHealthBar {
+	optional .CMsgEntity entity = 1;
+	optional float healthratio_old = 2;
+	optional float healthratio_new = 3;
+	optional int32 style = 4;
+}
+
+message CUsrMsg_EntityOutlineHighlight {
+	optional .CMsgEntity entity = 1;
+}
+
+message CUsrMsg_DesiredTimescale {
+	optional float desired_timescale = 1;
+	optional float acceleration = 2;
+	optional float minblendrate = 3;
+	optional float blendmultiplier = 4;
+}
+
+message CUsrMsg_CurrentTimescale {
+	optional float cur_timescale = 1;
+}
+
+message CUsrMsg_AchievementEvent {
+	optional int32 achievement = 1;
+	optional int32 count = 2;
+	optional int32 user_id = 3;
+}
+
+message CUsrMsg_PlayerStatsUpdate {
+	message Stat {
+		optional int32 idx = 1;
+		optional int32 delta = 2;
+	}
+
+	optional int32 version = 1;
+	repeated .CUsrMsg_PlayerStatsUpdate.Stat stats = 4;
+	optional int32 user_id = 5;
+	optional int32 crc = 6;
+}
+
+message CUsrMsg_CallVoteFailed {
+	optional int32 reason = 1;
+	optional int32 time = 2;
+}
+
+message CUsrMsg_VoteStart {
+	optional int32 team = 1;
+	optional .CMsgEntity entity = 2;
+	optional int32 vote_type = 3;
+	optional string disp_str = 4;
+	optional string details_str = 5;
+	optional string other_team_str = 6;
+	optional bool is_yes_no_vote = 7;
+}
+
+message CUsrMsg_VotePass {
+	optional int32 team = 1;
+	optional int32 vote_type = 2;
+	optional string disp_str = 3;
+	optional string details_str = 4;
+}
+
+message CUsrMsg_VoteFailed {
+	optional int32 team = 1;
+	optional int32 reason = 2;
+}
+
+message CUsrMsg_VoteSetup {
+	repeated string potential_issues = 1;
+}
+
+message CUsrMsg_SendLastKillerDamageToClient {
+	optional int32 num_hits_given = 1;
+	optional int32 damage_given = 2;
+	optional int32 num_hits_taken = 3;
+	optional int32 damage_taken = 4;
+}
+
+message CUsrMsg_ItemPickup {
+	optional string item = 1;
+}
+
+message CUsrMsg_ShowMenu {
+	optional int32 bits_valid_slots = 1;
+	optional int32 display_time = 2;
+	optional string menu_string = 3;
+}
+
+message CUsrMsg_BarTime {
+	optional string time = 1;
+}
+
+message CUsrMsg_AmmoDenied {
+	optional int32 ammoIdx = 1;
+}
+
+message CUsrMsg_MarkAchievement {
+	optional string achievement = 1;
+}
+
+message CUsrMsg_GlowPropTurnOff {
+	optional .CMsgEntity entity = 1;
+}
+
+message CUsrMsg_Tilt {
+	optional int32 command = 1;
+	optional bool ease_in_out = 2;
+	optional .CMsgQAngle angle = 3;
+	optional float duration = 4;
+	optional float time = 5;
+}
+
+message CUsrMsg_Battery {
+	optional int32 value = 1;
+}
+
+message CUsrMsg_CreditsMsg {
+	optional int32 type = 1;
+}
+
+message CUsrMsg_LogoTimeMsg {
+	optional float length = 1;
+}
+
+message CUsrMsg_UpdateJalopyRadar {
+	optional int32 dummy = 1;
+}
+
+message CUsrMsg_MessageText {
+	optional .CMsgRGBA color = 1;
+	optional string text = 2;
+}
+
+message CUsrMsg_StatsSkipState {
+	optional int32 num_skips = 1;
+	optional int32 num_players = 2;
+}
+
+message CUsrMsg_PanoramaEvent {
+	optional string event = 1;
+	optional string payload = 2;
+}
+
+message CUsrMsg_ResetHud {
+	optional bool reset = 1;
+}
+
+message CUsrMsg_RequestState {
+	optional int32 dummy = 1;
+}
+
+message CUsrMsg_StopSpectatorMode {
+	optional int32 dummy = 1;
+}

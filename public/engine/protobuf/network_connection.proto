@@ -1,0 +1,86 @@
+import "google/protobuf/descriptor.proto";
+
+option cc_generic_services = false;
+
+extend .google.protobuf.EnumValueOptions {
+	optional string network_connection_token = 50500;
+}
+
+enum ENetworkDisconnectionReason {
+	NETWORK_DISCONNECT_INVALID = 0;
+	NETWORK_DISCONNECT_SHUTDOWN = 1;
+	NETWORK_DISCONNECT_DISCONNECT_BY_USER = 2 [(network_connection_token) = "#GameUI_Disconnect_User"];
+	NETWORK_DISCONNECT_DISCONNECT_BY_SERVER = 3 [(network_connection_token) = "#GameUI_Disconnect_Server"];
+	NETWORK_DISCONNECT_LOST = 4 [(network_connection_token) = "#GameUI_Disconnect_ConnectionLost"];
+	NETWORK_DISCONNECT_OVERFLOW = 5 [(network_connection_token) = "#GameUI_Disconnect_ConnectionOverflow"];
+	NETWORK_DISCONNECT_SERVERINFO_OVERFLOW = 6 [(network_connection_token) = "#GameUI_Disconnect_ServerInfoOverflow"];
+	NETWORK_DISCONNECT_TICKMSG_OVERFLOW = 7 [(network_connection_token) = "#GameUI_Disconnect_TickMessage"];
+	NETWORK_DISCONNECT_STRINGTABLEMSG_OVERFLOW = 8 [(network_connection_token) = "#GameUI_Disconnect_StringTableMessage"];
+	NETWORK_DISCONNECT_DELTAENTMSG_OVERFLOW = 9 [(network_connection_token) = "#GameUI_Disconnect_DeltaEntMessage"];
+	NETWORK_DISCONNECT_TEMPENTMSG_OVERFLOW = 10 [(network_connection_token) = "#GameUI_Disconnect_TempEntMessage"];
+	NETWORK_DISCONNECT_SOUNDSMSG_OVERFLOW = 11 [(network_connection_token) = "#GameUI_Disconnect_SoundsMessage"];
+	NETWORK_DISCONNECT_SNAPSHOTOVERFLOW = 12 [(network_connection_token) = "#GameUI_Disconnect_SnapshotOverflow"];
+	NETWORK_DISCONNECT_SNAPSHOTERROR = 13 [(network_connection_token) = "#GameUI_Disconnect_SnapshotError"];
+	NETWORK_DISCONNECT_RELIABLEOVERFLOW = 14 [(network_connection_token) = "#GameUI_Disconnect_ReliableOverflow"];
+	NETWORK_DISCONNECT_BADDELTATICK = 15 [(network_connection_token) = "#GameUI_Disconnect_BadClientDeltaTick"];
+	NETWORK_DISCONNECT_NOMORESPLITS = 16 [(network_connection_token) = "#GameUI_Disconnect_NoMoreSplits"];
+	NETWORK_DISCONNECT_TIMEDOUT = 17 [(network_connection_token) = "#GameUI_Disconnect_TimedOut"];
+	NETWORK_DISCONNECT_DISCONNECTED = 18 [(network_connection_token) = "#GameUI_Disconnect_Disconnected"];
+	NETWORK_DISCONNECT_LEAVINGSPLIT = 19 [(network_connection_token) = "#GameUI_Disconnect_LeavingSplit"];
+	NETWORK_DISCONNECT_DIFFERENTCLASSTABLES = 20 [(network_connection_token) = "#GameUI_Disconnect_DifferentClassTables"];
+	NETWORK_DISCONNECT_NOSPECTATORS = 21 [(network_connection_token) = "#GameUI_Disconnect_NoSpectators"];
+	NETWORK_DISCONNECT_KICKED = 22 [(network_connection_token) = "#GameUI_Disconnect_Kicked"];
+	NETWORK_DISCONNECT_BANADDED = 23 [(network_connection_token) = "#GameUI_Disconnect_BanAdded"];
+	NETWORK_DISCONNECT_KICKBANADDED = 24 [(network_connection_token) = "#GameUI_Disconnect_KickBanAdded"];
+	NETWORK_DISCONNECT_PURESERVER_CLIENTEXTRA = 25 [(network_connection_token) = "#GameUI_Disconnect_PureServer_ClientExtra"];
+	NETWORK_DISCONNECT_PURESERVER_MISMATCH = 26 [(network_connection_token) = "#GameUI_Disconnect_PureServer_Mismatch"];
+	NETWORK_DISCONNECT_USERCMD = 27 [(network_connection_token) = "#GameUI_Disconnect_UserCmd"];
+	NETWORK_DISCONNECT_REJECTED_BY_GAME = 28 [(network_connection_token) = "#GameUI_Disconnect_RejectedByGame"];
+	NETWORK_DISCONNECT_MESSAGE_PARSE_ERROR = 29 [(network_connection_token) = "#GameUI_Disconnect_MessageParseError"];
+	NETWORK_DISCONNECT_INVALID_MESSAGE_ERROR = 30 [(network_connection_token) = "#GameUI_Disconnect_InvalidMessageError"];
+	NETWORK_DISCONNECT_BAD_SERVER_PASSWORD = 31 [(network_connection_token) = "#GameUI_Disconnect_BadServerPassword"];
+	NETWORK_DISCONNECT_DIRECT_CONNECT_RESERVATION = 32 [(network_connection_token) = "#GameUI_Disconnect_DirectConnectReservation"];
+	NETWORK_DISCONNECT_CONNECTION_FAILURE = 33 [(network_connection_token) = "#GameUI_Disconnect_ConnectionFailure"];
+	NETWORK_DISCONNECT_NO_PEER_GROUP_HANDLERS = 34 [(network_connection_token) = "#GameUI_Disconnect_NoPeerGroupHandlers"];
+	NETWORK_DISCONNECT_RECONNECTION = 35 [(network_connection_token) = "#GameUI_Disconnect_Reconnection"];
+	NETWORK_DISCONNECT_CONNECTION_CLOSING = 36 [(network_connection_token) = "#GameUI_Disconnect_ConnectionClosing"];
+	NETWORK_DISCONNECT_SESSION_MIGRATED = 37 [(network_connection_token) = "#GameUI_Disconnect_SessionMigrated"];
+	NETWORK_DISCONNECT_VERYLARGETRANSFEROVERFLOW = 38 [(network_connection_token) = "#GameUI_Disconnect_VeryLargeTransferOverflow"];
+	NETWORK_DISCONNECT_SENDNETOVERFLOW = 39 [(network_connection_token) = "#GameUI_Disconnect_SendNetOverflow"];
+	NETWORK_DISCONNECT_PLAYER_REMOVED_FROM_HOST_SESSION = 40 [(network_connection_token) = "#GameUI_Disconnect_PlayerRemovedFromHostSession"];
+	NETWORK_DISCONNECT_SERVER_DOS = 41 [(network_connection_token) = "#GameUI_Disconnect_TooManyCommands"];
+	NETWORK_DISCONNECT_STEAM_BANNED = 201 [(network_connection_token) = "#GameUI_Disconnect_SteamIDBanned"];
+	NETWORK_DISCONNECT_STEAM_INUSE = 202 [(network_connection_token) = "#GameUI_Disconnect_SteamIDInUse"];
+	NETWORK_DISCONNECT_STEAM_TICKET = 203 [(network_connection_token) = "#GameUI_Disconnect_SteamTicket"];
+	NETWORK_DISCONNECT_STEAM_LOGON = 204 [(network_connection_token) = "#GameUI_Disconnect_SteamLogon"];
+	NETWORK_DISCONNECT_STEAM_AUTHCANCELLED = 205 [(network_connection_token) = "#GameUI_Disconnect_SteamLogon"];
+	NETWORK_DISCONNECT_STEAM_AUTHALREADYUSED = 206 [(network_connection_token) = "#GameUI_Disconnect_SteamLogon"];
+	NETWORK_DISCONNECT_STEAM_AUTHINVALID = 207 [(network_connection_token) = "#GameUI_Disconnect_SteamLogon"];
+	NETWORK_DISCONNECT_STEAM_VACBANSTATE = 208 [(network_connection_token) = "#GameUI_Disconnect_SteamVAC"];
+	NETWORK_DISCONNECT_STEAM_LOGGED_IN_ELSEWHERE = 209 [(network_connection_token) = "#GameUI_Disconnect_SteamInUse"];
+	NETWORK_DISCONNECT_STEAM_VAC_CHECK_TIMEDOUT = 210 [(network_connection_token) = "#GameUI_Disconnect_SteamTimeOut"];
+	NETWORK_DISCONNECT_STEAM_DROPPED = 211 [(network_connection_token) = "#GameUI_Disconnect_SteamDropped"];
+	NETWORK_DISCONNECT_STEAM_OWNERSHIP = 212 [(network_connection_token) = "#GameUI_Disconnect_SteamOwnership"];
+	NETWORK_DISCONNECT_SNS_LOCAL_MANYRELAYS = 301 [(network_connection_token) = "#GameUI_Disconnect_LocalProblem_ManyRelays"];
+	NETWORK_DISCONNECT_SNS_LOCAL_HOSTEDSERVERPRIMARYRELAY = 302 [(network_connection_token) = "#GameUI_Disconnect_LocalProblem_HostedServerPrimaryRelay"];
+	NETWORK_DISCONNECT_SNS_LOCAL_NETWORKCONFIG = 303 [(network_connection_token) = "#GameUI_Disconnect_LocalProblem_NetworkConfig"];
+	NETWORK_DISCONNECT_SNS_LOCAL_OTHER = 304 [(network_connection_token) = "#GameUI_Disconnect_LocalProblem_Other"];
+	NETWORK_DISCONNECT_SNS_REMOTE_TIMEOUTCONNECTING = 305 [(network_connection_token) = "#GameUI_Disconnect_RemoteProblem_TimeoutConnecting"];
+	NETWORK_DISCONNECT_SNS_REMOTE_TIMEOUT = 306 [(network_connection_token) = "#GameUI_Disconnect_RemoteProblem_Timeout"];
+	NETWORK_DISCONNECT_SNS_REMOTE_BADCRYPT = 307 [(network_connection_token) = "#GameUI_Disconnect_RemoteProblem_BadCrypt"];
+	NETWORK_DISCONNECT_SNS_REMOTE_BADCERT = 308 [(network_connection_token) = "#GameUI_Disconnect_RemoteProblem_BadCert"];
+	NETWORK_DISCONNECT_SNS_CLOSEDBYPEER_TIMEOUT = 309 [(network_connection_token) = "#GameUI_Disconnect_ClosedByPeer_Timeout"];
+	NETWORK_DISCONNECT_SNS_CLOSEDBYPEER_OTHER = 310 [(network_connection_token) = "#GameUI_Disconnect_ClosedByPeer"];
+	NETWORK_DISCONNECT_SNS_CONNECTION_TIMEOUT = 311 [(network_connection_token) = "#GameUI_Disconnect_ConnectionTimedout"];
+	NETWORK_DISCONNECT_SNS_CONNECTION_LOST = 312 [(network_connection_token) = "#GameUI_Disconnect_ConnectionLost"];
+	NETWORK_DISCONNECT_SNS_INTERNALERROR = 313 [(network_connection_token) = "#GameUI_Disconnect_InternalError"];
+	NETWORK_DISCONNECT_SNS_UNUSUAL = 314 [(network_connection_token) = "#GameUI_Disconnect_Unusual"];
+	NETWORK_DISCONNECT_HLTV_BADRELAYPASSWORD = 401 [(network_connection_token) = "#GameUI_Disconnect_HLTVBadRelayPassword"];
+	NETWORK_DISCONNECT_HLTV_BADSPECTATORPASSWORD = 402 [(network_connection_token) = "#GameUI_Disconnect_HLTVBadSpectatorPassword"];
+	NETWORK_DISCONNECT_HLTV_RESTRICTED = 403 [(network_connection_token) = "#GameUI_Disconnect_HLTVRestricted"];
+	NETWORK_DISCONNECT_HLTV_UNAVAILABLE = 404 [(network_connection_token) = "#GameUI_Disconnect_HLTVUnavailable"];
+	NETWORK_DISCONNECT_HLTV_STOP = 405 [(network_connection_token) = "#GameUI_Disconnect_HLTVStop"];
+	NETWORK_DISCONNECT_HLTV_DIRECT = 406 [(network_connection_token) = "#GameUI_Disconnect_HLTVDirect"];
+	NETWORK_DISCONNECT_HLTV_NO_RELAYS_AVAILABLE = 407 [(network_connection_token) = "#GameUI_Disconnect_HLTVNoRelaysAvailable"];
+	NETWORK_DISCONNECT_HLTV_RESTRICTED_TO_LOCAL_SPECTATORS = 408 [(network_connection_token) = "#GameUI_Disconnect_HLTVRestrictedToLocalSpectators"];
+}
