@@ -75,6 +75,10 @@ public:
     virtual void  Free( void *pMem, const char *pFileName, int nLine ) = 0;
     virtual void *Expand_NoLongerSupported( void *pMem, size_t nSize, const char *pFileName, int nLine ) = 0;
 
+	virtual void *AllocAlign( size_t nSize, size_t align ) = 0;
+	virtual void *AllocAlign( size_t nSize, size_t align, const char *pFileName, int nLine ) = 0;
+	virtual void *ReallocAlign( void *pMem, size_t nSize, size_t align ) = 0;
+
 	inline void *IndirectAlloc( size_t nSize )										{ return Alloc( nSize ); }
 	inline void *IndirectAlloc( size_t nSize, const char *pFileName, int nLine )	{ return Alloc( nSize, pFileName, nLine ); }
 
@@ -140,6 +144,9 @@ public:
 
 	// Replacement for ::GlobalMemoryStatus which accounts for unused memory in our system
 	virtual void GlobalMemoryStatus( size_t *pUsedMemory, size_t *pFreeMemory ) = 0;
+	virtual void* unk001( size_t unk ) = 0;
+	virtual int unk002( void *pUnk ) = 0;
+	virtual ~IMemAlloc() { };
 };
 
 //-----------------------------------------------------------------------------

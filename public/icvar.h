@@ -62,7 +62,7 @@ public:
 	virtual CVarDLLIdentifier_t AllocateDLLIdentifier() = 0;
 
 	// Register, unregister commands
-	virtual void			RegisterConCommand( ConCommandBase *pCommandBase, bool cmdline=true ) = 0;
+	virtual void			RegisterConCommand( ConCommandBase *pCommandBase, bool cmdline=false ) = 0;
 	virtual void			UnregisterConCommand( ConCommandBase *pCommandBase ) = 0;
 	virtual void			UnregisterConCommands( CVarDLLIdentifier_t id ) = 0;
 
@@ -75,10 +75,12 @@ public:
 	virtual ConCommandBase *FindCommandBase( const char *name ) = 0;
 	virtual const ConCommandBase *FindCommandBase( const char *name ) const = 0;
 	virtual ConVar			*FindVar ( const char *var_name ) = 0;
+	virtual ConVar			*FindVar ( const char *var_name, uint32 *unk ) = 0;
 	virtual const ConVar	*FindVar ( const char *var_name ) const = 0;
 	virtual ConCommand		*FindCommand( const char *name ) = 0;
 	virtual const ConCommand *FindCommand( const char *name ) const = 0;
 
+	virtual bool	unk001() = 0;
 
 
 	// Install a global change callback (to be called when any convar changes) 
@@ -122,10 +124,6 @@ public:
 	virtual bool			HasQueuedMaterialThreadConVarSets() const = 0;
 	virtual int				ProcessQueuedMaterialThreadConVarSets() = 0;
 
-	virtual void			QueueMaterialThreadSetConCommand( ConCommand *pConCommand ) = 0;
-	virtual bool			HasQueuedMaterialThreadConCommandSets() const = 0;
-	virtual int				ProcessQueuedMaterialThreadConCommandSets() = 0;
-
 protected:	class ICVarIteratorInternal;
 public:
 	/// Iteration over all cvars. 
@@ -162,6 +160,7 @@ protected:
 	class ICVarIteratorInternal
 	{
 	public:
+        virtual ~ICVarIteratorInternal() {}
 		virtual void		SetFirst( void ) = 0;
 		virtual void		Next( void ) = 0;
 		virtual	bool		IsValid( void ) = 0;

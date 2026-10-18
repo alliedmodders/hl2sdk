@@ -132,7 +132,7 @@ DECLARE_TIER3_INTERFACE( vgui::ILocalize, g_pVGuiLocalize );
 #define RENDER_DEVICE_MGR_INTERFACE_VERSION		"RenderDeviceMgr001"
 DECLARE_TIER2_INTERFACE( IRenderDeviceMgr, g_pRenderDeviceMgr );
 
-#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem017"
+#define FILESYSTEM_INTERFACE_VERSION			"VFileSystem018"
 DECLARE_TIER2_INTERFACE( IFileSystem, g_pFullFileSystem );
 
 #define ASYNCFILESYSTEM_INTERFACE_VERSION		"VNewAsyncFileSystem001"

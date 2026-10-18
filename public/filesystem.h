@@ -472,6 +472,7 @@ public:
 	virtual bool			ReadFile( const char *pFileName, const char *pPath, CUtlBuffer &buf, int nMaxBytes = 0, int nStartingByte = 0, FSAllocFunc_t pfnAlloc = NULL ) = 0;
 	virtual bool			WriteFile( const char *pFileName, const char *pPath, CUtlBuffer &buf ) = 0;
 	virtual bool			UnzipFile( const char *pFileName, const char *pPath, const char *pDestination ) = 0;
+	virtual bool			unk001() = 0;
 };
 
 
@@ -506,9 +507,11 @@ public:
 	//  override is cleared and the current .bsp is searched for an embedded PAK file
 	//  and this file becomes the highest priority search path ( i.e., it's looked at first
 	//   even before the mod's file system path ).
-	virtual void			AddSearchPath( const char *pPath, const char *pathID, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) = 0;
+	virtual void			AddSearchPath( const char *pPath, const char *pathID, SearchPathAdd_t addType = PATH_ADD_TO_TAIL, bool bUnk = false ) = 0;
 	virtual bool			RemoveSearchPath( const char *pPath, const char *pathID = 0 ) = 0;
 
+	virtual bool unk002() = 0;
+	virtual bool unk003() = 0;
 	// Remove all search paths (including write path?)
 	virtual void			RemoveAllSearchPaths( void ) = 0;
 
@@ -529,15 +532,18 @@ public:
 	// Returns the search path, each path is separated by ;s. Returns the length of the string returned
 	virtual int				GetSearchPath( const char *pathID, bool bGetPackFiles, char *pPath, int nMaxLen ) = 0;
 
+	virtual int				unk004() = 0;
+
 	// interface for custom pack files > 4Gb
-	virtual bool			AddPackFile( const char *fullpath, const char *pathID ) = 0;
+	virtual bool			AddPackFile( const char *fullpath, const char *pathID, int unk = 1 ) = 0;
+	virtual bool			unk005() = 0;
 
 	//--------------------------------------------------------
 	// File manipulation operations
 	//--------------------------------------------------------
 
 	// Deletes a file (on the WritePath)
-	virtual void			RemoveFile( char const* pRelativePath, const char *pathID = 0 ) = 0;
+	virtual bool			RemoveFile( char const* pRelativePath, const char *pathID = 0 ) = 0;
 
 	// Renames a file (on the WritePath)
 	virtual bool			RenameFile( char const *pOldPath, char const *pNewPath, const char *pathID = 0 ) = 0;
@@ -579,6 +585,7 @@ public:
 	virtual const char		*FindFirst( const char *pWildCard, FileFindHandle_t *pHandle ) = 0;
 	virtual const char		*FindNext( FileFindHandle_t handle ) = 0;
 	virtual bool			FindIsDirectory( FileFindHandle_t handle ) = 0;
+	virtual bool			unk006() = 0;
 	virtual void			FindClose( FileFindHandle_t handle ) = 0;
 
 	// Same as FindFirst, but you can filter by path ID, which can make it faster.
@@ -597,11 +604,7 @@ public:
 	//--------------------------------------------------------
 	// File name and directory operations
 	//--------------------------------------------------------
-
-	// FIXME: This method is obsolete! Use RelativePathToFullPath instead!
-	// converts a partial path into a full path
-	virtual const char		*GetLocalPath( const char *pFileName, char *pLocalPath, int localPathBufferSize ) = 0;
-
+	
 	// Returns true on success ( based on current list of search paths, otherwise false if 
 	//  it can't be resolved )
 	virtual bool			FullPathToRelativePath( const char *pFullpath, char *pRelative, int maxlen ) = 0;
@@ -625,13 +628,16 @@ public:
 	//------------------------------------
 			FSAsyncStatus_t	AsyncRead( const FileAsyncRequest_t &request, FSAsyncControl_t *phControl = NULL )	{ return AsyncReadMultiple( &request, 1, phControl ); 	}
 	virtual FSAsyncStatus_t	AsyncReadMultiple( const FileAsyncRequest_t *pRequests, int nRequests,  FSAsyncControl_t *phControls = NULL ) = 0;
-	virtual FSAsyncStatus_t	AsyncAppend(const char *pFileName, const void *pSrc, int nSrcBytes, bool bFreeMemory, FSAsyncControl_t *pControl = NULL ) = 0;
+	virtual FSAsyncStatus_t	AsyncAppend(const char *pFileName, const char *pathID, const void *pSrc, int nSrcBytes, bool bFreeMemory, FSAsyncControl_t *pControl = NULL ) = 0;
 	virtual FSAsyncStatus_t	AsyncAppendFile(const char *pAppendToFileName, const char *pAppendFromFileName, FSAsyncControl_t *pControl = NULL ) = 0;
 	virtual void			AsyncFinishAll( int iToPriority = 0 ) = 0;
 	virtual void			AsyncFinishAllWrites() = 0;
 	virtual FSAsyncStatus_t	AsyncFlush() = 0;
 	virtual bool			AsyncSuspend() = 0;
 	virtual bool			AsyncResume() = 0;
+
+	virtual void	unk007() = 0;
+	virtual void	unk008() = 0;
 
 	//------------------------------------
 	// Functions to hold a file open if planning on doing mutiple reads. Use is optional,
@@ -651,6 +657,7 @@ public:
 	virtual FSAsyncStatus_t	AsyncSetPriority(FSAsyncControl_t hControl, int newPriority) = 0;
 	virtual void			AsyncAddRef( FSAsyncControl_t hControl ) = 0;
 	virtual void			AsyncRelease( FSAsyncControl_t hControl ) = 0;
+	virtual void			unk009() = 0;
 
 	//--------------------------------------------------------
 	// Remote resource management
@@ -714,27 +721,13 @@ public:
 	virtual void SetupPreloadData() = 0;
 	virtual void DiscardPreloadData() = 0;
 
-	// Fixme, we could do these via a string embedded into the compiled data, etc...
-	enum KeyValuesPreloadType_t
-	{
-		TYPE_VMT,
-		TYPE_SOUNDEMITTER,
-		TYPE_SOUNDSCAPE,
-		NUM_PRELOAD_TYPES
-	};
-
-	// If the "PreloadedData" hasn't been purged, then this'll try and instance the KeyValues using the fast path of compiled keyvalues loaded during startup.
-	// Otherwise, it'll just fall through to the regular KeyValues loading routines
-	virtual KeyValues	*LoadKeyValues( KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) = 0;
-	virtual bool		LoadKeyValues( KeyValues& head, KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) = 0;
-
-	virtual FSAsyncStatus_t	AsyncWrite(const char *pFileName, const void *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t *pControl = NULL ) = 0;
-	virtual FSAsyncStatus_t	AsyncWriteFile(const char *pFileName, const CUtlBuffer *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t *pControl = NULL ) = 0;
+	virtual FSAsyncStatus_t	AsyncWrite(const char *pFileName, const char *pathID, const void *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t *pControl = NULL ) = 0;
+	virtual FSAsyncStatus_t	AsyncWriteFile(const char *pFileName, const char *pathID, const CUtlBuffer *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t *pControl = NULL ) = 0;
 	// Async read functions with memory blame
 	FSAsyncStatus_t			AsyncReadCreditAlloc( const FileAsyncRequest_t &request, const char *pszFile, int line, FSAsyncControl_t *phControl = NULL )	{ return AsyncReadMultipleCreditAlloc( &request, 1, pszFile, line, phControl ); 	}
 	virtual FSAsyncStatus_t	AsyncReadMultipleCreditAlloc( const FileAsyncRequest_t *pRequests, int nRequests, const char *pszFile, int line, FSAsyncControl_t *phControls = NULL ) = 0;
 
-	virtual FSAsyncStatus_t AsyncDirectoryScan( const char* pSearchSpec, bool recurseFolders,  void* pContext, FSAsyncScanAddFunc_t pfnAdd, FSAsyncScanCompleteFunc_t pfnDone, FSAsyncControl_t *pControl = NULL ) = 0;
+	virtual FSAsyncStatus_t AsyncDirectoryScan( const char* pSearchSpec, const char *pathID, bool recurseFolders,  void* pContext, FSAsyncScanAddFunc_t pfnAdd, FSAsyncScanCompleteFunc_t pfnDone, bool bUnk = false, FSAsyncControl_t *pControl = NULL ) = 0;
 
 	virtual bool			GetFileTypeForFullPath( char const *pFullPath, wchar_t *buf, size_t bufSizeInBytes ) = 0;
 
@@ -761,8 +754,6 @@ public:
 
 	virtual int			GetPathIndex( const FileNameHandle_t &handle ) = 0;
 	virtual long		GetPathTime( const char *pPath, const char *pPathID ) = 0;
-
-	virtual DVDMode_t	GetDVDMode() = 0;
 
 	//--------------------------------------------------------
 	// Whitelisting for pure servers.
@@ -816,53 +807,34 @@ public:
 	virtual int				GetWhitelistSpewFlags() = 0;
 	virtual void			SetWhitelistSpewFlags( int flags ) = 0;
 
-	// Installs a callback used to display a dirty disk dialog
-	virtual void			InstallDirtyDiskReportFunc( FSDirtyDiskReportFunc_t func ) = 0;
-
-	virtual bool			IsLaunchedFromXboxHDD() = 0;
-	virtual bool			IsInstalledToXboxHDDCache() = 0;
-	virtual bool			IsDVDHosted() = 0;
-	virtual bool			IsInstallAllowed() = 0;
+	virtual int		unk010() = 0;
+	virtual void	unk011() = 0;
+	virtual bool	unk012() = 0;
+	virtual bool	unk013() = 0;
+	virtual void	unk014() = 0;
+	virtual bool	unk015() = 0;
+	virtual void	unk016() = 0;
 
 	virtual int				GetSearchPathID( char *pPath, int nMaxLen ) = 0;
-	virtual bool			FixupSearchPathsAfterInstall() = 0;
-	
-	virtual FSDirtyDiskReportFunc_t		GetDirtyDiskReportFunc() = 0;
+	virtual void	unk017() = 0;
+	virtual bool	unk018() = 0;
 
-	virtual void AddVPKFile( char const *pszName, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) = 0;
-	virtual void RemoveVPKFile( char const *pszName ) = 0;
+	virtual void AddVPKFile( char const *pszName, const char *pathID, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) = 0;
+	virtual bool RemoveVPKFile( char const *pszName, const char *pathID ) = 0;
+	virtual void unk019() = 0;
 	virtual void GetVPKFileNames( CUtlVector<CUtlString> &destVector ) = 0;
 	virtual void			RemoveAllMapSearchPaths() = 0;
-	virtual void			SyncDvdDevCache() = 0;
-
-	virtual bool			GetStringFromKVPool( CRC32_t poolKey, unsigned int key, char *pOutBuff, int buflen ) = 0;
-
-	virtual bool			DiscoverDLC( int iController ) = 0;
-	virtual int				IsAnyDLCPresent( bool *pbDLCSearchPathMounted = NULL ) = 0;
-	virtual bool			GetAnyDLCInfo( int iDLC, unsigned int *pLicenseMask, wchar_t *pTitleBuff, int nOutTitleSize ) = 0;
-	virtual int				IsAnyCorruptDLC() = 0;
-	virtual bool			GetAnyCorruptDLCInfo( int iCorruptDLC, wchar_t *pTitleBuff, int nOutTitleSize ) = 0;
-	virtual bool			AddDLCSearchPaths() = 0;
-	virtual bool			IsSpecificDLCPresent( unsigned int nDLCPackage ) = 0;
-
 	// call this to look for CPU-hogs during loading processes. When you set this, a breakpoint
 	// will be issued whenever the indicated # of seconds go by without an i/o request.  Passing
 	// 0.0 will turn off the functionality.
 	virtual void            SetIODelayAlarm( float flThreshhold ) = 0;
 	
-	virtual bool			AddXLSPUpdateSearchPath( const void *pData, int nSize ) = 0;
-	
 	virtual IIoStats		*GetIoStats() = 0;
-	
-	virtual EFileSystemPureState	GetPureState() = 0;
-	virtual void					AllowLoadFromDisk( bool bAllowLoadFromDisk ) = 0;
-	
+
 	virtual void			CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes ) = 0;
 	virtual bool			CheckVPKFileHash( int PackFileID, int nPackFileNumber, int nFileFraction, MD5Value_t &md5Value ) = 0;
 	virtual void			GetVPKFileStatisticsKV( KeyValues *pKV ) = 0;
 	
-	virtual void			SetDisallowOutsideWrites( bool bDisallow ) = 0;
-	virtual bool			GetDisallowOutsideWrites() = 0;
 };
 
 //-----------------------------------------------------------------------------

@@ -239,10 +239,6 @@ private:
 abstract_class ISoundEmitterSystemBase : public IAppSystem
 {
 public:
-	// Unused, left in the interface so I don't have to rebuild all
-	virtual void			Unused1() {}
-	virtual void			Unused2() {}
-
 	virtual int				GetSoundIndex( const char *pName ) const = 0;
 	virtual bool			IsValidIndex( int index ) = 0;
 	virtual int				GetSoundCount( void ) = 0;

@@ -211,11 +211,11 @@ static CLeakTrack track;
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues( const char *setName, IKeyValuesSystem *customSystem, bool ownsCustomSystem )
+KeyValues::KeyValues( const char *setName )
 {
 	TRACK_KV_ADD( this, setName );
 
-	Init( customSystem, ownsCustomSystem );
+	Init();
 	SetName ( setName );
 }
 
@@ -284,7 +284,7 @@ KeyValues::KeyValues( const char *setName, const char *firstKey, int firstValue,
 //-----------------------------------------------------------------------------
 // Purpose: Initialize member variables
 //-----------------------------------------------------------------------------
-void KeyValues::Init(IKeyValuesSystem *customSystem, bool ownsCustomSystem)
+void KeyValues::Init()
 {
 	m_iKeyName = 0;
 	m_iKeyNameCaseSensitive1 = 0;
@@ -300,9 +300,6 @@ void KeyValues::Init(IKeyValuesSystem *customSystem, bool ownsCustomSystem)
 	m_pValue = NULL;
 	
 	m_bHasEscapeSequences = false;
-
-	m_pKeyValuesSystem = customSystem;
-	m_bOwnsCustomKeyValuesSystem = ownsCustomSystem;
 }
 
 //-----------------------------------------------------------------------------
@@ -313,11 +310,6 @@ KeyValues::~KeyValues()
 	TRACK_KV_REMOVE( this );
 
 	RemoveEverything();
-
-	if (m_pKeyValuesSystem && m_bOwnsCustomKeyValuesSystem) {
-		delete m_pKeyValuesSystem;
-		m_pKeyValuesSystem = NULL;
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -372,7 +364,7 @@ void KeyValues::ChainKeyValue( KeyValues* pChain )
 //-----------------------------------------------------------------------------
 const char *KeyValues::GetName( void ) const
 {
-	return GetKeyValuesSystem()->GetStringForSymbol(m_iKeyName);
+	return KeyValuesSystem()->GetStringForSymbol(m_iKeyName);
 }
 
 //-----------------------------------------------------------------------------
@@ -770,7 +762,7 @@ KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 	}
 
 	// lookup the symbol for the search string
-	HKeySymbol iSearchStr = GetKeyValuesSystem()->GetSymbolForString( searchStr, bCreate );
+	HKeySymbol iSearchStr = KeyValuesSystem()->GetSymbolForString( searchStr, bCreate );
 	if ( iSearchStr == INVALID_KEY_SYMBOL )
 	{
 		// not found, couldn't possibly be in key value list
@@ -802,7 +794,7 @@ KeyValues *KeyValues::FindKey(const char *keyName, bool bCreate)
 		if (bCreate)
 		{
 			// we need to create a new key
-			dat = new KeyValues( searchStr, m_pKeyValuesSystem );
+			dat = new KeyValues( searchStr );
 //			Assert(dat != NULL);
 
 			// insert new key at end of list
@@ -869,7 +861,7 @@ KeyValues *KeyValues::CreateNewKey()
 KeyValues* KeyValues::CreateKey( const char *keyName )
 {
 	// key wasn't found so just create a new one
-	KeyValues* dat = new KeyValues( keyName, m_pKeyValuesSystem );
+	KeyValues* dat = new KeyValues( keyName );
 
 	dat->UsesEscapeSequences( m_bHasEscapeSequences != 0 ); // use same format as parent does
 	
@@ -1427,7 +1419,7 @@ void KeyValues::SetFloat( const char *keyName, float value )
 
 void KeyValues::SetName( const char * setName )
 {
-	m_iKeyName = GetKeyValuesSystem()->GetSymbolForString( setName );
+	m_iKeyName = KeyValuesSystem()->GetSymbolForString( setName );
 }
 
 //-----------------------------------------------------------------------------
@@ -1536,14 +1528,14 @@ void KeyValues::RecursiveCopyKeyValues( KeyValues& src )
 	// Handle the immediate child
 	if( src.m_pSub )
 	{
-		m_pSub = new KeyValues( NULL, m_pKeyValuesSystem );
+		m_pSub = new KeyValues( NULL );
 		m_pSub->RecursiveCopyKeyValues( *src.m_pSub );
 	}
 
 	// Handle the immediate peer
 	if( src.m_pPeer )
 	{
-		m_pPeer = new KeyValues( NULL, m_pKeyValuesSystem );
+		m_pPeer = new KeyValues( NULL );
 		m_pPeer->RecursiveCopyKeyValues( *src.m_pPeer );
 	}
 }
@@ -1760,7 +1752,7 @@ void KeyValues::ParseIncludedKeys( char const *resourceName, const char *filetoi
 	// Append included file
 	Q_strncat( fullpath, filetoinclude, sizeof( fullpath ), COPY_ALL_CHARACTERS );
 
-	KeyValues *newKV = new KeyValues( fullpath, m_pKeyValuesSystem );
+	KeyValues *newKV = new KeyValues( fullpath );
 
 	// CUtlSymbol save = s_CurrentFileSymbol;	// did that had any use ???
 
@@ -1911,7 +1903,7 @@ bool KeyValues::LoadFromBuffer( char const *resourceName, CUtlBuffer &buf, IBase
 
 		if ( !pCurrentKey )
 		{
-			pCurrentKey = new KeyValues( s, m_pKeyValuesSystem );
+			pCurrentKey = new KeyValues( s );
 			Assert( pCurrentKey );
 
 			pCurrentKey->UsesEscapeSequences( m_bHasEscapeSequences != 0 ); // same format has parent use
@@ -2283,7 +2275,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 		{
 		case TYPE_NONE:
 			{
-				dat->m_pSub = new KeyValues("", m_pKeyValuesSystem);
+				dat->m_pSub = new KeyValues("");
 				dat->m_pSub->ReadAsBinary( buffer );
 				break;
 			}
@@ -2347,7 +2339,7 @@ bool KeyValues::ReadAsBinary( CUtlBuffer &buffer )
 			break;
 
 		// new peer follows
-		dat->m_pPeer = new KeyValues("", m_pKeyValuesSystem);
+		dat->m_pPeer = new KeyValues("");
 		dat = dat->m_pPeer;
 	}
 

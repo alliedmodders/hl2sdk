@@ -41,6 +41,7 @@ public:
 	float			absoluteframetime;
 	
 	float			absoluteframestarttimestddev;
+	double			dUnknown;
 
 	// Current time 
 	//

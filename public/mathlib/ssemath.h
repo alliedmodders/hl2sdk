@@ -10,14 +10,10 @@
 #include <xboxmath.h>
 #else
 #include <xmmintrin.h>
-#ifndef _LINUX
-#include <emmintrin.h>
-#endif
 #endif
 
 #include <mathlib/vector.h>
 #include <mathlib/mathlib.h>
-#include <mathlib/compressed_vector.h>
 
 #if defined(GNUC)
 #define USE_STDC_FOR_SIMD 0
@@ -36,7 +32,6 @@
 
 #if USE_STDC_FOR_SIMD
 
-#error "hello"
 typedef union
 {
 	float  m128_f32[4];
@@ -45,6 +40,8 @@ typedef union
 
 typedef fltx4 i32x4;
 typedef fltx4 u32x4;
+
+typedef fltx4 bi32x4;
 
 #elif ( defined( _X360 ) )
 
@@ -65,6 +62,8 @@ typedef __vector4 u32x4; // a VMX register; just a way of making it explicit tha
 typedef __m128 fltx4;
 typedef __m128 i32x4;
 typedef __m128 u32x4;
+typedef __m128 bi32x4;
+typedef __m128i shortx8;
 
 #endif
 
@@ -179,20 +178,17 @@ extern const fltx4 Four_Negative_FLT_MAX;						// -FLT_MAX, -FLT_MAX, -FLT_MAX, 
 extern const fltx4 g_SIMD_0123;									// 0 1 2 3 as float
 
 // external aligned integer constants
-#ifndef ALIGN16_POST
-#define ALIGN16_POST
-#endif
-extern const ALIGN16 int32 g_SIMD_clear_signmask[] ALIGN16_POST;			// 0x7fffffff x 4
-extern const ALIGN16 int32 g_SIMD_signmask[] ALIGN16_POST;				// 0x80000000 x 4
-extern const ALIGN16 int32 g_SIMD_lsbmask[] ALIGN16_POST;				// 0xfffffffe x 4
-extern const ALIGN16 int32 g_SIMD_clear_wmask[] ALIGN16_POST;			// -1 -1 -1 0
-extern const ALIGN16 int32 g_SIMD_ComponentMask[4][4] ALIGN16_POST;		// [0xFFFFFFFF 0 0 0], [0 0xFFFFFFFF 0 0], [0 0 0xFFFFFFFF 0], [0 0 0 0xFFFFFFFF]
-extern const ALIGN16 int32 g_SIMD_AllOnesMask[] ALIGN16_POST;			// ~0,~0,~0,~0
-extern const ALIGN16 int32 g_SIMD_Low16BitsMask[] ALIGN16_POST;			// 0xffff x 4
+extern const ALIGN16 uint32 g_SIMD_clear_signmask[] ALIGN16_POST;			// 0x7fffffff x 4
+extern const ALIGN16 uint32 g_SIMD_signmask[] ALIGN16_POST;				// 0x80000000 x 4
+extern const ALIGN16 uint32 g_SIMD_lsbmask[] ALIGN16_POST;				// 0xfffffffe x 4
+extern const ALIGN16 uint32 g_SIMD_clear_wmask[] ALIGN16_POST;			// -1 -1 -1 0
+extern const ALIGN16 uint32 g_SIMD_ComponentMask[4][4] ALIGN16_POST;		// [0xFFFFFFFF 0 0 0], [0 0xFFFFFFFF 0 0], [0 0 0xFFFFFFFF 0], [0 0 0 0xFFFFFFFF]
+extern const ALIGN16 uint32 g_SIMD_AllOnesMask[] ALIGN16_POST;			// ~0,~0,~0,~0
+extern const ALIGN16 uint32 g_SIMD_Low16BitsMask[] ALIGN16_POST;			// 0xffff x 4
 
 // this mask is used for skipping the tail of things. If you have N elements in an array, and wish
 // to mask out the tail, g_SIMD_SkipTailMask[N & 3] what you want to use for the last iteration.
-extern const int32 ALIGN16 g_SIMD_SkipTailMask[4][4] ALIGN16_POST;
+extern const uint32 ALIGN16 g_SIMD_SkipTailMask[4][4] ALIGN16_POST;
 
 extern const int32 ALIGN16 g_SIMD_EveryOtherMask[];				// 0, ~0, 0, ~0
 // Define prefetch macros.
@@ -2931,6 +2927,14 @@ FORCEINLINE i32x4 IntShiftLeftWordSIMD(const i32x4 &vSrcA, const i32x4 &vSrcB)
 // like this.
 FORCEINLINE void ConvertStoreAsIntsSIMD(intx4 * RESTRICT pDest, const fltx4 &vSrc)
 {
+#if defined( COMPILER_MSVC64 )
+
+	(*pDest)[0] = SubFloat( vSrc, 0 );
+	(*pDest)[1] = SubFloat( vSrc, 1 );
+	(*pDest)[2] = SubFloat( vSrc, 2 );
+	(*pDest)[3] = SubFloat( vSrc, 3 );
+
+#else
 	__m64 bottom = _mm_cvttps_pi32( vSrc );
 	__m64 top    = _mm_cvttps_pi32( _mm_movehl_ps(vSrc,vSrc) );
 
@@ -2938,6 +2942,7 @@ FORCEINLINE void ConvertStoreAsIntsSIMD(intx4 * RESTRICT pDest, const fltx4 &vSr
 	*reinterpret_cast<__m64 *>(&(*pDest)[2]) = top;
 
 	_mm_empty();
+#endif
 }
 
 

@@ -63,13 +63,6 @@ public:
 		entitygroundcontact.RemoveAll();
 #endif
 
-
-
-		// TrackIR
-		headangles.Init();
-		headoffset.Init();
-		// TrackIR
-
 #if defined( INFESTED_DLL )
 		crosshairtrace = vec3_origin;
 #endif
@@ -112,13 +105,6 @@ public:
 #if defined( HL2_DLL ) || defined( HL2_CLIENT_DLL )
 		entitygroundcontact			= src.entitygroundcontact;
 #endif
-
-
-
-		// TrackIR
-		headangles			= src.headangles;
-		headoffset			= src.headoffset;
-		// TrackIR
 
 #if defined( INFESTED_DLL )
 		crosshairtrace		= src.crosshairtrace;
@@ -223,11 +209,6 @@ public:
 	CUtlVector< CEntityGroundContact > entitygroundcontact;
 #endif
 
-
-	// TrackIR
-	QAngle headangles;
-	Vector headoffset;
-	// TrackIR
 
 #if defined( INFESTED_DLL )
 	Vector crosshairtrace;		// world location directly beneath the player's crosshair

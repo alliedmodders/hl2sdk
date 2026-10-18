@@ -32,6 +32,8 @@ public:
 	// These methods return the bounds of an OBB measured in "collision" space
 	// which can be retreived through the CollisionToWorldTransform or
 	// GetCollisionOrigin/GetCollisionAngles methods
+	virtual const Vector&	unk001() const = 0;
+	virtual const Vector&	unk002() const = 0;
 	virtual const Vector&	OBBMins( ) const = 0;
 	virtual const Vector&	OBBMaxs( ) const = 0;
 
@@ -51,6 +53,8 @@ public:
 
 	// Return the model, if it's a studio model.
 	virtual const model_t*	GetCollisionModel() = 0;
+
+	virtual void *unk003() = 0;
 
 	// Get angles and origin.
 	virtual const Vector&	GetCollisionOrigin() const = 0;
@@ -72,7 +76,7 @@ public:
 	// It may or may not be a tight-fitting box and its volume may suddenly change
 	virtual void			WorldSpaceSurroundingBounds( Vector *pVecMins, Vector *pVecMaxs ) = 0;
 
-	virtual bool			ShouldTouchTrigger( int triggerSolidFlags ) const = 0;
+	virtual uint unk004() = 0;
 
 	// returns NULL unless this collideable has specified FSOLID_ROOT_PARENT_ALIGNED
 	virtual const matrix3x4_t	*GetRootParentToWorldTransform() const = 0;

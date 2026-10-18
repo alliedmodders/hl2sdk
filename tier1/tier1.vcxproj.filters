@@ -35,6 +35,9 @@
     <ClCompile Include="datamanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dbg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="diff.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,9 +60,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="newbitbuf.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="processor_detect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="rangecheckedvar.cpp">

@@ -1132,29 +1132,27 @@ PLATFORM_INTERFACE void				Plat_ExitProcess( int nCode );
 // Processor Information:
 struct CPUInformation
 {
-	int	 m_Size;		// Size of this structure, for forward compatability.
-
-	bool m_bRDTSC : 1,	// Is RDTSC supported?
-		 m_bCMOV  : 1,  // Is CMOV supported?
-		 m_bFCMOV : 1,  // Is FCMOV supported?
-		 m_bSSE	  : 1,	// Is SSE supported?
-		 m_bSSE2  : 1,	// Is SSE2 Supported?
-		 m_b3DNow : 1,	// Is 3DNow! Supported?
-		 m_bMMX   : 1,	// Is MMX supported?
-		 m_bHT	  : 1;	// Is HyperThreading supported?
-
-	uint8 m_nLogicalProcessors;		// Number op logical processors.
-	uint8 m_nPhysicalProcessors;	// Number of physical processors
-	
-	bool m_bSSE3 : 1,
+	int m_Size;
+	uint8 m_nLogicalProcessors;
+	uint8 m_nPhysicalProcessors;
+	bool m_bRDTSC : 1,
+		 m_bCMOV : 1,
+		 m_bFCMOV : 1,
+		 m_bHT : 1,
+		 m_bF16C : 1,
+		 m_bSSE3 : 1,
 		 m_bSSSE3 : 1,
-		 m_bSSE4a : 1,
-		 m_bSSE41 : 1,
-		 m_bSSE42 : 1;	
-
-	int64 m_Speed;						// In cycles per second.
-
-	tchar* m_szProcessorID;				// Processor vendor Identification.
+		 m_bSSE4a : 1;
+	bool m_bSSE41 : 1,
+		 m_bSSE42 : 1,
+		 m_bAVX : 1,
+		 m_bAVX2 : 1,
+		 m_bSHA : 1,
+		 m_bAES : 1;
+	int64 m_Speed;
+	tchar *m_szProcessorID;
+	tchar *m_szProcessorBrand;
+	uint8 m_Reserved[56];
 
 	CPUInformation(): m_Size(0){}
 };
@@ -1165,7 +1163,11 @@ struct CPUInformation
 #pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
 #endif
 
-PLATFORM_INTERFACE const CPUInformation& GetCPUInformation();
+PLATFORM_INTERFACE const CPUInformation& Plat_GetCPUInformation();
+inline const CPUInformation& GetCPUInformation()
+{
+	return Plat_GetCPUInformation();
+}
 
 #ifdef __clang__
 #pragma clang diagnostic pop

@@ -19,8 +19,8 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef schema
-#define schema namespace ValveSchemaMarker {}
+#ifndef SCHEMA
+#define SCHEMA namespace ValveSchemaMarker {}
 #endif
 
 #ifdef COMPILING_SCHEMA

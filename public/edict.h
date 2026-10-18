@@ -53,7 +53,6 @@ public:
 	int				mapversion;
 	string_t		startspot;
 	MapLoadType_t	eLoadType;		// How the current map was loaded
-	bool			bMapLoadFailed;	// Map has failed to load, we need to kick back to the main menu
 
 	// game specific flags
 	bool			deathmatch;

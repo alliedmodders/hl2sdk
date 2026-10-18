@@ -542,7 +542,7 @@ public:
 	CVProfNode *GetRoot();
 	CVProfNode *FindNode( CVProfNode *pStartNode, const tchar *pszNode );
 
-	void OutputReport( int type = VPRT_FULL, const tchar *pszStartNode = NULL, int budgetGroupID = -1 );
+	void OutputReport( int type = VPRT_FULL, const tchar *pszStartNode = NULL, int budgetGroupID = -1, class IVProfReportCallback *pCallback = NULL );
 
 	const tchar *GetBudgetGroupName( int budgetGroupID );
 	int GetBudgetGroupFlags( int budgetGroupID ) const;	// Returns a combination of BUDGETFLAG_ defines.

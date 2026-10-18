@@ -3209,8 +3209,7 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 	// FIXME: Hook SSE into VectorAligned + Vector4DAligned
 
 #if !defined( _X360 )
-	// Grab the processor information:
-	const CPUInformation& pi = GetCPUInformation();
+	const bool bHasMMX = true, bHasSSE = true, bHasSSE2 = true;
 
 	// Select the default generic routines.
 	pfSqrt = _sqrtf;
@@ -3221,7 +3220,7 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 	pfFastSinCos = SinCos;
 	pfFastCos = cosf;
 
-	if ( bAllowMMX && pi.m_bMMX )
+	if ( bAllowMMX && bHasMMX )
 	{
 		// Select the MMX specific routines if available
 		// (MMX routines were used by SW span fillers - not currently used for HW)
@@ -3232,10 +3231,11 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 		s_bMMXEnabled = false;
 	}
 
-	if ( bAllowSSE && pi.m_bSSE )
+	if ( bAllowSSE && bHasSSE )
 	{
 		s_bSSEEnabled = true;
 
+#ifndef _WIN64
 		// Select the SSE specific routines if available
 		pfVectorNormalizeFast = _SSE_VectorNormalizeFast;
 		pfInvRSquared = _SSE_InvRSquared;
@@ -3246,16 +3246,17 @@ void MathLib_Init( float gamma, float texGamma, float brightness, int overbright
 		pfFastSinCos = _SSE_SinCos;
 		pfFastCos = _SSE_cos;
 #endif
+#endif
 	}
 	else
 	{
 		s_bSSEEnabled = false;
 	}
 
-	if ( bAllowSSE2 && pi.m_bSSE2 )
+	if ( bAllowSSE2 && bHasSSE2 )
 	{
 		s_bSSE2Enabled = true;
-#ifdef _WIN32
+#ifdef PLATFORM_WINDOWS_PC32
 		pfFastSinCos = _SSE2_SinCos;
 		pfFastCos = _SSE2_cos;
 #endif

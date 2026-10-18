@@ -14,6 +14,8 @@
 #include "tier0/platform.h"
 #include "tier1/utlvector.h"
 
+enum ENetworkDisconnectionReason : int;
+
 class IServer;
 class INetMessage;
 struct NetMessageCvar_t;
@@ -36,7 +38,7 @@ public:
 	virtual	~IClient() {}
 
 	// connect client
-	virtual void	Connect( const char * szName, int nUserID, INetChannel *pNetChannel, bool bFakePlayer, CrossPlayPlatform_t platform, const CMsg_CVars *pCvars = NULL ) = 0;
+	virtual void	Connect( const char * szName, int nUserID, INetChannel *pNetChannel, bool bFakePlayer, const CMsg_CVars *pCvars = NULL ) = 0;
 
 	// set the client in a pending state waiting for a new game
 	virtual void	Inactivate( void ) = 0;
@@ -45,7 +47,9 @@ public:
 	virtual	void	Reconnect( void ) = 0;				// froce reconnect
 
 	// disconnects a client with a given reason
-	virtual void	Disconnect( const char *reason ) = 0;
+	virtual void	Disconnect( ENetworkDisconnectionReason reason ) = 0;
+
+	virtual bool	unk001() = 0;
 
 	virtual int				GetPlayerSlot() const = 0; // returns client slot (usually entity number-1)
 	virtual int				GetUserID() const = 0; // unique ID on this server 
@@ -61,7 +65,7 @@ public:
 	virtual int		GetRate( void ) const = 0;
 	
 	// set/get updates/second rate
-	virtual void	SetUpdateRate( int nUpdateRate, bool bForce ) = 0;
+	virtual void	SetUpdateRate( float flUpdateRate, bool bForce ) = 0;
 	virtual int		GetUpdateRate( void ) const = 0;	
 
 	// clear complete object & free all memory 
@@ -108,8 +112,6 @@ public:
 
 	virtual bool	IsHumanPlayer() const = 0;
 
-	virtual CrossPlayPlatform_t		GetClientPlatform() const = 0;
-	
 	virtual bool StartHltvReplay( const HltvReplayParams_t & ) = 0;
 	virtual void StopHltvReplay( void ) = 0;
 	virtual int GetHltvReplayDelay( void ) = 0;

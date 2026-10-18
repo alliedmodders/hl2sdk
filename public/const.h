@@ -25,9 +25,9 @@
 #define INVALID_STEAM_LOGGED_IN_ELSEWHERE "This Steam account is being used in another location\n"
 
 // This is the default, see shareddefs.h for mod-specific value, which can override this
-#define DEFAULT_TICK_INTERVAL	(1.0f / 64.0f)	// 0.015625
-#define MINIMUM_TICK_INTERVAL	(1.0f / 128.0f) // 0.0078125
-#define MAXIMUM_TICK_INTERVAL	(1.0f / 20.48f)	// 0.048828125
+#define DEFAULT_TICK_INTERVAL	(1.0f / 30.0f)	// 0.015625
+#define MINIMUM_TICK_INTERVAL (0.0001f)
+#define MAXIMUM_TICK_INTERVAL (0.1f)
 
 // This is the max # of players the engine can handle
 // Note, must be power of 2
@@ -50,15 +50,15 @@
 #define MAX_PLAYERS_PER_CLIENT		1	// One player per PC
 #endif
 
-#define MAX_MAP_NAME				32	
+#define MAX_MAP_NAME				64	
 #define	MAX_NETWORKID_LENGTH		64  // num chars for a network (i.e steam) ID
 
 // BUGBUG: Reconcile with or derive this from the engine's internal definition!
 // FIXME: I added an extra bit because I needed to make it signed
-#define SP_MODEL_INDEX_BITS			11
+#define SP_MODEL_INDEX_BITS			13
 
 // How many bits to use to encode an edict.
-#define	MAX_EDICT_BITS				11			// # of bits needed to represent max edicts
+#define	MAX_EDICT_BITS				13			// # of bits needed to represent max edicts
 // Max # of edicts in a level
 #define	MAX_EDICTS					(1<<MAX_EDICT_BITS)
 
@@ -70,7 +70,7 @@
 #define SIGNED_GUID_LEN 32 // Hashed CD Key (32 hex alphabetic chars + 0 terminator )
 
 // Used for networking ehandles.
-#define NUM_ENT_ENTRY_BITS		(MAX_EDICT_BITS + 2)
+#define NUM_ENT_ENTRY_BITS		(MAX_EDICT_BITS + 1)
 #define NUM_ENT_ENTRIES			(1 << NUM_ENT_ENTRY_BITS)
 #define INVALID_EHANDLE_INDEX	0xFFFFFFFF
 
@@ -93,7 +93,7 @@
 
 // a client can have up to 4 customization files (logo, sounds, models, txt).
 #define MAX_CUSTOM_FILES		4		// max 4 files
-#define MAX_CUSTOM_FILE_SIZE	131072	
+#define MAX_CUSTOM_FILE_SIZE	524288
 
 //
 // Constants shared by the engine and dlls
@@ -104,28 +104,28 @@
 // PLAYER SPECIFIC FLAGS FIRST BECAUSE WE USE ONLY A FEW BITS OF NETWORK PRECISION
 #define	FL_ONGROUND				(1<<0)	// At rest / on the ground
 #define FL_DUCKING				(1<<1)	// Player flag -- Player is fully crouched
-#define	FL_WATERJUMP			(1<<3)	// player jumping out of water
-#define FL_ONTRAIN				(1<<4) // Player is _controlling_ a train, so movement commands should be ignored on client during prediction.
-#define FL_INRAIN				(1<<5)	// Indicates the entity is standing in rain
-#define FL_FROZEN				(1<<6) // Player is frozen for 3rd person camera
-#define FL_ATCONTROLS			(1<<7) // Player can't move, but keeps key inputs for controlling another entity
-#define	FL_CLIENT				(1<<8)	// Is a player
-#define FL_FAKECLIENT			(1<<9)	// Fake client, simulated server side; don't send network messages to them
-#define	FL_INWATER				(1<<10)	// In water
+#define	FL_WATERJUMP			(1<<2)	// player jumping out of water
+#define FL_ONTRAIN				(1<<3) // Player is _controlling_ a train, so movement commands should be ignored on client during prediction.
+#define FL_INRAIN				(1<<4)	// Indicates the entity is standing in rain
+#define FL_FROZEN				(1<<5) // Player is frozen for 3rd person camera
+#define FL_ATCONTROLS			(1<<6) // Player can't move, but keeps key inputs for controlling another entity
+#define	FL_CLIENT				(1<<7)	// Is a player
+#define FL_FAKECLIENT			(1<<8)	// Fake client, simulated server side; don't send network messages to them
+#define	FL_INWATER				(1<<9)	// In water
 
 // NOTE if you move things up, make sure to change this value
-#define PLAYER_FLAG_BITS		11
+#define PLAYER_FLAG_BITS		10
 
 // NON-PLAYER SPECIFIC (i.e., not used by GameMovement or the client .dll ) -- Can still be applied to players, though
-#define	FL_FLY					(1<<11)	// Changes the SV_Movestep() behavior to not need to be on ground
-#define	FL_SWIM					(1<<12)	// Changes the SV_Movestep() behavior to not need to be on ground (but stay in water)
-#define	FL_CONVEYOR				(1<<13)
-#define	FL_NPC					(1<<14)
-#define	FL_GODMODE				(1<<15)
-#define	FL_NOTARGET				(1<<16)
-#define	FL_AIMTARGET			(1<<17)	// set if the crosshair needs to aim onto the entity
-#define	FL_PARTIALGROUND		(1<<18)	// not all corners are valid
-#define FL_STATICPROP			(1<<19)	// Eetsa static prop!		
+#define	FL_FLY					(1<<10)	// Changes the SV_Movestep() behavior to not need to be on ground
+#define	FL_SWIM					(1<<11)	// Changes the SV_Movestep() behavior to not need to be on ground (but stay in water)
+#define	FL_CONVEYOR				(1<<12)
+#define	FL_NPC					(1<<13)
+#define	FL_GODMODE				(1<<14)
+#define	FL_NOTARGET				(1<<15)
+#define	FL_AIMTARGET			(1<<16)	// set if the crosshair needs to aim onto the entity
+#define	FL_PARTIALGROUND		(1<<17)	// not all corners are valid
+#define FL_STATICPROP			(1<<18)	// Eetsa static prop!		
 #define FL_GRAPHED				(1<<20) // worldgraph has this ent listed as something that blocks a connection
 #define FL_GRENADE				(1<<21)
 #define FL_STEPMOVEMENT			(1<<22)	// Changes the SV_Movestep() behavior to not do any processing
@@ -212,7 +212,7 @@ enum SolidFlags_t
 	FSOLID_TRIGGER_TOUCH_PLAYER	= 0x0400,	// This trigger will touch only players
 	FSOLID_NOT_MOVEABLE			= 0x0800,	// Assume this object will not move
 
-	FSOLID_MAX_BITS	= 12
+	FSOLID_MAX_BITS	= 13
 };
 
 //-----------------------------------------------------------------------------
@@ -251,9 +251,9 @@ enum
 	
 	EF_MARKED_FOR_FAST_REFLECTION	= 0x400,
 	EF_NOSHADOWDEPTH		= 0x800,
-	EF_NOFLASHLIGHT			= 0x1000,
+	EF_NOFLASHLIGHT			= 0x2000,
 	
-	EF_MAX_BITS = 10
+	EF_MAX_BITS = 15
 };
 
 #define EF_PARITY_BITS	3

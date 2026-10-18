@@ -138,7 +138,7 @@ const LoggingChannelID_t INVALID_LOGGING_CHANNEL_ID = -1;
 //-----------------------------------------------------------------------------
 // The severity of a logging operation.
 //-----------------------------------------------------------------------------
-enum LoggingSeverity_t
+enum LoggingSeverity_t : uint8
 {
 	//-----------------------------------------------------------------------------
 	// An informative logging message.
@@ -174,7 +174,7 @@ enum LoggingSeverity_t
 // The logging system invokes ILoggingResponsePolicy::OnLog() on
 // the specified policy object, which returns a LoggingResponse_t.
 //-----------------------------------------------------------------------------
-enum LoggingResponse_t
+enum LoggingResponse_t : uint8
 {
 	LR_CONTINUE,
 	LR_DEBUGGER,
@@ -184,7 +184,7 @@ enum LoggingResponse_t
 //-----------------------------------------------------------------------------
 // Logging channel behavior flags, set on channel creation.
 //-----------------------------------------------------------------------------
-enum LoggingChannelFlags_t
+enum LoggingChannelFlags_t : uint8
 {
 	//-----------------------------------------------------------------------------
 	// Indicates that the spew is only relevant to interactive consoles.
@@ -221,6 +221,7 @@ struct LoggingContext_t
 	// If channel color is not specified, this value is UNSPECIFIED_LOGGING_COLOR
 	// and indicates that a suitable default should be chosen.
 	Color m_Color;
+	const char *m_pModuleName;
 };
 
 //-----------------------------------------------------------------------------
@@ -676,6 +677,11 @@ private:
 
 #define DECLARE_LOGGING_CHANNEL( Channel ) extern LoggingChannelID_t Channel
 
+// AMNOTE: Override when compiling tier1 to give its legacy channels a unique module name
+#ifndef LOGGING_MODULE_NAME
+#define LOGGING_MODULE_NAME "HL2SDK"
+#endif
+
 #define DEFINE_LOGGING_CHANNEL_NO_TAGS( Channel, ChannelName, /* [Flags], [Severity], [Color] */ ... ) \
 	LoggingChannelID_t Channel = LoggingSystem_RegisterLoggingChannel( ChannelName, NULL, ##__VA_ARGS__ )
 
@@ -696,7 +702,7 @@ private:
 
 // For documentation on these functions, please look at the corresponding function
 // in CLoggingSystem (unless otherwise specified).
-PLATFORM_INTERFACE LoggingChannelID_t LoggingSystem_RegisterLoggingChannel( const char *pName, RegisterTagsFunc registerTagsFunc, int flags = 0, LoggingSeverity_t severity = LS_MESSAGE, Color color = UNSPECIFIED_LOGGING_COLOR ); 
+PLATFORM_INTERFACE LoggingChannelID_t LoggingSystem_RegisterLoggingChannel( const char *pName, RegisterTagsFunc registerTagsFunc, int flags = 0, LoggingSeverity_t severity = LS_MESSAGE, Color color = UNSPECIFIED_LOGGING_COLOR, const char *pModuleName = LOGGING_MODULE_NAME );
 
 PLATFORM_INTERFACE void LoggingSystem_RegisterLoggingListener( ILoggingListener *pListener );
 PLATFORM_INTERFACE void LoggingSystem_ResetCurrentLoggingState();
@@ -741,6 +747,6 @@ PLATFORM_INTERFACE LoggingResponse_t LoggingSystem_Log( LoggingChannelID_t chann
 PLATFORM_OVERLOAD LoggingResponse_t LoggingSystem_Log( LoggingChannelID_t channelID, LoggingSeverity_t severity, Color spewColor, const char *pMessageFormat, ... ) FMTFUNCTION( 4, 5 );
 
 PLATFORM_INTERFACE LoggingResponse_t LoggingSystem_LogDirect( LoggingChannelID_t channelID, LoggingSeverity_t severity, Color spewColor, const char *pMessage );
-PLATFORM_INTERFACE LoggingResponse_t LoggingSystem_LogAssert( const char *pMessageFormat, ... ) FMTFUNCTION( 1, 2 );
+extern "C" LoggingResponse_t LoggingSystem_LogAssert( const char *pMessageFormat, ... ) FMTFUNCTION( 1, 2 );
 
 #endif // LOGGING_H

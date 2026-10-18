@@ -20,6 +20,8 @@ class IClient;
 
 typedef struct player_info_s player_info_t;
 
+enum ENetworkDisconnectionReason : int;
+
 abstract_class IServer : public IConnectionlessPacketHandler
 {
 public:
@@ -63,7 +65,7 @@ public:
 	virtual void	BroadcastMessage( INetMessage &msg, bool onlyActive = false, bool reliable = false) = 0;
 	virtual void	BroadcastMessage( INetMessage &msg, IRecipientFilter &filter ) = 0;
 
-	virtual void	DisconnectClient( IClient *client, const char *reason ) = 0;
+	virtual void	DisconnectClient( IClient *client, ENetworkDisconnectionReason reason ) = 0;
 };
 
 

@@ -141,7 +141,7 @@ public:
 	// Note: If nLen != 0, then this adds an extra byte for a null-terminator.	
 	void		SetLength( int nLen );
 	char		*Get();
-	void		Clear();
+	void Clear() { Set( NULL ); }
 	void		Purge();
 
 	// Strips the trailing slash

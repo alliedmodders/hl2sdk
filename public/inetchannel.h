@@ -66,7 +66,6 @@ public:
 	virtual bool	SendData(bf_write &msg, bool bReliable = true) = 0;
 	virtual bool	SendFile(const char *filename, unsigned int transferID, bool isReplayDemo) = 0;
 	virtual void	DenyFile(const char *filename, unsigned int transferID, bool isReplayDemo) = 0;
-	virtual void	RequestFile_OLD(const char *filename, unsigned int transferID) = 0;	// get rid of this function when we version the 
 	virtual void	SetChoked( void ) = 0;
 	virtual int		SendDatagram(bf_write *data) = 0;		
 	virtual bool	Transmit(bool onlyReliable = false) = 0;
@@ -88,6 +87,7 @@ public:
 	virtual void	SetFileTransmissionMode(bool bBackgroundMode) = 0;
 	virtual void	SetCompressionMode( bool bUseCompression ) = 0;
 	virtual unsigned int RequestFile(const char *filename, bool isReplayDemoFile) = 0;
+	virtual float	unk001() = 0;
 
 	virtual void	SetMaxBufferSize(bool bReliable, int nBytes, bool bVoice = false ) = 0;
 
@@ -107,7 +107,7 @@ public:
 
 	virtual bool	IsRemoteDisconnected() const = 0;
 	virtual bool	WasLastMessageReliable() const = 0;
-	virtual unsigned int GetChannelEncryptionKey( void ) const = 0;
+	virtual const unsigned char *GetChannelEncryptionKey( void ) const = 0;
 	virtual bool	EnqueueVeryLargeAsyncTransfer( INetMessage &msg ) = 0;
 };
 

@@ -72,7 +72,7 @@ typedef void * FileHandle_t;
 class KeyValues
 {
 public:
-	KeyValues( const char *setName, IKeyValuesSystem *customSystem = NULL, bool ownsCustomSystem = false );
+	KeyValues( const char *setName );
 
 	//
 	// AutoDelete class to automatically free the keyvalues.
@@ -315,7 +315,7 @@ private:
 	// If filesystem is null, it'll ignore f.
 	void InternalWrite( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, const void *pData, int len );
 	
-	void Init(IKeyValuesSystem *customSystem = NULL, bool ownsCustomSystem = false);
+	void Init();
 	const char * ReadToken( CUtlBuffer &buf, bool &wasQuoted, bool &wasConditional );
 	void WriteIndents( IBaseFileSystem *filesystem, FileHandle_t f, CUtlBuffer *pBuf, int indentLevel );
 
@@ -326,20 +326,13 @@ private:
 
 	bool EvaluateConditional( const char *pExpressionString, GetSymbolProc_t pfnEvaluateSymbolProc );
 
-	inline IKeyValuesSystem *GetKeyValuesSystem() const {
-		if (m_pKeyValuesSystem) {
-			return m_pKeyValuesSystem;
-		}
-
-		return KeyValuesSystem();
-	}
-
 	uint32 m_iKeyName : 24;	// keyname is a symbol defined in KeyValuesSystem
 	uint32 m_iKeyNameCaseSensitive1 : 8;	// 1st part of case sensitive symbol defined in KeyValueSystem
 
 	// These are needed out of the union because the API returns string pointers
 	char *m_sValue;
 	wchar_t *m_wsValue;
+	char *m_sUnk;
 
 	// we don't delete these
 	union
@@ -354,12 +347,11 @@ private:
 	char	   m_bHasEscapeSequences; // true, if while parsing this KeyValue, Escape Sequences are used (default false)
 	uint16	   m_iKeyNameCaseSensitive2;	// 2nd part of case sensitive symbol defined in KeyValueSystem;
 
-	IKeyValuesSystem *m_pKeyValuesSystem;
-	bool              m_bOwnsCustomKeyValuesSystem;
-
 	KeyValues *m_pPeer;	// pointer to next key in list
 	KeyValues *m_pSub;	// pointer to Start of a new sub key list
 	KeyValues *m_pChain;// Search here if it's not in our list
+
+	void *m_pUnk;
 };
 
 typedef KeyValues::AutoDelete KeyValuesAD;

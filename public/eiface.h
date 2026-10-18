@@ -95,10 +95,93 @@ struct bbox_t
 	Vector maxs;
 };
 
+abstract_class IVEngineShared
+{
+public:
+	// SINGLE PLAYER/LISTEN SERVER ONLY (just matching the client .dll api for this)
+	// Prints the formatted string to the notification area of the screen ( down the right hand edge
+	//  numbered lines starting at position 0
+	virtual void		Con_NPrintf( int pos, const char *fmt, ... ) = 0;
+	// SINGLE PLAYER/LISTEN SERVER ONLY(just matching the client .dll api for this)
+	// Similar to Con_NPrintf, but allows specifying custom text color and duration information
+	virtual void		Con_NXPrintf( const struct con_nprint_s *info, const char *fmt, ... ) = 0;
+
+	// Sentences / sentence groups
+	virtual int			SentenceGroupPick( int groupIndex, char *name, int nameBufLen ) = 0;
+	virtual int			SentenceGroupPickSequential( int groupIndex, char *name, int nameBufLen, int sentenceIndex, int reset ) = 0;
+	virtual int			SentenceIndexFromName( const char *pSentenceName ) = 0;
+	virtual const char *SentenceNameFromIndex( int sentenceIndex ) = 0;
+	virtual int			SentenceGroupIndexFromName( const char *pGroupName ) = 0;
+	virtual const char *SentenceGroupNameFromIndex( int groupIndex ) = 0;
+	virtual float		SentenceLength( int sentenceIndex ) = 0;
+
+	virtual int	GetAppID() = 0;
+
+	virtual bool IsLowViolence() = 0;
+
+	virtual bool IsActiveApp() = 0;
+
+	// Get the current game directory (hl2, tf2, hl1, cstrike, etc.)
+	virtual const char *GetGameDir() = 0;
+
+	virtual void		unk001() = 0;
+	virtual float		unk002() = 0;
+
+	// What is the game timescale multiplied with the host_timescale?
+	virtual float GetTimescale( void ) const = 0;
+
+	// Is the game paused?
+	virtual bool		IsPaused() = 0;
+
+	// Is the engine in Commentary mode?
+	virtual int			IsInCommentaryMode( void ) = 0;
+
+	// Is the engine running a background map?
+	virtual bool		IsLevelMainMenuBackground( void ) = 0;
+
+	//Finds or Creates a shared memory space, the returned pointer will automatically be AddRef()ed
+	virtual ISPSharedMemory *GetSinglePlayerSharedMemorySpace( const char *szName, int ent_num = MAX_EDICTS ) = 0;
+
+	// Save/restore uses a special memory allocator (which zeroes newly allocated memory, etc.)
+	virtual void		*SaveAllocMemory( size_t num, size_t size ) = 0;
+	virtual void		SaveFreeMemory( void *pSaveMem ) = 0;
+
+	// Tells the engine to allocate paint surfaces
+	virtual bool HasPaintmap() = 0;
+	virtual void RemoveAllPaint() = 0;
+	virtual void PaintAllSurfaces( unsigned char ) = 0;
+	virtual void RemovePaint( const model_t *pModel ) = 0;
+
+	// Calls ShootPaintSphere
+	virtual bool SpherePaintSurface( const model_t *pModel, const Vector &, unsigned char, float, float ) = 0;
+
+	virtual void SphereTracePaintSurface( const model_t *pModel, const Vector &, const Vector &, float, CUtlVector<unsigned char> & ) = 0;
+
+	// Methods to set/get a gamestats data container so client & server running in same process can send combined data
+	virtual void SetGamestatsData( CGamestatsData *pGamestatsData ) = 0;
+	virtual CGamestatsData *GetGamestatsData() = 0;
+
+	virtual int		unk003() = 0;
+	
+	// Get the pristine map entity lump string.  (e.g., used by CS to reload the map entities when restarting a round.)
+	virtual const char*	GetMapEntitiesString() = 0;
+
+	virtual bool IsCreatingReslist() = 0;
+
+	// Text message system -- lookup the text message of the specified name
+	virtual client_textmessage_t *TextMessageGet( const char *pName ) = 0;
+
+	// Fill in the player info structure for the specified player index (name, model, etc.)
+	virtual bool GetPlayerInfo( int ent_num, player_info_t *pinfo ) = 0;
+
+	virtual void SetAchievementMgr( IAchievementMgr * ) = 0;
+	virtual IAchievementMgr* GetAchievementMgr() = 0;
+};
+
 //-----------------------------------------------------------------------------
 // Purpose: Interface the engine exposes to the game DLL
 //-----------------------------------------------------------------------------
-abstract_class IVEngineServer
+abstract_class IVEngineServer : public IVEngineShared
 {
 public:
 	// Tell engine to change level ( "changelevel s1\n" or "changelevel2 s1 s2\n" )
@@ -109,6 +192,10 @@ public:
 	
 	// Is this a dedicated server?
 	virtual bool		IsDedicatedServer( void ) = 0;
+
+	virtual bool	unk004() = 0;
+	virtual void	unk005() = 0;
+	virtual int		unk006() = 0;
 	
 	// Is in Hammer editing mode?
 	virtual int			IsInEditMode( void ) = 0;
@@ -169,25 +256,12 @@ public:
 	// Memory allocation for entity class data
 	virtual void		*PvAllocEntPrivateData( long cb ) = 0;
 	virtual void		FreeEntPrivateData( void *pEntity ) = 0;
-
-	// Save/restore uses a special memory allocator (which zeroes newly allocated memory, etc.)
-	virtual void		*SaveAllocMemory( size_t num, size_t size ) = 0;
-	virtual void		SaveFreeMemory( void *pSaveMem ) = 0;
 	
 	// Emit an ambient sound associated with the specified entity
 	virtual void		EmitAmbientSound( int entindex, const Vector &pos, const char *samp, float vol, soundlevel_t soundlevel, int fFlags, int pitch, float delay = 0.0f ) = 0;
 
 	// Fade out the client's volume level toward silence (or fadePercent)
 	virtual void        FadeClientVolume( const edict_t *pEdict, float fadePercent, float fadeOutSeconds, float holdTime, float fadeInSeconds ) = 0;
-	
-	// Sentences / sentence groups
-	virtual int			SentenceGroupPick( int groupIndex, char *name, int nameBufLen ) = 0;
-	virtual int			SentenceGroupPickSequential( int groupIndex, char *name, int nameBufLen, int sentenceIndex, int reset ) = 0;
-	virtual int			SentenceIndexFromName( const char *pSentenceName ) = 0;
-	virtual const char *SentenceNameFromIndex( int sentenceIndex ) = 0;
-	virtual int			SentenceGroupIndexFromName( const char *pGroupName ) = 0;
-	virtual const char *SentenceGroupNameFromIndex( int groupIndex ) = 0;
-	virtual float		SentenceLength( int sentenceIndex ) = 0;
 
 	// Issue a command to the command parser as if it was typed at the server console.	
 	virtual void		ServerCommand( const char *str ) = 0;
@@ -195,6 +269,9 @@ public:
 	virtual void		ServerExecute( void ) = 0;
 	// Issue the specified command to the specified client (mimics that client typing the command at the console).
 	virtual void		ClientCommand( edict_t *pEdict, const char *szFmt, ... ) FMTFUNCTION( 3, 4 ) = 0;
+
+	virtual void	unk007() = 0;
+	virtual void	unk008() = 0;
 
 	// Set the lightstyle to the specified value and network the change to any connected clients.  Note that val must not 
 	//  change place in memory (use MAKE_STRING) for anything that's not compiled into your mod.
@@ -217,25 +294,11 @@ public:
 	// Print szMsg to the client console.
 	virtual void		ClientPrintf( edict_t *pEdict, const char *szMsg ) = 0;
 
-	// SINGLE PLAYER/LISTEN SERVER ONLY (just matching the client .dll api for this)
-	// Prints the formatted string to the notification area of the screen ( down the right hand edge
-	//  numbered lines starting at position 0
-	virtual void		Con_NPrintf( int pos, const char *fmt, ... ) = 0;
-	// SINGLE PLAYER/LISTEN SERVER ONLY(just matching the client .dll api for this)
-	// Similar to Con_NPrintf, but allows specifying custom text color and duration information
-	virtual void		Con_NXPrintf( const struct con_nprint_s *info, const char *fmt, ... ) = 0;
-
 	// Change a specified player's "view entity" (i.e., use the view entity position/orientation for rendering the client view)
 	virtual void		SetView( const edict_t *pClient, const edict_t *pViewent ) = 0;
 
 	// Set the player's crosshair angle
 	virtual void		CrosshairAngle( const edict_t *pClient, float pitch, float yaw ) = 0;
-
-	// Get the current game directory (hl2, tf2, hl1, cstrike, etc.)
-	virtual void        GetGameDir( char *szGetGameDir, int maxlength ) = 0;
-
-	// Used by AI node graph code to determine if .bsp and .ain files are out of date
-	virtual int 		CompareFileTime( const char *filename1, const char *filename2, int *iCompare ) = 0;
 
 	// Locks/unlocks the network string tables (.e.g, when adding bots to server, this needs to happen).
 	// Be sure to reset the lock after executing your code!!!
@@ -247,11 +310,6 @@ public:
 	// Get a convar keyvalue for s specified client
 	virtual const char	*GetClientConVarValue( int clientIndex, const char *name ) = 0;
 	
-	// Parse a token from a file
-	virtual const char	*ParseFile( const char *data, char *token, int maxlen ) = 0;
-	// Copies a file
-	virtual bool		CopyFile( const char *source, const char *destination ) = 0;
-
 	// Reset the pvs, pvssize is the size in bytes of the buffer pointed to by pvs.
 	// This should be called right before any calls to AddOriginToPVS
 	virtual void		ResetPVS( byte *pvs, int pvssize ) = 0;
@@ -281,12 +339,6 @@ public:
 	virtual void		LoadAdjacentEnts( const char *pOldLevel, const char *pLandmarkName ) = 0;
 	virtual void		ClearSaveDir() = 0;
 
-	// Get the pristine map entity lump string.  (e.g., used by CS to reload the map entities when restarting a round.)
-	virtual const char*	GetMapEntitiesString() = 0;
-
-	// Text message system -- lookup the text message of the specified name
-	virtual client_textmessage_t *TextMessageGet( const char *pName ) = 0;
-
 	// Print a message to the server log file
 	virtual void		LogPrint( const char *msg ) = 0;
 	virtual bool		IsLogEnabled() = 0;
@@ -302,10 +354,6 @@ public:
 	virtual ISpatialPartition *CreateSpatialPartition( const Vector& worldmin, const Vector& worldmax ) = 0;
 	virtual void 		DestroySpatialPartition( ISpatialPartition * ) = 0;
 
-	// Draw the brush geometry in the map into the scratch pad.
-	// Flags is currently unused.
-	virtual void		DrawMapToScratchPad( IScratchPad3D *pPad, unsigned long iFlags ) = 0;
-
 	// This returns which entities, to the best of the server's knowledge, the client currently knows about.
 	// This is really which entities were in the snapshot that this client last acked.
 	// This returns a bit vector with one bit for each entity.
@@ -316,12 +364,6 @@ public:
 	// 
 	// iClientIndex is the CLIENT index, so if you use pPlayer->entindex(), subtract 1.
 	virtual const CBitVec<MAX_EDICTS>* GetEntityTransmitBitsForClient( int iClientIndex ) = 0;
-	
-	// Is the game paused?
-	virtual bool		IsPaused() = 0;
-
-	// What is the game timescale multiplied with the host_timescale?
-	virtual float GetTimescale( void ) const = 0;
 	
 	// Marks the filename for consistency checking.  This should be called after precaching the file.
 	virtual void		ForceExactFile( const char *s ) = 0;
@@ -335,12 +377,6 @@ public:
 	// contents for the file, the client's vmt can only use the VertexLitGeneric shader, and can only
 	// contain $baseTexture and $bumpmap vars.
 	virtual void		ForceSimpleMaterial( const char *s ) = 0;
-
-	// Is the engine in Commentary mode?
-	virtual int			IsInCommentaryMode( void ) = 0;
-
-	// Is the engine running a background map?
-	virtual bool		IsLevelMainMenuBackground( void ) = 0;
 
 	// Mark some area portals as open/closed. It's more efficient to use this
 	// than a bunch of individual SetAreaPortalState calls.
@@ -368,15 +404,12 @@ public:
 	virtual char const *GetMostRecentlyLoadedFileName() = 0;
 	virtual char const *GetSaveFileName() = 0;
 
+	virtual void	unk009() = 0;
+	virtual bool	unk010() = 0;
+	virtual bool	unk011() = 0;
+
 	// Cleans up the cluster list
 	virtual void CleanUpEntityClusterList( PVSInfo_t *pPVSInfo ) = 0;
-	
-	virtual void SetAchievementMgr( IAchievementMgr * ) = 0;
-	virtual IAchievementMgr* GetAchievementMgr() = 0;
-
-	virtual int	GetAppID() = 0;
-	
-	virtual bool IsLowViolence() = 0;
 
 	virtual bool IsAnyClientLowViolence() = 0;
 
@@ -390,9 +423,6 @@ public:
 	virtual QueryCvarCookie_t StartQueryCvarValue( edict_t *pPlayerEntity, const char *pName ) = 0;
 
 	virtual void InsertServerCommand( const char *str ) = 0;
-
-	// Fill in the player info structure for the specified player index (name, model, etc.)
-	virtual bool GetPlayerInfo( int ent_num, player_info_t *pinfo ) = 0;
 
 	// Returns true if this client has been fully authenticated by Steam
 	virtual bool IsClientFullyAuthenticated( edict_t *pEdict ) = 0;
@@ -412,53 +442,17 @@ public:
 	// Used by Foundry when it changes an entity (and possibly its class) but preserves its serial number.
 	virtual void ForceFlushEntity( int iEntity ) = 0;
 
-	//Finds or Creates a shared memory space, the returned pointer will automatically be AddRef()ed
-	virtual ISPSharedMemory *GetSinglePlayerSharedMemorySpace( const char *szName, int ent_num = MAX_EDICTS ) = 0;
-
-	// Allocate hunk memory
-	virtual void *AllocLevelStaticData( size_t bytes ) = 0;
-
 	// Gets a list of all clusters' bounds.  Returns total number of clusters.
 	virtual int GetClusterCount() = 0;
 	virtual int GetAllClusterBounds( bbox_t *pBBoxList, int maxBBox ) = 0;
 
-	virtual bool IsCreatingReslist() = 0;
-	virtual bool IsCreatingXboxReslist() = 0;
-	virtual bool IsDedicatedServerForXbox() = 0;
-	virtual bool IsDedicatedServerForPS3() = 0;
-
 	virtual void Pause( bool bPause, bool bForce = false ) = 0;
-
-	virtual void SetTimescale( float flTimescale ) = 0;
-
-	// Methods to set/get a gamestats data container so client & server running in same process can send combined data
-	virtual void SetGamestatsData( CGamestatsData *pGamestatsData ) = 0;
-	virtual CGamestatsData *GetGamestatsData() = 0;
 
 	// Returns the SteamID of the specified player. It'll be NULL if the player hasn't authenticated yet.
 	virtual const CSteamID	*GetClientSteamID( const edict_t *pPlayerEdict, bool bValidatedIDOnly = false ) = 0;
 
 	// Returns the SteamID of the game server
 	virtual const CSteamID	*GetGameServerSteamID() = 0;
-	
-	// Validate session
-	virtual void HostValidateSession() = 0;
-
-	// Update the 360 pacifier/spinner
-	virtual void RefreshScreenIfNecessary() = 0;
-
-	// Tells the engine to allocate paint surfaces
-	virtual bool HasPaintmap() = 0;
-
-	// Calls ShootPaintSphere
-	virtual bool SpherePaintSurface( const model_t *pModel, const Vector &, unsigned char, float, float ) = 0;
-
-	virtual void SphereTracePaintSurface( const model_t *pModel, const Vector &, const Vector &, float, CUtlVector<unsigned char> & ) = 0;
-	
-	virtual void RemoveAllPaint() = 0;
-	
-	virtual void PaintAllSurfaces( unsigned char ) = 0;
-	virtual void RemovePaint( const model_t *pModel ) = 0;
 
 	// Send a client command keyvalues
 	// keyvalues are deleted inside the function
@@ -466,7 +460,6 @@ public:
 
 	// Returns the XUID of the specified player. It'll be NULL if the player hasn't connected yet.
 	virtual uint64 GetClientXUID( edict_t *pPlayerEdict ) = 0;
-	virtual bool IsActiveApp() = 0;
 	
 	virtual void SetNoClipEnabled( bool bEnabled ) = 0;
 	
@@ -475,8 +468,6 @@ public:
 	virtual void SendPaintmapDataToClient( edict_t *pEdict ) = 0;
 	
 	virtual float GetLatencyForChoreoSounds() = 0;
-	
-	virtual CrossPlayPlatform_t GetClientCrossPlayPlatform( int ent_num ) = 0;
 	
 	virtual void EnsureInstanceBaseline( int ent_num ) = 0;
 	
@@ -520,8 +511,9 @@ public:
 	virtual bool			GameInit( void ) = 0;
 
 	// Called any time a new level is started (after GameInit() also on level transitions within a game)
+	// AMNOTE: Unlike in other games, pMapEntities is not a string
 	virtual bool			LevelInit( char const *pMapName, 
-									char const *pMapEntities, char const *pOldLevel, 
+									void *pMapEntities, char const *pOldLevel, 
 									char const *pLandmarkName, bool loadGame, bool background ) = 0;
 
 	// The server is about to activate
@@ -618,6 +610,8 @@ public:
 
 	virtual void			ServerHibernationUpdate( bool bHibernating ) = 0;
 
+	virtual void			unk001() = 0;
+
 	virtual bool			ShouldPreferSteamAuth() = 0;
 	
 	virtual bool			ShouldAllowDirectConnect() = 0;
@@ -639,8 +633,6 @@ public:
 	virtual void			PrecacheParticleSystemFile( const char *pszFilename ) = 0;
 	virtual void			ClientConnectionValidatePreNetChan( bool, const char *, int, unsigned long long ) = 0;
 	virtual void			OnEngineClientNetworkEvent( edict_t *, unsigned long long, int, void * ) = 0;
-	virtual void			GetNewestSubscribedFiles() = 0;
-	virtual bool			ValidateAndAddActiveCaster( const CSteamID & ) = 0;
 };
 
 //-----------------------------------------------------------------------------

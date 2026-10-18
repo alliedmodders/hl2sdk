@@ -82,7 +82,7 @@ class Color;
 //	 DebuggerBreak();
 //-----------------------------------------------------------------------------
 
-PLATFORM_INTERFACE void _ExitOnFatalAssert( const tchar* pFile, int line );
+extern "C" void _ExitOnFatalAssert( const tchar* pFile, int line );
 PLATFORM_INTERFACE bool ShouldUseNewAssertDialog();
 
 PLATFORM_INTERFACE bool SetupWin32ConsoleIO();
@@ -259,11 +259,16 @@ DECLARE_LOGGING_CHANNEL( LOG_DEVELOPER_VERBOSE );
 
 // Legacy logging functions
 
-PLATFORM_INTERFACE void Msg( const tchar* pMsg, ... );
-PLATFORM_INTERFACE void Warning( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
-PLATFORM_INTERFACE void Warning_SpewCallStack( int iMaxCallStackLength, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
-PLATFORM_INTERFACE void Error( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
-PLATFORM_INTERFACE void Error_SpewCallStack( int iMaxCallStackLength, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
+// AMNOTE: Outbreak doesn't export these from tier0 but instead builds them into each module.
+//         For our purposes, we just build them into tier1.
+#define DBG_INTERFACE extern "C"
+#define DBG_OVERLOAD extern
+
+DBG_INTERFACE void Msg( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+DBG_INTERFACE void Warning( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+DBG_INTERFACE void Warning_SpewCallStack( int iMaxCallStackLength, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
+DBG_INTERFACE void Error( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+DBG_INTERFACE void Error_SpewCallStack( int iMaxCallStackLength, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
 
 // @TODO: these callstack spew functions are currently disabled in the new logging system.  Need to add support for these if desired.
 PLATFORM_INTERFACE void _Warning_AlwaysSpewCallStack_Enable( bool bEnable );
@@ -272,16 +277,16 @@ PLATFORM_INTERFACE void _Warning_AlwaysSpewCallStack_Length( int iMaxCallStackLe
 PLATFORM_INTERFACE void _Error_AlwaysSpewCallStack_Enable( bool bEnable );
 PLATFORM_INTERFACE void _Error_AlwaysSpewCallStack_Length( int iMaxCallStackLength );
 
-PLATFORM_INTERFACE void DevMsg( int level, const tchar* pMsg, ... ) FMTFUNCTION( 2, 3 );
-PLATFORM_INTERFACE void DevWarning( int level, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
+DBG_INTERFACE void DevMsg( int level, const tchar* pMsg, ... ) FMTFUNCTION( 2, 3 );
+DBG_INTERFACE void DevWarning( int level, const tchar *pMsg, ... ) FMTFUNCTION( 2, 3 );
 
-PLATFORM_OVERLOAD void DevMsg( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
-PLATFORM_OVERLOAD void DevWarning( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
+DBG_OVERLOAD void DevMsg( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+DBG_OVERLOAD void DevWarning( const tchar *pMsg, ... ) FMTFUNCTION( 1, 2 );
 
-PLATFORM_OVERLOAD void ConColorMsg( const Color& clr, const tchar* pMsg, ... ) FMTFUNCTION( 2, 3 );
-PLATFORM_OVERLOAD void ConMsg( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+DBG_OVERLOAD void ConColorMsg( const Color& clr, const tchar* pMsg, ... ) FMTFUNCTION( 2, 3 );
+DBG_OVERLOAD void ConMsg( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
 
-PLATFORM_INTERFACE void ConDMsg( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
+DBG_INTERFACE void ConDMsg( const tchar* pMsg, ... ) FMTFUNCTION( 1, 2 );
 
 // You can use this macro like a runtime assert macro.
 // If the condition fails, then Error is called with the message. This macro is called
@@ -348,11 +353,11 @@ inline DEST_POINTER_TYPE assert_cast(SOURCE_POINTER_TYPE* pSource)
 // Templates to assist in validating pointers:
 
 // Have to use these stubs so we don't have to include windows.h here.
-PLATFORM_INTERFACE void _AssertValidReadPtr( void* ptr, int count = 1 );
-PLATFORM_INTERFACE void _AssertValidWritePtr( void* ptr, int count = 1 );
-PLATFORM_INTERFACE void _AssertValidReadWritePtr( void* ptr, int count = 1 );
+DBG_INTERFACE void _AssertValidReadPtr( void* ptr, int count = 1 );
+DBG_INTERFACE void _AssertValidWritePtr( void* ptr, int count = 1 );
+DBG_INTERFACE void _AssertValidReadWritePtr( void* ptr, int count = 1 );
 
-PLATFORM_INTERFACE  void _AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFFF );
+DBG_INTERFACE void _AssertValidStringPtr( const tchar* ptr, int maxchar = 0xFFFFFF );
 template<class T> inline void AssertValidReadPtr( T* ptr, int count = 1 )		     { _AssertValidReadPtr( (void*)ptr, count ); }
 template<class T> inline void AssertValidWritePtr( T* ptr, int count = 1 )		     { _AssertValidWritePtr( (void*)ptr, count ); }
 template<class T> inline void AssertValidReadWritePtr( T* ptr, int count = 1 )	     { _AssertValidReadWritePtr( (void*)ptr, count ); }

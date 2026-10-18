@@ -79,7 +79,7 @@ public:
 	virtual float GetFloat( const char *keyName = NULL, float defaultValue = 0.0f ) = 0;
 	virtual const char *GetString( const char *keyName = NULL, const char *defaultValue = "" ) = 0;
 	virtual const wchar_t *GetWString(char const *keyName = NULL, const wchar_t *defaultValue = L"") = 0;
-	virtual const void *GetPtr( const char *keyname = NULL, const void *defaultValues = NULL ) = 0;
+	virtual const void *GetPtr( const char *keyname = NULL ) = 0;
 
 	virtual void SetBool( const char *keyName, bool value ) = 0;
 	virtual void SetInt( const char *keyName, int value ) = 0;
@@ -126,7 +126,7 @@ public:
 	// removes a listener 
 	virtual void RemoveListener( IGameEventListener2 *listener) = 0;
 	
-	virtual void AddListenerGlobal( IGameEventListener2 * listener, bool bIsServerSide ) = 0;
+	virtual bool AddListenerGlobal( IGameEventListener2 * listener, bool bIsServerSide ) = 0;
 
 	// create an event by name, but doesn't fire it. returns NULL is event is not
 	// known or no listener is registered for it. bForce forces the creation even if no listener is active
@@ -147,8 +147,6 @@ public:
 	// write/read event to/from bitbuffer
 	virtual bool SerializeEvent( IGameEvent *event, bf_write *buf ) = 0;
 	virtual IGameEvent *UnserializeEvent( bf_read *buf ) = 0; // create new KeyValues, must be deleted
-	
-	virtual KeyValues *GetEventDataTypes( IGameEvent *event ) = 0;
 };
 
 // the old game event manager interface, don't use it. Rest is legacy support:

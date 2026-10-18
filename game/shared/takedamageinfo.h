@@ -21,30 +21,6 @@
 class CBaseEntity;
 
 
-struct CSGOAttackerInfo
-{
-	CSGOAttackerInfo() {
-		m_bNeedInit = true;
-		m_bIsPlayer = false;
-		m_bIsWorld = false;
-		m_iClientIndex = 0;
-		m_nSurvivalTeam = -1;
-		m_iTeamChecked = -1;
-		m_iTeamNum = -1;
-		m_iUserId = -1;
-	}
-
-	bool m_bNeedInit;
-	EHANDLE m_hHndl;
-	bool m_bIsPlayer;
-	bool m_bIsWorld;
-	int m_iClientIndex;
-	int m_nSurvivalTeam;
-	int m_iTeamChecked; // If team index is spectator, switch to m_iCoachingTeam
-	int m_iTeamNum;
-	int m_iUserId;
-};
-
 class CTakeDamageInfo
 {
 public:
@@ -104,8 +80,14 @@ public:
 	void			SetAmmoType( int iAmmoType );
 	const char *	GetAmmoName() const;
 
+	Vector			GetDamageDirection() const;
+	void			SetDamageDirection( const Vector &damageDirection );
+
 	float			GetRadius() const;
 	void			SetRadius( float fRadius );
+
+	float			GetVictimIndex() const;
+	void			SetVictimIndex( int iVictimIndex );
 
 	void			Set( CBaseEntity *pInflictor, CBaseEntity *pAttacker, float flDamage, int bitsDamageType, int iKillType = 0 );
 	void			Set( CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBaseEntity *pWeapon, float flDamage, int bitsDamageType, int iKillType = 0 );
@@ -129,6 +111,7 @@ protected:
 	Vector			m_vecDamageForce;
 	Vector			m_vecDamagePosition;
 	Vector			m_vecReportedPosition;	// Position players are told damage is coming from
+	Vector			m_vecDamageDirection;
 	EHANDLE			m_hInflictor;
 	EHANDLE			m_hAttacker;
 	EHANDLE			m_hWeapon;
@@ -140,11 +123,11 @@ protected:
 	int				m_iDamageStats;
 	int				m_iAmmoType;			// AmmoType of the weapon used to cause this damage, if any
 	float			m_flRadius;
+	int             m_iDamageVictimIndex;
 	int				m_iDamagedOtherPlayers;
 	int				m_iObjectsPenetrated;	// Number of objects penetrated
 	uint32			m_uiBulletID;
 	uint8			m_uiRecoilIndex;
-	CSGOAttackerInfo	m_CSGOAttacker;
 
 	DECLARE_SIMPLE_DATADESC();
 };

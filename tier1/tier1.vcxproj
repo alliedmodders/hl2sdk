@@ -125,6 +125,7 @@
     <ClCompile Include="commandbuffer.cpp" />
     <ClCompile Include="convar.cpp" />
     <ClCompile Include="datamanager.cpp" />
+    <ClCompile Include="dbg.cpp" />
     <ClCompile Include="diff.cpp" />
     <ClCompile Include="generichash.cpp" />
     <ClCompile Include="interface.cpp" />
@@ -133,10 +134,6 @@
     <ClCompile Include="memstack.cpp" />
     <ClCompile Include="NetAdr.cpp" />
     <ClCompile Include="newbitbuf.cpp" />
-    <ClCompile Include="processor_detect.cpp">
-      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Sync</ExceptionHandling>
-      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Sync</ExceptionHandling>
-    </ClCompile>
     <ClCompile Include="rangecheckedvar.cpp" />
     <ClCompile Include="stringpool.cpp" />
     <ClCompile Include="strtools.cpp" />

@@ -168,7 +168,7 @@ public:
 	void			WriteByte( unsigned int val );
 	void			WriteShort(int val);
 	void			WriteWord( unsigned int val );
-	void			WriteLong(long val);
+	void			WriteLong(int32 val);
 	void			WriteLongLong(int64 val);
 	void			WriteFloat(float val);
 	bool			WriteBytes( const void *pBuf, int nBytes );
@@ -310,7 +310,7 @@ inline void bf_write::WriteUBitLong( unsigned int curData, int numbits, bool bCh
 	// Make sure it doesn't overflow.
 	if ( bCheckRange && numbits < 32 )
 	{
-		if ( curData >= (unsigned long)(1 << numbits) )
+		if ( curData >= (uint32)(1 << numbits) )
 		{
 			CallErrorHandler( BITBUFERROR_VALUE_OUT_OF_RANGE, GetDebugName() );
 		}
@@ -318,7 +318,7 @@ inline void bf_write::WriteUBitLong( unsigned int curData, int numbits, bool bCh
 	Assert( numbits >= 0 && numbits <= 32 );
 #endif
 
-	extern unsigned long g_BitWriteMasks[32][33];
+	extern uint32 g_BitWriteMasks[32][33];
 
 	// Bounds checking..
 	if ((m_iCurBit+numbits) > m_nDataBits)
@@ -334,9 +334,9 @@ inline void bf_write::WriteUBitLong( unsigned int curData, int numbits, bool bCh
 
 	// Mask in a dword.
 	unsigned int iDWord = iCurBit >> 5;
-	Assert( (iDWord*4 + sizeof(long)) <= (unsigned int)m_nDataBytes );
+	Assert( (iDWord*4 + sizeof(int32)) <= (unsigned int)m_nDataBytes );
 
-	unsigned long iCurBitMasked = iCurBit & 31;
+	uint32 iCurBitMasked = iCurBit & 31;
 
 	uint32 dword = LoadLittleDWord( (uint32*)m_pData, iDWord );
 
@@ -473,7 +473,7 @@ public:
 	int				ReadByte();
 	int				ReadShort();
 	int				ReadWord();
-	long			ReadLong();
+	int32			ReadLong();
 	int64			ReadLongLong();
 	float			ReadFloat();
 	bool			ReadBytes(void *pOut, int nBytes);
@@ -619,9 +619,9 @@ inline int old_bf_read::ReadOneBit()
 
 inline float old_bf_read::ReadBitFloat()
 {
-	long val;
+	int32 val;
 
-	Assert(sizeof(float) == sizeof(long));
+	Assert(sizeof(float) == sizeof(int32));
 	Assert(sizeof(float) == 4);
 
 	if(CheckForOverflow(32))
@@ -642,7 +642,7 @@ inline float old_bf_read::ReadBitFloat()
 
 inline unsigned int old_bf_read::ReadUBitLong( int numbits )
 {
-	extern unsigned long g_ExtraMasks[32];
+	extern uint32 g_ExtraMasks[32];
 
 	if ( (m_iCurBit+numbits) > m_nDataBits )
 	{
@@ -823,7 +823,7 @@ public:
 	}
 
 
-	FORCEINLINE void WriteLong(long val)
+	FORCEINLINE void WriteLong(int32 val)
 	{
 		WriteSBitLong( val, 32 );
 	}
@@ -928,7 +928,7 @@ FORCEINLINE void CBitWrite::WriteUBitLong( unsigned int nData, int nNumBits, boo
 	// Make sure it doesn't overflow.
 	if ( bCheckRange && nNumBits < 32 )
 	{
-		Assert( nData <= (unsigned long)(1 << nNumBits ) );
+		Assert( nData <= (uint32)(1 << nNumBits ) );
 	}
 	Assert( nNumBits >= 0 && nNumBits <= 32 );
 #endif
@@ -1126,7 +1126,7 @@ FORCEINLINE void CBitRead::GrabNextDWord( bool bOverFlowImmediately )
 		}
 		else
 		{
-			Assert( reinterpret_cast<int>(m_pDataIn) + 3 < reinterpret_cast<int>(m_pBufferEnd));
+			Assert( reinterpret_cast<uintp>(m_pDataIn) + 3 < reinterpret_cast<uintp>(m_pBufferEnd));
 			m_nInBufWord = LittleDWord( *( m_pDataIn++ ) );
 		}
 }

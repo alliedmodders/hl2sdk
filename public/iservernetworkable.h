@@ -91,12 +91,12 @@ public:
 	virtual IHandleEntity	*GetEntityHandle() = 0;
 
 	// Tell the engine which class this object is.
-	virtual ServerClass*	GetServerClass() = 0;
+	virtual const ServerClass*	GetServerClass() const = 0;
+	virtual ServerClass*	GetServerClassForModify() = 0;
 
 	virtual edict_t			*GetEdict() const = 0;
 
 	virtual const char*		GetClassName() const = 0;
-	virtual void			Release() = 0;
 
 	virtual int				AreaNum() const = 0;
 

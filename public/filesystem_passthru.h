@@ -55,7 +55,8 @@ public:
 	virtual long			GetFileTime( const char *pFileName, const char *pPathID )						{ return m_pBaseFileSystemPassThru->GetFileTime( pFileName, pPathID ); }
 	virtual bool			ReadFile( const char *pFileName, const char *pPath, CUtlBuffer &buf, int nMaxBytes = 0, int nStartingByte = 0, FSAllocFunc_t pfnAlloc = NULL ) { return m_pBaseFileSystemPassThru->ReadFile( pFileName, pPath, buf, nMaxBytes, nStartingByte, pfnAlloc  ); }
 	virtual bool			WriteFile( const char *pFileName, const char *pPath, CUtlBuffer &buf )		{  return m_pBaseFileSystemPassThru->WriteFile( pFileName, pPath, buf ); }
-	virtual bool			UnzipFile( const char *pFileName, const char *pPath, const char *pDestination )		{  return m_pBaseFileSystemPassThru->UnzipFile( pFileName, pPath, pDestination ); }
+	virtual bool			UnzipFile( const char *pFileName, const char *pPath, const char *pDestination ) { return m_pBaseFileSystemPassThru->UnzipFile( pFileName, pPath, pDestination ); }
+	virtual bool			unk001() { return m_pBaseFileSystemPassThru->unk001(); }
 
 protected:
 	IBaseFileSystem *m_pBaseFileSystemPassThru;
@@ -98,9 +99,11 @@ public:
 	virtual bool IsSingleton()																					{ return m_pFileSystemPassThru->IsSingleton(); }
 
 	virtual void			RemoveAllSearchPaths( void )														{ m_pFileSystemPassThru->RemoveAllSearchPaths(); }
-	virtual void			AddSearchPath( const char *pPath, const char *pathID, SearchPathAdd_t addType )		{ m_pFileSystemPassThru->AddSearchPath( pPath, pathID, addType ); }
+	virtual void			AddSearchPath( const char *pPath, const char *pathID, SearchPathAdd_t addType, bool bUnk = false ) { m_pFileSystemPassThru->AddSearchPath( pPath, pathID, addType, bUnk ); }
 	virtual bool			RemoveSearchPath( const char *pPath, const char *pathID )							{ return m_pFileSystemPassThru->RemoveSearchPath( pPath, pathID ); }
-	virtual void			RemoveFile( char const* pRelativePath, const char *pathID )							{ m_pFileSystemPassThru->RemoveFile( pRelativePath, pathID ); }
+	virtual bool			unk002() { return m_pFileSystemPassThru->unk002(); }
+	virtual bool			unk003() { return m_pFileSystemPassThru->unk003(); }
+	virtual bool			RemoveFile( char const* pRelativePath, const char *pathID ) { return m_pFileSystemPassThru->RemoveFile( pRelativePath, pathID ); }
 	virtual bool			RenameFile( char const *pOldPath, char const *pNewPath, const char *pathID )		{ return m_pFileSystemPassThru->RenameFile( pOldPath, pNewPath, pathID ); }
 	virtual void			CreateDirHierarchy( const char *path, const char *pathID )							{ m_pFileSystemPassThru->CreateDirHierarchy( path, pathID ); }
 	virtual bool			IsDirectory( const char *pFileName, const char *pathID )							{ return m_pFileSystemPassThru->IsDirectory( pFileName, pathID ); }
@@ -123,8 +126,8 @@ public:
 	virtual const char		*FindFirst( const char *pWildCard, FileFindHandle_t *pHandle )						{ return m_pFileSystemPassThru->FindFirst( pWildCard, pHandle ); }
 	virtual const char		*FindNext( FileFindHandle_t handle )												{ return m_pFileSystemPassThru->FindNext( handle ); }
 	virtual bool			FindIsDirectory( FileFindHandle_t handle )											{ return m_pFileSystemPassThru->FindIsDirectory( handle ); }
+	virtual bool			unk006() { return m_pFileSystemPassThru->unk006(); }
 	virtual void			FindClose( FileFindHandle_t handle )												{ m_pFileSystemPassThru->FindClose( handle ); }
-	virtual const char		*GetLocalPath( const char *pFileName, char *pLocalPath, int localPathBufferSize )	{ return m_pFileSystemPassThru->GetLocalPath( pFileName, pLocalPath, localPathBufferSize ); }
 	virtual bool			FullPathToRelativePath( const char *pFullpath, char *pRelative, int maxlen )		{ return m_pFileSystemPassThru->FullPathToRelativePath( pFullpath, pRelative, maxlen ); }
 	virtual bool			GetCurrentDirectory( char* pDirectory, int maxlen )									{ return m_pFileSystemPassThru->GetCurrentDirectory( pDirectory, maxlen ); }
 	virtual void			PrintOpenedFiles( void )															{ m_pFileSystemPassThru->PrintOpenedFiles(); }
@@ -135,7 +138,7 @@ public:
 	virtual void			RemoveLoggingFunc( FileSystemLoggingFunc_t logFunc )								{ m_pFileSystemPassThru->RemoveLoggingFunc( logFunc ); }
 	virtual FSAsyncStatus_t	AsyncReadMultiple( const FileAsyncRequest_t *pRequests, int nRequests, FSAsyncControl_t *pControls )			{ return m_pFileSystemPassThru->AsyncReadMultiple( pRequests, nRequests, pControls ); }
 	virtual FSAsyncStatus_t	AsyncReadMultipleCreditAlloc( const FileAsyncRequest_t *pRequests, int nRequests, const char *pszFile, int line, FSAsyncControl_t *pControls ) { return m_pFileSystemPassThru->AsyncReadMultipleCreditAlloc( pRequests, nRequests, pszFile, line, pControls ); }
-	virtual FSAsyncStatus_t AsyncDirectoryScan( const char* pSearchSpec, bool recurseFolders,  void* pContext, FSAsyncScanAddFunc_t pfnAdd,  FSAsyncScanCompleteFunc_t pfnDone, FSAsyncControl_t *pControl = NULL )  { return m_pFileSystemPassThru->AsyncDirectoryScan( pSearchSpec, recurseFolders, pContext, pfnAdd, pfnDone, pControl ); }
+	virtual FSAsyncStatus_t AsyncDirectoryScan( const char* pSearchSpec, const char *pathID, bool recurseFolders, void* pContext, FSAsyncScanAddFunc_t pfnAdd, FSAsyncScanCompleteFunc_t pfnDone, bool bUnk = false, FSAsyncControl_t *pControl = NULL ) { return m_pFileSystemPassThru->AsyncDirectoryScan( pSearchSpec, pathID, recurseFolders, pContext, pfnAdd, pfnDone, bUnk, pControl ); }
 	virtual FSAsyncStatus_t	AsyncFinish(FSAsyncControl_t hControl, bool wait)									{ return m_pFileSystemPassThru->AsyncFinish( hControl, wait ); }
 	virtual FSAsyncStatus_t	AsyncGetResult( FSAsyncControl_t hControl, void **ppData, int *pSize )				{ return m_pFileSystemPassThru->AsyncGetResult( hControl, ppData, pSize ); }
 	virtual FSAsyncStatus_t	AsyncAbort(FSAsyncControl_t hControl)												{ return m_pFileSystemPassThru->AsyncAbort( hControl ); }
@@ -143,6 +146,7 @@ public:
 	virtual FSAsyncStatus_t	AsyncFlush()																		{ return m_pFileSystemPassThru->AsyncFlush(); }
 	virtual void			AsyncAddRef( FSAsyncControl_t hControl )											{ m_pFileSystemPassThru->AsyncAddRef( hControl ); }
 	virtual void			AsyncRelease( FSAsyncControl_t hControl )											{ m_pFileSystemPassThru->AsyncRelease( hControl ); }
+	virtual void			unk009() { m_pFileSystemPassThru->unk009(); }
 	virtual FSAsyncStatus_t	AsyncBeginRead( const char *pszFile, FSAsyncFile_t *phFile )						{ return m_pFileSystemPassThru->AsyncBeginRead( pszFile, phFile ); }
 	virtual FSAsyncStatus_t	AsyncEndRead( FSAsyncFile_t hFile )													{ return m_pFileSystemPassThru->AsyncEndRead( hFile ); }
 	virtual const FileSystemStatistics *GetFilesystemStatistics()												{ return m_pFileSystemPassThru->GetFilesystemStatistics(); }
@@ -172,16 +176,20 @@ public:
 		const char *pPathID
 		)																										{ m_pFileSystemPassThru->FindFileAbsoluteList( output, pWildCard, pPathID ); }
 	virtual void			MarkPathIDByRequestOnly( const char *pPathID, bool bRequestOnly )					{ m_pFileSystemPassThru->MarkPathIDByRequestOnly( pPathID, bRequestOnly ); }
-	virtual bool			AddPackFile( const char *fullpath, const char *pathID )								{ return m_pFileSystemPassThru->AddPackFile( fullpath, pathID ); }
-	virtual FSAsyncStatus_t	AsyncAppend(const char *pFileName, const void *pSrc, int nSrcBytes, bool bFreeMemory, FSAsyncControl_t *pControl ) { return m_pFileSystemPassThru->AsyncAppend( pFileName, pSrc, nSrcBytes, bFreeMemory, pControl); }
-	virtual FSAsyncStatus_t	AsyncWrite(const char *pFileName, const void *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend, FSAsyncControl_t *pControl ) { return m_pFileSystemPassThru->AsyncWrite( pFileName, pSrc, nSrcBytes, bFreeMemory, bAppend, pControl); }
-	virtual FSAsyncStatus_t	AsyncWriteFile(const char *pFileName, const CUtlBuffer *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend, FSAsyncControl_t *pControl ) { return m_pFileSystemPassThru->AsyncWriteFile( pFileName, pSrc, nSrcBytes, bFreeMemory, bAppend, pControl); }
+	virtual int				unk004() { return m_pFileSystemPassThru->unk004(); }
+	virtual bool			AddPackFile( const char *fullpath, const char *pathID, int unk = 1 ) { return m_pFileSystemPassThru->AddPackFile( fullpath, pathID, unk ); }
+	virtual bool			unk005() { return m_pFileSystemPassThru->unk005(); }
+	virtual FSAsyncStatus_t	AsyncAppend(const char *pFileName, const char *pathID, const void *pSrc, int nSrcBytes, bool bFreeMemory, FSAsyncControl_t *pControl = NULL ) { return m_pFileSystemPassThru->AsyncAppend( pFileName, pathID, pSrc, nSrcBytes, bFreeMemory, pControl); }
+	virtual FSAsyncStatus_t	AsyncWrite(const char *pFileName, const char *pathID, const void *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t *pControl = NULL ) { return m_pFileSystemPassThru->AsyncWrite( pFileName, pathID, pSrc, nSrcBytes, bFreeMemory, bAppend, pControl); }
+	virtual FSAsyncStatus_t	AsyncWriteFile(const char *pFileName, const char *pathID, const CUtlBuffer *pSrc, int nSrcBytes, bool bFreeMemory, bool bAppend = false, FSAsyncControl_t *pControl = NULL ) { return m_pFileSystemPassThru->AsyncWriteFile( pFileName, pathID, pSrc, nSrcBytes, bFreeMemory, bAppend, pControl); }
 	virtual FSAsyncStatus_t	AsyncAppendFile(const char *pDestFileName, const char *pSrcFileName, FSAsyncControl_t *pControl )			{ return m_pFileSystemPassThru->AsyncAppendFile(pDestFileName, pSrcFileName, pControl); }
 	virtual void			AsyncFinishAll( int iToPriority )													{ m_pFileSystemPassThru->AsyncFinishAll(iToPriority); }
 	virtual void			AsyncFinishAllWrites()																{ m_pFileSystemPassThru->AsyncFinishAllWrites(); }
 	virtual FSAsyncStatus_t	AsyncSetPriority(FSAsyncControl_t hControl, int newPriority)						{ return m_pFileSystemPassThru->AsyncSetPriority(hControl, newPriority); }
 	virtual bool			AsyncSuspend()																		{ return m_pFileSystemPassThru->AsyncSuspend(); }
 	virtual bool			AsyncResume()																		{ return m_pFileSystemPassThru->AsyncResume(); }
+	virtual void			unk007() { m_pFileSystemPassThru->unk007(); }
+	virtual void			unk008() { m_pFileSystemPassThru->unk008(); }
 	virtual const char		*RelativePathToFullPath( const char *pFileName, const char *pPathID, char *pLocalPath, int localPathBufferSize, PathTypeFilter_t pathFilter = FILTER_NONE, PathTypeQuery_t *pPathType = NULL ) { return m_pFileSystemPassThru->RelativePathToFullPath( pFileName, pPathID, pLocalPath, localPathBufferSize, pathFilter, pPathType ); }
 	virtual int				GetSearchPath( const char *pathID, bool bGetPackFiles, char *pPath, int nMaxLen	)	{ return m_pFileSystemPassThru->GetSearchPath( pathID, bGetPackFiles, pPath, nMaxLen ); }
 
@@ -198,10 +206,6 @@ public:
 	virtual void			SetupPreloadData() {}
 	virtual void			DiscardPreloadData() {}
 
-	// If the "PreloadedData" hasn't been purged, then this'll try and instance the KeyValues using the fast path of compiled keyvalues loaded during startup.
-	// Otherwise, it'll just fall through to the regular KeyValues loading routines
-	virtual KeyValues		*LoadKeyValues( KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) { return m_pFileSystemPassThru->LoadKeyValues( type, filename, pPathID ); }
-	virtual bool			LoadKeyValues( KeyValues& head, KeyValuesPreloadType_t type, char const *filename, char const *pPathID = 0 ) { return m_pFileSystemPassThru->LoadKeyValues( head, type, filename, pPathID ); }
 
 	virtual bool			GetFileTypeForFullPath( char const *pFullPath, wchar_t *buf, size_t bufSizeInBytes ) { return m_pFileSystemPassThru->GetFileTypeForFullPath( pFullPath, buf, bufSizeInBytes ); }
 
@@ -216,8 +220,6 @@ public:
 	virtual bool			FullPathToRelativePathEx( const char *pFullPath, const char *pPathId, char *pRelative, int nMaxLen ) { return m_pFileSystemPassThru->FullPathToRelativePathEx( pFullPath, pPathId, pRelative, nMaxLen ); }
 	virtual int				GetPathIndex( const FileNameHandle_t &handle ) { return m_pFileSystemPassThru->GetPathIndex( handle ); }
 	virtual long			GetPathTime( const char *pPath, const char *pPathID ) { return m_pFileSystemPassThru->GetPathTime( pPath, pPathID ); }
-
-	virtual DVDMode_t		GetDVDMode() { return m_pFileSystemPassThru->GetDVDMode(); }
 
 	virtual void EnableWhitelistFileTracking( bool bEnable, bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes )
 		{ m_pFileSystemPassThru->EnableWhitelistFileTracking( bEnable, bCacheAllVPKHashes, bRecalculateAndCheckHashes ); }
@@ -235,39 +237,25 @@ public:
 		{ return m_pFileSystemPassThru->GetWhitelistSpewFlags(); }
 	virtual void SetWhitelistSpewFlags( int spewFlags )
 		{ m_pFileSystemPassThru->SetWhitelistSpewFlags( spewFlags ); }
-	virtual void InstallDirtyDiskReportFunc( FSDirtyDiskReportFunc_t func ) { m_pFileSystemPassThru->InstallDirtyDiskReportFunc( func ); }
-
-	virtual bool			IsLaunchedFromXboxHDD() { return m_pFileSystemPassThru->IsLaunchedFromXboxHDD(); }
-	virtual bool			IsInstalledToXboxHDDCache() { return m_pFileSystemPassThru->IsInstalledToXboxHDDCache(); }
-	virtual bool			IsDVDHosted() { return m_pFileSystemPassThru->IsDVDHosted(); }
-	virtual bool			IsInstallAllowed() { return m_pFileSystemPassThru->IsInstallAllowed(); }
-	virtual int				GetSearchPathID( char *pPath, int nMaxLen	) { return m_pFileSystemPassThru->GetSearchPathID( pPath, nMaxLen ); }
-	virtual bool			FixupSearchPathsAfterInstall() { return m_pFileSystemPassThru->FixupSearchPathsAfterInstall(); }
-
-	virtual FSDirtyDiskReportFunc_t	GetDirtyDiskReportFunc() { return m_pFileSystemPassThru->GetDirtyDiskReportFunc(); }
-
-	virtual void AddVPKFile( char const *pPkName, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) { m_pFileSystemPassThru->AddVPKFile( pPkName, addType ); }
-	virtual void RemoveVPKFile( char const *pPkName ) { m_pFileSystemPassThru->RemoveVPKFile( pPkName ); }
+	virtual int			unk010() { return m_pFileSystemPassThru->unk010(); }
+	virtual void			unk011() { m_pFileSystemPassThru->unk011(); }
+	virtual bool			unk012() { return m_pFileSystemPassThru->unk012(); }
+	virtual bool			unk013() { return m_pFileSystemPassThru->unk013(); }
+	virtual void			unk014() { m_pFileSystemPassThru->unk014(); }
+	virtual bool			unk015() { return m_pFileSystemPassThru->unk015(); }
+	virtual void			unk016() { m_pFileSystemPassThru->unk016(); }
+	virtual int			GetSearchPathID( char *pPath, int nMaxLen ) { return m_pFileSystemPassThru->GetSearchPathID( pPath, nMaxLen ); }
+	virtual void			unk017() { m_pFileSystemPassThru->unk017(); }
+	virtual bool			unk018() { return m_pFileSystemPassThru->unk018(); }
+	virtual void AddVPKFile( char const *pszName, const char *pathID, SearchPathAdd_t addType = PATH_ADD_TO_TAIL ) { m_pFileSystemPassThru->AddVPKFile( pszName, pathID, addType ); }
+	virtual bool RemoveVPKFile( char const *pszName, const char *pathID ) { return m_pFileSystemPassThru->RemoveVPKFile( pszName, pathID ); }
+	virtual void unk019() { m_pFileSystemPassThru->unk019(); }
 	virtual void GetVPKFileNames( CUtlVector<CUtlString> &destVector ) { m_pFileSystemPassThru->GetVPKFileNames( destVector ); }
 
 	virtual void			RemoveAllMapSearchPaths( void ) { m_pFileSystemPassThru->RemoveAllMapSearchPaths(); }
 
-	virtual void			SyncDvdDevCache( void ) { m_pFileSystemPassThru->SyncDvdDevCache(); }
-
-	virtual bool			GetStringFromKVPool( CRC32_t poolKey, unsigned int key, char *pOutBuff, int buflen ) { return m_pFileSystemPassThru->GetStringFromKVPool( poolKey, key, pOutBuff, buflen ); }
-
-	virtual bool			DiscoverDLC( int iController ) { return m_pFileSystemPassThru->DiscoverDLC( iController ); }
-	virtual int				IsAnyDLCPresent( bool *pbDLCSearchPathMounted = NULL ) { return m_pFileSystemPassThru->IsAnyDLCPresent( pbDLCSearchPathMounted ); }
-	virtual bool			GetAnyDLCInfo( int iDLC, unsigned int *pLicenseMask, wchar_t *pTitleBuff, int nOutTitleSize ) { return m_pFileSystemPassThru->GetAnyDLCInfo( iDLC, pLicenseMask, pTitleBuff, nOutTitleSize ); }
-	virtual int				IsAnyCorruptDLC() { return m_pFileSystemPassThru->IsAnyCorruptDLC(); }
-	virtual bool			GetAnyCorruptDLCInfo( int iCorruptDLC, wchar_t *pTitleBuff, int nOutTitleSize ) { return m_pFileSystemPassThru->GetAnyCorruptDLCInfo( iCorruptDLC, pTitleBuff, nOutTitleSize ); }
-	virtual bool			AddDLCSearchPaths() { return m_pFileSystemPassThru->AddDLCSearchPaths(); }
-	virtual bool			IsSpecificDLCPresent( unsigned int nDLCPackage ) { return m_pFileSystemPassThru->IsSpecificDLCPresent( nDLCPackage ); }
 	virtual void            SetIODelayAlarm( float flThreshhold ) { m_pFileSystemPassThru->SetIODelayAlarm( flThreshhold ); }
 
-	virtual bool			AddXLSPUpdateSearchPath( const void *pData, int nSize )
-		{ return m_pFileSystemPassThru->AddXLSPUpdateSearchPath( pData, nSize ); }
-	
 	virtual IIoStats		*GetIoStats() { return m_pFileSystemPassThru->GetIoStats(); }
 	
 	virtual void			CacheAllVPKFileHashes( bool bCacheAllVPKHashes, bool bRecalculateAndCheckHashes )
@@ -276,13 +264,9 @@ public:
 		{ return m_pFileSystemPassThru->CheckVPKFileHash( PackFileID, nPackFileNumber, nFileFraction, md5Value ); }
 	virtual void			GetVPKFileStatisticsKV( KeyValues *pKV )
 		{ m_pFileSystemPassThru->GetVPKFileStatisticsKV( pKV ); }
-	
 	virtual bool			IsFileInReadOnlySearchPath( const char *pFileName, const char *pPathID ) { return m_pFileSystemPassThru->IsFileInReadOnlySearchPath( pFileName, pPathID ); }
+	
 
-	virtual EFileSystemPureState	GetPureState() { return m_pFileSystemPassThru->GetPureState(); }
-	virtual void					AllowLoadFromDisk( bool bAllowLoadFromDisk ) { return m_pFileSystemPassThru->AllowLoadFromDisk( bAllowLoadFromDisk ); }
-	virtual void					SetDisallowOutsideWrites( bool bDisallow ) { return m_pFileSystemPassThru->SetDisallowOutsideWrites( bDisallow ); }
-	virtual bool					GetDisallowOutsideWrites() { return m_pFileSystemPassThru->GetDisallowOutsideWrites(); }
 
 protected:
 	IFileSystem *m_pFileSystemPassThru;

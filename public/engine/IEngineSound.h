@@ -29,7 +29,14 @@ class Vector;
 #define SOUND_FROM_LOCAL_PLAYER		-1
 #define SOUND_FROM_WORLD			0
 
-
+struct SoundEventGuid_t
+{
+	int m_Value;
+	SoundEventGuid_t() = default;
+	SoundEventGuid_t( int value ) : m_Value( value ) {}
+	operator int() const { return m_Value; }
+	SoundEventGuid_t& operator=( int value ) { m_Value = value; return *this; }
+};
 
 // These are used to feed a soundlevel to the sound system and have it use
 // goldsrc-type attenuation. We should use this as little as possible and 
@@ -61,6 +68,8 @@ public:
 	virtual void PrefetchSound( const char *pSample ) = 0;
 	virtual bool IsLoopingSound( const char *pSample ) = 0;
 
+	virtual bool unk001() = 0;
+
 	// Just loads the file header and checks for duration (not hooked up for .mp3's yet)
 	// Is accessible to server and client though
 	virtual float GetSoundDuration( const char *pSample ) = 0;  
@@ -72,11 +81,11 @@ public:
 
 	// NOTE: setting iEntIndex to -1 will cause the sound to be emitted from the local
 	// player (client-side only)
-	virtual int EmitSound( IRecipientFilter& filter, int iEntIndex, int iChannel, const char *pSoundEntry, unsigned int nSoundEntryHash, const char *pSample, 
+	virtual SoundEventGuid_t EmitSound( IRecipientFilter& filter, int iEntIndex, int iChannel, const char *pSoundEntry, unsigned int nSoundEntryHash, const char *pSample, 
 		float flVolume, float flAttenuation, int nSeed, int iFlags = 0, int iPitch = PITCH_NORM, 
 		const Vector *pOrigin = NULL, const Vector *pDirection = NULL, CUtlVector< Vector >* pUtlVecOrigins = NULL, bool bUpdatePositions = true, float soundtime = 0.0f, int speakerentity = -1, void *pUnknown = NULL /* (client only) */ ) = 0;
 
-	virtual int EmitSound( IRecipientFilter& filter, int iEntIndex, int iChannel, const char *pSoundEntry, unsigned int nSoundEntryHash, const char *pSample, 
+	virtual SoundEventGuid_t EmitSound( IRecipientFilter& filter, int iEntIndex, int iChannel, const char *pSoundEntry, unsigned int nSoundEntryHash, const char *pSample, 
 		float flVolume, soundlevel_t iSoundlevel, int nSeed, int iFlags = 0, int iPitch = PITCH_NORM, 
 		const Vector *pOrigin = NULL, const Vector *pDirection = NULL, CUtlVector< Vector >* pUtlVecOrigins = NULL, bool bUpdatePositions = true, float soundtime = 0.0f, int speakerentity = -1, void *pUnknown = NULL /* (client only) */ ) = 0;
 
@@ -97,7 +106,7 @@ public:
 	
 	// emit an "ambient" sound that isn't spatialized
 	// only available on the client, assert on server
-	virtual int EmitAmbientSound( const char *pSample, float flVolume, int iPitch = PITCH_NORM, int flags = 0, float soundtime = 0.0f ) = 0;
+	virtual SoundEventGuid_t EmitAmbientSound( const char *pSample, float flVolume, int iPitch = PITCH_NORM, int flags = 0, float soundtime = 0.0f ) = 0;
 
 
 //	virtual EntChannel_t	CreateEntChannel() = 0;
@@ -105,11 +114,13 @@ public:
 	virtual float GetDistGainFromSoundLevel( soundlevel_t soundlevel, float dist ) = 0;
 
 	// Client .dll only functions
-	virtual int		GetGuidForLastSoundEmitted() = 0;
-	virtual bool	IsSoundStillPlaying( int guid ) = 0;
-	virtual void	StopSoundByGuid( int guid, bool bForceSync ) = 0;
+	virtual SoundEventGuid_t	GetGuidForLastSoundEmitted() = 0;
+	virtual bool	IsSoundStillPlaying( SoundEventGuid_t guid ) = 0;
+	virtual void	StopSoundByGuid( SoundEventGuid_t guid, bool bForceSync ) = 0;
 	// Set's master volume (0.0->1.0)
-	virtual void	SetVolumeByGuid( int guid, float fvol ) = 0;
+	virtual void	SetVolumeByGuid( SoundEventGuid_t guid, float fvol ) = 0;
+
+	virtual bool	unk002() = 0;
 
 	// Retrieves list of all active sounds
 	virtual void	GetActiveSounds( CUtlVector< SndInfo_t >& sndlist ) = 0;
@@ -121,12 +132,9 @@ public:
 
 	virtual bool	GetSoundChannelVolume( const char* sound, float &flVolumeLeft, float &flVolumeRight ) = 0;
 	
-	virtual float	GetElapsedTimeByGuid( int guid ) = 0;
+	virtual float	GetElapsedTimeByGuid( SoundEventGuid_t guid ) = 0;
 
 	virtual bool	GetPreventSound() = 0;
-	
-	virtual void	SetReplaySoundFade( float flFade ) = 0;
-	virtual float	GetReplaySoundFade() = 0;
 };
 
 

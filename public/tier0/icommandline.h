@@ -59,7 +59,6 @@ PLATFORM_INTERFACE const tchar *Plat_GetCommandLine();
 // helper function for OS's that don't have a ::GetCommandLine() call
 PLATFORM_INTERFACE void Plat_SetCommandLine( const char *cmdLine );
 #endif
-PLATFORM_INTERFACE const char *Plat_GetCommandLineA();
 
 
 #endif // TIER0_ICOMMANDLINE_H
