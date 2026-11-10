@@ -29,10 +29,14 @@ typedef enum _fieldtypes
 {
 	FIELD_VOID = 0,			// No type or value
 	FIELD_FLOAT,			// Any floating point value
+	FIELD_DOUBLE,
 	FIELD_STRING,			// A string ID (return from ALLOC_STRING)
 	FIELD_VECTOR,			// Any vector, QAngle, or AngularImpulse
+	FIELD_VECTOR2D,
+	FIELD_VECTOR4D,
 	FIELD_QUATERNION,		// A quaternion
 	FIELD_INTEGER,			// Any integer or enum
+	FIELD_INTEGER64,
 	FIELD_BOOLEAN,			// boolean, implemented as an int, I may use this as a hint for compression
 	FIELD_SHORT,			// 2 byte integer
 	FIELD_CHARACTER,		// a byte
@@ -63,10 +67,6 @@ typedef enum _fieldtypes
 	FIELD_MODELINDEX,		// a model index
 	FIELD_MATERIALINDEX,	// a material index (using the material precache string table)
 	
-	FIELD_VECTOR2D,			// 2 floats
-	FIELD_INTEGER64,		// 64bit integer
-
-	FIELD_VECTOR4D,			// 4 floats
 
 	FIELD_TYPECOUNT,		// MUST BE LAST
 } fieldtype_t;
