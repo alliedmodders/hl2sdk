@@ -24,6 +24,8 @@
 #include "engine/iserverplugin.h"
 #include "tier1/bitbuf.h"
 #include "tier1/checksum_crc.h"
+#include "tier1/utllinkedlist.h"
+#include "tier1/utlvector.h"
 #include "iclient.h"
 
 //-----------------------------------------------------------------------------
@@ -76,6 +78,15 @@ namespace google
 typedef struct player_info_s player_info_t;
 
 typedef uint64 PublishedFileId_t;
+
+class CMapEntityDataPair
+{
+public:
+	char *m_pszKey;
+	char *m_pszValue;
+};
+typedef CUtlLinkedList<CMapEntityDataPair> CMapEntityData;
+typedef CUtlBlockVector<CMapEntityData> CMapEntityDataList;
 
 //-----------------------------------------------------------------------------
 // defines
@@ -146,25 +157,14 @@ public:
 	virtual void		*SaveAllocMemory( size_t num, size_t size ) = 0;
 	virtual void		SaveFreeMemory( void *pSaveMem ) = 0;
 
-	// Tells the engine to allocate paint surfaces
-	virtual bool HasPaintmap() = 0;
-	virtual void RemoveAllPaint() = 0;
-	virtual void PaintAllSurfaces( unsigned char ) = 0;
-	virtual void RemovePaint( const model_t *pModel ) = 0;
-
-	// Calls ShootPaintSphere
-	virtual bool SpherePaintSurface( const model_t *pModel, const Vector &, unsigned char, float, float ) = 0;
-
-	virtual void SphereTracePaintSurface( const model_t *pModel, const Vector &, const Vector &, float, CUtlVector<unsigned char> & ) = 0;
-
 	// Methods to set/get a gamestats data container so client & server running in same process can send combined data
 	virtual void SetGamestatsData( CGamestatsData *pGamestatsData ) = 0;
 	virtual CGamestatsData *GetGamestatsData() = 0;
 
 	virtual int		unk003() = 0;
 	
-	// Get the pristine map entity lump string.  (e.g., used by CS to reload the map entities when restarting a round.)
-	virtual const char*	GetMapEntitiesString() = 0;
+	// Get the pristine map entity list, also used when reloading map entities.
+	virtual const CMapEntityDataList *GetMapEntityList() const = 0;
 
 	virtual bool IsCreatingReslist() = 0;
 
@@ -463,10 +463,6 @@ public:
 	
 	virtual void SetNoClipEnabled( bool bEnabled ) = 0;
 	
-	virtual void GetPaintmapDataRLE( CUtlVector<unsigned int> &mapdata ) = 0;
-	virtual void LoadPaintmapDataRLE( CUtlVector<unsigned int> &mapdata ) = 0;
-	virtual void SendPaintmapDataToClient( edict_t *pEdict ) = 0;
-	
 	virtual float GetLatencyForChoreoSounds() = 0;
 	
 	virtual void EnsureInstanceBaseline( int ent_num ) = 0;
@@ -513,7 +509,7 @@ public:
 	// Called any time a new level is started (after GameInit() also on level transitions within a game)
 	// AMNOTE: Unlike in other games, pMapEntities is not a string
 	virtual bool			LevelInit( char const *pMapName, 
-									void *pMapEntities, char const *pOldLevel, 
+									CMapEntityDataList *pMapEntities, char const *pOldLevel, 
 									char const *pLandmarkName, bool loadGame, bool background ) = 0;
 
 	// The server is about to activate
