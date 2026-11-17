@@ -11,7 +11,7 @@
 #pragma once
 #endif
 
-#include "predictable_entity.h"
+//#include "predictable_entity.h"
 
 class CBaseEntity;
 
