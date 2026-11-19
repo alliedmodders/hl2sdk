@@ -30,6 +30,8 @@ typedef CGameTrace trace_t;
 // Client-server neutral effects interface
 //-----------------------------------------------------------------------------
 #define IEFFECTS_INTERFACE_VERSION	"IEffects001"
+
+// IPredictionSystem - virtual destructor
 abstract_class IEffects : public IPredictionSystem
 {
 public:
@@ -62,6 +64,9 @@ public:
 	virtual void EnergySplash( const Vector &position, const Vector &direction, bool bExplosive = false ) = 0;
 
 	virtual void Ricochet( const Vector &position, const Vector &direction ) = 0;
+	
+	// Empty method (server)
+	virtual void Scent(const Vector& origin, const Vector& direction, int scentType) = 0;
 
 	// FIXME: Should these methods remain in this interface? Or go in some 
 	// other client-server neutral interface?

@@ -11,7 +11,8 @@
 #pragma once
 #endif
 
-#include "predictable_entity.h"
+//#include "predictable_entity.h"
+#include "shared_classnames.h" // Maps CBaseEntity to C_BaseEntity on the client.
 
 class CBaseEntity;
 
