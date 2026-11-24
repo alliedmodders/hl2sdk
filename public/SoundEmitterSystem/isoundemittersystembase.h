@@ -25,6 +25,7 @@
 typedef short HSOUNDSCRIPTHANDLE;
 #define SOUNDEMITTER_INVALID_HANDLE	(HSOUNDSCRIPTHANDLE)-1
 
+class KeyValues;
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -46,6 +47,7 @@ struct CSoundParameters
 		count		= 0;
 
 		delay_msec	= 0;
+		gamedata = NULL;
 	}
 
 	int				channel;
@@ -58,6 +60,7 @@ struct CSoundParameters
 	int				count;
 	char 			soundname[ 128 ];
 	int				delay_msec;
+	KeyValues*      gamedata;
 };
 
 // A bit of a hack, but these are just utility function which are implemented in the SouneParametersInternal.cpp file which all users of this lib also compile
