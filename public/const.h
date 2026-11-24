@@ -30,7 +30,7 @@
 #define MAXIMUM_TICK_INTERVAL	(0.1)
 
 // This is the max # of players the engine can handle
-#define ABSOLUTE_PLAYER_LIMIT 255  // not 256, so we can send the limit as a byte 
+#define ABSOLUTE_PLAYER_LIMIT 32  // not 256, so we can send the limit as a byte 
 #define ABSOLUTE_PLAYER_LIMIT_DW	( (ABSOLUTE_PLAYER_LIMIT/32) + 1 )
 
 // a player name may have 31 chars + 0 on the PC.
