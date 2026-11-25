@@ -119,7 +119,7 @@ entities. Each one is useful under different conditions.
 #include "tier0/fasttimer.h"
 #include "utllinkedlist.h"
 #include "UtlDict.h"
-#include <typeinfo.h>
+#include <typeinfo>
 #include "tier1/utlintrusivelist.h"
 #include "tier1/utlstring.h"
 

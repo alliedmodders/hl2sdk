@@ -7,14 +7,11 @@
 
 
 #include "cbase.h"
-#ifdef _WIN32
-#include "typeinfo.h"
-// BUGBUG: typeinfo stomps some of the warning settings (in yvals.h)
-#pragma warning(disable:4244)
-#elif _LINUX
 #include <typeinfo>
-#else
-#error "need typeinfo defined"
+
+#ifdef _WIN32
+	// BUGBUG: typeinfo stomps some of the warning settings (in yvals.h)
+	#pragma warning(disable:4244)
 #endif
 
 #include "player.h"
