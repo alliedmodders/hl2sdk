@@ -31,13 +31,6 @@ class CBaseEntity;
 typedef CHandle<CBaseEntity> EHANDLE;
 #endif
 
-enum
-{
-	PC_EVERYTHING = 0,
-	PC_NON_NETWORKED_ONLY,
-	PC_NETWORKED_ONLY,
-};
-
 #define PC_DATA_PACKED			true
 #define PC_DATA_NORMAL			false
 
