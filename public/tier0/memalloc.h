@@ -313,10 +313,10 @@ public:
 //-----------------------------------------------------------------------------
 
 #if defined(_WIN32) && ( defined(_DEBUG) || defined(USE_MEM_DEBUG) )
-
-	#pragma warning(disable:4290)
 	#pragma warning(push)
-	#include <typeinfo.h>
+	#pragma warning(disable:4290)
+
+	#include <typeinfo>
 
 	// MEM_DEBUG_CLASSNAME is opt-in.
 	// Note: typeid().name() is not threadsafe, so if the project needs to access it in multiple threads

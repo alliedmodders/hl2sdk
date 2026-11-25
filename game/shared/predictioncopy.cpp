@@ -12,7 +12,7 @@
 #if defined( CLIENT_DLL )
 
 #include "IGameSystem.h"
-#include <typeinfo.h>
+#include <typeinfo>
 
 #endif
 #include <memory.h>

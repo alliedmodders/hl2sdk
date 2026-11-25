@@ -6,7 +6,7 @@
 //=============================================================================//
 #include "cbase.h"
 #include "c_baseentity.h"
-#include "typeinfo.h"
+#include <typeinfo>
 #include "tier0/vprof.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
